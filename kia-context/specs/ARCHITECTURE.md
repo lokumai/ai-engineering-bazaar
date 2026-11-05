@@ -11,7 +11,7 @@ description: >
 authority: blueprint
 writes: agent, when explicitly refactoring
 status: active
-covers: the whole system as built on 2026-09-10, with M16 shipped — every route on the design language; the record, channel A and the render step corrected for M24 on 2026-10-11, and the quiz and the end of a module for M25 on 2026-10-12, the Bazaar Street front door for M27 and the Persian pages for M28 the same day, and the progress page slimmed to its circles and its data row for M38 on 2026-11-05, and the account layer, role paths, record of work and two thirds of the test suite removed for M40 the same day
+covers: the whole system as built on 2026-09-10, with M16 shipped — every route on the design language; the record, channel A and the render step corrected for M24 on 2026-10-11, and the quiz and the end of a module for M25 on 2026-10-12, the Bazaar Street front door for M27 and the Persian pages for M28 the same day, and the progress page slimmed to its circles and its data row for M38 on 2026-11-05, and the account layer, role paths, record of work and two thirds of the test suite removed for M40 the same day, and the two tracks (For Engineers, For Everyone) and their per-track record for M43 the same day
 last_updated: "2026-11-05"
 ---
 
@@ -186,6 +186,18 @@ the route segment, the menu's label, the text direction and whether every module
 Everything that used to say `'tr'` asks it. A translation is a different body for the same module,
 never a module of its own, so it changes no count, no number and no record key.
 
+**Every module has two tracks (M43, D86, D91).** *For Engineers* is the module as it always was and
+keeps every address it had. *For Everyone* is the same module in plain words, written as
+`mini-courses/<level>/everyone/<name>.md` (with `_tr.md` and `_fa.md` beside it, under the same
+rules), listed by the same `curriculum.yaml` name: there is one list of modules, never two. The
+validator fails a For Everyone file whose name the config does not list. Its pages live under an
+`/everyone/` segment after the language prefix (`/everyone/sheets/<level>/`,
+`/tr/everyone/courses/<level>/<module>/`); `src/lib/tracks.ts` is the one place those addresses and
+the track names are written. Every module has a For Everyone page in every language it has a For
+Engineers page in; where the file is not written, that page says so, links back, carries no
+completion control and is `noindex`. A track is a second body of the same module, like a
+translation: it changes no count and no number, but it does have its own record (§5).
+
 **A reader's record** is the only mutable state in the system, and §5 describes it.
 
 **Prerequisites are a directed graph.** `needs` entries resolve by name to modules that must sit
@@ -300,10 +312,11 @@ schema version 1 (`src/lib/record/schema.ts`). A record that fails to parse is m
 
 ```
 RecordData
-  sheets     { [slug]: { signedOff, signedRevision, reachedEnd, dwellSeconds, checklist {} } }
-  days       [ ISO dates ]
-  prefs      { charKeys, railFolded, catalogView, figurePalette, codePalette }
-  meta       { lastExport, persisted }
+  sheets          { [slug]: { signedOff, signedRevision, reachedEnd, dwellSeconds, checklist {} } }
+  everyoneSheets  { [slug]: the same shape }                    For Everyone, since M43
+  days            [ ISO dates ]
+  prefs           { charKeys, railFolded, catalogView, figurePalette, codePalette }
+  meta            { lastExport, persisted }
 ```
 
 **M40 removed `identity` (name, mark seed, mark, role), each module's `quiz`, `sources` and
@@ -338,6 +351,20 @@ the end of a module (**A**) and another across the whole course on the progress 
 first completion on a record also makes the single permitted `navigator.storage.persist()` request,
 so both controls call `src/lib/record/complete.ts`'s `toggleCompletion` rather than implementing
 that sequence twice.
+
+**Completion is per track (D86, D91).** `sheets` is For Engineers, the only map before M43, which is
+why it kept its name and why a record from before M43 reads as For Engineers progress with nothing
+migrated. `everyoneSheets` is For Everyone, in the same shape; `trackView(data, track)` hands every
+reader of the record the map for one track, and export, import, erase and `carriesNothing` cover
+both. The boot script stamps both tracks on `<html>` (`hl-signed-<n>` and `hl-e-signed-<n>`, the level
+classes the same way) and the current track as `data-bz-track`; a page region carries
+`data-track`, and the generated stylesheet scopes each track's marks to its own regions.
+
+**Which track a page that belongs to neither (home, progress, legend) shows is NOT in the record.**
+It is the last track page opened in this tab, in `sessionStorage` under `hl-track`
+(`src/lib/tracks.ts`), read by the boot script and written by `RecordStateSync`. Opening a page is
+not recording anything, and a visit must leave `hl-record` unwritten; the `prefs.track` field that
+first held this broke exactly that, and was removed.
 
 **`sheets` is keyed by slug, not by number.** This is what makes a curriculum reorder safe: renaming a
 module orphans its progress, but moving it does not.

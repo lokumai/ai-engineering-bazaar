@@ -64,6 +64,8 @@ export interface SheetRecord {
 export interface RecordData {
   /** §12.1.3 — keyed by SLUG (`intermediate/security`), never by number. */
   sheets: { [slug: string]: SheetRecord }
+  /** D91 — For Everyone's completions, the same shape. */
+  everyoneSheets: { [slug: string]: SheetRecord }
   days: string[]
   /**
    * Every key the store writes is stated here, because the round trips compare
@@ -91,6 +93,7 @@ export interface Envelope {
 export type SheetSeed = Partial<SheetRecord>
 export interface RecordSeed {
   sheets?: { [slug: string]: SheetSeed }
+  everyoneSheets?: { [slug: string]: SheetSeed }
   days?: string[]
   prefs?: Partial<RecordData['prefs']>
   meta?: Partial<RecordData['meta']>
@@ -127,8 +130,13 @@ export function recordData(seed: RecordSeed = {}): RecordData {
   for (const [slug, sheet] of Object.entries(seed.sheets ?? {})) {
     sheets[slug] = sheetRecord(sheet)
   }
+  const everyoneSheets: RecordData['everyoneSheets'] = {}
+  for (const [slug, sheet] of Object.entries(seed.everyoneSheets ?? {})) {
+    everyoneSheets[slug] = sheetRecord(sheet)
+  }
   return {
     sheets,
+    everyoneSheets,
     days: seed.days ?? [SEED_DAY],
     prefs: {
       charKeys: true,
@@ -325,8 +333,6 @@ export async function waitForSheet(
 /** What `<html>` carried inside the first `requestAnimationFrame`. */
 export interface FirstPaint {
   className: string
-  /** `data-hl-record="1"` — a readable record exists. */
-  record: string | null
   /** `data-hl-storage` — §12.13's class 1 told from class 4. */
   storage: string | null
   /**
@@ -367,7 +373,6 @@ export async function probeFirstPaint(page: Page): Promise<void> {
       const root = document.documentElement
       ;(window as unknown as PaintWindow).__hlRecordFirstPaint = {
         className: root.className,
-        record: root.getAttribute('data-hl-record'),
         storage: root.getAttribute('data-hl-storage'),
         hydrated: document.querySelector('.bz-readout')?.getAttribute('data-hydrated') ?? null,
       }
@@ -492,49 +497,3 @@ export const CATEGORY_SLUGS: readonly string[] = [
 // §16.4 — the register, opened
 // ---------------------------------------------------------------------------
 
-/**
- * Opens the register row whose heading id is `id`, and returns its body once
- * the browser is actually rendering it.
- *
- * **Why every spec needs this and none of them needed anything like it before.**
- * §16.4 folded nine of `/profile/`'s eleven panels into closed `<details>`
- * rows. A closed row's subtree is still in the DOM, so `textContent`,
- * `page.evaluate` and `setInputFiles` are unaffected — MEASURED as the reason
- * the storage readouts and the import input needed no change at all. What does
- * not survive is anything that requires a rendered box: `click()` waits for the
- * element to be visible and stable, and `toBeVisible()` is that assertion by
- * definition. So `ERASE ALL LOCAL DATA`, `EXPORT YOUR RECORD` and every import
- * readout now sit behind one gesture, and the gesture is written once here
- * rather than nine times as `page.locator(...).click()` on a summary.
- *
- * **It is idempotent, and that is the point of reading `open` first.** Several
- * tests open the same row twice — an erase followed by an import, a reload in
- * the middle of a round trip — and `<summary>` is a toggle: a second click
- * would CLOSE the row and the next assertion would fail somewhere far from the
- * cause. Reading `details.open` and clicking only when it is false makes the
- * call safe to repeat and safe to put in a helper another spec composes.
- *
- * The row is addressed by `aria-labelledby`, not by position: the ids are
- * verbatim from the panels these rows replaced (`storage`, `raw`, `data`,
- * `submittals`, `bz-orgs-head`) and §16.4's order is asserted on its own, in
- * `record-pages.spec.ts`, rather than assumed here by every caller.
- */
-export async function openRegisterRow(page: Page, id: string): Promise<Locator> {
-  const row = page.locator(`section.bz-register-row[aria-labelledby="${id}"]`)
-  const fold = row.locator('details.bz-register-fold')
-  const body = fold.locator('.bz-register-body')
-
-  await expect(fold, `no register row is labelled by "${id}"`).toHaveCount(1)
-  if (!(await fold.evaluate((node) => (node as HTMLDetailsElement).open))) {
-    await fold.locator('summary.bz-register-summary').click()
-  }
-  await expect(body).toBeVisible()
-  return body
-}
-
-/** One register row's summary reading (§16.4.1), addressed by its heading id. */
-export function registerReading(page: Page, id: string): Locator {
-  return page.locator(
-    `section.bz-register-row[aria-labelledby="${id}"] .bz-register-reading`,
-  )
-}

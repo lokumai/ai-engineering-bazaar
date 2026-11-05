@@ -305,4 +305,228 @@
     color: var(--color-on-surface-muted);
     font-size: var(--text-lead);
   }
+
+  /* ---------------------------------------------------------------------------
+     THE TRACK SWITCH (M39 B1 + C1, D91).
+
+     Two segments in one field, the bar's own field geometry (`.bz-bar-repo`'s
+     height, line and fill). The track the page is in is filled with the band's
+     gold and the bar's dark chip ink, so it reads as the active state rather
+     than as one more button; the other segment is the bar's dim ink.
+
+     The fill is drawn from `data-bz-track` on `<html>`, which the boot script
+     stamps before first paint, so the right segment is filled in frame one.
+     With no stamp at all (scripts refused) For Engineers is filled, which is
+     the track every address without `/everyone/` belongs to.
+     --------------------------------------------------------------------------- */
+  .bz-trackswitch {
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+    height: 33px;
+    padding: 3px;
+    border: 1px solid var(--color-bar-field-line);
+    border-radius: var(--radius-lg);
+    background: var(--color-bar-field);
+  }
+
+  .bz-trackswitch-seg {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    height: 25px;
+    padding: 0 9px;
+    border-radius: var(--radius-base);
+    color: var(--color-on-bar-dim);
+    font: 600 var(--text-control) / 1 var(--font-sans);
+    text-decoration: none;
+    white-space: nowrap;
+  }
+
+  .bz-trackswitch-seg:hover {
+    background: var(--color-bar-hover);
+    color: var(--color-on-bar);
+  }
+
+  html:not([data-bz-track="everyone"]) .bz-trackswitch-seg[data-track-id="engineers"],
+  html[data-bz-track="everyone"] .bz-trackswitch-seg[data-track-id="everyone"] {
+    background: var(--color-ornament);
+    color: var(--color-on-bar-chip);
+  }
+
+  /* The one non-colour carrier of "this one": the filled segment's name is in
+     a heavier weight too, and its link says `aria-current`. */
+  html:not([data-bz-track="everyone"]) .bz-trackswitch-seg[data-track-id="engineers"] .bz-trackswitch-label,
+  html[data-bz-track="everyone"] .bz-trackswitch-seg[data-track-id="everyone"] .bz-trackswitch-label {
+    font-weight: 700;
+  }
+
+  .bz-trackswitch-icon { flex: none; }
+
+  /* With the names hidden below the rail breakpoint, the fill is what says
+     which track this is, and a forced-colours theme drops every fill: the
+     current segment takes the system's highlight there, so the state survives
+     as a filled box against an empty one. */
+  @media (forced-colors: active) {
+    html:not([data-bz-track="everyone"]) .bz-trackswitch-seg[data-track-id="engineers"],
+    html[data-bz-track="everyone"] .bz-trackswitch-seg[data-track-id="everyone"] {
+      forced-color-adjust: none;
+      background: Highlight;
+      color: HighlightText;
+    }
+  }
+
+  /* §10.4's touch floor, the bar's way (`bazaar.css`, the hit-area block): the
+     segments and the language button keep their painted size in the fixed
+     strip and carry a 44px-tall invisible target. The two segments touch, so
+     each target is as wide as its own segment and no wider. */
+  @media (max-width: 767px) {
+    .bz-trackswitch-seg,
+    .bz-langmenu-trigger { position: relative; }
+
+    .bz-trackswitch-seg::after,
+    .bz-langmenu-trigger::after {
+      content: "";
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 100%;
+      height: 44px;
+      translate: -50% -50%;
+    }
+  }
+
+  /* The bar's controls keep their size; at narrow widths the navigation is the
+     part that scrolls inside itself (see the bar's own rules above), so these
+     must not be the part that gives way. */
+  .bz-trackswitch,
+  .bz-langmenu,
+  .bz-bar-icon,
+  .bz-bar-repo { flex: none; }
+
+  /* MEASURED from 320 to 1440 on module, catalog, home and progress pages in
+     all three languages, once the switch and the flag joined the bar: with both
+     full names it ran to 1,080px at 1024, the page scrolled sideways up to
+     1016px, and below the rail breakpoint, where the navigation becomes a
+     scroller, Catalog and Progress sat past its edge (77px wide at 390). The
+     bar gives way at the language's own breakpoints only.
+
+     At the fold the switch's names drop their `For`, the Home link goes (the
+     logo is the link home), and so do the star count and the code beside the
+     flag (the flag states it; Persian has no flag and keeps its script). */
+  @media (max-width: 1180px) {
+    .bz-trackswitch-for,
+    .bz-bar-nav li[data-home],
+    .bz-bar-star,
+    .bz-bar-stars,
+    .bz-flag + .bz-langmenu-code { display: none; }
+    .bz-bar-nav .bz-bar-link { padding-inline: 8px; }
+  }
+
+  /* At the rail breakpoint the switch shows its two icons; its names stay
+     the links' accessible names. */
+  @media (max-width: 880px) {
+    .bz-trackswitch-seg { padding: 0 8px; }
+    .bz-trackswitch-label {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      margin: -1px;
+      overflow: hidden;
+      clip-path: inset(50%);
+      white-space: nowrap;
+    }
+  }
+
+  /* On a phone the repository button goes (the footer links it on every
+     page) and the gaps tighten. Narrower than 390 the navigation still
+     scrolls inside itself, as the bar's narrow rules above intend. */
+  @media (max-width: 767px) {
+    .bz-bar-repo { display: none; }
+    .bz-bar-inner { gap: 6px; }
+    .bz-bar-nav .bz-bar-link { padding-inline: 6px; }
+  }
+
+  /* ---------------------------------------------------------------------------
+     THE CATALOG MENU'S TWO TABS (M39 D2).
+
+     Over the level list, one per track. The selected one is filled with the
+     bar's cobalt, the same fill the menu's trigger carries in the bar; the
+     other is a quiet hairlined chip. A tab changes only which track the levels
+     below open into.
+     --------------------------------------------------------------------------- */
+  .bz-menu-tabs {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4px;
+    padding: 0 0 6px;
+    margin-bottom: 4px;
+    border-bottom: 1px solid var(--color-line);
+  }
+
+  .bz-menu-tab {
+    height: 30px;
+    padding: 0 10px;
+    border: 1px solid var(--color-line-strong);
+    border-radius: var(--radius-base);
+    background: var(--color-surface);
+    color: var(--color-on-surface);
+    font: 600 var(--text-control) / 1 var(--font-sans);
+    cursor: pointer;
+    white-space: nowrap;
+  }
+
+  .bz-menu-tab:hover { background: var(--color-surface-sunken); }
+
+  .bz-menu-tab[aria-selected="true"] {
+    border-color: var(--color-bar);
+    background: var(--color-bar);
+    color: var(--color-on-bar);
+  }
+
+  /* ---------------------------------------------------------------------------
+     THE LANGUAGE BUTTON'S FLAG AND CODE (M39 E4).
+
+     The button widens like the repository button beside it, the same field
+     geometry, and shows the current language's flag and then its code. A flag
+     carries a hairline, because the UK flag's navy all but disappears on the
+     cobalt without one. Persian shows its script in a small chip instead of a
+     flag (D91).
+     --------------------------------------------------------------------------- */
+  .bz-langmenu-trigger {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    height: 33px;
+    padding: 0 9px;
+    border: 1px solid var(--color-bar-field-line);
+    border-radius: var(--radius-base);
+    background: var(--color-bar-field);
+    color: var(--color-on-bar);
+    font: 700 var(--text-mark) / 1 var(--font-sans);
+    cursor: pointer;
+  }
+
+  .bz-langmenu-trigger:hover { background: var(--color-bar-hover); }
+
+  .bz-flag {
+    flex: none;
+    width: 18px;
+    height: 12px;
+    border-radius: var(--radius-sm);
+    outline: 1px solid var(--color-bar-field-line);
+  }
+
+  .bz-menu-item .bz-flag { outline-color: var(--color-line-strong); }
+
+  .bz-flag-script {
+    display: inline-grid;
+    place-items: center;
+    width: auto;
+    height: auto;
+    padding: 1px 4px;
+    border: 1px solid var(--color-line-strong);
+    outline: 0;
+    font: 600 var(--text-mark) / 1.2 var(--font-sans);
+  }
 }

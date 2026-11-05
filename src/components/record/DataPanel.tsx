@@ -170,6 +170,10 @@ export function DataPanel() {
     update(() => result.data)
     flush()
     setImported({ kind: 'imported', schema: result.schema })
+    // A restore replaces what a reset left behind, so the reset's undo goes:
+    // offering it now would put back an older erase over the restored file.
+    setUndo(null)
+    setErasedAt(null)
   }
 
   function onErase(): void {
@@ -187,7 +191,6 @@ export function DataPanel() {
     eraseStored()
     setImported({ kind: 'idle' })
     setExported(null)
-
   }
 
   function onUndo(): void {
@@ -200,110 +203,71 @@ export function DataPanel() {
   }
 
   return (
-    <div className="grid gap-6">
-      {/* ---- EXPORT ------------------------------------------------------- */}
-      <div>
-        <div className="bz-actions">
-          <button type="button" className="bz-btn" onClick={onExport}>
-            EXPORT YOUR RECORD
-          </button>
-          {exported !== null && (
-            <span className="text-mark text-on-surface-muted" role="status">
-              {`EXPORTED ${exported.slice(0, 10)}`}
-            </span>
-          )}
-        </div>
-        <p className="mt-2 mb-0 text-meta leading-normal text-on-surface-muted">
-          One JSON file, indented so it can be read in a text editor. It is
-          written by this page and downloaded by this browser; nothing is
-          uploaded. An export taken with nothing recorded says exactly that.
-        </p>
-      </div>
-
-      {/* ---- IMPORT ------------------------------------------------------- */}
-      <div>
-        <label className="bz-field">
-          <span className="bz-field-label">Import a record from a file</span>
+    <div className="bz-dataline">
+      {/* M39 F2 — one quiet line: where the progress lives, and the three ways
+          to keep it. The reasons the export exists are in this file's header. */}
+      <p className="bz-dataline-text">
+        Your progress is saved in this browser only. A backup file keeps it safe
+        if the browser clears it, and moves it to another browser.
+      </p>
+      <div className="bz-dataline-actions">
+        <button type="button" className="bz-link bz-dataline-action" onClick={onExport}>
+          Back up to a file
+        </button>
+        <label className="bz-link bz-dataline-action">
+          Restore from a file
           <input
             type="file"
             accept=".json,application/json"
             onChange={(event) => void onImport(event)}
-            // `.bz-field input` already gives the border, the ground and the
-            // type; a file input needs its own height and vertical padding.
-            className="block h-auto w-full p-2"
+            className="bz-dataline-file"
           />
         </label>
-        <p className="bz-field-hint">
-          The exported .json. Importing replaces the record in this browser with the one in the file.
+        <EraseDialog
+          onConfirm={onErase}
+          onExport={onExport}
+          exportedAt={exported}
+          triggerLabel="Reset"
+          triggerClassName="bz-link bz-dataline-action bz-dataline-reset"
+        />
+        {undo !== null && left > 0 && (
+          <button type="button" className="bz-link bz-dataline-action" onClick={onUndo}>
+            Undo
+          </button>
+        )}
+      </div>
+
+      {exported !== null && (
+        <p className="bz-dataline-status" role="status">
+          {`Backed up ${exported.slice(0, 10)}`}
         </p>
+      )}
 
-        {imported.kind !== 'idle' && (
-          <div className="mt-2" role="status">
-            {imported.kind === 'imported' && (
-              <>
-                <p className="text-mark m-0 text-on-surface">
-                  {`RECORD IMPORTED · SCHEMA ${imported.schema}`}
-                </p>
-              </>
-            )}
-            {imported.kind === 'empty' && (
-              <>
-                <p className="text-mark m-0 text-on-surface">NO RECORD IN THIS FILE</p>
-                <p className="mt-1 mb-0 text-meta leading-normal text-on-surface-muted">
-                  Nothing was changed. Only the exported .json carries the
-                  record.
-                </p>
-              </>
-            )}
-            {imported.kind === 'unreadable' && (
-              <>
-                <p className="text-mark m-0 text-on-surface">
-                  {imported.reason === 'newer'
-                    ? 'FILE WRITTEN BY A NEWER VERSION OF THIS SITE — NOT READ'
-                    : 'FILE IS NOT THE SHAPE THIS SITE WRITES — NOT READ'}
-                </p>
-                <p className="mt-1 mb-0 text-meta leading-normal text-on-surface-muted">
-                  Nothing was changed, and the file on disk is untouched.
-                  {imported.reason === 'newer'
-                    ? ' Reload this site to pick up the newer version, then import it again.'
-                    : ''}
-                </p>
-              </>
-            )}
-            {imported.kind === 'unopened' && (
-              <p className="text-mark m-0 text-on-surface">THIS FILE COULD NOT BE OPENED</p>
-            )}
-          </div>
-        )}
-      </div>
-
-      {/* ---- ERASE -------------------------------------------------------- */}
-      <div>
-        <div className="bz-actions">
-          <EraseDialog onConfirm={onErase} onExport={onExport} exportedAt={exported} />
-          {undo !== null && left > 0 && (
-            <button type="button" className="bz-btn" onClick={onUndo}>
-              UNDO
-            </button>
+      {imported.kind !== 'idle' && (
+        <div className="bz-dataline-status" role="status">
+          {imported.kind === 'imported' && <p>Restored from the file.</p>}
+          {imported.kind === 'empty' && (
+            <p>Nothing was changed. That file holds no progress; only a backup file does.</p>
           )}
+          {imported.kind === 'unreadable' && (
+            <p>
+              {imported.reason === 'newer'
+                ? 'That file was written by a newer version of this site. Reload the site, then restore it again.'
+                : 'That file is not a backup this site wrote. Nothing was changed.'}
+            </p>
+          )}
+          {imported.kind === 'unopened' && <p>That file could not be opened.</p>}
         </div>
+      )}
 
-        {/* §12.15 — reversible, and the line says for how long. `hydrated`
-            gates it because an erased state can only ever follow a click this
-            session made; the server has nothing to say about it. */}
-        {erasedAt !== null && hydrated && (
-          <div className="mt-2" role="status">
-            <p className="text-mark m-0 text-on-surface">
-              {undo !== null && left > 0 ? undoLabel(left) : UNDO_CLOSED}
-            </p>
-            <p className="mt-1 mb-0 text-meta leading-normal text-on-surface-muted">
-              The completion marks ready before this page loaded stay on screen
-              until the page is reloaded: they are painted by the boot script,
-              which reads the record once, before anything else runs.
-            </p>
-          </div>
-        )}
-      </div>
+      {/* §12.15 — reversible, and the line says for how long. `hydrated`
+          gates it because an erased state can only ever follow a click this
+          session made; the server has nothing to say about it. */}
+      {erasedAt !== null && hydrated && (
+        <p className="bz-dataline-status" role="status">
+          {undo !== null && left > 0 ? undoLabel(left) : UNDO_CLOSED}
+        </p>
+      )}
     </div>
   )
 }

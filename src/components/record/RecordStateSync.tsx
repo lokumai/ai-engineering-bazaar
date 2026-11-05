@@ -1,8 +1,10 @@
 'use client'
 
+import { usePathname } from 'next/navigation'
 import { useEffect } from 'react'
-import { type StampFacts, stampRecordState } from '@/lib/record/stamp'
+import { type StampFacts, TRACK_ATTR, currentTrack, stampRecordState } from '@/lib/record/stamp'
 import { snapshot, subscribe } from '@/lib/record/store'
+import { lastTrack, rememberTrack, trackOfPath } from '@/lib/tracks'
 
 /**
  * §12.2 Channel A, after first paint.
@@ -25,18 +27,32 @@ import { snapshot, subscribe } from '@/lib/record/store'
  * stops the build (§12.2).
  */
 export function RecordStateSync({ facts }: { facts: StampFacts }) {
+  const pathname = usePathname()
+
+  /* D91 — a track page remembers its track for this tab, so a page that
+     belongs to neither shows the bar in the track the reader was reading. In
+     session storage, never the record: opening a page records nothing (§12.13).
+     Runs before the stamping effect above, so the stamp reads the new value. */
+  useEffect(() => {
+    const track = trackOfPath(pathname)
+    if (track !== null) rememberTrack(track)
+  }, [pathname])
+
   useEffect(() => {
     const root = document.documentElement
 
     function apply(): void {
       stampRecordState(root, snapshot(), facts)
+      // D91 — and the current track, which a client transition can change.
+      root.setAttribute(TRACK_ATTR, currentTrack(pathname, lastTrack()))
     }
 
     // Once on mount as well as on every change: the boot script may have been
     // unable to read storage at all, and another tab may have written since.
     apply()
     return subscribe(apply)
-  }, [facts])
+  }, [facts, pathname])
+
 
   return null
 }

@@ -59,6 +59,14 @@ drops in-progress images into the category folders. **Do not commit or push unle
   is"). Two headings keep their exact text because the app matches them: `## Summary` / `## Özet`
   and `## Where this fits in the series` / `## Bu serinin neresindeyiz` (Persian below).
 - **Every module ends with links out** and a References list built only from links used in the text.
+- **The References list is grouped by kind**, under `###` headings, each present only when it has an
+  item, in this order and with these exact words: `### 📄 Articles` (written posts, papers, docs
+  pages that explain a topic), `### 🎬 Videos`, `### 🛠️ Tools` (a product, library or service, by its
+  home page or docs landing), `### 🗃️ Repositories` (GitHub or GitLab, awesome-lists included),
+  `### 🧭 Modules` (a relative `.md` link). Turkish: `Makaleler`, `Videolar`, `Araçlar`, `Repolar`,
+  `Modüller`. Persian: `مقاله‌ها`, `ویدیوها`, `ابزارها`, `Repository‌ها` (with a zero-width
+  non-joiner before `ها`), `ماژول‌ها`. An item's kind is the kind of its first link, and it keeps the
+  same kind in all three languages. Items keep the author's order inside a group.
 
 ## Images and captions
 
@@ -223,6 +231,12 @@ underscores, no number); create `<name>_tr.md` beside it, even as a stub; add it
 `curriculum.yaml`; once written, give it a quick quiz. A `status` change regenerates
 `src/app/lokum-modules.css`, which goes in the same commit.
 
+**Writing a module For Everyone (D86, D91):** the plain-words version of `<name>.md` is
+`<category>/everyone/<name>.md`, with `_tr.md` and `_fa.md` beside it under the translation rules
+above. It uses the same name, so it needs no line of its own in `curriculum.yaml`, and a file whose
+name is not listed fails the build. Until the file exists, the site shows that module's For Everyone
+page as not written yet. Adding one regenerates `src/app/lokum-modules.css`, in the same commit.
+
 ## The quick quiz
 
 A written module carries `<name>.quiz.yaml` beside it, shown at the end of the module page. It is
@@ -286,6 +300,7 @@ mini-courses/            the authored course, and all this file governs
   index.md               the GitHub page for mini-courses/, mirrors README.md
   curriculum.yaml        the course shape
   <level>/               modules, their _tr.md and _fa.md, quizzes and images
+    everyone/            each module For Everyone, same names, same suffixes
   scratchpad/            research notes and diagram prompts, never published
 src/ tests/ scripts/     the website that renders the course (the root CLAUDE.md)
 ```

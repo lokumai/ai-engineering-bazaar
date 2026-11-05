@@ -2,6 +2,8 @@
 
 import Link from 'next/link'
 import { toggleCompletion } from '@/lib/record/complete'
+import { sheetsOf } from '@/lib/record/schema'
+import type { Track } from '@/lib/tracks'
 import { SIGN_OFF_ATTR } from '@/lib/record/keys'
 import { useHydrated, useRecord, useWriteState } from '@/lib/record/store'
 
@@ -56,10 +58,13 @@ export function SignOff({
   slug,
   revision,
   drawn,
+  track = 'engineers',
 }: {
   slug: string
   revision: string | null
   drawn: boolean
+  /** D91 — whose completion this box writes: completion is per track. */
+  track?: Track
 }) {
   const record = useRecord()
   const hydrated = useHydrated()
@@ -67,7 +72,7 @@ export function SignOff({
 
   if (!drawn) return null
 
-  const signedOff = hydrated ? (record.sheets[slug]?.signedOff ?? null) : null
+  const signedOff = hydrated ? (sheetsOf(record, track)[slug]?.signedOff ?? null) : null
   const done = signedOff !== null
   const refused = REFUSED[write] ?? null
   const id = `hl-complete-${slug.replace(/[^A-Za-z0-9]+/g, '-')}`
@@ -80,7 +85,7 @@ export function SignOff({
           type="checkbox"
           className="bz-complete-box"
           checked={done}
-          onChange={() => toggleCompletion(record, slug, revision)}
+          onChange={() => toggleCompletion(record, slug, revision, track)}
           {...{ [SIGN_OFF_ATTR]: slug }}
         />
         <span className="bz-complete-mark" aria-hidden="true">

@@ -27,7 +27,8 @@
  * DOM at all.
  */
 
-import { carriesNothing, type RecordData } from './schema'
+import type { RecordData } from './schema'
+import { type Track, trackOfPath } from '../tracks'
 
 /** The slice of `<html>` the stamps touch. */
 export interface StampRoot {
@@ -36,7 +37,6 @@ export interface StampRoot {
     remove(token: string): void
     forEach?(callback: (token: string) => void): void
   }
-  setAttribute(name: string, value: string): void
   /** Every class currently on the element, so the stale ones can be removed. */
   readonly className: string
   /**
@@ -61,44 +61,53 @@ export interface StampFacts {
 /**
  * The prefixes this module owns. Anything else on `<html>` is left alone.
  */
-const OWNED = /^hl-(?:signed-\d+|cat-[a-z0-9-]+-(?:started|complete))$/
+const OWNED = /^hl-(?:e-)?(?:signed-\d+|cat-[a-z0-9-]+-(?:started|complete))$/
 
 /**
- * The class set a record implies. Sorted, so two callers comparing results —
- * and the cross-test — are comparing sets rather than insertion orders.
+ * D91 — each track's classes carry their own prefix: `hl-signed-<n>` and
+ * `hl-cat-…` for For Engineers, `hl-e-signed-<n>` and `hl-e-cat-…` for For
+ * Everyone. Both are stamped every time, so a page that shows both tracks (the
+ * progress page) is right in frame one; `data-track` regions pick one.
  */
-export function stampClassesFor(data: RecordData, facts: StampFacts): string[] {
+const STAMP_PREFIX: Readonly<Record<Track, string>> = { engineers: 'hl-', everyone: 'hl-e-' }
+
+function classesOf(
+  sheets: RecordData['sheets'],
+  facts: StampFacts,
+  prefix: string,
+): string[] {
   const counts = new Map<string, number>()
   const classes: string[] = []
-
-  for (const [slug, sheet] of Object.entries(data.sheets)) {
+  for (const [slug, sheet] of Object.entries(sheets)) {
     if (sheet.signedOff === null || sheet.signedOff === undefined) continue
-
-    // The category is the slug's own first segment, which is why identity is
-    // the slug: no second map is needed and no number can drift.
     const cut = slug.indexOf('/')
     if (cut > 0) {
       const category = slug.slice(0, cut)
       counts.set(category, (counts.get(category) ?? 0) + 1)
     }
-
     const module = facts.slugToModule[slug]
-    if (typeof module === 'number') classes.push(`hl-signed-${module}`)
+    if (typeof module === 'number') classes.push(`${prefix}signed-${module}`)
   }
-
   for (const [category, approved] of counts) {
     const total = facts.categoryTotals[category] ?? 0
-    // `-complete` needs a real total. With none, the honest answer is that the
-    // subsystem is under way, not that it is finished.
-    classes.push(`hl-cat-${category}-${total > 0 && approved >= total ? 'complete' : 'started'}`)
+    classes.push(`${prefix}cat-${category}-${total > 0 && approved >= total ? 'complete' : 'started'}`)
   }
-
-  return classes.sort()
+  return classes
 }
 
-/** The custom property a level's dial reads, for one category slug. */
-export function progressProperty(category: string): string {
-  return `--bz-done-${category}`
+/**
+ * The class set a record implies, both tracks. Sorted, so two callers comparing
+ * results — and the cross-test — are comparing sets rather than insertion orders.
+ */
+export function stampClassesFor(data: RecordData, facts: StampFacts): string[] {
+  return [
+    ...classesOf(data.sheets, facts, STAMP_PREFIX.engineers),
+    ...classesOf(data.everyoneSheets ?? {}, facts, STAMP_PREFIX.everyone),
+  ].sort()
+}
+
+export function progressProperty(category: string, track: Track = 'engineers'): string {
+  return `--bz-${track === 'everyone' ? 'e' : ''}done-${category}`
 }
 
 /**
@@ -126,36 +135,38 @@ export function stampProgressFor(
   data: RecordData,
   facts: StampFacts,
 ): Record<string, string> {
-  const counts = new Map<string, number>()
-
-  for (const [slug, sheet] of Object.entries(data.sheets)) {
-    if (sheet.signedOff === null || sheet.signedOff === undefined) continue
-    const cut = slug.indexOf('/')
-    if (cut > 0) {
-      const category = slug.slice(0, cut)
-      counts.set(category, (counts.get(category) ?? 0) + 1)
+  const properties: Record<string, string> = {}
+  for (const track of ['engineers', 'everyone'] as const) {
+    const counts = new Map<string, number>()
+    const sheets = track === 'everyone' ? (data.everyoneSheets ?? {}) : data.sheets
+    for (const [slug, sheet] of Object.entries(sheets)) {
+      if (sheet.signedOff === null || sheet.signedOff === undefined) continue
+      const cut = slug.indexOf('/')
+      if (cut > 0) {
+        const category = slug.slice(0, cut)
+        counts.set(category, (counts.get(category) ?? 0) + 1)
+      }
+    }
+    for (const [category, approved] of counts) {
+      const total = facts.categoryTotals[category] ?? 0
+      if (total <= 0) continue
+      properties[progressProperty(category, track)] = `${Math.round((approved / total) * 100)}%`
     }
   }
-
-  const properties: Record<string, string> = {}
-  for (const [category, approved] of counts) {
-    const total = facts.categoryTotals[category] ?? 0
-    // With no total there is no fraction to state, and 0% would be a claim
-    // rather than an absence — the same reason `-complete` needs a real total.
-    if (total <= 0) continue
-    properties[progressProperty(category)] = `${Math.round((approved / total) * 100)}%`
-  }
-
   return properties
 }
 
 /**
- * Apply the stamps, removing the ones that are no longer true.
- *
- * Removal is the half a boot script never needs and this function always does:
- * un-signing a sheet has to take its class off, or the mark keeps claiming a
- * sign-off the reader has withdrawn.
+ * D91 — the track the bar shows: the page's own, or on a page that belongs to
+ * neither track the one this tab last opened (`lastTrack`), or For Engineers.
  */
+export function currentTrack(pathname: string, remembered: Track | null): Track {
+  return trackOfPath(pathname) ?? remembered ?? 'engineers'
+}
+
+/** The attribute the bar's switch and the progress page's tabs read in frame one. */
+export const TRACK_ATTR = 'data-bz-track'
+
 export function stampRecordState(
   root: StampRoot,
   data: RecordData,
@@ -179,46 +190,15 @@ export function stampRecordState(
   if (root.style !== undefined) {
     const progress = stampProgressFor(data, facts)
     for (const category of Object.keys(facts.categoryTotals)) {
-      const name = progressProperty(category)
-      const value = progress[name]
-      if (value === undefined) root.style.removeProperty(name)
-      else root.style.setProperty(name, value)
+      for (const track of ['engineers', 'everyone'] as const) {
+        const name = progressProperty(category, track)
+        const value = progress[name]
+        if (value === undefined) root.style.removeProperty(name)
+        else root.style.setProperty(name, value)
+      }
     }
   }
 
   // `data-hl-storage` is deliberately NOT touched here. It is an answer only the
   // boot script can give: whether the READ threw, at load, in this document.
-  //
-  // `data-hl-record` is set here and NEVER REMOVED, and the asymmetry is the
-  // whole of it. See `RECORD_ATTR` below.
-  if (!carriesNothing(data)) root.setAttribute(RECORD_ATTR, '1')
 }
-
-/**
- * Why the record attribute goes ON here and never comes OFF.
- *
- * **The removal half stays with the load, for §12.13.** `data-hl-record`
- * separates empty-state class 1 from class 2: a fresh browser has no attribute
- * at all and reads as NEVER STARTED, while a reader who erased their record
- * keeps the `1` the load stamped and correctly reads as CLEARED BY YOU.
- * Recomputing the attribute from the live record — setting AND clearing —
- * collapses the two, because an erased record and a never-started one look
- * identical from the inside and only the load can tell them apart. That is why
- * this function did not touch the attribute at all.
- *
- * **But the addition half was never covered by that reason, and §15 made its
- * absence reader-visible.** Before the home screen, this attribute drove only
- * §12.13's copy, where being one load out of date costs nothing. §15.2.1 hung
- * the entire choice between the home screen's two halves on it (`app/home.css`),
- * and every navigation on this site is a client transition — so a reader who
- * arrived with no record, saved an alias or signed off a sheet, and then pressed
- * Home was shown the first-visit document and told they were new here. MEASURED
- * in Chrome: `data-hl-record` absent, `.hl-home-new` visible, and correct only
- * after a full reload.
- *
- * Setting it one-way fixes that and cannot collapse §12.13's two classes: the
- * attribute only ever appears for a record that carries something, and an erase
- * leaves it exactly where the old reasoning wanted it — present, because this
- * browser did once hold a record.
- */
-const RECORD_ATTR = 'data-hl-record'

@@ -2,12 +2,13 @@ import { sheetStamps } from '../record/derive'
 import { NOT_MEASURED, numberWord } from '../text'
 import { EMPTY_RECORD } from '../record/schema'
 import { plural } from '../text'
-import { CATEGORIES, type Category } from './curriculum-file'
+import type { Category } from './curriculum-file'
 import { categoryPath, sheetPath } from './curriculum'
 import { LANG_DISPLAY, countFigures } from './derive'
 import { moduleGraph } from './edges'
 import { curriculumFacts } from './facts'
-import { loadAllModules } from './loader'
+import { loadAllModules, loadModuleIn } from './loader'
+import { type Track, catalogRoute, moduleRoute } from '../tracks'
 import type { SheetRow } from './rows'
 import { thousands } from './title-block'
 import { topicsFor } from './topics'
@@ -41,31 +42,44 @@ function pad2(n: number): string {
   return String(n).padStart(2, '0')
 }
 
-let rowCache: SheetRow[] | null = null
+const rowCache: Partial<Record<Track, SheetRow[]>> = {}
 
-/** The whole set, in sheet order — the order the set is numbered in. */
-export function sheetRows(): SheetRow[] {
-  if (rowCache) return rowCache
+/**
+ * The whole set, in sheet order — the order the set is numbered in.
+ *
+ * D91 — in For Everyone a row is written where its For Everyone file is, and
+ * takes its length, summary and topics from that file; where it is not written
+ * yet the row is planned and its page says so. Numbers, titles and levels are
+ * the curriculum's own and the same in both tracks.
+ */
+export function sheetRows(track: Track = 'engineers'): SheetRow[] {
+  const cached = rowCache[track]
+  if (cached) return cached
 
   const graph = moduleGraph()
-  const facts = curriculumFacts()
+  const facts = curriculumFacts(track)
 
-  rowCache = loadAllModules().map((sheet) => {
-    const drawn = sheet.frontmatter.status === 'ready'
+  const rows = loadAllModules().map((base) => {
+    const everyone = track === 'everyone' ? loadModuleIn(base.slug, 'en', 'everyone') : undefined
+    const sheet = everyone ?? base
+    const drawn = track === 'everyone' ? everyone !== undefined : sheet.frontmatter.status === 'ready'
     const requires = graph.requires(sheet.frontmatter.module)
 
     return {
       module: sheet.frontmatter.module,
       number: pad2(sheet.frontmatter.module),
       slug: sheet.slug,
-      title: sheet.frontmatter.title,
-      path: sheetPath(sheet),
+      title: base.frontmatter.title,
+      // D91 — every module has a For Everyone page; an unwritten one says so.
+      path: track === 'everyone' ? moduleRoute(sheet.slug, 'everyone') : sheetPath(sheet),
       drawn,
       status: drawn ? 'READY' : 'PLANNED',
       subsystem: {
         order: sheet.category.order,
         title: sheet.category.title,
-        path: categoryPath(sheet.category),
+        path: track === 'everyone'
+          ? catalogRoute('everyone', sheet.category.slug)
+          : categoryPath(sheet.category),
         // M12 — carried rather than recovered from the path: the catalog's
         // views address a level's colour as `[data-cat="<slug>"]`.
         slug: sheet.category.slug,
@@ -83,11 +97,11 @@ export function sheetRows(): SheetRow[] {
       lang: LANG_DISPLAY[sheet.lang],
       bilingual: sheet.lang === 'EN·TR',
       requires: requires.length === 0 ? DASH : requires.join(', '),
-      topics: topicsFor({ status: sheet.frontmatter.status, body: sheet.body }),
+      topics: topicsFor({ status: drawn ? 'ready' : 'draft', body: sheet.body }),
       // M20 — the author's own sentence, carried rather than rewritten. It is
       // `null` on a planned module and `schema.ts` is what guarantees it is
       // not null on a written one, so the listing never has to check twice.
-      summary: sheet.frontmatter.summary,
+      summary: drawn ? sheet.frontmatter.summary : null,
       // §4.8 column 9. Taken from `sheetStamps` rather than re-derived from
       // the same three facts, because the island that fills the squares asks
       // `sheetStamps` which slots exist: two derivations of one slot set would
@@ -98,12 +112,13 @@ export function sheetRows(): SheetRow[] {
     }
   })
 
-  return rowCache
+  rowCache[track] = rows
+  return rows
 }
 
 /** The rows of one subsystem, still in sheet order. */
-export function categoryRows(category: Category): SheetRow[] {
-  return sheetRows().filter((row) => row.subsystem.order === category.order)
+export function categoryRows(category: Category, track: Track = 'engineers'): SheetRow[] {
+  return sheetRows(track).filter((row) => row.subsystem.order === category.order)
 }
 
 // ---------------------------------------------------------------------------

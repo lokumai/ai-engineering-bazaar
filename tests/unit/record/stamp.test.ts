@@ -117,6 +117,12 @@ describe('the two stampers agree', () => {
     ['a single-module level, where one sign-off completes it',
       signed('protocols/protocols-reference')],
     ['a slug the build has no module number for', signed('expert/advanced-ui')],
+    // D91 — the For Everyone map, alone and beside For Engineers.
+    ['one module For Everyone', signOff(EMPTY_RECORD, 'intermediate/security', null, AT, 'everyone')],
+    ['a single-module level For Everyone',
+      signOff(EMPTY_RECORD, 'protocols/protocols-reference', null, AT, 'everyone')],
+    ['the same module in both tracks',
+      signOff(signed('intermediate/security'), 'intermediate/security', null, AT, 'everyone')],
   ]
 
   for (const [name, data] of CASES) {
@@ -137,31 +143,11 @@ describe('the two stampers agree', () => {
     })
   }
 
-  it('answers `data-hl-record` the same way after mount as at load', () => {
-    // The REMOVAL of the attribute belongs to the load, and §12.13 is why: a
-    // fresh browser has no attribute and reads NEVER STARTED, while a reader who
-    // erased their record keeps the `1` and correctly reads CLEARED BY YOU. An
-    // erased record and a never-started one are identical from the inside; only
-    // the load can tell them apart. Setting it is a different question, and
-    // §15.2.1's cases below hold that half — a client transition after a first
-    // write used to leave the home screen saying "you are new here".
-    expect(runBootScript(signed('intermediate/security')).getAttribute('data-hl-record'))
-      .toBe('1')
-    // §15.11 — but a readable envelope is not automatically a reader. An
-    // envelope that `carriesNothing()` gets NO stamp, because the home screen
-    // now swaps a whole document on this attribute: the old rule handed
-    // "Where you left off", a resume block and a continue control to anyone
-    // whose storage held a record with only `prefs` in it, which the store
-    // writes on a first theme click. The attribute still answers "was there
-    // something in storage at load", and §12.13's class 1 / class 2 split
-    // survives intact — a reader whose record carried something is stamped at
-    // load and keeps the `1` through an erase, so CLEARED BY YOU is still
-    // distinguishable from NEVER STARTED.
-    expect(runBootScript(EMPTY_RECORD).getAttribute('data-hl-record')).toBeNull()
-
+  it('leaves `data-hl-storage` to the boot script', () => {
+    // Only the load can answer whether the READ threw, in this document, so the
+    // after-mount stamper never writes it.
     const root = fakeRoot()
     stampRecordState(root, signed('intermediate/security'), FACTS)
-    expect(root.getAttribute('data-hl-record')).toBe('1')
     expect(root.getAttribute('data-hl-storage')).toBeNull()
   })
 })
@@ -221,10 +207,6 @@ describe('stampRecordState — the half a boot script never needs', () => {
     stampRecordState(root, signed('intermediate/security'), FACTS)
     stampRecordState(root, EMPTY_RECORD, FACTS)
     expect(root.owned()).toEqual([])
-    // `data-hl-record` is never taken off, which is how §12.13 tells CLEARED BY
-    // YOU apart from NEVER STARTED. Set one-way, so the `1` this browser earned
-    // by holding a record survives the erase. See the test above.
-    expect(root.getAttribute('data-hl-record')).toBe('1')
   })
 
   it('leaves classes it does not own alone', () => {
@@ -244,71 +226,5 @@ describe('stampRecordState — the half a boot script never needs', () => {
     const once = root.owned()
     stampRecordState(root, data, FACTS)
     expect(root.owned()).toEqual(once)
-  })
-})
-
-/**
- * §15.2.1 — the attribute the home screen reads, and the half of it that lives
- * here.
- *
- * MEASURED in Chrome before this: a clean browser opened `/`, saved an alias on
- * `/sign-in/alias/`, pressed Home, and was shown the FIRST-VISIT document —
- * `data-hl-record` absent, `.hl-home-new` visible — correct only after a full
- * reload. `stampRecordState` explicitly did not touch the attribute, and the
- * reason recorded for that only justified never REMOVING it: §12.13 needs an
- * erased record to keep the `1` the load stamped, so that CLEARED BY YOU can be
- * told from NEVER STARTED. Every navigation on this site is a client
- * transition, so "whatever was true at load" is the whole session.
- *
- * The three cases below are the rule: it goes on for a record that carries
- * something, it does not go on for one that carries nothing, and it never comes
- * off. The third is the one that protects §12.13.
- */
-describe('data-hl-record after mount (§15.2.1, §12.13)', () => {
-  it('goes on as soon as the live record carries something', () => {
-    const root = fakeRoot()
-    expect(root.getAttribute('data-hl-record')).toBeNull()
-
-    stampRecordState(root, signed('intermediate/security'), FACTS)
-    expect(root.getAttribute('data-hl-record')).toBe('1')
-  })
-
-  it('does not go on for a record that carries nothing', () => {
-    const root = fakeRoot()
-    stampRecordState(root, EMPTY_RECORD, FACTS)
-    expect(root.getAttribute('data-hl-record')).toBeNull()
-
-    // A preference is not something the reader recorded (§15.11), and it is what
-    // the store writes on a first theme click.
-    stampRecordState(
-      root,
-      { ...EMPTY_RECORD, prefs: { charKeys: false, railFolded: false, catalogView: null, figurePalette: null, codePalette: null } },
-      FACTS,
-    )
-    expect(root.getAttribute('data-hl-record')).toBeNull()
-  })
-
-  it('never comes off, so an erase still reads as CLEARED BY YOU (§12.13)', () => {
-    const root = fakeRoot()
-    const signed = signOff(EMPTY_RECORD, 'fundamentals/llms', 'b7225f8', AT)
-
-    stampRecordState(root, signed, FACTS)
-    expect(root.getAttribute('data-hl-record')).toBe('1')
-
-    // The erase: the record goes back to empty and the classes come off, but
-    // the attribute stays. Recomputing it both ways would make this browser
-    // indistinguishable from one that had never held a record.
-    stampRecordState(root, EMPTY_RECORD, FACTS)
-    expect(root.owned()).toEqual([])
-    expect(root.getAttribute('data-hl-record')).toBe('1')
-  })
-
-  it('agrees with the boot script on the same record, so a reload changes nothing', () => {
-    const signed = signOff(EMPTY_RECORD, 'fundamentals/llms', 'b7225f8', AT)
-    const mounted = fakeRoot()
-    stampRecordState(mounted, signed, FACTS)
-
-    expect(mounted.getAttribute('data-hl-record'))
-      .toBe(runBootScript(signed).getAttribute('data-hl-record'))
   })
 })

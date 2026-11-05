@@ -32,6 +32,7 @@ import {
   type RecordData,
   type SheetRecord,
 } from './schema'
+import type { Track } from '../tracks'
 
 const INSTANT_DAY = /^(\d{4}-\d{2}-\d{2})(?:[T ]|$)/
 /** §12.7 — the corpus's longest checklist is 8 items; 4 digits is generous. */
@@ -70,11 +71,13 @@ function editSheet(
   slug: string,
   now: string | null,
   edit: (sheet: SheetRecord) => SheetRecord | null,
+  track: Track = 'engineers',
 ): RecordData {
   if (!isSafeKey(slug)) return data
-  const next = edit(data.sheets[slug] ?? emptySheetRecord())
+  const key = track === 'everyone' ? 'everyoneSheets' : 'sheets'
+  const next = edit(data[key][slug] ?? emptySheetRecord())
   if (next === null) return data
-  const written = { ...data, sheets: { ...data.sheets, [slug]: next } }
+  const written = { ...data, [key]: { ...data[key], [slug]: next } }
   return now === null ? written : stampDay(written, now)
 }
 
@@ -93,12 +96,13 @@ export function signOff(
   slug: string,
   revision: string | null,
   now: string,
+  track: Track = 'engineers',
 ): RecordData {
   return editSheet(data, slug, now, (sheet) =>
     sheet.signedOff !== null
       ? null
       : { ...sheet, signedOff: now, signedRevision: revision },
-  )
+  track)
 }
 
 /**
@@ -106,12 +110,12 @@ export function signOff(
  * a confirmation dialog. It clears the assertion and nothing else: the quiz
  * answer, the ticks, the sources and the submittals were separate acts.
  */
-export function unsign(data: RecordData, slug: string): RecordData {
+export function unsign(data: RecordData, slug: string, track: Track = 'engineers'): RecordData {
   return editSheet(data, slug, null, (sheet) =>
     sheet.signedOff === null && sheet.signedRevision === null
       ? null
       : { ...sheet, signedOff: null, signedRevision: null },
-  )
+  track)
 }
 
 /**
@@ -125,6 +129,7 @@ export function setChecklistItem(
   index: number,
   ticked: boolean,
   now: string,
+  track: Track = 'engineers',
 ): RecordData {
   if (!Number.isInteger(index) || index < 0 || index > MAX_CHECKLIST_INDEX) return data
   const key = String(index)
@@ -134,8 +139,9 @@ export function setChecklistItem(
     if (ticked) checklist[key] = true
     else delete checklist[key]
     return { ...sheet, checklist }
-  })
+  }, track)
 }
+
 
 /**
  * §12.16 — SC 2.1.4's off switch for single-character shortcuts. Default on for

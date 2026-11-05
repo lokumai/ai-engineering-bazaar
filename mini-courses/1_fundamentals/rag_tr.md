@@ -210,11 +210,22 @@ Sırada araçlar var, çünkü bir modelin yalnızca okuyan olmaktan çıkıp i�
 
 ## Kaynaklar
 
+### 📄 Makaleler
+
 - [RAG vs fine-tuning](https://www.redhat.com/en/topics/ai/rag-vs-fine-tuning): Red Hat'in karşılaştırması, yukarıdaki bölümün daha uzun hali.
+
+### 🎬 Videolar
+
 - [What is RAG?](https://youtube.com/shorts/KBRvB_NDY-o?si=DIUHt8lihi0EzgxT): bütün fikri tek bir kısa videoda anlatır.
 - [Fine-Tuning vs RAG: Why Not Both?](https://youtube.com/shorts/24jqSMs10zE?si=zuhAbSZcFGkTKVfI): ikisini birlikte kullanmak üzerine.
+
+### 🛠️ Araçlar
+
 - [Haystack](https://haystack.deepset.ai/): RAG pipeline'larını hazır parçalardan kurmak.
 - [LlamaIndex](https://www.llamaindex.ai/): bir LLM'i kendi verinle bağlamak.
+
+### 🗃️ Repolar
+
 - [ChromaDB](https://github.com/chroma-core/chroma): başlamak için en kolay vektör veritabanı.
 - [FAISS](https://github.com/facebookresearch/faiss): tek başına arama katmanı.
 - [RAGFlow](https://github.com/infiniflow/ragflow), [LightRAG](https://github.com/HKUDS/LightRAG), [PageIndex](https://github.com/VectifyAI/PageIndex), [RAG-Anything](https://github.com/HKUDS/RAG-Anything), [DocsGPT](https://github.com/arc53/DocsGPT), [MiniRAG](https://github.com/HKUDS/MiniRAG) ve [PixelRAG](https://github.com/StarTrail-org/PixelRAG): olduğu gibi çalıştırabileceğin eksiksiz RAG sistemleri.

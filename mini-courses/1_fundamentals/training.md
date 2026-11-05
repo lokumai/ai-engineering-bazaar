@@ -314,10 +314,18 @@ so expensive?
 
 ## References
 
-- [Unsloth documentation](https://unsloth.ai/docs): the full documentation of the library
+### 📄 Articles
+
 - [Unsloth: is fine-tuning right for me?](https://unsloth.ai/docs/get-started/fine-tuning-for-beginners/faq-+-is-fine-tuning-right-for-me): read this before you fine-tune anything
 - [Unsloth notebooks](https://unsloth.ai/docs/get-started/unsloth-notebooks): ready-made notebooks for training and for running quantized models
 - [Unsloth fine-tuning guide](https://unsloth.ai/docs/get-started/fine-tuning-llms-guide): the whole process, from start to finish
-- [Hugging Face](https://huggingface.co/): the model registry, and the `transformers` library
 - [Fine-tuning AI models](https://cloud.google.com/use-cases/fine-tuning-ai-models?hl=en#fine-tuning-llms-and-ai-models): Google Cloud's overview, useful for the vocabulary
+
+### 🎬 Videos
+
 - [What is LLM Fine-Tuning? (Explained Simply)](https://youtube.com/shorts/Ei4E2lWStqw?si=q0PttlRmBsARGHZU): a short video, if you want the whole idea in under a minute
+
+### 🛠️ Tools
+
+- [Unsloth documentation](https://unsloth.ai/docs): the full documentation of the library
+- [Hugging Face](https://huggingface.co/): the model registry, and the `transformers` library

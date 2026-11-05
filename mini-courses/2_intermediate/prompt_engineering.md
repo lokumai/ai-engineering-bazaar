@@ -484,13 +484,24 @@ And what does a role prompt actually change?
 
 ## References
 
+### 📄 Articles
+
 - [Prompt Engineering Guide](https://www.promptingguide.ai/): the full catalogue of techniques, much more than we covered
 - [Prompting best practices](https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices): Anthropic's current guidance, and the source of the two before-and-after examples
 - [Quantifying Language Models' Sensitivity to Spurious Features in Prompt Design](https://arxiv.org/abs/2310.11324): a measurement of how fragile the 2023 generation of models really was
 - [Why Can Large Language Models Generate Correct Chain-of-Thoughts?](https://arxiv.org/abs/2310.13571): the theory behind the idea that writing is thinking
-- [Chain of Thought Visualizer](https://cot-visualizer.online/): a side-by-side demo of reasoning compared with answering immediately
 - [Effort](https://platform.claude.com/docs/en/build-with-claude/effort): the thinking dial, and what each level is for
 - [Stop Overthinking: A Survey on Efficient Reasoning for Large Language Models](https://arxiv.org/abs/2503.16419): the research on overthinking, in one place
 - [When "A Helpful Assistant" Is Not Really Helpful](https://arxiv.org/abs/2311.10054): the study that showed persona prompts help less than people hoped
+
+### 🛠️ Tools
+
+- [Chain of Thought Visualizer](https://cot-visualizer.online/): a side-by-side demo of reasoning compared with answering immediately
+
+### 🗃️ Repositories
+
 - [System prompt leaks](https://github.com/asgeirtj/system_prompts_leaks): production system prompts, copied word for word
+
+### 🧭 Modules
+
 - [Advanced Prompting](../3_expert/advanced_prompting.md): the techniques this module skipped on purpose

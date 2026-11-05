@@ -218,11 +218,22 @@ RAG داده‌هات رو بیرون از مدل نگه می‌داره و بر
 
 ## منابع
 
+### 📄 مقاله‌ها
+
 - [RAG vs fine-tuning](https://www.redhat.com/en/topics/ai/rag-vs-fine-tuning): مقایسه‌ای که Red Hat نوشته؛ نسخه‌ی مفصل بخش بالا
+
+### 🎬 ویدیوها
+
 - [What is RAG?](https://youtube.com/shorts/KBRvB_NDY-o?si=DIUHt8lihi0EzgxT): کل ایده، توی یه ویدیوی کوتاه
 - [Fine-Tuning vs RAG: Why Not Both?](https://youtube.com/shorts/24jqSMs10zE?si=zuhAbSZcFGkTKVfI): درباره‌ی این‌که چطور این دو تا رو با هم استفاده کنی
+
+### 🛠️ ابزارها
+
 - [Haystack](https://haystack.deepset.ai/): pipeline‌های RAG با قطعه‌های آماده
 - [LlamaIndex](https://www.llamaindex.ai/): وصل کردن LLM به داده‌های خودت
+
+### 🗃️ Repository‌ها
+
 - [ChromaDB](https://github.com/chroma-core/chroma): راحت‌ترین vector database برای شروع
 - [FAISS](https://github.com/facebookresearch/faiss): فقط لایه‌ی جستجو، بدون هیچ چیز اضافه
 - [RAGFlow](https://github.com/infiniflow/ragflow)، [LightRAG](https://github.com/HKUDS/LightRAG)، [PageIndex](https://github.com/VectifyAI/PageIndex)، [RAG-Anything](https://github.com/HKUDS/RAG-Anything)، [DocsGPT](https://github.com/arc53/DocsGPT)، [MiniRAG](https://github.com/HKUDS/MiniRAG) و [PixelRAG](https://github.com/StarTrail-org/PixelRAG): سیستم‌های کامل RAG که می‌تونی همین‌طوری که هستن اجرا کنی

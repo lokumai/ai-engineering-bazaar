@@ -10,7 +10,7 @@ description: >
 authority: reasoning
 writes: agent, when a decision is taken
 status: active
-covers: "D26 to D88 and D90, plus open questions O1 to O5 — 2026-09-09 to 2026-11-05 (D89 is on PR #57)"
+covers: "D26 to D88, D90 and D91, plus open questions O1 to O5 — 2026-09-09 to 2026-11-05 (D89 is on PR #57)"
 last_updated: 2026-11-05
 ---
 
@@ -2164,6 +2164,75 @@ for what it changes on the website, not only for whether it merges.
 revision, the e2e build reading `17f7c2c` for all of them. The author and the agent will finish the
 changes the author wants first, and then tell cevheri what changed. The promise is
 `specs/MANIFESTO.md` §7.
+
+### D91 · How the two tracks are built: a folder, a URL prefix, a second sheet map, and both tracks stamped — 2026-11-05
+
+The author picked the round-2 options (M39). Building them needed five choices the pages did not
+make; each is the smallest one that keeps today's For Engineers URLs and records unchanged.
+
+1. **Content.** A For Everyone module is `mini-courses/<level>/everyone/<name>.md`, with `_tr.md`
+   and `_fa.md` beside it under the same rules, listed by the same `curriculum.yaml` name. A module
+   has a For Everyone page only where that file exists; elsewhere the For Everyone catalog says it is
+   not written yet. *(Changed while building, below: every module has a For Everyone page.)* Rejected: a second `curriculum.yaml` (two lists of one course would drift) and a
+   name suffix such as `_everyone.md` (it collides with the `_tr` / `_fa` suffix rule).
+2. **Addresses.** For Everyone lives under an `/everyone/` prefix: `/everyone/sheets/`,
+   `/everyone/sheets/<level>/`, `/everyone/courses/<level>/<module>/`, and `/tr/` or `/fa/` before
+   it for a translation. For Engineers keeps every address it has, so no bookmark breaks.
+3. **The record.** Completion is per track (D86): `everyoneSheets` sits beside `sheets`, with the
+   same shape. Export, import and erase cover both. ~~`prefs.track` remembers the last track page the
+   reader opened~~ *(changed while building, below: session storage)*, so a page that belongs to
+   neither track (home, progress, legend) shows the bar in the track they were reading. The home
+   page's choice itself writes nothing (D86).
+4. **Frame one.** The boot script stamps both tracks every time (`hl-signed-<n>` for For Engineers,
+   `hl-e-signed-<n>` for For Everyone, and the level classes the same way) and puts the current track
+   on `<html>` as `data-bz-track`. A page region carries `data-track`, and the generated stylesheet
+   scopes each track's marks to its own regions, so the progress page can show both tracks' rings
+   correctly before any script runs.
+5. **Details the pages left open.** The bar's toggle (B1 + C1) shrinks to its two icons below the
+   phone breakpoint, since C1 does not fit there. Persian shows its script, `فا`, and no flag (E4's
+   own no-flag option), because a flag stands for a country and Iran's is politically loaded; English
+   shows the UK flag. A reader who scrolls past the home page's track choice gets doors that open For
+   Engineers, with one line to switch (N1, recommended beside H1).
+
+**Changed while building, 2026-11-05.** Three of the choices above did not survive contact with the
+build, and the measurement that moved each is the reason.
+
+- **Every module has a For Everyone page** (choice 1). `next build` with `output: 'export'` refuses
+  a dynamic route whose `generateStaticParams` returns nothing, and none of the For Everyone files is
+  written yet. The page for an unwritten module says so, links to the For Engineers page and to the
+  For Everyone catalog, and is `noindex`; it has no completion control. This also means the switch
+  always has a page to land on, so it never needs a dead state. Rejected: a placeholder file per
+  module (it would be content the author did not write) and a nullable route row (it reintroduced
+  links to pages that did not exist).
+- **The last track is kept in `sessionStorage` (`hl-track`), not in `prefs.track`** (choice 3). A
+  visit must write nothing to the reader's record until they record something (ARCHITECTURE §12.13),
+  and a test that asserts exactly that went red the moment opening a page wrote `prefs.track`. The
+  memory now lasts for the tab, which is what it is for; `prefs.track` was removed from the schema.
+- **The bar gives way at the language's own breakpoints, measured** (choice 5). With both full
+  names the bar ran to 1,080px at 1024; with the switch and the flag in it the page then scrolled
+  sideways up to 1016px, and below 880, where the navigation becomes a scroller, Catalog and
+  Progress sat past its edge (the scroller was 77px wide at 390). A first fix added widths of its
+  own (1023, 960, 480) and the design language's breakpoint guard rejected them, rightly: the bar
+  now gives way only at the fold (1180: `For`, the Home link, the star count and the code beside
+  the flag go; the logo is the link home), the rail breakpoint (880: the switch shows its icons)
+  and the touch floor (767: the repository button goes, since the footer links it). Measured on 9
+  pages in three languages at 24 widths from 320 to 1440: no sideways scroll at any, and every
+  destination in view from 390 up. Narrower than that the navigation still scrolls inside itself,
+  which the bar's narrow rules intend.
+
+- **On a page of neither track, the switch changes the track in place** (from the browser review).
+  Its links led to a track's catalog, so a reader on the progress page who switched lost the page.
+  Now a plain click there calls `chooseTrack`: this tab's session storage and `<html>`, and a
+  `bz-track` event that every island reading the track follows (`useReadingTrack`); the link stays
+  for a reader with no script or a modified click. The home page's signs show their choice in the
+  bar too, but with the memory off, because D86 keeps that choice nowhere; and the doors follow the
+  bar (its switch on the home page, or a track this tab already read in) with no sign pressed.
+  Rejected: keeping the sign's choice in session storage, which the home spec's "nothing is kept"
+  test rightly refuses.
+
+F2 also took out the progress page's continue card and statistics row: the tabs and the data line
+are the whole page. The language menu keeps the track (a For Everyone page's menu offers the For
+Everyone page in each language).
 
 ## Open questions
 

@@ -319,4 +319,6 @@ more than its implementation?
 
 ## References
 
+### 📄 Articles
+
 - [Mastering LLM tool calling](https://machinelearningmastery.com/mastering-llm-tool-calling-the-complete-framework-for-connecting-models-to-the-real-world/): the full framework, with more of the wire format than we needed here

@@ -5,11 +5,9 @@ import {
   firstPaint,
   probeFirstPaint,
   readRawRecord,
-  readRecord,
   seedRecord,
   signedSheet,
   slugOf,
-  waitForRecord,
 } from './record'
 import { A0, DRAWN_COUNT, INDEX_SHEET, SHEETS, SHEET_COUNT, sheetByModule } from './sheets'
 import { watchPage } from './watch'
@@ -132,7 +130,7 @@ test('a clean browser meets the whole page, and it claims nothing about the read
 // ---------------------------------------------------------------------------
 
 // ---------------------------------------------------------------------------
-// §15.11 — a record that carries nothing is not a returning reader
+// §15.11 — a record that carries nothing stamps no progress
 // ---------------------------------------------------------------------------
 
 /**
@@ -140,9 +138,7 @@ test('a clean browser meets the whole page, and it claims nothing about the read
  * `days` by default, so the suite's ordinary "empty seed" is already a record
  * that carries something; the state under test is the one the store leaves
  * behind when a reader has touched the site without reading it — a schema
- * stamp, a preference, and nothing else. That envelope used to stamp
- * `data-hl-record` and hand the reader a continue control for a module they had
- * never opened.
+ * stamp, a preference, and nothing else.
  */
 const CARRIES_NOTHING: ReadonlyArray<[string, RecordSeed]> = [
   ['a migration stamp and nothing else', { days: [] }],
@@ -153,31 +149,24 @@ const CARRIES_NOTHING: ReadonlyArray<[string, RecordSeed]> = [
   ['a catalog view and nothing else', { days: [], prefs: { catalogView: 'table' } }],
 ]
 
+/** The classes and properties channel A uses to draw progress, either track. */
+const PROGRESS_CLASS = /^hl-(?:e-)?(?:signed-|cat-)/
+const PROGRESS_PROPERTY = /--bz-(?:e)?done-/
+
 for (const [what, seed] of CARRIES_NOTHING) {
-  test(`a record carrying ${what} is not a returning reader (§15.11)`, async ({
-    page,
-  }) => {
+  test(`a record carrying ${what} stamps no progress (§15.11)`, async ({ page }) => {
     const problems = watchPage(page)
     await probeFirstPaint(page)
     await seedRecord(page, seed)
     await page.goto('/')
 
-    // Absent, not `"0"`: the key IS in storage and it parses, so this is the
-    // boot script having applied `carriesNothing`'s rule rather than having
-    // failed to read anything.
+    // The key IS in storage and it parses, so what follows is the boot script
+    // applying the rule rather than having failed to read anything.
     expect(await readRawRecord(page)).not.toBeNull()
-    expect((await firstPaint(page))!.record).toBeNull()
-    expect((await firstPaint(page))!.storage).toBe('ok')
-
-    /* M18 — the STAMP is the whole claim now, and it always was.
-
-       This read the continue block the stamp revealed, and the author had that
-       block removed; what §15.11 says is that an envelope carrying only a
-       schema version or a preference is not a reader who has been here, and
-       that is a fact about `data-hl-record` rather than about any one control.
-       The stamp is asserted above, before first paint, which is stricter than
-       reading what it drew. What the page does with it is `/profile/`'s
-       business now, and `completion.spec.ts` measures that. */
+    const painted = (await firstPaint(page))!
+    expect(painted.storage).toBe('ok')
+    expect(painted.className.split(/\s+/).filter((token) => PROGRESS_CLASS.test(token))).toEqual([])
+    expect((await page.locator('html').getAttribute('style')) ?? '').not.toMatch(PROGRESS_PROPERTY)
 
     expect(problems.consoleErrors).toEqual([])
     expect(problems.failedRequests).toEqual([])
@@ -216,59 +205,6 @@ for (const state of ['clean', 'with a record'] as const) {
     expect(title).not.toMatch(/\b(you|your|welcome|back|resume|continue|left off)\b/i)
   })
 }
-
-// ---------------------------------------------------------------------------
-// §15.2.1 — the state switch after a client transition
-// ---------------------------------------------------------------------------
-
-/**
- * The reader who becomes a returning reader DURING the visit.
- *
- * MEASURED before this existed: a clean browser opened `/`, saved an alias on
- * `/sign-in/alias/`, pressed Home, and got the first-visit document —
- * `data-hl-record` absent — correct only after a full reload. `boot.ts` was the
- * attribute's only writer and `stampRecordState` explicitly left it alone. Every
- * navigation on this site is a client transition, so "whatever was true at load"
- * was the whole session.
- *
- * The route is a real one and taken through real controls: complete a module,
- * then follow a link a reader can see. Seeding storage and reloading would
- * test the boot script again, which was never the half that was broken.
- */
-test('a first write during the visit reaches the home page without a reload (§15.2.1)', async ({
-  page,
-}) => {
-  await page.goto('/')
-  await expect(page.locator('html')).not.toHaveAttribute('data-hl-record', '1')
-
-  // The write, through the control the reader would use.
-  await page.goto(A0.path)
-  await page.getByRole('checkbox', { name: 'Mark this module as complete' }).check()
-  await waitForRecord(
-    page,
-    (envelope) => envelope?.data.sheets[slugOf(A0)]?.signedOff != null,
-    'the completion',
-  )
-
-  // Home the way a reader gets there: a link, not a reload. The breadcrumb is
-  // where a reader on this route sees a way back.
-  await page
-    .getByRole('navigation', { name: 'Curriculum' })
-    .getByRole('link', { name: 'Home', exact: true })
-    .click()
-  await expect(page).toHaveURL(/\/$/)
-
-  await expect(page.locator('html')).toHaveAttribute('data-hl-record', '1')
-
-  // And it survives the reload, i.e. the two stampers agree rather than one
-  // undoing the other.
-  //
-  // M18 — the continue block this used to watch is gone; the stamp it was
-  // revealed by is the claim, and `stampRecordState` is the half that was
-  // broken. `boot.ts` is the other half and the reload is what asks it.
-  await page.reload()
-  await expect(page.locator('html')).toHaveAttribute('data-hl-record', '1')
-})
 
 // ---------------------------------------------------------------------------
 // §13.1.4, §10.4 — a level is never told apart by colour alone
@@ -338,6 +274,155 @@ for (const reducedMotion of ['reduce', 'no-preference'] as const) {
     await expect(offer).toHaveCSS('opacity', '0')
   })
 }
+
+// ---------------------------------------------------------------------------
+// The track choice: which way the five doors open
+// ---------------------------------------------------------------------------
+
+/**
+ * The page asks how the reader would like to read, and the doors open into
+ * that track. What is asserted is the mechanism, not any wording: every door
+ * starts on the For Engineers address (the one that always exists, which is
+ * what a link checker reads), a sign swaps ALL of them to the For Everyone
+ * address and back, and the choice is written nowhere, so a reader who comes
+ * back meets the same question. Each door carries both addresses, so the test
+ * needs no list of levels of its own beyond the drawing set's.
+ */
+const LEVELS = [...new Set(SHEETS.map((sheet) => sheet.category))]
+const ENGINEERS = (level: string) => `${INDEX_SHEET}${level}/`
+const EVERYONE = (level: string) => `/everyone${INDEX_SHEET}${level}/`
+
+async function doorHrefs(page: Page): Promise<(string | null)[]> {
+  return page.locator('.bz-street .door').evaluateAll((doors) => doors.map((door) => door.getAttribute('href')))
+}
+
+/** What a reader could have been given to keep the choice with: storage and cookies. */
+async function keptAnywhere(page: Page): Promise<string> {
+  return page.evaluate(() => JSON.stringify([
+    Object.entries(localStorage),
+    Object.entries(sessionStorage),
+    document.cookie,
+  ]))
+}
+
+for (const reducedMotion of ['reduce', 'no-preference'] as const) {
+  test(`a sign opens all five doors into its track, and the other sign opens them back (${reducedMotion})`, async ({
+    page,
+  }) => {
+    const problems = watchPage(page)
+    await page.emulateMedia({ reducedMotion })
+    await page.goto('/')
+    // With motion allowed the choice stands inside the walk, and a control in
+    // it is brought into view by being focused, which is how a keyboard reader
+    // reaches it; with motion reduced it is already in the page.
+    const signFor = (track: 'eng' | 'all') => page.locator(`.bz-street [data-choose="${track}"]`)
+
+    // Nothing chosen: the doors open For Engineers, and nothing is pressed.
+    expect(await doorHrefs(page)).toEqual(LEVELS.map(ENGINEERS))
+    await expect(page.locator('.bz-street [data-choose][aria-pressed="true"]')).toHaveCount(0)
+    const before = await keptAnywhere(page)
+
+    await signFor('all').focus()
+    await signFor('all').click()
+    expect(await doorHrefs(page)).toEqual(LEVELS.map(EVERYONE))
+    await expect(signFor('all')).toHaveAttribute('aria-pressed', 'true')
+    await expect(signFor('eng')).toHaveAttribute('aria-pressed', 'false')
+    // Colour is not the only signal: the chosen sign says so in words, and the
+    // other one does not.
+    await expect(signFor('all').locator('.sg-on')).toBeVisible()
+    await expect(signFor('all').locator('.sg-on')).toHaveText('Chosen')
+    await expect(signFor('eng').locator('.sg-on')).toBeHidden()
+
+    await signFor('eng').focus()
+    await signFor('eng').click()
+    expect(await doorHrefs(page)).toEqual(LEVELS.map(ENGINEERS))
+    await expect(signFor('eng')).toHaveAttribute('aria-pressed', 'true')
+    await expect(signFor('all')).toHaveAttribute('aria-pressed', 'false')
+
+    // Nothing was saved: not a record, not storage, not a cookie.
+    expect(await keptAnywhere(page)).toBe(before)
+
+    expect(problems.consoleErrors).toEqual([])
+    expect(problems.failedRequests).toEqual([])
+  })
+}
+
+test('with no choice made the doors say they open For Engineers, and the line under them switches', async ({
+  page,
+}) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' })
+  await page.goto('/')
+
+  const line = page.locator('.bz-street [data-switch-line]')
+  await expect(line).toContainText('These doors open For Engineers')
+  const switcher = line.locator('[data-switch]')
+  await expect(switcher).toContainText('For Everyone')
+  expect(await doorHrefs(page)).toEqual(LEVELS.map(ENGINEERS))
+
+  await switcher.click()
+  expect(await doorHrefs(page)).toEqual(LEVELS.map(EVERYONE))
+  await expect(line).toContainText('These doors open For Everyone')
+  await expect(switcher).toContainText('For Engineers')
+  // Switching from the line is a choice like any other: it marks the sign.
+  await expect(page.locator('.bz-street [data-choose="all"]')).toHaveAttribute('aria-pressed', 'true')
+
+  await switcher.click()
+  expect(await doorHrefs(page)).toEqual(LEVELS.map(ENGINEERS))
+})
+
+test('every door carries both addresses, and its default is always the For Engineers one', async ({
+  page,
+}) => {
+  await page.goto('/')
+  const doors = await page.locator('.bz-street .door').evaluateAll((all) => all.map((door) => ({
+    cat: (door as HTMLElement).dataset.cat,
+    href: door.getAttribute('href'),
+    eng: (door as HTMLElement).dataset.hrefEng,
+    all: (door as HTMLElement).dataset.hrefAll,
+  })))
+  expect(doors.map((door) => door.cat)).toEqual(LEVELS)
+  for (const door of doors) {
+    expect(door.href).toBe(door.eng)
+    expect(door.eng).toBe(ENGINEERS(door.cat!))
+    expect(door.all).toBe(EVERYONE(door.cat!))
+  }
+})
+
+test('a door opens the track that was chosen', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' })
+  await page.goto('/')
+  await page.locator('.bz-street [data-choose="all"]').click()
+
+  const level = LEVELS[0]
+  await page.locator(`.bz-street .door[data-cat="${level}"]`).click()
+  await expect(page).toHaveURL(new RegExp(`${EVERYONE(level)}?$`))
+  // And the page it lands on is that track's, by the bar's own account.
+  await expect(page.getByRole('navigation', { name: 'Track' }).getByRole('link', { name: /For Everyone/ }))
+    .toHaveAttribute('aria-current', 'true')
+})
+
+test('the track choice and its two characters stack on a phone without pushing the page sideways', async ({
+  page,
+}) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' })
+  await page.setViewportSize({ width: 390, height: 844 })
+  await page.goto('/')
+  for (const track of ['eng', 'all']) {
+    const sign = page.locator(`.bz-street [data-choose="${track}"]`)
+    await sign.scrollIntoViewIfNeeded()
+    await expect(sign).toBeVisible()
+    const box = (await sign.boundingBox())!
+    expect(box.x, 'a sign starts off the left edge').toBeGreaterThanOrEqual(0)
+    expect(box.x + box.width, 'a sign runs off the right edge').toBeLessThanOrEqual(390)
+  }
+  // A caption names each character, Turkish first and the English in brackets.
+  await expect(page.locator('.bz-street .who')).toHaveCount(2)
+  for (const who of await page.locator('.bz-street .who').all()) {
+    await expect(who).toHaveText(/^\S.* \(\S.*\)$/)
+  }
+  const sideways = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth)
+  expect(sideways).toBeLessThanOrEqual(0)
+})
 
 // ---------------------------------------------------------------------------
 // The record survives the page it is edited from

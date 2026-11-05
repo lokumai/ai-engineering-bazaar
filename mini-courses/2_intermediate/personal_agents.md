@@ -184,13 +184,24 @@ And all of it is the same trade-off. The access that makes a personal agent usef
 
 ## References
 
-- [OpenClaw](https://github.com/openclaw/openclaw) and [openclaw.ai](https://openclaw.ai/): the project, and its own description of what it does
-- [Hermes Agent](https://github.com/NousResearch/hermes-agent) and [hermes-agent.nousresearch.com](https://hermes-agent.nousresearch.com/): the alternative people moved to, and its feature list
+### 📄 Articles
+
 - [OpenClaw vs Hermes Agent: The best agent harness in 2026](https://composio.dev/content/openclaw-vs-hermes-agent): the clearest explanation of when each one fits
 - [OpenClaw vs Hermes Agent: Which one should you actually run?](https://www.firecrawl.dev/blog/openclaw-vs-hermes): the same comparison, with measured install sizes and memory latency
 - [Hermes vs OpenClaw: Self-Evolving Coding Agent or Local AI Control Plane?](https://www.kimi.ai/resources/hermes-vs-openclaw): a third comparison, if the first two disagree
 - [OpenClaw Agents on Moltbook: Risky Instruction Sharing and Norm Enforcement in an Agent-Only Social Network](https://arxiv.org/abs/2602.02625): the 18.4% figure, and the norm enforcement that nobody designed
-- [nanoclaw](https://github.com/nanocoai/nanoclaw): the lightweight alternative, which uses containers by default
+
+### 🛠️ Tools
+
 - [Kimi Claw](https://www.kimi.com/en/help/kimi-claw) and [myclaw.ai](https://myclaw.ai/): hosted versions, for when you cannot run it yourself
 - [Introducing dots](https://openai.com/index/introducing-dots/), [Muse](https://ai.meta.com/muse/), [Grok Bot](https://x.ai/bot) and [Gemini Spark](https://gemini.google/overview/agent/spark/): the personal agents that the large AI companies host for you
+
+### 🗃️ Repositories
+
+- [OpenClaw](https://github.com/openclaw/openclaw) and [openclaw.ai](https://openclaw.ai/): the project, and its own description of what it does
+- [Hermes Agent](https://github.com/NousResearch/hermes-agent) and [hermes-agent.nousresearch.com](https://hermes-agent.nousresearch.com/): the alternative people moved to, and its feature list
+- [nanoclaw](https://github.com/nanocoai/nanoclaw): the lightweight alternative, which uses containers by default
+
+### 🧭 Modules
+
 - [Security](security.md): the module to read first, and the one that explains why `SOUL.md` matters

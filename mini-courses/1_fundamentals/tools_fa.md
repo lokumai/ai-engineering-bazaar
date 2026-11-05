@@ -265,4 +265,6 @@ schema رو هم تو نمی‌نویسی؛ framework از روی خود تاب�
 
 ## منابع
 
+### 📄 مقاله‌ها
+
 - [Mastering LLM tool calling](https://machinelearningmastery.com/mastering-llm-tool-calling-the-complete-framework-for-connecting-models-to-the-real-world/): کل framework، با جزئیاتی از فرمت پیام‌ها که بیشتر از نیاز این درسه

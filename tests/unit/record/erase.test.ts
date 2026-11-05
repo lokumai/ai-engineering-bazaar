@@ -115,7 +115,7 @@ describe('§12.15 — the undo window', () => {
   it('is ten seconds', () => {
     expect(UNDO_WINDOW_MS).toBe(10_000)
     expect(undoSecondsLeft(at, at)).toBe(10)
-    expect(undoLabel(undoSecondsLeft(at, at))).toBe('ERASED · UNDO AVAILABLE FOR 10 S')
+    expect(undoLabel(undoSecondsLeft(at, at))).toBe('Reset. You can undo it for 10 seconds.')
   })
 
   it('rounds up, so the last fraction of a second is offered rather than dropped', () => {
@@ -144,7 +144,7 @@ describe('§12.15 — the undo window', () => {
   })
 
   it('states that the window shut instead of the offer vanishing', () => {
-    expect(UNDO_CLOSED).toBe('ERASED · UNDO WINDOW CLOSED')
+    expect(UNDO_CLOSED).toBe('Reset. The time to undo it has passed.')
   })
 })
 

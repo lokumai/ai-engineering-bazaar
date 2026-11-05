@@ -122,8 +122,13 @@ latency رو هم روی tier پولی اندازه بگیر، چون free tier 
 
 ## منابع
 
+### 🛠️ ابزارها
+
 - [OpenRouter](https://openrouter.ai/): یه key برای کلی مدل، و سریع‌ترین راه برای مقایسه‌شون
 - [Portkey](https://portkey.ai/) و [gateway](https://github.com/Portkey-AI/gateway) متن‌بازش: routing با key‌های خودت، به‌اضافه‌ی guardrails و observability
 - [AgentRouter](https://www.agentrouter.to/quick-start): یه key و یه کیف پول برای API‌های پولی‌ای که agent صدا می‌زنه
 - [Google AI Studio](https://aistudio.google.com/): key رایگان و سهمیه‌ی روزانه، که برای یاد گرفتن کافیه
+
+### 🧭 ماژول‌ها
+
 - [مبانی LLM](../1_fundamentals/llms_fa.md): جایی که اولین API call و بده‌بستون quantization توضیح داده شده

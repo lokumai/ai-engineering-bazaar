@@ -3,6 +3,8 @@
 import { useEffect } from 'react'
 import { sheetStamps, type CurriculumFacts } from '@/lib/record/derive'
 import { useRecord } from '@/lib/record/store'
+import { trackView } from '@/lib/record/schema'
+import type { Track } from '@/lib/tracks'
 
 /**
  * §4.8 column 9 / §12.2 channel B — the one island that fills the sign-off
@@ -52,8 +54,8 @@ const SIGNED = 'data-signed'
 const CELLS = `[${CELL_ATTR}]`
 const SQUARES = `[${SLOT_ATTR}]`
 
-export function SignOffMarks({ facts }: { facts: CurriculumFacts }) {
-  const record = useRecord()
+export function SignOffMarks({ facts, track = 'engineers' }: { facts: CurriculumFacts; track?: Track }) {
+  const record = trackView(useRecord(), track)
 
   useEffect(() => {
     let frame = 0

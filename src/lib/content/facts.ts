@@ -1,8 +1,10 @@
 import { CATEGORIES } from './curriculum-file'
 import { checklistOf } from './checklist'
+import { countSources } from './derive'
 import { moduleGraph } from './edges'
 import { loadAllModules } from './loader'
 import { quickCheckOf } from './quickcheck'
+import type { Track } from '../tracks'
 
 /**
  * §12.2 — the bridge between the file-system-bound content layer and the
@@ -99,7 +101,7 @@ export interface CurriculumFacts {
   attainable: AttainableCounts
 }
 
-let cache: CurriculumFacts | null = null
+const cache: Partial<Record<Track, CurriculumFacts>> = {}
 
 /**
  * The corpus spine, built once per build. Cached in a module-level `let` like
@@ -107,27 +109,34 @@ let cache: CurriculumFacts | null = null
  * per-sheet extractors are all walked here and a static export renders every
  * page in one process.
  */
-export function curriculumFacts(): CurriculumFacts {
-  if (cache) return cache
+export function curriculumFacts(track: Track = 'engineers'): CurriculumFacts {
+  const cached = cache[track]
+  if (cached) return cached
 
   const modules = loadAllModules()
 
-  const sheets: SheetFact[] = modules.map((m) => ({
-    slug: m.slug,
-    module: m.frontmatter.module,
-    title: m.frontmatter.title,
-    category: m.category.slug,
-    drawn: m.frontmatter.status === 'ready',
-    hasQuickCheck: quickCheckOf(m.body) !== null,
-    checklistItems: checklistOf(m.body).length,
-    sources: m.sources,
-    duration: m.frontmatter.duration,
-    revision: m.revision?.hash ?? null,
-  }))
+  const sheets: SheetFact[] = modules.map((m) => {
+    // D91 — in For Everyone a module is written where its For Everyone file is.
+    const everyone = track === 'everyone' ? m.everyone : null
+    const body = everyone ? everyone.body : m.body
+    return {
+      slug: m.slug,
+      module: m.frontmatter.module,
+      title: m.frontmatter.title,
+      category: m.category.slug,
+      drawn: track === 'everyone' ? everyone !== null : m.frontmatter.status === 'ready',
+      hasQuickCheck: track === 'engineers' && quickCheckOf(body) !== null,
+      checklistItems: track === 'everyone' && everyone === null ? 0 : checklistOf(body).length,
+      // The page counts the body it shows, so the fact must count the same one.
+      sources: track === 'everyone' ? (everyone ? countSources(everyone.body) : 0) : m.sources,
+      duration: m.frontmatter.duration,
+      revision: (everyone ? everyone.revision : m.revision)?.hash ?? null,
+    }
+  })
 
   const drawn = sheets.filter((sheet) => sheet.drawn)
 
-  cache = {
+  const facts: CurriculumFacts = {
     sheets,
     categories: CATEGORIES.map((category) => ({
       slug: category.slug,
@@ -142,5 +151,6 @@ export function curriculumFacts(): CurriculumFacts {
       checklist: drawn.filter((sheet) => sheet.checklistItems > 0).length,
     },
   }
-  return cache
+  cache[track] = facts
+  return facts
 }

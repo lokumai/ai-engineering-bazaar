@@ -3,6 +3,8 @@
 import { useEffect } from 'react'
 import { categoryProgress, type CurriculumFacts } from '@/lib/record/derive'
 import { useRecord } from '@/lib/record/store'
+import { trackView } from '@/lib/record/schema'
+import type { Track } from '@/lib/tracks'
 
 /**
  * §13.5 / §12.2 channel B — the one island that fills the printed count beside
@@ -49,13 +51,14 @@ const CELL_ATTR = 'data-hl-cat-tally'
 
 const CELLS = `[${CELL_ATTR}]`
 
-export function CategoryTally({ facts }: { facts: CurriculumFacts }) {
-  const record = useRecord()
+export function CategoryTally({ facts, track = 'engineers' }: { facts: CurriculumFacts; track?: Track }) {
+  const record = trackView(useRecord(), track)
 
   useEffect(() => {
     const standing = categoryProgress(record, facts)
 
-    for (const cell of document.querySelectorAll<HTMLElement>(CELLS)) {
+    // D91 — only this track's cells: a page can hold both tracks' (`/profile/`).
+    for (const cell of document.querySelectorAll<HTMLElement>(`[data-track="${track}"] ${CELLS}`)) {
       const slug = cell.getAttribute(CELL_ATTR)
       if (!slug) continue
 
@@ -67,7 +70,7 @@ export function CategoryTally({ facts }: { facts: CurriculumFacts }) {
 
       cell.textContent = `${entry.approved}/${entry.total}`
     }
-  }, [record, facts])
+  }, [record, facts, track])
 
   return null
 }

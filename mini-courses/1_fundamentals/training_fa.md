@@ -225,10 +225,18 @@ training چیزی جز تنظیم parameter‌های مدل نیست. pre-traini
 
 ## منابع
 
-- [Unsloth documentation](https://unsloth.ai/docs): مستندات کامل این کتابخونه
+### 📄 مقاله‌ها
+
 - [Unsloth: is fine-tuning right for me?](https://unsloth.ai/docs/get-started/fine-tuning-for-beginners/faq-+-is-fine-tuning-right-for-me): قبل از این‌که چیزی رو fine-tune کنی، این رو بخون
 - [Unsloth notebooks](https://unsloth.ai/docs/get-started/unsloth-notebooks): notebook‌های آماده، هم برای training و هم برای اجرای مدل‌های quantize‌شده
 - [Unsloth fine-tuning guide](https://unsloth.ai/docs/get-started/fine-tuning-llms-guide): کل مسیر، از اول تا آخر
-- [Hugging Face](https://huggingface.co/): مرجع مدل‌ها، و کتابخونه‌ی `transformers`
 - [Fine-tuning AI models](https://cloud.google.com/use-cases/fine-tuning-ai-models?hl=en#fine-tuning-llms-and-ai-models): مرور کلی Google Cloud؛ برای آشنا شدن با اصطلاحات به درد می‌خوره
+
+### 🎬 ویدیوها
+
 - [What is LLM Fine-Tuning? (Explained Simply)](https://youtube.com/shorts/Ei4E2lWStqw?si=q0PttlRmBsARGHZU): یه ویدیوی کوتاه، اگه می‌خوای کل ایده رو توی کمتر از یه دقیقه بگیری
+
+### 🛠️ ابزارها
+
+- [Unsloth documentation](https://unsloth.ai/docs): مستندات کامل این کتابخونه
+- [Hugging Face](https://huggingface.co/): مرجع مدل‌ها، و کتابخونه‌ی `transformers`

@@ -238,16 +238,30 @@ Bu modüldeki her şey bir agent'ı denetlemeyi zorlaştırdı. Sıradaki konu o
 
 ## Kaynaklar
 
+### 📄 Makaleler
+
 - [The Art of Loop Engineering](https://www.langchain.com/blog/the-art-of-loop-engineering): loop engineering'i döngüleri üst üste yığmak olarak ve dört seviyesiyle anlatıyor
 - [Loop engineering: Getting started with loops](https://claude.com/blog/getting-started-with-loops): `/goal`, `/loop` ve `/schedule`, her birinin kullandığı durma koşuluyla birlikte
 - [everything is a ralph loop](https://ghuntley.com/loop/): özgün teknik ve her döngüde tek görev kuralı
-- [ralph-loop plugin](https://claude.com/plugins/ralph-loop): Claude Code için paketlenmiş sürüm
-- [snarktank/ralph](https://github.com/snarktank/ralph): bir gereksinim dokümanındaki her madde tamamlanana kadar çalışan otonom bir döngü
-- [loop-engineering](https://github.com/cobusgreyling/loop-engineering): desenler, başlangıç projeleri ve CLI araçları; uzun bir çalışmanın maliyet denetimi dahil
 - [Ralph Wiggum Loop for Claude Code](https://awesomeclaude.ai/ralph-wiggum): yazılı bir rehber; operatörün prompt'unun neden modelden daha önemli olduğu
 - [Orchestrate teams of Claude Code sessions](https://code.claude.com/docs/en/agent-teams): agent team'ler, ortak görev listesi ve bunun altyapısı
 - [Orchestrate subagents at scale with dynamic workflows](https://code.claude.com/docs/en/workflows): bir workflow betiğinin neye benzediği, sınırları ve dört yönlü karşılaştırma
 - [Executable Code Actions Elicit Better LLM Agents](https://arxiv.org/abs/2402.01030): CodeAct; kodun eylem alanı olduğu yaklaşım
 - [Recursive Language Models](https://arxiv.org/abs/2512.24601): makale; [Alex Zhang'in yazısı](https://alexzhang13.github.io/blog/2025/rlm/) ve [rlm](https://github.com/alexzhang13/rlm) kütüphanesiyle birlikte
+
+### 🎬 Videolar
+
 - [Loop Engineering explained in 8min..](https://www.youtube.com/watch?v=4biXYSNkn9Y): bu modülün konusunu sekiz dakikada, izlemek istersen
+
+### 🛠️ Araçlar
+
+- [ralph-loop plugin](https://claude.com/plugins/ralph-loop): Claude Code için paketlenmiş sürüm
+
+### 🗃️ Repolar
+
+- [snarktank/ralph](https://github.com/snarktank/ralph): bir gereksinim dokümanındaki her madde tamamlanana kadar çalışan otonom bir döngü
+- [loop-engineering](https://github.com/cobusgreyling/loop-engineering): desenler, başlangıç projeleri ve CLI araçları; uzun bir çalışmanın maliyet denetimi dahil
+
+### 🧭 Modüller
+
 - [İleri Seviye Mimariler](../3_expert/advanced_agent_architectures_tr.md): CodeAct, recursive language model'ler ve diğerleri, ayrıntılı olarak

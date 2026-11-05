@@ -182,25 +182,33 @@ jailbreaking یعنی مدل رو وادار کنی چیزی رو تولید ک�
 
 ## منابع
 
+### 📄 مقاله‌ها
+
 - [Adversarial Prompting in LLMs](https://www.promptingguide.ai/risks/adversarial): فرق injection و leaking و jailbreaking رو خیلی روشن جدا می‌کنه. صفحه‌های بعدی هر کدوم رو عمیق‌تر باز می‌کنن
 - [Prompt Injection in LLMs](https://www.promptingguide.ai/prompts/adversarial-prompting/prompt-injection)، [Prompt Leaking in LLMs](https://www.promptingguide.ai/prompts/adversarial-prompting/prompt-leaking) و [Jailbreaking LLMs](https://www.promptingguide.ai/prompts/adversarial-prompting/jailbreaking-llms): برای هر کدوم یه صفحه، با مثال‌هایی که خودت می‌تونی اجرا کنی
 - [What Are AI Guardrails?](https://www.ibm.com/think/topics/ai-guardrails): تقسیم guardrail‌ها به سمت ورودی و سمت خروجی، ساده و سرراست
-- [Guardrails AI](https://github.com/guardrails-ai/guardrails): validator‌هایی دور call مدل، که اگه یه بررسی رد بشه دوباره امتحان می‌کنن
-- [NeMo Guardrails](https://github.com/NVIDIA-NeMo/Guardrails): rail‌های قابل برنامه‌نویسی برای سیستم‌های گفت‌وگومحور
 - [LangChain guardrails](https://docs.langchain.com/oss/python/langchain/guardrails): middleware‌های before-agent و after-agent، به‌اضافه‌ی PII و human-in-the-loop
+- [The Crescendo Multi-Turn LLM Jailbreak Attack](https://www.usenix.org/conference/usenixsecurity25/presentation/russinovich): سؤال‌های بی‌خطری که آروم‌آروم تندتر می‌شن؛ مهم‌ترین الگوی حمله که باید بفهمیش
+- [DeepInception](https://arxiv.org/abs/2311.03191)، [FlipAttack](https://arxiv.org/abs/2410.02832)، [Sugar-Coated Poison](https://arxiv.org/abs/2504.05652) و [BreakFun](https://arxiv.org/abs/2510.17904): چهار مقاله‌ی دیگه درباره‌ی حمله، که آخریش مال خودمونه
+
+### 🛠️ ابزارها
+
 - [Prompt Guard 86M](https://huggingface.co/meta-llama/Prompt-Guard-86M): یه classifier کوچیک که ورودی رو توی benign، injection یا jailbreak دسته‌بندی می‌کنه
 - [Llama Guard 4](https://developer.meta.com/ai/docs/model-cards-and-prompt-formats/llama-guard-4/): 12B، multimodal، با 14 دسته‌ی خطر، برای ورودی و خروجی
 - [Llama Guard 3](https://ollama.com/library/llama-guard3)، [Granite 4.1 Guardian](https://ollama.com/library/granite4.1-guardian) و [ShieldGemma](https://ollama.com/library/shieldgemma): هر سه روی Ollama هستن، پس برای شروع روی سیستم خودت راحت‌ترین گزینه‌ان
 - [gpt-oss-safeguard](https://ollama.com/library/gpt-oss-safeguard): با policy‌ای که خودت می‌نویسی قضاوت می‌کنه و استدلالش رو هم نشون می‌ده
 - [Llama 3.1 Nemotron Safety Guard 8B v3](https://build.nvidia.com/nvidia/llama-3_1-nemotron-safety-guard-8b-v3): 23 دسته توی 9 زبان
+- [AI Red Teaming Agent](https://learn.microsoft.com/en-us/azure/foundry/concepts/ai-red-teaming-agent): حمله‌ی خودکار که attack success rate گزارش می‌ده، و روی PyRIT ساخته شده
+
+### 🗃️ Repository‌ها
+
+- [Guardrails AI](https://github.com/guardrails-ai/guardrails): validator‌هایی دور call مدل، که اگه یه بررسی رد بشه دوباره امتحان می‌کنن
+- [NeMo Guardrails](https://github.com/NVIDIA-NeMo/Guardrails): rail‌های قابل برنامه‌نویسی برای سیستم‌های گفت‌وگومحور
 - [promptfoo](https://github.com/promptfoo/promptfoo): red teaming و scanning از روی یه config، توی CI
 - [deepteam](https://github.com/confident-ai/deepteam): یه framework برای red teaming روی LLM‌ها و agent‌ها
 - [OpenRT](https://github.com/AI45Lab/OpenRT): بیشتر از 40 روش حمله‌ی آماده برای مدل‌های multimodal
 - [PyRIT](https://github.com/microsoft/PyRIT): framework مایکروسافت برای red teaming، که Crescendo، TAP و PAIR رو به شکل کلاس‌های آماده‌ی اجرا داره
-- [AI Red Teaming Agent](https://learn.microsoft.com/en-us/azure/foundry/concepts/ai-red-teaming-agent): حمله‌ی خودکار که attack success rate گزارش می‌ده، و روی PyRIT ساخته شده
 - [AI Red Teaming Playground Labs](https://github.com/microsoft/AI-Red-Teaming-Playground-Labs): lab و زیرساخت، برای اینکه این کار رو با دست خودت یاد بگیری
 - [Strix](https://github.com/usestrix/strix)، [Shannon](https://github.com/KeygraphHQ/shannon)، [PentAGI](https://github.com/vxcontrol/pentagi) و [Pentest Swarm AI](https://github.com/Armur-Ai/Pentest-Swarm-AI): agent‌هایی که خودشون penetration test انجام می‌دن
 - [claude-red](https://github.com/SnailSploit/Claude-Red): امنیت تهاجمی به شکل یه کتابخونه‌ی skill، برای agent‌ی که از قبل داری
 - [security-audit-skill](https://github.com/cloudflare/security-audit-skill): نیمه‌ی دفاعی همین مکانیزم، از Cloudflare، که هر یافته رو قبل از گزارش وارسی می‌کنه
-- [The Crescendo Multi-Turn LLM Jailbreak Attack](https://www.usenix.org/conference/usenixsecurity25/presentation/russinovich): سؤال‌های بی‌خطری که آروم‌آروم تندتر می‌شن؛ مهم‌ترین الگوی حمله که باید بفهمیش
-- [DeepInception](https://arxiv.org/abs/2311.03191)، [FlipAttack](https://arxiv.org/abs/2410.02832)، [Sugar-Coated Poison](https://arxiv.org/abs/2504.05652) و [BreakFun](https://arxiv.org/abs/2510.17904): چهار مقاله‌ی دیگه درباره‌ی حمله، که آخریش مال خودمونه

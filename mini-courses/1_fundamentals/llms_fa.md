@@ -225,12 +225,23 @@ graph LR
 
 ## منابع
 
+### 📄 مقاله‌ها
+
 - [Scaling Laws for Neural Language Models](https://arxiv.org/abs/2001.08361): Kaplan و همکاران، 2020؛ همون اندازه‌گیری‌ای که حرف «مدل بزرگ‌تر، بهتر» ازش میاد
+
+### 🎬 ویدیوها
+
+- [Large Language Models explained briefly](https://youtu.be/LPZh9BOjkQs?si=8kH-lzHbfHRL1_8h): یه ویدیو درباره‌ی همین موضوع‌ها، اگه دیدن رو به خوندن ترجیح می‌دی
+
+### 🛠️ ابزارها
+
 - [Artificial Analysis](https://artificialanalysis.ai/): مقایسه‌ی مدل‌ها و benchmark‌هاشون
 - [Ollama](https://ollama.com/): برای pull و serve کردن مدل‌ها روی سیستم خودت
 - [LMStudio](https://lmstudio.ai/): یه GUI برای اجرای مدل‌ها روی سیستم خودت
 - [Unsloth](https://unsloth.ai/): نسخه‌های آماده‌ی quantize‌شده‌ی مدل‌ها
 - [Google AI Studio](https://aistudio.google.com/): API key با پلن رایگان
 - [OpenRouter](https://openrouter.ai/): یه key برای کلی provider
+
+### 🗃️ Repository‌ها
+
 - [System prompt leaks](https://github.com/asgeirtj/system_prompts_leaks)
-- [Large Language Models explained briefly](https://youtu.be/LPZh9BOjkQs?si=8kH-lzHbfHRL1_8h): یه ویدیو درباره‌ی همین موضوع‌ها، اگه دیدن رو به خوندن ترجیح می‌دی

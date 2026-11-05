@@ -359,13 +359,24 @@ Sıradaki konu: context window'a giren her şey ve bu alanın neyi hak ettiğine
 
 ## Kaynaklar
 
+### 📄 Makaleler
+
 - [Prompt Engineering Guide](https://www.promptingguide.ai/): tekniklerin tam kataloğu, bu modülde anlattığımızdan çok daha fazlası
 - [Prompting best practices](https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices): Anthropic'in güncel rehberi ve iki önce-sonra örneğinin kaynağı
 - [Quantifying Language Models' Sensitivity to Spurious Features in Prompt Design](https://arxiv.org/abs/2310.11324): 2023 neslindeki modellerin ne kadar kırılgan olduğunu ölçen çalışma
 - [Why Can Large Language Models Generate Correct Chain-of-Thoughts?](https://arxiv.org/abs/2310.13571): "yazmak düşünmektir" fikrinin arkasındaki teori
-- [Chain of Thought Visualizer](https://cot-visualizer.online/): düşünerek ve hemen cevap vererek üretilen cevapları yan yana gösteren bir demo
 - [Effort](https://platform.claude.com/docs/en/build-with-claude/effort): düşünme düğmesi ve her seviyenin ne için olduğu
 - [Stop Overthinking: A Survey on Efficient Reasoning for Large Language Models](https://arxiv.org/abs/2503.16419): aşırı düşünme üzerine araştırmalar, tek bir yerde
 - [When "A Helpful Assistant" Is Not Really Helpful](https://arxiv.org/abs/2311.10054): persona prompt'larının umulandan daha az yardımcı olduğunu gösteren çalışma
+
+### 🛠️ Araçlar
+
+- [Chain of Thought Visualizer](https://cot-visualizer.online/): düşünerek ve hemen cevap vererek üretilen cevapları yan yana gösteren bir demo
+
+### 🗃️ Repolar
+
 - [System prompt leaks](https://github.com/asgeirtj/system_prompts_leaks): üretimdeki system prompt'lar, kelimesi kelimesine kopyalanmış
+
+### 🧭 Modüller
+
 - [Advanced Prompting](../3_expert/advanced_prompting_tr.md): bu modülün bilerek atladığı teknikler

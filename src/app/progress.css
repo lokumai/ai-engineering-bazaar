@@ -1,216 +1,19 @@
 /* ===========================================================================
-   §16 — YOUR PROGRESS, and the account.
+   §16 — PROGRESS (`/profile/`), M39 F2.
 
-   Reference: `playground/07-dashboard.html`, variant A, whose own note is the
-   brief: *"one page, and the first thing on it is the one action a returning
-   reader wants. Settings sit at the bottom where settings belong."* And its
-   governing constraint, at `07:107-110`: *"Nothing here removes a capability.
-   Export, import, erase, the role-based path, the repository links and the
-   sign-in are all still reachable; the question is how many pages they need."*
+   The page is two tabs, one per track (D91), each holding the level cards of
+   `completion.css`, and one data line under them: back up, restore, reset.
+   The continue card, the statistics row and the settings register that the
+   earlier `07`-A page carried are gone (M38, M43), removed rather than hidden.
 
-   `/profile/` is the route that absorbed three others — `/dashboard/`,
-   `/path/` and `/report/` are `MovedTo` stubs forwarding here and must keep
-   forwarding.
-
-   WHAT `07`-A DRAWS THAT THIS DOES NOT BUILD. Its `.bars` block is five
-   per-level rails, and stage 7 already put `05`-C's dials on this page for the
-   same fact. `07`'s own variant-C argument is the reason not to have both:
-   *"Per-level progress is already in the sidebar and the catalog, on every
-   page. Repeating it on a page of its own is the duplication that makes the
-   dashboard feel pointless."* So the page takes `07`'s ORDER — continue, then
-   progress, then settings — and `05`-C's rendering of the middle.
+   `/dashboard/`, `/path/` and `/report/` are `MovedTo` stubs forwarding here
+   and must keep forwarding. This sheet also holds the footer readout and the
+   erase dialog, which other pages use.
 
    D31: colour from `01`, geometry from `07`.
    =========================================================================== */
 
 @layer components {
-  /* -- the continue hero, `07:36-45` --------------------------------------- */
-
-  /* -- the gate, and it was missing -----------------------------------------
-     §15.11 — this is revealed only for a record that CARRIES SOMETHING, which
-     `boot.ts` decides before first paint and stamps as `data-hl-record`. It
-     had no gate at all, so the prerendered page shipped a populated "Continue
-     where you left off" to every reader including a fresh browser, and with
-     the bundle blocked it never corrected. The home page's own shortcut has
-     had this rule since stage 9; `/profile/` was built in stage 8 and never
-     got it.
-
-     The BOX is channel A and the CONTENT is channel B, which is the only split
-     available: a module's title is text, and channel A stamps classes. */
-  .bz-cont {
-    display: none;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: 18px;
-    margin: 0 0 26px;
-    padding: 18px 20px;
-    border: 1px solid var(--color-line);
-    border-radius: var(--radius-xl);
-    background: var(--color-surface-raised);
-  }
-
-  html[data-hl-record] .bz-cont {
-    display: flex;
-  }
-
-  /* `07:38` fills this 46px square with a tint and prints the ordinal on it.
-     The language has no tint scale, and stage 4 met the same shape in `03`'s
-     level badge: **D33** answers a pale tinted fill with an edge. The hue is
-     the level's own, read from `data-cat` by `category.css`. */
-  .bz-cont-num {
-    flex: none;
-    display: grid;
-    place-items: center;
-    width: 46px;
-    height: 46px;
-    border: 1px solid var(--bz-cat);
-    border-radius: var(--radius-xl);
-    color: var(--color-on-surface-muted);
-    font: 600 var(--text-lead) / 1 var(--font-mono);
-    font-variant-numeric: tabular-nums;
-  }
-
-  .bz-cont-body {
-    flex: 1;
-    min-width: 0;
-  }
-
-  .bz-cont-eyebrow {
-    display: block;
-    color: var(--color-on-surface-faint);
-    font-size: var(--text-meta);
-  }
-
-  .bz-cont-title {
-    display: block;
-    margin: 2px 0 3px;
-    color: var(--color-on-surface-title);
-    font: 600 var(--text-subsection) / 1.25 var(--font-sans);
-    letter-spacing: -0.015em;
-  }
-
-  .bz-cont-meta {
-    margin: 0;
-    color: var(--color-on-surface-muted);
-    font-size: var(--text-item);
-  }
-
-  .bz-hidden-y {
-    overflow-y: hidden;
-  }
-
-  /* -- §16.4 the register -------------------------------------------------
-     One `<details>` per subject. Folding removes prose and never a fact
-     (§16.4.1), which is why the summary carries a reading and not just a
-     name. */
-
-  .bz-register {
-    margin: 0;
-    padding: 0;
-    list-style: none;
-  }
-
-  .bz-register-row {
-    border-top: 1px solid var(--color-line);
-  }
-
-  .bz-register-fold {
-    margin: 0;
-  }
-
-  .bz-register-summary {
-    display: flex;
-    align-items: baseline;
-    gap: 10px;
-    padding: 11px 2px;
-    cursor: pointer;
-  }
-
-  .bz-register-summary::-webkit-details-marker {
-    display: none;
-  }
-
-  .bz-register-name {
-    color: var(--color-on-surface);
-    font-weight: 500;
-  }
-
-  /* §16.4.1's reading. It used to be uppercased by the retired label
-     treatment, and `record-pages.spec.ts` read it with `innerText` and
-     required capitals to tell a named state from a sentence of prose. Neither
-     the case nor that test's mechanism survives: the row states WHAT it is in
-     `data-reading`, and the spec asks by that instead of by casing. */
-  .bz-register-reading {
-    margin-left: auto;
-    color: var(--color-on-surface-muted);
-    font-size: var(--text-mark);
-    font-variant-numeric: tabular-nums;
-  }
-
-  .bz-register-chev {
-    flex: none;
-    color: var(--color-on-surface-faint);
-    font: var(--text-mark) / 1 var(--font-mono);
-  }
-
-  .bz-register-body {
-    padding: 0 2px 16px;
-  }
-
-  /* -- §16.1 the drafter block -------------------------------------------- */
-
-  /* M22 — **the clearance the groups need, and it is the same defect M20 found
-     one page over.**
-
-     `.bz-panel-head` declares `margin-bottom: 4px` and no top margin, because
-     until now it sat under a rule or at the top of a block. Five group headings
-     in a row of register rows have nothing above them at all, so each one
-     butted against the row before it and read as belonging to what it followed
-     rather than to what it introduced — which is most of what "a mess" means
-     for a list like this.
-
-     Declared on the GROUP and not on `.bz-panel-head`, which every panel on
-     every page uses: a rule there would move six other surfaces to fix one. */
-  [data-bz-register-group] {
-    margin-top: 30px;
-  }
-
-  /* **A group heading is subordinate to the page's own blocks, and it has to
-     LOOK it.** A review caught this: the five group heads were rendering
-     through the same `.bz-panel-title` as `Every module` and `Waiting on you`,
-     so five headings over a list of rows carried the same weight as the page's
-     real sections — which is the flat outline the regroup was fixing, moved up
-     one level rather than removed.
-
-     The heading LEVEL is already right (§16.7: group `h2`, row `h3`); this is
-     the other half of it, for a reader who is looking rather than navigating by
-     heading.
-
-     One step DOWN the scale — `control`, 14.5px, against `.bz-panel-title`'s
-     `lead` at 16. **The first attempt reached for `subsection` and made them
-     BIGGER**: 18.5px, measured on the built page, which is the scale's step in
-     the other direction. A token named for a structural role is not a size, and
-     reading it as one is how a heading ends up outweighing the section it is
-     inside — which was the criticism being answered. */
-  [data-bz-register-group] > .bz-panel-head > .bz-panel-title {
-    font-size: var(--text-control);
-  }
-
-  /* **The destructive group is set apart, and a margin is not apart enough.**
-     §12.15's erase is the only irreversible thing on this page, and standard
-     practice puts a destructive action last, alone, and visibly separated — the
-     brief's own words. It is last and alone by the group order; this is the
-     third. A rule above it and the extra room, so the eye stops there rather
-     than reading it as one more settings row.
-
-     Keyed on the id rather than on `:last-child`, which would move to whatever
-     group happened to end the list. */
-  [data-bz-register-group="group-data"] {
-    margin-top: 44px;
-    padding-top: 22px;
-    border-top: 1px solid var(--color-line);
-  }
-
   /* -- the readout strip -------------------------------------------------- */
 
   .bz-readout {
@@ -379,4 +182,123 @@
     max-width: 100%;
     height: auto;
   }
+
+  /* ---------------------------------------------------------------------------
+     THE PROGRESS PAGE'S TWO TABS (M39 F2).
+
+     One tab per track, with its count, over that track's level cards. The
+     selected tab is marked by a bar under it and by its ink, never by a hue.
+     Which panel shows in frame one is the track the bar shows: `data-bz-track`
+     on `<html>`, stamped before first paint. A click sets `data-tab` on the tab
+     set, which overrides that.
+     --------------------------------------------------------------------------- */
+  .bz-ptabs-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    margin: 0 0 20px;
+    border-bottom: 1px solid var(--color-line);
+  }
+
+  .bz-ptab {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 8px;
+    margin-bottom: -1px;
+    padding: 10px 14px 12px;
+    border: 0;
+    border-bottom: 3px solid transparent;
+    background: none;
+    color: var(--color-on-surface-muted);
+    font: 600 var(--text-item) / 1.2 var(--font-sans);
+    cursor: pointer;
+  }
+
+  .bz-ptab:hover { color: var(--color-on-surface); }
+
+  .bz-ptab-count {
+    color: var(--color-on-surface-faint);
+    font-size: var(--text-meta);
+    font-weight: 500;
+  }
+
+  .bz-ptab-panel[data-panel="everyone"] { display: none; }
+
+  html[data-bz-track="everyone"] .bz-ptabs:not([data-tab]) .bz-ptab-panel[data-panel="everyone"],
+  .bz-ptabs[data-tab="everyone"] .bz-ptab-panel[data-panel="everyone"] { display: block; }
+
+  html[data-bz-track="everyone"] .bz-ptabs:not([data-tab]) .bz-ptab-panel[data-panel="engineers"],
+  .bz-ptabs[data-tab="everyone"] .bz-ptab-panel[data-panel="engineers"] { display: none; }
+
+  .bz-ptabs[data-tab="engineers"] .bz-ptab-panel[data-panel="engineers"] { display: block; }
+
+  html:not([data-bz-track="everyone"]) .bz-ptabs:not([data-tab]) .bz-ptab[data-track-id="engineers"],
+  html[data-bz-track="everyone"] .bz-ptabs:not([data-tab]) .bz-ptab[data-track-id="everyone"],
+  .bz-ptab[aria-selected="true"] {
+    border-bottom-color: var(--color-bar);
+    color: var(--color-on-surface-title);
+  }
+
+  /* ---------------------------------------------------------------------------
+     THE DATA LINE (M39 F2).
+
+     Under the cards, after a rule: one sentence saying where the progress is,
+     and three plain links to back it up, restore it, or reset it. Reset is in
+     the fault ink, because it is the one of the three that loses something.
+     --------------------------------------------------------------------------- */
+  .bz-dataline-wrap {
+    margin-top: 32px;
+    padding-top: 18px;
+    border-top: 1px solid var(--color-line);
+  }
+
+  .bz-dataline {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 8px 28px;
+  }
+
+  .bz-dataline-text {
+    max-width: 52ch;
+    margin: 0;
+    color: var(--color-on-surface-muted);
+    font-size: var(--text-meta);
+    line-height: 1.5;
+  }
+
+  .bz-dataline-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 18px;
+  }
+
+  .bz-dataline-action {
+    padding: 0;
+    border: 0;
+    background: none;
+    font: inherit;
+    font-size: var(--text-item);
+    cursor: pointer;
+  }
+
+  .bz-dataline-reset { color: var(--color-fault); }
+
+  /* The file input is the label's: clicking the words opens the picker. */
+  .bz-dataline-file {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+  }
+
+  .bz-dataline-status {
+    flex-basis: 100%;
+    margin: 0;
+    color: var(--color-on-surface);
+    font-size: var(--text-meta);
+  }
+
+  .bz-dataline-status p { margin: 0; }
 }

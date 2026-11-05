@@ -73,9 +73,8 @@ test('the manifest survives being used', async ({ page }) => {
  */
 const HOME_STATES: [string, RecordSeed | null, string][] = [
   // `null`, not `{}`: an empty seed is still a record — `recordData()` puts
-  // today in `days` — and the boot script would stamp `data-hl-record` for it,
-  // which is the returning reader's page. The first visit is the one with no
-  // key in `localStorage` at all.
+  // today in `days`. The first visit is the one with no key in `localStorage`
+  // at all.
   ['a first visit', null, 'Open the curriculum'],
   ['a return', { sheets: { [slugOf(A0)]: signedSheet('b7225f8') } }, 'Open the curriculum'],
 ]

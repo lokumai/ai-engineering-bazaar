@@ -181,6 +181,7 @@ export function coerceRecordData(input: unknown): RecordData {
   const meta = isRecordObject(data.meta) ? data.meta : {}
   return {
     sheets: coerceSheets(data.sheets),
+    everyoneSheets: coerceSheets(data.everyoneSheets),
     days: coerceDays(data.days),
     prefs: {
       charKeys: asBoolean(prefs.charKeys, EMPTY_RECORD.prefs.charKeys),

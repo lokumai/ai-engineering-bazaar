@@ -76,7 +76,7 @@ describe('§13.5 — the segment rules cover the whole corpus', () => {
   const mainRules = css.slice(0, FORCED_AT)
 
   it('names every module in the corpus, exactly once', () => {
-    const raw = [...mainRules.matchAll(/html\.hl-signed-(\d+)\s+\.bz-seg\[data-module=/g)]
+    const raw = [...mainRules.matchAll(/html\.hl-signed-(\d+)\s+\[data-track="engineers"\]\s+\.bz-seg\[data-module=/g)]
       .map((match) => Number(match[1]))
     // `captures` de-dupes, so a module listed twice would pass the set
     // comparison silently. Compare the raw list, which cannot hide one.
@@ -88,7 +88,7 @@ describe('§13.5 — the segment rules cover the whole corpus', () => {
     // "signed" survives as a difference in fill rather than in hue. It only
     // needs the signable modules; a draft segment has nothing to reveal.
     const forced = css.slice(css.search(/@media \(forced-colors: active\)/))
-    const named = [...forced.matchAll(/html\.hl-signed-(\d+)\s+\.bz-seg\[data-module=/g)]
+    const named = [...forced.matchAll(/html\.hl-signed-(\d+)\s+\[data-track="engineers"\]\s+\.bz-seg\[data-module=/g)]
       .map((match) => Number(match[1]))
       .sort((a, b) => a - b)
     expect(named).toEqual(DRAWN_MODULES)
@@ -98,7 +98,7 @@ describe('§13.5 — the segment rules cover the whole corpus', () => {
 describe('M10 — the curriculum rail’s tick covers every module that can be completed', () => {
   it('covers the ready modules and stops there', () => {
     const named = captures(
-      /html\.hl-signed-(\d+)\s+\.bz-item\[data-module="\d+"\]\s+\.bz-tick/g,
+      /html\.hl-signed-(\d+)\s+\[data-track="engineers"\]\s+\.bz-item\[data-module="\d+"\]\s+\.bz-tick/g,
     )
       .map(Number)
       .sort((a, b) => a - b)
@@ -113,7 +113,7 @@ describe('M10 — the curriculum rail’s tick covers every module that can be c
    */
   it('names no module the corpus has not written', () => {
     const named = captures(
-      /html\.hl-signed-(\d+)\s+\.bz-item\[data-module="\d+"\]\s+\.bz-tick/g,
+      /html\.hl-signed-(\d+)\s+\[data-track="engineers"\]\s+\.bz-item\[data-module="\d+"\]\s+\.bz-tick/g,
     ).map(Number)
     for (const module of named) expect(DRAWN_MODULES).toContain(module)
   })
@@ -122,7 +122,7 @@ describe('M10 — the curriculum rail’s tick covers every module that can be c
 describe('M13 — control C’s tick covers every module that can be completed', () => {
   it('covers the ready modules and stops there', () => {
     const named = captures(
-      /html\.hl-signed-(\d+)\s+\.bz-cmod\[data-module="\d+"\]\s+\.bz-cmod-mark/g,
+      /html\.hl-signed-(\d+)\s+\[data-track="engineers"\]\s+\.bz-cmod\[data-module="\d+"\]\s+\.bz-cmod-mark/g,
     )
       .map(Number)
       .sort((a, b) => a - b)
@@ -137,7 +137,7 @@ describe('M13 — control C’s tick covers every module that can be completed',
    */
   it('names no module the corpus has not written', () => {
     const named = captures(
-      /html\.hl-signed-(\d+)\s+\.bz-cmod\[data-module="\d+"\]\s+\.bz-cmod-mark/g,
+      /html\.hl-signed-(\d+)\s+\[data-track="engineers"\]\s+\.bz-cmod\[data-module="\d+"\]\s+\.bz-cmod-mark/g,
     ).map(Number)
     for (const module of named) expect(DRAWN_MODULES).toContain(module)
   })

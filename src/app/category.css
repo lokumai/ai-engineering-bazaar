@@ -47,4 +47,12 @@
   [data-cat="expert"]       { --bz-done: var(--bz-done-expert, 0%); }
   [data-cat="ecosystem"]    { --bz-done: var(--bz-done-ecosystem, 0%); }
   [data-cat="protocols"]    { --bz-done: var(--bz-done-protocols, 0%); }
+
+  /* D91 — inside a For Everyone region the ring reads that track's own
+     percentage, which the boot script sets as `--bz-edone-<slug>`. */
+  [data-track="everyone"] [data-cat="fundamentals"] { --bz-done: var(--bz-edone-fundamentals, 0%); }
+  [data-track="everyone"] [data-cat="intermediate"] { --bz-done: var(--bz-edone-intermediate, 0%); }
+  [data-track="everyone"] [data-cat="expert"]       { --bz-done: var(--bz-edone-expert, 0%); }
+  [data-track="everyone"] [data-cat="ecosystem"]    { --bz-done: var(--bz-edone-ecosystem, 0%); }
+  [data-track="everyone"] [data-cat="protocols"]    { --bz-done: var(--bz-edone-protocols, 0%); }
 }

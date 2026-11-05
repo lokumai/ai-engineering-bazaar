@@ -18,7 +18,14 @@ describe('alternatesOf', () => {
 
   it('offers English and every language the module has, English first', () => {
     expect(alternatesOf('/courses/fundamentals/llms/', both))
-      .toEqual({ slug: 'fundamentals/llms', current: 'en', available: ['en', 'tr', 'fa'] })
+      .toEqual({ slug: 'fundamentals/llms', track: 'engineers', current: 'en', available: ['en', 'tr', 'fa'] })
+  })
+
+  it('keeps a For Everyone page in its track, in every language', () => {
+    expect(alternatesOf('/everyone/courses/fundamentals/llms/', both))
+      .toEqual({ slug: 'fundamentals/llms', track: 'everyone', current: 'en', available: ['en', 'tr', 'fa'] })
+    expect(alternatesOf('/tr/everyone/courses/fundamentals/llms/', both)?.current).toBe('tr')
+    expect(alternatesOf('/everyone/tr/courses/fundamentals/llms/', both)).toBeNull()
   })
 
   it('knows which one is being read, from the address', () => {

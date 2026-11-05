@@ -6,6 +6,7 @@ import { BazaarStreetMotion } from '@/components/home/BazaarStreetMotion'
 import { art, type ArtName } from '@/components/home/street/art'
 import { PageShell } from '@/components/shell/PageShell'
 import { CATEGORIES } from '@/lib/content/curriculum-file'
+import { curriculumFacts } from '@/lib/content/facts'
 import { INDEX_ROUTE, levelRoute } from '@/lib/route-labels'
 import { SITE_NAME } from '@/lib/site'
 
@@ -57,7 +58,7 @@ const STALLS: ReadonlyArray<{
   body: string
 }> = [
   {
-    art: 'stall-scribe',
+    art: 'stall-draft',
     icon: 'icon-1',
     hue: 'var(--color-category-1)',
     x: 1510,
@@ -68,7 +69,7 @@ const STALLS: ReadonlyArray<{
       + 'by AI engineers who build this for a living.',
   },
   {
-    art: 'stall-scale',
+    art: 'stall-sieve',
     icon: 'icon-2',
     hue: 'var(--color-category-4)',
     x: 2710,
@@ -79,7 +80,7 @@ const STALLS: ReadonlyArray<{
       + 'that matter most, and nothing else.',
   },
   {
-    art: 'stall-pictures',
+    art: 'stall-lantern',
     icon: 'icon-3',
     hue: 'var(--color-category-5)',
     x: 3910,
@@ -89,7 +90,7 @@ const STALLS: ReadonlyArray<{
       + 'sometimes even a little brain rot, because a good meme can explain an idea in one look.',
   },
   {
-    art: 'stall-papers',
+    art: 'stall-signpost',
     icon: 'icon-4',
     hue: 'var(--color-category-3)',
     x: 5110,
@@ -102,11 +103,80 @@ const STALLS: ReadonlyArray<{
 /** The concept draws five doors, and a tray for each; a sixth level would reuse the first. */
 const DOOR_ART = 5
 
-/** Where the doors and the way in stand in the hall, in the art's own units. */
-const DOOR_X = 6485
+/**
+ * Where everything after the four stalls stands in the hall, in the art's own
+ * units. The track choice takes the 1560 units between the last stall and the
+ * doors: two bays, the Sipahi's stall and the merchant's, each under a sign
+ * that is a button. `art/track-*.html` draw those bays at exactly these widths
+ * (760 and 800), so the hall, the doors and the way in stand `HALL_SHIFT`
+ * further along than the concept drew them.
+ */
+const TRACK_START = 6240
+const HALL_SHIFT = 1560
+const DOOR_X = 6485 + HALL_SHIFT
 const DOOR_STEP = 230
 const DOOR_Y = 252
-const CTA_AT = { x: 7040, y: 800 }
+const CTA_AT = { x: 7040 + HALL_SHIFT, y: 786 }
+
+/** The question hangs over the gap between the two stalls. */
+const QUESTION_AT = { x: TRACK_START + 820, y: 40 }
+const SIGN_Y = 224
+
+/** The characters stand beside their stalls; each caption is centred under its character. */
+const TRACKS: ReadonlyArray<{
+  id: 'eng' | 'all'
+  name: string
+  body: string
+  art: ArtName
+  hue: string
+  signX: number
+  who: { name: string; english: string; x: number; left: number }
+}> = [
+  {
+    id: 'eng',
+    name: 'For Engineers',
+    body: 'The technical modules: how each part works, with the code and the numbers behind it.',
+    art: 'track-eng',
+    hue: 'var(--color-category-2)',
+    /** The centre of the stall the sign hangs over. */
+    signX: TRACK_START + 545,
+    who: { name: 'Sipahi', english: 'Horseman', x: TRACK_START + 190, left: 24.4 },
+  },
+  {
+    id: 'all',
+    name: 'For Everyone',
+    body: 'The same modules in plain words, for readers with no technical background.',
+    art: 'track-all',
+    hue: 'var(--color-category-1)',
+    signX: TRACK_START + 760 + 335,
+    who: { name: 'Bezirgân', english: 'Merchant', x: TRACK_START + 760 + 645, left: 81.4 },
+  },
+]
+
+/** The For Everyone track lives under its own prefix; a level opens at the same address inside it. */
+const everyoneRoute = (slug: string) => `/everyone${levelRoute(slug)}`
+
+/** `</>` for the track about the code, an open book for the one about the ideas. */
+function TrackIcon({ track }: { track: 'eng' | 'all' }) {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+      {track === 'eng' ? (
+        <path d="M8 6 2.5 12 8 18M16 6l5.5 6-5.5 6M13.5 4l-3 16" />
+      ) : (
+        <path d="M12 6.5C9.5 4.8 6.2 4.5 3 5v13c3.2-.5 6.5-.2 9 1.5 2.5-1.7 5.8-2 9-1.5V5c-3.2-.5-6.5-.2-9 1.5Zm0 0V19.5" />
+      )}
+    </svg>
+  )
+}
+
+/** The mark that says a sign is chosen without a colour: a tick, beside the word. */
+function CheckIcon() {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+      <path d="m5 12.5 4.5 4.5L19 7" />
+    </svg>
+  )
+}
 
 /** A custom property on an element; React writes custom properties unitless. */
 function at(props: Record<string, string | number>): CSSProperties {
@@ -150,6 +220,20 @@ function at(props: Record<string, string | number>): CSSProperties {
  * the door at any size. The motion is the island's; with no script or with
  * reduced motion, `home.css` shows the tray on hover and focus without moving it.
  *
+ * ## The stalls, and the choice before the doors (M44)
+ *
+ * On 2026-11-05 the author picked the scene each stall acts out (the edited
+ * draft, the sieve, the magic lantern, the signpost: `art/stall-*.html`, moved
+ * by `street/stall-timelines.ts`) and a step between the stalls and the doors.
+ * The reader is asked how they would like to read, and the five doors open into
+ * the track they pick: For Engineers at `/sheets/<level>/`, For Everyone at
+ * `/everyone/sheets/<level>/`. Two stalls stand side by side under two signs
+ * that are buttons, the Sipahi beside the first and the Bazargan beside the
+ * second. Every door is rendered For Engineers, with the other address beside it
+ * in `data-href-all`, so with no choice and no script the doors open For
+ * Engineers and a link checker reads an address that always exists;
+ * `street/track.ts` swaps them. Nothing is saved.
+ *
  * ## What left, and where it went
  *
  * The lead action `Start with <first module>` and the facts strip were removed
@@ -157,10 +241,15 @@ function at(props: Record<string, string | number>): CSSProperties {
  * "Why this and not the hundredth AI blog" panel became the four stalls.
  */
 export default function HomePage() {
+  /* The sentence under the question is a count, so it is the course's own:
+     every module in the curriculum, written or not, which is what both tracks
+     list. */
+  const moduleCount = curriculumFacts().sheets.length
   const doors = CATEGORIES.map((category, i) => ({
     slug: category.slug,
     title: category.title,
     href: levelRoute(category.slug),
+    hrefEveryone: everyoneRoute(category.slug),
     art: `door-${(i % DOOR_ART) + 1}` as ArtName,
     tray: `tray-${(i % DOOR_ART) + 1}` as ArtName,
     x: DOOR_X + i * DOOR_STEP,
@@ -216,6 +305,54 @@ export default function HomePage() {
           </div>
         </section>
 
+        <section className="choice" id="track" aria-labelledby="track-q">
+          <div className="choice-in">
+            <div className="sign question" style={at({ '--x': QUESTION_AT.x, '--y': QUESTION_AT.y, '--hue': 'var(--color-category-4)' })}>
+              <div className="rail" />
+              <div className="swing">
+                <div className="board">
+                  <h2 id="track-q" className={display.className}>How would you like to read?</h2>
+                  <p>The same {moduleCount} modules either way. You can switch later from the top bar.</p>
+                </div>
+              </div>
+            </div>
+            <div className="tracks">
+              {TRACKS.map((track) => (
+                <article key={track.id} className="track" data-track={track.id}>
+                  <div className="sign track-sign" style={at({ '--x': track.signX, '--y': SIGN_Y, '--hue': track.hue })}>
+                    <div className="rail" />
+                    <div className="swing">
+                      <button type="button" className="board" data-choose={track.id} aria-pressed="false">
+                        <span className="sg-ico" aria-hidden="true">
+                          <TrackIcon track={track.id} />
+                        </span>
+                        <span className={`sg-t ${display.className}`}>{track.name}</span>
+                        <span className="sg-p">{track.body}</span>
+                        <span className="sg-go">
+                          <span className="sg-off">Choose {track.name}</span>
+                          <span className="sg-on">
+                            <CheckIcon />
+                            Chosen
+                          </span>
+                        </span>
+                      </button>
+                    </div>
+                  </div>
+                  <div className="track-art">
+                    <div aria-hidden="true" dangerouslySetInnerHTML={{ __html: art(track.art) }} />
+                    <p
+                      className="who"
+                      style={at({ '--x': track.who.x, '--y': 800, '--l': `${track.who.left}%`, '--hue': track.hue })}
+                    >
+                      <span lang="tr">{track.who.name}</span> ({track.who.english})
+                    </p>
+                  </div>
+                </article>
+              ))}
+            </div>
+          </div>
+        </section>
+
         <section className="end">
           <nav className="doors" aria-label="Levels">
             {doors.map((door) => (
@@ -224,6 +361,8 @@ export default function HomePage() {
                 className="door"
                 href={door.href}
                 data-cat={door.slug}
+                data-href-eng={door.href}
+                data-href-all={door.hrefEveryone}
                 style={at({ '--x': door.x, '--y': DOOR_Y })}
               >
                 <span className="plaque">{door.title}</span>
@@ -232,6 +371,17 @@ export default function HomePage() {
             ))}
           </nav>
           <div className="cta-wrap" style={at({ '--x': CTA_AT.x, '--y': CTA_AT.y })}>
+            {/* With no script the doors open For Engineers and this says so; the
+                switch is a button, so it stays hidden until the island can work it. */}
+            <p className="switch" data-switch-line>
+              These doors open <b data-track-name>For Engineers</b>.{' '}
+              <button type="button" className="sw-link" data-switch hidden>
+                {/* One child: the button is inline-flex on a phone, which would make each text run its own item and drop the spaces between them. */}
+                <span>
+                  Open them <span data-track-other>For Everyone</span> instead
+                </span>
+              </button>
+            </p>
             <Link className="bz-btn" href={INDEX_ROUTE}>
               Open the curriculum
             </Link>

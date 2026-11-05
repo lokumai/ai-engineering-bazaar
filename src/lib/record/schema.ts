@@ -37,6 +37,7 @@ export const CATALOG_VIEWS: readonly CatalogViewId[] = CATALOG_VIEW_IDS
  * stored id before it reaches an attribute.
  */
 import { type PaletteId, PALETTE_IDS as READING_PALETTE_IDS } from '../reading/palettes'
+import type { Track } from '../tracks'
 
 export type { PaletteId }
 export const PALETTE_IDS: readonly PaletteId[] = READING_PALETTE_IDS
@@ -55,7 +56,10 @@ export interface SheetRecord {
 }
 
 export interface RecordData {
+  /** For Engineers, keyed by slug. The only map before D91, so its name stays. */
   sheets: { [slug: string]: SheetRecord }
+  /** D86, D91 — For Everyone, the same shape: completion is per track. */
+  everyoneSheets: { [slug: string]: SheetRecord }
   /** ISO dates (YYYY-MM-DD) on which anything was written. */
   days: string[]
   prefs: {
@@ -148,6 +152,7 @@ function deepFreeze<T>(value: T): T {
  */
 export const EMPTY_RECORD: RecordData = deepFreeze<RecordData>({
   sheets: {},
+  everyoneSheets: {},
   days: [],
   prefs: {
     charKeys: true,
@@ -167,6 +172,21 @@ export function carriesNothing(data: RecordData): boolean {
   if (data.days.length > 0) return false
   if (data.meta.lastExport !== null) return false
   return Object.values(data.sheets).every(isEmptySheetRecord)
+    && Object.values(data.everyoneSheets).every(isEmptySheetRecord)
+}
+
+/** D91 — the map a track's completions live in. */
+export function sheetsOf(data: RecordData, track: Track): RecordData['sheets'] {
+  return track === 'everyone' ? data.everyoneSheets : data.sheets
+}
+
+/**
+ * D91 — the record seen through one track: `sheets` is that track's map. Every
+ * selector in `derive.ts` reads `sheets`, so this is what lets each of them
+ * answer for either track without a second copy.
+ */
+export function trackView(data: RecordData, track: Track): RecordData {
+  return track === 'everyone' ? { ...data, sheets: data.everyoneSheets } : data
 }
 
 /**

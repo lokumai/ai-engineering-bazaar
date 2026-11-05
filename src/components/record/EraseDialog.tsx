@@ -38,7 +38,7 @@ import { useRecord } from '@/lib/record/store'
  *    Yes/No — and the decline label states the SAFE outcome without shame or
  *    loss framing. §12.14.1 bans confirmshaming, and its own example of the
  *    thing not to write is `No, I don't care about my progress`.
- *  - **`EXPORT YOUR RECORD` is inside the dialog**, so the safe path is one
+ *  - **`Back up to a file` is inside the dialog** (the data line's own words, M39 F2), so the safe path is one
  *    click from the destructive one rather than a route away from it.
  *
  * The typed confirmation gates the danger button with a real `disabled`, not an
@@ -87,14 +87,19 @@ export const ERASE_COPY = {
   confirmLabel: `Type ${ERASE_WORD} to confirm`,
   danger: 'Erase all data',
   decline: 'Keep my data',
-  export: 'EXPORT YOUR RECORD',
+  export: 'Back up to a file',
 } as const
 
 export function EraseDialog({
   onConfirm,
   onExport,
   exportedAt = null,
+  triggerLabel = ERASE_COPY.trigger,
+  triggerClassName = 'bz-btn bz-btn-danger',
 }: {
+  /** M39 F2 — the trigger's words and look; the progress page's data line says `Reset`. */
+  triggerLabel?: string
+  triggerClassName?: string
   /** Called once, on a confirmed erase. The caller holds the undo snapshot. */
   onConfirm: () => void
   /** §12.15 — the same export the panel runs, so there is one implementation. */
@@ -103,7 +108,7 @@ export function EraseDialog({
    * ISO instant of the last export this session took, or null.
    *
    * The safe path has to confirm itself where it was taken. A reader who
-   * clicks `EXPORT YOUR RECORD` inside this dialog and sees nothing change has
+   * clicks `Back up to a file` inside this dialog and sees nothing change has
    * no reason to believe the file exists, and the next thing they are being
    * offered is irreversible.
    */
@@ -126,7 +131,7 @@ export function EraseDialog({
 
   return (
     <Dialog.Root open={open} onOpenChange={onOpenChange}>
-      <Dialog.Trigger className="bz-btn bz-btn-danger">{ERASE_COPY.trigger}</Dialog.Trigger>
+      <Dialog.Trigger className={triggerClassName}>{triggerLabel}</Dialog.Trigger>
 
       <Dialog.Portal>
         <Dialog.Overlay className="bz-dialog-backdrop" />
@@ -186,7 +191,7 @@ export function EraseDialog({
               </button>
               {exportedAt !== null && (
                 <span className="text-mark self-center text-on-surface-muted" role="status">
-                  {`EXPORTED ${exportedAt.slice(0, 10)}`}
+                  {`Backed up ${exportedAt.slice(0, 10)}`}
                 </span>
               )}
             </div>

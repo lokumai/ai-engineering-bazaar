@@ -190,25 +190,33 @@ Next: agents that live with you and not in a repository, and what that does to e
 
 ## References
 
+### 📄 Articles
+
 - [Adversarial Prompting in LLMs](https://www.promptingguide.ai/risks/adversarial): the clear split between injection, leaking and jailbreaking. The pages below go deeper into each one
 - [Prompt Injection in LLMs](https://www.promptingguide.ai/prompts/adversarial-prompting/prompt-injection), [Prompt Leaking in LLMs](https://www.promptingguide.ai/prompts/adversarial-prompting/prompt-leaking) and [Jailbreaking LLMs](https://www.promptingguide.ai/prompts/adversarial-prompting/jailbreaking-llms): one page each, with examples you can run
 - [What Are AI Guardrails?](https://www.ibm.com/think/topics/ai-guardrails): the input-side and output-side split, stated plainly
-- [Guardrails AI](https://github.com/guardrails-ai/guardrails): validators around a model call, with retries when a check fails
-- [NeMo Guardrails](https://github.com/NVIDIA-NeMo/Guardrails): programmable rails for conversational systems
 - [LangChain guardrails](https://docs.langchain.com/oss/python/langchain/guardrails): the before-agent and after-agent middleware, plus PII and human-in-the-loop
+- [The Crescendo Multi-Turn LLM Jailbreak Attack](https://www.usenix.org/conference/usenixsecurity25/presentation/russinovich): benign questions that escalate gradually. It is the most important attack shape to understand
+- [DeepInception](https://arxiv.org/abs/2311.03191), [FlipAttack](https://arxiv.org/abs/2410.02832), [Sugar-Coated Poison](https://arxiv.org/abs/2504.05652) and [BreakFun](https://arxiv.org/abs/2510.17904): four more attack papers, ours last
+
+### 🛠️ Tools
+
 - [Prompt Guard 86M](https://huggingface.co/meta-llama/Prompt-Guard-86M): a small classifier that sorts input into benign, injection or jailbreak
 - [Llama Guard 4](https://developer.meta.com/ai/docs/model-cards-and-prompt-formats/llama-guard-4/): 12B, multimodal, 14 hazard categories, input and output
 - [Llama Guard 3](https://ollama.com/library/llama-guard3), [Granite 4.1 Guardian](https://ollama.com/library/granite4.1-guardian) and [ShieldGemma](https://ollama.com/library/shieldgemma): all three are on Ollama, so they are the easiest place to start locally
 - [gpt-oss-safeguard](https://ollama.com/library/gpt-oss-safeguard): judges against a policy you write, and shows its reasoning
 - [Llama 3.1 Nemotron Safety Guard 8B v3](https://build.nvidia.com/nvidia/llama-3_1-nemotron-safety-guard-8b-v3): 23 categories across 9 languages
+- [AI Red Teaming Agent](https://learn.microsoft.com/en-us/azure/foundry/concepts/ai-red-teaming-agent): automated probing that reports an attack success rate, built on PyRIT
+
+### 🗃️ Repositories
+
+- [Guardrails AI](https://github.com/guardrails-ai/guardrails): validators around a model call, with retries when a check fails
+- [NeMo Guardrails](https://github.com/NVIDIA-NeMo/Guardrails): programmable rails for conversational systems
 - [promptfoo](https://github.com/promptfoo/promptfoo): red teaming and scanning from a config, in CI
 - [deepteam](https://github.com/confident-ai/deepteam): a red-teaming framework for LLMs and agents
 - [OpenRT](https://github.com/AI45Lab/OpenRT): more than 40 attack methods for multimodal models
 - [PyRIT](https://github.com/microsoft/PyRIT): Microsoft's red-teaming framework, with Crescendo, TAP and PAIR as classes you can run
-- [AI Red Teaming Agent](https://learn.microsoft.com/en-us/azure/foundry/concepts/ai-red-teaming-agent): automated probing that reports an attack success rate, built on PyRIT
 - [AI Red Teaming Playground Labs](https://github.com/microsoft/AI-Red-Teaming-Playground-Labs): labs and infrastructure for learning this by doing it
 - [Strix](https://github.com/usestrix/strix), [Shannon](https://github.com/KeygraphHQ/shannon), [PentAGI](https://github.com/vxcontrol/pentagi) and [Pentest Swarm AI](https://github.com/Armur-Ai/Pentest-Swarm-AI): agents that do the penetration testing
 - [claude-red](https://github.com/SnailSploit/Claude-Red): offensive security as a skill library for an agent you already have
 - [security-audit-skill](https://github.com/cloudflare/security-audit-skill): the defensive half of the same mechanism, from Cloudflare, with every finding verified before it is reported
-- [The Crescendo Multi-Turn LLM Jailbreak Attack](https://www.usenix.org/conference/usenixsecurity25/presentation/russinovich): benign questions that escalate gradually. It is the most important attack shape to understand
-- [DeepInception](https://arxiv.org/abs/2311.03191), [FlipAttack](https://arxiv.org/abs/2410.02832), [Sugar-Coated Poison](https://arxiv.org/abs/2504.05652) and [BreakFun](https://arxiv.org/abs/2510.17904): four more attack papers, ours last

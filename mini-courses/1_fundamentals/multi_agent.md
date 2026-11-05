@@ -202,8 +202,13 @@ difference between shared and isolated context?
 
 ## References
 
+### 📄 Articles
+
 - [Multi-agent systems](https://docs.langchain.com/oss/python/langchain/multi-agent): the patterns, in more depth
 - [LangGraph multi-agent concepts](https://langchain-ai.github.io/langgraph/concepts/multi_agent/): supervisor, network and the rest, with code
 - [What is an agent?](https://www.langchain.com/blog/what-is-an-agent): worth reading again here, because a supervisor is a decision about autonomy
+
+### 🧭 Modules
+
 - [AI Agents](agents.md): the single loop that all of this is built from
 - [Advanced Multi-Agent](../3_expert/advanced_multiagent.md): shared and isolated context, and agent-to-agent protocols

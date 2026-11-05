@@ -54,15 +54,11 @@ const CONTROL_C = '/profile/'
 const SEEDED = A0
 const SEEDED_SLUG = slugOf(SEEDED)
 
-/* M18 — `CONTINUE` was `.bz-home-continue`, the returning reader's shortcut on
-   the home page and the only thing on it keyed off the record. The author had
-   the block removed, so the probe below no longer reads it; `data-hl-record` is
-   still stamped and `home.spec.ts` asserts the stamp itself, which is what
-   §15.11 is actually about. */
-
 /** Control C's own selectors (D14). */
-const LEVEL_CARD = '.bz-cc-level'
-const MODULE_ROW = '.bz-cmod'
+// M39 F2 — the progress page holds both tracks' cards; these are For Engineers'.
+const ENGINEERS = '[data-track="engineers"]'
+const LEVEL_CARD = `${ENGINEERS} .bz-cc-level`
+const MODULE_ROW = `${ENGINEERS} .bz-cmod`
 const TICK = '.bz-cmod-mark'
 /**
  * The word that states the completion to an assistive technology. It is the
@@ -108,8 +104,6 @@ function saidRevealed(page: Page, module: number): Promise<boolean> {
  * quietly.
  */
 interface ControlCPaint {
-  /** `data-hl-record="1"` — the boot script found a readable record. */
-  record: string | null
   /** The module numbers whose completion tick was visible in that frame. */
   ticked: number[]
   /** How many module rows had been parsed when the reading was taken. */
@@ -154,7 +148,6 @@ async function probeControlCPaint(page: Page): Promise<void> {
           if (mark?.checkVisibility() === true) ticked.push(number)
         }
         ;(window as unknown as ControlCPaintWindow).__hlControlCPaint = {
-          record: document.documentElement.getAttribute('data-hl-record'),
           ticked: ticked.sort((a, b) => a - b),
           rows: rows.length,
           hydrated: readout?.getAttribute('data-hydrated') ?? null,
@@ -171,7 +164,7 @@ function controlCPaint(page: Page): Promise<ControlCPaint | undefined> {
   return page.evaluate(() => (window as unknown as ControlCPaintWindow).__hlControlCPaint)
 }
 
-/** A record with one module completed — enough for `data-hl-record="1"`. */
+/** A record with one module completed. */
 function seedOneCompletion(page: Page): Promise<void> {
   return seedRecord(page, { sheets: { [SEEDED_SLUG]: signedSheet('b7225f8') } })
 }
@@ -199,8 +192,6 @@ test('a reader’s completions are ticked in frame one, with no JavaScript at al
   await page.route('**/*.js', (route) => route.abort())
   await page.goto(CONTROL_C, { waitUntil: 'domcontentloaded' })
 
-  expect((await firstPaint(page))!.record).toBe('1')
-
   const painted = await controlCPaint(page)
   expect(painted, 'the first-paint probe never ran').toBeDefined()
   expect(painted!.rows, 'no module rows were parsed').toBe(SHEET_COUNT)
@@ -209,12 +200,6 @@ test('a reader’s completions are ticked in frame one, with no JavaScript at al
   expect(painted!.ticked, `after ${painted!.frames} frame(s)`).toEqual(
     [SEEDED.module, second.module].sort((a, b) => a - b),
   )
-  /* M18 — the returning reader's shortcut was read in this same frame and the
-     author had it removed from the home page. What the assertion was about is
-     unchanged and is asserted two lines above by the STAMP itself:
-     `data-hl-record` is `1` before first paint, and it is the one thing on
-     channel A that knows the reader at all. `home.spec.ts` holds §15.11's own
-     cases on that attribute. */
   // And it is genuinely pre-React: the footer's strip still publishes the
   // prerendered `false`, which is the state channel B leaves. It cannot say
   // anything else here — every module was refused — which is what makes the
@@ -239,8 +224,8 @@ test('the counts arrive after mount, and the ticks do not move', async ({ page }
   await expect(page.locator('.bz-readout[data-hydrated="true"]').first()).toBeAttached()
   await expect(page.locator(`${MODULE_ROW}[data-module="${SEEDED.module}"] ${TICK}`)).toBeVisible()
 
-  // The three numbers, which are `--` until the store has answered.
-  const numbers = page.locator('.bz-cc-stats')
+  // The tab's count, which is `--` until the store has answered (M39 F2).
+  const numbers = page.locator('.bz-ptab[data-track-id="engineers"] .bz-ptab-count')
   await expect(numbers).toContainText(`1 of ${SHEET_COUNT}`)
   await expect(numbers).not.toContainText('--')
 
@@ -276,7 +261,7 @@ test('control C completes a module from the progress page, and takes it back', a
   await expect
     .poll(() => saidRevealed(page, target.module), { timeout: 3_000 })
     .toBe(true)
-  await expect(page.locator('.bz-cc-stats')).toContainText(`1 of ${SHEET_COUNT}`)
+  await expect(page.locator('.bz-ptab[data-track-id="engineers"] .bz-ptab-count')).toContainText(`1 of ${SHEET_COUNT}`)
   const stored = await waitForRecord(
     page,
     (envelope) => envelope?.data.sheets[slugOf(target)]?.signedOff != null,
@@ -508,7 +493,7 @@ test('every number control C prints is derived from the modules it is printed be
      bare attribute selector picked them up, which is the failure this test
      produced on its first run here. On the home page the dials were the only
      consumer, so the selector had never had to say which it meant. */
-  const dial = '.bz-dial-value [data-hl-cat-tally]'
+  const dial = `${ENGINEERS} .bz-dial-value [data-hl-cat-tally]`
   await expect(page.locator(dial).first()).toHaveText(/\/\d+$/)
   const dials = await page.locator(dial).allInnerTexts()
   expect(dials.length, 'no level states a tally').toBeGreaterThan(0)

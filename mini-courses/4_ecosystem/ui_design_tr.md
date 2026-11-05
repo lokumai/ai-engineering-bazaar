@@ -93,7 +93,15 @@ Bunların hiçbiri, ekranın ne işe yaradığına dair bir yargı sunmaz; eriş
 
 ## Kaynaklar
 
-- [Google Stitch](https://stitch.withgoogle.com/): bir prompt'u, bir görseli ya da bir çizimi gerçek bir arayüze dönüştürür ve tek tıkla Figma'ya aktarır
+### 📄 Makaleler
+
 - [From idea to app: Introducing Stitch](https://developers.googleblog.com/stitch-a-new-way-to-design-uis/): Google'ın kendi duyurusu. DESIGN.md kuralının nereden çıktığını da burada görebilirsin.
+
+### 🛠️ Araçlar
+
+- [Google Stitch](https://stitch.withgoogle.com/): bir prompt'u, bir görseli ya da bir çizimi gerçek bir arayüze dönüştürür ve tek tıkla Figma'ya aktarır
 - [Claude Design](https://claude.ai/design): gerçek kod olarak prototipler üretir ve bir codebase'deki design system'i okuyabilir
+
+### 🗃️ Repolar
+
 - [awesome-design-md](https://github.com/VoltAgent/awesome-design-md): tanınmış markalar için hazır DESIGN.md dosyaları, böylece etkisini tek bir denemede görebilirsin

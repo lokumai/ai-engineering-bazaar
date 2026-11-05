@@ -1,6 +1,6 @@
 import { expect, test } from '@playwright/test'
 import { A0, INDEX_SHEET, SHEETS, SHORT } from './sheets'
-import { openRegisterRow, seedRecord, signedSheet, waitForHydratedReadout } from './record'
+import { seedRecord, signedSheet } from './record'
 import {
   APP_SELECTORS,
   AUTHOR_DEVIATIONS,
@@ -8,13 +8,10 @@ import {
   CATALOG_URL,
   DELIBERATELY_ABSENT,
   DESIGN_FACTS,
-  NARROW_DEVIATIONS,
   freezeMotion,
   FACT_KEYS,
   MOCKUP_SELECTORS,
   MOCKUP_URL,
-  DASHBOARD_SELECTORS,
-  DASHBOARD_URL,
   HOME_SELECTORS,
   HOME_URL,
   PROGRESS_SELECTORS,
@@ -970,7 +967,8 @@ test.describe('M16 stage 7 — completion', () => {
    * that is where these are read. The component and the mockup are unchanged;
    * only the count of surfaces that draw it moved, from two to one.
    */
-  const BUILT: readonly Role[] = ['levelCard', 'dial', 'dialValue', 'statRow', 'legendKey']
+  // The stats row left the progress page in M39 F2; the tabs carry the counts.
+  const BUILT: readonly Role[] = ['levelCard', 'dial', 'dialValue', 'legendKey']
 
   test('is indistinguishable from `05`, in every length the overview carries', async ({ page }) => {
     await page.goto(PROGRESS_URL)
@@ -1100,54 +1098,6 @@ test.describe('M16 stage 7 — completion', () => {
 
 test.describe('M16 stage 8 — progress and account', () => {
   /**
-   * `07`-A, on `/profile/` — the route that absorbed `/dashboard/`, `/path/`
-   * and `/report/`.
-   *
-   * The hero is gated on BOTH channels, and this docblock used to claim the
-   * wrong one. `nextUnsigned` returns the FIRST drawn module for an empty
-   * record, not `null`, so "renders nothing until the store has answered" was
-   * never true and the prerendered page shipped a populated shortcut to every
-   * reader — the defect a review found and **D55** records. The box is gated on
-   * channel A by `data-hl-record`; the CONTENT is channel B, because a module's
-   * title is text and channel A stamps classes. Which is why this seeds a
-   * record and waits for the readout before extracting: without a record the
-   * box is `display: none` and the comparison would agree with itself about
-   * nothing.
-   */
-  // The panel and the field left this page on 2026-11-05 with the account
-  // block and the settings rows; stage 10 still compares both against `07`, on
-  // `/sign-in/alias/`.
-  const BUILT: readonly Role[] = ['continueHero', 'continueNum']
-
-  test('is indistinguishable from `07`, in every length it specifies', async ({ page }) => {
-    await page.goto(DASHBOARD_URL)
-    await freezeMotion(page)
-    const reference = await extractDesignFacts(page, DASHBOARD_SELECTORS)
-
-    await seedRecord(page, { sheets: { 'fundamentals/llms': signedSheet('a1b2c3d') } })
-    await page.goto('/profile/')
-    await waitForHydratedReadout(page)
-    // The erase dialog holds the only danger button on the page, and a closed
-    // `<details>` has no box for `getComputedStyle` to answer about.
-    await openRegisterRow(page, 'data')
-    await freezeMotion(page)
-    const actual = await extractDesignFacts(page, APP_SELECTORS)
-
-    const shown = (facts: Record<string, string | null>, role: Role) =>
-      FACT_KEYS.filter((key) => key.startsWith(`${role}.`)).some((key) => facts[key] !== null)
-
-    for (const role of BUILT) {
-      expect(
-        shown(actual, role),
-        `${role}: mockup ${shown(reference, role)}, page ${shown(actual, role)}`,
-      ).toBe(shown(reference, role))
-    }
-    expect(BUILT.every((role) => shown(reference, role)), 'a role `07` does not draw').toBe(true)
-
-    expect(differencesAt(reference, actual, BUILT, page.viewportSize()!.width)).toEqual([])
-  })
-
-  /**
    * `07:88-89` draws the destructive control as a COLOUR-ONLY modifier — "it
    * changes nothing geometric" — and that claim cannot be checked against `07`,
    * because `07`'s button geometry is `07`'s and the product's is `01`'s.
@@ -1157,9 +1107,10 @@ test.describe('M16 stage 8 — progress and account', () => {
    */
   test('draws the destructive control as a colour and nothing else', async ({ page }) => {
     await page.goto('/profile/')
-    // The danger button is the erase row's trigger, and the row is a
-    // `<details>` with no rendered box while it is closed.
-    await openRegisterRow(page, 'data')
+    // The danger button is in the erase dialog since M39 F2, which the data
+    // line's `Reset` opens; the dialog's other buttons are the plain ones.
+    await page.getByRole('button', { name: 'Reset', exact: true }).click()
+    await expect(page.locator('[role="dialog"]')).toBeVisible()
 
     const measured = await page.evaluate(() => {
       const read = (node: Element) => {
@@ -1207,77 +1158,6 @@ test.describe('M16 stage 8 — progress and account', () => {
     )
   })
 
-  /**
-   * §15.11 — the shortcut is offered only to a reader who has a record, and
-   * this is the test whose absence let it ship to everybody.
-   *
-   * `/profile/`'s hero had NO gate: the prerendered page carried a populated
-   * "Continue where you left off → LLM Fundamentals" for every reader,
-   * including a fresh browser, and with the bundle blocked it never corrected.
-   * The component's own docblock claimed it rendered nothing until the store
-   * answered — `nextUnsigned` returns the FIRST drawn module for an empty
-   * record, not `null`, so it never did.
-   *
-   * Measured with every `.js` request refused, because the gate is channel A
-   * and nothing React does may be what makes it true. The equivalent test for
-   * the home page's shortcut is in the stage 9 block.
-   */
-  test('offers the continue hero only to a reader with a record, in frame one', async ({ page }) => {
-    await page.route('**/*.js', (route) => route.abort())
-
-    await page.goto('/profile/')
-    const clean = await page.evaluate(() => {
-      const hero = document.querySelector('.bz-cont') as HTMLElement | null
-      return {
-        stamped: document.documentElement.hasAttribute('data-hl-record'),
-        present: hero !== null,
-        shown: hero?.checkVisibility() ?? null,
-        // What it would have claimed if it were shown.
-        eyebrow: (document.querySelector('.bz-cont-eyebrow')?.textContent ?? '').trim(),
-      }
-    })
-    expect(clean.stamped, 'a fresh browser was stamped as carrying a record').toBe(false)
-    expect(clean.present, 'no continue hero in the document at all').toBe(true)
-    expect(clean.shown, 'a fresh browser is offered a shortcut it has not earned').toBe(false)
-    // And the copy does not claim a reader with no completions left off
-    // somewhere — the mockup draws one state and there are two.
-    expect(clean.eyebrow).toBe('Start with')
-
-    await seedRecord(page, { sheets: { 'fundamentals/llms': signedSheet('a1b2c3d') } })
-    await page.goto('/profile/')
-    const returning = await page.evaluate(() => ({
-      stamped: document.documentElement.hasAttribute('data-hl-record'),
-      shown: (document.querySelector('.bz-cont') as HTMLElement).checkVisibility(),
-    }))
-    expect(returning.stamped).toBe(true)
-    expect(returning.shown, 'a reader with a record is not offered the shortcut').toBe(true)
-  })
-
-  /**
-   * THE MUTATION. Pointed at the continue card's padding: `07` states 11px and
-   * the language holds 8px on the radius deliberately, so the padding is the
-   * one of the two that is meant to agree and is therefore the one worth
-   * proving can disagree. The panel's own mutation is stage 10's now, on the
-   * route that still draws one.
-   */
-  test('notices when the continue card stops taking `07`\'s padding', async ({ page }) => {
-    await page.goto(DASHBOARD_URL)
-    await freezeMotion(page)
-    const reference = await extractDesignFacts(page, DASHBOARD_SELECTORS)
-
-    await seedRecord(page, { sheets: { 'fundamentals/llms': signedSheet('a1b2c3d') } })
-    await page.goto('/profile/')
-    await waitForHydratedReadout(page)
-    await freezeMotion(page)
-    await page.addStyleTag({
-      content: '.bz-cont { padding-top: 4px !important; padding-left: 4px !important; }',
-    })
-    const mutated = await extractDesignFacts(page, APP_SELECTORS)
-
-    const facts = differencesIn(reference, mutated, BUILT).map((one) => one.fact)
-    expect(facts).toContain('continueHero.paddingTop')
-    expect(facts).toContain('continueHero.paddingLeft')
-  })
 })
 
 test.describe('M27 — the front door, from `10` (D79)', () => {

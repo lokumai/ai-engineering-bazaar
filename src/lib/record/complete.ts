@@ -1,5 +1,6 @@
 import { signOff, unsign } from './events'
-import type { RecordData } from './schema'
+import { sheetsOf, type RecordData } from './schema'
+import type { Track } from '../tracks'
 import { nowIso, requestPersistence, update } from './store'
 
 /**
@@ -50,17 +51,19 @@ export function toggleCompletion(
   record: RecordData,
   slug: string,
   revision: string | null = null,
+  track: Track = 'engineers',
 ): CompletionOutcome {
-  if ((record.sheets[slug]?.signedOff ?? null) !== null) {
-    update((data) => unsign(data, slug))
+  if ((sheetsOf(record, track)[slug]?.signedOff ?? null) !== null) {
+    update((data) => unsign(data, slug, track))
     return { completed: false, first: false }
   }
 
   const now = nowIso()
   // The first completion on this record is the one genuine user gesture
   // §12.1.6 allows `navigator.storage.persist()` to be asked on.
-  const first = Object.values(record.sheets).every((sheet) => sheet.signedOff === null)
-  update((data) => signOff(data, slug, revision, now))
+  const first = [...Object.values(record.sheets), ...Object.values(record.everyoneSheets)]
+    .every((sheet) => sheet.signedOff === null)
+  update((data) => signOff(data, slug, revision, now, track))
   if (first) void requestPersistence()
 
   return { completed: true, first }

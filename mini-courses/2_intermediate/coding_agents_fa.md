@@ -234,17 +234,25 @@ coding agent خیلی قوی‌تر از چیزیه که از اسمش برمی�
 
 ## منابع
 
+### 📄 مقاله‌ها
+
 - [Claude Code features](https://code.claude.com/docs/en/agent-sdk/claude-code-features): همه‌ی راه‌های گسترش روی یه صفحه، که می‌شه مثل یه چک‌لیست ازش استفاده کرد تا ببینی agent خودت کدوم‌ها رو پشتیبانی می‌کنه
-- [agents.md](https://agents.md/): فرمت باز، از جمله اینکه فایل‌های تودرتو توی یه monorepo چطور کار می‌کنن
 - [How Claude remembers your project](https://code.claude.com/docs/en/memory): فرق CLAUDE.md و auto memory، و اینکه فایل‌ها کجا نگه داشته می‌شن
 - [Connect to MCP servers](https://code.claude.com/docs/en/mcp-quickstart): اضافه کردن یه server از اول تا آخر، و اینکه اگه وصل نشد چی رو چک کنی
-- [awesome-mcp-servers](https://github.com/punkpeye/awesome-mcp-servers): لیست community، برای اینکه ببینی tool‌ی که می‌خوای از قبل ساخته شده یا نه
 - [Equipping agents for the real world with Agent Skills](https://www.anthropic.com/engineering/equipping-agents-for-the-real-world-with-agent-skills): جایی که progressive disclosure درست و حسابی توضیح داده شده
 - [Extend Claude with skills](https://code.claude.com/docs/en/skills): نسخه‌ی کاربردی، از جمله دو فیلدی که تعیین می‌کنن کی اجازه داره یه skill رو صدا بزنه
+- [Hooks reference](https://code.claude.com/docs/en/hooks): همه‌ی event‌های چرخه‌ی کار agent، و ورودی‌ای که هر کدوم می‌گیره
+- [Discover plugins](https://code.claude.com/docs/en/discover-plugins) و [plugins reference](https://code.claude.com/docs/en/plugins-reference): اول اینکه plugin چطور نصب می‌شه، بعد اینکه چطور یکی بسازی
+
+### 🛠️ ابزارها
+
+- [agents.md](https://agents.md/): فرمت باز، از جمله اینکه فایل‌های تودرتو توی یه monorepo چطور کار می‌کنن
+- [Artificial Analysis](https://artificialanalysis.ai/): عددهای benchmark هر مدل با هر تنظیم reasoning، اگه می‌خوای ببینی effort چی بهت می‌ده
+
+### 🗃️ Repository‌ها
+
+- [awesome-mcp-servers](https://github.com/punkpeye/awesome-mcp-servers): لیست community، برای اینکه ببینی tool‌ی که می‌خوای از قبل ساخته شده یا نه
 - [anthropics/skills](https://github.com/anthropics/skills): مجموعه‌ی رسمی skill‌ها
 - [awesome-claude](https://github.com/webfuse-com/awesome-claude): یه لیست دست‌چین‌شده‌ی گسترده‌تر از ابزارهای Claude
 - [awesome-claude-code-subagents](https://github.com/VoltAgent/awesome-claude-code-subagents): بیشتر از صد تعریف subagent که می‌تونی ازشون شروع کنی
-- [Hooks reference](https://code.claude.com/docs/en/hooks): همه‌ی event‌های چرخه‌ی کار agent، و ورودی‌ای که هر کدوم می‌گیره
-- [Discover plugins](https://code.claude.com/docs/en/discover-plugins) و [plugins reference](https://code.claude.com/docs/en/plugins-reference): اول اینکه plugin چطور نصب می‌شه، بعد اینکه چطور یکی بسازی
 - [claude-plugins-official](https://github.com/anthropics/claude-plugins-official): فهرست plugin‌هایی که خود Anthropic مدیریتش می‌کنه
-- [Artificial Analysis](https://artificialanalysis.ai/): عددهای benchmark هر مدل با هر تنظیم reasoning، اگه می‌خوای ببینی effort چی بهت می‌ده

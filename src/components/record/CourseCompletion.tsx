@@ -4,14 +4,9 @@ import Link from 'next/link'
 import { CategoryTally } from '@/components/course/CategoryTally'
 import type { CategorySlug } from '@/lib/content/categories'
 import { toggleCompletion } from '@/lib/record/complete'
-import {
-  readingMinutes,
-  signedCount,
-  uptime,
-  type CurriculumFacts,
-} from '@/lib/record/derive'
-import { nowIso, useHydrated, useRecord } from '@/lib/record/store'
-import { hoursMinutes, plural } from '@/lib/text'
+import type { CurriculumFacts } from '@/lib/record/derive'
+import { useRecord } from '@/lib/record/store'
+import type { Track } from '@/lib/tracks'
 
 /**
  * D14 — COMPLETION CONTROL C: the whole course, visible and adjustable.
@@ -104,8 +99,9 @@ export interface CompletionLevel {
  * number, because a module's number is its position and moves when the course
  * is reordered, while its slug is its identity.
  */
-function saidId(slug: string): string {
-  return `hl-cmod-said-${slug}`
+function saidId(slug: string, track: Track): string {
+  // D91 — the track in the id: the progress page holds both tracks' cards.
+  return `hl-cmod-said-${track === 'everyone' ? 'e-' : ''}${slug}`
 }
 
 function Tick() {
@@ -133,66 +129,22 @@ export function CourseCompletion({
   facts,
   levels,
   headingId,
+  track = 'engineers',
 }: {
-  /** `curriculumFacts()`, for the three counts. Measured by the page (§12.2). */
+  /** `curriculumFacts()`, for the level tallies. Measured by the page (§12.2). */
   facts: CurriculumFacts
   levels: readonly CompletionLevel[]
   /** The id of the heading this control is labelled by. */
   headingId: string
+  /** D91 — whose completions these cards show and write. */
+  track?: Track
 }) {
-  const record = useRecord()
-  const hydrated = useHydrated()
-
-  const counts = signedCount(record, facts)
-  const minutes = readingMinutes(record, facts)
-  /**
-   * The clock is read only once the store has answered, which is after the
-   * hydration commit and never in the first client render — which has to match
-   * the server's. UTC, the basis `store.ts` writes days in, so the reading
-   * cannot change on a flight.
-   */
-  const streak = hydrated ? uptime(record, nowIso().slice(0, 10)).streak : null
+  const full = useRecord()
 
   return (
-    <section className="bz-cc" aria-labelledby={headingId}>
-      {/* O2's answer, in three readings. `XP`, `Rank` and `I at 8` are gone
-          because nobody could name the question they answered; what is left is
-          three quantities a reader already thinks in. Each is derived, each
-          prints `--` until the store has answered, and each has exactly one
-          implementation in `lib/record/derive.ts`. */}
-      <dl className="bz-cc-stats">
-        <div>
-          <dt>Modules completed</dt>
-          <dd>
-            <span className="bz-cc-stat-value">
-              {hydrated ? counts.signed : NO_READING}
-            </span>{' '}
-            of {counts.of}
-          </dd>
-        </div>
-        <div>
-          <dt>Reading time</dt>
-          <dd>
-            <span className="bz-cc-stat-value">
-              {hydrated ? hoursMinutes(minutes.done) : NO_READING}
-            </span>{' '}
-            of {hoursMinutes(minutes.of)}
-          </dd>
-        </div>
-        <div>
-          <dt>Days in a row</dt>
-          <dd>
-            <span className="bz-cc-stat-value">{streak === null ? NO_READING : streak}</span>{' '}
-            {streak === 1 ? 'day' : 'days'}
-          </dd>
-        </div>
-      </dl>
-
+    <section className="bz-cc" aria-labelledby={headingId} data-track={track}>
       <ul className="bz-cc-levels">
         {levels.map((level) => {
-          const ready = level.modules.filter((one) => one.drawn)
-          const planned = level.modules.length - ready.length
-
           return (
             <li key={level.slug} className="bz-cc-level" data-cat={level.slug}>
               <div className="bz-cc-head">
@@ -269,8 +221,8 @@ export function CourseCompletion({
                         // this the word was in the row but not on the button,
                         // and a reader who focused the button was told the
                         // action and never the state.
-                        aria-describedby={saidId(one.slug)}
-                        onClick={() => toggleCompletion(record, one.slug)}
+                        aria-describedby={saidId(one.slug, track)}
+                        onClick={() => toggleCompletion(full, one.slug, null, track)}
                       >
                         <Tick />
                       </button>
@@ -311,7 +263,7 @@ export function CourseCompletion({
                         is never announced; and it carries its own class rather
                         than the disc's, because sharing `bz-cmod-mark` made
                         that selector match two elements per row. */}
-                    <span id={saidId(one.slug)} className="bz-cmod-said">
+                    <span id={saidId(one.slug, track)} className="bz-cmod-said">
                       Complete
                     </span>
                   </li>
@@ -345,7 +297,7 @@ export function CourseCompletion({
           meters drew. It renders nothing of its own, and with scripting off
           every cell keeps the dash, which is the true statement that no record
           was read. */}
-      <CategoryTally facts={facts} />
+      <CategoryTally facts={facts} track={track} />
     </section>
   )
 }

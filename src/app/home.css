@@ -679,9 +679,11 @@
     padding: clamp(40px, 6vw, 72px) 16px clamp(56px, 7vw, 96px);
     text-align: center;
     border-top: 6px solid var(--color-category-5);
-    /* The wall is plain. The concept ruled it in 49px courses with no joints between them,
-       which read as notebook lines running behind the doors. */
-    background: linear-gradient(to bottom, var(--color-surface) calc(100% - 64px), var(--color-surface-sunken) calc(100% - 64px));
+    /* The wall's 49px courses are the mockup's (`10-home-bazaar-street.html`),
+       which outranks a reviewer's reading of them as stray lines. */
+    background:
+      linear-gradient(to bottom, transparent calc(100% - 64px), var(--color-surface-sunken) calc(100% - 64px)),
+      repeating-linear-gradient(to bottom, var(--color-surface) 0 47px, var(--color-line) 47px 49px);
   }
 
   .bz-street .doors {

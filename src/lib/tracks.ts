@@ -124,8 +124,10 @@ export function readingTrackOf(pathname: string, hydrated: boolean): Track {
  */
 export const TRACK_EVENT = 'bz-track'
 
-export function chooseTrack(track: Track): void {
-  rememberTrack(track)
+export function chooseTrack(track: Track, remember: boolean = true): void {
+  // The home page's signs pass `false`: their choice is not kept (D86), so the
+  // bar shows it on this page and the tab does not remember it.
+  if (remember) rememberTrack(track)
   document.documentElement.setAttribute('data-bz-track', track)
   window.dispatchEvent(new CustomEvent<Track>(TRACK_EVENT, { detail: track }))
 }

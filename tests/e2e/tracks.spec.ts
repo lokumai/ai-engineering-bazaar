@@ -183,3 +183,25 @@ test('both track tablists follow the ARIA tabs pattern: one tab stop, arrows mov
   await expect(focused).toHaveAttribute('aria-selected', 'true')
   await expect(focused).toHaveAttribute('tabindex', '0')
 })
+
+test('the home page\'s signs and the bar agree, both ways, and a sign keeps nothing', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' })
+  await page.goto('/')
+  await waitForHydratedReadout(page)
+  const bar = page.getByRole('navigation', { name: 'Track' })
+  const doors = () => page.locator('.bz-street .door').evaluateAll((all) =>
+    all.map((door) => new URL((door as HTMLAnchorElement).href).pathname))
+
+  // A sign: the bar shows the choice, and the tab does not remember it (D86).
+  await page.locator('.bz-street [data-choose="all"]').click()
+  await expect(bar.getByRole('link', { name: /For Everyone/ })).toHaveAttribute('aria-current', 'true')
+  expect(await page.evaluate(() => sessionStorage.getItem('hl-track'))).toBeNull()
+  expect((await doors()).every((path) => path.includes('/everyone/'))).toBe(true)
+
+  // The bar: the doors follow, and no sign claims the reader pressed it.
+  await bar.getByRole('link', { name: /For Engineers/ }).click()
+  await expect(page).toHaveURL(/\/$/)
+  await expect.poll(async () => (await doors()).some((path) => path.includes('/everyone/'))).toBe(false)
+  await expect(page.locator('.bz-street [data-choose][aria-pressed="true"]')).toHaveCount(0)
+  expect(await readRawRecord(page)).toBeNull()
+})

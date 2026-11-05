@@ -9,10 +9,15 @@
  * the doors open For Engineers, and a link checker that reads `href` finds
  * the address that always exists. This module is the half that swaps.
  *
- * **Nothing is saved.** No cookie, no `localStorage`: a reader who comes back
- * meets the same question, which is what the author asked for. The choice
+ * **Nothing is saved.** No cookie, no storage: a reader who comes back meets
+ * the same question, which is what the author asked for (D86). The choice
  * lives in the page's attributes (`data-track` on the street, `aria-pressed` on
- * the signs, the `href` of each door) and goes with the page.
+ * the signs, the `href` of each door) and goes with the page; the bar shows it
+ * too (`chooseTrack` with `remember` off).
+ *
+ * **And the doors follow the bar** (D91): the bar's switch on this page, or a
+ * track this tab already read in, sets which way they open, with no sign
+ * pressed, since the reader has not answered the question here.
  *
  * **Why the click is taken over, and not only the `href`.** The doors are
  * `next/link`s, and a Link navigates with the address React rendered it with,
@@ -26,7 +31,12 @@
  * works the moment the page does, before GSAP has arrived.
  */
 
+import { TRACK_EVENT, type Track as SiteTrack, chooseTrack, lastTrack } from '@/lib/tracks'
+
 export type Track = 'eng' | 'all'
+
+const SITE: Record<Track, SiteTrack> = { eng: 'engineers', all: 'everyone' }
+const LOCAL: Record<SiteTrack, Track> = { engineers: 'eng', everyone: 'all' }
 
 const NAME: Record<Track, string> = { eng: 'For Engineers', all: 'For Everyone' }
 const OTHER: Record<Track, Track> = { eng: 'all', all: 'eng' }
@@ -75,13 +85,20 @@ export function initTrack(root: HTMLElement, go: (path: string) => void): () => 
     const sign = target.closest<HTMLElement>('[data-choose]')
     if (sign !== null && root.contains(sign)) {
       apply(sign.dataset.choose as Track, true)
+      chooseTrack(SITE[track], false)
       root.dispatchEvent(new CustomEvent(CHOSEN))
       return
     }
     if (target.closest('[data-switch]') !== null) {
       apply(OTHER[track], true)
+      chooseTrack(SITE[track], false)
       return
     }
+  }
+
+  const onTrack = (event: Event) => {
+    const next = LOCAL[(event as CustomEvent<SiteTrack>).detail]
+    if (next !== undefined && next !== track) apply(next, false)
   }
 
   const onDoor = (event: MouseEvent) => {
@@ -97,11 +114,14 @@ export function initTrack(root: HTMLElement, go: (path: string) => void): () => 
 
   root.addEventListener('click', onClick)
   root.addEventListener('click', onDoor, true)
+  window.addEventListener(TRACK_EVENT, onTrack)
   switches.forEach((sw) => { sw.hidden = false })
+  if (lastTrack() === 'everyone') apply('all', false)
 
   return () => {
     root.removeEventListener('click', onClick)
     root.removeEventListener('click', onDoor, true)
+    window.removeEventListener(TRACK_EVENT, onTrack)
     switches.forEach((sw) => { sw.hidden = true })
     /* Back to what the server wrote, which is what a reader meets on coming back. */
     apply('eng', false)

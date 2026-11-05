@@ -21,7 +21,7 @@ description: >
 authority: state
 writes: agent, every session
 status: active
-covers: "M16 to M40 and M42 to M45 (M41 on PR #57), 2026-09-09 onward — M16 the ten stages and the review pass, M17 the curriculum fold, M18 the front door, M20 the catalog's descriptions, M21 the module page, M22 the progress redesign and M19's pipeline, all six done; M23 — the interface's own strings — is written and not started; M24 — the author's requests of 2026-10-11 — shipped and merged as PR #23, with a same-day follow-up (the level chip `All`, a filter bar that no longer sticks, the current level marked); M25 — the end of a module rebuilt, and a quick quiz — shipped and merged as PR #25; M26 — headings, the requested additions and ASD-STE-like English across the corpus — merged as PR #26. M27 — the Bazaar Street front door — merged as PR #27. Released as v1.0.0 on 2026-10-12. M28 — Persian, the third language — merged as PR #30 the same day. M29 — both translations rewritten in their own language (D81) — merged as PR #31 the same day. M30 — the Persian rewritten by meaning and a clarity hunt in all three languages (D82, D83) — merged as PR #32 the same day. M31 — two promo videos, one made with HyperFrames and one with /brag (D84) — removed at the author's request before merging. M32 — the README rewritten for readers — squash-merged as PR #33 on 2026-10-13. M33 — a tray of lokum offered at each door on hover — merged as PR #34 on 2026-10-14. M34 — the star count refreshed by the deploy (D85) — merged as PR #36 on 2026-10-15. M35 — Harness Engineering names its parts in plain words — merged as PR #38 on 2026-10-15. M36 — three references for Observability and Context Engineering — merged as PR #42 on 2026-10-18. M37 — ten stale mockups removed from playground/ — merged as PR #54 on 2026-11-05. M38 — the progress page slimmed to its circles, the continue card and the data row — merged as PR #55 on 2026-11-05. Checkbox format repaired across the part on 2026-09-13."
+covers: "M16 to M40 and M42 to M45 (M41 on PR #57), 2026-09-09 onward — M16 the ten stages and the review pass, M17 the curriculum fold, M18 the front door, M20 the catalog's descriptions, M21 the module page, M22 the progress redesign and M19's pipeline, all six done; M23 — the interface's own strings — is written and not started; M24 — the author's requests of 2026-10-11 — shipped and merged as PR #23, with a same-day follow-up (the level chip `All`, a filter bar that no longer sticks, the current level marked); M25 — the end of a module rebuilt, and a quick quiz — shipped and merged as PR #25; M26 — headings, the requested additions and ASD-STE-like English across the corpus — merged as PR #26. M27 — the Bazaar Street front door — merged as PR #27. Released as v1.0.0 on 2026-10-12. M28 — Persian, the third language — merged as PR #30 the same day. M29 — both translations rewritten in their own language (D81) — merged as PR #31 the same day. M30 — the Persian rewritten by meaning and a clarity hunt in all three languages (D82, D83) — merged as PR #32 the same day. M31 — two promo videos, one made with HyperFrames and one with /brag (D84) — removed at the author's request before merging. M32 — the README rewritten for readers — squash-merged as PR #33 on 2026-10-13. M33 — a tray of lokum offered at each door on hover — merged as PR #34 on 2026-10-14. M34 — the star count refreshed by the deploy (D85) — merged as PR #36 on 2026-10-15. M35 — Harness Engineering names its parts in plain words — merged as PR #38 on 2026-10-15. M36 — three references for Observability and Context Engineering — merged as PR #42 on 2026-10-18. M37 — ten stale mockups removed from playground/ — merged as PR #54 on 2026-11-05. M38 — the progress page slimmed to its circles, the continue card and the data row — merged as PR #55 on 2026-11-05. M43 to M45 — the round-2 picks (D91) — merged as PR #59 on 2026-11-05. Checkbox format repaired across the part on 2026-09-13."
 last_updated: 2026-11-05
 ---
 
@@ -4407,7 +4407,7 @@ too large, with information that goes stale.
 - [ ] PR #57: finish the changes the author wants, then tell cevheri what changed (D90).
 
 
-## 🏁 Milestone M43: Two tracks, the bar and the progress page — BUILT AND REVIEWED
+## 🏁 Milestone M43: Two tracks, the bar and the progress page — SHIPPED AS PR #59
 
 Branch `feat/round-2-build`. Builds M39's picks A1, B1, C1, D2, E4 and F2 and the two bar requests,
 on D91's design (and D91's "changed while building").
@@ -4455,7 +4455,7 @@ on D91's design (and D91's "changed while building").
       first run had one console 404 in `home.spec.ts` after a door click that did not recur in 175
       further runs of that flow, so it is noted rather than fixed.
 
-## 🏁 Milestone M44: The home page: four scenes, the track choice and two characters — BUILT AND REVIEWED
+## 🏁 Milestone M44: The home page: four scenes, the track choice and two characters — SHIPPED AS PR #59
 
 Builds M39's picks G1b, G2a, G3a, G4a, H1, and P3 with P4. Built by an agent on its own branch,
 merged into `feat/round-2-build`; the fit at small windows by a second.
@@ -4483,7 +4483,7 @@ merged into `feat/round-2-build`; the fit at small windows by a second.
       walk pulls back by `min(1, width / group)` around the choice only.
 - [x] The walk and the reduced-motion still are both checked by screenshot against the playground.
 
-## 🏁 Milestone M45: Reference lists grouped by kind — BUILT
+## 🏁 Milestone M45: Reference lists grouped by kind — SHIPPED AS PR #59
 
 Builds M39's pick J2, with the author's five kinds.
 

@@ -318,33 +318,44 @@ const TRAILED: string[] = (() => {
   return found.filter((route) => !['/404/', '/_not-found/'].includes(route)).sort()
 })()
 
-test('every trail names its page the way the page names itself', async ({ page }) => {
-  /* It visits every exported route — 61 of them since the list stopped being
-     hand-written — which is slower than the default budget allows under eight
-     parallel workers. MEASURED at 11s alone. The coverage is the point: the one
-     route M22 missed was the one its hand-written list left out. */
-  test.slow()
+/* It visits every exported route, and since the For Everyone pages (D91) there
+   are well over a hundred: one sequential test ran past its 90s budget on CI.
+   So the list is cut into parts that run on separate workers. The coverage is
+   the point: the one route M22 missed was the one its hand-written list left
+   out, so every route is still visited, and the part count is derived. */
+const PART = 30
+const PARTS = Array.from({ length: Math.ceil(TRAILED.length / PART) }, (_, i) =>
+  TRAILED.slice(i * PART, (i + 1) * PART))
 
-  const wrong: string[] = []
+test('the trail check visits every exported route', () => {
+  expect(TRAILED.length, 'no exported route was found; is out/ built?').toBeGreaterThan(PART)
+  expect(PARTS.flat()).toEqual(TRAILED)
+})
 
-  for (const route of TRAILED) {
-    await page.goto(route)
-    const found = await page.evaluate(() => {
-      const trail = document.querySelector('nav[aria-label="Curriculum"]')
-      return {
-        last: trail?.querySelector('[aria-current="page"]')?.textContent?.trim() ?? null,
-        heading: document.querySelector('main h1')?.textContent?.trim() ?? null,
+PARTS.forEach((routes, part) => {
+  test(`every trail names its page the way the page names itself (part ${part + 1} of ${PARTS.length})`, async ({ page }) => {
+    test.slow()
+    const wrong: string[] = []
+
+    for (const route of routes) {
+      await page.goto(route)
+      const found = await page.evaluate(() => {
+        const trail = document.querySelector('nav[aria-label="Curriculum"]')
+        return {
+          last: trail?.querySelector('[aria-current="page"]')?.textContent?.trim() ?? null,
+          heading: document.querySelector('main h1')?.textContent?.trim() ?? null,
+        }
+      })
+
+      // Both halves, so a route that stops drawing a trail — or stops having a
+      // heading — fails here rather than passing on two nulls.
+      if (found.last === null || found.heading === null) {
+        wrong.push(`${route}: trail ${found.last}, heading ${found.heading}`)
+        continue
       }
-    })
-
-    // Both halves, so a route that stops drawing a trail — or stops having a
-    // heading — fails here rather than passing on two nulls.
-    if (found.last === null || found.heading === null) {
-      wrong.push(`${route}: trail ${found.last}, heading ${found.heading}`)
-      continue
+      if (found.last !== found.heading) wrong.push(`${route}: "${found.last}" vs "${found.heading}"`)
     }
-    if (found.last !== found.heading) wrong.push(`${route}: "${found.last}" vs "${found.heading}"`)
-  }
 
-  expect(wrong, 'a crumb calls its page something the page does not').toEqual([])
+    expect(wrong, 'a crumb calls its page something the page does not').toEqual([])
+  })
 })

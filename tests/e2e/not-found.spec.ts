@@ -1,5 +1,6 @@
 import { type Page, expect, test } from '@playwright/test'
 import { CATEGORY_PATHS, INDEX_SHEET } from './sheets'
+import { waitForHydratedReadout } from './record'
 import { watchPage } from './watch'
 
 /**
@@ -122,6 +123,9 @@ test('the trail and the footer read the same at every address', async ({ page })
   const readings: string[][] = []
   for (const address of [...ADDRESSES.map(([path]) => path), '/nothing/at/all/']) {
     await page.goto(address)
+    // The footer's readout is channel B: `--` until the store answers. Read it
+    // once it has, or two addresses differ by hydration timing, not by address.
+    await waitForHydratedReadout(page)
     readings.push([
       await page.locator('nav[aria-label="Curriculum"]').innerText(),
       await page.locator('footer').innerText(),

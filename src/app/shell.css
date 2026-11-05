@@ -378,22 +378,27 @@
   .bz-bar-icon,
   .bz-bar-repo { flex: none; }
 
-  /* MEASURED once the switch and the flag joined the bar: below 880px, where
-     the navigation becomes a scroller, it was 77px wide at 390 and 119px at
-     768, so Catalog and Progress sat past its edge; and at 900, where it does
-     not scroll, the document was 938px wide. The logo is already the link
-     home, the star count is the repository button's least needed part, and on
-     a phone the footer links the repository on every page, so those go first.
-     The switch keeps its two icons; its names stay the links' accessible
-     names. Below 360 the navigation still scrolls inside itself, as the bar's
-     narrow rules above intend. */
-  @media (max-width: 960px) {
+  /* MEASURED from 320 to 1440 on module, catalog, home and progress pages in
+     all three languages, once the switch and the flag joined the bar. Without
+     these steps the page scrolled sideways between 881 and 1016px, and below
+     880, where the navigation becomes a scroller, Catalog and Progress sat
+     past its edge (the scroller was 77px wide at 390). Below 1024 the Home
+     link goes (the logo is the link home), with the star count and the code
+     beside the flag; below 960 the switch shows its two icons, its names kept
+     as the links' accessible names; below 480 the repository button goes (the
+     footer links it on every page) and the links' side padding gives. Below
+     390 the navigation still scrolls inside itself, as the bar's narrow rules
+     above intend. */
+  @media (max-width: 1023px) {
     .bz-bar-nav li[data-home],
     .bz-bar-star,
     .bz-bar-stars { display: none; }
+    /* The language button keeps its flag and drops the code beside it, which
+       the flag already states (Persian has no flag and keeps its script). */
+    .bz-flag + .bz-langmenu-code { display: none; }
   }
 
-  @media (max-width: 880px) {
+  @media (max-width: 960px) {
     .bz-trackswitch-seg { padding: 0 8px; }
     .bz-trackswitch-label {
       position: absolute;
@@ -409,13 +414,12 @@
   @media (max-width: 480px) {
     .bz-bar-repo { display: none; }
     .bz-bar-inner { gap: 6px; }
+    /* MEASURED at 390 on a page with the language button: Progress still ran
+       16px past the scroller. The links' side padding is the last give, and
+       their height (the touch target) does not change. */
+    .bz-bar-nav .bz-bar-link { padding-inline: 6px; }
   }
 
-  /* On a phone the language button keeps its flag and drops the code beside
-     it, which the flag already states. */
-  @media (max-width: 767px) {
-    .bz-flag + .bz-langmenu-code { display: none; }
-  }
 
   /* ---------------------------------------------------------------------------
      THE CATALOG MENU'S TWO TABS (M39 D2).

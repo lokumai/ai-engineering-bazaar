@@ -231,6 +231,12 @@ underscores, no number); create `<name>_tr.md` beside it, even as a stub; add it
 `curriculum.yaml`; once written, give it a quick quiz. A `status` change regenerates
 `src/app/lokum-modules.css`, which goes in the same commit.
 
+**Writing a module For Everyone (D86, D91):** the plain-words version of `<name>.md` is
+`<category>/everyone/<name>.md`, with `_tr.md` and `_fa.md` beside it under the translation rules
+above. It uses the same name, so it needs no line of its own in `curriculum.yaml`, and a file whose
+name is not listed fails the build. Until the file exists, the site shows that module's For Everyone
+page as not written yet. Adding one regenerates `src/app/lokum-modules.css`, in the same commit.
+
 ## The quick quiz
 
 A written module carries `<name>.quiz.yaml` beside it, shown at the end of the module page. It is
@@ -294,6 +300,7 @@ mini-courses/            the authored course, and all this file governs
   index.md               the GitHub page for mini-courses/, mirrors README.md
   curriculum.yaml        the course shape
   <level>/               modules, their _tr.md and _fa.md, quizzes and images
+    everyone/            each module For Everyone, same names, same suffixes
   scratchpad/            research notes and diagram prompts, never published
 src/ tests/ scripts/     the website that renders the course (the root CLAUDE.md)
 ```

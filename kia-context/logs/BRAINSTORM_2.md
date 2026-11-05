@@ -2173,15 +2173,16 @@ make; each is the smallest one that keeps today's For Engineers URLs and records
 1. **Content.** A For Everyone module is `mini-courses/<level>/everyone/<name>.md`, with `_tr.md`
    and `_fa.md` beside it under the same rules, listed by the same `curriculum.yaml` name. A module
    has a For Everyone page only where that file exists; elsewhere the For Everyone catalog says it is
-   not written yet. Rejected: a second `curriculum.yaml` (two lists of one course would drift) and a
+   not written yet. *(Changed while building, below: every module has a For Everyone page.)* Rejected: a second `curriculum.yaml` (two lists of one course would drift) and a
    name suffix such as `_everyone.md` (it collides with the `_tr` / `_fa` suffix rule).
 2. **Addresses.** For Everyone lives under an `/everyone/` prefix: `/everyone/sheets/`,
    `/everyone/sheets/<level>/`, `/everyone/courses/<level>/<module>/`, and `/tr/` or `/fa/` before
    it for a translation. For Engineers keeps every address it has, so no bookmark breaks.
 3. **The record.** Completion is per track (D86): `everyoneSheets` sits beside `sheets`, with the
-   same shape. Export, import and erase cover both. `prefs.track` remembers the last track page the
-   reader opened, so a page that belongs to neither track (home, progress, legend) shows the bar in
-   the track they were reading. The home page's choice itself writes nothing (D86).
+   same shape. Export, import and erase cover both. ~~`prefs.track` remembers the last track page the
+   reader opened~~ *(changed while building, below: session storage)*, so a page that belongs to
+   neither track (home, progress, legend) shows the bar in the track they were reading. The home
+   page's choice itself writes nothing (D86).
 4. **Frame one.** The boot script stamps both tracks every time (`hl-signed-<n>` for For Engineers,
    `hl-e-signed-<n>` for For Everyone, and the level classes the same way) and puts the current track
    on `<html>` as `data-bz-track`. A page region carries `data-track`, and the generated stylesheet
@@ -2192,6 +2193,35 @@ make; each is the smallest one that keeps today's For Engineers URLs and records
    own no-flag option), because a flag stands for a country and Iran's is politically loaded; English
    shows the UK flag. A reader who scrolls past the home page's track choice gets doors that open For
    Engineers, with one line to switch (N1, recommended beside H1).
+
+**Changed while building, 2026-11-05.** Three of the choices above did not survive contact with the
+build, and the measurement that moved each is the reason.
+
+- **Every module has a For Everyone page** (choice 1). `next build` with `output: 'export'` refuses
+  a dynamic route whose `generateStaticParams` returns nothing, and none of the For Everyone files is
+  written yet. The page for an unwritten module says so, links to the For Engineers page and to the
+  For Everyone catalog, and is `noindex`; it has no completion control. This also means the switch
+  always has a page to land on, so it never needs a dead state. Rejected: a placeholder file per
+  module (it would be content the author did not write) and a nullable route row (it reintroduced
+  links to pages that did not exist).
+- **The last track is kept in `sessionStorage` (`hl-track`), not in `prefs.track`** (choice 3). A
+  visit must write nothing to the reader's record until they record something (ARCHITECTURE §12.13),
+  and a test that asserts exactly that went red the moment opening a page wrote `prefs.track`. The
+  memory now lasts for the tab, which is what it is for; `prefs.track` was removed from the schema.
+- **The bar gives way in steps, measured** (choice 5). With both full names the bar ran to 1,080px
+  at 1024, so `For` drops at 1180px and below. With the switch and the flag in the bar the page
+  then scrolled sideways between 881 and 1016px, and below 880, where the navigation becomes a
+  scroller, Catalog and Progress sat past its edge (the scroller was 77px wide at 390). So: below
+  1024 the Home link (the logo is the link home), the star count and the code beside the flag go;
+  below 960 the switch shows its two icons; below 480 the repository button goes (the footer links
+  it on every page) and the links' side padding gives. Measured on 9 pages in three languages at 24
+  widths from 320 to 1440: no sideways scroll at any, and every destination in view from 390 up.
+  Narrower than that the navigation still scrolls inside itself, which the bar's narrow rules
+  intend.
+
+F2 also took out the progress page's continue card and statistics row: the tabs and the data line
+are the whole page. The language menu keeps the track (a For Everyone page's menu offers the For
+Everyone page in each language).
 
 ## Open questions
 

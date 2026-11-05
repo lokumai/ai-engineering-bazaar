@@ -4251,8 +4251,9 @@ of every file in `playground/` by what references it: *"delete the ones in Safe 
 ### Acceptance criteria
 
 - [x] 2,194 unit and corpus tests pass after the deletion.
-- [ ] Open: `playground/index.html` still links the nine deleted pages; it is the record of the
-      author's ten choices (PROGRESS.md M8), so whether to edit it is the author's call.
+- [x] `playground/index.html`, the record of the author's ten choices (PROGRESS.md M8), linked the
+      nine deleted pages; at the author's word they now point at each file on GitHub at `a941364`,
+      the last commit that had them, and no local link in it is dead.
 
 ---
 

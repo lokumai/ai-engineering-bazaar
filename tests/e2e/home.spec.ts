@@ -340,6 +340,156 @@ for (const reducedMotion of ['reduce', 'no-preference'] as const) {
 }
 
 // ---------------------------------------------------------------------------
+// The track choice: which way the five doors open
+// ---------------------------------------------------------------------------
+
+/**
+ * The page asks how the reader would like to read, and the doors open into
+ * that track. What is asserted is the mechanism, not any wording: every door
+ * starts on the For Engineers address (the one that always exists, which is
+ * what a link checker reads), a sign swaps ALL of them to the For Everyone
+ * address and back, and the choice is written nowhere, so a reader who comes
+ * back meets the same question. Each door carries both addresses, so the test
+ * needs no list of levels of its own beyond the drawing set's.
+ */
+const LEVELS = [...new Set(SHEETS.map((sheet) => sheet.category))]
+const ENGINEERS = (level: string) => `${INDEX_SHEET}${level}/`
+const EVERYONE = (level: string) => `/everyone${INDEX_SHEET}${level}/`
+
+async function doorHrefs(page: Page): Promise<(string | null)[]> {
+  return page.locator('.bz-street .door').evaluateAll((doors) => doors.map((door) => door.getAttribute('href')))
+}
+
+/** What a reader could have been given to keep the choice with: storage and cookies. */
+async function keptAnywhere(page: Page): Promise<string> {
+  return page.evaluate(() => JSON.stringify([
+    Object.entries(localStorage),
+    Object.entries(sessionStorage),
+    document.cookie,
+  ]))
+}
+
+for (const reducedMotion of ['reduce', 'no-preference'] as const) {
+  test(`a sign opens all five doors into its track, and the other sign opens them back (${reducedMotion})`, async ({
+    page,
+  }) => {
+    const problems = watchPage(page)
+    await page.emulateMedia({ reducedMotion })
+    await page.goto('/')
+    // With motion allowed the choice stands inside the walk, and a control in
+    // it is brought into view by being focused, which is how a keyboard reader
+    // reaches it; with motion reduced it is already in the page.
+    const signFor = (track: 'eng' | 'all') => page.locator(`.bz-street [data-choose="${track}"]`)
+
+    // Nothing chosen: the doors open For Engineers, and nothing is pressed.
+    expect(await doorHrefs(page)).toEqual(LEVELS.map(ENGINEERS))
+    await expect(page.locator('.bz-street [data-choose][aria-pressed="true"]')).toHaveCount(0)
+    const before = await keptAnywhere(page)
+
+    await signFor('all').focus()
+    await signFor('all').click()
+    expect(await doorHrefs(page)).toEqual(LEVELS.map(EVERYONE))
+    await expect(signFor('all')).toHaveAttribute('aria-pressed', 'true')
+    await expect(signFor('eng')).toHaveAttribute('aria-pressed', 'false')
+    // Colour is not the only signal: the chosen sign says so in words, and the
+    // other one does not.
+    await expect(signFor('all').locator('.sg-on')).toBeVisible()
+    await expect(signFor('all').locator('.sg-on')).toHaveText('Chosen')
+    await expect(signFor('eng').locator('.sg-on')).toBeHidden()
+
+    await signFor('eng').focus()
+    await signFor('eng').click()
+    expect(await doorHrefs(page)).toEqual(LEVELS.map(ENGINEERS))
+    await expect(signFor('eng')).toHaveAttribute('aria-pressed', 'true')
+    await expect(signFor('all')).toHaveAttribute('aria-pressed', 'false')
+
+    // Nothing was saved: not a record, not storage, not a cookie.
+    expect(await keptAnywhere(page)).toBe(before)
+
+    expect(problems.consoleErrors).toEqual([])
+    expect(problems.failedRequests).toEqual([])
+  })
+}
+
+test('with no choice made the doors say they open For Engineers, and the line under them switches', async ({
+  page,
+}) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' })
+  await page.goto('/')
+
+  const line = page.locator('.bz-street [data-switch-line]')
+  await expect(line).toContainText('These doors open For Engineers')
+  const switcher = line.locator('[data-switch]')
+  await expect(switcher).toContainText('For Everyone')
+  expect(await doorHrefs(page)).toEqual(LEVELS.map(ENGINEERS))
+
+  await switcher.click()
+  expect(await doorHrefs(page)).toEqual(LEVELS.map(EVERYONE))
+  await expect(line).toContainText('These doors open For Everyone')
+  await expect(switcher).toContainText('For Engineers')
+  // Switching from the line is a choice like any other: it marks the sign.
+  await expect(page.locator('.bz-street [data-choose="all"]')).toHaveAttribute('aria-pressed', 'true')
+
+  await switcher.click()
+  expect(await doorHrefs(page)).toEqual(LEVELS.map(ENGINEERS))
+})
+
+test('every door carries both addresses, and its default is always the For Engineers one', async ({
+  page,
+}) => {
+  await page.goto('/')
+  const doors = await page.locator('.bz-street .door').evaluateAll((all) => all.map((door) => ({
+    cat: (door as HTMLElement).dataset.cat,
+    href: door.getAttribute('href'),
+    eng: (door as HTMLElement).dataset.hrefEng,
+    all: (door as HTMLElement).dataset.hrefAll,
+  })))
+  expect(doors.map((door) => door.cat)).toEqual(LEVELS)
+  for (const door of doors) {
+    expect(door.href).toBe(door.eng)
+    expect(door.eng).toBe(ENGINEERS(door.cat!))
+    expect(door.all).toBe(EVERYONE(door.cat!))
+  }
+})
+
+test('a door opens the track that was chosen', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' })
+  await page.goto('/')
+  await page.locator('.bz-street [data-choose="all"]').click()
+
+  const level = LEVELS[0]
+  // The track's pages are built by their own route; this only needs the click
+  // to ask for the right address, so the address is answered with a stub.
+  await page.route(`**${EVERYONE(level)}**`, (route) =>
+    route.fulfill({ status: 200, contentType: 'text/html', body: '<title>track</title>' }))
+  await page.locator(`.bz-street .door[data-cat="${level}"]`).click()
+  await expect(page).toHaveURL(new RegExp(`${EVERYONE(level)}?$`))
+})
+
+test('the track choice and its two characters stack on a phone without pushing the page sideways', async ({
+  page,
+}) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' })
+  await page.setViewportSize({ width: 390, height: 844 })
+  await page.goto('/')
+  for (const track of ['eng', 'all']) {
+    const sign = page.locator(`.bz-street [data-choose="${track}"]`)
+    await sign.scrollIntoViewIfNeeded()
+    await expect(sign).toBeVisible()
+    const box = (await sign.boundingBox())!
+    expect(box.x, 'a sign starts off the left edge').toBeGreaterThanOrEqual(0)
+    expect(box.x + box.width, 'a sign runs off the right edge').toBeLessThanOrEqual(390)
+  }
+  // A caption names each character, Turkish first and the English in brackets.
+  await expect(page.locator('.bz-street .who')).toHaveCount(2)
+  for (const who of await page.locator('.bz-street .who').all()) {
+    await expect(who).toHaveText(/^\S.* \(\S.*\)$/)
+  }
+  const sideways = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth)
+  expect(sideways).toBeLessThanOrEqual(0)
+})
+
+// ---------------------------------------------------------------------------
 // The record survives the page it is edited from
 // ---------------------------------------------------------------------------
 

@@ -5,7 +5,7 @@ import { quarantineReason, update, useHydrated, useRecord } from '@/lib/record/s
 
 /**
  * The small record panels that outlived the progress page's register: the
- * quarantine note, the keyboard switch, and the data row's closed reading.
+ * quarantine note and the keyboard switch.
  *
  * M38 and M40 (2026-11-05) removed everything else this file held, on the
  * author's word: the readout and its face legend, the streak, the stamps, the
@@ -81,5 +81,3 @@ export function CharKeysToggle() {
   )
 }
 
-/** The data row's closed reading: there is no count to print, so it names its subject. */
-export const DATA_READING = 'YOUR COPY OF THE RECORD'

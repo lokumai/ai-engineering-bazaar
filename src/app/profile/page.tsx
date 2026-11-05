@@ -1,15 +1,14 @@
 import type { Metadata } from 'next'
-import { ContinueHero } from '@/components/record/ContinueHero'
 import { CourseCompletion, type CompletionLevel } from '@/components/record/CourseCompletion'
 import { DataPanel } from '@/components/record/DataPanel'
-import { FoldFragment } from '@/components/record/FoldFragment'
-import { DATA_READING, QuarantineNote } from '@/components/record/ProfilePanels'
-import { Register, RegisterRow } from '@/components/record/Register'
+import { ProgressTabs } from '@/components/record/ProgressTabs'
+import { QuarantineNote } from '@/components/record/ProfilePanels'
 import { PageShell } from '@/components/shell/PageShell'
 import { CATEGORIES } from '@/lib/content/curriculum-file'
 import { curriculumFacts } from '@/lib/content/facts'
 import { sheetRows } from '@/lib/content/manifest'
 import { SHORTCUTS } from '@/lib/record/keys'
+import type { Track } from '@/lib/tracks'
 
 /**
  * The chord that reaches this page, read from the one place it is defined.
@@ -22,56 +21,65 @@ const PROFILE_CHORD =
 export const metadata: Metadata = {
   title: 'Your progress',
   description:
-    'Every module and whether you have completed it, and the controls that '
-    + 'export, import or erase your progress.',
+    'Every module in both tracks and whether you have completed it, and how to '
+    + 'back up, restore or reset your progress.',
 }
 
 /**
- * Your progress: the level circles, the way back into the module you left, and
- * the one control that keeps the record safe.
+ * Your progress, as the author picked it in round 2 (M39 F2): two tabs, one per
+ * track, each with its count and its five level cards, and under them one quiet
+ * line with Back up, Restore and Reset.
  *
- * ## What was removed, and why (2026-11-05)
+ * ## What changed, and why (2026-11-05)
  *
- * The author, after six readers had used the site: *"I am tired of the unused
- * features or statistics ... you can freely remove them."* So the page lost
- * the account block (the name, "Checked by", the approval marks and their
- * seed, and sign-in), "Waiting on you", and every register row but one: the
- * readout, streak, stamps and submittals, the role path, the curriculum
- * diagram, the record of work, and the settings rows (organisation, last
- * claim, storage, stored values, keyboard).
+ * M38 had left the level cards, the continue card and the register's data row.
+ * F2 is the whole page: the continue card and the three-figure stats row went,
+ * and the data row became one line, because the record lives only in this
+ * browser and a backup file is the one copy that survives a cleared browser.
+ * Progress is per track (D86), so each tab's cards show and write that track.
  *
- * **What stayed, and why each earns its place.** The circles are the page's
- * answer to "how far am I" (M22).
- * The continue card draws nothing until there is a module to go back to.
- * And `Export, import, erase` stays because the record lives only in this
- * browser, which can clear it without warning: a file is the reader's only
- * copy that survives that, and the round-2 playground (F2) keeps it for the
- * same reason. The components behind the removed rows are left in the tree;
- * nothing on this page imports them any more.
+ * `/profile/#data` is still the address of the data line: the legend links to it.
  */
 export default function ProgressPage() {
-  const facts = curriculumFacts()
-  const rows = sheetRows()
+  const facts = { engineers: curriculumFacts('engineers'), everyone: curriculumFacts('everyone') }
 
   /**
-   * Every level in curriculum order, with every module in it, planned or not,
+   * Every level in curriculum order, with every module in it, written or not,
    * because the denominator is the level and not the part of it somebody has
-   * written (§11.25). The same shape the home page hands it (D14).
+   * written (§11.25).
    */
-  const levels: readonly CompletionLevel[] = CATEGORIES.map((category) => ({
-    slug: category.slug,
-    title: category.title,
-    order: category.order,
-    modules: rows
-      .filter((row) => row.subsystem.slug === category.slug)
-      .map((row) => ({
-        slug: row.slug,
-        module: row.module,
-        title: row.title,
-        path: row.path,
-        drawn: row.drawn,
-      })),
-  }))
+  const levelsOf = (track: Track): readonly CompletionLevel[] => {
+    const rows = sheetRows(track)
+    return CATEGORIES.map((category) => ({
+      slug: category.slug,
+      title: category.title,
+      order: category.order,
+      modules: rows
+        .filter((row) => row.subsystem.slug === category.slug)
+        .map((row) => ({
+          slug: row.slug,
+          module: row.module,
+          title: row.title,
+          path: row.path,
+          drawn: row.drawn,
+        })),
+    }))
+  }
+
+  const panel = (track: Track) => (
+    <>
+      <h2 id={`progress-levels-${track}`} className="sr-only">
+        Every module, {track === 'engineers' ? 'For Engineers' : 'For Everyone'}
+      </h2>
+      <CourseCompletion
+        facts={facts[track]}
+        levels={levelsOf(track)}
+        headingId={`progress-levels-${track}`}
+        track={track}
+        stats={false}
+      />
+    </>
+  )
 
   return (
     <PageShell column={false}>
@@ -81,44 +89,19 @@ export default function ProgressPage() {
         <p className="text-mark m-0 text-on-surface-muted">{PROFILE_CHORD}</p>
       </div>
 
-      <hr className="bz-rule" aria-hidden="true" />
-
       {/* §12.1.2 — the one surface where a quarantined record can be
           discovered, and the only thing that explains why everything below is
           empty. It renders nothing unless there is one to report. */}
       <QuarantineNote />
 
-      <div className="bz-panel-head">
-        <h2 id="progress-levels" className="bz-panel-title">
-          Every module
-        </h2>
-        <p className="bz-panel-note">Yours to set, and to take back</p>
-      </div>
-      <CourseCompletion facts={facts} levels={levels} headingId="progress-levels" />
-
-      {/* Channel B: nothing to continue draws nothing. */}
-      <ContinueHero
+      <ProgressTabs
         facts={facts}
-        levels={Object.fromEntries(CATEGORIES.map((one) => [one.slug, one.title]))}
+        panels={{ engineers: panel('engineers'), everyone: panel('everyone') }}
       />
 
-      {/* `/profile/#data` is an address other surfaces link to, and its id sits
-          inside a closed `<summary>`; this island opens the fold it names. */}
-      <FoldFragment />
-
-      <div data-bz-register-group="group-data">
-        <div className="bz-panel-head">
-          <h2 id="group-data" className="bz-panel-title">
-            Your data
-          </h2>
-          <p className="bz-panel-note">Export and import are reversible. Erasing is not</p>
-        </div>
-        <Register labelledBy="group-data">
-          <RegisterRow id="data" name="Export, import, erase" reading={DATA_READING} kind="state">
-            <DataPanel />
-          </RegisterRow>
-        </Register>
-      </div>
+      <section id="data" aria-label="Your data" className="bz-dataline-wrap">
+        <DataPanel />
+      </section>
     </PageShell>
   )
 }

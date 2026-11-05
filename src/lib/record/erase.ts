@@ -123,20 +123,19 @@ export function undoAvailable(erasedAt: number, now: number): boolean {
 }
 
 /**
- * §12.15's status line. Uppercase `S`, following the `UPTIME 6D` precedent the
- * strip in `Uptime.tsx` already sets: these lines are readouts, and a readout
- * on this site is uppercase mono with no terminal period (§12.14.1).
+ * §12.15's status line, a sentence since M39 F2 put the erase in the progress
+ * page's quiet data line as `Reset`.
  *
- * Only meaningful above zero — at zero the window is over and the caller
- * prints `UNDO_CLOSED` instead, because an offer of `FOR 0 S` is an offer of
+ * Only meaningful above zero: at zero the window is over and the caller prints
+ * `UNDO_CLOSED` instead, because an offer of zero seconds is an offer of
  * nothing.
  */
 export function undoLabel(secondsLeft: number): string {
-  return `ERASED · UNDO AVAILABLE FOR ${secondsLeft} S`
+  return `Reset. You can undo it for ${secondsLeft} ${secondsLeft === 1 ? 'second' : 'seconds'}.`
 }
 
 /** The window shut. Stated, rather than the offer silently disappearing. */
-export const UNDO_CLOSED = 'ERASED · UNDO WINDOW CLOSED'
+export const UNDO_CLOSED = 'Reset. The time to undo it has passed.'
 
 /**
  * §12.11 item 7 — both stored strings, exactly as they sit in Web Storage.

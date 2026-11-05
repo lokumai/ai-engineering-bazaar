@@ -57,7 +57,8 @@ export function CategoryTally({ facts, track = 'engineers' }: { facts: Curriculu
   useEffect(() => {
     const standing = categoryProgress(record, facts)
 
-    for (const cell of document.querySelectorAll<HTMLElement>(CELLS)) {
+    // D91 — only this track's cells: a page can hold both tracks' (`/profile/`).
+    for (const cell of document.querySelectorAll<HTMLElement>(`[data-track="${track}"] ${CELLS}`)) {
       const slug = cell.getAttribute(CELL_ATTR)
       if (!slug) continue
 
@@ -69,7 +70,7 @@ export function CategoryTally({ facts, track = 'engineers' }: { facts: Curriculu
 
       cell.textContent = `${entry.approved}/${entry.total}`
     }
-  }, [record, facts])
+  }, [record, facts, track])
 
   return null
 }

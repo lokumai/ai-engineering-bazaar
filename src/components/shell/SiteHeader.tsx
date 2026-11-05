@@ -4,6 +4,7 @@ import GITHUB from '@/lib/github-stars.json'
 import { REPO_URL } from '@/lib/site'
 import { href } from '@/lib/url'
 import { categoryLabels } from '@/lib/content/chrome'
+import { TrackSwitch } from './TrackSwitch'
 import { LanguageMenu } from './LanguageMenu'
 import { MainNav } from './MainNav'
 import { ThemeToggle } from './ThemeToggle'
@@ -157,6 +158,7 @@ export function SiteHeader({
           <Keyboard />
           {/* Left of the theme toggle, where the author asked for it, and only
               on a module that has a second language (`LanguageMenu`). */}
+          <TrackSwitch translated={translated} />
           <LanguageMenu translated={translated} />
           <ThemeToggle />
 

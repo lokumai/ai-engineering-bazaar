@@ -4,24 +4,32 @@ import ProfilePage from '@/app/profile/page'
 import { DataPanel } from '@/components/record/DataPanel'
 import { ERASE_COPY, EraseDialog } from '@/components/record/EraseDialog'
 import { ERASE_WORD } from '@/lib/record/erase'
+import { TRACKS } from '@/lib/tracks'
 
 /**
- * `/profile/` since M38 and M40: the level circles, the continue card, and one
- * row, Export, import, erase. These are the page's structural rules; the
- * behaviour of export, import and erase is the browser suite's.
+ * `/profile/` since M39 F2: one tab per track over that track's level cards,
+ * and one data line under them. These are the page's structural rules; how
+ * export, restore and reset behave is the browser suite's.
  */
 const PAGE = renderToStaticMarkup(<ProfilePage />)
 
 describe('the progress page', () => {
-  it('draws one register row, the data row, and it arrives closed', () => {
-    const rows = [...PAGE.matchAll(/<section class="bz-register-row" aria-labelledby="([^"]+)"/g)]
-    expect(rows.map((m) => m[1])).toEqual(['data'])
-    expect(PAGE).toContain('Export, import, erase')
-    expect(PAGE).not.toMatch(/<details[^>]*\sopen/)
+  it('has one tab and one panel per track, each panel its own track region', () => {
+    for (const track of TRACKS) {
+      expect(PAGE).toContain(`id="bz-ptab-${track.id}"`)
+      expect(PAGE).toMatch(new RegExp(`id="bz-ppanel-${track.id}"[^>]*data-panel="${track.id}"`))
+      expect(PAGE).toContain(`data-track="${track.id}"`)
+      expect(PAGE).toContain(track.label)
+    }
+  })
+
+  it('keeps the data line at #data, with back up, restore and reset', () => {
+    expect(PAGE).toMatch(/<section id="data"/)
+    for (const words of ['Back up to a file', 'Restore from a file', 'Reset']) expect(PAGE).toContain(words)
   })
 
   it('draws none of the removed features', () => {
-    for (const gone of ['Waiting on you', 'Checked by', 'role path', 'Record of work', 'Sign in']) {
+    for (const gone of ['Waiting on you', 'Checked by', 'Record of work', 'Sign in', 'Days in a row']) {
       expect(PAGE.toLowerCase()).not.toContain(gone.toLowerCase())
     }
   })
@@ -30,24 +38,22 @@ describe('the progress page', () => {
     expect(PAGE.match(/<h1[\s>]/g)?.length).toBe(1)
     const ids = [...PAGE.matchAll(/\sid="([^"]+)"/g)].map((m) => m[1])
     expect(new Set(ids).size).toBe(ids.length)
-    for (const [, ref] of PAGE.matchAll(/aria-labelledby="([^"]+)"/g)) {
-      expect(ids, `aria-labelledby="${ref}"`).toContain(ref)
+    for (const [, ref] of PAGE.matchAll(/aria-(?:labelledby|controls|describedby)="([^"]+)"/g)) {
+      expect(ids, `reference to "${ref}"`).toContain(ref)
     }
   })
 })
 
-describe('the data panel', () => {
-  const PANEL = renderToStaticMarkup(<DataPanel />)
+describe('the data line', () => {
+  const LINE = renderToStaticMarkup(<DataPanel />)
 
-  it('offers export, a .json import, and erase', () => {
-    expect(PANEL).toContain('EXPORT YOUR RECORD')
-    expect(PANEL).toMatch(/type="file"[^>]*accept="\.json,application\/json"|accept="\.json,application\/json"[^>]*type="file"/)
-    expect(PANEL).toContain(ERASE_COPY.trigger)
+  it('restores from a .json file only', () => {
+    expect(LINE).toMatch(/type="file"[^>]*accept="\.json,application\/json"|accept="\.json,application\/json"[^>]*type="file"/)
   })
 
   it('asks for the erase word, and says nothing about an account', () => {
     expect(ERASE_COPY.confirmLabel).toContain(ERASE_WORD)
     const dialog = renderToStaticMarkup(<EraseDialog onConfirm={() => {}} onExport={() => {}} />)
-    expect(`${PANEL}${dialog}${ERASE_COPY.scope}`.toLowerCase()).not.toMatch(/account|organisation/)
+    expect(`${LINE}${dialog}${ERASE_COPY.scope}`.toLowerCase()).not.toMatch(/account|organisation/)
   })
 })

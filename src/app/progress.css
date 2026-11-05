@@ -379,4 +379,123 @@
     max-width: 100%;
     height: auto;
   }
+
+  /* ---------------------------------------------------------------------------
+     THE PROGRESS PAGE'S TWO TABS (M39 F2).
+
+     One tab per track, with its count, over that track's level cards. The
+     selected tab is marked by a bar under it and by its ink, never by a hue.
+     Which panel shows in frame one is the track the bar shows: `data-bz-track`
+     on `<html>`, stamped before first paint. A click sets `data-tab` on the tab
+     set, which overrides that.
+     --------------------------------------------------------------------------- */
+  .bz-ptabs-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    margin: 0 0 20px;
+    border-bottom: 1px solid var(--color-line);
+  }
+
+  .bz-ptab {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 8px;
+    margin-bottom: -1px;
+    padding: 10px 14px 12px;
+    border: 0;
+    border-bottom: 3px solid transparent;
+    background: none;
+    color: var(--color-on-surface-muted);
+    font: 600 var(--text-item) / 1.2 var(--font-sans);
+    cursor: pointer;
+  }
+
+  .bz-ptab:hover { color: var(--color-on-surface); }
+
+  .bz-ptab-count {
+    color: var(--color-on-surface-faint);
+    font-size: var(--text-meta);
+    font-weight: 500;
+  }
+
+  .bz-ptab-panel[data-panel="everyone"] { display: none; }
+
+  html[data-bz-track="everyone"] .bz-ptabs:not([data-tab]) .bz-ptab-panel[data-panel="everyone"],
+  .bz-ptabs[data-tab="everyone"] .bz-ptab-panel[data-panel="everyone"] { display: block; }
+
+  html[data-bz-track="everyone"] .bz-ptabs:not([data-tab]) .bz-ptab-panel[data-panel="engineers"],
+  .bz-ptabs[data-tab="everyone"] .bz-ptab-panel[data-panel="engineers"] { display: none; }
+
+  .bz-ptabs[data-tab="engineers"] .bz-ptab-panel[data-panel="engineers"] { display: block; }
+
+  html:not([data-bz-track="everyone"]) .bz-ptabs:not([data-tab]) .bz-ptab[data-track-id="engineers"],
+  html[data-bz-track="everyone"] .bz-ptabs:not([data-tab]) .bz-ptab[data-track-id="everyone"],
+  .bz-ptab[aria-selected="true"] {
+    border-bottom-color: var(--color-bar);
+    color: var(--color-on-surface-title);
+  }
+
+  /* ---------------------------------------------------------------------------
+     THE DATA LINE (M39 F2).
+
+     Under the cards, after a rule: one sentence saying where the progress is,
+     and three plain links to back it up, restore it, or reset it. Reset is in
+     the fault ink, because it is the one of the three that loses something.
+     --------------------------------------------------------------------------- */
+  .bz-dataline-wrap {
+    margin-top: 32px;
+    padding-top: 18px;
+    border-top: 1px solid var(--color-line);
+  }
+
+  .bz-dataline {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 8px 28px;
+  }
+
+  .bz-dataline-text {
+    max-width: 52ch;
+    margin: 0;
+    color: var(--color-on-surface-muted);
+    font-size: var(--text-meta);
+    line-height: 1.5;
+  }
+
+  .bz-dataline-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 18px;
+  }
+
+  .bz-dataline-action {
+    padding: 0;
+    border: 0;
+    background: none;
+    font: inherit;
+    font-size: var(--text-item);
+    cursor: pointer;
+  }
+
+  .bz-dataline-reset { color: var(--color-fault); }
+
+  /* The file input is the label's: clicking the words opens the picker. */
+  .bz-dataline-file {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+  }
+
+  .bz-dataline-status {
+    flex-basis: 100%;
+    margin: 0;
+    color: var(--color-on-surface);
+    font-size: var(--text-meta);
+  }
+
+  .bz-dataline-status p { margin: 0; }
 }

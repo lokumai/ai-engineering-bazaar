@@ -2,8 +2,10 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { useEffect, useRef } from 'react'
-import { INDEX_ROUTE, INDEX_TITLE, levelRoute, type CategoryLabel } from '@/lib/route-labels'
+import { useEffect, useRef, useState } from 'react'
+import { INDEX_ROUTE, INDEX_TITLE, type CategoryLabel } from '@/lib/route-labels'
+import { useHydrated, useRecord } from '@/lib/record/store'
+import { TRACKS, type Track, EVERYONE_SEGMENT, catalogRoute, trackOfPath } from '@/lib/tracks'
 
 /**
  * M10 — the navbar. One row, on every route, with a dropdown per level.
@@ -129,21 +131,14 @@ const DESTINATIONS: readonly Destination[] = [
    * is the author's own framing of the milestone: *"lets only have a single
    * catalog page which has everything there and people can filter there."*
    */
-  { href: INDEX_ROUTE, label: INDEX_TITLE, owns: [INDEX_ROUTE, MODULES] },
+  { href: INDEX_ROUTE, label: INDEX_TITLE, owns: [INDEX_ROUTE, MODULES, `/${EVERYONE_SEGMENT}/`] },
   {
     href: '/profile/',
-    // M14 — `Your progress`, which is the name the page itself carries and the
-    // one §9 gives this subject. It read `My progress`, and the copy register
-    // bans the first person outright: the site does not speak as the reader any
-    // more than it speaks as itself.
-    label: 'Your progress',
-    /**
-     * M14 folded the four routes that reported on the reader into `/profile/`,
-     * and the three retired ones are still owned here: they are forwarding
-     * pages, and for the frame a reader spends on one the navbar should mark
-     * the destination they are on their way to rather than nothing at all.
-     */
-    owns: ['/profile/', '/report/', '/dashboard/', '/path/'],
+    // The author, 2026-11-05: `Progress` in the bar. The page keeps its own
+    // title, `Your progress`. It read `My progress` once, and the copy register
+    // bans the first person outright.
+    label: 'Progress',
+    owns: ['/profile/'],
   },
 ]
 
@@ -157,6 +152,8 @@ const DESTINATIONS: readonly Destination[] = [
  */
 function levelOf(pathname: string): string | null {
   const segments = pathname.split('/').filter(Boolean)
+  if (segments[0] === 'tr' || segments[0] === 'fa') segments.shift()
+  if (segments[0] === EVERYONE_SEGMENT) segments.shift()
   if (segments[0] === 'sheets' && segments.length === 2) return segments[1]
   if (segments[0] === 'courses' && segments.length >= 2) return segments[1]
   return null
@@ -197,6 +194,14 @@ const CLOSE_DELAY_MS = 260
 
 export function MainNav({ categories }: { categories: readonly CategoryLabel[] }) {
   const pathname = usePathname() ?? '/'
+  const record = useRecord()
+  const hydrated = useHydrated()
+  /* M39 D2 — the menu's two tabs. The tab of the track the reader is in is the
+     one selected when the menu opens; a tab changes only which track the levels
+     below open into. With no script, the For Engineers list is the one shown. */
+  const readingTrack: Track = trackOfPath(pathname) ?? (hydrated ? record.prefs.track : null) ?? 'engineers'
+  const pageTrack = trackOfPath(pathname)
+  const [tab, setTab] = useState<Track>('engineers')
   const panel = useRef<HTMLDetailsElement>(null)
   /**
    * The PANEL, not the disclosure — and the difference is the whole of a bug
@@ -344,6 +349,9 @@ export function MainNav({ categories }: { categories: readonly CategoryLabel[] }
               {hasMenu ? (
                 <details
                   ref={panel}
+                  onToggle={(event) => {
+                    if (event.currentTarget.open) setTab(readingTrack)
+                  }}
                   onPointerLeave={leave}
                   onPointerEnter={cancelClose}
                   onFocus={cancelClose}
@@ -365,43 +373,53 @@ export function MainNav({ categories }: { categories: readonly CategoryLabel[] }
                   </summary>
 
                   <div className="bz-menu" ref={menu}>
-                    <ul role="list">
-                      {/* The destination the trigger used to be. A disclosure
-                          cannot also be a link, so the whole-curriculum page
-                          is named here instead of implied by the label. */}
-                      <li>
-                        <Link
-                          href={INDEX_ROUTE}
-                          className="bz-menu-item"
-                          aria-current={pathname === INDEX_ROUTE ? 'page' : undefined}
+                    <div role="tablist" aria-label="Track" className="bz-menu-tabs">
+                      {TRACKS.map((one) => (
+                        <button
+                          key={one.id}
+                          type="button"
+                          role="tab"
+                          id={`bz-menu-tab-${one.id}`}
+                          aria-controls={`bz-menu-panel-${one.id}`}
+                          aria-selected={tab === one.id}
+                          className="bz-menu-tab"
+                          onClick={() => setTab(one.id)}
                         >
-                          <span aria-hidden="true" className="bz-menu-key" />
-                          {/* `Curriculum`, the author's word on 2026-10-12. It
-                              read `Every level` and then `View Curriculum`
-                              (M20), when it shared one string with the
-                              catalog's first level chip; that chip became
-                              `All` under its `Level:` heading (D75), and this
-                              row, which has no heading over it, names the
-                              destination instead. */}
-                          Curriculum
-                          <span className="bz-menu-count">All</span>
-                        </Link>
-                      </li>
-                      {categories.map((category) => {
-                        return (
+                          {one.label}
+                        </button>
+                      ))}
+                    </div>
+                    {TRACKS.map((one) => (
+                      <ul
+                        key={one.id}
+                        role="list"
+                        id={`bz-menu-panel-${one.id}`}
+                        aria-labelledby={`bz-menu-tab-${one.id}`}
+                        hidden={tab !== one.id}
+                      >
+                        {/* The whole curriculum, named here because a
+                            disclosure cannot also be a link. */}
+                        <li>
+                          <Link
+                            href={catalogRoute(one.id)}
+                            className="bz-menu-item"
+                            aria-current={pathname === catalogRoute(one.id) ? 'page' : undefined}
+                          >
+                            <span aria-hidden="true" className="bz-menu-key" />
+                            Curriculum
+                            <span className="bz-menu-count">All</span>
+                          </Link>
+                        </li>
+                        {categories.map((category) => (
                           <li key={category.slug}>
                             <Link
-                              href={levelRoute(category.slug)}
+                              href={catalogRoute(one.id, category.slug)}
                               className="bz-menu-item"
                               data-cat={category.slug}
-                              /* Not `startsWith`, because M17 left the two
-                                 prefixes apart: the level's own page is under
-                                 `/sheets/` and its modules are under
-                                 `/courses/`, so the level a reader is inside is
-                                 a SEGMENT in one of two trees and not a prefix
-                                 of one address. */
                               aria-current={
-                                levelOf(pathname) === category.slug ? 'page' : undefined
+                                pageTrack === one.id && levelOf(pathname) === category.slug
+                                  ? 'page'
+                                  : undefined
                               }
                             >
                               {/* The level's own colour, and its number beside
@@ -416,9 +434,9 @@ export function MainNav({ categories }: { categories: readonly CategoryLabel[] }
                               <span className="bz-menu-count">{category.total}</span>
                             </Link>
                           </li>
-                        )
-                      })}
-                    </ul>
+                        ))}
+                      </ul>
+                    ))}
                   </div>
                 </details>
               ) : (

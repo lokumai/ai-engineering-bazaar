@@ -94,7 +94,12 @@ export function EraseDialog({
   onConfirm,
   onExport,
   exportedAt = null,
+  triggerLabel = ERASE_COPY.trigger,
+  triggerClassName = 'bz-btn bz-btn-danger',
 }: {
+  /** M39 F2 — the trigger's words and look; the progress page's data line says `Reset`. */
+  triggerLabel?: string
+  triggerClassName?: string
   /** Called once, on a confirmed erase. The caller holds the undo snapshot. */
   onConfirm: () => void
   /** §12.15 — the same export the panel runs, so there is one implementation. */
@@ -126,7 +131,7 @@ export function EraseDialog({
 
   return (
     <Dialog.Root open={open} onOpenChange={onOpenChange}>
-      <Dialog.Trigger className="bz-btn bz-btn-danger">{ERASE_COPY.trigger}</Dialog.Trigger>
+      <Dialog.Trigger className={triggerClassName}>{triggerLabel}</Dialog.Trigger>
 
       <Dialog.Portal>
         <Dialog.Overlay className="bz-dialog-backdrop" />

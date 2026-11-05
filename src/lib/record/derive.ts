@@ -304,7 +304,9 @@ export function nextUnsigned(data: RecordData, facts: CurriculumFacts): string |
  * A true zero prints `0`, not a dash: somebody counted (§11.25).
  */
 export function tally(data: RecordData): { sheets: number } {
-  const sheets = Object.values(data.sheets).filter((sheet) => !isEmptySheetRecord(sheet))
+  // D91 — both tracks: an erase removes both.
+  const sheets = [...Object.values(data.sheets), ...Object.values(data.everyoneSheets ?? {})]
+    .filter((sheet) => !isEmptySheetRecord(sheet))
   return { sheets: sheets.length }
 }
 

@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { useEffect, useMemo, useRef } from 'react'
+import { useEffect, useId, useMemo, useRef } from 'react'
 import {
   type ReadingLang,
   type TranslatedLang,
@@ -75,25 +75,46 @@ export function alternatesOf(
 }
 
 /** A globe: the mark every product uses for "the language of this page". */
-function GlobeGlyph() {
+/**
+ * M39 E4 — the flag of a language, beside its code. English takes the UK flag
+ * and Turkish Turkey's. Persian takes none: a flag stands for a country, Persian
+ * is spoken in three, and Iran's flag is a statement either way (D91), so it
+ * shows its own script, `فا`, in a small chip instead. Drawn inline, because an
+ * emoji flag does not render on Windows.
+ */
+function Flag({ lang }: { lang: ReadingLang }) {
+  const clip = useId()
+  if (lang === 'fa') {
+    return (
+      <span className="bz-flag bz-flag-script" aria-hidden="true" lang="fa">
+        فا
+      </span>
+    )
+  }
+  if (lang === 'tr') {
+    return (
+      <svg className="bz-flag" viewBox="0 0 1200 800" aria-hidden="true" preserveAspectRatio="xMidYMid slice">
+        <rect width="1200" height="800" fill="#E30A17" />
+        <circle cx="425" cy="400" r="200" fill="#fff" />
+        <circle cx="475" cy="400" r="160" fill="#E30A17" />
+        <polygon fill="#fff" points="583.3,400 764.2,458.8 652.4,304.9 652.4,495.1 764.2,341.2" />
+      </svg>
+    )
+  }
   return (
-    <svg
-      width="16"
-      height="16"
-      viewBox="0 0 16 16"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="1.5"
-      aria-hidden="true"
-    >
-      <circle cx="8" cy="8" r="6.25" />
-      <path d="M1.75 8h12.5" />
-      <path d="M8 1.75c1.8 1.7 2.7 3.8 2.7 6.25S9.8 12.55 8 14.25C6.2 12.55 5.3 10.45 5.3 8S6.2 3.45 8 1.75Z" />
+    <svg className="bz-flag" viewBox="0 0 60 30" aria-hidden="true" preserveAspectRatio="xMidYMid slice">
+      <clipPath id={clip}>
+        <path d="M30,15 h30 v15 z v15 h-30 z h-30 v-15 z v-15 h30 z" />
+      </clipPath>
+      <rect width="60" height="30" fill="#012169" />
+      <path d="M0,0 L60,30 M60,0 L0,30" stroke="#fff" strokeWidth="6" />
+      <path d="M0,0 L60,30 M60,0 L0,30" clipPath={`url(#${clip})`} stroke="#C8102E" strokeWidth="4" />
+      <path d="M30,0 v30 M0,15 h60" stroke="#fff" strokeWidth="10" />
+      <path d="M30,0 v30 M0,15 h60" stroke="#C8102E" strokeWidth="6" />
     </svg>
   )
 }
 
-/** The mark beside the language being read; `aria-current` says it in words. */
 function CheckGlyph() {
   return (
     <svg
@@ -182,11 +203,12 @@ export function LanguageMenu({
     <nav className="bz-langmenu" aria-label={LANGUAGE_PICKER_LABEL}>
       <details ref={panel} onKeyDown={keyDown} onBlur={blur}>
         <summary
-          className="bz-bar-icon bz-langmenu-trigger"
+          className="bz-langmenu-trigger"
           aria-label={`Language: ${currentLabel}`}
           title="Language"
         >
-          <GlobeGlyph />
+          {here.current !== 'fa' && <Flag lang={here.current} />}
+          <span>{here.current.toUpperCase()}</span>
         </summary>
         <div className="bz-menu bz-langmenu-panel">
           {LANGUAGES.filter((one) => here.available.includes(one.id)).map((one) => (
@@ -199,6 +221,7 @@ export function LanguageMenu({
               dir={dirOf(one.id)}
               aria-current={here.current === one.id ? 'page' : undefined}
             >
+              <Flag lang={one.id} />
               {one.label}
               {here.current === one.id && <CheckGlyph />}
             </Link>

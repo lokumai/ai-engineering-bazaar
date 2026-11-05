@@ -46,17 +46,20 @@ test('a For Everyone page is For Everyone in frame one, before any script file l
   expect(onEveryone.engineers).toBe(onEngineers.everyone)
 })
 
-test('an unwritten For Everyone module says so, and offers both ways on', async ({ page }) => {
+test('a For Everyone page is either the written module or says it is not written, never both or neither', async ({ page }) => {
   await page.goto(EVERYONE)
-  // Whatever is written, every module has a For Everyone page; one that is not
-  // written says so and links back. Written ones have prose instead.
+  // Every module has a For Everyone page (D91). Which of the two it is depends
+  // on the content, so the test asserts the rule both ways round: exactly one
+  // of prose and the not-written note, and the note always offers both ways on.
   const notWritten = page.getByText('The For Everyone version of this module is not written yet.')
-  if (await notWritten.count() === 0) {
-    await expect(page.locator('[data-hl-prose]')).toBeVisible()
-    return
+  const prose = page.locator('[data-hl-prose]')
+  const shown = (await notWritten.count()) + (await prose.count())
+  expect(shown, 'a For Everyone page with both, or neither, of prose and the note').toBe(1)
+  await expect(page.getByRole('link', { name: 'Read it For Engineers' })).toHaveCount(await notWritten.count())
+  if (await notWritten.count() === 1) {
+    await expect(page.getByRole('link', { name: 'Read it For Engineers' })).toHaveAttribute('href', new RegExp(`${A0.path}$`))
+    await expect(page.getByRole('link', { name: 'See what is written For Everyone' })).toBeVisible()
   }
-  await expect(page.getByRole('link', { name: 'Read it For Engineers' })).toHaveAttribute('href', new RegExp(`${A0.path}$`))
-  await expect(page.getByRole('link', { name: 'See what is written For Everyone' })).toBeVisible()
 })
 
 test('the catalog menu opens on the reader\'s track, and its levels open into it', async ({ page }) => {

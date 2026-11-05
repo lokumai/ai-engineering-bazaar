@@ -65,10 +65,6 @@ export interface StampFacts {
 const OWNED = /^hl-(?:e-)?(?:signed-\d+|cat-[a-z0-9-]+-(?:started|complete))$/
 
 /**
- * The class set a record implies. Sorted, so two callers comparing results —
- * and the cross-test — are comparing sets rather than insertion orders.
- */
-/**
  * D91 — each track's classes carry their own prefix: `hl-signed-<n>` and
  * `hl-cat-…` for For Engineers, `hl-e-signed-<n>` and `hl-e-cat-…` for For
  * Everyone. Both are stamped every time, so a page that shows both tracks (the
@@ -100,6 +96,10 @@ function classesOf(
   return classes
 }
 
+/**
+ * The class set a record implies, both tracks. Sorted, so two callers comparing
+ * results — and the cross-test — are comparing sets rather than insertion orders.
+ */
 export function stampClassesFor(data: RecordData, facts: StampFacts): string[] {
   return [
     ...classesOf(data.sheets, facts, STAMP_PREFIX.engineers),

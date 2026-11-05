@@ -113,7 +113,7 @@ function flushNow(): void {
   } else {
     lastWrite = result.reason
     // §12.1.4 — the in-memory store stays live. The UI prints NOT SAVED beside
-    // the affected control, with EXPORT YOUR RECORD as the adjacent action.
+    // the affected control, with `Back up to a file` as the adjacent action.
     if (result.reason === 'blocked') stampStorage('blocked')
   }
   // Posted whether or not the write landed: another tab can still be right

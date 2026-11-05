@@ -58,12 +58,24 @@ function groupsOf(section: string[]): { heading: string; body: string[] }[] {
 
 const modules = loadAllModules()
 
+/** One body per language, For Engineers and (D91) For Everyone where it is written. */
+function versions(name: string, body: string, translations: Readonly<Record<string, string | null>>) {
+  return [
+    { name: `${name} (en)`, lang: 'en' as ReadingLang, markdown: body },
+    ...TRANSLATED_LANGS.flatMap((lang) => {
+      const markdown = translations[lang]
+      return markdown === null || markdown === undefined
+        ? []
+        : [{ name: `${name} (${lang})`, lang: lang as ReadingLang, markdown }]
+    }),
+  ]
+}
+
 const bodies = modules.flatMap((module) => [
-  { name: `${module.slug} (en)`, lang: 'en' as ReadingLang, markdown: module.body },
-  ...TRANSLATED_LANGS.flatMap((lang) => {
-    const markdown = module.translations[lang]
-    return markdown === null ? [] : [{ name: `${module.slug} (${lang})`, lang: lang as ReadingLang, markdown }]
-  }),
+  ...versions(module.slug, module.body, module.translations),
+  ...(module.everyone === null
+    ? []
+    : versions(`${module.slug} for everyone`, module.everyone.body, module.everyone.translations)),
 ])
 
 describe('a grouped References list', () => {
@@ -72,8 +84,10 @@ describe('a grouped References list', () => {
     return section === null ? [] : [{ ...body, section }]
   })
 
-  it('has something to check: modules carry a References section, grouped or not', () => {
+  it('has something to check: modules carry a References section, and some are grouped', () => {
     expect(sections.length).toBeGreaterThan(0)
+    // Without a grouped list, every rule below holds over nothing.
+    expect(sections.some(({ section }) => groupsOf(section).length > 0)).toBe(true)
   })
 
   it('uses only its language\'s five headings', () => {

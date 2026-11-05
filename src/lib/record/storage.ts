@@ -103,7 +103,7 @@ export function readRecord(storage: RecordStorage | null): ParseResult {
 /**
  * §12.1.4 — the flush. The in-memory store stays authoritative whatever this
  * returns, and the UI prints `NOT SAVED` beside the affected control with
- * `EXPORT YOUR RECORD` adjacent: a write silently thrown away while the page
+ * `Back up to a file` adjacent: a write silently thrown away while the page
  * keeps claiming the state is the §1 failure in its purest form.
  *
  * The size guard runs BEFORE the write, in UTF-8 bytes — `json.length` counts

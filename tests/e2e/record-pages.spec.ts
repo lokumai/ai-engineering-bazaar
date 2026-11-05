@@ -169,14 +169,14 @@ test('§12.15 — the erase dialog names its scope and enumerates the real count
 
   // §12.15 — the safe path is one click from the destructive one, not a route
   // away from it.
-  await expect(dialog.getByRole('button', { name: 'EXPORT YOUR RECORD' })).toBeVisible()
+  await expect(dialog.getByRole('button', { name: 'Back up to a file' })).toBeVisible()
 
   // §12.14.1 — the buttons state OUTCOMES, and the decline states the SAFE
   // outcome with no shame and no loss framing. Never Yes/No.
   const buttons = await dialog
     .locator('.bz-actions button')
     .evaluateAll((nodes) => nodes.map((node) => (node.textContent ?? '').trim()))
-  expect(buttons).toEqual(['Erase all data', 'Keep my data', 'EXPORT YOUR RECORD'])
+  expect(buttons).toEqual(['Erase all data', 'Keep my data', 'Back up to a file'])
   for (const label of buttons) {
     expect(label).not.toMatch(/^(yes|no)\b/i)
   }

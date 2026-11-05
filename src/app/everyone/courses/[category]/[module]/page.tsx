@@ -6,7 +6,7 @@ import {
   type SheetRouteParams,
 } from '@/components/sheet/ModuleSheet'
 
-/** D91 — a module's For Everyone page, only where that version is written. */
+/** D91 — every module's For Everyone page; an unwritten one says so (`NotWritten`). */
 export function generateStaticParams(): SheetRouteParams[] {
   return everyoneModuleParam('en')
 }

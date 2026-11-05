@@ -121,6 +121,20 @@ const ATTRIBUTE = /\s+([^\s=/>]+)\s*=\s*("([^"]*)"|'([^']*)')/g
 /** What may precede the root: an XML declaration, a comment, whitespace. */
 const PROLOGUE = /<\?[\s\S]*?\?>|<!--[\s\S]*?-->/y
 
+/**
+ * Whether the SVG carries a forbidden string. One ending in `=` (`class=`,
+ * `style=`) is an attribute, and matches only where an attribute name starts,
+ * after whitespace: `font-style=` is on the allow-list, and a plain substring
+ * test refused every label the finaliser writes it on.
+ *
+ * @param {string} svg
+ * @param {string} forbidden
+ */
+function carries(svg, forbidden) {
+  if (!forbidden.endsWith('=')) return svg.includes(forbidden)
+  return new RegExp(`\\s${forbidden.replace(/[.*+?^${}()|[\]\\-]/g, '\\$&')}`).test(svg)
+}
+
 function isStrippedAttribute(name) {
   if (Object.hasOwn(STRIPPED_ATTRIBUTES, name)) return true
   return Object.keys(STRIPPED_ATTRIBUTES).some(
@@ -229,7 +243,7 @@ export function profileViolations(svg) {
   const violations = []
 
   for (const forbidden of FORBIDDEN_STRINGS) {
-    if (svg.includes(forbidden)) violations.push(`forbidden string "${forbidden}"`)
+    if (carries(svg, forbidden)) violations.push(`forbidden string "${forbidden}"`)
   }
 
   const { tags, unmatched } = tokenize(svg)

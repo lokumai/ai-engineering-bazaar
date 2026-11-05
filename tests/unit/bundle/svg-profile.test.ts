@@ -69,6 +69,12 @@ describe('profileViolations', () => {
     expect(profileViolations(CONFORMING)).toEqual([])
   })
 
+  // `font-style` is on the allow-list and its name ends in `style=`: the
+  // forbidden `style=` and `class=` are attributes, not substrings of one.
+  it('accepts font-style, whose name ends in a forbidden attribute', () => {
+    expect(profileViolations(svg('<text x="1" y="1" font-style="normal">A</text>'))).toEqual([])
+  })
+
   it('accepts escaped entities', () => {
     expect(profileViolations(svg('<text x="1" y="1">A &amp; B &lt; C &quot;D&quot;</text>'))).toEqual([])
   })

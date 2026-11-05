@@ -43,6 +43,7 @@
  */
 import { readFileSync, readdirSync, existsSync, statSync } from 'node:fs'
 import { join, resolve, relative, dirname, basename } from 'node:path'
+import { htmlFiles, measureBasePath } from './lib/base-path.mjs'
 
 const root = resolve(process.argv[2] ?? 'out')
 
@@ -53,17 +54,6 @@ const FAIL = `${E}[31m✗${E}[0m`
 if (!existsSync(root) || !statSync(root).isDirectory()) {
   console.error(`\n${FAIL} export not found: ${root}\n      run \`npm run build\` first, or pass the export directory.\n`)
   process.exit(1)
-}
-
-/** Every `.html` file in the export, in directory order. */
-function htmlFiles(dir) {
-  const out = []
-  for (const entry of readdirSync(dir, { withFileTypes: true })) {
-    const p = join(dir, entry.name)
-    if (entry.isDirectory()) out.push(...htmlFiles(p))
-    else if (entry.isFile() && entry.name.endsWith('.html')) out.push(p)
-  }
-  return out
 }
 
 /**
@@ -78,26 +68,8 @@ const attrs = /\s(href|src)\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s>"'`]+))/gi
 const files = htmlFiles(root)
 
 // -- 1. What base path did this build use? ----------------------------------
-/** The prefix in front of `/_next/`, i.e. the `basePath` the export was built with. */
-function measureBasePath() {
-  const fromEnv = process.env.SITE_BASE_PATH
-  if (fromEnv !== undefined) return { base: fromEnv.replace(/\/$/, ''), how: 'SITE_BASE_PATH' }
-
-  const tally = new Map()
-  for (const f of files) {
-    const m = /["'\\]((?:\/[^"'\\\s]*?)?)\/_next\//.exec(readFileSync(f, 'utf8'))
-    if (m) tally.set(m[1], (tally.get(m[1]) ?? 0) + 1)
-  }
-  if (tally.size === 0) return { base: '', how: 'no /_next/ asset in the export; assumed empty' }
-  const [base, seen] = [...tally].sort((a, b) => b[1] - a[1])[0]
-  const how =
-    tally.size === 1
-      ? `measured from /_next/ URLs in ${seen} file(s)`
-      : `measured from /_next/ URLs, but the export carries ${tally.size} different prefixes: ${[...tally.keys()].map((k) => k || '<empty>').join(', ')}`
-  return { base, how }
-}
-
-const { base, how } = measureBasePath()
+// Measured from the export (`scripts/lib/base-path.mjs` says why).
+const { base, how } = measureBasePath(files)
 
 // -- 2. Collect and resolve -------------------------------------------------
 /** The URL a given exported file is served at, base path included. */

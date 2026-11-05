@@ -11,8 +11,8 @@ description: >
 authority: blueprint
 writes: agent, when explicitly refactoring
 status: active
-covers: the whole system as built on 2026-09-10, with M16 shipped — every route on the design language; the record, channel A and the render step corrected for M24 on 2026-10-11, and the quiz and the end of a module for M25 on 2026-10-12, the Bazaar Street front door for M27 and the Persian pages for M28 the same day
-last_updated: "2026-10-12"
+covers: "the whole system as built on 2026-09-10, with M16 shipped: every route on the design language; the record, channel A and the render step corrected for M24 on 2026-10-11, and the quiz and the end of a module for M25 on 2026-10-12, the Bazaar Street front door for M27 and the Persian pages for M28 the same day; the content bundle under out/api/ for M37 on 2026-11-05"
+last_updated: "2026-11-05"
 ---
 
 # 🏗️ ARCHITECTURE — How this project is built
@@ -100,6 +100,8 @@ Wherever a question has an answer, exactly one piece of code answers it.
 | Where does the record go? | `src/lib/record/scope.ts` |
 | What is an internal link? | `src/lib/content/links.ts` |
 | What number is this module, and what comes next? | `mini-courses/curriculum.yaml` |
+| What does a module page render? | `src/lib/content/module-render.ts` |
+| What is the bundle contract? | `src/lib/bundle/schema.ts` |
 
 The failure this prevents is two answers that agree until they do not. A manager's panel computing
 completion in SQL while the reader's page computes it in TypeScript works fine until the curriculum
@@ -733,6 +735,56 @@ served from a shared origin, and the conditions under which a custom domain stop
 fast-forward, and `gh pr merge --admin` is refused while a check is still running. Note that
 `repos/.../branches/main/protection` returns 404 for this repository, which is misleading; use
 `gh api repos/.../rulesets`.
+
+---
+
+## 13. The content bundle
+
+Every build also publishes the course as JSON under `out/api/`, for the native mobile reader.
+The reader renders what it is given and derives nothing: slugging, figure numbering, row headers, link localisation and code tokens have all been computed in TypeScript, and the reader maps each node to a widget.
+Why a block tree and not HTML or markdown is **D86**.
+
+**The contract is `src/lib/bundle/schema.ts`, and only there.**
+It is a set of strict zod schemas, so a key the contract does not name fails the build instead of reaching the reader.
+Every route handler parses its document with them before serialising it, and `tests/e2e/bundle.spec.ts` parses the finished export with the same schemas.
+They name fields and formats, never a fact about the content: a language is checked against `src/lib/content/languages.ts`, not listed.
+Every path in every field is relative to the site root, with no base path and no leading slash, so one bundle serves from any host.
+`tests/unit/bundle/__snapshots__/bundle-schema.json` shows any change to the contract as a diff.
+
+**Two producer stages, and one writer per file.**
+
+| Published path | Written by |
+|---|---|
+| `api/index.json` (the published majors) | `src/app/api/index.json/route.ts` |
+| `api/v1/tokens.json` | `src/app/api/v1/tokens.json/route.ts`, from `src/lib/bundle/tokens.ts` |
+| `api/v1/levels/<level>.json` | `src/app/api/v1/levels/[file]/route.ts` |
+| `api/v1/modules/<level>/<module>/<lang>.json` | `src/app/api/v1/modules/[level]/[module]/[file]/route.ts`, one per language the module has a page in |
+| `api/v1/index.draft.json` | `src/app/api/v1/index.draft.json/route.ts`; deleted by the finaliser |
+| `api/v1/index.json`, `api/v1/diagrams/<id>.svg` | `scripts/finalize-bundle.mjs` |
+| `api/v1/record-conformance.json` | `scripts/finalize-bundle.mjs`, copied from `tests/unit/record/__snapshots__/record-conformance.v1.json` |
+| `course-images/<level>/<file>` | the existing `prebuild` |
+
+The route handlers write every document the TypeScript pipeline can produce, and they are static, so `next build` writes each as a plain file.
+A module document comes from `src/lib/content/module-render.ts`, the same render input the module page reads, so the page and the bundle cannot drift (rule 4).
+The finaliser is the `postbuild` of `npm run build` and writes what needs a browser or the hash of another file.
+It draws every diagram the draft lists in Playwright's bundled Chromium, twice: in the Paper palette as `light` and in Night as `dark`.
+Each drawing is flattened into the SVG profile of `scripts/lib/svg-profile.mjs`, with labels set in the one pinned Vazirmatn face that `scripts/lib/diagram-font.mjs` names and the index records by hash.
+Then it hashes every bundle file and image, writes `index.json` and deletes the draft.
+It exits 1, naming the diagram, module and language, on any render error, profile violation, moved label or unloaded font, and writes no `index.json`; without Chromium it exits 1 and prints `npx playwright install chromium`.
+The two scripts are plain `.mjs` and import only `node:`, packages and `scripts/lib/`, so neither restates a TypeScript definition.
+
+**Versions.**
+`files` maps every file under `api/v1/` except `index.json` and `record-conformance.json` to the sha256 of its bytes, and `images` does the same for every image a document names.
+`contentVersion` is the sha256 of the index with `contentVersion` and `publishedAt` blanked, through the one canonical serialisation in `scripts/lib/bundle-hash.mjs`.
+It holds no build time, commit hash or commit date, so two builds of one commit, and a commit that changes no content and no render input, give the same value.
+`publishedAt` is the commit date, and the reader orders versions by it.
+Adding a field, a node type or a language is additive and stays in `api/v1/`, because the reader ignores what it does not know.
+Removing, renaming or retyping a field means `api/v2/`, and `api/v1/` stays published while the reader's oldest supported version reads it.
+
+**Checks.**
+`node scripts/check-bundle-out.mjs <dir>` reads a finished export and recomputes every claim the index makes: the file set, each sha256, `contentVersion`, the SVG profile of every diagram, the diagram font, and no field starting with the base path.
+CI runs it after the plain build and after the base-path build, and then requires the two `api/` trees to be byte-identical.
+The deploy runs it on `_site` before publishing, and after publishing it polls the live `api/v1/index.json` with a per-run query string for up to a minute, until it serves this build's `contentVersion`.
 
 ---
 

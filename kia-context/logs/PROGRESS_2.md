@@ -21,8 +21,8 @@ description: >
 authority: state
 writes: agent, every session
 status: active
-covers: "M16 to M36, 2026-09-09 onward — M16 the ten stages and the review pass, M17 the curriculum fold, M18 the front door, M20 the catalog's descriptions, M21 the module page, M22 the progress redesign and M19's pipeline, all six done; M23 — the interface's own strings — is written and not started; M24 — the author's requests of 2026-10-11 — shipped and merged as PR #23, with a same-day follow-up (the level chip `All`, a filter bar that no longer sticks, the current level marked); M25 — the end of a module rebuilt, and a quick quiz — shipped and merged as PR #25; M26 — headings, the requested additions and ASD-STE-like English across the corpus — merged as PR #26. M27 — the Bazaar Street front door — merged as PR #27. Released as v1.0.0 on 2026-10-12. M28 — Persian, the third language — merged as PR #30 the same day. M29 — both translations rewritten in their own language (D81) — merged as PR #31 the same day. M30 — the Persian rewritten by meaning and a clarity hunt in all three languages (D82, D83) — merged as PR #32 the same day. M31 — two promo videos, one made with HyperFrames and one with /brag (D84) — removed at the author's request before merging. M32 — the README rewritten for readers — squash-merged as PR #33 on 2026-10-13. M33 — a tray of lokum offered at each door on hover — merged as PR #34 on 2026-10-14. M34 — the star count refreshed by the deploy (D85) — merged as PR #36 on 2026-10-15. M35 — Harness Engineering names its parts in plain words — merged as PR #38 on 2026-10-15. M36 — three references for Observability and Context Engineering — merged as PR #42 on 2026-10-18. Checkbox format repaired across the part on 2026-09-13."
-last_updated: 2026-10-18
+covers: "M16 to M37, 2026-09-09 onward: M16 the ten stages and the review pass, M17 the curriculum fold, M18 the front door, M20 the catalog's descriptions, M21 the module page, M22 the progress redesign and M19's pipeline, all six done; M23, the interface's own strings, is written and not started; M24, the author's requests of 2026-10-11, shipped and merged as PR #23, with a same-day follow-up (the level chip `All`, a filter bar that no longer sticks, the current level marked); M25, the end of a module rebuilt, and a quick quiz, shipped and merged as PR #25; M26, headings, the requested additions and ASD-STE-like English across the corpus, merged as PR #26. M27, the Bazaar Street front door, merged as PR #27. Released as v1.0.0 on 2026-10-12. M28, Persian, the third language, merged as PR #30 the same day. M29, both translations rewritten in their own language (D81), merged as PR #31 the same day. M30, the Persian rewritten by meaning and a clarity hunt in all three languages (D82, D83), merged as PR #32 the same day. M31, two promo videos, one made with HyperFrames and one with /brag (D84), removed at the author's request before merging. M32, the README rewritten for readers, squash-merged as PR #33 on 2026-10-13. M33, a tray of lokum offered at each door on hover, merged as PR #34 on 2026-10-14. M34, the star count refreshed by the deploy (D85), merged as PR #36 on 2026-10-15. M35, Harness Engineering names its parts in plain words, merged as PR #38 on 2026-10-15. M36, three references for Observability and Context Engineering, merged as PR #42 on 2026-10-18. Checkbox format repaired across the part on 2026-09-13. M37, the content bundle for the mobile reader (D86), is built on branch feat/content-bundle as PR 1 of the mobile reader."
+last_updated: 2026-11-05
 ---
 
 # 📈 PROGRESS, part 2 — M16 to M36
@@ -4229,6 +4229,64 @@ then commit and push and merge"*.
 - [x] Every title fetched from its page, and each note says what the page covers.
 - [x] Nine lines added across the six files and nothing else moved; no em dash; 2,194 unit and
       corpus tests; build clean, the links on the built pages.
+
+---
+
+## Milestone M37: The content bundle for the mobile reader
+
+Branch `feat/content-bundle`, from `main` at `a941364`, ten commits, one per task; not pushed and not merged when this was written.
+It is PR 1 of the mobile reader: the web build now publishes the course as a versioned, content-addressed JSON bundle under `out/api/` that a native reader renders without deriving anything.
+The shape of the bundle and why is **D86**; the contract is ARCHITECTURE §13; MANIFESTO rule 10 gained one sentence about device backup.
+
+### Deliverables
+
+- [x] **The base-path localisation bug**, fixed first with a failing test (`c96bc7b`): on the deployed build every Turkish and Persian prose cross-reference landed on the English page, because the link was localised after the base path was applied.
+      `scripts/check-links-out.mjs` now refuses a translated page that sends a reader to English where its language has the page.
+- [x] **The kitchen sink** carries every element the block inventory names (`7f67c14`).
+- [x] **`renderTree`**: the renderer returns its hast tree and annotates links, images and captions on it (`e41584b`).
+- [x] **One render input**, `src/lib/content/module-render.ts`, read by the module page and the bundle (`e9278ba`).
+- [x] **The record conformance snapshot**, `tests/unit/record/__snapshots__/record-conformance.v1.json`, and the exports it needs (`dfd6452`).
+- [x] **The bundle library** `src/lib/bundle/` (schema, blocks, build, diagrams, tokens, image size) and its guards (`3cccbd0`).
+- [x] **The route handlers** under `src/app/api/` (`75ccf3f`).
+- [x] **The finaliser** `scripts/finalize-bundle.mjs`, the checker `scripts/check-bundle-out.mjs` and the e2e contract check `tests/e2e/bundle.spec.ts` (`d228635`).
+- [x] **CI and deploy**: Chromium installed before each build, the bundle checked after both builds and the two `api/` trees diffed, and the deploy waiting for the live `contentVersion` (`65cb429`).
+- [x] **The written record**: ARCHITECTURE §13 and two rows in its rule-4 table, MANIFESTO rule 10, **D86**, this entry, and the `CLAUDE.md` and `tests/README.md` lines.
+
+### Acceptance criteria
+
+Measured on `65cb429` on 2026-11-05 unless a commit is named.
+
+- [x] **1.** With `SITE_BASE_PATH=/ai-engineering-bazaar`, translated prose links point at the translated page.
+      On the unfixed tree the new export rule failed with 32 dead targets in 218 places, 110 on `tr` pages and 108 on `fa` pages; none carried a fragment, because the corpus writes no fragment course link today, so the fragment case is held by `tests/unit/content/localised-links.test.ts` alone, which failed on the old code.
+- [x] **2.** `tests/unit/content/__snapshots__/kitchen-sink.html` last changed in `7f67c14`, and the e2e suite passed with no snapshot update: 1,204 passed, 59 skipped.
+- [x] **3.** With an empty `PLAYWRIGHT_BROWSERS_PATH` the build exits 1 and prints `npx playwright install chromium` (`d228635`).
+- [x] **4.** The export holds `api/index.json`, `api/v1/index.json`, `tokens.json`, `record-conformance.json`, 5 level documents, 71 module documents (the count of `docs` entries the index lists), and 138 diagram files, the light and dark file of each of the 69 diagram blocks, none missing; `index.draft.json` is absent.
+- [x] **5.** `check-bundle-out` passes, and failed naming the file and both hashes when one byte was flipped in a module document, a diagram and a course image (`d228635`).
+- [x] **6.** The plain build and the base-path build gave byte-identical `out/api/` trees (`diff -r`, no output).
+- [x] **7.** Two base-path builds of `65cb429` gave byte-identical `out/api/` trees (`diff -r`, no output).
+- [x] **8.** A docs-only probe commit `6c85e5e` on top of `65cb429`, built in a throwaway worktree: `contentVersion` `db80145249e7328c3b8debb307e157facd1a237a965f7d5604ce3a8dcf62cb87` on both; `publishedAt` `2026-11-05T14:41:08.000Z` on `65cb429` and `2026-11-05T14:45:57.000Z` on the probe.
+- [x] **9.** Every guard of the spec's thirteen was run once against a named mutation and failed; each commit body names the mutation and the failure.
+- [x] **10.** The conformance snapshot exists, holds five sections and eight constants and no vocabulary list, and its web-side test passes.
+- [x] **11.** `ci.yml` runs `check-bundle-out` after each build and diffs the two trees; `deploy.yml` checks `_site` before publishing and polls the live index for the new `contentVersion`.
+      The live check has not yet run against a deploy.
+- [x] **12.** This entry, **D86**, ARCHITECTURE §13, MANIFESTO rule 10, `CLAUDE.md` and `tests/README.md`, with frontmatter updated.
+
+The gate on `65cb429`, one stage at a time under `heavy`: typecheck clean; 104 test files and 2,384 unit and corpus tests; build clean; `check-links-out` and `check-bundle-out` pass on the plain and the base-path build; e2e as in 2 above.
+The finaliser drew 138 diagrams, the largest glyph move between the first drawing and the finished file was 0.133 px, and the index lists 215 files and 43 images.
+
+**Build time**, `npm run build` under `heavy` with a cold `.next`: 11.96 s at `a941364`, before the work, and 17.97 s at `65cb429`.
+The e2e `webServer` timeout of 300 s was not reached.
+
+### Found, not fixed
+
+Filed here rather than folded into this branch.
+
+- `scripts/check-mermaid.mjs:17` validates diagrams with `mermaid.initialize({ startOnLoad: false })` and not with `mermaidConfig()`, so it checks a configuration the site does not render with.
+- `src/lib/figure/mermaid-config.ts:144-147`: `flowchart.htmlLabels: false` does not stop mermaid emitting `foreignObject`; only a top-level `htmlLabels: false` does, which is why the bundle's render config sets one.
+- `docs/data-flow.md:369` says `checklist[i]` merges by "last writer", but `src/lib/record/merge.ts:179-189` takes the union, deliberately, as `merge.ts:161-176` explains.
+- `src/lib/record/merge.ts:50-53`: `Date.parse` reads an instant with no offset in local time (measured under `TZ=Asia/Tokyo`), so the merge order of such an instant depends on the device's zone.
+  A rule is needed before the merge is ported to the app.
+- `src/lib/record/validate.ts:125-130`: `asInstant` acceptance depends on the engine's `Date.parse`, and only V8 has been measured.
 
 ---
 

@@ -10,8 +10,8 @@ description: >
 authority: reasoning
 writes: agent, when a decision is taken
 status: active
-covers: "D26 to D85, plus open questions O1 to O4 — 2026-09-09 to 2026-10-15"
-last_updated: 2026-10-15
+covers: "D26 to D86, plus open questions O1 to O4, 2026-09-09 to 2026-11-05"
+last_updated: 2026-11-05
 ---
 
 # 🧠 BRAINSTORM, part 2 — the rebuild, D26 onward
@@ -2054,6 +2054,58 @@ takes changes only through a pull request and a bot opening one a day would be n
 committed file is the fallback and may lag the live site; its `measured` date says by how much. A
 scheduled workflow in a public repository is switched off by GitHub after 60 days without activity
 in the repository; a push re-enables it.
+
+### D86 · The mobile reader reads a bundle the web build publishes, 2026-11-05
+
+The author decided on a native reader app for learners, Android and iOS, with progress on the device and no account in its first version, and on content arriving as a JSON bundle the web build emits.
+What was decided here is the shape of that bundle and of the record the app keeps.
+The contract itself is ARCHITECTURE §13; what follows is why it looks that way.
+
+**A block tree, not HTML and not markdown.**
+*Shipping the rendered HTML* was rejected: it carries web-only structure, tool menus, `data-hl-*` attributes and `bz-` classes, which the app would have to recognise and discard.
+*Shipping the markdown* was rejected harder: the app would have to redo slugging, dropped rules, section marks, `FIG. n.m` numbering, row headers, link localisation and code tokens in Dart, a second copy of every transformation `render.ts` exists for, and the derive-never-restate rule would then hold on one side only.
+So every transformation runs in TypeScript, over the hast tree the web already renders, and the app maps one node type to one widget.
+The module page and the bundle read one render input, so they cannot drift.
+
+**Two producer stages, one writer per file.**
+*One stage in the route handlers* was the first draft, with the index route hashing every file.
+It cannot work: a diagram needs a browser to lay out its labels, and the index needs the hash of every other file, which exists only once the export does.
+So the routes write every document the pipeline can produce, plus a draft index that lists the diagrams by source, and a `postbuild` finaliser draws the diagrams, hashes everything and writes the index.
+*A separate manifest of diagram sources* beside the draft was rejected as a second file to keep in step with the first.
+
+**Paper for light, Night for dark.**
+The web already draws diagrams in two palettes, chosen on `<html>`.
+The bundle names both files in every diagram block, so the app never decides which palette counts as light; *one variant recoloured in the app* was rejected because a recolour is a second palette, written in Dart.
+
+**Labels in Vazirmatn, in every language.**
+The finaliser measures every label in Chromium, and the app draws it with `flutter_svg` at the positions Chromium measured.
+That only holds if both draw the same face.
+*The platform font* (Avenir Next on iOS, the default on Android) was rejected because neither is the face the labels were measured in, and a label set in a wider face overruns its box.
+*One face per script* was rejected because a Persian diagram mixes Latin and Persian in one label.
+Vazirmatn covers both, is already the site's Persian face, and is pinned as one TTF whose hash the index carries, so the app can check its bundled copy against the one the diagrams were measured with.
+
+**Content hashes, not ETags and not build times.**
+*`If-None-Match` against the host's ETag* was rejected because the ETag changes on every daily deploy even when nothing changed, so it saves nothing.
+*A build time or a commit hash in the version* was rejected because two builds of the same content would then disagree, and the app would download what it already has.
+So `contentVersion` is a hash of the index, which lists the hash of every file, and the app fetches each object by its own hash.
+*Putting every render input into a diagram's id* (the stylesheets, the mermaid version, the flattener, the font, Chromium) was proposed and withdrawn: those inputs do not exist when the route names the file, and hashing the bytes already changes `files` whenever any of them changes the drawing.
+
+**Ordered by `publishedAt`, which is outside the hash.**
+A hash has no order, so the app needs a second field to tell a newer bundle from an older one.
+*The build time* was rejected because two builds of one commit would then publish different bytes.
+The commit date is the same for every build of a commit and later for every later commit, so `publishedAt` carries it, and it is left out of `contentVersion` on purpose: a commit that changes only documentation keeps the version and moves the date.
+
+**The record fixture carries no vocabulary.**
+The app has to read and write the same record the web does, so the web's answers are pinned in a conformance snapshot the app's tests run against.
+*Copying the web's lists of allowed values into the fixture* (roles, marks, catalog views, palettes) was rejected: the app keeps the record as raw JSON and passes through every part it does not write, so the web stays the only place that coerces those values, and a second list in Dart would be a second rule that drifts.
+For the same reason there is no battery over every instant field: the only instant the app interprets is a sign-off, so the instant cases are sign-off cases, generated from shape classes because the app's acceptance has to equal V8's `Date.parse` and nobody has written that grammar down.
+
+**The record is included in device backup, and the erase screen says so.**
+This one pulled against MANIFESTO rule 10 as it stood (`MANIFESTO.md:98-99`): erasing is the reader's, and a backup holds a copy the erase cannot reach.
+*Excluding the record from backup* would make an erase complete, and would also lose every reader's progress on a new phone, with no account in the first version to bring it back.
+*Including it and saying nothing* would make the erase screen claim more than it does.
+**Taken by the author: included, with the honest statement.**
+The erase screen says a device backup may still hold an earlier copy, and rule 10 now says it too.
 
 ## Open questions
 

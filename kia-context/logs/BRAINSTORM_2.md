@@ -2220,6 +2220,16 @@ build, and the measurement that moved each is the reason.
   destination in view from 390 up. Narrower than that the navigation still scrolls inside itself,
   which the bar's narrow rules intend.
 
+- **On a page of neither track, the switch changes the track in place** (from the browser review).
+  Its links led to a track's catalog, so a reader on the progress page who switched lost the page.
+  Now a plain click there calls `chooseTrack`: this tab's session storage and `<html>`, and a
+  `bz-track` event that every island reading the track follows (`useReadingTrack`); the link stays
+  for a reader with no script or a modified click. The home page's signs show their choice in the
+  bar too, but with the memory off, because D86 keeps that choice nowhere; and the doors follow the
+  bar (its switch on the home page, or a track this tab already read in) with no sign pressed.
+  Rejected: keeping the sign's choice in session storage, which the home spec's "nothing is kept"
+  test rightly refuses.
+
 F2 also took out the progress page's continue card and statistics row: the tabs and the data line
 are the whole page. The language menu keeps the track (a For Everyone page's menu offers the For
 Everyone page in each language).

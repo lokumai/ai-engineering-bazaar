@@ -4327,14 +4327,16 @@ Engineers one, and **D87**, the figure formats, with no MDX. D87's rule is writt
       the things a Turkish merchant sells; **J2** groups under five emoji headings (📄 articles,
       🎬 videos, 🧭 modules, 🛠️ tools that are not repositories, 🗃️ repositories). Also asked the same
       day: the bar's `Your progress` reads `Progress`, and the theme button becomes a sun and moon.
-- [ ] The site built from them: **M43** (the track system and the bar), **M44** (the home page),
+- [x] The site built from them: **M43** (the track system and the bar), **M44** (the home page),
       **M45** (the reference lists). D91 records the choices the pages left open.
 
 ### Acceptance criteria
 
-- [ ] Every built surface matches the option the author picked, compared in a screenshot.
-- [ ] Every existing route and capability survives; a For Everyone page exists only where it is
-      written, and the switch says so where it is not.
+- [x] Every built surface matches the option the author picked, compared in a screenshot (the
+      bar, menu, progress page and not-written page by me; every pick by the browser review, which
+      found two departures, both fixed: the signs over the goods and the characters cut off).
+- [x] Every existing route and capability survives; ~~a For Everyone page exists only where it is
+      written~~ every module has a For Everyone page, and an unwritten one says so (D91).
 
 ## 🏁 Milestone M40: Removed features gone from the code, and the test suite cut to what guards a reader — SHIPPED, MERGED AS PR #56
 
@@ -4405,7 +4407,7 @@ too large, with information that goes stale.
 - [ ] PR #57: finish the changes the author wants, then tell cevheri what changed (D90).
 
 
-## 🏁 Milestone M43: Two tracks, the bar and the progress page — BUILT, IN REVIEW
+## 🏁 Milestone M43: Two tracks, the bar and the progress page — BUILT AND REVIEWED
 
 Branch `feat/round-2-build`. Builds M39's picks A1, B1, C1, D2, E4 and F2 and the two bar requests,
 on D91's design (and D91's "changed while building").
@@ -4444,31 +4446,39 @@ on D91's design (and D91's "changed while building").
       hydration: `tests/unit/record/tracks.test.ts` (the record, the stamps, the boot script's
       track), proven by two mutations. The browser half (`tracks.spec.ts`) can only fail on the For
       Engineers side until a For Everyone module is written.
-- [ ] The full gate is green and each new surface is compared to its playground option by
-      screenshot. *Screenshots read for the bar at 390, 768, 900, 1100 and 1440, the menu, the
-      progress page and the not-written page; the bar measured on 9 pages in three languages at 24
-      widths with no sideways scroll. Waiting on the two reviews.*
+- [x] Each new surface is compared to its playground option by screenshot: the bar at 390, 768,
+      900, 1100 and 1440, the menu, the progress page and the not-written page; the bar measured
+      on 9 pages in three languages at 24 widths with no sideways scroll. A code review and a
+      browser review ran; every finding is fixed or answered in D91 and the PR.
+- [ ] The full gate is green (recorded with the PR).
 
-## 🏁 Milestone M44: The home page: four scenes, the track choice and two characters — IN PROGRESS
+## 🏁 Milestone M44: The home page: four scenes, the track choice and two characters — BUILT AND REVIEWED
 
-Builds M39's picks G1b, G2a, G3a, G4a, H1, and P3 with P4.
+Builds M39's picks G1b, G2a, G3a, G4a, H1, and P3 with P4. Built by an agent on its own branch,
+merged into `feat/round-2-build`; the fit at small windows by a second.
 
 ### Deliverables
 
-- [ ] The four stalls play G1b (the edited draft), G2a (the sieve), G3a (the magic lantern) and G4a
+- [x] The four stalls play G1b (the edited draft), G2a (the sieve), G3a (the magic lantern) and G4a
       (the signpost) with the scroll, ported from the playground page; reduced motion shows each
-      scene's still frame.
-- [ ] Before the doors, two hanging signs over two stalls choose For Engineers or For Everyone; the
+      scene's still frame. Each scene ends on its finished frame (the playground's closing fades
+      are left out, because the walk does not loop).
+- [x] Before the doors, two hanging signs over two stalls choose For Engineers or For Everyone; the
       doors then open into that track. With no choice, or no script, they open For Engineers, with one
-      line to switch (N1). The choice is not saved (D86).
-- [ ] A Sipahi horseman beside For Engineers and a Bazargan merchant beside For Everyone, each named
-      in Turkish with the English in parentheses; the Sipahi's stall shows weapons, code and smith's
-      tools, the merchant's tea, spices and Turkish goods.
+      line to switch (N1). The choice is not saved (D86); it shows in the bar, and the doors follow
+      the bar (D91).
+- [x] A Sipahi horseman beside For Engineers and a Bazargan merchant beside For Everyone, each named
+      in Turkish with the English in parentheses ("Sipahi (Horseman)", "Bezirgân (Merchant)",
+      Bezirgân being the Turkish form); the Sipahi's stall shows weapons, code and smith's tools,
+      the merchant's tea, spices and Turkish goods.
 
 ### Acceptance criteria
 
-- [ ] Every motto and one door per level stay, walking or not, at every width; no sideways scroll.
-- [ ] The walk and the reduced-motion still are both checked by screenshot against the playground.
+- [x] Every motto and one door per level stay, walking or not, at every width; no sideways scroll.
+      At the choice, both characters and captions are inside the window and the signs end above
+      the goods, measured at 1024x768, 1280x720, 1366x768, 1440x900, 1920x1080 and 2560x1440: the
+      walk pulls back by `min(1, width / group)` around the choice only.
+- [x] The walk and the reduced-motion still are both checked by screenshot against the playground.
 
 ## 🏁 Milestone M45: Reference lists grouped by kind — BUILT
 

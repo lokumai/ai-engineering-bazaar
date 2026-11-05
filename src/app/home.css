@@ -24,6 +24,7 @@
      per element, declared once so each `var()` below resolves to something. */
   .bz-street {
     --u: 1;
+    --k: 1;
     --x: 0;
     --y: 0;
     --w: 0;
@@ -572,7 +573,8 @@
   .bz-street .who {
     position: absolute;
     top: 88%;
-    left: var(--l);
+    /* Centred under the character, but kept off the picture's edges: 7.4em is a little over half the longer name, so the box clears the edge. */
+    left: clamp(7.4em, var(--l), calc(100% - 7.4em));
     z-index: 1;
     margin: 0;
     padding: 3px 9px 2px;
@@ -677,9 +679,9 @@
     padding: clamp(40px, 6vw, 72px) 16px clamp(56px, 7vw, 96px);
     text-align: center;
     border-top: 6px solid var(--color-category-5);
-    background:
-      linear-gradient(to bottom, transparent calc(100% - 64px), var(--color-surface-sunken) calc(100% - 64px)),
-      repeating-linear-gradient(to bottom, var(--color-surface) 0 47px, var(--color-line) 47px 49px);
+    /* The wall is plain. The concept ruled it in 49px courses with no joints between them,
+       which read as notebook lines running behind the doors. */
+    background: linear-gradient(to bottom, var(--color-surface) calc(100% - 64px), var(--color-surface-sunken) calc(100% - 64px));
   }
 
   .bz-street .doors {
@@ -792,6 +794,17 @@
     background: var(--color-bar-chip);
   }
 
+  /* Pulled back at the choice, the street is shorter than the window by
+     (1 - --k) of its height, and the art hangs from the top, so what shows
+     below it is this: the floor, in the colour the art's floor is drawn in. */
+  .bz-street .floor-gap {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    height: calc(100% * (1 - var(--k)) + 2px);
+  }
+
   html.is-walk .bz-street .gate {
     position: absolute;
     inset: 0;
@@ -844,6 +857,7 @@
     left: 0;
     width: 1px;
     height: 100%;
+    transform-origin: 0 0;
     will-change: transform;
   }
 
@@ -949,52 +963,74 @@
   /* The track choice on the walk: the question and the two signs hang in the
      street where their stalls are, and each character's name stands on the floor
      under it. Centred on the x the page gives, because their widths follow the
-     window's height and the stalls' do not. */
+     window's height and the stalls' do not.
+     On a window too narrow for the two stalls and their characters, the whole
+     street is scaled down by --k at the choice (motion.ts), and that scales the
+     signs' text with it. So a floor here is written as a pixel size divided by
+     --k: it is what the reader sees at the choice, which is at least that many
+     pixels. The sign's own size follows the stalls', so it hangs over their
+     arches and the goods stay in view under it. */
   html.is-walk .bz-street .sign.question,
   html.is-walk .bz-street .track-sign {
     transform: translateX(-50%);
   }
 
   html.is-walk .bz-street .sign.question {
-    width: max(460px, calc(560px * var(--u)));
+    width: max(calc(420px / var(--k, 1)), calc(560px * var(--u)));
   }
 
   html.is-walk .bz-street .track-sign {
-    width: max(360px, calc(396px * var(--u)));
+    width: max(calc(340px / var(--k, 1)), calc(396px * var(--u)));
   }
 
   html.is-walk .bz-street .sign.question .board {
-    padding: max(14px, calc(18px * var(--u))) max(20px, calc(26px * var(--u))) max(16px, calc(20px * var(--u)));
+    padding: max(calc(10px / var(--k, 1)), calc(18px * var(--u))) max(calc(16px / var(--k, 1)), calc(26px * var(--u))) max(calc(12px / var(--k, 1)), calc(20px * var(--u)));
+  }
+
+  html.is-walk .bz-street .sign.question h2 {
+    font-size: max(calc(20px / var(--k, 1)), calc(29px * var(--u)));
   }
 
   html.is-walk .bz-street .sign.question p {
-    font-size: max(15px, calc(17px * var(--u)));
+    font-size: max(calc(14px / var(--k, 1)), calc(17px * var(--u)));
+  }
+
+  html.is-walk .bz-street .track-sign .board {
+    padding: max(calc(6px / var(--k, 1)), calc(24px * var(--u))) max(calc(14px / var(--k, 1)), calc(27px * var(--u))) max(calc(8px / var(--k, 1)), calc(26px * var(--u)));
   }
 
   html.is-walk .bz-street .sg-ico {
-    width: max(34px, calc(40px * var(--u)));
-    height: max(34px, calc(40px * var(--u)));
-    margin-bottom: max(8px, calc(12px * var(--u)));
+    width: max(calc(24px / var(--k, 1)), calc(40px * var(--u)));
+    height: max(calc(24px / var(--k, 1)), calc(40px * var(--u)));
+    margin-bottom: max(calc(4px / var(--k, 1)), calc(12px * var(--u)));
+  }
+
+  html.is-walk .bz-street .sg-ico svg {
+    width: 60%;
+    height: 60%;
   }
 
   html.is-walk .bz-street .sg-t {
-    font-size: max(24px, calc(31px * var(--u)));
+    font-size: max(calc(20px / var(--k, 1)), calc(31px * var(--u)));
   }
 
   html.is-walk .bz-street .sg-p {
-    margin: max(6px, calc(10px * var(--u))) 0 max(10px, calc(16px * var(--u)));
-    font-size: max(15px, calc(16.8px * var(--u)));
+    min-height: 4.05em;
+    margin: max(calc(3px / var(--k, 1)), calc(10px * var(--u))) 0 max(calc(6px / var(--k, 1)), calc(16px * var(--u)));
+    font-size: max(calc(14px / var(--k, 1)), calc(16.8px * var(--u)));
+    line-height: 1.35;
   }
 
   html.is-walk .bz-street .sg-go {
-    padding: max(9px, calc(11px * var(--u))) max(14px, calc(18px * var(--u)));
-    font-size: max(15px, calc(16px * var(--u)));
+    min-height: calc(44px / var(--k, 1));
+    padding: max(calc(8px / var(--k, 1)), calc(11px * var(--u))) max(calc(12px / var(--k, 1)), calc(18px * var(--u)));
+    font-size: max(calc(14px / var(--k, 1)), calc(16px * var(--u)));
   }
 
   html.is-walk .bz-street .who {
     top: calc(var(--y) * var(--u) * 1px);
     left: calc(var(--x) * var(--u) * 1px);
-    font-size: max(14px, calc(16px * var(--u)));
+    font-size: max(calc(14px / var(--k, 1)), calc(16px * var(--u)));
   }
 
   @media (prefers-reduced-motion: reduce) {

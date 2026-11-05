@@ -45,7 +45,13 @@ const num = (el: Element, key: string): number => Number(data(el, key))
 /* Camera stops: the world x at the centre of the screen at the start, at each
    of the four stalls, at the track choice (the middle of the two track bays)
    and at the doors. World units are 900 tall. */
-const STOPS = [720, 1990, 3190, 4390, 5590, 7020, 8600]
+const STOPS = [720, 1990, 3190, 4390, 5590, 7003, 8600]
+/** The choice's characters and stalls, from the horse's tail to the merchant's far edge, in world units (measured on the built page). The camera stops at the middle of them. */
+const GROUP = 1511
+/** What the group keeps clear of each window edge, in pixels. */
+const EDGE = 16
+/** How far from the choice, in world units, the street is pulled back to fit it. */
+const EASE_OUT = 1000
 /** The stops that are one of the four mottos' stalls, by index in STOPS. */
 const STALL_STOPS = 4
 /** The choice is a decision, so the walk holds there longer than at a stall. */
@@ -175,11 +181,27 @@ export function initBazaar(root: HTMLElement): Cleanup {
     const bar = () => document.querySelector<HTMLElement>('.bz-bar')?.offsetHeight ?? 0
     let U = 1
     let VW = 1
+    /* How far the street is pulled back at the choice so the group fits the window
+       (1 when it already does). The signs size themselves from it in home.css. */
+    let K = 1
     const cam = { x: STOPS[0] }
     const size = () => {
       U = (innerHeight - bar()) / 900
       VW = html.clientWidth
+      K = Math.min(1, (VW - 2 * EDGE) / (GROUP * U))
       stage.style.setProperty('--u', String(U))
+      stage.style.setProperty('--k', String(K))
+    }
+    /* The pull-back is full at the choice and gone EASE_OUT units either side, so every other stop is drawn as it always was. */
+    const pull = (x: number): number => {
+      const t = Math.min(1, Math.abs(x - STOPS[STALL_STOPS + 1]) / EASE_OUT)
+      return 1 - (1 - K) * (1 - t * t * (3 - 2 * t))
+    }
+    /* Every layer pans by its speed and is scaled by the pull about the middle of the window's top edge (the floor then runs on under the art, see home.css). */
+    const place = (el: HTMLElement, speed: number, x: number, k: number) => {
+      el.style.transform = k === 1
+        ? `translate3d(${VW / 2 - x * speed * U}px,0,0)`
+        : `translate3d(${VW / 2}px,0,0) scale(${k}) translate3d(${-x * speed * U}px,0,0)`
     }
     /* A sign flaps down as the camera nears it. The mottos' signs come in at the
        stop they belong to; the choice's signs are read off where they hang. */
@@ -191,10 +213,12 @@ export function initBazaar(root: HTMLElement): Cleanup {
     ].map((one) => ({ ...one, on: false, tl: swingTL(one.el) }))
     const apply = () => {
       const x = cam.x
-      L.back.style.transform = `translate3d(${VW / 2 - x * SP.back * U}px,0,0)`
-      L.mid.style.transform = L.top.style.transform = `translate3d(${VW / 2 - x * SP.mid * U}px,0,0)`
-      L.beams.style.transform = `translate3d(${VW / 2 - x * SP.beams * U}px,0,0)`
-      L.fore.style.transform = `translate3d(${VW / 2 - x * SP.fore * U}px,0,0)`
+      const k = pull(x)
+      place(L.back, SP.back, x, k)
+      place(L.mid, SP.mid, x, k)
+      place(L.top, SP.mid, x, k)
+      place(L.beams, SP.beams, x, k)
+      place(L.fore, SP.fore, x, k)
       signs.forEach((s) => {
         const on = x > s.at
         if (on !== s.on) {
@@ -243,8 +267,10 @@ export function initBazaar(root: HTMLElement): Cleanup {
           ? gsap.timeline().to({}, { duration: 1 })
           : STALL_TIMELINES[data(baySvgs[i - 1], 'art')](baySvgs[i - 1])
       master.add(ptl.timeScale(ptl.duration() / (LEAD + hold - 0.06)), arrive - LEAD)
-      master.to(cam, { x: to + (last ? 0 : 54), duration: hold }, arrive)
-      from = to + (last ? 0 : 54)
+      /* The camera drifts on at a stall; at the choice it holds still, so the group stays inside the window. */
+      const drift = last || choice ? 0 : 54
+      master.to(cam, { x: to + drift, duration: hold }, arrive)
+      from = to + drift
       pos = arrive + hold
     }
     const st = ScrollTrigger.create({

@@ -258,6 +258,14 @@ describe('routeFor — where each destination goes', () => {
     expect(categoryPathOf('/courses/intermediate/')).toBe('/sheets/intermediate/')
   })
 
+  it('reads it through a language prefix and a track, and stays in the track (D91)', () => {
+    expect(categoryPathOf('/tr/courses/intermediate/security/')).toBe('/sheets/intermediate/')
+    expect(categoryPathOf('/everyone/courses/intermediate/security/')).toBe('/everyone/sheets/intermediate/')
+    expect(categoryPathOf('/fa/everyone/courses/intermediate/security/')).toBe('/everyone/sheets/intermediate/')
+    expect(categoryPathOf('/everyone/sheets/expert/')).toBe('/everyone/sheets/expert/')
+    expect(categoryPathOf('/everyone/sheets/')).toBeNull()
+  })
+
   it('has no current category to offer outside the set, and says so with null', () => {
     for (const path of ['/', '/courses/', '/dashboard/', '/profile/', '']) {
       expect(categoryPathOf(path), path).toBeNull()

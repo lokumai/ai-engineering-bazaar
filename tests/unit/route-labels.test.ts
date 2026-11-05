@@ -170,6 +170,13 @@ describe('sheetLabelFor', () => {
   it('still returns nothing for a module page under that route', () => {
     expect(sheetLabelFor('/courses/intermediate/security/', CATEGORIES)).toBeNull()
   })
+
+  it('labels a For Everyone page as its For Engineers twin (D91)', () => {
+    for (const path of ['/sheets/', '/sheets/fundamentals/', '/courses/protocols/']) {
+      expect(sheetLabelFor(`/everyone${path}`, CATEGORIES)).toBe(sheetLabelFor(path, CATEGORIES))
+      expect(sheetLabelFor(`/everyone${path}`, CATEGORIES)).not.toBeNull()
+    }
+  })
 })
 
 describe('an ancestor segment with no page of its own (§15.1)', () => {

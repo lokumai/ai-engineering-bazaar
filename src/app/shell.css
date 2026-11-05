@@ -363,6 +363,39 @@
 
   .bz-trackswitch-icon { flex: none; }
 
+  /* With the names hidden below the rail breakpoint, the fill is what says
+     which track this is, and a forced-colours theme drops every fill: the
+     current segment takes the system's highlight there, so the state survives
+     as a filled box against an empty one. */
+  @media (forced-colors: active) {
+    html:not([data-bz-track="everyone"]) .bz-trackswitch-seg[data-track-id="engineers"],
+    html[data-bz-track="everyone"] .bz-trackswitch-seg[data-track-id="everyone"] {
+      forced-color-adjust: none;
+      background: Highlight;
+      color: HighlightText;
+    }
+  }
+
+  /* §10.4's touch floor, the bar's way (`bazaar.css`, the hit-area block): the
+     segments and the language button keep their painted size in the fixed
+     strip and carry a 44px-tall invisible target. The two segments touch, so
+     each target is as wide as its own segment and no wider. */
+  @media (max-width: 767px) {
+    .bz-trackswitch-seg,
+    .bz-langmenu-trigger { position: relative; }
+
+    .bz-trackswitch-seg::after,
+    .bz-langmenu-trigger::after {
+      content: "";
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 100%;
+      height: 44px;
+      translate: -50% -50%;
+    }
+  }
+
   /* The bar's controls keep their size; at narrow widths the navigation is the
      part that scrolls inside itself (see the bar's own rules above), so these
      must not be the part that gives way. */

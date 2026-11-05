@@ -162,7 +162,9 @@ function levelOf(pathname: string): string | null {
 /** `/` is only current when it is the whole path; everything else owns a tree. */
 function isCurrent(destination: Destination, pathname: string): boolean {
   if (destination.href === '/') return pathname === '/'
-  return destination.owns.some((route) => pathname.startsWith(route))
+  // A translated page belongs to the same tree as its English one.
+  const path = pathname.replace(/^\/(?:tr|fa)(?=\/)/, '')
+  return destination.owns.some((route) => path.startsWith(route))
 }
 
 function Chevron() {

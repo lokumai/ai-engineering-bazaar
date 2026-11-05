@@ -1,6 +1,6 @@
 import { expect, test } from '@playwright/test'
 import { A0, INDEX_SHEET, SHEETS, SHORT } from './sheets'
-import { seedRecord, signedSheet, waitForHydratedReadout } from './record'
+import { seedRecord, signedSheet } from './record'
 import {
   APP_SELECTORS,
   AUTHOR_DEVIATIONS,
@@ -8,13 +8,10 @@ import {
   CATALOG_URL,
   DELIBERATELY_ABSENT,
   DESIGN_FACTS,
-  NARROW_DEVIATIONS,
   freezeMotion,
   FACT_KEYS,
   MOCKUP_SELECTORS,
   MOCKUP_URL,
-  DASHBOARD_SELECTORS,
-  DASHBOARD_URL,
   HOME_SELECTORS,
   HOME_URL,
   PROGRESS_SELECTORS,
@@ -1100,26 +1097,6 @@ test.describe('M16 stage 7 — completion', () => {
 })
 
 test.describe('M16 stage 8 — progress and account', () => {
-  /**
-   * `07`-A, on `/profile/` — the route that absorbed `/dashboard/`, `/path/`
-   * and `/report/`.
-   *
-   * The hero is gated on BOTH channels, and this docblock used to claim the
-   * wrong one. `nextUnsigned` returns the FIRST drawn module for an empty
-   * record, not `null`, so "renders nothing until the store has answered" was
-   * never true and the prerendered page shipped a populated shortcut to every
-   * reader — the defect a review found and **D55** records. The box is gated on
-   * channel A by `data-hl-record`; the CONTENT is channel B, because a module's
-   * title is text and channel A stamps classes. Which is why this seeds a
-   * record and waits for the readout before extracting: without a record the
-   * box is `display: none` and the comparison would agree with itself about
-   * nothing.
-   */
-  // The panel and the field left this page on 2026-11-05 with the account
-  // block and the settings rows; stage 10 still compares both against `07`, on
-  // `/sign-in/alias/`.
-  const BUILT: readonly Role[] = ['continueHero', 'continueNum']
-
   /**
    * `07:88-89` draws the destructive control as a COLOUR-ONLY modifier — "it
    * changes nothing geometric" — and that claim cannot be checked against `07`,

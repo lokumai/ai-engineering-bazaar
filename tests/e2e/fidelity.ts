@@ -189,8 +189,6 @@ export type Role =
   | 'signTitle'
   | 'plaque'
   /* Stage 8 — progress and account, from `07`. */
-  | 'continueHero'
-  | 'continueNum'
   | 'panel'
   | 'field'
   | 'fieldLabel'
@@ -468,17 +466,7 @@ const FACTS: readonly Fact[] = [
      length it gives it turns out to be on the language's scale already — 36px,
      a 7px radius, 14.5px type, a 96px label gutter, a 10px gap. Nothing had to
      be reconciled, which is the strongest evidence available that the scale was
-     transcribed from the same hand.
-
-     `continueHero`'s radius is NOT compared: `07` sets 11px and the radius
-     scale is a closed set that stops at 9. Snapping to it is the language
-     winning on purpose, and a fact that was always going to differ is an
-     exemption waiting to be written rather than a comparison. */
-  { role: 'continueHero', property: 'paddingTop', mutate: '99px' },
-  { role: 'continueHero', property: 'paddingLeft', mutate: '99px' },
-  { role: 'continueHero', property: 'gap', mutate: '99px' },
-  { role: 'continueNum', property: 'width', mutate: '99px' },
-  { role: 'continueNum', property: 'height', mutate: '99px' },
+     transcribed from the same hand. */
   { role: 'panel', property: 'paddingTop', mutate: '99px' },
   { role: 'panel', property: 'paddingLeft', mutate: '99px' },
   { role: 'field', property: 'gap', mutate: '99px' },
@@ -689,8 +677,6 @@ export const PROGRESS_SELECTORS: SelectorMap = {
  * saying, because a mockup that reordered its options would move these.
  */
 export const DASHBOARD_SELECTORS: SelectorMap = {
-  continueHero: '.cont',
-  continueNum: '.cont .num',
   panel: '.panel',
   field: '.field',
   fieldLabel: '.field label',
@@ -755,7 +741,7 @@ export const REFERENCE_OF: Readonly<Partial<Record<Role, Reference>>> = {
 
   levelCard: '05', dial: '05', dialValue: '05', legendKey: '05',
 
-  continueHero: '07', continueNum: '07', panel: '07', field: '07',
+  panel: '07', field: '07',
   fieldLabel: '07', fieldInput: '07',
 
   signBoard: '10', signTitle: '10', plaque: '10',
@@ -926,8 +912,6 @@ export const APP_SELECTORS: SelectorMap = {
   /* Stage 8 — progress and account, read off `/profile/`. The hero is channel
      B and renders only once the store has answered, which is why the stage's
      comparison waits for the readout before extracting. */
-  continueHero: '.bz-cont',
-  continueNum: '.bz-cont-num',
   panel: '.bz-panel',
   field: '.bz-field',
   fieldLabel: '.bz-field-label',

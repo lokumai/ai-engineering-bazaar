@@ -29,7 +29,8 @@
  *    2.1.1 requires operation without specific keystroke timings, so a tight
  *    sub-second window is a conformance risk as well as a usability one.
  */
-import { levelRoute } from '@/lib/route-labels'
+import { TRANSLATED_LANGS, type TranslatedLang } from '@/lib/content/languages'
+import { EVERYONE_SEGMENT, catalogRoute } from '@/lib/tracks'
 
 
 /**
@@ -269,9 +270,15 @@ export const ROUTES: Readonly<Record<Exclude<NavTarget, 'category'>, string>> = 
  */
 export function categoryPathOf(pathname: string): string | null {
   const segments = pathname.split('/').filter(Boolean)
+  // A translated page and a For Everyone page (D91) sit under a prefix; the
+  // level is the segment after `courses` or `sheets` either way, and the
+  // destination stays in the reader's track. Catalog pages are English only.
+  if (TRANSLATED_LANGS.includes(segments[0] as TranslatedLang)) segments.shift()
+  const track = segments[0] === EVERYONE_SEGMENT ? 'everyone' : 'engineers'
+  if (track === 'everyone') segments.shift()
   const under = segments[0] === 'courses' || segments[0] === 'sheets'
   if (!under || segments.length < 2) return null
-  return levelRoute(segments[1])
+  return catalogRoute(track, segments[1])
 }
 
 export function routeFor(target: NavTarget, pathname: string): string | null {

@@ -310,7 +310,9 @@ export function sheetLabelFor(
   pathname: string,
   categories: readonly CategoryLabel[],
 ): string | null {
-  const segments = segmentsOf(pathname)
+  // D91 — a For Everyone page is labelled as its For Engineers twin is.
+  const all = segmentsOf(pathname)
+  const segments = all[0] === EVERYONE_SEGMENT ? all.slice(1) : all
   // §15.1 — `/` is the home screen. `INDEX SHEET` moved with the register it
   // named, to `/sheets/`, where the last branch of this function derives it
   // from `ROUTE_TITLES`.

@@ -1,5 +1,5 @@
 /**
- * The track choice (D89): which way the five level doors open.
+ * The track choice: which way the five level doors open.
  *
  * The page asks "How would you like to read?" and the doors open into one of
  * two tracks: For Engineers, at `/sheets/<level>/` (the course as it was), or

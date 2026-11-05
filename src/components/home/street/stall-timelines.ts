@@ -19,6 +19,14 @@ import { gsap } from 'gsap'
  *
  * Durations are the page's own, in seconds, and mean nothing here: the walk
  * rescales a prop's timeline to the scroll it is given.
+ *
+ * **What is left out: each scene's closing fade.** The page loops its scenes,
+ * so every one ends by clearing itself (the ink fades, the chips vanish, the
+ * arrows retract) to be ready to start again. A scrubbed walk has no restart:
+ * the reader scrolls back instead, and a stall that empties itself just as
+ * the camera reaches it would show the wrong picture at the stop. Without the
+ * fade each timeline ends on the scene's finished frame, which is the one the
+ * author marked as its `still` (and the one captured into the art file).
  */
 
 type Timeline = gsap.core.Timeline
@@ -91,12 +99,11 @@ export function tlDraft(svg: Element): Timeline {
     .to(hand, { y: py + 46, duration: 0.14, yoyo: true, repeat: 1 }, t + 1.25)
     .fromTo(print, { opacity: 0, scale: 0.85, svgOrigin: '590 482' }, { opacity: 1, scale: 1, svgOrigin: '590 482', duration: 0.3 }, t + 1.4)
     .to(hand, { x: 560, y: 160, rotation: -10, duration: 0.6, ease: 'power2.out' }, t + 1.55)
-    .to(ink, { opacity: 0, duration: 0.5 }, t + 3.6)
-    .to({}, { duration: 0.2 }, t + 4.1)
+    .to({}, { duration: 0.5 }, t + 2.15)
   tl.fromTo(
     $('.flame', svg),
     { scaleY: 1, svgOrigin: '176 490' },
-    { scaleY: 1.14, svgOrigin: '176 490', duration: 0.22, repeat: Math.floor((t + 4.2) / 0.22) - 1, yoyo: true, ease: 'sine.inOut' },
+    { scaleY: 1.14, svgOrigin: '176 490', duration: 0.22, repeat: Math.floor((t + 2.65) / 0.22) - 1, yoyo: true, ease: 'sine.inOut' },
     0,
   )
   return tl
@@ -123,9 +130,7 @@ export function tlSieve(svg: Element): Timeline {
     tl.to(c, { y: 236 + r() * 24, x: (r() - 0.5) * 60, duration: 0.5, ease: 'power2.in' }, t0)
   })
   tl.fromTo(spk, { scale: 0, opacity: 0, transformOrigin: '50% 50%' }, { scale: 1, opacity: 1, duration: 0.3, stagger: 0.1, ease: 'back.out(3)' }, 4.2)
-    .to(spk, { opacity: 0, duration: 0.3 }, 6)
-    .to(chips, { opacity: 0, duration: 0.4 }, 6.2)
-    .to({}, { duration: 0.1 }, 6.6)
+    .to({}, { duration: 0.6 }, 4.7)
   return tl
 }
 
@@ -159,7 +164,7 @@ export function tlLantern(svg: Element): Timeline {
   swap(6.0, 3)
   tl.fromTo(shades, { y: -260 }, { y: 0, duration: 0.9, ease: 'power1.in' }, 6.6)
     .fromTo(shades, { rotation: -4, svgOrigin: '650 262' }, { rotation: 0, svgOrigin: '650 262', duration: 0.4, ease: 'back.out(3)' }, 7.5)
-    .to({}, { duration: 1.4 }, 8)
+    .to({}, { duration: 0.6 }, 8)
   motes.forEach((m, i) =>
     tl.fromTo(m, { x: 0, y: 0, opacity: 0 }, { x: 60 + i * 8, y: -30 + (i % 3) * 20, opacity: 0.9, duration: 4.6, ease: 'sine.inOut', yoyo: true, repeat: 1 }, i * 0.1),
   )
@@ -187,8 +192,7 @@ export function tlSignpost(svg: Element): Timeline {
       .fromTo(d[i], { opacity: 0, scale: 0, transformOrigin: '50% 50%' }, { opacity: 1, scale: 1, duration: 0.2, stagger: 0.08 }, t0 + 0.7)
   })
   tl.to(d.flat(), { opacity: 0.35, duration: 0.25, yoyo: true, repeat: 5, stagger: 0.03 }, 4.0)
-  ar.forEach((a, i) => tl.to(a, { scaleX: 0, svgOrigin: org[i], duration: 0.35, ease: 'power2.in' }, 6.4 + i * 0.12))
-  tl.to([...tips, ...d.flat()], { opacity: 0, duration: 0.3 }, 6.4).to(topl, { opacity: 0.3, duration: 0.4 }, 6.6).to({}, { duration: 0.1 }, 7.0)
+    .to({}, { duration: 0.8 }, 5.5)
   return tl
 }
 

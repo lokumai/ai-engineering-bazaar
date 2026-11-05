@@ -140,7 +140,7 @@ const TRACKS: ReadonlyArray<{
     hue: 'var(--color-category-2)',
     /** The centre of the stall the sign hangs over. */
     signX: TRACK_START + 545,
-    who: { name: 'Sipahi', english: 'Horseman', x: TRACK_START + 158, left: 20.8 },
+    who: { name: 'Sipahi', english: 'Horseman', x: TRACK_START + 190, left: 24.4 },
   },
   {
     id: 'all',
@@ -149,7 +149,7 @@ const TRACKS: ReadonlyArray<{
     art: 'track-all',
     hue: 'var(--color-category-1)',
     signX: TRACK_START + 760 + 335,
-    who: { name: 'Bezirgân', english: 'Merchant', x: TRACK_START + 760 + 660, left: 82.5 },
+    who: { name: 'Bezirgân', english: 'Merchant', x: TRACK_START + 760 + 645, left: 81.4 },
   },
 ]
 
@@ -219,6 +219,20 @@ function at(props: Record<string, string | number>): CSSProperties {
  * stall's platter and cubes and that level's colour on top, so it lines up with
  * the door at any size. The motion is the island's; with no script or with
  * reduced motion, `home.css` shows the tray on hover and focus without moving it.
+ *
+ * ## The stalls, and the choice before the doors (M44)
+ *
+ * On 2026-11-05 the author picked the scene each stall acts out (the edited
+ * draft, the sieve, the magic lantern, the signpost: `art/stall-*.html`, moved
+ * by `street/stall-timelines.ts`) and a step between the stalls and the doors.
+ * The reader is asked how they would like to read, and the five doors open into
+ * the track they pick: For Engineers at `/sheets/<level>/`, For Everyone at
+ * `/everyone/sheets/<level>/`. Two stalls stand side by side under two signs
+ * that are buttons, the Sipahi beside the first and the Bazargan beside the
+ * second. Every door is rendered For Engineers, with the other address beside it
+ * in `data-href-all`, so with no choice and no script the doors open For
+ * Engineers and a link checker reads an address that always exists;
+ * `street/track.ts` swaps them. Nothing is saved.
  *
  * ## What left, and where it went
  *

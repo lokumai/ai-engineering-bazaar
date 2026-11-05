@@ -28,6 +28,7 @@
     --y: 0;
     --w: 0;
     --s: 1;
+    --l: 50%;
     --hue: var(--color-category-1);
     --amp: 3deg;
     --sd: 5s;
@@ -397,7 +398,7 @@
   }
 
   /* ---------- the track choice, stacked: a phone, reduced motion, no script ----------
-     The question over two stalls, each under a sign that is a button (D89).
+     The question over two stalls, each under a sign that is a button.
      The signs are drawn the way the mottos' are, and take the same tokens that
      do not flip, so a sign reads the same at night. Each stall's art holds its
      character, and the character's name stands on the floor under it. */
@@ -620,6 +621,15 @@
 
   .bz-street .sw-link[hidden] {
     display: none;
+  }
+
+  /* Below the touch floor (§10.4) the switch grows to a thumb's height. */
+  @media (max-width: 767px) {
+    .bz-street .sw-link {
+      display: inline-flex;
+      align-items: center;
+      min-height: 44px;
+    }
   }
 
   @media (min-width: 760px) {

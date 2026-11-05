@@ -33,6 +33,10 @@ env:
 jobs:
   build:
     runs-on: ubuntu-latest
+    # The bundle's contentVersion, so the deploy job can wait for the live site
+    # to serve this build's index rather than the one before it.
+    outputs:
+      content_version: ${{ steps.bundle.outputs.content_version }}
     steps:
       - uses: actions/checkout@v7
         with:
@@ -56,6 +60,9 @@ jobs:
         run: node scripts/github-stars.mjs
         env:
           GITHUB_TOKEN: ${{ github.token }}
+      # The bundle's finaliser draws every diagram in the bundled Chromium, and
+      # the build exits 1 without it rather than fall back to another browser.
+      - run: npx playwright install --with-deps chromium
       - name: Build the site for its base path
         run: npm run build
         env:
@@ -81,6 +88,16 @@ jobs:
           # A basePath that did not reach assetPrefix builds cleanly and 404s
           # every stylesheet, so check the emitted URLs, not just the files.
           grep -q "$BASE_PATH/_next/" _site/index.html
+          # The content bundle the native reader fetches, against its contract:
+          # every hash, the SVG profile, the diagram font, and no base path.
+          node scripts/check-bundle-out.mjs _site
+
+      - name: Record the bundle's contentVersion
+        id: bundle
+        run: |
+          set -euo pipefail
+          content_version=$(jq -r .contentVersion _site/api/v1/index.json)
+          echo "content_version=$content_version" >> "$GITHUB_OUTPUT"
 
       # `include-hidden-files` is LOAD-BEARING, and it is why this is v5 rather
       # than v4. v4.0.0's release note: "hidden files (specifically dotfiles)
@@ -130,3 +147,44 @@ jobs:
           test -n "$href"
           echo "stylesheet: $href"
           curl -fsS -o /dev/null "${base%/ai-engineering-bazaar}${href}"
+
+      # A reader that fetches the index right after a deploy must get this
+      # build's contentVersion. A query string cannot bust the cache in front
+      # of Pages: measured on 2026-11-05, a never-used `?r=<random>` on a live
+      # page came back `x-cache: HIT`, so the edge keys on the path alone and
+      # every request here reads the entry readers read. A stale entry is
+      # therefore waited out rather than bypassed: the budget is the index's
+      # own `max-age` plus a minute, read from the first response, so the step
+      # follows whatever lifetime Pages sets instead of restating it.
+      - name: Wait for the published bundle's contentVersion
+        env:
+          PAGE_URL: ${{ steps.deployment.outputs.page_url }}
+          EXPECTED: ${{ needs.build.outputs.content_version }}
+        run: |
+          set -euo pipefail
+          url="${PAGE_URL%/}/api/v1/index.json"
+          live=""
+          deadline=""
+          attempt=0
+          while :; do
+            attempt=$((attempt + 1))
+            live=""
+            if curl -fsS -D headers.txt -o index.json "$url"; then
+              live=$(jq -r .contentVersion index.json || true)
+              if [ -z "$deadline" ]; then
+                max_age=$(tr -d '\r' < headers.txt | grep -i '^cache-control:' | grep -oE 'max-age=[0-9]+' | tail -1 | cut -d= -f2 || true)
+                deadline=$(( $(date +%s) + ${max_age:-0} + 60 ))
+                echo "cache max-age: ${max_age:-none}; waiting until $(date -u -d "@$deadline" +%H:%M:%SZ) at most"
+              fi
+            fi
+            if [ "$live" = "$EXPECTED" ]; then
+              echo "contentVersion: $live"
+              exit 0
+            fi
+            echo "attempt $attempt: live contentVersion is '$live'"
+            if [ -n "$deadline" ] && [ "$(date +%s)" -ge "$deadline" ]; then break; fi
+            if [ -z "$deadline" ] && [ "$attempt" -ge 12 ]; then break; fi
+            sleep 15
+          done
+          echo "expected contentVersion $EXPECTED, the live index serves '$live'"
+          exit 1

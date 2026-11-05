@@ -43,6 +43,7 @@
  */
 import { readFileSync, readdirSync, existsSync, statSync } from 'node:fs'
 import { join, resolve, relative, dirname, basename } from 'node:path'
+import { htmlFiles, measureBasePath } from './lib/base-path.mjs'
 
 const root = resolve(process.argv[2] ?? 'out')
 
@@ -53,17 +54,6 @@ const FAIL = `${E}[31m✗${E}[0m`
 if (!existsSync(root) || !statSync(root).isDirectory()) {
   console.error(`\n${FAIL} export not found: ${root}\n      run \`npm run build\` first, or pass the export directory.\n`)
   process.exit(1)
-}
-
-/** Every `.html` file in the export, in directory order. */
-function htmlFiles(dir) {
-  const out = []
-  for (const entry of readdirSync(dir, { withFileTypes: true })) {
-    const p = join(dir, entry.name)
-    if (entry.isDirectory()) out.push(...htmlFiles(p))
-    else if (entry.isFile() && entry.name.endsWith('.html')) out.push(p)
-  }
-  return out
 }
 
 /**
@@ -78,26 +68,8 @@ const attrs = /\s(href|src)\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s>"'`]+))/gi
 const files = htmlFiles(root)
 
 // -- 1. What base path did this build use? ----------------------------------
-/** The prefix in front of `/_next/`, i.e. the `basePath` the export was built with. */
-function measureBasePath() {
-  const fromEnv = process.env.SITE_BASE_PATH
-  if (fromEnv !== undefined) return { base: fromEnv.replace(/\/$/, ''), how: 'SITE_BASE_PATH' }
-
-  const tally = new Map()
-  for (const f of files) {
-    const m = /["'\\]((?:\/[^"'\\\s]*?)?)\/_next\//.exec(readFileSync(f, 'utf8'))
-    if (m) tally.set(m[1], (tally.get(m[1]) ?? 0) + 1)
-  }
-  if (tally.size === 0) return { base: '', how: 'no /_next/ asset in the export; assumed empty' }
-  const [base, seen] = [...tally].sort((a, b) => b[1] - a[1])[0]
-  const how =
-    tally.size === 1
-      ? `measured from /_next/ URLs in ${seen} file(s)`
-      : `measured from /_next/ URLs, but the export carries ${tally.size} different prefixes: ${[...tally.keys()].map((k) => k || '<empty>').join(', ')}`
-  return { base, how }
-}
-
-const { base, how } = measureBasePath()
+// Measured from the export (`scripts/lib/base-path.mjs` says why).
+const { base, how } = measureBasePath(files)
 
 // -- 2. Collect and resolve -------------------------------------------------
 /** The URL a given exported file is served at, base path included. */
@@ -165,6 +137,59 @@ for (const file of files) {
   }
 }
 
+// -- 2b. A translated page links to translated pages -----------------------
+/**
+ * Spec 4.1 #1: on a page in a language tree, a prose link to a module that
+ * has a page in that language must land on it, not on the English one. Every
+ * such link resolves, so step 2 cannot see the failure: it is a one-way door
+ * back into English, and on the deployed build it was every cross-reference,
+ * because the route was localised after the base path had been prepended and
+ * the lookup of a prefixed string in a set of bare routes never matched.
+ *
+ * A language tree is any top-level directory `<lang>` holding `courses/`, so
+ * nothing here names a language. Only `<a>` tags are read, and an anchor that
+ * declares `hreflang` is skipped: a link that names its own language is a
+ * language switch (the bar's `LanguageMenu`), and pointing elsewhere is its job.
+ */
+const anchors = /<a\b[^>]*>/gi
+const hreflang = /\shreflang\s*=/i
+const anchorHref = /\shref\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s>"'`]+))/i
+const moduleRoute = /^\/courses\/[^/]+\/[^/]+\/$/
+
+const languageTrees = readdirSync(root, { withFileTypes: true })
+  .filter((entry) => entry.isDirectory() && existsSync(join(root, entry.name, 'courses')))
+  .map((entry) => entry.name)
+  .filter((name) => statSync(join(root, name, 'courses')).isDirectory())
+
+for (const lang of languageTrees) {
+  for (const file of htmlFiles(join(root, lang, 'courses'))) {
+    const html = readFileSync(file, 'utf8').replace(comments, '').replace(strippable, '$1')
+    const from = servedUrl(file)
+    const shown = relative(root, file)
+
+    for (const [tag] of html.matchAll(anchors)) {
+      if (hreflang.test(tag)) continue
+      const m = anchorHref.exec(tag)
+      if (!m) continue
+      const raw = (m[1] ?? m[2] ?? m[3] ?? '').trim().replace(/&amp;/g, '&')
+      if (!raw || raw.startsWith('#') || raw.startsWith('//') || /^[a-z][a-z0-9+.-]*:/i.test(raw)) continue
+
+      let pathname
+      try {
+        pathname = decodeURIComponent(new URL(raw, `http://export${from}`).pathname)
+      } catch {
+        continue // step 2 has already reported it
+      }
+      if (base && pathname !== base && !pathname.startsWith(base + '/')) continue // likewise
+      const inExport = base ? pathname.slice(base.length) || '/' : pathname
+
+      if (moduleRoute.test(inExport) && exportedFile(`/${lang}${inExport}`)) {
+        record(raw, `English page where a ${lang} page exists`, shown)
+      }
+    }
+  }
+}
+
 // -- 3. Report --------------------------------------------------------------
 const total = [...broken.values()].reduce(
   (n, e) => n + [...e.files.values()].reduce((a, b) => a + b, 0),
@@ -175,7 +200,7 @@ console.log(`\n${root} — ${files.length} html, ${checked} internal links`)
 console.log(`  base path: ${base || '<empty>'}  (${how})`)
 
 if (broken.size === 0) {
-  console.log(`\n${PASS} every internal link resolves to a file\n`)
+  console.log(`\n${PASS} every internal link resolves to a file, and no translated page sends a reader to English where its language has the page\n`)
   process.exit(0)
 }
 

@@ -142,12 +142,15 @@ apart from committing it with your work.
 
 ```bash
 npm run dev            # next dev on :3000, basePath '' (prebuild copies course images)
-npm run build          # static export into out/
+npm run build          # static export into out/, then the bundle finaliser; needs Playwright Chromium
+node scripts/check-bundle-out.mjs out   # the content bundle under out/api/ against its contract
 npm run typecheck      # tsc --noEmit, strict
 npm test               # vitest run — tests/unit/** + tests/corpus/**
 npm run test:e2e       # playwright: builds, serves out/ on :3111, real Chrome
 npm run test:e2e:dev   # same suite against next dev (unminified React errors)
 ```
+
+`npm run build` exits 1 without Playwright's bundled Chromium, which its `postbuild` (`scripts/finalize-bundle.mjs`) draws the diagrams in; install it once with `npx playwright install chromium`.
 
 CI (`.github/workflows/ci.yml`) runs typecheck → test → build → e2e, in that
 order. Run all four before opening a PR; a green `npm test` alone means little
@@ -255,6 +258,7 @@ Export / import / erase on `/profile/` is how a reader keeps a copy.
 - **Colour is never the only signal.** Contrast and palette tests recompute
   every ratio from the shipped stylesheets rather than asserting a table, and an
   e2e spec loads the site under `forced-colors: active`.
+- **The bundle under `out/api/v1/` is a published contract** that the mobile reader depends on; what may change inside v1 and what needs `api/v2/` is [ARCHITECTURE §13](kia-context/specs/ARCHITECTURE.md#13-the-content-bundle).
 - Decisions are pure functions with the clock passed in — no `Date.now()` in a
   reducer, no `Math.random()` in a layout.
 

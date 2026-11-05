@@ -7,6 +7,7 @@
     "dev": "next dev",
     "prebuild": "node scripts/curriculum-css.mjs && node scripts/copy-course-images.mjs",
     "build": "next build",
+    "postbuild": "node scripts/finalize-bundle.mjs out",
     "test": "vitest run",
     "test:e2e": "playwright test",
     "test:watch": "vitest",
@@ -47,6 +48,7 @@
     "@types/react-dom": "^19.2.5",
     "tailwindcss": "^4.3.3",
     "typescript": "^5.9.3",
+    "vazirmatn": "33.0.3",
     "vite-tsconfig-paths": "^6.1.1",
     "vitest": "^4.1.11"
   }

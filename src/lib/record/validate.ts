@@ -48,12 +48,13 @@ export type ParseResult =
   | { kind: 'quarantine'; reason: 'newer' | 'malformed'; raw: string }
 
 /**
- * A git short hash as `revision.ts` actually emits it — git chooses the length,
- * so the floor is 4.
+ * A git short hash as a record may hold it. `revision.ts` now writes a fixed
+ * width, but a record signed against an earlier build carries whatever length
+ * git chose then, so the floor stays 4.
  */
-const SHORT_HASH = /^[0-9a-f]{4,40}$/
-const ISO_DAY = /^\d{4}-\d{2}-\d{2}$/
-const ISO_TIME = /^\d{4}-\d{2}-\d{2}(?:[T ][\d:.+\-Z]{1,20})?$/
+export const SHORT_HASH = /^[0-9a-f]{4,40}$/
+export const ISO_DAY = /^\d{4}-\d{2}-\d{2}$/
+export const ISO_TIME = /^\d{4}-\d{2}-\d{2}(?:[T ][\d:.+\-Z]{1,20})?$/
 const INDEX_KEY = /^\d{1,4}$/
 
 function isRecordObject(value: unknown): value is Record<string, unknown> {

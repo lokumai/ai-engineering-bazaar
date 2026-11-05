@@ -95,93 +95,6 @@
     font-size: var(--text-item);
   }
 
-  /* -- §13.3 the role path, and the reveal that shows exactly one ----------
-     THE SECOND CARRIER. All nine ordered paths are in the prerendered
-     document, and channel A shows one: `boot.ts` stamps `hl-role-<id>` on
-     `<html>` before first paint. CSS has no operator that compares a class on
-     the root with an attribute on a descendant, so there is one selector per
-     role and there has to be — the same shape as the generated per-module
-     sheet and the aggregate level states.
-
-     A reader with no role gets NONE of them, which is the honest state rather
-     than a placeholder: a drawn route for a role nobody chose is a page
-     claiming something untrue of them (§1). That is what the negation chain
-     below is for, and `category-surfaces.test.ts` holds both halves to the
-     frozen nine — a role missing from the chain would show the empty state AND
-     that role's path at once, which is two contradictory answers on one
-     screen. */
-
-  .bz-path-body {
-    display: none;
-  }
-
-  html.hl-role-software-engineer .bz-path-body[data-role="software-engineer"],
-  html.hl-role-devops .bz-path-body[data-role="devops"],
-  html.hl-role-data-engineer .bz-path-body[data-role="data-engineer"],
-  html.hl-role-data-analyst .bz-path-body[data-role="data-analyst"],
-  html.hl-role-analyst .bz-path-body[data-role="analyst"],
-  html.hl-role-qa .bz-path-body[data-role="qa"],
-  html.hl-role-project-manager .bz-path-body[data-role="project-manager"],
-  html.hl-role-dba .bz-path-body[data-role="dba"],
-  html.hl-role-pre-sales .bz-path-body[data-role="pre-sales"] {
-    display: block;
-  }
-
-  /* The empty state, negating every role at once. */
-  html:not(.hl-role-software-engineer):not(.hl-role-devops):not(.hl-role-data-engineer):not(.hl-role-data-analyst):not(.hl-role-analyst):not(.hl-role-qa):not(.hl-role-project-manager):not(.hl-role-dba):not(.hl-role-pre-sales)
-    .bz-path-empty {
-    display: grid;
-  }
-
-  /* `display: none` here and `grid` on the reveal, NOT a `grid` utility in the
-     markup: Tailwind's utilities layer sits above `components`, so a `grid`
-     class on this element beat the hiding rule and the empty state stayed
-     visible beside a chosen path — two contradictory answers on one screen,
-     which is exactly what the negation chain exists to prevent. A layer is not
-     a suggestion. */
-  .bz-path-empty {
-    display: none;
-    gap: 16px;
-  }
-
-  /* -- one step on a path -------------------------------------------------- */
-
-  .bz-step {
-    display: flex;
-    align-items: baseline;
-    gap: 8px;
-    padding: 4px 0;
-    font-size: var(--text-item);
-  }
-
-  /* THE BASE THE GENERATED SHEET NEEDS, for the same reason the completion
-     disc has one: `lokum-modules.css` reveals this for the modules the reader
-     has signed off and states only `display` and a colour, so without a base
-     rule here every drawn step reads as completed. */
-  .bz-step-tick {
-    display: none;
-    color: var(--color-success);
-    font-size: var(--text-label);
-    letter-spacing: var(--tracking-label);
-  }
-
-  /* Channel B — the island marks the ONE step to take next, scoped to the body
-     the reader's own role reveals. HIDDEN BY DEFAULT and shown only on the step
-     the island has marked: every step renders the marker, and without a base
-     rule all eleven of them claim to be next at once. Same shape as the
-     completion disc and the step's own tick. */
-  .bz-step-next {
-    display: none;
-    margin-left: auto;
-    color: var(--color-on-surface-muted);
-    font-size: var(--text-label);
-    letter-spacing: var(--tracking-label);
-  }
-
-  .bz-step[data-next="true"] .bz-step-next {
-    display: inline;
-  }
-
   .bz-hidden-y {
     overflow-y: hidden;
   }
@@ -298,169 +211,6 @@
     border-top: 1px solid var(--color-line);
   }
 
-  .bz-drafter {
-    margin: 0 0 26px;
-  }
-
-  /* M22 — **the mark took half the page and stood in the middle of it.**
-
-     MEASURED at 1440: `repeat(auto-fit, minmax(240px, 1fr))` computed to
-     `662px 662px 0px 0px 0px`, and `.bz-drafter-mark` rendered **137px wide at
-     x=312** — its own `margin: 0 auto` makes a grid item shrink to fit and
-     centre, which is right in the stacked case it was written for and leaves
-     525px of white beside it here. The block read as broken, and it is the
-     first thing under the circles.
-
-     The two children are not a pair of halves: one is a small fixed graphic and
-     the other is everything else, so `1fr 1fr` was never their shape. The mark
-     takes what it needs and the body takes the rest. `07`'s own breakpoint is
-     760px and this stacks under it, where the centring is correct again. */
-  .bz-drafter-grid {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr);
-    gap: 18px;
-  }
-
-  @media (min-width: 761px) {
-    .bz-drafter-grid {
-      grid-template-columns: minmax(0, max-content) minmax(0, 1fr);
-    }
-  }
-
-  /* **AND THE PROSE KEEPS A MEASURE**, which the fix above took away.
-
-     `auto-fit` had been capping this column at 662px by accident — badly, since
-     it also centred a 137px graphic in a 662px track — and giving the body the
-     rest of the row meant **1187px at 1440, about 176 characters a line**,
-     where every other paragraph on this page sets at 584. A review measured it
-     and it is the better defect to have: the block is no longer broken-looking,
-     it was merely unreadable.
-
-     `--layout-measure` rather than a number, because it is the same measure the
-     reading column uses and a second constant would be a second opinion. */
-  .bz-drafter-body {
-    max-width: var(--layout-measure);
-  }
-
-  .bz-drafter-half {
-    min-width: 0;
-  }
-
-  .bz-drafter-halfhead {
-    margin: 0 0 6px;
-    color: var(--color-on-surface-faint);
-    font: 600 var(--text-label) / 1 var(--font-sans);
-    letter-spacing: var(--tracking-label);
-  }
-
-  .bz-drafter-body {
-    margin: 0;
-  }
-
-  .bz-drafter-mark {
-    display: block;
-    margin: 0 auto 10px;
-  }
-
-  .bz-drafter-line {
-    margin: 2px 0 0;
-    color: var(--color-on-surface-muted);
-    font-size: var(--text-mark);
-  }
-
-  /* -- §16.2 the mark picker ---------------------------------------------
-     Eight options, and `07` draws no such control — so this is derived
-     (**D30**) from the item row and the field.
-
-     THE FLOOR IS STATED HERE, ONCE. §10.4 wants 44px for a thumb, the cell
-     used to get it from a utility on one of the picker's three call sites, and
-     the rule that replaced that was in a stylesheet stage 0 deleted — so both
-     routes shipped a 19px target. It is unconditional rather than behind the
-     phone breakpoint because a pointer on a 44px cell costs nothing and a
-     second rule is a second place for this to go missing. */
-
-  .bz-markrow {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-    gap: 6px;
-    margin: 0;
-    padding: 0;
-    border: 0;
-  }
-
-  .bz-markrow-cell {
-    display: flex;
-    align-items: center;
-    gap: 9px;
-    min-height: 44px;
-    padding: 4px 8px;
-    border: 1px solid var(--color-line);
-    border-radius: var(--radius-lg);
-    cursor: pointer;
-  }
-
-  .bz-markrow-cell:hover {
-    border-color: var(--color-line-strong);
-  }
-
-  /* §16.2.3 — the selected cell, and the native radio is the carrier under
-     forced colours. Three signals: the edge, the weight, and the platform's
-     own control, which is the one thing forced colours cannot take away. */
-  .bz-markrow-cell[data-hl-selected="true"] {
-    border-color: var(--color-primary);
-    border-width: 2px;
-    font-weight: 600;
-  }
-
-  /* The glyph and its name are the control at every other width, so the radio
-     is hidden without being removed — `opacity` and not `display`, because it
-     has to come back under forced colours and a removed control cannot. */
-  .bz-markrow-input {
-    position: absolute;
-    opacity: 0;
-    pointer-events: none;
-  }
-
-  @media (forced-colors: active) {
-    .bz-markrow-input {
-      position: static;
-      opacity: 1;
-      pointer-events: auto;
-    }
-  }
-
-  .bz-markrow-name {
-    color: var(--color-on-surface);
-    font-size: var(--text-item);
-  }
-
-  .bz-markrow-note {
-    margin: 6px 0 0;
-    color: var(--color-on-surface-muted);
-    font-size: var(--text-meta);
-  }
-
-  .bz-mark-stamp {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-  }
-
-  .bz-identity-initials {
-    display: grid;
-    place-items: center;
-    width: 28px;
-    height: 28px;
-    border: 1px solid var(--color-line);
-    border-radius: 50%;
-    color: var(--color-on-surface-muted);
-    font: 600 var(--text-mark) / 1 var(--font-sans);
-  }
-
-  .bz-identity-name {
-    color: var(--color-on-surface);
-  }
-
   /* -- the readout strip -------------------------------------------------- */
 
   .bz-readout {
@@ -553,44 +303,6 @@
     font-size: var(--text-item);
   }
 
-  /* -- the stamps, the definitions, and the rest of the register's bodies -- */
-
-  .bz-stamp-set {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 6px;
-    margin: 0;
-    padding: 0;
-    list-style: none;
-  }
-
-  .bz-stamp,
-  .bz-stamp-slot {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    padding: 3px 8px;
-    border: 1px solid var(--color-line);
-    border-radius: var(--radius-base);
-    color: var(--color-on-surface-muted);
-    font-size: var(--text-mark);
-  }
-
-  /* §12.15's dashed, unsigned state: a slot nobody has earned is drawn as
-     hidden geometry, which is the same treatment a planned module's segment
-     gets and for the same reason. */
-  .bz-stamp-slot {
-    border-style: dashed;
-  }
-
-  .bz-stamp-name {
-    color: var(--color-on-surface);
-  }
-
-  .bz-stamp-cond {
-    color: var(--color-on-surface-faint);
-  }
-
   .bz-defs {
     display: grid;
     grid-template-columns: max-content 1fr;
@@ -606,59 +318,6 @@
   .bz-defs dd {
     margin: 0;
     color: var(--color-on-surface);
-  }
-
-  /* An exact string a reader may need to copy — a digest, a stored key. Mono,
-     because it is a machine's word and not a label. */
-  .bz-raw {
-    margin: 0;
-    padding: 9px 11px;
-    overflow-x: auto;
-    border: 1px solid var(--color-line);
-    border-radius: var(--radius-base);
-    background: var(--color-surface);
-    color: var(--color-on-surface);
-    font: var(--text-code) / 1.5 var(--font-mono);
-  }
-
-  .bz-account-head,
-  .bz-orgs-head,
-  .bz-signin-state {
-    margin: 0 0 8px;
-    color: var(--color-on-surface-faint);
-    font: 600 var(--text-label) / 1 var(--font-sans);
-    letter-spacing: var(--tracking-label);
-  }
-
-  .bz-signin-email-hint,
-  .bz-needs-mailbox {
-    margin: 6px 0 0;
-    color: var(--color-on-surface-muted);
-    font-size: var(--text-meta);
-  }
-
-  .bz-receipt {
-    margin: 0 0 14px;
-    padding: 12px 14px;
-    border: 1px solid var(--color-line);
-    border-left: 2px solid var(--color-success);
-    border-radius: var(--radius-base);
-  }
-
-  .bz-receipt-full {
-    font-size: var(--text-item);
-  }
-
-  .bz-uptime {
-    display: flex;
-    gap: 2px;
-  }
-
-  .bz-uptime-tick {
-    width: 7px;
-    height: 7px;
-    border: 1px solid var(--color-line);
-    border-radius: var(--radius-hair);
   }
 
   /* `.bz-keys` moved into `src/design/bazaar.css` in M18: `/legend/` renders
@@ -705,16 +364,7 @@
     margin: 8px 0 0;
   }
 
-  /* -- §12.10 the curriculum diagram -------------------------------------
-     Its own vocabulary, and deliberately NOT the language's `node`: the
-     figure's `.bz-node` is a hand-drawn box in a mermaid figure, and this is
-     an SVG the record draws with four states of its own. Two things named the
-     same would be two things agreeing on nothing. */
-
-  .bz-diagram-rail {
-    overflow-x: auto;
-    overscroll-behavior-x: contain;
-  }
+  
 
   /* §4.10.5 — the drawing SCALES to the column rather than overflowing it.
      MEASURED: the layout is 1,189px wide and the wrapper hides it below
@@ -728,20 +378,5 @@
   .bz-diagram {
     max-width: 100%;
     height: auto;
-  }
-
-  .bz-diagram-node-edge {
-    fill: none;
-    stroke: var(--color-line-strong);
-  }
-
-  .bz-diagram-node-focus {
-    outline: 2px solid var(--color-focus);
-    outline-offset: 2px;
-  }
-
-  .bz-trace {
-    fill: none;
-    stroke: var(--color-line);
   }
 }

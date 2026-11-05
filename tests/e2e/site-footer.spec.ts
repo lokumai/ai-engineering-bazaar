@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test'
-import { CATEGORY_PATHS, SHEETS, SHEET_COUNT } from './sheets'
+import { A0, A4, CATEGORY_PATHS, SHEETS, SHEET_COUNT, SHORT } from './sheets'
 
 /**
  * §5.2 — footer row 1, which shipped empty on all 32 module sheets.
@@ -40,7 +40,9 @@ const readRow = () => {
   }
 }
 
-for (const sheet of SHEETS) {
+// Representative modules (M40, D88): the footer is one component on every
+// module, and `module-sheets.spec.ts` already loads each one.
+for (const sheet of [A0, SHORT, A4]) {
   test(`sheet ${String(sheet.module).padStart(2, '0')} signs its footer`, async ({ page }) => {
     await page.goto(sheet.path)
     const row = await page.evaluate(readRow)

@@ -19,7 +19,7 @@
 
 import { describe, expect, it } from 'vitest'
 import { recordBootScript } from '@/lib/record/boot'
-import { setRole, signOff, unsign } from '@/lib/record/events'
+import { signOff, unsign } from '@/lib/record/events'
 import { RECORD_STORAGE_KEY, SCHEMA_VERSION, EMPTY_RECORD, type RecordData } from '@/lib/record/schema'
 import {
   type StampFacts,
@@ -117,11 +117,6 @@ describe('the two stampers agree', () => {
     ['a single-module level, where one sign-off completes it',
       signed('protocols/protocols-reference')],
     ['a slug the build has no module number for', signed('expert/advanced-ui')],
-    ['a role and nothing else, which is a reader who has chosen a path before signing anything',
-      setRole(EMPTY_RECORD, 'qa', AT)],
-    ['a role alongside sign-offs', setRole(signed('intermediate/security'), 'devops', AT)],
-    ['a role the build does not know, which neither stamper may turn into a class',
-      { ...EMPTY_RECORD, identity: { ...EMPTY_RECORD.identity, role: 'business-analyst' as never } }],
   ]
 
   for (const [name, data] of CASES) {
@@ -163,11 +158,6 @@ describe('the two stampers agree', () => {
     // load and keeps the `1` through an erase, so CLEARED BY YOU is still
     // distinguishable from NEVER STARTED.
     expect(runBootScript(EMPTY_RECORD).getAttribute('data-hl-record')).toBeNull()
-    // And the line the gate must not cross: an identity the reader typed is
-    // something, even with nothing signed off. A sign-off is not the only
-    // evidence of a reader.
-    expect(runBootScript(setRole(EMPTY_RECORD, 'qa', AT)).getAttribute('data-hl-record'))
-      .toBe('1')
 
     const root = fakeRoot()
     stampRecordState(root, signed('intermediate/security'), FACTS)
@@ -208,34 +198,6 @@ describe('stampClassesFor — what a record implies', () => {
   it('ignores a module that was recorded but never completed', () => {
     const data = signOff(EMPTY_RECORD, 'intermediate/security', 'a1b2c3d', AT)
     expect(stampClassesFor(unsign(data, 'intermediate/security'), FACTS)).toEqual([])
-  })
-})
-
-describe('the role (§13.3)', () => {
-  it('stamps the chosen role, so `/path/` draws in frame one with no hydration', () => {
-    expect(stampClassesFor(setRole(EMPTY_RECORD, 'qa', AT), FACTS)).toEqual(['hl-role-qa'])
-  })
-
-  it('takes the previous role off when the reader changes it', () => {
-    // Changing role is not destructive (§13.3), so it happens freely — and if
-    // the old class stayed, `/path/` would draw two paths at once.
-    const root = fakeRoot()
-    stampRecordState(root, setRole(EMPTY_RECORD, 'qa', AT), FACTS)
-    expect(root.owned()).toEqual(['hl-role-qa'])
-    stampRecordState(root, setRole(EMPTY_RECORD, 'devops', AT), FACTS)
-    expect(root.owned()).toEqual(['hl-role-devops'])
-    stampRecordState(root, setRole(EMPTY_RECORD, null, AT), FACTS)
-    expect(root.owned()).toEqual([])
-  })
-
-  it('stamps nothing for an id outside the frozen nine', () => {
-    // The typed path cannot produce this; a hand-edited record can, and a class
-    // no stylesheet answers to would leave the empty state half-drawn.
-    const data: RecordData = {
-      ...EMPTY_RECORD,
-      identity: { ...EMPTY_RECORD.identity, role: 'business-analyst' as never },
-    }
-    expect(stampClassesFor(data, FACTS)).toEqual([])
   })
 })
 
@@ -307,7 +269,7 @@ describe('data-hl-record after mount (§15.2.1, §12.13)', () => {
     const root = fakeRoot()
     expect(root.getAttribute('data-hl-record')).toBeNull()
 
-    stampRecordState(root, setRole(EMPTY_RECORD, 'qa', AT), FACTS)
+    stampRecordState(root, signed('intermediate/security'), FACTS)
     expect(root.getAttribute('data-hl-record')).toBe('1')
   })
 
@@ -320,7 +282,7 @@ describe('data-hl-record after mount (§15.2.1, §12.13)', () => {
     // the store writes on a first theme click.
     stampRecordState(
       root,
-      { ...EMPTY_RECORD, prefs: { charKeys: false, railFolded: false, aliasNamedFor: null, catalogView: null, figurePalette: null, codePalette: null } },
+      { ...EMPTY_RECORD, prefs: { charKeys: false, railFolded: false, catalogView: null, figurePalette: null, codePalette: null } },
       FACTS,
     )
     expect(root.getAttribute('data-hl-record')).toBeNull()

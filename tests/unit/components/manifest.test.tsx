@@ -24,7 +24,7 @@ const DRAWN: SheetRow = {
   module: 13,
   number: '13',
   slug: 'intermediate/security',
-  slots: ['COMPLETION', 'QUIZ', 'CHECKLIST', 'SOURCES'],
+  slots: ['COMPLETION', 'CHECKLIST'],
   title: 'Security',
   path: '/courses/intermediate/security/',
   drawn: true,
@@ -188,15 +188,15 @@ describe('ModuleRow — the index row (§5.3)', () => {
   })
 
   it('draws the sign-off squares this module supplies, and only those (§5.9)', () => {
-    expect(drawn.match(/bz-signoff-square/g)).toHaveLength(4)
-    for (const slot of ['COMPLETION', 'QUIZ', 'CHECKLIST', 'SOURCES']) {
+    expect(drawn.match(/bz-signoff-square/g)).toHaveLength(DRAWN.slots.length)
+    for (const slot of DRAWN.slots) {
       expect(drawn).toContain(`data-hl-slot="${slot}"`)
       expect(drawn).toContain(`title="${slot}"`)
     }
   })
 
   it('draws every square unsigned: the build has met no reader (§12.2)', () => {
-    expect(drawn.match(/data-signed="false"/g)).toHaveLength(4)
+    expect(drawn.match(/data-signed="false"/g)).toHaveLength(DRAWN.slots.length)
     expect(drawn).not.toContain('data-signed="true"')
   })
 

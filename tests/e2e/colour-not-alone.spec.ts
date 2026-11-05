@@ -45,7 +45,7 @@ test.beforeEach(async ({ page }) => {
 test('a category card still reports its standing with no colour (§13.1.3 item 2)', async ({
   page,
 }) => {
-  await seedRecord(page, { identity: { role: 'software-engineer' }, sheets: SIGNED })
+  await seedRecord(page, {sheets: SIGNED })
 
   /* M17 — the band and its meter are on the level's own catalog entry now, one
      per page rather than five on one. `SIGNED` carries a signed sheet in each
@@ -164,94 +164,6 @@ test('LKM-01 draws its faces with no fill (§13.1.3 item 1)', async ({ page }) =
   expect(unforced.length).toBe(fills.length)
   expect(unforced.every((fill) => fill === 'none')).toBe(true)
   await page.emulateMedia({ forcedColors: 'active' })
-})
-
-test('the mark picker and a closed row read as text with no colour (§16.2.3, §16.7)', async ({
-  page,
-}) => {
-  /**
-   * Two surfaces that carry state in paint, and both of them are deleted by
-   * this mode rather than merely dimmed.
-   *
-   * The selected mark cell has three carriers: an `--accent-wash` ground, a
-   * 1.5px inset shadow and a bold label. `forced-colors: active` drops every
-   * `background-image` and every `box-shadow` on the page, so two of the three
-   * are gone here and the third — a font weight — is not a state a reader can be
-   * asked to infer. §16.2.3's answer is that the native radio, hidden at every
-   * other width because the glyph and its name are the control, is brought back
-   * into view in this mode; the selection is then read from the platform's own
-   * control, which is the one thing forced colours cannot take away. The picker
-   * lives on `/sign-in/alias/` only since 2026-11-05, when the drafter block
-   * that also drew it left `/profile/`.
-   *
-   * The register's closed row is the other: the fold is drawn as a painted
-   * hairline grid, and the open row's marker is a painted 2px cut line. What
-   * makes a closed row honest is not any of that — it is §16.4.1's reading,
-   * which is real text in the summary. So this reads it as text, with the row
-   * still closed, which is also the screen-reader case: the line is announced
-   * without opening anything.
-   */
-  await seedRecord(page, {
-    identity: { name: 'Ada Lovelace', markSeed: 'a1b2c3d4', mark: 'datum' },
-    sheets: SIGNED,
-  })
-  await page.goto('/sign-in/alias/')
-  await expect(page.locator('.bz-readout[data-hydrated="true"]').first()).toBeAttached()
-
-  /*
-    §16.2.3 — the chosen mark is readable from the native control, not from the
-    wash.
-
-    THE DESIGN IS A SWAP, SO BOTH HALVES ARE ASSERTED. The glyph and its name
-    are the control at every other width, so the radio is `opacity: 0` there;
-    under forced colours it comes back, because the platform's own widget is
-    then the only thing that can say which option is chosen. `progress.css`
-    states both, and stage 8 restored them after stage 0 deleted the stylesheet
-    that used to.
-
-    This comment said the rule was missing and that `toBeVisible()` "can no
-    longer tell the design from its absence" — true when it was written, stale
-    since stage 8, and the second half is the part worth keeping: **it is still
-    true of `toBeVisible()`**, because Playwright counts an `opacity: 0` element
-    as visible. It has a box and it is not `visibility: hidden`. So the swap is
-    read from the COMPUTED OPACITY in both modes, which is the only assertion
-    that can fail if either half of the rule goes away.
-  */
-  const chosen = page.locator('label[data-hl-mark="datum"] input[type="radio"]')
-  await expect(chosen).toBeChecked()
-
-  await page.emulateMedia({ forcedColors: 'none' })
-  expect(
-    await chosen.evaluate((node) => getComputedStyle(node).opacity),
-    'the native radio is meant to be out of sight while the glyph is the control',
-  ).toBe('0')
-
-  await page.emulateMedia({ forcedColors: 'active' })
-  expect(
-    await chosen.evaluate((node) => getComputedStyle(node).opacity),
-    'with no colour at all the native radio is what says which mark is chosen',
-  ).toBe('1')
-  await expect(chosen).toBeVisible()
-  // And the cell says which mark it is in text, because the glyph is decoration:
-  // it is `aria-hidden` in every state and its fill is gone here.
-  await expect(page.locator('label[data-hl-mark="datum"]')).toContainText(/\S/)
-
-  // ---- one closed row, in words -------------------------------------------
-  await page.goto('/profile/')
-  const row = page.locator('section.bz-register-row').first()
-  const fold = row.locator('details.bz-register-fold')
-  expect(await fold.evaluate((node) => (node as HTMLDetailsElement).open)).toBe(false)
-
-  const name = (await row.locator('.bz-register-name').innerText()).trim()
-  const reading = (await row.locator('.bz-register-reading').innerText()).trim()
-  expect(name.length, 'a closed row does not name itself').toBeGreaterThan(2)
-  // §16.4.1 — folding removes prose and never a fact, and with no colour at all
-  // the fact is still the only thing that has to survive.
-  expect(reading, 'a closed row states no reading under forced colours').not.toBe('')
-  expect(reading === '--' || /\d/.test(reading) || /^[A-Z]/.test(reading)).toBe(true)
-  // The whole summary reads as one line of text: name, reading, and the mono
-  // chevron, which is `aria-hidden` and therefore not in this reading.
-  expect((await row.locator('summary').innerText()).trim()).toContain(name)
 })
 
 /**

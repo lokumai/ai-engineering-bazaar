@@ -1,5 +1,4 @@
 import { type Page, expect, test } from '@playwright/test'
-import { HOME_SCOPE } from '@/lib/record/scope'
 import { SITE_NAME } from '@/lib/site'
 import {
   type RecordSeed,
@@ -132,12 +131,6 @@ test('a clean browser meets the whole page, and it claims nothing about the read
 // M13's own criterion: the marks are right in frame one
 // ---------------------------------------------------------------------------
 
-
-
-
-
-
-
 // ---------------------------------------------------------------------------
 // §15.11 — a record that carries nothing is not a returning reader
 // ---------------------------------------------------------------------------
@@ -191,24 +184,6 @@ for (const [what, seed] of CARRIES_NOTHING) {
   })
 }
 
-/**
- * The line between the two: a name is not reading, but it is something the
- * reader put there, so the record carries it. This is the case that keeps the
- * rule above from becoming "ignore everything but completions".
- */
-test('an identity the reader typed is enough to be a returning reader (§15.11)', async ({
-  page,
-}) => {
-  await probeFirstPaint(page)
-  await seedRecord(page, { days: [], identity: { name: 'Ada' } })
-  await page.goto('/')
-
-  // Before first paint, and on the stamp itself — see the block above for why
-  // this stopped reading a control.
-  expect((await firstPaint(page))!.record).toBe('1')
-  expect((await firstPaint(page))!.storage).toBe('ok')
-})
-
 // ---------------------------------------------------------------------------
 // §15.2.2 — one document, so one h1 and one tab
 // ---------------------------------------------------------------------------
@@ -256,8 +231,8 @@ for (const state of ['clean', 'with a record'] as const) {
  * navigation on this site is a client transition, so "whatever was true at load"
  * was the whole session.
  *
- * The route is a real one and taken through real controls: type a name, keep
- * it, then follow a link a reader can see. Seeding storage and reloading would
+ * The route is a real one and taken through real controls: complete a module,
+ * then follow a link a reader can see. Seeding storage and reloading would
  * test the boot script again, which was never the half that was broken.
  */
 test('a first write during the visit reaches the home page without a reload (§15.2.1)', async ({
@@ -267,13 +242,12 @@ test('a first write during the visit reaches the home page without a reload (§1
   await expect(page.locator('html')).not.toHaveAttribute('data-hl-record', '1')
 
   // The write, through the control the reader would use.
-  await page.goto('/sign-in/alias/')
-  await page.getByRole('textbox').first().fill('Ada')
-  await page.getByRole('button', { name: /keep this alias/i }).click()
+  await page.goto(A0.path)
+  await page.getByRole('checkbox', { name: 'Mark this module as complete' }).check()
   await waitForRecord(
     page,
-    (envelope) => envelope?.data.identity.name === 'Ada',
-    'the alias',
+    (envelope) => envelope?.data.sheets[slugOf(A0)]?.signedOff != null,
+    'the completion',
   )
 
   // Home the way a reader gets there: a link, not a reload. The breadcrumb is
@@ -299,7 +273,6 @@ test('a first write during the visit reaches the home page without a reload (§1
 // ---------------------------------------------------------------------------
 // §13.1.4, §10.4 — a level is never told apart by colour alone
 // ---------------------------------------------------------------------------
-
 
 test(`the way in opens the catalog at ${INDEX_SHEET}`, async ({ page }) => {
   const problems = watchPage(page)

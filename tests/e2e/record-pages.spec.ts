@@ -102,7 +102,7 @@ async function settled(page: Page): Promise<RecordData> {
 
 /** The reader's own work, which is what a round trip has to preserve. */
 function readerWork(data: RecordData): Record<string, unknown> {
-  return { identity: data.identity, sheets: data.sheets, prefs: data.prefs }
+  return { sheets: data.sheets, prefs: data.prefs }
 }
 
 /**
@@ -117,7 +117,6 @@ function payloadOf(text: string): { schema: number; savedAt: string; data: Recor
   return JSON.parse(text.slice(start, text.indexOf('</script', start)))
 }
 
-const READER = 'İlker Cevheri'
 
 /**
  * Three sheets signed off across two subsystems, one repository with a commit,
@@ -126,22 +125,15 @@ const READER = 'İlker Cevheri'
  * rather than a zero, which is the only way the enumeration can be checked.
  */
 const SEEDED: RecordSeed = {
-  identity: { name: READER, markSeed: 'a1b2c3d4', mark: null, role: null },
   sheets: {
     'fundamentals/llms': {
       signedOff: '2026-07-01T08:00:00.000Z',
       signedRevision: 'ab12cd3',
       reachedEnd: true,
-      sources: ['https://platform.openai.com/docs/guides/text-generation'],
     },
     'intermediate/prompt-engineering': {
       signedOff: '2026-07-20T11:30:00.000Z',
       signedRevision: 'bc23de4',
-      quiz: {
-        answer: 'Retrieval before generation, and the module says why.',
-        assessed: 'matched',
-        at: '2026-07-20T11:20:00.000Z',
-      },
     },
     'intermediate/security': {
       signedOff: '2026-08-11T15:45:00.000Z',
@@ -149,20 +141,6 @@ const SEEDED: RecordSeed = {
       reachedEnd: true,
       dwellSeconds: 900,
       checklist: { '0': true, '1': true, '2': true },
-      sources: [
-        'https://owasp.org/www-project-top-10-for-large-language-model-applications/',
-        'https://platform.openai.com/docs/guides/text-generation',
-      ],
-      submittals: [
-        {
-          owner: 'cevheri',
-          repo: 'hidden-line',
-          url: 'https://github.com/cevheri/hidden-line',
-          commit: '9f2c1ab',
-          note: 'A prompt-injection harness for the module 13 criteria.',
-          at: '2026-08-11T16:00:00.000Z',
-        },
-      ],
     },
   },
   days: ['2026-07-01', '2026-07-20', '2026-08-11'],
@@ -234,7 +212,7 @@ test('§12.10.6 — CONTINUE is absent when there is no next module', async ({ p
     }
   }
 
-  await seedRecord(page, { identity: { name: READER }, sheets: everything })
+  await seedRecord(page, {sheets: everything })
   await page.goto('/profile/')
 
   // The island has to have taken the record on board before an absence means
@@ -474,7 +452,7 @@ function daysBack(count: number): string {
 }
 
 /** A record that has recorded nothing at all beyond a name. */
-const NOTHING_RECORDED: RecordSeed = { identity: { name: READER }, days: [] }
+const NOTHING_RECORDED: RecordSeed = { days: [] }
 
 /**
  * The opposite record, and it is maximal on purpose: every drawn sheet signed
@@ -497,24 +475,12 @@ const EVERYTHING_RECORDED: RecordSeed = (() => {
       signedOff: '2026-08-11T15:45:00.000Z',
       signedRevision: 'cd34ef5',
       reachedEnd: true,
-      sources: ['https://owasp.org/www-project-top-10-for-large-language-model-applications/'],
     }
   }
   sheets['intermediate/security'] = {
     ...sheets['intermediate/security'],
-    submittals: [
-      {
-        owner: 'cevheri',
-        repo: 'hidden-line',
-        url: 'https://github.com/cevheri/hidden-line',
-        commit: '9f2c1ab',
-        note: 'A prompt-injection harness for the module 13 criteria.',
-        at: '2026-08-11T16:00:00.000Z',
-      },
-    ],
   }
   return {
-    identity: { name: READER, markSeed: 'a1b2c3d4', mark: 'datum', role: 'software-engineer' },
     sheets,
     days: [daysBack(2), daysBack(1), TODAY],
     prefs: { charKeys: false },
@@ -525,24 +491,6 @@ const EVERYTHING_RECORDED: RecordSeed = (() => {
       // BOTH states. Without it the row reads NO CLAIM ON RECORD at both seeds
       // and a frozen reading would pass the table — the exact vacuity this
       // gate exists to close.
-      lastClaim: {
-        at: '2026-08-11T15:44:00.000Z',
-        summary: {
-          outcome: 'merged',
-          signed: { here: 2, account: 3, shared: 1, merged: 4 },
-          submittals: { here: 1, account: 0, shared: 0, merged: 1 },
-          droppedSignatures: [],
-          droppedSubmittals: [],
-          identity: {
-            name: 'account',
-            markSeed: 'account',
-            role: 'local',
-            markChanged: false,
-            nameChanged: true,
-            roleChanged: false,
-          },
-        },
-      },
     },
   }
 })()
@@ -797,19 +745,11 @@ test('§12.15 — the erase dialog names its scope and enumerates the real count
   expect(title).toBe('Erase all progress in this browser?')
   expect(title.toLowerCase()).not.toContain('are you sure')
 
-  // The actual counts, from the record: 3 sheet states, 1 name, 1 submittal,
-  // 1 self-check, 2 sources opened. Zeros are omitted rather than padding the
-  // list a reader is meant to read.
+  // The actual count, from the record: 3 module states.
   const enumerated = await dialog
     .locator('.bz-dialog-tally li')
     .evaluateAll((nodes) => nodes.map((node) => (node.textContent ?? '').trim()))
-  expect(enumerated).toEqual([
-    '3 module states',
-    '1 name',
-    '1 submittal',
-    '1 self-check',
-    '2 sources opened',
-  ])
+  expect(enumerated).toEqual(['3 module states'])
 
   // §12.15 — the safe path is one click from the destructive one, not a route
   // away from it.
@@ -1058,7 +998,6 @@ test('§12.15 — export, erase, import: the record comes back identical', async
   // and indented JSON is also readable in a text editor — the cheapest proof
   // that §1 reaches the storage layer.
   expect(exported.text).toContain('\n  "schema": 1')
-  expect(exported.text).toContain(READER)
 
   // `lastExport` is recorded, so `NO EXPORT ON RECORD` can be a truthful state
   // rather than a permanent one.
@@ -1085,9 +1024,6 @@ test('§12.15 — export, erase, import: the record comes back identical', async
     .setInputFiles(onDisk(exported.filename, exported.text))
 
   await expect(page.getByText('RECORD IMPORTED · SCHEMA 1')).toBeVisible()
-  // A raw `.json` export carries no digest at all, and that is stated as a
-  // fact about the file rather than as an accusation about the reader.
-  await expect(page.getByText('NO CONTENT DIGEST IN THIS FILE')).toBeVisible()
 
   // The record that comes back is the record the file carried, field for
   // field — which is what makes the export a backup rather than a souvenir.

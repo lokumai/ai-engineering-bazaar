@@ -196,7 +196,6 @@ describe('the preference is written through the record, once', () => {
     const chosen = setCatalogView(EMPTY_RECORD, 'cards')
     expect(chosen.days).toEqual(EMPTY_RECORD.days)
     expect(chosen.sheets).toEqual(EMPTY_RECORD.sheets)
-    expect(chosen.identity).toEqual(EMPTY_RECORD.identity)
     expect(chosen.meta).toEqual(EMPTY_RECORD.meta)
   })
 

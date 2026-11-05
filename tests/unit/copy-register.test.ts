@@ -38,17 +38,11 @@ const ROOTS: readonly string[] = [
   // §13 — the path is the largest single body of new reader-visible copy in the
   // project: nine role blurbs and 126 step reasons, written by agents reading
   // the sheets. Agent-written prose is exactly what this register exists for.
-  'components/path',
-  'app/path',
-  'lib/path',
   // §13.5's two new course components print `signed off` and a `--` placeholder.
   'components/course',
-  'app/dashboard',
   'app/profile',
-  'app/report',
   'app/legend',
   'lib/record',
-  'lib/identity',
   'lib/content/criteria.ts',
   // §15 — the front matter. Every root below carries reader-visible prose this
   // phase either wrote or rewrote, and none of it was scanned before: the home
@@ -56,12 +50,7 @@ const ROOTS: readonly string[] = [
   // and the three identity surfaces are where a name could be mistaken for a
   // proof, which is exactly the kind of claim the register guards.
   'components/home',
-  'components/identity',
-  'app/sign-in',
-  'app/join',
-  'app/team',
   'app/sheets',
-  'lib/auth',
   // §16.6 — the two auth panels. `lib/auth` was scanned from §15 but the panels
   // that print its states were not, and §16.1.1 makes them reader-visible in a
   // second place: `SignInPanel` and `AccountPanel` now render inside the
@@ -70,7 +59,6 @@ const ROOTS: readonly string[] = [
   // root was added: 81 files scanned before, 84 after — AuthPanels.tsx,
   // SessionProvider.tsx and SignInPanel.tsx, which is why the non-vacuity test
   // below now names this root rather than only counting.
-  'components/auth',
   // M10, M12 and M14 — the shell, the catalog and the folded progress route.
   // These four hold the largest new blocks of reader-visible copy in the
   // interface revision (the view toggle's three names, the two filter groups,

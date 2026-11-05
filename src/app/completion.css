@@ -72,13 +72,6 @@
     font-size: var(--text-meta);
   }
 
-  .bz-identity {
-    display: flex;
-    align-items: flex-end;
-    gap: 10px;
-    flex-wrap: wrap;
-  }
-
   /* -- the end of a module: completion, then the quick quiz -------------
      2026-10-12, on the author's word: one familiar check-or-uncheck control,
      Previous and Next, then a collapsed quiz. `SignOff.tsx` and
@@ -450,59 +443,6 @@
   [data-correct="true"] > .bz-quiz-recap-item .bz-quiz-recap-mark { color: var(--color-success); }
 
   [data-correct="false"] > .bz-quiz-recap-item .bz-quiz-recap-mark { color: var(--color-fault); }
-
-  /* -- the submittal, and the stamps --------------------------------------
-     `05:134` — "Optional. Paste a repository link if you want a record of it."
-     A form, so it is the language's field primitive and nothing local. */
-
-  .bz-submittal-form {
-    margin: 0 0 12px;
-  }
-
-  .bz-submittal-list {
-    margin: 0;
-    padding: 0;
-    list-style: none;
-  }
-
-  .bz-submittal-item {
-    display: flex;
-    align-items: baseline;
-    gap: 10px;
-    padding: 7px 0;
-    border-top: 1px solid var(--color-line);
-    font-size: var(--text-item);
-  }
-
-  .bz-submittal-repo {
-    color: var(--color-on-surface);
-  }
-
-  .bz-submittal-commit {
-    margin-left: auto;
-    color: var(--color-on-surface-muted);
-    font: var(--text-mark) / 1 var(--font-mono);
-  }
-
-  .bz-submittal-note,
-  .bz-submittal-empty {
-    margin: 0;
-    color: var(--color-on-surface-muted);
-    font-size: var(--text-meta);
-  }
-
-  .bz-stamp-grid {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 6px;
-  }
-
-  .bz-stamp-shelf {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 6px;
-    margin: 0;
-  }
 
   /* -- §12.4.1 the checklist ----------------------------------------------
      `05:140-143` states the rule this has to keep: "The button works whatever

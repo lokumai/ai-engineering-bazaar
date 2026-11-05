@@ -1,5 +1,4 @@
 import { type Page, expect, test } from '@playwright/test'
-import { NAME_SCOPE } from '@/lib/record/scope'
 import {
   documentLoads,
   firstPaint,
@@ -419,7 +418,7 @@ test('channel A stays true across a client transition (§12.2)', async ({ page }
   const problems = watchPage(page)
   // A name on record, so the §12.3.2 prompt never opens: this test is about the
   // stamps, and a form in the middle of it would be a second subject.
-  await seedRecord(page, { identity: { name: 'Ada Lovelace', markSeed: '0123abcd' } })
+  await seedRecord(page, {})
 
   await page.goto(SHEET.path)
   await waitForHydratedReadout(page)
@@ -500,7 +499,7 @@ test('channel A stays true across a client transition (§12.2)', async ({ page }
 test('sign-off records the module’s own revision and survives a reload (§12.4.1, §12.4.3)', async ({
   page,
 }) => {
-  await seedRecord(page, { identity: { name: 'Ada Lovelace', markSeed: '0123abcd' } })
+  await seedRecord(page, {})
   await page.goto(SHEET.path)
   await waitForHydratedReadout(page)
 
@@ -533,7 +532,6 @@ test('un-complete reverses the assertion and clears its channel-A stamp (§12.4.
 }) => {
   await seedRecord(page, {
     sheets: { [SLUG]: signedSheet('b7225f8') },
-    identity: { name: 'Ada Lovelace', markSeed: '0123abcd' },
   })
   await page.goto(SHEET.path)
   await waitForHydratedReadout(page)
@@ -555,7 +553,7 @@ test('un-complete reverses the assertion and clears its channel-A stamp (§12.4.
 
 test('neither sign-off nor un-complete raises a confirmation (§12.4.1, §12.15)', async ({ page }) => {
   const raised = watchDialogs(page)
-  await seedRecord(page, { identity: { name: 'Ada Lovelace', markSeed: '0123abcd' } })
+  await seedRecord(page, {})
   await page.goto(SHEET.path)
   await waitForHydratedReadout(page)
 
@@ -575,39 +573,6 @@ test('neither sign-off nor un-complete raises a confirmation (§12.4.1, §12.15)
 // ---------------------------------------------------------------------------
 // §12.3.5 — the mark seed, minted once
 // ---------------------------------------------------------------------------
-
-test('the first sign-off mints one mark seed and nothing mints a second (§12.3.5)', async ({
-  page,
-}) => {
-  await page.goto(SHEET.path)
-  await waitForHydratedReadout(page)
-  expect((await readRecord(page))?.data.identity.markSeed ?? null).toBeNull()
-
-  await completion(page).check()
-  const minted = (await waitForRecord(page, (env) => env?.data.identity.markSeed != null)).data
-    .identity.markSeed
-  // §12.3.5 — 8 lowercase hex, four bytes from the CSPRNG, never derived from
-  // the name: a name-derived mark would silently change on every already-signed
-  // sheet the moment the reader renamed themselves.
-  expect(minted).toMatch(/^[0-9a-f]{8}$/)
-
-  // A SECOND sign-off, on another sheet, is not a second mint.
-  await page.goto(OTHER.path)
-  await completion(page).check()
-  await waitForSheet(page, OTHER_SLUG, (sheet) => sheet?.signedOff != null)
-  expect((await readRecord(page))?.data.identity.markSeed).toBe(minted)
-
-  // Neither is a rename, which is §12.3.5's whole point: the mark is generated
-  // from the seed, so an identity edit cannot retroactively alter an artefact
-  // the reader has already signed.
-  // The alias screen is the one place left that renames the reader.
-  await page.goto('/sign-in/alias/')
-  await waitForHydratedReadout(page)
-  await page.getByRole('textbox', { name: /Alias, as you would sign/ }).fill('Ada Lovelace')
-  await page.getByRole('button', { name: 'KEEP THIS ALIAS', exact: true }).click()
-  const renamed = await waitForRecord(page, (env) => env?.data.identity.name === 'Ada Lovelace')
-  expect(renamed.data.identity.markSeed).toBe(minted)
-})
 
 // ---------------------------------------------------------------------------
 // §12.3.2, §12.3.3 — the name, asked for once
@@ -776,7 +741,7 @@ test('? opens the keyboard shortcuts and Escape closes it (§12.16)', async ({ p
 
 test('. toggles the theme and s signs off the current module (§12.16)', async ({ page }) => {
   await seedTheme(page, 'light')
-  await seedRecord(page, { identity: { name: 'Ada Lovelace', markSeed: '0123abcd' } })
+  await seedRecord(page, {})
   await page.goto(SHEET.path)
   await waitForHydratedReadout(page)
   expect(await hasRootClass(page, 'dark')).toBe(false)
@@ -794,27 +759,6 @@ test('. toggles the theme and s signs off the current module (§12.16)', async (
   // It is a toggle, and un-sign needs no confirmation either.
   await page.keyboard.press('s')
   await expect(completion(page)).not.toBeChecked()
-})
-
-test('no character shortcut fires from inside a text field (§12.16)', async ({ page }) => {
-  await seedTheme(page, 'light')
-  // The alias screen's name field. A module page has no text field since the
-  // module's own written quick check left it on 2026-10-12, and `/profile/`
-  // has none since its name field left with the drafter block on 2026-11-05.
-  // The guard is about any field the reader types into, wherever it is.
-  await page.goto('/sign-in/alias/')
-  await waitForHydratedReadout(page)
-
-  const answer = page.getByRole('textbox', { name: /Alias, as you would sign/ })
-  await answer.focus()
-  for (const key of ['s', '.', '?', 'g', 'j', '[']) await page.keyboard.press(key)
-
-  // Every one of them is a character the reader was typing. The guard is what
-  // stops a reader typing `s3` from completing a module mid-word.
-  expect(await answer.inputValue()).toBe('s.?gj[')
-  await expect(anyDialog(page)).toHaveCount(0)
-  await expect(pendingHint(page)).toHaveCount(0)
-  expect(await hasRootClass(page, 'dark')).toBe(false)
 })
 
 test('no character shortcut fires with a modifier held (§12.16)', async ({ page }) => {

@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test'
-import { INDEX_SHEET, SHEETS } from './sheets'
+import { A0, A4, INDEX_SHEET, SHORT } from './sheets'
 
 /**
  * The module's own facts, checked against the sheet they describe.
@@ -71,8 +71,10 @@ const read = () => {
   }
 }
 
-const DRAWN = SHEETS.filter((s) => s.drawn)
-const NOT_DRAWN = SHEETS.filter((s) => !s.drawn)
+// Representative modules, not all of them (M40, D88): the rule is the same on
+// every module, and `module-sheets.spec.ts` already loads each one.
+const DRAWN = [A0, SHORT]
+const NOT_DRAWN = [A4]
 
 for (const sheet of DRAWN) {
   test(`sheet ${String(sheet.module).padStart(2, '0')} states what it draws`, async ({ page }) => {

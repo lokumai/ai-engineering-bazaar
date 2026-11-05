@@ -29,18 +29,14 @@ import { defineConfig, devices } from '@playwright/test'
  *
  * ## The viewports
  *
- * §4.7 gives the layout three behaviours and each project is one of them:
- * 1440 is all three tracks of a written module, 1024 is the contents rail
- * behind its control, 390 is the single column. **Two** specs run on all three
- * — the rest of the suite is behaviour, not a rendering matrix, and tripling it
- * would triple CI for no additional answer.
+ * 1440 is the desktop, 390 is the phone. Two specs also run at 390:
+ * `responsive.spec.ts`, which is about widths, and `containment.spec.ts`,
+ * because a diagram's natural width does not change with the window but the
+ * column's does, so overflow shows first on a phone (M11). The rest of the
+ * suite is behaviour, not a rendering matrix.
  *
- * The second one is `containment.spec.ts`, and M11's acceptance criteria are
- * why: "no element of a diagram may have a right edge beyond its column
- * without a clipping ancestor… the same at 390px and 1024px". A diagram's
- * natural width does not change with the window but the column's does, so the
- * ratio between them — which is the whole of the defect — is different at each
- * one. See `kia-context/logs/PROGRESS.md` M11.
+ * A 1024px project ran those two and `fidelity` a third time until 2026-11-05
+ * (M40, D88); it answered nothing the two ends did not, for a third of CI.
  */
 
 const TARGET = process.env.E2E_TARGET ?? 'static'
@@ -74,7 +70,9 @@ export default defineConfig({
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 1 : 0,
-  workers: process.env.CI ? 2 : undefined,
+  // 4 on CI: GitHub's runner has 4 vCPUs, and at 2 the suite took 13 of CI's
+  // 16 minutes (measured 2026-11-05, D88).
+  workers: process.env.CI ? 4 : undefined,
   reporter: process.env.CI ? [['github'], ['list']] : 'list',
   use: {
     baseURL,
@@ -89,13 +87,8 @@ export default defineConfig({
       use: { ...devices['Desktop Chrome'], channel, viewport: { width: 1440, height: 900 } },
     },
     {
-      name: 'chrome-1024',
-      testMatch: /(responsive|containment|fidelity)\.spec\.ts/,
-      use: { ...devices['Desktop Chrome'], channel, viewport: { width: 1024, height: 768 } },
-    },
-    {
       name: 'chrome-390',
-      testMatch: /(responsive|containment|fidelity)\.spec\.ts/,
+      testMatch: /(responsive|containment)\.spec\.ts/,
       use: {
         ...devices['Desktop Chrome'],
         channel,

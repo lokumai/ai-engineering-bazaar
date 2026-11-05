@@ -95,27 +95,6 @@ describe('§13.5 — the segment rules cover the whole corpus', () => {
   })
 })
 
-describe('§13.4.2 — a step tick exists only for a module that can be signed', () => {
-  it('covers the ready modules and stops there', () => {
-    const named = captures(/html\.hl-signed-(\d+)\s+\.bz-step\[data-module="\d+"\]\s+\.bz-step-tick/g)
-      .map(Number)
-      .sort((a, b) => a - b)
-    expect(named).toEqual(DRAWN_MODULES)
-  })
-
-  it('pairs each selector’s two module numbers', () => {
-    // `html.hl-signed-13 .bz-step[data-module="13"]` — a mismatch here would
-    // light up a different step than the one that was signed, which is the
-    // worst kind of quiet defect: plausible, and wrong.
-    const mismatched = [
-      ...css.matchAll(/html\.hl-signed-(\d+)\s+\.bz-(?:seg|step|item|cmod)\[data-module="(\d+)"\]/g),
-    ]
-      .filter((match) => match[1] !== match[2])
-      .map((match) => `${match[1]} → ${match[2]}`)
-    expect(mismatched).toEqual([])
-  })
-})
-
 describe('M10 — the curriculum rail’s tick covers every module that can be completed', () => {
   it('covers the ready modules and stops there', () => {
     const named = captures(

@@ -140,9 +140,11 @@ what makes the language portable — and it carries no colour maths, because two
 documents in the same engine serialise one colour to one string. `contrast.ts`
 remains the place for absolute ratios.
 
-**Every fact carries the value used to overwrite it**, and there is one mutation
-case per fact. So a fact cannot be added to that table without also being proven
-to be checked. Two holes were found that way and both mattered: swapping the
+**Every fact carries the value used to overwrite it.** Until M40 there was one
+mutation case per fact, at every viewport — 166 × 3 page loads that proved the
+checker rather than the site, and a third of CI. They were removed on
+2026-11-05 (D88); each stage block keeps its own mutation case, which is what
+proves its comparison can fail. Two holes were found that way and both mattered: swapping the
 type stack to Manrope passed until `--font-` joined the declared-token sweep,
 and the harness reported that overriding a background changed nothing because
 `.arch > summary` carries a 120ms transition and the value was read before it

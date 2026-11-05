@@ -71,9 +71,9 @@ const MARK_SEED = /^[0-9a-f]{8}$/
  * so the floor is 4, not §12.9.3's 7. A different rule from COMMIT because it
  * is a different fact from a different source.
  */
-const SHORT_HASH = /^[0-9a-f]{4,40}$/
-const ISO_DAY = /^\d{4}-\d{2}-\d{2}$/
-const ISO_TIME = /^\d{4}-\d{2}-\d{2}(?:[T ][\d:.+\-Z]{1,20})?$/
+export const SHORT_HASH = /^[0-9a-f]{4,40}$/
+export const ISO_DAY = /^\d{4}-\d{2}-\d{2}$/
+export const ISO_TIME = /^\d{4}-\d{2}-\d{2}(?:[T ][\d:.+\-Z]{1,20})?$/
 const INDEX_KEY = /^\d{1,4}$/
 const EXTERNAL_URL = /^https?:\/\//i
 

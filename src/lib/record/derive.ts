@@ -123,7 +123,7 @@ export function xp(data: RecordData, facts: CurriculumFacts): XpReadout {
 // §12.5.2, §12.5.3 — the readout's counts
 // ---------------------------------------------------------------------------
 
-function isSigned(data: RecordData, fact: SheetFact): boolean {
+export function isSigned(data: RecordData, fact: SheetFact): boolean {
   return fact.drawn && (data.sheets[fact.slug]?.signedOff ?? null) !== null
 }
 

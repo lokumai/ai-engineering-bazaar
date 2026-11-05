@@ -18,6 +18,7 @@ import { markActivity, markExported } from '@/lib/record/events'
 import { canonicalRecordJson } from '@/lib/record/report'
 import { SCHEMA_VERSION, type RecordData } from '@/lib/record/schema'
 import {
+  exportFilename,
   exportJson,
   flush,
   importJson,
@@ -58,11 +59,6 @@ import { EraseDialog } from './EraseDialog'
  * the state is printed, rather than rejected on the strength of a check that
  * only ever detects the careless case.
  */
-
-/** §12.12.1's rule for a filename: a fixed ASCII template, never the name. */
-function exportFilename(at: string): string {
-  return `hl-record-${at.slice(0, 10)}.json`
-}
 
 /**
  * §12.12.5 — the digest as the `RECORD OF WORK` prints it, lifted back out.

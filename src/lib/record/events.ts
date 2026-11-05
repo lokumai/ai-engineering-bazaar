@@ -37,11 +37,11 @@ import {
 } from './schema'
 import type { ClaimReceipt } from './claim'
 
-const MARK_SEED = /^[0-9a-f]{8}$/
+export const MARK_SEED = /^[0-9a-f]{8}$/
 const GH_SEGMENT = /^[A-Za-z0-9._-]{1,100}$/
 const COMMIT = /^[0-9a-f]{7,40}$/
 const EXTERNAL_URL = /^https?:\/\//i
-const INSTANT_DAY = /^(\d{4}-\d{2}-\d{2})(?:[T ]|$)/
+export const INSTANT_DAY = /^(\d{4}-\d{2}-\d{2})(?:[T ]|$)/
 /** §12.7 — the corpus's longest checklist is 8 items; 4 digits is generous. */
 const MAX_CHECKLIST_INDEX = 9999
 

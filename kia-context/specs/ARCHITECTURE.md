@@ -778,13 +778,16 @@ The two scripts are plain `.mjs` and import only `node:`, packages and `scripts/
 `contentVersion` is the sha256 of the index with `contentVersion` and `publishedAt` blanked, through the one canonical serialisation in `scripts/lib/bundle-hash.mjs`.
 It holds no build time, commit hash or commit date, so two builds of one commit, and a commit that changes no content and no render input, give the same value.
 `publishedAt` is the commit date, and the reader orders versions by it.
-Adding a field, a node type or a language is additive and stays in `api/v1/`, because the reader ignores what it does not know.
+Adding a field, a node type, a code-token role or a language is additive and stays in `api/v1/`, because the reader ignores what it does not know and draws a role it has no colour for as plain code.
+A new inline type that carries words carries them in `inlines`, which is what an older reader renders of an inline it does not know.
+A new value in a closed set (heading `depth`, table `align`, level `status`, `dir`) is a retyping.
 Removing, renaming or retyping a field means `api/v2/`, and `api/v1/` stays published while the reader's oldest supported version reads it.
 
 **Checks.**
 `node scripts/check-bundle-out.mjs <dir>` reads a finished export and recomputes every claim the index makes: the file set, each sha256, `contentVersion`, the SVG profile of every diagram, the diagram font, and no field starting with the base path.
 CI runs it after the plain build and after the base-path build, and then requires the two `api/` trees to be byte-identical.
-The deploy runs it on `_site` before publishing, and after publishing it polls the live `api/v1/index.json` with a per-run query string for up to a minute, until it serves this build's `contentVersion`.
+The deploy runs it on `_site` before publishing, and after publishing it polls the live `api/v1/index.json` until it serves this build's `contentVersion`, for at most the first response's `max-age` plus a minute.
+It sends no query string, because the Pages edge leaves the query out of its cache key, so a stale entry can only be waited out.
 
 ---
 

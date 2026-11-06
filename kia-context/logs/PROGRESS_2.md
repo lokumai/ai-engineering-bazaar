@@ -4636,6 +4636,10 @@ inspected by a Haiku reviewer at xhigh effort before the author sees it, as the 
       *börk* (the tall white felt cap with its long cloth falling down the back and the brass
       spoon-holder at the front), a long kaftan over a sash, and his weapon visible but held at
       rest, never pointed: a *yatağan* at the sash and a long musket shouldered. Haiku-reviewed.
+- [ ] **Two props redrawn, at the author's request (2026-11-06):** Deniz's simit larger and
+      plainly visible in his hand; Dariush's carpet not rolled but held open as a rectangle, with
+      Persian patterns (a centre medallion, corner pieces, a patterned border and fringed ends) so
+      it reads at once as a carpet. Both in `M-characters.html` first, Haiku-reviewed.
 - [ ] **K2 in the stall:** the redrawn tripod grip, plum sleeve, bangles and henna replace the hand
       in `src/components/home/street/art/stall-draft.html`; the G1b timeline still drives it (the
       pen tip stays at 0,0). The playground source the capture script reads

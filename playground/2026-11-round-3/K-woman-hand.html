@@ -167,7 +167,10 @@ const shadow = (cx, rx, y = 676) => `<ellipse cx="${cx}" cy="${y}" rx="${rx}" ry
 const fa = (a, b) => `${f1(81 + 0.77 * a + 0.63 * b)},${f1(-27 - 0.64 * a + 0.77 * b)}`
 const fq = (rows) => 'M' + rows.map(([a, b]) => fa(a, b)).join('L') + 'Z'
 
-const PEN = `<path d="M0,0 L66,-88" stroke="#8A6328" stroke-width="6" stroke-linecap="round"/><path d="M0,0 L6,-8" stroke="#25233F" stroke-width="6" stroke-linecap="round"/>`
+const PEN_SHAFT = `<path d="M6,-8 L66,-88" stroke="#8A6328" stroke-width="6" stroke-linecap="round"/><path d="M6.6,-8.8 L66,-88" stroke="#A47A3A" stroke-width="1.6" stroke-linecap="round"/>`
+/* a cut reed nib: the shaft narrows to a point, darkened with ink */
+const PEN_NIB = `<path d="M0,0 L3.4,-9.6 L8.6,-6.4Z" fill="#25233F"/><path d="M3.4,-9.6 L8.6,-6.4" stroke="#6E4F22" stroke-width="1.2"/>`
+const PEN = ''  // drawn inside the grip now: behind the thumb, in front of the index
 
 /* the hand on the pen: a tripod grip seen from the thumb side, redrawn after
    the author found the first version visually wrong (the index finger and the
@@ -193,32 +196,29 @@ function blob(pts) {
 const path = (d, fill, extra = '') => `<path d="${d}" fill="${fill}" ${extra}/>`
 function grip(c, v = {}) {
   const edge = `stroke="${c.shade}" stroke-width="1.5" stroke-linejoin="round"`
-  // the back of the hand and the closed fist: ring and little finger are
-  // folded into it, so they show only as the fist's lower curve and creases
-  const back = path(blob([[42, 4], [58, 8], [72, 22], [77, 40], [72, 60], [60, 67], [48, 62], [42, 50], [40, 34], [39, 18]]), c.skin, edge)
-  // middle finger, under the pen, its tip against it a little above the point
-  const middle = path(blob([[42, 12], [30, 11], [19, 8.5], [14.5, 7], [13.5, 11], [18, 14.5], [30, 18], [42, 22]]), c.skin, edge)
-  // index finger, lying along the top of the pen, its tip near the point
-  const index = path(blob([[46, -4], [34, -5.5], [20, -5.5], [11.5, -4.2], [9.5, -0.5], [12, 2.6], [22, 2.8], [34, 3.4], [46, 6]]), c.skin, edge)
-  // thumb, from the base of the hand, crossing in front of the pen well
-  // above the index tip, so the pen shows between the two
-  const thumb = path(blob([[54, 12], [46, 5], [39, 0], [34, -1.5], [31, 1], [31.5, 6], [36, 11], [44, 18], [52, 22]]), c.skin, edge)
+  // back of the hand and the closed fist; the knuckles sit high and close
+  const back = path(blob([[44, 3], [58, 5], [71, 18], [75, 36], [69, 53], [57, 59], [48, 54], [44, 40], [42, 20]]), c.skin, edge)
+  // index finger, behind the pen: tapered, its pad near the nib
+  const index = path(blob([[50, -5], [38, -6.6], [26, -8], [16, -7.6], [9.2, -5.4], [6.4, -1.8], [8, 2.2], [18, 3.2], [33, 4.4], [50, 7]]), c.skin, edge)
+  // middle finger, under the pen, its pad supporting it a little further up
+  const middle = path(blob([[40, 10], [30, 9.4], [20, 8.4], [14, 8], [12.6, 11.2], [16.4, 14.2], [28, 15.6], [40, 18]]), c.skin, edge)
+  // thumb, in front: from the base of the hand near the wrist, its tip pressing the pen
+  // thumb, in front: bent at its middle joint so it curves round the pen, its
+  // pad pressing the pen's near side; its root is covered below so it grows
+  // out of the thumb mound with no corner
+  const thumb = path(blob([[52, 20], [44, 13], [37, 8.5], [30, 4.6], [25.6, 2.6], [24, 6.2], [27.6, 9.8], [33, 13.8], [39, 19.4], [46, 27], [52, 31]]), c.skin, edge)
+    + path(blob([[56, 18], [47, 20.5], [45, 27], [50, 33], [58, 30], [60, 23]]), c.skin)
   const lines = `<g fill="none" stroke="${c.shade}" stroke-width="1.5" stroke-linecap="round">
-    <path d="M${P(21, -5)} L${P(20.5, 2.5)}"/>
-    <path d="M${P(41, 4)} L${P(39, 10)}"/>
-    <path d="M${P(36, 9)} C${P(38, 12)} ${P(39, 14)} ${P(41, 16)}"/>
-    <path d="M${P(45, 40)} C${P(50, 44)} ${P(56, 46)} ${P(62, 46)}"/>
-    <path d="M${P(46, 52)} C${P(51, 56)} ${P(57, 58)} ${P(63, 58)}"/>
+    <path d="M${P(24, -7.4)} L${P(23.4, -3.6)}"/>
+    <path d="M${P(31, 12)} L${P(30, 15.4)}"/>
+    <path d="M${P(50, 44)} C${P(54, 47)} ${P(60, 48)} ${P(64, 47)}"/><path d="M${P(52, 53)} C${P(56, 55)} ${P(61, 56)} ${P(64, 55)}"/>
   </g>`
-  const nail = (a, b, cls = '') => { const [x, y] = P(a, b).split(','); return `<ellipse cx="${x}" cy="${y}" rx="3.4" ry="2.2" transform="rotate(-53 ${x} ${y})" fill="${c.nail}"/>` }
-  const nails = nail(12.8, -1) + nail(33.4, 1.2)
+  const nail = (a, b, rot = -53) => { const [x, y] = P(a, b).split(','); return `<ellipse cx="${x}" cy="${y}" rx="3" ry="2" transform="rotate(${rot} ${x} ${y})" fill="${c.nail}"/>` }
   const henna = v.henna
-    ? `<g fill="none" stroke="#6B2E1F" stroke-width="1.6" stroke-linecap="round" opacity=".85">
-        <path d="M${P(66, 32)} C${P(60, 26)} ${P(56, 30)} ${P(52, 24)} C${P(49, 19)} ${P(46, 20)} ${P(44, 15)}"/>
-        <path d="M${P(58, 28)} c-2,-3 -5,-3 -6,-1"/><path d="M${P(51, 22)} c1,-3 4,-4 6,-3"/>
-      </g><g fill="#6B2E1F" opacity=".85">${[[63, 40], [59, 44], [55, 47]].map(([a, b]) => { const [x, y] = P(a, b).split(','); return `<circle cx="${x}" cy="${y}" r="1.4"/>` }).join('')}</g>`
+    ? `<path d="M${P(66, 22)} C${P(61, 14)} ${P(56, 18)} ${P(53, 12)} C${P(50, 7)} ${P(47, 9)} ${P(45, 6)}" stroke="#8A2F1A" stroke-width="1.4" fill="none" stroke-linecap="round"/>`
+      + [[62, 12], [58, 9.6], [54, 7.6], [64, 26]].map(([a, b]) => { const [x, y] = P(a, b).split(','); return `<circle cx="${x}" cy="${y}" r="1.8" fill="#8A2F1A"/>` }).join('')
     : ''
-  return back + middle + henna + index + thumb + lines + nails
+  return back + henna + index + middle + nail(9.4, -4.8, -40) + PEN_SHAFT + PEN_NIB + thumb + nail(27.8, 5.2, -62) + lines
 }
 
 /* K1: a fitted teal sleeve and an embroidered cuff. Light skin. */
@@ -242,14 +242,14 @@ const K2 = (cls = 'hand') => {
   const c = { skin: '#C48A5E', shade: '#A06A44', nail: '#D9A67E' }
   return `<g class="${cls}"><g class="hand-in">${PEN}
   <path d="${fq([[-6, -19], [26, -20], [26, 20], [-6, 19]])}" fill="${c.skin}"/>
-  <path d="${fq([[24, -30], [60, -35], [110, -40], [110, 40], [60, 35], [24, 30]])}" fill="#7A4A86"/>
-  <path d="${fq([[24, -30], [32, -30.5], [32, 30.5], [24, 30]])}" fill="#A57AB0"/>
-  <path d="M${fa(28, -30.3)}L${fa(28, 30.3)}" stroke="#DDB46A" stroke-width="1.8" fill="none"/>
-  <path d="M${fa(32, -30.5)}Q${fa(60, -4)} ${fa(90, -34)}" stroke="#5A3366" stroke-width="2" fill="none" stroke-linecap="round"/>
+  <path d="${fq([[24, -24], [44, -26.4], [58, -27], [63, -14], [64.5, 0], [63, 14], [58, 27], [44, 26.4], [24, 24]])}" fill="#7A4A86"/>
+  <path d="${fq([[24, -24], [30, -24.5], [30, 24.5], [24, 24]])}" fill="#A57AB0"/>
+  <path d="M${fa(27, -24.3)}L${fa(27, 24.3)}" stroke="#DDB46A" stroke-width="1.6" fill="none"/>
+  <path d="M${fa(31, -14)}Q${fa(40, -12)} ${fa(50, -17)}M${fa(31, 2)}Q${fa(41, 4)} ${fa(53, 0)}M${fa(31, 15)}Q${fa(40, 17)} ${fa(49, 13)}" stroke="#5A3366" stroke-width="1.8" fill="none" stroke-linecap="round"/>
   ${grip(c, { henna: true })}
-  <path d="${fq([[8, -21.5], [12.5, -21.5], [12.5, 21.5], [8, 21.5]])}" fill="#B8873B"/>
-  <path d="${fq([[15, -22], [19.5, -22], [19.5, 22], [15, 22]])}" fill="#B8873B"/>
-  <path d="M${fa(9.2, -21)}L${fa(9.2, 21)}M${fa(16.2, -21.5)}L${fa(16.2, 21.5)}" stroke="#DDB46A" stroke-width="1.4" fill="none"/>
+  <path d="${fq([[8, -19.4], [12.5, -19.5], [12.5, 19.5], [8, 19.4]])}" fill="#B8873B"/>
+  <path d="${fq([[15, -19.6], [19.5, -19.8], [19.5, 19.8], [15, 19.6]])}" fill="#B8873B"/>
+  <path d="M${fa(9.2, -19)}L${fa(9.2, 19)}M${fa(16.2, -19.2)}L${fa(16.2, 19.2)}" stroke="#DDB46A" stroke-width="1.4" fill="none"/>
 </g></g>`
 }
 
@@ -262,7 +262,7 @@ const K3 = (cls = 'hand') => {
   <path d="${fq([[58, -26], [76, -29], [76, 29], [58, 26]])}" fill="#C9785F"/>
   <path d="M${fa(67, -29)}L${fa(67, 29)}M${fa(75, -30)}L${fa(75, 30)}" stroke="#76392A" stroke-width="1.8" fill="none"/>
   ${grip(c)}
-  <path d="M38.4,-52.2 L43.6,-43.2" stroke="#DDB46A" stroke-width="2.6" stroke-linecap="round" fill="none"/>
+  <path d="M${P(36, -6.8)} L${P(36.4, 4.6)}" stroke="#DDB46A" stroke-width="2.6" stroke-linecap="round" fill="none"/>
 </g></g>`
 }
 

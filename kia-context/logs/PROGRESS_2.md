@@ -4602,7 +4602,13 @@ inspected by a Haiku reviewer at xhigh effort, as the author asked.
       top of the pen to near its point, the thumb pinching it from the near side above the index
       tip, the middle finger under it, the ring and little fingers folded into the fist, each part
       outlined so overlaps separate; the henna moves onto the back of the new hand.
-- [ ] The Haiku review of the hand, and its findings fixed.
+- [x] The Haiku review of the hand, and its findings fixed. Two rounds. The first found the pen
+      passing behind the index finger with no thumb pinching it, sausage fingers on a mitten palm,
+      an oversized sleeve with bangles sticking out, and henna reading as a cut; the second found
+      the thumb reading as a second index finger. Fixed: index behind the pen with a nail at its
+      tip, a cut reed nib, a short bent thumb pressing the pen from in front and grown out of the
+      palm with no corner, the middle finger under it, the sleeve two-thirds the size with a curved
+      end and gathers, the bangles inside the arm, darker henna dots.
 - [x] `playground/2026-11-round-3/M-characters.html`: Bit, Mei (a cross-collared robe with wide
       sleeves, a high bun with pins, a bolt of silk), Deniz (a simit) and Leyla (a bowl of spice
       and a scoop, sacks at her feet); **N1 to N5**, five Iranian traders (Shirin with saffron,

@@ -166,7 +166,7 @@ bar's band and its last 18px are below the window; a phone tile's cloud hung 44p
 is:** the stall hand's grip, which a reviewer found loose, is K2 as the author picked it; the figures
 are in the HTML twice (about 95 KB raw), the price of a phone row that is not the gate re-laid-out.
 
-## 🏁 Milestone M51: Ship round 3 — IN PROGRESS
+## 🏁 Milestone M51: Ship round 3 — SHIPPED AS PR #69
 
 One PR to `main` carrying **M50** (the approved art), **M55** (no Sources count) and **M58** (round
 3 built), from a branch cut from `main` after PR #66. M47, the round-3 playground (M48, M49) and M61
@@ -176,6 +176,18 @@ before it merges. The gate above, then:
 
 - [ ] The live site checked after the deploy: the chase on the home page, the catalog with no
       Sources count, a Persian module page.
+
+**Report, 2026-11-06.** Shipped as **PR #69**. The PR was reviewed by a Sonnet subagent at high
+effort and by Gemini 3.8 Flash High (`agy`). Sonnet found no high-severity defect; it found a section
+result landing under the sticky bar (a gap no page had, the page's own index too), a section of the
+open page that would not scroll, a heading's marks in the browser's yellow, a Persian row's English
+line misaligned, Enter acting mid-composition, two test floors pinning the corpus's size, and stale
+counts in ARCHITECTURE and INDEX (33 modules where there are 38): all fixed, the first two with a test
+seen failing under its mutation. Gemini's first run timed out after 24 minutes with no output (exit 0);
+rerun on the code alone, it found nothing. CI failed twice on the new cast tests timing out on the
+runner (33 to 34s against 30s, each loading the page six or eight times) and once on a click before the
+clouds were wired: the waits and limits fixed, then green. A door test in `home.spec.ts` flaked on a 404
+in one run; it failed in 3 of `main`'s last 4 CI runs before this branch, so it is not this PR's.
 
 ## 🏁 Milestone M52: The For Everyone modules — WAITING FOR THE AUTHOR, CONTENT PHASE
 

@@ -737,6 +737,14 @@ quiz question each (citation; reciprocal rank). The online/offline figure was al
 "1,000" which a Turkish reader reads as one (now "bin", in the four places the analogy appears),
 three calques in Persian and two in Turkish, and one quiz stem; all fixed. The Turkish "RAG" link
 label was left: the file uses that short form throughout.
+*Accuracy:* the arithmetic and the four definitions held. Fixed in three languages: the worked
+example claimed to be the earlier example's question, whose diagram had ranked `add` first, so it is
+now that question given to a weaker retriever; Weaviate's article has no code for MRR ("code for
+most of them"); overstatements ("can never know", "nobody can say", "trace it back to the chunk that
+caused it", "Easy", "Nothing extra") softened to what is true; "non-parametric memory" is now
+credited to the original RAG paper (Lewis et al., 2020, arXiv 2005.11401), added to the references;
+"position p is divided" corrected to the chunk's score; the reranker also raises precision when
+fewer chunks are kept; the Summary now carries the source point; long sentences split.
 
 ## 🏁 Milestone M66: Where an agent finds current docs: llms.txt, MCP, Context7 (#49) — DONE
 
@@ -861,17 +869,50 @@ three languages) gained the new module, and Code Agents' last line now points to
 suite's drawing set is 43 sheets. **Gate:** typecheck, 1,160 unit tests, the build and the link
 check.
 
-## 🏁 Milestone M69: Vendor logos where modules name them — PLANNED
+**Reviews (two Haiku, xhigh).** *Content:* Duet's launch date is not on Anthropic's page, so it is
+gone; Claude 101 now says Cowork and Research need a paid plan to try; the For Everyone page gives
+Claude Code 101's real prerequisite (a code editor and the command line) and the API-key option;
+the desktop app is needed for the folder lessons only; one quiz explanation now uses the module's
+words and two weak distractors were replaced; idioms ("above all", "carries over", "from the
+ground up") and four calques fixed. **Kept, and why:** "free" for the courses is the author's word;
+no course page states a price. The For Everyone page has no quiz on purpose (`ModuleSheet`: the
+quiz asks about the For Engineers text). The Office add-ins are on the Cowork course's page.
+*Rendered site:* the logo, catalog, counts (43), pager, quiz (four questions in three languages)
+and the For Everyone page were clean; at 390px the course-order diagram scrolls inside its figure,
+as wide figures do. The For Everyone page's pager and prerequisite lead to For Engineers pages:
+that is D91's rule (a For Everyone page where one is written, otherwise the For Engineers page) and
+it is the only one written so far, so every link goes across; left as decided.
+
+## 🏁 Milestone M69: Vendor logos where modules name them — DONE
 
 ### Deliverables
 
-- [ ] A Sonnet High audit of where modules name an agent or vendor, and a logo placed where it
+- [x] A Sonnet High audit of where modules name an agent or vendor, and a logo placed where it
       helps the reader find the thing.
-- [ ] Each SVG checked visually by a Haiku reviewer at xhigh before it is used, in both themes.
+- [x] Each SVG checked visually by a Haiku reviewer at xhigh before it is used, in both themes.
 
 ### Acceptance criteria
 
-- [ ] Every logo file is the vendor's own mark or Simple Icons', unaltered; the gate green.
+- [x] Every logo file is the vendor's own mark or Simple Icons', the shape unaltered (size, brand
+      colour or black set on the root; xAI's empty canvas cropped to the mark); the gate green.
+
+**Report, 2026-11-06.** **The audit (Sonnet, high)** read every written module and proposed 14
+places where a product is introduced as one of a set of choices or for the first time, and
+rejected passing mentions, tables, headings, references and lists where only a few brands have a
+mark (the benchmark list would have read as a ranking). Taken: its 14, plus dots (OpenAI) and Grok
+Bot (xAI) so that the five personal agents all carry one. **16 placements, 48 lines in three
+languages, 13 distinct files** under each level's `images/logos/`: Simple Icons 16.36.0 for Meta,
+Google Gemini, n8n, Replit, vLLM, NVIDIA, OpenRouter and LangChain; the official Hugging Face
+logo and OpenClaw's favicon; OpenAI's 2025 symbol and xAI's mark from Wikimedia Commons; Claude as
+in M68. A brand whose colour is near-black or too pale on cream (OpenAI, xAI, OpenRouter, LangChain)
+ships black as `*-mono.svg`, and one rule turns it light on the dark ground (`prose.css`, `html.dark
+.bz-logo[src*="-mono."]`). **The visual check (Haiku, xhigh), before commit:** 23 placements on 9
+pages at three times the pixel density, light and dark: right brand, undistorted, visible in both
+themes, centred within 0.4px of the text. It found two Persian lines where the logo sat beside the
+English "personal agent" rather than the name (the bidirectional run carried it); a Persian word
+after the name fixed both. Left: Hugging Face's yellow, NVIDIA's green and vLLM's blue are faint
+(1.4 to 2.6:1) on the light ground, which is the brands' own colour; each sits beside its name.
+**Gate:** 1,160 unit tests, the build, the link check.
 
 ---
 

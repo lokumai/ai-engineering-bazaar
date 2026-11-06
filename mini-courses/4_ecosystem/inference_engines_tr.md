@@ -40,9 +40,9 @@ graph TD
 
 **Gerçek kullanıcılara hizmet veren bir GPU sunucusunda** sarmalayıcılar artık yetmez ve burada bir serving engine'e ihtiyacın olur.
 
-- **vLLM** genellikle varsayılan seçimdir. Geniş bir donanım yelpazesini destekler ve iyi bir verimi büyük ölçüde sürekli batching'e borçludur.
+- ![](./images/logos/vllm.svg)**vLLM** genellikle varsayılan seçimdir. Geniş bir donanım yelpazesini destekler ve iyi bir verimi büyük ölçüde sürekli batching'e borçludur.
 - **[SGLang](https://github.com/sgl-project/sglang)**, dil ve multimodal modeller için yüksek performanslı bir serving framework'üdür. Özellikle isteklerin uzun ve ortak bir önek (prefix) paylaştığı durumlarda güçlüdür. Her isteğin aynı büyük system prompt'la başladığı bir durumdaysan, tam olarak senin durumun budur.
-- **[TensorRT-LLM](https://github.com/NVIDIA/TensorRT-LLM)**, NVIDIA'dan gelir ve özellikle o donanımdan en fazla verimi çıkarmak için tasarlanmıştır. Modeli önceden optimize edilmiş bir engine'e derlersin. Bunun bir build adımı maliyeti vardır, ama karşılığında daha düşük gecikme (latency) elde edersin.
+- ![](./images/logos/nvidia.svg)**[TensorRT-LLM](https://github.com/NVIDIA/TensorRT-LLM)**, NVIDIA'dan gelir ve özellikle o donanımdan en fazla verimi çıkarmak için tasarlanmıştır. Modeli önceden optimize edilmiş bir engine'e derlersin. Bunun bir build adımı maliyeti vardır, ama karşılığında daha düşük gecikme (latency) elde edersin.
 
 **Birden fazla makineye yayıldığında** sorun artık tek bir sunucu programını iyi çalıştırmak değildir. Sorun, bütün bir makine cluster'ını birlikte yönetmeye dönüşür. [llm-d](https://github.com/llm-d/llm-d) tam bu iş için tasarlanmıştır ve modern hızlandırıcılarla Kubernetes üzerinde inference çalıştırır. Zamanlamayı ve yönlendirmeyi platform üstlenir, yani her isteği hangi makinenin çalıştıracağına o karar verir. Ayrıca önbellek farkındalıklı yerleştirme (cache-aware placement) yapar: gereken veriyi zaten önbelleğinde tutan bir makineyi tercih eder. Böylece sen bunlarla uğraşmak zorunda kalmazsın.
 

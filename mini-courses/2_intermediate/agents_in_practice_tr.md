@@ -14,7 +14,7 @@ Peki neden ![](./images/logos/claude.svg)**Claude**? Bu satırların yazıldığ
 - **En güvenilir olanı**: Anthropic güvenliği en başa koyuyor ve araçları riskli bir şey yapmadan önce sana soruyor.
 - **En zengin özelliklere sahip olanı**: tek bir abonelikle sohbet, Claude Code, Cowork ve daha fazlası geliyor; bu serinin anlattığı özelliklerin çoğu da zaten bunların içinde.
 
-Burada öğrendiğin her şey başka agent'lara da taşınır. Parçaların adı araçtan araca değişir, ama yaptıkları iş aynıdır.
+Burada öğrendiğin her şey başka agent'larla çalışırken de işine yarar. Parçaların adı araçtan araca değişir, ama yaptıkları iş aynıdır.
 
 ## Hangi Sırayla Almalısın
 
@@ -31,7 +31,7 @@ Claude 101 ile başla, çünkü diğer üçü onu bildiğini varsayıyor. Sonra 
 
 [Claude 101](https://academy.claude.com/courses/claude-101), Claude'u günlük işlerde kullanmayı öğretiyor. İlk sohbetinle ve daha iyi cevaplar almanın yollarıyla başlıyor. Ardından project'leri, doküman ve tasarım gibi artifact'leri, skill'leri, diğer araçlarına bağlanan connector'ları ve derinlemesine araştırmayı anlatıyor. Sonunda rollere göre kullanım örnekleri ve diğer Claude ürünlerinin kısa bir turu var.
 
-**Kimin için:** Claude'u iş yerinde kullanmaya yeni başlayan herkes ve onu zaten kullanan ama hiç düzenli bir tur almamış olanlar için. Ücretsiz olan da dahil herhangi bir plandaki bir Claude hesabı yeterli; yapay zekâ deneyimi gerekmiyor. Yaklaşık iki buçuk saat sürüyor.
+**Kimin için:** Claude'u iş yerinde kullanmaya yeni başlayan herkes ve onu zaten kullanan ama hiç düzenli bir tur almamış olanlar için. Ücretsiz olan da dahil herhangi bir plandaki bir Claude hesabı yeterli; yapay zekâ deneyimi gerekmiyor. Yalnızca Cowork ve Research bölümlerini kendin denemek istersen ücretli bir plan gerekiyor. Yaklaşık iki buçuk saat sürüyor.
 
 Büyük kısmı [Prompt Engineering](prompt_engineering_tr.md) ve [Context Engineering](context_engineering_tr.md) konularının pratikteki hali: bir project, bir kez kurup tekrar tekrar kullandığın bir context'tir.
 
@@ -62,9 +62,9 @@ Bu kurs, [Harness Engineering](harness_engineering_tr.md) ve [Loop Engineering](
 
 [Introduction to Claude Cowork](https://academy.claude.com/courses/introduction-to-claude-cowork), ona çok adımlı işleri devretmeyi öğretiyor. Bir çalışma alanı kuruyor ve talimatlar ile project'ler aracılığıyla ona kalıcı bir context veriyorsun. Onu skill'ler ve plugin'lerle genişletiyor; Chrome'da ve Word, Excel, PowerPoint ile Outlook'ta Claude'u kullanıyorsun. Son kısım güvenlikle ilgili: bir plana ve çıktısına güvenmeden önce onları nasıl inceleyeceğin ve plugin'leri bir ekiple nasıl paylaşacağın.
 
-**Kimin için:** işi dosyalar, uygulamalar ve araçlar arasında gidip gelen herkes için. Kod yazmayı bilmen gerekmiyor; ücretli bir Claude planına ve Claude masaüstü uygulamasına ihtiyacın var. Yaklaşık iki buçuk saat sürüyor.
+**Kimin için:** işi dosyalar, uygulamalar ve araçlar arasında gidip gelen herkes için. Kod yazmayı bilmen gerekmiyor; ücretli bir Claude planına, bilgisayarındaki klasörlerle çalışılan dersler için de Claude masaüstü uygulamasına ihtiyacın var. Yaklaşık iki buçuk saat sürüyor.
 
-Bir mühendis için Cowork, Claude Code ile aynı fikir, yalnızca bir repo yerine dokümanlara yönelmiş hali: tool'ları, context'i ve bir planı olan bir agent döngüsü.
+Bir mühendis için Cowork, Claude Code ile aynı mantık, yalnızca bir repo yerine dokümanlara yönelmiş hali: tool'ları, context'i ve bir planı olan bir agent döngüsü.
 
 (Cowork'ü **Claude Duet** ile karıştırma. Cowork'te işi sen başlatırsın. Duet'te ise işi Claude başlatır: Duet bulutta kendine ait bir bilgisayarda çalışır, bağladığın uygulamaları takip eder ve her sabah sana bir özetle gelir. Onu [Personal Agent'lar](personal_agents_tr.md) modülü anlatıyor.)
 
@@ -90,7 +90,7 @@ graph LR
 
 Bir agent'la çalışmayı, bir agent'la çalışarak öğrenirsin. Claude Academy'deki dört ücretsiz kurs seni oraya götürüyor. Claude 101 herkes için başlangıç noktası. Claude Code 101, [Code Agent'lar](coding_agents_tr.md) modülündeki coding agent'ı öğretiyor; Claude Code in Action ise daha az gözetimle çalışan, uzun ve güvenilir çalışmaları. Introduction to Claude Cowork aynı türden bir agent'ı dokümanlar, dosyalar ve uygulamalar için öğretiyor. Cowork'te işi sen başlatırsın, Claude Duet'te ise Claude.
 
-Sırada harness engineering var: Claude Code in Action'da ayarladığın şeyin, en temelden anlatılmış hali.
+Sırada harness engineering var: Claude Code in Action'da ayarladığın şeyin, baştan anlatılmış hali.
 
 **Hızlı Kontrol**: İlk hangi kursu alırdın ve hiç kod yazmıyorsan hangisini atlardın? Cowork ile Duet arasındaki fark nedir?
 

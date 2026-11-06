@@ -18,7 +18,7 @@ There are two ways to buy that access, and it helps to keep them clearly apart.
 
 ## The Gateway (Router)
 
-[OpenRouter](https://openrouter.ai/) sits in front of many providers. You use one key and one API shape. The model name in your request decides which provider serves it. [LLM Fundamentals](../1_fundamentals/llms.md) already showed what this looks like. So here is what it gives you after the learning stage:
+![](./images/logos/openrouter-mono.svg)[OpenRouter](https://openrouter.ai/) sits in front of many providers. You use one key and one API shape. The model name in your request decides which provider serves it. [LLM Fundamentals](../1_fundamentals/llms.md) already showed what this looks like. So here is what it gives you after the learning stage:
 
 - **You can change model in one line.** The code stays the same, and only one string changes. If a new model comes out on a Monday, you can have it in your product a few hours later. You can also compare three of them on your own task in one afternoon.
 - **No growing pile of keys.** You do not need a separate account, a separate billing relationship and a separate rate limit for each vendor.
@@ -80,7 +80,7 @@ The price per million tokens is the number that everyone quotes. It is also the 
 
 Both of the routes below have free tiers with daily limits. That is enough to build something real.
 
-**[Google AI Studio](https://aistudio.google.com/)** is the most generous of the big vendors. You sign up and get a key. The free tier then covers the ordinary models, with a daily cap. **OpenRouter** also offers free models with daily limits. It is the fastest way to try several models on one prompt without opening accounts.
+![](./images/logos/googlegemini.svg)**[Google AI Studio](https://aistudio.google.com/)** is the most generous of the big vendors. You sign up and get a key. The free tier then covers the ordinary models, with a daily cap. **OpenRouter** also offers free models with daily limits. It is the fastest way to try several models on one prompt without opening accounts.
 
 Here is one warning about free tiers, because this problem catches people at exactly the wrong moment. A free tier tells you whether the model can do your task. It tells you almost nothing about how your product will feel. Free capacity is slower, and it has stricter rate limits. It is also the first capacity that the provider cuts when it is busy. Measure latency on the tier that you plan to pay for.
 

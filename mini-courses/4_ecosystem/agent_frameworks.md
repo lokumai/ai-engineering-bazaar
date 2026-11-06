@@ -74,7 +74,7 @@ An **AI workflow** runs a path that somebody wrote down. The steps are fixed. Co
 
 The mistake is to assume that the agent is the grown-up version. It is not. If the requirements are stable and you know the steps, a workflow is more predictable, cheaper and easier to debug. And when real users depend on a system in production, you usually want that system to be predictable. Keep the agent for open-ended work, where nobody can write down the steps in advance.
 
-**[n8n](https://github.com/n8n-io/n8n)** is the tool that most people finally choose for the workflow half. With it, you:
+![](./images/logos/n8n.svg)**[n8n](https://github.com/n8n-io/n8n)** is the tool that most people finally choose for the workflow half. With it, you:
 
 - build on a visual canvas
 - connect more than 400 integrations
@@ -94,7 +94,7 @@ Building workflows through MCP arrived in v2.13. So the agent and the workflow s
 
 ## No-code Options
 
-This is worth saying plainly, because engineers tend to skip it. For a lot of jobs, the right answer is a no-code platform. **[Lovable](https://lovable.dev/)**, **[Bolt](https://bolt.new/)** and **[Replit](https://replit.com/)** turn a description into a working application. They deploy it, and you can keep writing prompts to change it. For a prototype, an internal tool, or a landing page with a form behind it, that takes hours instead of weeks.
+This is worth saying plainly, because engineers tend to skip it. For a lot of jobs, the right answer is a no-code platform. **[Lovable](https://lovable.dev/)**, **[Bolt](https://bolt.new/)** and ![](./images/logos/replit.svg)**[Replit](https://replit.com/)** turn a description into a working application. They deploy it, and you can keep writing prompts to change it. For a prototype, an internal tool, or a landing page with a form behind it, that takes hours instead of weeks.
 
 The trade-off is the usual one. You get speed now and less control later. If you move off the platform, you must build the application again. Know which of those you are buying.
 

@@ -27,8 +27,10 @@ import { loadModule } from '@/lib/content/loader'
  * both onto other modules while every test stayed green.
  */
 
-/** Loop Engineering: the widest table in the corpus, at five columns. */
-const WIDEST = sheetByPath('/courses/intermediate/loop-engineering/')
+/** RAG & Embeddings: the widest table in the corpus, at six columns (its
+ * worked retrieval example, M65). Loop Engineering held it at five until its
+ * tables moved to Advanced Loop Engineering (M67). */
+const WIDEST = sheetByPath('/courses/fundamentals/rag/')
 /** Context Engineering: the longest sheet, and the most figures. */
 const LONGEST = sheetByPath('/courses/intermediate/context-engineering/')
 
@@ -166,7 +168,7 @@ test('the widest table scrolls inside its own container', async ({ page }) => {
     }),
   )
 
-  expect(report.length, 'module 10 still has tables').toBeGreaterThan(0)
+  expect(report.length, 'the widest module still has tables').toBeGreaterThan(0)
   for (const figure of report) {
     expect(figure.overflowX).toBe('auto')
   }

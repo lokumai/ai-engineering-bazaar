@@ -81,20 +81,20 @@ The main point: **the LLM itself has no memory of its own. Parametric memory is 
 
 ## Pros and Cons
 
-Working memory and long-term memory have one thing in common. In both, the information sits outside the weights, as text that the model reads. So the two are often grouped together under one name: **non-parametric memory**. Here is how the two families compare.
+Working memory and long-term memory have one thing in common. In both, the information sits outside the weights, as text that the model reads. So we group the two under one name: **non-parametric memory**. The name comes from the [original RAG paper](https://arxiv.org/abs/2005.11401), which used it for knowledge kept outside the weights. Here is how the two families compare.
 
 | | Parametric (in the weights) | Non-parametric (in the context, or retrieved into it) |
 |---|---|---|
-| Cost on each call | Nothing extra: the knowledge is already inside the model | You pay for every token you put into the context, on every call |
+| Cost on each call | No extra tokens: the knowledge is already inside the model | You pay for every token you put into the context, on every call |
 | Changing it | You have to train again, which takes hours or days and costs real money | You edit a file or a database row, and the next call sees the change |
 | Freshness | Frozen at the moment training ended | Live: as current as the data you store |
 | Where an answer came from | Unknown: you cannot see which training data produced it | Known: you can point at the exact document the model read |
-| Checking an answer | Hard, because there is nothing to compare it with | Easy: compare the answer with the text the model was shown |
+| Checking an answer | Hard, because there is nothing to compare it with | Easier: compare the answer with the text the model was shown |
 | Good for | How the model behaves: a style, a format, a skill | What the model should know: facts, documents, data that changes |
 
-The row that matters most is the source. When a model answers from its weights, you can never know which training data it is using, or whether that data was right. The knowledge is frozen and has no address. Go back to the person who has read 1,000 books. They can tell you a fact, but they cannot tell you which book it came from. Now give them their own notes. They can point at the page.
+The row that matters most is the source. When a model answers from its weights, you usually cannot tell which training data it is using. You also cannot tell whether that data was right. The knowledge is frozen and has no address. Go back to the person who has read 1,000 books. They can tell you a fact, but they cannot tell you which book it came from. Now give them their own notes. They can point at the page.
 
-A non-parametric answer can be **cited**: the app can show the user the document behind it. That is one of the main reasons why [RAG](rag.md) is usually a better way than fine-tuning to give a model your own documents.
+A non-parametric answer can be **cited**: the app can show the user the document the model had in front of it. This is one of the main reasons why [RAG](rag.md) usually beats fine-tuning. It is the better way to give a model your own documents.
 
 
 ## Where this fits in the series
@@ -117,7 +117,7 @@ graph LR
 
 ## Summary
 
-There are three kinds of memory, and you cannot use one in place of another. **Parametric memory** is permanent, and training puts it into the weights. But it is fuzzy, because your data is mixed in with billions of other documents. **Working memory** is precise but temporary: it is just a growing stack of messages that we send again on every call. **Long-term memory** is saved outside the model and retrieved back into working memory when needed, often with RAG. Next come agents. They depend on this same working memory to plan and act across many steps.
+There are three kinds of memory, and you cannot use one in place of another. **Parametric memory** is permanent, and training puts it into the weights. But it is fuzzy, because your data is mixed in with billions of other documents. **Working memory** is precise but temporary: it is just a growing stack of messages that we send again on every call. **Long-term memory** is saved outside the model and retrieved back into working memory when needed, often with RAG. Only the memory outside the weights can show where an answer came from. Next come agents. They depend on this same working memory to plan and act across many steps.
 
 **Quick Check**: What are the three types of memory? Why is parametric memory imprecise even though it is permanent? Why do we call short-term memory "working memory"? How does information from long-term memory get back into the LLM's context?
 
@@ -125,6 +125,7 @@ There are three kinds of memory, and you cannot use one in place of another. **P
 
 ### 📄 Articles
 
+- [Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks](https://arxiv.org/abs/2005.11401): the original RAG paper, which named parametric and non-parametric memory
 - [The three memory types every LLM developer must know](https://medium.com/@sahilnanga4/the-three-memory-types-every-llm-developer-must-know-3358c26fdff3): the same split, seen from a different angle
 
 ### 🧭 Modules

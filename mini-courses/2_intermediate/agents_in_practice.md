@@ -16,8 +16,8 @@ real tool open in front of you.
 ## Why Take These Courses
 
 Reading about an agent and working with one are different skills. When you read, everything goes
-right. When you work, the agent misreads a file, runs out of context, or goes in the wrong direction,
-and you have to notice it and steer it back. Only practice teaches that part.
+right. When you work, the agent misreads a file or runs out of context. Sometimes it goes in the wrong
+direction. Then you have to notice it and steer it back. Only practice teaches that part.
 
 The four courses below are free, short and hands-on. The people who build the tools wrote them.
 Each one ends with a short quiz and a completion badge.
@@ -25,14 +25,14 @@ Each one ends with a short quiz and a completion badge.
 Why ![](./images/logos/claude.svg)**Claude**? At the time of writing, we think it is the best place
 to practise, for three reasons:
 
-- **The most capable**: for agent work, and for code above all, we think no other model family is
+- **The most capable**: for agent work, and especially for code, we think no other model family is
   stronger today.
 - **The most trusted**: Anthropic puts safety first, and its tools ask you before they do something
   risky.
 - **The most feature-rich**: one subscription gives you chat, Claude Code, Cowork and more, and
   most of the features this series has described are already in them.
 
-Everything you learn here carries over to other agents. The parts have different names in different
+Everything you learn here is also useful with other agents. The parts have different names in different
 tools, but they do the same jobs.
 
 ## Which Order to Take Them In
@@ -57,7 +57,8 @@ It ends with use cases by role and a tour of the other Claude products.
 
 **Who it is for:** anyone who is starting to use Claude at work, and anyone who uses it already
 but never had a structured tour. You need a Claude account on any plan, including the free one, and
-no experience with AI. It takes about two and a half hours.
+no experience with AI. Two parts, Cowork and Research, need a paid plan if you want to try them
+yourself. It takes about two and a half hours.
 
 Much of it is [Prompt Engineering](prompt_engineering.md) and
 [Context Engineering](context_engineering.md) in practice: a project is a context that you set up
@@ -111,7 +112,8 @@ Word, Excel, PowerPoint and Outlook. The last part is about safety: how to revie
 output before you trust them, and how to share plugins with a team.
 
 **Who it is for:** anyone whose work moves between files, apps and tools. You do not need to code.
-You need a paid Claude plan and the Claude desktop app. It takes about two and a half hours.
+You need a paid Claude plan, and the Claude desktop app for the lessons that work with folders on
+your computer. It takes about two and a half hours.
 
 For an engineer, Cowork is the same idea as Claude Code, pointed at documents instead of a
 repository: an agent loop with tools, context and a plan.
@@ -147,7 +149,7 @@ supervision. Introduction to Claude Cowork teaches the same kind of agent for do
 apps. With Cowork, you start the work. With Claude Duet, Claude starts it.
 
 Next: harness engineering, which is what you configure in Claude Code in Action, explained from
-the ground up.
+the start.
 
 **Quick Check**: which course would you take first, and which one would you skip if you never write
 code? What is the difference between Cowork and Duet?

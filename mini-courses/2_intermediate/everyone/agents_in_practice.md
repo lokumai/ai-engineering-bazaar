@@ -34,7 +34,8 @@ shows you how to use Claude in your daily work: your first conversation, how to 
 better answers, and how to keep the documents and instructions for one piece of work together in a
 project. It also shows how Claude connects to tools you already use.
 
-You need a Claude account. The free plan is enough, and you need no experience with AI. It takes
+You need a Claude account. The free plan is enough, and you need no experience with AI. Two parts,
+Cowork and Research, need a paid plan if you want to try them yourself. It takes
 about two and a half hours.
 
 ## Claude Code 101 (Optional)
@@ -46,7 +47,8 @@ software, and this course is written for developers.
 That is why this course is optional if you are not an engineer. Still, we think it is worth a
 look. You can describe what you want in plain words, and Claude Code writes the code and runs it
 for you. People who know nothing about coding use it to build small tools, clean up spreadsheets
-and automate boring tasks. It needs a paid Claude plan.
+and automate boring tasks. The course itself expects you to know a code editor and the command line
+a little. It needs a paid Claude plan or an API key.
 
 ## Introduction to Claude Cowork
 
@@ -59,7 +61,8 @@ end you get a real result, such as a report, a spreadsheet or a tidy folder.
 [Introduction to Claude Cowork](https://academy.claude.com/courses/introduction-to-claude-cowork)
 teaches you to hand it work like this. It also shows Claude inside Chrome, Word, Excel,
 PowerPoint and Outlook, and how to check its work before you trust it. You do not need to code.
-You need a paid Claude plan and the Claude desktop app. It takes about two and a half hours.
+You need a paid Claude plan, and the Claude desktop app for the lessons that work with folders on
+your computer. It takes about two and a half hours.
 
 (Do not confuse Cowork with **Claude Duet**. With Cowork, you start the work. With Duet, Claude
 starts it: Duet keeps an eye on the apps you connect, does work in the background, and comes to

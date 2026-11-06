@@ -58,7 +58,7 @@ questions:
         - "Cowork works with files, and Duet only answers questions"
         - "Cowork needs code, and Duet is for people who do not code"
         - "Cowork runs in the cloud, and Duet runs only on your computer"
-      explain: "With Cowork, you give Claude a goal and it works on it. Duet runs on its own computer in the cloud, watches the apps you connect, and comes to you first."
+      explain: "With Cowork, you give Claude a goal and it works on it. Duet runs on its own computer in the cloud, watches the apps you connect, and comes to you with a brief every morning."
     tr:
       question: "Claude Cowork ile Claude Duet arasındaki temel fark nedir?"
       options:
@@ -66,7 +66,7 @@ questions:
         - "Cowork dosyalarla çalışır, Duet ise yalnızca soruları cevaplar"
         - "Cowork kod gerektirir, Duet ise kod yazmayanlar içindir"
         - "Cowork bulutta çalışır, Duet ise yalnızca senin bilgisayarında"
-      explain: "Cowork'te Claude'a bir hedef verirsin ve o da bunun üzerinde çalışır. Duet ise bulutta kendi bilgisayarında çalışır, bağladığın uygulamaları takip eder ve sana ilk o gelir."
+      explain: "Cowork'te Claude'a bir hedef verirsin ve o da bunun üzerinde çalışır. Duet ise bulutta kendi bilgisayarında çalışır, bağladığın uygulamaları takip eder ve her sabah sana bir özetle gelir."
     fa:
       question: "فرق اصلی Claude Cowork و Claude Duet چیه؟"
       options:
@@ -74,29 +74,29 @@ questions:
         - "Cowork با فایل‌ها کار می‌کنه، Duet فقط به سؤال‌ها جواب می‌ده"
         - "Cowork کدنویسی لازم داره، Duet برای کساییه که کد نمی‌نویسن"
         - "Cowork توی cloud اجرا می‌شه، Duet فقط روی کامپیوتر خودت"
-      explain: "توی Cowork یه هدف به Claude می‌دی و اون روش کار می‌کنه. ولی Duet روی کامپیوتر خودش توی cloud کار می‌کنه، حواسش به اپ‌هایی که وصل کردی هست و خودش اول میاد سراغت."
+      explain: "توی Cowork یه هدف به Claude می‌دی و اون روش کار می‌کنه. ولی Duet روی کامپیوتر خودش توی cloud کار می‌کنه، حواسش به اپ‌هایی که وصل کردی هست و هر روز صبح با یه خلاصه میاد سراغت."
   - answer: 2
     en:
       question: "Why does the module say you should practise with a real agent?"
       options:
-        - "Because the courses are the only place the features are described"
-        - "Because reading about agents is not allowed without a badge"
+        - "Because the courses describe features that no other page explains"
+        - "Because a course badge is needed before you can use Claude Code"
         - "Because only practice teaches you to notice and steer an agent that goes wrong"
-        - "Because Claude works only for people who have taken a course"
+        - "Because reading takes longer than taking a short course"
       explain: "When you read, everything goes right. When you work, the agent misreads or drifts, and you learn to notice that and steer it back only by doing it."
     tr:
       question: "Modül, neden gerçek bir agent'la pratik yapman gerektiğini söylüyor?"
       options:
-        - "Çünkü özellikler yalnızca bu kurslarda anlatılıyor"
-        - "Çünkü rozet olmadan agent'lar hakkında okumak mümkün değil"
+        - "Çünkü kurslar başka hiçbir sayfanın anlatmadığı özellikleri anlatıyor"
+        - "Çünkü Claude Code'u kullanmadan önce bir kurs rozeti gerekiyor"
         - "Çünkü yanlış giden bir agent'ı fark edip yönlendirmeyi yalnızca pratik öğretir"
-        - "Çünkü Claude yalnızca kurs almış kişiler için çalışıyor"
+        - "Çünkü okumak, kısa bir kursu bitirmekten daha uzun sürüyor"
       explain: "Okurken her şey yolunda gider. Çalışırken agent bir şeyi yanlış okur ya da yoldan sapar; bunu fark edip onu geri getirmeyi ancak yaparak öğrenirsin."
     fa:
       question: "چرا این درس می‌گه باید با یه agent واقعی تمرین کنی؟"
       options:
-        - "چون امکانات فقط توی همین دوره‌ها توضیح داده شدن"
-        - "چون بدون badge نمی‌شه درباره‌ی agent‌ها خوند"
+        - "چون دوره‌ها امکاناتی رو توضیح می‌دن که هیچ صفحه‌ی دیگه‌ای توضیح نمی‌ده"
+        - "چون قبل از استفاده از Claude Code یه badge دوره لازمه"
         - "چون فقط تمرین یادت می‌ده agent‌ی رو که راه رو کج رفته ببینی و برش گردونی"
-        - "چون Claude فقط برای کسایی کار می‌کنه که دوره رو گذرونده‌ن"
+        - "چون خوندن از گذروندن یه دوره‌ی کوتاه بیشتر طول می‌کشه"
       explain: "وقتی می‌خونی همه‌چی درست پیش می‌ره. ولی وقتی کار می‌کنی، agent یه چیزی رو اشتباه می‌خونه یا راه رو کج می‌ره، و فهمیدن و برگردوندنش رو فقط با انجام دادن یاد می‌گیری."

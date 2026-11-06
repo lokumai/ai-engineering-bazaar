@@ -32,7 +32,7 @@ trace یعنی کل درخت یه request، از اول تا آخر. توش ای
 
 ## ابزارهای Observability
 
-- **LangSmith** ابزار خود LangChain‌ه. اگه همین الان با یکی از ابزارهای درس [Agent Framework‌ها](../4_ecosystem/agent_frameworks_fa.md) کار می‌کنی، این یکی از همه بهتر با کارت جفت می‌شه، و tracing و dataset و evaluator و annotation رو یه‌جا بهت می‌ده.
+- ![](./images/logos/langchain-mono.svg)**LangSmith** ابزار خود LangChain‌ه. اگه همین الان با یکی از ابزارهای درس [Agent Framework‌ها](../4_ecosystem/agent_frameworks_fa.md) کار می‌کنی، این یکی از همه بهتر با کارت جفت می‌شه، و tracing و dataset و evaluator و annotation رو یه‌جا بهت می‌ده.
 - **[Langfuse](https://github.com/langfuse/langfuse)** گزینه‌ی متن‌بازه. وقتی trace‌ها نباید از زیرساخت خودت بیرون برن، معمولاً همین رو انتخاب می‌کنن. هم OpenTelemetry رو پشتیبانی می‌کنه هم SDK‌های framework‌ها رو، برای همین تقریباً از هر چیزی می‌تونه trace جمع کنه. کنار trace‌ها، eval و مدیریت prompt و dataset هم داره.
 - **[Latitude](https://github.com/latitude-dev/latitude-llm)** هم متن‌بازه، ولی تمرکزش مشخصاً روی monitoring توی production‌ه.
 

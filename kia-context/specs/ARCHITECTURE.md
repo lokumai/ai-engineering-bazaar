@@ -12,7 +12,7 @@ authority: blueprint
 writes: agent, when explicitly refactoring
 status: active
 covers: the whole system as built on 2026-09-10, with M16 shipped — every route on the design language; the record, channel A and the render step corrected for M24 on 2026-10-11, and the quiz and the end of a module for M25 on 2026-10-12, the Bazaar Street front door for M27 and the Persian pages for M28 the same day, and the progress page slimmed to its circles and its data row for M38 on 2026-11-05, and the account layer, role paths, record of work and two thirds of the test suite removed for M40 the same day, and the two tracks (For Engineers, For Everyone) and their per-track record for M43 the same day; the custom domain (D92), Emerging Trends and moved addresses (D94) on 2026-11-06, and the people at the gate (M58), search (M59) and the catalog without its Sources count (M55) the same day
-last_updated: "2026-11-06"
+last_updated: 2026-11-06
 ---
 
 # 🏗️ ARCHITECTURE — How this project is built
@@ -223,8 +223,8 @@ declared prerequisites, and `see-also` scraped from links found in module prose.
                         │           │
                         │           └── A0 sheet, full body renders, counts toward
                         │               every "done" denominator
-                        └── A4 sheet, only the first paragraph and the topic list
-                            render; the rest of the body is dropped
+                        └── A4 sheet, the first paragraph and the topic list render,
+                            then any sections from the first `##` (D102)
 ```
 
 Moved by **the author**, by editing `status` in the config. Nothing else can move it.
@@ -233,9 +233,13 @@ The consequences of that one word are larger than they look, and they are the mo
 fact in this repository:
 
 - `SheetFormat` is `status === 'draft' ? 'A4' : 'A0'` (`src/lib/content/derive.ts`).
-- A `draft` renders **only its first paragraph and its `Topics this module will cover` list**, which
-  becomes a "schedule of parts" table. Everything else in the body — including a references block — is
-  dropped from the page. It stays in the file for whoever opens it to write the module.
+- A `draft` renders **its first paragraph and its `Topics this module will cover` list**, which
+  becomes a "schedule of parts" table. Anything between the list and the first `##` — notes, a
+  references block — is dropped from the page and stays in the file for whoever writes the module.
+  **From the first `##` on, the body renders as prose under the schedule** (`writtenSections`,
+  `src/lib/content/schedule.ts`, D102): a planned module can hold sections a written one gave it, as
+  Advanced Loop Engineering does. Then its status band reads "Partly written" instead of "Schedule of
+  parts only". It still has no quiz, no completion and no contents rail.
 - **That first paragraph becomes the page dek and the `<meta name="description">`, and neither is
   passed through the markdown renderer.** A `[Title](file.md)` link there ships as literal brackets.
   Six pages shipped that way in September 2026 before it was caught.
@@ -479,7 +483,9 @@ page prints none.
    position.
 3. `render.ts` turns markdown into HTML: it strips raw HTML, numbers figures, builds `<figure>` from
    an image plus its italic caption line, rewrites image paths to the copied `/course-images/`
-   location, and leaves mermaid as a `data-mermaid` source div. It also REMOVES what the page states
+   location (an image under `images/logos/` gets the class `bz-logo` and is drawn inline at text
+   height, never as a figure; it must sit beside text, since an image alone in a paragraph becomes a
+   figure), and leaves mermaid as a `data-mermaid` source div. It also REMOVES what the page states
    elsewhere: the first `h1`, the category dek, the self-check paragraph, and since M24 the series map
    (`## Where this fits in the series` / `## Bu serinin neresindeyiz`), which stays in the file for a
    reader of raw markdown. `SERIES_HEADINGS` in `lines.ts` holds every language. And it turns each

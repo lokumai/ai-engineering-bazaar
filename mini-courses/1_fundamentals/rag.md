@@ -184,9 +184,9 @@ Replace "code chunks" with "contract clauses", and the flow is exactly the same.
 The answer can only be as good as the chunks that reach the desk. If retrieval misses the right
 chunk, the model never sees it. So before you judge the answers, measure the retrieval on its own.
 
-To do that, you need a small test set: a list of questions, and for each question, the chunks that a
-person marked as relevant. You run retrieval for each question and look at the top **k** results,
-where k is the number of chunks you keep (for example, 5). Four measures are common:
+To do that, you need a small test set. It is a list of questions, and for each question, the
+chunks that a person marked as relevant. You run retrieval for each question and look at the top
+**k** results. Here, k is the number of chunks you keep (for example, 5). Four measures are common:
 
 | Measure | The question it answers |
 |---|---|
@@ -197,9 +197,9 @@ where k is the number of chunks you keep (for example, 5). Four measures are com
 
 ### A Worked Example
 
-Here is one question from the example above: "how does the add function work?". Two chunks are
-relevant: `def add` and the test for `add`. Retrieval returns five chunks, and the relevant ones
-come second and fourth:
+Take the question from the example above, "how does the add function work?", and give it to a
+weaker retriever that returns five chunks. Two chunks are relevant: `def add` and the test for
+`add`. This retriever puts them second and fourth:
 
 | Position | 1 | 2 | 3 | 4 | 5 |
 |---|---|---|---|---|---|
@@ -212,17 +212,17 @@ come second and fourth:
   where they take up space and can distract the model.
 - **Reciprocal rank = 1 / 2 = 0.5**, because the first relevant chunk is at position 2. MRR is the
   average of this number over all the questions in the test set.
-- **nDCG@5 = 0.65.** Each relevant chunk scores less the lower it sits: position p is divided by
-  log2(p + 1). Here that gives 1/log2(3) + 1/log2(5) = 0.63 + 0.43 = 1.06. The best possible order,
+- **nDCG@5 = 0.65.** Each relevant chunk scores less the lower it sits: the score of a relevant
+  chunk at position p is divided by log2(p + 1). Here that gives 1/log2(3) + 1/log2(5) = 0.63 + 0.43 = 1.06. The best possible order,
   with both relevant chunks at the top, would give 1 + 0.63 = 1.63. And 1.06 / 1.63 = 0.65. A score
   of 1.0 means a perfect order. nDCG can also give some chunks more weight than others, when a
   person grades them as "very relevant" or "a little relevant".
 
 Recall and precision only count what is in the top k. MRR and nDCG also care about the order. A
-reranker, like the one in the figure above, exists to push MRR and nDCG up: it moves the best
-chunks to the top. Weaviate's
+reranker, like the one in the figure above, moves the best chunks to the top. That raises MRR and
+nDCG, and when you keep fewer chunks, it raises precision too. Weaviate's
 [Evaluation Metrics for Search and Recommendation Systems](https://weaviate.io/blog/retrieval-evaluation-metrics)
-gives the formula and a code example for each of the four.
+gives the formula for each of the four, and code for most of them.
 
 ## Tools for RAG
 
@@ -310,9 +310,9 @@ desk, open, at the moment someone asks the question.
 
 **Because a RAG answer can be checked.** With RAG, you know exactly which chunks the model read,
 so the app can cite them next to the answer. A user can open the source and verify the answer, and
-when an answer is wrong, you can trace it back to the chunk that caused it. A fine-tuned model gives
-you none of this. Its knowledge is mixed into the weights, and nobody can say which training
-document produced a given answer. [Memory](memory.md) comes back to this difference.
+when an answer is wrong, you can see which chunks the model had when it went wrong. A fine-tuned
+model gives you none of this. Its knowledge is mixed into the weights, and it is very hard to say
+which training document produced a given answer. [Memory](memory.md) comes back to this difference.
 
 In one line: **fine-tuning changes what the model *knows*; RAG changes what the model *sees*.**
 

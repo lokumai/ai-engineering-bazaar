@@ -71,20 +71,20 @@ Asıl önemli nokta şu: **LLM'in kendisinin bir belleği yoktur. Parametrik bel
 
 ## Artıları ve Eksileri
 
-Çalışma belleği ile uzun süreli belleğin ortak bir yanı var: ikisinde de bilgi ağırlıkların dışında, modelin okuduğu bir metin olarak duruyor. Bu yüzden bu ikisi genellikle tek bir isim altında toplanır: **non-parametric memory** (parametrik olmayan bellek). İki ailenin karşılaştırması şöyle:
+Çalışma belleği ile uzun süreli belleğin ortak bir yanı var: ikisinde de bilgi ağırlıkların dışında, modelin okuduğu bir metin olarak duruyor. Bu yüzden ikisini tek bir isim altında topluyoruz: **non-parametric memory** (parametrik olmayan bellek). Bu isim, ağırlıkların dışında tutulan bilgi için onu kullanan [özgün RAG makalesinden](https://arxiv.org/abs/2005.11401) geliyor. İki ailenin karşılaştırması şöyle:
 
 | | Parametrik (ağırlıkların içinde) | Parametrik olmayan (context'te ya da oraya getirilen) |
 |---|---|---|
-| Her çağrının maliyeti | Ek bir maliyet yok, bilgi zaten modelin içinde | Context'e koyduğun her token'ın parasını her çağrıda ödersin |
+| Her çağrının maliyeti | Ek token yok, bilgi zaten modelin içinde | Context'e koyduğun her token'ın parasını her çağrıda ödersin |
 | Değiştirmek | Yeniden eğitmen gerekir; bu saatler, hatta günler sürer ve ciddi bir masrafı var | Bir dosyayı ya da bir veritabanı satırını düzenlersin, bir sonraki çağrı değişikliği görür |
 | Güncellik | Eğitimin bittiği anda donmuş halde | Canlı: sakladığın veri ne kadar güncelse, o kadar güncel |
 | Cevabın nereden geldiği | Bilinmez: cevabı hangi training verisinin ürettiğini göremezsin | Bilinir: modelin okuduğu dokümanı tam olarak gösterebilirsin |
-| Bir cevabı kontrol etmek | Zor, çünkü karşılaştıracak hiçbir şey yok | Kolay: cevabı modele gösterilen metinle karşılaştırırsın |
+| Bir cevabı kontrol etmek | Zor, çünkü karşılaştıracak hiçbir şey yok | Daha kolay: cevabı modele gösterilen metinle karşılaştırırsın |
 | Neye uygun | Modelin nasıl davrandığına: bir üslup, bir format, bir beceri | Modelin ne bilmesi gerektiğine: gerçekler, dokümanlar, değişen veriler |
 
-En önemli satır, kaynak satırı. Model ağırlıklarından cevap verdiğinde hangi training verisini kullandığını ya da o verinin doğru olup olmadığını hiçbir zaman bilemezsin; bilgi donmuştur ve bir adresi yoktur. bin kitap okumuş kişiyi hatırla: sana bir bilgiyi söyleyebilir ama hangi kitaptan aldığını söyleyemez. Şimdi ona kendi notlarını ver; artık sayfayı parmağıyla gösterebilir.
+En önemli satır, kaynak satırı. Model ağırlıklarından cevap verdiğinde hangi training verisini kullandığını ya da o verinin doğru olup olmadığını çoğu zaman bilemezsin; bilgi donmuştur ve bir adresi yoktur. bin kitap okumuş kişiyi hatırla: sana bir bilgiyi söyleyebilir ama hangi kitaptan aldığını söyleyemez. Şimdi ona kendi notlarını ver; artık sayfayı parmağıyla gösterebilir.
 
-Parametrik olmayan bir cevaba ise **kaynak gösterilebilir**: uygulama, cevabın arkasındaki dokümanı kullanıcıya açıp gösterebilir. Kendi dokümanlarını bir modele vermek için genellikle fine-tuning yerine [RAG](rag_tr.md) tercih edilir; bunun başlıca nedenlerinden biri de budur.
+Parametrik olmayan bir cevaba ise **kaynak gösterilebilir**: uygulama, modelin o an önünde duran dokümanı kullanıcıya açıp gösterebilir. Kendi dokümanlarını bir modele vermek için genellikle fine-tuning yerine [RAG](rag_tr.md) tercih edilir; bunun başlıca nedenlerinden biri de budur.
 
 ## Bu serinin neresindeyiz
 
@@ -106,7 +106,7 @@ graph LR
 
 ## Özet
 
-Üç tür bellek vardır ve birini diğerinin yerine kullanamazsın. **Parametrik bellek** kalıcıdır, ama senin verin milyarlarca başka dokümanın arasına karıştığı için bulanıktır. Bunu eğitim, modelin ağırlıklarına yazar. **Çalışma belleği** kesindir ama geçicidir: her çağrıda yeniden gönderdiğimiz büyüyen bir mesaj yığınından başka bir şey değildir. **Uzun süreli bellek** modelin dışında saklanır ve gerektiğinde, çoğu zaman [RAG](rag_tr.md) ile, çalışma belleğine geri getirilir. Sıradaki konu agent'lar: onlar, birçok adım boyunca plan yapıp eylem almak için bu aynı çalışma belleğine dayanır.
+Üç tür bellek vardır ve birini diğerinin yerine kullanamazsın. **Parametrik bellek** kalıcıdır, ama senin verin milyarlarca başka dokümanın arasına karıştığı için bulanıktır. Bunu eğitim, modelin ağırlıklarına yazar. **Çalışma belleği** kesindir ama geçicidir: her çağrıda yeniden gönderdiğimiz büyüyen bir mesaj yığınından başka bir şey değildir. **Uzun süreli bellek** modelin dışında saklanır ve gerektiğinde, çoğu zaman [RAG](rag_tr.md) ile, çalışma belleğine geri getirilir. Bir cevabın nereden geldiğini yalnızca ağırlıkların dışındaki bellek gösterebilir. Sıradaki konu agent'lar: onlar, birçok adım boyunca plan yapıp eylem almak için bu aynı çalışma belleğine dayanır.
 
 **Hızlı Kontrol**: Üç bellek türü nedir? Parametrik bellek kalıcı olmasına rağmen neden kesin değildir? Kısa süreli belleğe neden "çalışma belleği" diyoruz? Uzun süreli bellekteki bilgi LLM'in context'ine nasıl geri döner?
 
@@ -114,6 +114,7 @@ graph LR
 
 ### 📄 Makaleler
 
+- [Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks](https://arxiv.org/abs/2005.11401): parametrik ve parametrik olmayan belleğe adını veren özgün RAG makalesi
 - [The three memory types every LLM developer must know](https://medium.com/@sahilnanga4/the-three-memory-types-every-llm-developer-must-know-3358c26fdff3): aynı üçlü ayrım, bu kez farklı bir açıdan
 
 ### 🧭 Modüller

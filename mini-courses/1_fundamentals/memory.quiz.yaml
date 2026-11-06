@@ -108,7 +108,7 @@ questions:
         - "Because non-parametric memory is always more accurate"
         - "Because a model forgets its training data after each call"
         - "Because you know exactly which document the model read"
-      explain: "Retrieved text sits in the context, so the app can show which document the answer came from. Knowledge in the weights has no address, so nobody can say which training data produced it."
+      explain: "Retrieved text sits in the context, so the app can show which document the answer came from. Knowledge in the weights has no address, so it is very hard to say which training data produced it."
     tr:
       question: "Parametrik olmayan bellekten gelen bir cevaba neden kaynak gösterilebilirken ağırlıklardan gelen bir cevaba gösterilemez?"
       options:
@@ -116,7 +116,7 @@ questions:
         - "Çünkü parametrik olmayan bellek her zaman daha doğrudur"
         - "Çünkü model her çağrıdan sonra training verisini unutur"
         - "Çünkü modelin hangi dokümanı okuduğunu tam olarak bilirsin"
-      explain: "Getirilen metin context'te durur, bu yüzden uygulama cevabın hangi dokümandan geldiğini gösterebilir. Ağırlıklardaki bilginin bir adresi yoktur; onu hangi training verisinin ürettiğini kimse söyleyemez."
+      explain: "Getirilen metin context'te durur, bu yüzden uygulama cevabın hangi dokümandan geldiğini gösterebilir. Ağırlıklardaki bilginin bir adresi yoktur; onu hangi training verisinin ürettiğini söylemek çok zordur."
     fa:
       question: "چرا برای جوابی که از non-parametric memory میاد می‌شه منبع آورد، ولی برای جوابی که از weight‌ها میاد نه؟"
       options:
@@ -124,4 +124,4 @@ questions:
         - "چون non-parametric memory همیشه دقیق‌تره"
         - "چون مدل بعد از هر call داده‌ی training رو یادش می‌ره"
         - "چون دقیقاً می‌دونی مدل کدوم سند رو خونده"
-      explain: "متنی که retrieve می‌شه توی context‌ه، پس اپ می‌تونه نشون بده جواب از کدوم سند اومده. ولی دانشی که توی weight‌هاست آدرس نداره و هیچ‌کس نمی‌تونه بگه کدوم داده‌ی training ساخته‌ش."
+      explain: "متنی که retrieve می‌شه توی context‌ه، پس اپ می‌تونه نشون بده جواب از کدوم سند اومده. ولی دانشی که توی weight‌هاست آدرس نداره و خیلی سخته بگی کدوم داده‌ی training ساخته‌ش."

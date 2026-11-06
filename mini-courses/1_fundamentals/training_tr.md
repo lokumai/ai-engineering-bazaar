@@ -237,7 +237,7 @@ training'de geçmeye çalıştığında ise kaybeder.
 
 Yukarıdaki iki kod örneği de ondan import yapıyor, o yüzden ona bir paragraf ayırmak yerinde olur.
 
-[Hugging Face](https://huggingface.co/), açık kaynaklı makine öğrenmesi topluluğunun çalışmalarını
+![](./images/logos/huggingface.svg)[Hugging Face](https://huggingface.co/), açık kaynaklı makine öğrenmesi topluluğunun çalışmalarını
 tuttuğu yer. Pratikte **Models** sayfası, yalnızca LLM'ler değil, her türden açık modelin merkezi
 kaydıdır. Bilgisayarlı görü, konuşma ve ses gibi birçok alanda da modelleri var. Bir araştırma grubu
 açık bir model yayınladığında, bu model genellikle burada görünür.

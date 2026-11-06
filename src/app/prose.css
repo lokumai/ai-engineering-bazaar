@@ -169,6 +169,13 @@
     vertical-align: -0.18em;
   }
 
+  /* A brand whose mark is one dark colour (OpenAI, xAI, LangChain, OpenRouter)
+     ships it black, named `*-mono.svg`, and the dark theme turns it light: a
+     black mark on the dark ground would vanish. A coloured mark is left alone. */
+  html.dark .bz-logo[src*="-mono."] {
+    filter: invert(1);
+  }
+
   /* The three-part caption. `01` has one flat `figcaption`, which the language
      carries as `.bz-caption`; the corpus's captions have a label, an optional
      authored sentence and, on a diagram, a control. */

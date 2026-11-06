@@ -8,7 +8,7 @@ Bu erişimi almanın iki yolu var ve ikisini birbirinden net ayırmak, neyi sat�
 
 ## Gateway (Router)
 
-[OpenRouter](https://openrouter.ai/) birçok provider'ın önünde durur ve sana tek bir key ile tek bir API şekli sunar. İsteğindeki model adı, o isteğe hangi provider'ın cevap vereceğini belirler. Bunun nasıl göründüğünü [LLM Temelleri](../1_fundamentals/llms_tr.md) bölümünde zaten görmüştün. Öğrenme aşamasının ötesinde, bu yapının sana ne kazandırdığını şöyle sıralayabiliriz:
+![](./images/logos/openrouter-mono.svg)[OpenRouter](https://openrouter.ai/) birçok provider'ın önünde durur ve sana tek bir key ile tek bir API şekli sunar. İsteğindeki model adı, o isteğe hangi provider'ın cevap vereceğini belirler. Bunun nasıl göründüğünü [LLM Temelleri](../1_fundamentals/llms_tr.md) bölümünde zaten görmüştün. Öğrenme aşamasının ötesinde, bu yapının sana ne kazandırdığını şöyle sıralayabiliriz:
 
 - **Modeli tek satırda değiştirebilirsin.** Kod aynı kalır, değişen tek şey model adını taşıyan bir string olur. Pazartesi günü yeni bir model çıkarsa, birkaç saat sonra onu ürününde kullanabilirsin. Üstelik üç modeli kendi işinde, tek bir öğleden sonrada birbirine karşı test edebilirsin.
 - **Büyüyen bir key yığını yok.** Her üretici için ayrı bir hesap, ayrı bir fatura ilişkisi ve ayrı bir rate limit'le uğraşman gerekmez.
@@ -70,7 +70,7 @@ Herkesin verdiği sayı milyon token başına fiyattır, ama aynı zamanda tek b
 
 Aşağıdaki iki yolun da günlük sınırları olan bir ücretsiz katmanı var ve gerçek bir şey inşa etmek için bu yeterli.
 
-**[Google AI Studio](https://aistudio.google.com/)**, büyük üreticiler arasında en cömert olanıdır. Kayıt olup bir key aldıktan sonra ücretsiz katman, sıradan modelleri günlük bir üst sınırla kapsar. **OpenRouter** de günlük limitli ücretsiz modeller sunar ve ayrı hesaplar açmadan aynı prompt üzerinde birkaç modeli denemenin en hızlı yolu da budur.
+![](./images/logos/googlegemini.svg)**[Google AI Studio](https://aistudio.google.com/)**, büyük üreticiler arasında en cömert olanıdır. Kayıt olup bir key aldıktan sonra ücretsiz katman, sıradan modelleri günlük bir üst sınırla kapsar. **OpenRouter** de günlük limitli ücretsiz modeller sunar ve ayrı hesaplar açmadan aynı prompt üzerinde birkaç modeli denemenin en hızlı yolu da budur.
 
 Ücretsiz katmanlarla ilgili bir uyarım var, çünkü bu sorun insanları tam da en kötü anda yakalar. Ücretsiz katman, modelin görevini yapıp yapamayacağını söyler, ama ürününün nasıl hissettireceği hakkında neredeyse hiçbir şey söylemez. Ücretsiz kapasite daha yavaştır, daha sıkı rate limit'lere sahiptir ve provider meşgul olduğunda ilk kesilen kapasite de ücretsiz olandır. Bu yüzden gecikmeyi, parasını ödeyeceğin katmanda ölçmelisin.
 

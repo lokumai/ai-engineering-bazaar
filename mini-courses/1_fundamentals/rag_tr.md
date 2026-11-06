@@ -150,7 +150,7 @@ Bunun için küçük bir test setine ihtiyacın var: bir soru listesi ve her sor
 
 ### Bir Örnek Üzerinden
 
-Yukarıdaki örnekten bir soru alalım: "add fonksiyonu nasıl çalışıyor?". İki chunk alakalı: `def add` ve `add`'in testi. Retrieval beş chunk döndürüyor ve alakalı olanlar ikinci ve dördüncü sırada geliyor:
+Yukarıdaki örnekteki "add fonksiyonu nasıl çalışıyor?" sorusunu alalım ve onu beş chunk döndüren daha zayıf bir retriever'a verelim. İki chunk alakalı: `def add` ve `add`'in testi. Bu retriever onları ikinci ve dördüncü sıraya koyuyor:
 
 | Sıra | 1 | 2 | 3 | 4 | 5 |
 |---|---|---|---|---|---|
@@ -160,9 +160,9 @@ Yukarıdaki örnekten bir soru alalım: "add fonksiyonu nasıl çalışıyor?". 
 - **Recall@5 = 2 / 2 = 1.0.** İki alakalı chunk'ın ikisi de ilk 5'te. RAG için genellikle ilk bakılacak sayı budur, çünkü getirilmeyen bir chunk hiçbir zaman kullanılamaz.
 - **Precision@5 = 2 / 5 = 0.4.** Beş chunk'ın üçü gürültü. Yine de masaya konuyorlar; orada yer kaplıyor ve modelin dikkatini dağıtabiliyorlar.
 - **Reciprocal rank = 1 / 2 = 0.5**, çünkü ilk alakalı chunk 2. sırada. MRR, test setindeki bütün soruların bu sayısının ortalamasıdır.
-- **nDCG@5 = 0.65.** Alakalı her chunk, ne kadar aşağıdaysa o kadar az puan alır: p. sıradaki chunk'ın puanı log2(p + 1)'e bölünür. Burada bu, 1/log2(3) + 1/log2(5) = 0.63 + 0.43 = 1.06 eder. İki alakalı chunk'ın da en üstte olduğu en iyi sıralama ise 1 + 0.63 = 1.63 verirdi. 1.06 / 1.63 = 0.65 olur ve 1.0 kusursuz bir sıralama demektir. Bir insan chunk'ları "çok alakalı" ya da "biraz alakalı" diye derecelendirdiğinde nDCG bazı chunk'lara diğerlerinden daha fazla ağırlık da verebilir.
+- **nDCG@5 = 0.65.** Alakalı her chunk, ne kadar aşağıdaysa o kadar az puan alır: p. sıradaki alakalı bir chunk'ın puanı log2(p + 1)'e bölünür. Burada bu, 1/log2(3) + 1/log2(5) = 0.63 + 0.43 = 1.06 eder. İki alakalı chunk'ın da en üstte olduğu en iyi sıralama ise 1 + 0.63 = 1.63 verirdi. 1.06 / 1.63 = 0.65 olur ve 1.0 kusursuz bir sıralama demektir. Bir insan chunk'ları "çok alakalı" ya da "biraz alakalı" diye derecelendirdiğinde nDCG bazı chunk'lara diğerlerinden daha fazla ağırlık da verebilir.
 
-Recall ve precision yalnızca ilk k sonucun içinde ne olduğunu sayar; MRR ve nDCG ise sırayı da önemser. Yukarıdaki şekildeki gibi bir reranker tam da MRR ve nDCG'yi yükseltmek için vardır: en iyi chunk'ları en üste taşır. Weaviate'in [Evaluation Metrics for Search and Recommendation Systems](https://weaviate.io/blog/retrieval-evaluation-metrics) yazısı bu dördünün her biri için formülü ve bir kod örneğini veriyor.
+Recall ve precision yalnızca ilk k sonucun içinde ne olduğunu sayar; MRR ve nDCG ise sırayı da önemser. Yukarıdaki şekildeki gibi bir reranker en iyi chunk'ları en üste taşır. Bu, MRR ve nDCG'yi yükseltir; daha az chunk sakladığında precision'ı da artırır. Weaviate'in [Evaluation Metrics for Search and Recommendation Systems](https://weaviate.io/blog/retrieval-evaluation-metrics) yazısı bu dördünün her biri için formülü, çoğu için de kodu veriyor.
 
 ## RAG için Araçlar
 
@@ -210,7 +210,7 @@ Kendin kurmak yerine hazır bir RAG sisteminden başlamayı tercih edersen, şu 
 
 **Çünkü retrieval, cevabı modelin önüne koyar.** Masaya ve kütüphaneye geri dönersek, fine-tuning belgelerini milyarlarca kitap barındıran bir kütüphanenin bir yerindeki rafa koymaya çalışır ve sonra modelin doğru rafı hatırlamasını umar. RAG ise birisi soruyu sorduğu anda, ihtiyaç duyulan tek sayfayı masaya açık olarak koyar.
 
-**Çünkü bir RAG cevabı kontrol edilebilir.** RAG'de modelin hangi chunk'ları okuduğunu tam olarak bilirsin, bu yüzden uygulama onları cevabın yanında kaynak olarak gösterebilir. Kullanıcı kaynağı açıp cevabı doğrulayabilir; bir cevap yanlış çıktığında da onu, soruna yol açan chunk'a kadar geri izleyebilirsin. Fine-tune edilmiş bir model bunların hiçbirini sunmaz: bilgisi ağırlıklara karışmıştır ve belli bir cevabı hangi training dokümanının ürettiğini kimse söyleyemez. [Memory](memory_tr.md) modülü bu farka tekrar dönüyor.
+**Çünkü bir RAG cevabı kontrol edilebilir.** RAG'de modelin hangi chunk'ları okuduğunu tam olarak bilirsin, bu yüzden uygulama onları cevabın yanında kaynak olarak gösterebilir. Kullanıcı kaynağı açıp cevabı doğrulayabilir; bir cevap yanlış çıktığında da modelin o sırada elinde hangi chunk'lar olduğunu görebilirsin. Fine-tune edilmiş bir model bunların hiçbirini sunmaz: bilgisi ağırlıklara karışmıştır ve belli bir cevabı hangi training dokümanının ürettiğini söylemek çok zordur. [Memory](memory_tr.md) modülü bu farka tekrar dönüyor.
 
 Tek cümleyle özetlersek: **fine-tuning modelin *bildiğini* değiştirir, RAG ise modelin *gördüğünü* değiştirir.**
 

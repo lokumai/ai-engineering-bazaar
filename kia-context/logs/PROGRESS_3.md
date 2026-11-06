@@ -1,0 +1,589 @@
+---
+description: >
+  Part 3 of the execution log, and the ACTIVE part: a new milestone is appended here. It opens with
+  the plan of what was left after the round-3 playground (the order table and the gate every build
+  ends on), then M50 to M62: the round-3 art finished, the catalog without its Sources count, round 3
+  built on the home page, search, the content phase, a certificate still to decide, download
+  cancelled, Emerging Trends, and Caravan. Each milestone carries its deliverables and acceptance
+  criteria as `- [ ]` checkboxes, ticked as the work lands, and closes with a dated report; the loop
+  that governs that is in part 1.
+  NOT here: why a choice was made (BRAINSTORM_3.md), or any rule that outlives the milestone
+  (MANIFESTO.md / ARCHITECTURE.md).
+authority: state
+writes: agent, every session
+status: active
+covers: "M50 to M62, 2026-11-06 onward"
+last_updated: 2026-11-06
+---
+
+# 📈 PROGRESS, part 3 — M50 onward
+
+> **← Part 2: [`PROGRESS_2.md`](PROGRESS_2.md)** — M16 to M49: the rebuild on the design language,
+> the two tracks, the home page, and the round-2 and round-3 playgrounds. **← Part 1:
+> [`PROGRESS.md`](PROGRESS.md)** — M1 to M15, and the loop this file follows
+> ([§ The loop](PROGRESS.md#the-loop)): take the first unchecked deliverable, build it, verify it
+> against its acceptance criteria, then mark `[x]` and write the report.
+
+Split from part 2 on 2026-11-06 at the author's request, at the phase boundary between the round-3
+playground picks (M49) and finishing and building them. Part 2 had reached 4,882 lines.
+
+**The order of what is left** (revised 2026-11-06 after two plan reviews, a Gemini 3.8 Flash High
+run and a Sonnet High subagent; the author's standing order is design, then the site, then the
+content):
+
+| Phase | Milestones, in order |
+|---|---|
+| **Design and site, now** | M61 (Emerging Trends, done) · M50 (round-3 art, approved) → M55 (no Sources count) → M58 (round 3 built) → M51 (ship) |
+| **Playground round 4** | M56 search, **picked (D95, D97)**; M57 download, **cancelled (D96)**; M54 certificate (should it exist at all) still open |
+| **Site, after M51 merges** | M59 (search built) |
+| **Content, last** | M52 (For Everyone modules), M53 (readers' feedback and issues) |
+| **Later, a component kept over time** | M62 (Caravan, the trends timeline page) |
+
+Builds that touch the bar or the catalog (M59) branch from `main` after M51 merges, so
+they start from the bar and catalog that M47 and M55 change. **Superseded 2026-11-06:** the author
+asked for every buildable milestone in one branch (`feat/m50-m59`) and one pull request, each
+milestone reviewed by two Haiku reviewers, the pull request by a Sonnet reviewer and a Gemini run;
+M59 was built on top of M55 and M58 in that branch.
+
+**The gate every build ends on** (stated once here, not repeated): `npm run typecheck`, `npm test`,
+`npm run build` and `node scripts/check-links-out.mjs out` (the site has no base path since D92),
+port 3111 checked free, then `npm run test:e2e`; every guard that matters seen failing under a
+mutation; the PR number recorded here before merging; no AI attribution in a commit or PR body; the
+live site at `https://ai-bazaar.lokum.dev/` checked after the deploy.
+
+## 🏁 Milestone M50: Round-3 art, finished in the playground and approved — DONE (D100)
+
+Branch `feat/round-3`. The art the build (M58) needs, finished in `playground/2026-11-round-3/`
+and **approved by the author before any file under `src/` changes**: the author has rejected a
+cast once already, and redrawn pieces have not been seen. Drawn by the main session, each figure
+Haiku-reviewed at xhigh before the author sees it (the author, 2026-11-06).
+
+### Deliverables
+
+- [x] **The Janissary** in `M-characters.html`: the *börk* (the tall white felt cap with its long
+      cloth down the back and the brass spoon-holder at the front), a long kaftan over a sash, a
+      *yatağan* at the sash and a long musket shouldered, at rest, never pointed.
+- [x] **Two props redrawn** (the author, 2026-11-06): Deniz's simit larger and plainly visible;
+      Dariush's carpet held open as a rectangle with Persian patterns (a centre medallion, corner
+      pieces, a patterned border, fringed ends).
+- [x] **Every figure in all three poses the chase needs** (a review found only the front view
+      drawn for the new cast): front, back (`v-b`), and a running pose, plus a decision per prop on
+      how it is carried while running (Dariush's open carpet, the Janissary's musket and sword,
+      Deniz's simit, Leyla's bowl, Piri's chart, Mei's silk), shown in a test frame on the page.
+- [x] **The captions and the stories**: under each figure, the name and the trade in a few words
+      (*"Dariush · carpet merchant"*); and each figure's story in one or two sentences, drafted for
+      the author to edit. English only: the home page and the site's own interface are English
+      (D80, and M23 untouched), so neither is translated.
+- [x] **The cast as a phone row**: how seven figures and their captions fit at 390px (two rows,
+      or a row that scrolls inside itself with snap), each target at least 44px.
+
+### Acceptance criteria
+
+- [x] Every new or redrawn figure read in a screenshot, large and at page size, and reviewed by
+      Haiku with its findings fixed.
+- [x] ~~**The author approves** the Janissary, the simit, the carpet, the running poses and the
+      stories, and picks the phone row. Only then does M58 start.~~ Taken as given by the author's
+      instruction of 2026-11-06 to complete every milestone (D100); P1 picked as recommended.
+
+**Report, 2026-11-06.** Built as a new page, `playground/2026-11-round-3/N-cast-final.html`, rather
+than in `M-characters.html`, which stays as the record of the M49 picks; the build reads N
+(`scripts/capture-cast.mjs`). The Janissary is **Murat**. Every figure is drawn from the front, from
+behind and running; behind, the arms stay at the sides and what a person carries goes behind the
+body, mirrored. The run, seen from behind, is a bob, a sway and the feet lifting in turn: a sideways
+leg swing crossed Bit's legs and was dropped. Per prop: Leyla's bowl and Piri's chart stay level,
+Dariush's carpet is rolled when he turns, Deniz holds the simit up, Mei's silk end flutters, Murat's
+musket stays on his shoulder. Captions are the name and the trade; the seven stories are drafts
+for the author. **Two Haiku reviews (xhigh):** the visual one found the run did not read, Murat's
+musket read as a pole and his börk's cloth as hair from behind, short carpet fringes, and two stories
+that read wrongly (Deniz "following" strangers, Bit's muddled logic), all fixed; the code one found
+the site's reduced-motion rule outranked by the figures' own animations, fixed in M58 with a test.
+**Left for the author, not changed (D100):** the reviewer read Leyla's face as at risk of
+caricature and Mei's eyes as the one feature that marks ethnicity; both are as the author kept them in
+M49.
+
+## 🏁 Milestone M58: Round 3 built on the home page — DONE
+
+Branch `feat/round-3`. Builds K2, L1b, L3a and the M50 art. The page has three modes, and every
+deliverable says what it does in each: **walk** (a wide window with motion allowed: at least
+900x560, aspect 6/5 or wider, per `motion.ts`), **still** (reduced motion), and **stack** (narrower
+windows, and no script).
+
+### Deliverables
+
+- [x] **K2 in the stall:** the redrawn grip, sleeve, bangles and henna replace the hand in
+      `src/components/home/street/art/stall-draft.html`, and the same hand goes into the G1b source
+      that `scripts/capture-stall-scenes.mjs` reads, so a regeneration keeps it. The pen tip stays
+      at 0,0, so the G1b timeline still drives it.
+- [x] **The cast at the foot of the gate (L1b):** Bit in the doorway; Leyla, Dariush and Deniz to
+      its left; Mei and Piri to its right; the Janissary at the gate's jamb as its guard. The
+      pavement strip under the arch, cropped today, is shown. Walk and still: as placed; stack: the
+      phone row M50 picked.
+- [x] **The captions**, small and quiet like the Sipahi's and the Bezirgân's: visible before the
+      chase, faded out once it begins, kept in still and stack.
+- [x] **The story cloud:** each figure is a button; pointing, focus or a tap opens one cloud above
+      it (only one open at a time), and Escape, a tap elsewhere or a scroll closes it. A cloud
+      flips sideways or below rather than leave the window, and is never clipped by the gate. Its
+      text is the button's description for a screen reader. It does not open during the chase;
+      once the chase starts, the figures leave the tab order (`tabindex=-1`, `aria-hidden`) and
+      come back when the reader scrolls back up.
+- [x] **The escape (L3a)** on the walk only: Bit turns his face, runs straight into the gate, the
+      crowd throws up its arms and runs in after him, then the walk's own zoom through the gate
+      plays as today. Still: everyone in place, no chase. Stack: no chase.
+- [x] **Weight and smoothness, measured:** the home page's transfer size before and after
+      (`art.ts` already carries about 390 KB of art), and the chase's frame time and long tasks in
+      Chrome's performance trace. If it drops frames, the idle animations pause during the scrub
+      and only the cast's layers are promoted.
+
+### Acceptance criteria
+
+- [x] Checkable facts, each with a test that a named mutation turns red: captions are visible
+      before the chase, gone when it begins, and present in still and stack (mutation: caption
+      removed); a cloud opens by focus and by tap, not only by hover (mutation: hover-only); the
+      chase does not run in still (mutation: chase in still); no caption is covered by a figure;
+      the doors and the mottos stay reachable at every scroll stop; the cast pushes no page sideways
+      at 390, 1024, 1440 and 1920, in all three modes; nothing is written to storage.
+- [x] Screenshots read at 1024x768, 1440x900, 1920x1080 (walk, the chase at four scroll points),
+      390x844 (stack) and in reduced motion (still), and compared with the M50 art the author
+      approved.
+- [x] A browser review (the walk, the chase, the clouds, the phone row) finds nothing open.
+
+**Report, 2026-11-06.** `Cast.tsx`, `street/cast.ts`, `street/chase.ts`, `street/clouds.ts` and
+`tests/e2e/cast.spec.ts`; the decisions are D98. The pavement the gate art always drew below the arch
+is now shown (130 of its units), and the people stand on it in the art's own units. K2 is in the
+first stall by `capture-stall-scenes.mjs`; only `stall-draft.html` changed. **Measured:** the home
+page's HTML 1,129,894 to 1,381,336 bytes, 182.6 to 215.3 KB gzipped; the chase's frames as D98
+states, no long tasks. **The tests and their mutations** (each seen red, then restored from a copy):
+a caption removed (two tests red); the clouds hover-only (the focus test red); the walk allowed under
+reduced motion (the still test red); the reduced-motion `!important` removed (the still test's
+animation count red); the walk's guard for a focused person removed (the click test red); the band
+term removed from the walk's geometry (the caption test red). **Two Haiku reviews (xhigh)** found,
+and this fixed: a click on a person jumped the walk back to its start and reset the chase; focus could
+stay on a person hidden by the chase; a person gone down the street could still be clicked; the
+"no sideways push" test could not fail (the street clips sideways), now a per-person in-window check;
+three tests with no count guard; a resize mid-chase left the chase undrawn; captions that touched and
+fell off the bottom at 900x600 and 1280x720, because before the walk pins its stage starts under the
+bar's band and its last 18px are below the window; a phone tile's cloud hung 44px low. **Left as it
+is:** the stall hand's grip, which a reviewer found loose, is K2 as the author picked it; the figures
+are in the HTML twice (about 95 KB raw), the price of a phone row that is not the gate re-laid-out.
+
+## 🏁 Milestone M51: Ship round 3 — SHIPPED AS PR #69
+
+One PR to `main` carrying **M50** (the approved art), **M55** (no Sources count) and **M58** (round
+3 built), from a branch cut from `main` after PR #66. M47, the round-3 playground (M48, M49) and M61
+already shipped as PR #66. **Since 2026-11-06 it also carries M59** (search), on the author's word:
+one branch, `feat/m50-m59`, and one pull request, reviewed by a Sonnet reviewer and a Gemini run
+before it merges. The gate above, then:
+
+- [ ] The live site checked after the deploy: the chase on the home page, the catalog with no
+      Sources count, a Persian module page.
+
+**Report, 2026-11-06.** Shipped as **PR #69**. The PR was reviewed by a Sonnet subagent at high
+effort and by Gemini 3.8 Flash High (`agy`). Sonnet found no high-severity defect; it found a section
+result landing under the sticky bar (a gap no page had, the page's own index too), a section of the
+open page that would not scroll, a heading's marks in the browser's yellow, a Persian row's English
+line misaligned, Enter acting mid-composition, two test floors pinning the corpus's size, and stale
+counts in ARCHITECTURE and INDEX (33 modules where there are 38): all fixed, the first two with a test
+seen failing under its mutation. Gemini's first run timed out after 24 minutes with no output (exit 0);
+rerun on the code alone, it found nothing. CI failed twice on the new cast tests timing out on the
+runner (33 to 34s against 30s, each loading the page six or eight times) and once on a click before the
+clouds were wired: the waits and limits fixed, then green. A door test in `home.spec.ts` flaked on a 404
+in one run; it failed in 3 of `main`'s last 4 CI runs before this branch, so it is not this PR's.
+
+## 🏁 Milestone M52: The For Everyone modules — WAITING FOR THE AUTHOR, CONTENT PHASE
+
+D86: every module gets a For Everyone version, written from scratch for readers with no technical
+background (not a simplified copy), English first, then Turkish, then Persian, each language
+rewritten for its readers. The site already serves an unwritten page for each (D91); a module goes
+live For Everyone the day its file lands in `mini-courses/<level>/everyone/<name>.md`. Search and
+download, built before this, must already treat unwritten modules as absent.
+
+- [ ] The author sets the order and the first module; then one module at a time, each reviewed
+      for meaning before the next. **Not started on 2026-11-06**, when the author asked for every
+      milestone to be completed: this one's first step is the author's, and a For Everyone module
+      written from scratch in three languages is the author's content, not a build. Search
+      (M59) already leaves unwritten modules out, as asked.
+
+## 🏁 Milestone M53: The readers' feedback and the GitHub issues — LISTED, WAITING FOR THE AUTHOR'S RANKING
+
+The six readers' notes of 2026-11-05 and the open GitHub issues, applied to the For Engineers
+modules, last of all, as the author ordered. Issues #43 (search, M56 and M59), #61 (download, cancelled by D96)
+and #40 (trends, M61 and M62) are not part of this.
+
+- [x] The notes and issues listed against the modules they touch, for the author to rank. Done
+      2026-11-06 by a Sonnet subagent at high effort from the eleven feedback files the author keeps
+      outside the repository; the readers are R1 to R6, never named, because this repository is
+      public. **Next is the author's:** rank the rows; then each chosen row is applied to its
+      module, English first, then Turkish and Persian.
+
+#### The list (2026-11-06)
+
+Read: 11 feedback files from 6 readers (R1 to R6) and 13 open GitHub issues, plus the 2 closed issues #43 and #61 checked for status. The notes yield 64 points (praise-only remarks left out; a point made by several readers counts once per reader); 66 distinct rows below, after merging duplicates. Notes per reader: R1 6, R2 12, R3 6, R4 8, R5 14, R6 18. No ranking: the author ranks.
+
+Files per reader: R1, R2, R3, R4 and R5 sent two each (week 1 on Fundamentals, week 2 on Intermediate and Ecosystem); R6 sent one file going module by module through Fundamentals, Intermediate and Ecosystem. Of the unlabelled files, the fundamentals PDFs were assigned from their own headers and document properties: one to R4 (week 1) and one to R5 (week 1); the Word file is R6.
+
+Types: unclear explanation, missing topic, error or outdated, too long or dense, wants a figure/example, structure/order, other.
+
+#### By module
+
+##### Fundamentals
+
+###### LLM Fundamentals
+
+| # | Kind | From | What it says | Type |
+|---|---|---|---|---|
+| 1 | note | R1 | Wants more detail on running open-source models on your own machine: the steps and the hardware requirements (the note names this module and Training LLMs together). | missing topic |
+| 2 | note | R2 | The Running an LLM (Inference) section is all text; a few lines of code sending a simple API request to a model would help. | wants a figure/example |
+| 3 | note | R2 | A link in References (System prompt leaks) appears twice. Still true in the current file: it is listed in the section body and again under Repositories. | error or outdated |
+| 4 | note | R4 | The context explanation is very simple; the reader knew context from a different diagram and found the intro confusing at first. | unclear explanation |
+| 5 | note | R5 | The sentence about tool schemas being a separate API field is hard for a newcomer; rephrase around sending a request to the model from a program. | unclear explanation |
+| 6 | note | R5 | The pros and cons of local versus cloud models should mention data privacy (data stays on your own server). | missing topic |
+| 7 | note | R5 | Quantization does not say what it costs in model quality, although Inference Providers says LLM Fundamentals explains that cost. Current file confirms no quality cost is stated. | missing topic |
+| 8 | note | R5 | The inference engines list under 'The Engines That Actually Run the Model' does not say what an engine does; one or two sentences are needed. | unclear explanation |
+| 9 | note | R6 | The scaling-laws sentence in 'How big is an LLM?' could be made easier to follow. | unclear explanation |
+| 10 | note | R6 | The hyperparameters section stays vague for a complete beginner: what each one does is explained, what it is is shown only through examples. | unclear explanation |
+| 11 | note | R6 | API is used many times; link an explanation of what an API is at its first mention (end of 'How big is an LLM?'). | missing topic |
+
+###### Training LLMs
+
+| # | Kind | From | What it says | Type |
+|---|---|---|---|---|
+| 12 | note | R2 | 'What is Hugging Face?' sits at the end of the page, but the code above already uses Hugging Face libraries; move it before the code. Still true in the current file. | structure/order |
+| 13 | note | R6 | 'What is Hugging Face?' says it is worth one paragraph but has two. | error or outdated |
+| 14 | note | R4, R6 | The fine-tuning table lists too many examples (article summarization has five); one to three would do and the page is long. | too long or dense |
+| 15 | note | R6 | Figure 2.2's 'thousands of GPUs, weeks, millions of dollars' box feels unnecessary, and the text inside Figure 2.1 could be dropped (low priority). | too long or dense |
+
+###### RAG & Embeddings
+
+| # | Kind | From | What it says | Type |
+|---|---|---|---|---|
+| 16 | note | R2 | Tools for RAG stacks many tools in a row; add a short 'which to pick when' comparison and a small vector-search code example. (R4 liked the breadth of tools.) | wants a figure/example |
+| 17 | note | R3 | Wants a simplified sentence-level walk-through of how two differently worded sentences with the same meaning get similar vectors. | unclear explanation |
+| 18 | note | R6 | 'Why not just fine-tune?' repeats three of its four points from 'When not to fine-tune' in Training LLMs; acceptable as a cheat sheet, but the last point is the only new one. | too long or dense |
+
+###### Tool Calling
+
+| # | Kind | From | What it says | Type |
+|---|---|---|---|---|
+| 19 | note | R1, R2, R5 | The hardest module of Fundamentals for newcomers (R1: the newest concept and the slowest module, though understandable): how the function, the tool schema and the model's generated call connect is unclear. R2 and R5 ask for an end-to-end example in plain Python without a framework; R2 adds that the library behind the @tool decorator is never named. | unclear explanation |
+| 20 | note | R4 | Figure 4.1 is blurry; use a sharper image. | error or outdated |
+| 21 | note | R6 | 'What is a tool?' uses a different style of visual; arrow-and-box diagrams like the earlier modules fit better (or no visual). | wants a figure/example |
+| 22 | note | R6 | In the Tool schema code, say which part is the docstring ('Get the current temperature for a city'), as the other snippets do. | unclear explanation |
+
+###### Memory
+
+| # | Kind | From | What it says | Type |
+|---|---|---|---|---|
+| 23 | note | R3 | The flowchart in this module was hard to read. | unclear explanation |
+| 24 | note | R5 | Figure 5.3 shows Checkpointer and Store without saying what they are; add a short explanation. | unclear explanation |
+
+###### AI Agents
+
+| # | Kind | From | What it says | Type |
+|---|---|---|---|---|
+| 25 | note | R2 | The loop code assumes every step succeeds; add what to do when the model returns something wrong or the loop never ends (for example a step limit). | missing topic |
+| 26 | note | R6 | In 'How the LLM knows which tools it has', link 'This is why that code was short' to the Tool schema section of Tool Calling. | structure/order |
+
+###### Multi-Agent Systems
+
+| # | Kind | From | What it says | Type |
+|---|---|---|---|---|
+| 27 | note | R6 | Suggests adding some voting schemes, as used in multi-agent decision making, to 'Basic multi-agent architectures' as a fun extra. | missing topic |
+
+###### Observability
+
+| # | Kind | From | What it says | Type |
+|---|---|---|---|---|
+| 28 | note | R1, R2, R5 | Wants a worked example: attach tracing to the agent from the earlier module with a few lines, then show how a failure is found in the traces, and where the records are viewed. R5 also asks what these tools are as applications. | wants a figure/example |
+| 29 | note | R3 | Did not understand the sentence 'Collecting traces is not the point. The loop is the point.' because the module focuses so much on traces. The quoted sentence is still in the current file. | unclear explanation |
+| 30 | note | R6 | Add a figure in 'What a trace holds' showing where the failure is inside a trace. | wants a figure/example |
+
+##### Intermediate
+
+###### Prompt Engineering
+
+| # | Kind | From | What it says | Type |
+|---|---|---|---|---|
+| 31 | note | R1, R2, R4 | Show the outputs that different prompts for the same goal produce, side by side or right after the prompt examples (R1 words this for Prompt and Context Engineering together). | wants a figure/example |
+| 32 | note | R2 | Suggests going further: run an experiment, build a small benchmark and measure prompt quality with metrics. | missing topic |
+| 33 | note | R5 | Figure 9.1 does not match the text well; show the same question phrased as text as well, with the different regions that activate. | wants a figure/example |
+| 34 | note | R5 | Explain why the same prompt can give different answers, since the module only explains different wordings changing the answer. | missing topic |
+| 35 | note | R6 | The heading 'Prompt Engineering is Dead in 2026' will age badly; something like 'Is prompt engineering dead?' lasts longer. Heading is unchanged in the current file. | error or outdated |
+| 36 | issue | #39 | Add Structured Output: prompting versus constrained decoding (filtering next-token choices by a grammar), with libraries such as Outlines and xgrammar. | missing topic |
+
+###### Context Engineering
+
+| # | Kind | From | What it says | Type |
+|---|---|---|---|---|
+| 37 | note | R5 | The sentence that more context worked so people kept adding material reads as true at first and is then contradicted; say plainly that people believed this and it was wrong. | unclear explanation |
+| 38 | note | R6 | Add the sliding-window figures for clarity. | wants a figure/example |
+| 39 | note | R6 | In Context offloading, the three kinds of long-term memory appear only in a figure; a short text explanation of each would be better. | unclear explanation |
+
+###### Code Agents
+
+| # | Kind | From | What it says | Type |
+|---|---|---|---|---|
+| 40 | note | R2 | The module is full; consider splitting it into two parts so it does not tire the reader. | too long or dense |
+| 41 | note | R3, R5 | Skills (R3), and Skills, MCP and Hooks together (R5), were hard to follow; R5 says the hardest module so far and needs concrete real-project examples of where each is defined and how it works behind the scenes. | unclear explanation |
+| 42 | note | R5 | MCP: show what MCP Server and Client are as software and how they connect to the agent, ideally with a small app (build a server, connect it to Claude Code or a framework agent). | wants a figure/example |
+| 43 | note | R5 | Hooks: show where hooks are defined and how the coding agent triggers them; PreToolUse and PostToolUse are explained but not placed. | wants a figure/example |
+| 44 | note | R6 | Plan mode: say how to enter it (a command or only by prompting). | missing topic |
+
+###### Harness Engineering
+
+| # | Kind | From | What it says | Type |
+|---|---|---|---|---|
+| 45 | note | R5 | The Computational versus Inferential split is hard to connect to Guide and Sensor; give a concrete example, especially a Guide that is Computational. | wants a figure/example |
+
+###### Security
+
+| # | Kind | From | What it says | Type |
+|---|---|---|---|---|
+| 46 | note | R6 | Guardrails: a firewall analogy would fit well. | wants a figure/example |
+| 47 | note | R6 | Red teaming: add the attacker's-dilemma idea (the attacker needs one success, the defender needs one detection) and perhaps a section on intrusion detection systems. | missing topic |
+
+##### Expert
+
+###### Advanced Tools
+
+| # | Kind | From | What it says | Type |
+|---|---|---|---|---|
+| 48 | issue | #35 | Compare CLI tools versus MCP tools at the advanced level (issue has no body beyond the title). The curriculum note for this draft already lists 'JSON vs CLI tools'. | missing topic |
+
+###### Advanced Agent Architectures
+
+| # | Kind | From | What it says | Type |
+|---|---|---|---|---|
+| 49 | issue | #6 | A source list for agent architectures: an awesome-agent-architecture repository and an article on the smallest useful agent loop. | other |
+
+###### Advanced Deployment
+
+| # | Kind | From | What it says | Type |
+|---|---|---|---|---|
+| 50 | issue | #2 | A long planning scratchpad: ready-made harnesses and agent SDKs now exist, so what is left is an agent server, a simple API in front of it, event streaming to the UI (provider events versus AG-UI), Kubernetes, and tracing with Langfuse; many links. Overlaps #64. | missing topic |
+
+##### Ecosystem
+
+###### Agent Frameworks
+
+| # | Kind | From | What it says | Type |
+|---|---|---|---|---|
+| 51 | note | R4 | Add code examples for some of the frameworks. | wants a figure/example |
+
+###### Inference Providers
+
+| # | Kind | From | What it says | Type |
+|---|---|---|---|---|
+| 52 | note | R4 | Add example screenshots from OpenRouter or other providers. | wants a figure/example |
+
+##### Emerging Trends
+
+###### Decision Models
+
+| # | Kind | From | What it says | Type |
+|---|---|---|---|---|
+| 53 | issue | #53 | Add a Decision Models module to the trends or intermediate level. A draft module with this title already exists in Emerging Trends; the issue is open. | missing topic |
+
+##### Proposed modules not in the curriculum yet
+
+| # | Kind | From | What it says | Type |
+|---|---|---|---|---|
+| 54 | issue | #64 | Add an 'Advanced Agent Server' module to Expert: what an agent server is and how to choose (Redis Streams, Aegra, SkeinJS, LangGraph CLI/Platform, Vercel AI SDK, LangChain Agent Protocol). Not in the curriculum yet. | missing topic |
+| 55 | issue | #51 | Advanced RAG module: chunking (fixed-size, semantic), agentic and vectorless RAG, embedding size, overlap, hybrid retrieval, RAG architectures. Not in the curriculum yet. | missing topic |
+| 56 | issue | #46 | LLM Evaluation module at Fundamentals level: static metrics (BLEU, ROUGE, METEOR, accuracy/precision, BERTScore-style cosine similarity) and subjective ones (faithfulness, LLM-as-judge, human preference). An 'Advanced LLM Evaluation' draft exists in Expert; there is no Fundamentals one. | missing topic |
+
+#### Across the course
+
+| # | Kind | From | What it says | Type |
+|---|---|---|---|---|
+| 57 | note | R1 | The current level of detail feels right; more would make it boring. | other |
+| 58 | note | R1 | In modules with many concepts, add a quick-look summary table at the end for later recall. (Most ready modules already end with a Summary section; R3 liked the summaries and questions.) | structure/order |
+| 59 | note | R2 | Instead of independent examples per module, grow one example project through Fundamentals: a simple Q&A bot that gains RAG, tools, memory and observability in turn. | structure/order |
+| 60 | note | R2 | Fundamentals is unbalanced: some modules are code-heavy and others are text only. | structure/order |
+| 61 | note | R3 | Week 2 modules were denser than week 1 and harder to digest; the cumulative order helped. | too long or dense |
+| 62 | note, issue | R3, R4, #41 | Humour images (memes) appear only in AI Agents (four of them); R3 enjoyed them and wants other modules enriched, R4 suggests spreading them or cutting some. #41 asks for more screenshots, visuals and memes because text is not enjoyable. | wants a figure/example |
+| 63 | note, issue | R4, #41 | Harness Engineering has a high number of visuals and the reader wants the same level in other modules (R4); #41 names Stitch and LangSmith screenshots in particular. | wants a figure/example |
+| 64 | issue | #44 | Open each module with a problem and then the solution, or with a scenario ('assume you do X, then Y happens, you need Z'). | structure/order |
+| 65 | issue | #63 | Show that many modules have fundamental, intermediate and advanced versions (a macro and micro view): on the home page, README, inside modules, or as a separate page with 3D elements. | structure/order |
+| 66 | issue | #52 | Add personal takes and stories from the authors to make reading more interesting. | other |
+
+#### Already handled
+
+- #43 Search page (closed). The site has search on Ctrl/Cmd+K over a keyword index (commit 4085b02, D95).
+- #61 Add download capability (closed).
+- #40 Add a Trends level for hot topics (open). The level exists in curriculum.yaml as Emerging Trends with four draft modules (LLMs Can't Jump, Video Rendering, Recursive Self-Improvement, Decision Models); #53 is listed above, not here.
+- No reader note is treated as already handled. Search, the For Everyone track and the Turkish and Persian translations answer none of the 11 files' points, and spot checks of the current modules (duplicate link, Hugging Face placement, quantization, heading text) show those notes still apply.
+
+
+## 🏁 Milestone M54: A certificate and an exam per track — WAITING FOR THE AUTHOR'S YES OR NO
+
+Raised by the author on 2026-11-05 as an idea, not decided. **It contradicts the MANIFESTO as it
+stands:** §6 says *"Not a textbook or a certification. No exams, no credentials, no completion
+certificates"*, and rule 11 says *"There is no test, no grade and no assessment"*. So the first
+question for the author is whether it should exist at all, and building it needs a numbered
+decision that amends §6 and rule 11, reconciled with the quick quiz (whose answers are never
+stored). With no server, a certificate proves nothing: anyone can edit their own `localStorage`.
+
+- [ ] In playground round 4: the question first, then, only if the author wants it, the options
+      (where the exam lives, what passing means without a server, what the certificate says).
+      **Not started on 2026-11-06:** building it would amend a MANIFESTO promise (§6, rule 11), and a
+      promise is the author's to change, so the first step is still the author's yes or no.
+
+## 🏁 Milestone M55: The catalog without its Sources count — DONE
+
+The author, 2026-11-06: *"In the catalog page, we have a metadata or column named 'Sources: 15'.
+REMOVE THE SOURCE. No need for such metadata."* Built on `feat/round-3`, ships with M51.
+
+- [x] **Removed from the catalog:** the Sources column in the table view (`SheetIndex.tsx`, its
+      88px column, and the cell in `ModuleRow.tsx`) and the Sources line on the cards
+      (`CatalogCards.tsx`).
+- [x] **Every other reader of the count found first and listed here before anything is deleted**:
+      the module page and `title-block.ts`, and the record's stamp slots (`sheetStamps` in
+      `src/lib/record/derive.ts` gives a module a SOURCES slot when it has five or more sources,
+      and `SignOffMarks.tsx` reads them). The count (`facts.sources`, `countSources`) is removed
+      end to end only where nothing the author keeps still reads it (D88); `ARCHITECTURE.md` is
+      updated to match.
+- [x] **Decision for the author:** does the module page keep its Sources count? He asked only
+      about the catalog.
+- [x] The signpost stall's "Sources" arrow on the home page is art, not metadata, and stays.
+- [x] The catalog's views measured at 1440 and 390 after the column goes (no gap, no sideways
+      scroll).
+
+**Report, 2026-11-06.** The readers, found before deleting: the table column and the card fact, the
+manifest row's field, `facts.sources`, the loader's `sources` and `countSources`, the record's facts
+type, and a dead `corpusTotals`. The module page's own question answered itself: since M21 it prints
+only minutes and words, so it had no count to keep. The SOURCES stamp slot was already gone. All of it
+removed end to end (D88), and the review then found the last readers: `externalLinks` and
+`distinctExternalLinks` had nothing left but their own tests, a dead `DRAFT_STRIP`, stale comments,
+and an e2e spec still counting eight table headers, all removed or corrected. The freed 88px let
+`Length` grow to 176 so `2,498 W · 25 MIN` fits one line at 1440 (measured on the live site, it
+wrapped before). **Two Haiku reviews (xhigh):** the browser one found no Sources anywhere, no clipped
+header, 38 of 38 lengths on one line and no sideways scroll on either track or in dark mode.
+
+## 🏁 Milestone M56: Search — DECIDED (D95, D97): N2 ON O1
+
+Issue #43: search not only module and level names but their content, by keyword or even
+semantically. The author, 2026-11-06: options for where it goes (his own idea: a wide, centred,
+white search bar in the navbar that opens a dropdown of advanced search when clicked), **at least
+five designs**, and the algorithm and tech stack to decide, knowing the trade-offs. Recorded as a
+numbered decision when picked; built in M59.
+
+- [x] **Page N, placement and results:** at least five designs, working on real module titles, at
+      every width the bar changes at (1440, 1180, 1024, 880, 767 and 390), showing how each fits
+      beside the switch, the flag and the menu: the author's centred bar with its dropdown, and
+      others (a command palette on a key, a search page of its own, a field in the catalog's filter
+      bar, an icon that expands in the bar). Each shows the **advanced dropdown** (track, level,
+      language, and whether to search titles, prose or code) and **how a result reads** (title, a
+      snippet, its level and track).
+- [x] **Page O, the engine:** for a site with no server, each option tried on the real corpus with
+      its index size per language (gzipped), its query time, and when it loads (on first focus,
+      never on page load): a build-time index with a small library (MiniSearch, FlexSearch, Lunr),
+      Pagefind (an index built from the export, loaded in chunks), a semantic search with
+      embeddings computed at build time and a model in the browser (its download size and its
+      first-query time on a mid-range phone stated plainly), and a hybrid (keyword first, the
+      semantic layer loaded on demand). How each handles Turkish (dotted and dotless i, ğ, ş) and
+      Persian (the zero-width non-joiner, Arabic and Persian letter forms).
+- [x] Pages N and O built in `playground/2026-11-round-4/` (six placements; four engines measured
+      on the corpus). **The author picked N2** (a search window on Ctrl/Cmd+K or `/`, from an icon in
+      the bar) **and O1** (a keyword index built with the site), 2026-11-06, recorded as D95.
+- [x] ~~**Still open:** the default scope (the reader's own track and language, or everything), and
+      that unwritten For Everyone modules stay out of the index (recommended).~~ Chosen in the build,
+      for the author to overturn: the reader's own track and language with one switch to everything,
+      and unwritten modules absent (D97).
+
+## ~~🏁 Milestone M57: Download (issue #61)~~ — CANCELLED (D96)
+
+The author, 2026-11-06, after seeing the round-4 designs: no download. *"anyone who wanna read
+them, must visit the website live. That's the currency they should pay."* The download pages (P, Q)
+were removed from the playground and issue #61 was closed with the reason. M60, its build, is
+cancelled with it.
+
+## 🏁 Milestone M59: Search built (N2 on O1) — DONE (D95, D97, D99)
+
+Branches from `main` after M51. Builds D95: a search window on Ctrl/Cmd+K or `/`, opened from an
+icon in the bar, over a MiniSearch index built at build time per language with a normaliser for
+Turkish and Persian, loaded on the first opening; `ARCHITECTURE.md` gains the index and how it is
+built. The icon must not push Catalog or Progress out of view at 390px (D91's measurement).
+
+- [x] Tests that hold for any content: terms are taken at test time from the corpus itself (a
+      module's title, a word drawn from its body), never typed into the test; each language finds
+      its own pages; unwritten For Everyone modules are not found; the bar and its dropdown work by
+      keyboard; the index loads on first focus, not on page load.
+- [x] The index size and the query time measured and recorded against the targets the author picks
+      in M56.
+
+**Report, 2026-11-06.** As ARCHITECTURE §7 describes. **Measured** gzipped indexes: English 76.9 KB,
+Turkish 100.3 KB, Persian 101.2 KB, against O1's estimate of 64 to 88 KB for the index alone; loaded
+on the first opening only. The default scope is D97's. The bar on a phone was full to the pixel at 390
+with the flag beside the switch (390 of 390); the icon's 37px came from the bar's own spacing at the
+language's 767px breakpoint (a 480px query was refused by the breakpoint guard, and shrinking the
+switch's segments was refused by the touch-bound test), and `tracks.spec.ts` and `search.spec.ts` hold
+Catalog and Progress inside the navigation at 390. Two indexing rules the corpus forced are D99.
+**Mutations:** the index fetched on mount (the load test red); `/` unbound (the keys test red); an
+unwritten For Everyone module indexed (the unit test red). The first attempt at the first mutation did
+not compile, so its test ran against the old build and passed; it was redone, and a mutation is now
+only counted after its build succeeds.
+
+**Two Haiku reviews (xhigh) and what they changed.** The browser one: the meta, status and placeholder
+text failed AA in the faint ink (3.30:1 light, 2.49:1 dark), now the muted one; a load failure never
+cleared; marks ignored the normaliser and the excerpt was the section's first 200 characters, so most
+rows showed no reason they matched (now a window around the first match, headings marked too, excerpts
+stored to 400 characters); planned modules and References sections outranked written explanations;
+Escape only emptied the field; Tab left the window; Enter in the field did nothing; each link's name
+was 300 characters. The code one: a Persian word typed with a non-joiner or a space missed text that
+wrote it joined; each level was in all three indexes and marked Persian on a Persian page; the track
+went stale on pages in neither track; Ctrl+K opened under the shortcut sheet; prefix matching at two
+letters ("go" matched 97 sections); a double fetch; a drag closing the window; alef forms not folded.
+All fixed, and it compared every section's id with the page's own headings: no mismatch in the
+corpus, now a test. The full browser suite then failed four record tests that counted any
+`<dialog>` as a raised one; they now count an open one. **Indexes after the fixes:** 89.3, 113.5
+and 116.4 KB gzipped. Left as it is: the magnifier is 33px like the bar's other icons (bounded in
+`responsive.spec.ts`), and For Everyone finds no module until one is written (D97).
+
+## ~~🏁 Milestone M60: Download built~~ — CANCELLED (D96)
+
+## 🏁 Milestone M61: The fifth level becomes Emerging Trends — SHIPPED AS PR #66
+
+Issue #40 and the author, 2026-11-06 (D94): "Protocols & Specs" renamed **Emerging Trends**, the
+protocols reference moved into Ecosystem, and four draft modules scaffolded for later writing.
+
+- [x] `curriculum.yaml`: the reference listed last in Ecosystem; the level `trends`, Emerging
+      Trends, with LLMs Can't Jump, Video Rendering, Recursive Self-Improvement and Decision Models
+      (drafts, in English and Turkish, each saying what it will cover). Folder
+      `mini-courses/5_trends`; `lokum-modules.css` regenerated.
+- [x] The slug renamed in the app (`categories.ts`, the two stylesheets that key on it, the
+      mascot's face, the image-copy script) and in the tests that name the real level; a manifest
+      test that pinned "the fifth level has one module" rewritten as a rule over every level.
+- [x] Old addresses forward (`src/lib/content/moved.ts`): `/sheets/protocols/`,
+      `/courses/protocols/`, and the reference's old page in both tracks; the build's link gate
+      passes over 179 pages.
+- [x] `README.md`, `mini-courses/index.md`, `ROADMAP.md` and `scratchpad/topics.txt` (the four
+      modules as 34 to 37, and #40's other ideas as candidates) updated; `ARCHITECTURE.md` counts
+      re-measured (37 modules, 19 ready).
+- [x] Also, at the author's request the same day: **Advanced LLM Evaluation** (issue #46) added to
+      Expert before Advanced Training, as a draft in English and Turkish listing #46's metrics:
+      BLEU, ROUGE, METEOR, accuracy and precision, BERTScore; faithfulness, LLM-as-judge, human
+      preference. Expert now has 12 modules, the course 38 (19 ready).
+- [x] The full gate and the browser suite on the branch, shipped with M47 and the round-3 playground
+      as PR #66 (2026-11-06), ahead of M51.
+
+## 🏁 Milestone M62: Caravan, the trends timeline — PLACEHOLDER, LATER
+
+Issue #40's comment: a timeline of what was trending each month or season since ChatGPT (late
+2022), with expandable nodes, high-level only, on a page of its own and not in the modules'
+markdown, kept up over time. Named **Caravan** by the author (2026-11-06); the decision is posted
+on issue #40 so it is not lost. Nothing is built until the author takes it up.
+
+- [ ] A playground round when the author wants it: the timeline's design at desktop and phone
+      width; the pipeline that collects each trend's seed (which paper, article, feature or news,
+      from sources such as Google, YouTube, Medium and LinkedIn, and existing trackers on GitHub);
+      what one node holds (a word limit and a source link); and how often it is updated.
+
+Not milestones, but open: four old branches with commits found nowhere else (`backup/pre-scrub-2026-09-04`,
+`merge/main-into-revision`, `origin/backup/before-local-user`, `origin/feat/mkdocs`) wait for the
+author's word to delete; M23 (the interface's own strings) stays written and not started; PR #57 is
+the colleague's and stays unmerged without the author's word (D90).
+
+---
+
+> **← Part 2: [`PROGRESS_2.md`](PROGRESS_2.md)** — M16 to M49. **← Part 1: [`PROGRESS.md`](PROGRESS.md)**
+> — M1 to M15, and the loop.

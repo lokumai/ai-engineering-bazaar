@@ -441,10 +441,16 @@
   /* On a phone the repository button goes (the footer links it on every
      page) and the gaps tighten. Narrower than 390 the navigation still
      scrolls inside itself, as the bar's narrow rules above intend. */
+  /* M59 (D95): the search icon needs 37px on a phone, and at 390 on a module page the bar
+     was exactly full (390 of 390, MEASURED with the flag beside the switch). It is found in
+     the bar's own spacing rather than by dropping anything or shrinking a control under its
+     bound (`responsive.spec.ts`): 3px less per gap, 4px per side and per link, which keeps
+     Catalog and Progress inside the navigation at 390 (D91's guarantee, `tracks.spec.ts` and
+     `search.spec.ts`). At the language's own phone breakpoint; it declares no narrower one. */
   @media (max-width: 767px) {
     .bz-bar-repo { display: none; }
-    .bz-bar-inner { gap: 6px; }
-    .bz-bar-nav .bz-bar-link { padding-inline: 6px; }
+    .bz-bar-inner { gap: 3px; padding-inline: 8px; }
+    .bz-bar-nav .bz-bar-link { padding-inline: 2px; }
   }
 
   /* ---------------------------------------------------------------------------
@@ -546,5 +552,184 @@
   }
 
   .bz-menu-item .bz-flag { outline-color: var(--color-line-strong); }
+
+  /* A heading reached by its address (a search result, the page's own index) stops below the
+     sticky bar rather than under it, the same inset the j and k keys scroll to. */
+  main :is(h2, h3)[id] {
+    scroll-margin-top: calc(var(--layout-bar) + var(--layout-band) + 4px);
+  }
+
+  /* -- M59 (D95): the search window ----------------------------------------
+     Derived (D30): no mockup draws it. The erase dialog's answer (progress.css): a
+     hairline edge and no shadow over a backdrop of the slab's ground at reduced opacity,
+     because the language declares no translucent surface. A native modal `<dialog>`, so
+     the page behind is inert and Escape closes it. 680px wide, as the playground's N2;
+     the whole width less the gutter on a phone. */
+  .bz-search {
+    width: min(680px, calc(100vw - 32px));
+    max-width: none;
+    max-height: min(640px, calc(100dvh - 96px));
+    margin: 72px auto auto;
+    padding: 0;
+    border: 1px solid var(--color-line-strong);
+    border-radius: var(--radius-xl);
+    background: var(--color-surface-raised);
+    color: var(--color-on-surface);
+    overflow: hidden;
+  }
+
+  .bz-search::backdrop {
+    background: var(--color-slab-surface);
+    opacity: 0.42;
+  }
+
+  .bz-search-panel {
+    display: flex;
+    flex-direction: column;
+    max-height: inherit;
+  }
+
+  .bz-search-field {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px 10px 16px;
+    border-bottom: 1px solid var(--color-line-strong);
+    color: var(--color-on-surface-muted);
+  }
+
+  .bz-search-field input {
+    flex: 1;
+    min-width: 0;
+    min-height: 44px;
+    border: 0;
+    background: transparent;
+    color: var(--color-on-surface);
+    font: 500 var(--text-lead) / 1.3 var(--font-sans);
+  }
+
+  .bz-search-field input::placeholder {
+    color: var(--color-on-surface-muted);
+  }
+
+  .bz-search-more {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+  }
+
+  .bz-search-field input:focus-visible {
+    outline: none;
+  }
+
+  /* The field's ring is drawn on the row that holds it, since the input has no edge. */
+  .bz-search-field:focus-within {
+    outline: 2px solid var(--color-focus);
+    outline-offset: -2px;
+  }
+
+  .bz-search-close {
+    flex: none;
+    min-height: 44px;
+  }
+
+  .bz-search-scope {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 44px;
+    padding: 0 16px;
+    color: var(--color-on-surface-muted);
+    font-size: var(--text-meta);
+  }
+
+  .bz-search-scope input {
+    width: 18px;
+    height: 18px;
+    accent-color: var(--color-primary);
+  }
+
+  .bz-search-status {
+    margin: 0;
+    padding: 0 16px 6px;
+    color: var(--color-on-surface-muted);
+    font-size: var(--text-meta);
+  }
+
+  .bz-search-status:empty {
+    display: none;
+  }
+
+  .bz-search-results {
+    margin: 0;
+    padding: 0 8px 8px;
+    overflow-y: auto;
+    list-style: none;
+  }
+
+  .bz-search-results a {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    padding: 10px 10px;
+    border-radius: var(--radius-lg);
+    color: var(--color-on-surface);
+    text-decoration: none;
+  }
+
+  .bz-search-results a:hover {
+    background: var(--color-surface-sunken);
+  }
+
+  .bz-search-results a:focus-visible {
+    outline: 2px solid var(--color-focus);
+    outline-offset: -2px;
+    background: var(--color-surface-sunken);
+  }
+
+  .bz-search-title {
+    color: var(--color-on-surface-title);
+    font: 600 var(--text-item) / 1.35 var(--font-sans);
+  }
+
+  .bz-search-section {
+    font-weight: 500;
+    color: var(--color-on-surface);
+  }
+
+  .bz-search-snippet {
+    color: var(--color-on-surface-muted);
+    font-size: var(--text-meta);
+    line-height: 1.5;
+  }
+
+  .bz-search-snippet mark,
+  .bz-search-section mark {
+    background: transparent;
+    color: var(--color-on-surface-title);
+    font-weight: 700;
+    text-decoration: underline;
+    text-decoration-thickness: 2px;
+    text-underline-offset: 2px;
+  }
+
+  /* the muted ink, not the faint one: the faint measured 3.30:1 light and 2.49:1 dark at
+     this size (M59 review), and the level and track are what a reader reads here */
+  /* a Persian row reads right to left; its English line still sits under the title's end */
+  .bz-search-results a[dir="rtl"] .bz-search-meta {
+    align-self: flex-end;
+  }
+
+  .bz-search-meta {
+    color: var(--color-on-surface-muted);
+    font-size: var(--text-meta);
+  }
+
+  @media (max-width: 767.98px) {
+    .bz-search {
+      margin-top: 64px;
+      max-height: calc(100dvh - 80px);
+    }
+  }
 
 }

@@ -9,11 +9,8 @@ import {
   countDiagrams,
   countFigures,
   countImages,
-  countSources,
   countTables,
-  distinctExternalLinks,
   extent,
-  externalLinks,
   langCoverage,
   langFromExtents,
   sheetFormat,
@@ -190,102 +187,6 @@ describe('countFigures', () => {
       'utf8',
     )
     expect(countFigures(raw)).toBe(countFigures(body(1)))
-  })
-})
-
-describe('externalLinks / countSources', () => {
-  it('finds http and https links', () => {
-    expect(externalLinks('see [a](https://a.example) and http://b.example here'))
-      .toEqual(['https://a.example', 'http://b.example'])
-  })
-
-  it('drops the sentence punctuation a bare link picks up', () => {
-    expect(externalLinks('see https://a.example.')).toEqual(['https://a.example'])
-  })
-
-  it('ignores relative and anchor links', () => {
-    expect(externalLinks('[a](../1_fundamentals/llms.md) [b](#section)')).toEqual([])
-  })
-
-  it('counts distinct links only', () => {
-    expect(countSources('[a](https://x.example) [b](https://x.example)')).toBe(1)
-  })
-
-  it('does not count a URL inside a fenced code block', () => {
-    // 15_personal_agents.md:107 pipes `curl https://openclaw.ai/install.sh`
-    // through a ```bash fence. An install command is not a cited source and
-    // there is nothing on the page to click.
-    const md = 'Run it:\n\n```bash\ncurl -fsSL https://openclaw.ai/install.sh | sh\n```\n'
-    expect(externalLinks(md)).toEqual([])
-  })
-
-  it('does not count a URL inside an inline code span', () => {
-    // The dropped landscape sheet wrote an installer host in backticks;
-    // `unfenced()` would still have counted it, which is why this
-    // reads anchors off the parsed tree rather than lines of markdown.
-    expect(externalLinks('the host is `https://hermes-agent.example/install.sh`')).toEqual([])
-  })
-
-  it('counts the same links the renderer will mark with the external glyph', () => {
-    const md = 'A [link](https://a.example), `https://b.example`, and https://c.example.'
-    expect(externalLinks(md)).toEqual(['https://a.example', 'https://c.example'])
-  })
-
-  /*
-   * Removed: "counts only the openable links on the sheets that quoted URLs",
-   * which asserted `countSources(body(10)) === 15` and `body(14) === 16`. Two
-   * link counts on two live modules, so rewriting either one turned the build
-   * red without saying anything about `countSources`. The property it meant to
-   * protect, that a URL in backticks or a fence is not openable while an
-   * anchor and a bare URL are, is already covered by the two cases directly
-   * above from inline fixtures, which is where a claim like that belongs.
-   */
-})
-
-describe('distinctExternalLinks', () => {
-  it('keeps one entry per URL, in first-appearance order', () => {
-    const md = '[a](https://b.example) [b](https://a.example) [c](https://b.example)'
-    expect(distinctExternalLinks(md)).toEqual(['https://b.example', 'https://a.example'])
-  })
-
-  it('is empty where the body cites nothing openable', () => {
-    expect(distinctExternalLinks('[a](../1_fundamentals/llms.md) [b](#section)')).toEqual([])
-  })
-
-  it('sees exactly what `externalLinks` sees, and nothing a scraper would add', () => {
-    // §12.8 forbids a second URL scraper. Delegating is what keeps the list
-    // and the printed count answering the same question: a `curl` target in a
-    // fence and a host in backticks are in neither.
-    const md = 'Run `curl https://a.example`\n\n```bash\ncurl https://b.example\n```\n\n'
-      + '[c](https://c.example) and https://c.example again.'
-    expect(distinctExternalLinks(md)).toEqual(['https://c.example'])
-  })
-
-  it('is the occurrence list with the repeats removed, on every module', () => {
-    for (const m of modules) {
-      expect(distinctExternalLinks(m.body), m.slug).toEqual([...new Set(externalLinks(m.body))])
-      expect(distinctExternalLinks(m.body).length, m.slug)
-        .toBeLessThanOrEqual(externalLinks(m.body).length)
-    }
-  })
-
-  it('agrees with `countSources` sheet by sheet', () => {
-    // §12.8: the list a reader is shown and the number beside it must dedupe
-    // identically, or the sheet contradicts itself.
-    for (const m of modules) {
-      expect(distinctExternalLinks(m.body).length, m.slug).toBe(countSources(m.body))
-      expect(distinctExternalLinks(m.body).length, m.slug).toBe(m.sources)
-    }
-  })
-
-  it('returns absolute http(s) URLs only, ready to print in full', () => {
-    // §12.12.2 prints the full URL so it survives print; nothing here may be
-    // a fragment or a relative path.
-    for (const m of modules) {
-      for (const url of distinctExternalLinks(m.body)) {
-        expect(url, `${m.slug}: ${url}`).toMatch(/^https?:\/\/\S+$/)
-      }
-    }
   })
 })
 

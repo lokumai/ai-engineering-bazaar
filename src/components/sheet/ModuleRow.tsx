@@ -87,8 +87,8 @@ export type RowColumn = 'description' | 'both'
  * declutter a column — so the column went and the link stayed.
  *
  * **What carries the state instead, and none of it is colour.** A planned row
- * prints `—` in `Length` and `—` in `Sources`, because a sheet nobody has
- * written declares no length and cites nothing; and its completion cell holds
+ * prints `—` in `Length`, because a sheet nobody has written declares no
+ * length; and its completion cell holds
  * ONE DASHED square where a written module holds SOLID ones, because there is
  * no slot on it that could ever be filled (`SignOffSquares`). An em dash is
  * typographic content and a border style is not a colour: both survive
@@ -246,7 +246,6 @@ export function ModuleRow({ row, column }: { row: SheetRow; column: RowColumn })
       </td>
 
       <td className="bz-row-value">{row.extent}</td>
-      <td className="bz-row-value">{row.sources}</td>
 
       <td className="bz-row-signoff">
         <SignOffSquares row={row} />

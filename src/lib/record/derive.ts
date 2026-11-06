@@ -37,7 +37,6 @@ export interface CurriculumFacts {
     drawn: boolean
     hasQuickCheck: boolean
     checklistItems: number
-    sources: number
     /** M13 — the module's own declared minutes, which `readingMinutes` sums. */
     duration: number
   }>
@@ -215,8 +214,8 @@ export function uptime(
  *
  * `earned` is a DATE, not a boolean. The earned test is
  * `current >= threshold`; `earned` carries the instant when the record holds
- * one, and null when it does not — the SOURCES stamp records no per-URL
- * instant, so its date is absent rather than invented (§11.25).
+ * one, and null when it does not (the CHECKLIST stamp records no per-item
+ * instant, so its date is absent rather than invented, §11.25).
  *
  * `attainable` is false where the corpus cannot supply the threshold today, and
  * `reason` says so in sheets drawn (§7.4). Wording carries the whole §12.5.4
@@ -240,8 +239,7 @@ export interface Stamp {
  * §12.4.1 makes the reader's assertion the only completion primitive.
  *
  * A slot the sheet cannot supply is ABSENT, not empty — §7.4's rule for the
- * CHECKLIST slot, applied consistently: no Quick Check, no QUIZ slot; fewer
- * than five citable sources, no SOURCES slot. A draft sheet has no slots at
+ * CHECKLIST slot: no checklist, no CHECKLIST slot. A draft sheet has no slots at
  * all, because it has no sign-off control and awards nothing.
  */
 export function sheetStamps(data: RecordData, facts: CurriculumFacts, slug: string): Stamp[] {

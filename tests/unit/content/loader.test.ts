@@ -16,7 +16,6 @@ import {
   countDiagrams,
   countImages,
   extent,
-  externalLinks,
 } from '@/lib/content/derive'
 import { CONTENT_ROOT } from '@/lib/content/paths'
 import { stripLeadIn } from '@/lib/content/strip'
@@ -154,16 +153,14 @@ describe('loadAllModules', () => {
     }
   })
 
-  it('derives an extent, a module format, figures, sources and a language for each', () => {
+  it('derives an extent, a module format, figures and a language for each', () => {
     // Every one of these bakes in what `derive` computes, so every one is
-    // asserted against `derive` computing it. `figures >= 0` and
-    // `sources >= 0` — a length sum and a Set size — could never have gone
-    // red, and left the two rows the title block prints unverified here.
+    // asserted against `derive` computing it: `figures >= 0`, a length sum,
+    // could never have gone red.
     for (const m of modules) {
       expect(m.extent, m.slug).toBe(extent(stripLeadIn(m.body)))
       expect(['A0', 'A2', 'A4'], m.slug).toContain(m.sheetFormat)
       expect(m.figures, m.slug).toBe(countDiagrams(m.body) + countImages(m.body))
-      expect(m.sources, m.slug).toBe(new Set(externalLinks(m.body)).size)
       expect(['EN', 'EN·TR'], m.slug).toContain(m.lang)
     }
   })

@@ -99,7 +99,8 @@ function printedRevision(page: Page) {
  */
 const completion = (page: Page) =>
   page.getByRole('checkbox', { name: 'Mark this module as complete' })
-const anyDialog = (page: Page) => page.locator('[role="dialog"], [role="alertdialog"], dialog')
+/* A native `<dialog>` counts only while open: the search window (M59) is one, closed, on every page. */
+const anyDialog = (page: Page) => page.locator('[role="dialog"], [role="alertdialog"], dialog[open]')
 
 /*
   FOUR LOCATORS THAT EXIST TO BE SHARED, not to save typing.

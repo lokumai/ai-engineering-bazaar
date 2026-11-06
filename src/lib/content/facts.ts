@@ -1,6 +1,5 @@
 import { CATEGORIES } from './curriculum-file'
 import { checklistOf } from './checklist'
-import { countSources } from './derive'
 import { moduleGraph } from './edges'
 import { loadAllModules } from './loader'
 import { quickCheckOf } from './quickcheck'
@@ -20,16 +19,16 @@ import type { Track } from '../tracks'
  * imports nothing so that a client island may import it.
  *
  * **It is deliberately small.** §12.2 / D11 serialise it into every page, so it
- * carries counts, not content: no body text, no section spines, no source URL
- * lists, no checklist item text. Anything a single sheet's page needs — the
- * question, the item texts, the URLs — the sheet's own page derives for itself
- * from `quickCheckOf`, `checklistOf` and `distinctExternalLinks`.
+ * carries counts, not content: no body text, no section spines, no checklist
+ * item text. Anything a single sheet's page needs — the question, the item
+ * texts — the sheet's own page derives for itself from `quickCheckOf` and
+ * `checklistOf`.
  *
  * **Every field is derived or absent (§11.25).** Nothing here is typed by hand,
  * including the four numbers §12.5.1 multiplies into `2,380 ATTAINABLE TODAY`.
  * `revision` is `null` on a checkout where git cannot tell us, which is the one
  * honest answer; §11.25's dash gate is on `status`, not on zero, so a sheet
- * nobody has drawn reports `0` sources and `0` checklist items rather than a
+ * nobody has drawn reports `0` checklist items rather than a
  * dash — the count was taken, and it came to zero.
  */
 
@@ -51,8 +50,6 @@ export interface SheetFact {
   hasQuickCheck: boolean
   /** §12.7 — how many `- [ ]` items. 8 on one sheet, 0 on the other 31. */
   checklistItems: number
-  /** §12.8 / §5.5 `SOURCES` — distinct external links. */
-  sources: number
   /**
    * M13 — the module's own declared reading time, in minutes.
    *
@@ -127,8 +124,6 @@ export function curriculumFacts(track: Track = 'engineers'): CurriculumFacts {
       drawn: track === 'everyone' ? everyone !== null : m.frontmatter.status === 'ready',
       hasQuickCheck: track === 'engineers' && quickCheckOf(body) !== null,
       checklistItems: track === 'everyone' && everyone === null ? 0 : checklistOf(body).length,
-      // The page counts the body it shows, so the fact must count the same one.
-      sources: track === 'everyone' ? (everyone ? countSources(everyone.body) : 0) : m.sources,
       duration: m.frontmatter.duration,
       revision: (everyone ? everyone.revision : m.revision)?.hash ?? null,
     }

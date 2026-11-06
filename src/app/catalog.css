@@ -557,7 +557,7 @@
      spaces it — `margin: 0 0 10px`, which the mockup's `.card p` declares. */
   .bz-catcard .bz-desc { margin: 0 0 14px; }
 
-  /* Each fact named, because a bare `23` next to a bare `EN · TR` is the meta
+  /* Each fact named, because a bare `1, 3` next to a bare length is the meta
      strip DESIGN.md calls a tell. Laid out on `03`'s own footer row, whose gap
      is 9px — taken here as 6px down and 14px across, because this row wraps to
      two lines where the mockup's holds three items on one and a wrapped row

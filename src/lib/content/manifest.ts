@@ -4,7 +4,7 @@ import { EMPTY_RECORD } from '../record/schema'
 import { plural } from '../text'
 import type { Category } from './curriculum-file'
 import { categoryPath, sheetPath } from './curriculum'
-import { LANG_DISPLAY, countFigures } from './derive'
+import { LANG_DISPLAY } from './derive'
 import { moduleGraph } from './edges'
 import { curriculumFacts } from './facts'
 import { loadAllModules, loadModuleIn } from './loader'
@@ -17,7 +17,7 @@ import { topicsFor } from './topics'
  * §4.8 and §4.9 — the manifest.
  *
  * One row per sheet, and every cell in it is a fact about the *drawing*: its
- * extent, its sources, its language coverage, whether it is drawn, and what it
+ * extent, its language coverage, whether it is drawn, and what it
  * requires. Not one value here is a fact about the reader. That is the whole
  * point of §1's second question, and it is why this module is the only place
  * the two listing pages get their numbers from — a count computed twice starts
@@ -30,7 +30,7 @@ import { topicsFor } from './topics'
  *
  * §4.8's ninth column does not change that. `slots` names the sign-off slots a
  * sheet SUPPLIES — which is a property of the drawing, exactly like its extent
- * and its sources — and never which of them a reader has filled. The filling is
+ * — and never which of them a reader has filled. The filling is
  * §12.2 channel B's job, after mount, in one island; nothing here has an
  * opinion about it.
  */
@@ -90,10 +90,6 @@ export function sheetRows(track: Track = 'engineers'): SheetRow[] {
       extent: drawn
         ? `${thousands(sheet.extent)} W · ${sheet.frontmatter.duration} MIN`
         : DASH,
-      // Gated on `drawn`, not on zero, for the reason §5.5 gives: a dash means
-      // nobody counted, and on a drawn sheet somebody did. Modules 2, 4 and 5
-      // cite nothing, and `0` is the true statement about them.
-      sources: drawn ? String(sheet.sources) : DASH,
       lang: LANG_DISPLAY[sheet.lang],
       bilingual: sheet.lang === 'EN·TR',
       requires: requires.length === 0 ? DASH : requires.join(', '),
@@ -182,44 +178,6 @@ export function moduleLengthRange(): LengthRange {
   return {
     shortest: Math.min(...declared),
     longest: Math.max(...declared),
-  }
-}
-
-/**
- * M13 — the four facts the home page states about the course, measured.
- *
- * The home page's strip of numbers is the one place on the site that says how
- * big this thing is, and §11.25 does not make an exception for a number in a
- * headline: every one of these is counted from the corpus at build time, so
- * breaking a derivation changes the page rather than leaving it confidently
- * wrong. The strip prints `19 of 33 written`, a reading time, a figure count
- * and a source count, and it prints nothing this function did not count.
- *
- * `figures` is diagrams plus images, which is what a module's own info panel
- * counts (`countFigures`), so the total and the per-module rows cannot
- * disagree. `sources` is the sum of each module's distinct external links —
- * per module, so a paper cited by two modules is two citations here. The home
- * page says "sources cited" rather than "distinct sources" for exactly that
- * reason.
- */
-export interface CorpusTotals {
-  modules: number
-  ready: number
-  /** Declared minutes across the ready modules. */
-  minutes: number
-  figures: number
-  sources: number
-}
-
-export function corpusTotals(): CorpusTotals {
-  const modules = loadAllModules()
-  const { sheets, drawn, minutes } = setSummary()
-  return {
-    modules: sheets,
-    ready: drawn,
-    minutes,
-    figures: modules.reduce((total, module) => total + countFigures(module.body), 0),
-    sources: modules.reduce((total, module) => total + module.sources, 0),
   }
 }
 

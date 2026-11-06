@@ -57,6 +57,7 @@ export type KeyAction =
   | { kind: 'theme' }
   | { kind: 'sign-off' }
   | { kind: 'shortcuts' }
+  | { kind: 'search' }
   | { kind: 'close' }
 
 /** The whole machine: whether `g` has been pressed and is waiting. */
@@ -179,6 +180,8 @@ const KEYS: ReadonlyMap<string, KeyAction> = new Map<string, KeyAction>([
   ['.', { kind: 'theme' }],
   ['s', { kind: 'sign-off' }],
   ['?', { kind: 'shortcuts' }],
+  // M59 (D95) — opens the search window; Ctrl/Cmd+K, a modifier chord, is the search's own.
+  ['/', { kind: 'search' }],
 ])
 
 export function isTypingTarget(target: DescribedTarget): boolean {
@@ -313,5 +316,6 @@ export const SHORTCUTS: readonly Shortcut[] = Object.freeze([
   { keys: '.', action: 'Toggle theme', target: null },
   { keys: 's', action: 'Complete or un-complete the current module', target: null },
   { keys: '?', action: 'Keyboard shortcuts', target: null },
+  { keys: '/', action: 'Search the course', target: null },
   { keys: 'Esc', action: 'Close dialog, drawer or overlay', target: null },
 ])

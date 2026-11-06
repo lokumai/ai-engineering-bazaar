@@ -11,7 +11,7 @@
  * **`lang` reaches the corpus and stops there.** `loadModuleIn` returns the
  * module with its body ALREADY in the language asked for, so every derivation
  * below — the quick check, the authored summary, the figure sequence, the
- * sources, the word count — runs against the right text without one line here
+ * word count — runs against the right text without one line here
  * choosing. Nothing branches on the language except the two things that must:
  * the `lang` attribute the prose carries, and the control that switches.
  */

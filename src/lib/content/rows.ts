@@ -44,8 +44,6 @@ export interface SheetRow {
   subsystem: SubsystemRef
   /** §4.8 `EXTENT` — `5,008 W · 30 MIN`, or `—` on a sheet not yet drawn. */
   extent: string
-  /** §4.8 `SOURCES` — the count of distinct external links, or `—`. */
-  sources: string
   /** §4.8 `LANG` — `EN` or `EN · TR`, computed per §7.6. */
   lang: string
   bilingual: boolean

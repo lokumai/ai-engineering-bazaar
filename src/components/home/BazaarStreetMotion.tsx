@@ -2,11 +2,12 @@
 
 import { useRouter } from 'next/navigation'
 import { useLayoutEffect, useRef } from 'react'
+import { initClouds } from './street/clouds'
 import { initTrack } from './street/track'
 
 /**
  * The one island on the home page: it starts the bazaar's motion and stops it,
- * and works the track choice.
+ * and works the track choice and the story clouds over the people at the gate.
  *
  * Renders nothing. `gsap` is imported on demand, so the page's first paint
  * carries none of it and a reader who never scrolls never pays for it. The
@@ -32,6 +33,7 @@ export function BazaarStreetMotion({ rootId }: { rootId: string }) {
     const root = document.getElementById(rootId)
     if (!root) return
     const stopTrack = initTrack(root, (path) => push.current(path))
+    const stopClouds = initClouds(root)
     void import('./street/motion').then(({ initBazaar }) => {
       if (!gone) stop = initBazaar(root)
     })
@@ -39,6 +41,7 @@ export function BazaarStreetMotion({ rootId }: { rootId: string }) {
       gone = true
       stop?.()
       stopTrack()
+      stopClouds()
     }
   }, [rootId])
 

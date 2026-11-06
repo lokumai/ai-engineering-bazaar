@@ -1,5 +1,6 @@
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
+import { CHASE_END, ZOOM_AT, makeChase } from './chase'
 import { STALL_TIMELINES } from './stall-timelines'
 import { CHOSEN } from './track'
 
@@ -56,6 +57,11 @@ const EASE_OUT = 1000
 const STALL_STOPS = 4
 /** The choice is a decision, so the walk holds there longer than at a stall. */
 const CHOICE_HOLD = 0.95
+/** How much of the walk's timeline the escape at the gate takes (M58), in the timeline's
+    units, where the zoom through the gate takes 1: about one window's height of scroll. */
+const CHASE = 1.2
+/** Where the zoom starts: when the crowd is in, not when the last of it has gone. */
+const ZOOM = (CHASE * ZOOM_AT) / CHASE_END
 /* Layer speeds relative to the stall row. */
 const SP = { back: 0.3, mid: 1, beams: 0.8, fore: 1.45 }
 
@@ -159,6 +165,8 @@ export function initBazaar(root: HTMLElement): Cleanup {
     const copy = $('.gate-copy', gate)
     const tunnel = $('.tunnel', gate)
     const motes = $('.gate-motes', gate)
+    const chase = makeChase(root, gate)
+    const chaseT = { t: 0 }
     const moved: Array<[Node, Node, Node | null]> = []
     const move = (node: Node, parent: Node, before: Node | null = null) => {
       moved.push([node, node.parentNode!, node.nextSibling])
@@ -191,6 +199,12 @@ export function initBazaar(root: HTMLElement): Cleanup {
       K = Math.min(1, (VW - 2 * EDGE) / (GROUP * U))
       stage.style.setProperty('--u', String(U))
       stage.style.setProperty('--k', String(K))
+      /* The cast stands across the facade, not only the art's box (M58): further from the
+         middle the narrower the art is against the window, never past 85% of the window's
+         half-width, and at most 2.3 times (MEASURED: what 900x560, the smallest walk, needs
+         for its captions not to touch). */
+      const art = $('#archBox', gate).offsetWidth
+      if (chase && art > 0) chase.spread(Math.min(2.3, Math.max(1, (0.85 * VW) / art)))
     }
     /* The pull-back is full at the choice and gone EASE_OUT units either side, so every other stop is drawn as it always was. */
     const pull = (x: number): number => {
@@ -234,20 +248,34 @@ export function initBazaar(root: HTMLElement): Cleanup {
     /* walking in: the gate zooms about the far end of its vaulted street; the
        vault inside the arch fades so the real street shows through the
        opening; the frame passes off screen */
+    /* The far end is 432 of the art's 620 units down its box, which since M58 hangs above
+       the pavement rather than at the bottom of the arch's frame. */
     const origin = () => {
       const ga = $('.gate-arch', gate)
-      return `${gate.offsetWidth / 2}px ${ga.offsetTop + ga.offsetHeight * (432 / 620)}px`
+      const box = $('#archBox', gate)
+      return `${gate.offsetWidth / 2}px ${ga.offsetTop + box.offsetTop + box.offsetHeight * (432 / 620)}px`
     }
-    const master = gsap.timeline({ paused: true, defaults: { ease: 'none' }, onUpdate: apply })
+    const master = gsap.timeline({
+      paused: true,
+      defaults: { ease: 'none' },
+      onUpdate: () => {
+        apply()
+        chase?.render(chaseT.t)
+      },
+    })
+    /* M58: first the escape at the gate (street/chase.ts), drawn from its own clock, then
+       the zoom through the gate as before. With no cast on the page there is no chase. */
+    const Z = chase ? ZOOM : 0
+    if (chase) master.to(chaseT, { t: CHASE_END, duration: CHASE }, 0)
     master
-      .fromTo(gate, { scale: 1, transformOrigin: origin }, { scale: 9, transformOrigin: origin, ease: 'power2.in', duration: 1 }, 0)
-      .fromTo(copy, { opacity: 1, y: 0 }, { opacity: 0, y: -40, duration: 0.28 }, 0)
-      .fromTo([tunnel, motes], { opacity: 1 }, { opacity: 0, duration: 0.34, ease: 'power1.inOut' }, 0.2)
-      .fromTo(street, { scale: 1.3 }, { scale: 1, duration: 0.85, ease: 'power2.out' }, 0.15)
-      .fromTo(gate, { autoAlpha: 1 }, { autoAlpha: 0, duration: 0.04 }, 0.96)
+      .fromTo(gate, { scale: 1, transformOrigin: origin }, { scale: 9, transformOrigin: origin, ease: 'power2.in', duration: 1 }, Z)
+      .fromTo(copy, { opacity: 1, y: 0 }, { opacity: 0, y: -40, duration: 0.28 }, Z)
+      .fromTo([tunnel, motes], { opacity: 1 }, { opacity: 0, duration: 0.34, ease: 'power1.inOut' }, Z + 0.2)
+      .fromTo(street, { scale: 1.3 }, { scale: 1, duration: 0.85, ease: 'power2.out' }, Z + 0.15)
+      .fromTo(gate, { autoAlpha: 1 }, { autoAlpha: 0, duration: 0.04 }, Z + 0.96)
     const HOLD = 0.46
     const LEAD = 0.42
-    let pos = 1.02
+    let pos = Z + 1.02
     let from = STOPS[0]
     let choiceAt = 0
     for (let i = 1; i < STOPS.length; i++) {
@@ -284,12 +312,19 @@ export function initBazaar(root: HTMLElement): Cleanup {
       anticipatePin: 1,
     })
     ScrollTrigger.addEventListener('refreshInit', size)
-    ScrollTrigger.addEventListener('refresh', apply)
+    const redraw = () => {
+      apply()
+      chase?.render(chaseT.t)
+    }
+    ScrollTrigger.addEventListener('refresh', redraw)
     toDoors = () => window.scrollTo({ top: st.end, behavior: 'smooth' })
 
     /* keyboard: a control inside the walk brings the walk to where that control is visible */
     const onFocus = (e: FocusEvent) => {
       const target = e.target as HTMLElement
+      /* A person at the gate is reached only before the chase, where the walk already is,
+         and a click focuses them too: scrolling there would jump the walk back (M58 review). */
+      if (target.closest('.who-btn')) return
       const p = target.closest('.door, .cta-wrap')
         ? 1
         : target.closest('.track-sign') ? choiceAt / master.duration() : 0
@@ -306,9 +341,10 @@ export function initBazaar(root: HTMLElement): Cleanup {
       toDoors = null
       section.removeEventListener('focusin', onFocus)
       ScrollTrigger.removeEventListener('refreshInit', size)
-      ScrollTrigger.removeEventListener('refresh', apply)
+      ScrollTrigger.removeEventListener('refresh', redraw)
       st.kill(true)
       master.kill()
+      chase?.reset()
       signs.forEach((s) => {
         s.tl.kill()
         gsap.set($('.swing', s.el), { clearProps: 'all' })

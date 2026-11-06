@@ -129,7 +129,7 @@ by an agent, out of a conversation — nobody maintains them by hand. Your job i
 **How to use them.**
 
 - **Before proposing or building anything:** `specs/MANIFESTO.md` for the boundary you may not cross, and
-  the ACTIVE part of `logs/BRAINSTORM.md` — currently `BRAINSTORM_2.md` — to check whether your
+  the ACTIVE part of `logs/BRAINSTORM.md` — currently `BRAINSTORM_3.md` — to check whether your
   idea was already considered and rejected.
 - **Before touching anything structural:** `specs/ARCHITECTURE.md`.
 - **Every session:** `logs/PROGRESS.md` **and its later parts** hold the current milestone, its
@@ -155,7 +155,7 @@ Four levels under `kia-context/`, split by **authority**, not by topic.
 | **Map** | `kia-context/INDEX.md` | agent, when files move | What exists, and what points at what |
 | **0** | `kia-context/genesis/` | agent, at t=0 | Where this came from. `SEED.md`, `GENESIS.md` |
 | **1–2** | `kia-context/specs/` | agent, when explicitly refactoring | The law. `MANIFESTO.md`, `ARCHITECTURE.md`, `DESIGN.md` |
-| **3** | `kia-context/logs/` | agent, every session | State. `PROGRESS.md` + `PROGRESS_2.md`, `BRAINSTORM.md` + `BRAINSTORM_2.md` |
+| **3** | `kia-context/logs/` | agent, every session | State. `PROGRESS.md` + `PROGRESS_2.md` + `PROGRESS_3.md`, `BRAINSTORM.md` + `BRAINSTORM_2.md` + `BRAINSTORM_3.md` |
 
 `docs/` is a different thing entirely: human-facing artifacts, written **only when a human asks for one**.
 Agents do not maintain them and do not need to read them to do the work.

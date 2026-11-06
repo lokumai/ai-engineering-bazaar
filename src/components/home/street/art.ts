@@ -1,5 +1,6 @@
 import fs from 'node:fs'
 import path from 'node:path'
+import type { CastId } from './cast'
 
 /**
  * The bazaar's art, read at build time and handed to the page as markup.
@@ -35,6 +36,8 @@ export type ArtName =
   | `icon-${1 | 2 | 3 | 4}`
   | `door-${1 | 2 | 3 | 4 | 5}`
   | `tray-${1 | 2 | 3 | 4 | 5}`
+  | `cast-${CastId}`
+  | `cast-${CastId}-tile`
 
 export function art(name: ArtName): string {
   const hit = cache.get(name)

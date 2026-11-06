@@ -3,6 +3,7 @@ import type { Metadata } from 'next'
 import { Fraunces } from 'next/font/google'
 import Link from 'next/link'
 import { BazaarStreetMotion } from '@/components/home/BazaarStreetMotion'
+import { CastAtGate, CastRow } from '@/components/home/Cast'
 import { art, type ArtName } from '@/components/home/street/art'
 import { PageShell } from '@/components/shell/PageShell'
 import { CATEGORIES } from '@/lib/content/curriculum-file'
@@ -273,10 +274,14 @@ export default function HomePage() {
               Open the curriculum
             </Link>
           </div>
-          <div className="gate-arch" aria-hidden="true">
-            <div className="arch-box" id="archBox" dangerouslySetInnerHTML={{ __html: art('gate') }} />
+          {/* The art is hidden from assistive technology and the people standing in
+              front of it are not: each is a button with a caption and a story (M58). */}
+          <div className="gate-arch">
+            <div className="arch-box" id="archBox" aria-hidden="true" dangerouslySetInnerHTML={{ __html: art('gate') }} />
+            <CastAtGate />
           </div>
         </section>
+        <CastRow />
 
         <section className="mottos" aria-label="Why this course">
           <div className="mottos-in">

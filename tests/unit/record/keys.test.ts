@@ -51,6 +51,7 @@ describe('resolveKey — the unprefixed keys (§12.16)', () => {
       ['.', { kind: 'theme' }],
       ['s', { kind: 'sign-off' }],
       ['?', { kind: 'shortcuts' }],
+      ['/', { kind: 'search' }],
     ]
     for (const [key, action] of cases) {
       const result = resolveKey(IDLE, press(key), ON)
@@ -138,7 +139,7 @@ describe('resolveKey — the guards (§12.16)', () => {
 
 describe('resolveKey — prefs.charKeys, the SC 2.1.4 off switch', () => {
   it('turns off every single-character shortcut, ? included', () => {
-    for (const key of ['g', '[', ']', 'j', 'k', '.', 's', '?']) {
+    for (const key of ['g', '[', ']', 'j', 'k', '.', 's', '?', '/']) {
       const result = resolveKey(IDLE, press(key), OFF)
       expect(result.action, key).toBeNull()
       expect(result.handled, key).toBe(false)
@@ -287,7 +288,7 @@ describe('the table the ? module prints (§12.16)', () => {
     // `/profile/`. The remaining four are in the order they were in.
     expect(SHORTCUTS.map((row) => row.keys)).toEqual([
       'g h', 'g i', 'g p', 'g c',
-      '[ / ]', 'j / k', '.', 's', '?', 'Esc',
+      '[ / ]', 'j / k', '.', 's', '?', '/', 'Esc',
     ])
   })
 

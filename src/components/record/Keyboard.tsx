@@ -19,6 +19,7 @@ import { useRecord } from '@/lib/record/store'
 import { applyTheme, nextTheme, readTheme, type ThemeStorage } from '@/lib/theme'
 import { href } from '@/lib/url'
 import { ShortcutSheet } from './ShortcutSheet'
+import { SEARCH_OPEN_EVENT } from '@/lib/search/events'
 
 /**
  * §12.16 — the site-wide keyboard map, as DOM wiring and nothing else.
@@ -199,6 +200,9 @@ export function Keyboard() {
           return
         case 'shortcuts':
           setOpen(true)
+          return
+        case 'search':
+          window.dispatchEvent(new Event(SEARCH_OPEN_EVENT))
           return
         case 'close':
           // Radix closes on `Esc` itself; this keeps the two in step when the

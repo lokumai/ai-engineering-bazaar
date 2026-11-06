@@ -21,7 +21,7 @@ description: >
 authority: state
 writes: agent, every session
 status: active
-covers: "M16 to M40 and M42 to M48 (M41 on PR #57), 2026-09-09 onward — M16 the ten stages and the review pass, M17 the curriculum fold, M18 the front door, M20 the catalog's descriptions, M21 the module page, M22 the progress redesign and M19's pipeline, all six done; M23 — the interface's own strings — is written and not started; M24 — the author's requests of 2026-10-11 — shipped and merged as PR #23, with a same-day follow-up (the level chip `All`, a filter bar that no longer sticks, the current level marked); M25 — the end of a module rebuilt, and a quick quiz — shipped and merged as PR #25; M26 — headings, the requested additions and ASD-STE-like English across the corpus — merged as PR #26. M27 — the Bazaar Street front door — merged as PR #27. Released as v1.0.0 on 2026-10-12. M28 — Persian, the third language — merged as PR #30 the same day. M29 — both translations rewritten in their own language (D81) — merged as PR #31 the same day. M30 — the Persian rewritten by meaning and a clarity hunt in all three languages (D82, D83) — merged as PR #32 the same day. M31 — two promo videos, one made with HyperFrames and one with /brag (D84) — removed at the author's request before merging. M32 — the README rewritten for readers — squash-merged as PR #33 on 2026-10-13. M33 — a tray of lokum offered at each door on hover — merged as PR #34 on 2026-10-14. M34 — the star count refreshed by the deploy (D85) — merged as PR #36 on 2026-10-15. M35 — Harness Engineering names its parts in plain words — merged as PR #38 on 2026-10-15. M36 — three references for Observability and Context Engineering — merged as PR #42 on 2026-10-18. M37 — ten stale mockups removed from playground/ — merged as PR #54 on 2026-11-05. M38 — the progress page slimmed to its circles, the continue card and the data row — merged as PR #55 on 2026-11-05. M43 to M45 — the round-2 picks (D91) — merged as PR #59 on 2026-11-05. M46 — the home page tidied and Iran's flag for Persian — merged as PR #60 the same day. Checkbox format repaired across the part on 2026-09-13."
+covers: "M16 to M40 and M42 to M49 (M41 on PR #57), 2026-09-09 onward — M16 the ten stages and the review pass, M17 the curriculum fold, M18 the front door, M20 the catalog's descriptions, M21 the module page, M22 the progress redesign and M19's pipeline, all six done; M23 — the interface's own strings — is written and not started; M24 — the author's requests of 2026-10-11 — shipped and merged as PR #23, with a same-day follow-up (the level chip `All`, a filter bar that no longer sticks, the current level marked); M25 — the end of a module rebuilt, and a quick quiz — shipped and merged as PR #25; M26 — headings, the requested additions and ASD-STE-like English across the corpus — merged as PR #26. M27 — the Bazaar Street front door — merged as PR #27. Released as v1.0.0 on 2026-10-12. M28 — Persian, the third language — merged as PR #30 the same day. M29 — both translations rewritten in their own language (D81) — merged as PR #31 the same day. M30 — the Persian rewritten by meaning and a clarity hunt in all three languages (D82, D83) — merged as PR #32 the same day. M31 — two promo videos, one made with HyperFrames and one with /brag (D84) — removed at the author's request before merging. M32 — the README rewritten for readers — squash-merged as PR #33 on 2026-10-13. M33 — a tray of lokum offered at each door on hover — merged as PR #34 on 2026-10-14. M34 — the star count refreshed by the deploy (D85) — merged as PR #36 on 2026-10-15. M35 — Harness Engineering names its parts in plain words — merged as PR #38 on 2026-10-15. M36 — three references for Observability and Context Engineering — merged as PR #42 on 2026-10-18. M37 — ten stale mockups removed from playground/ — merged as PR #54 on 2026-11-05. M38 — the progress page slimmed to its circles, the continue card and the data row — merged as PR #55 on 2026-11-05. M43 to M45 — the round-2 picks (D91) — merged as PR #59 on 2026-11-05. M46 — the home page tidied and Iran's flag for Persian — merged as PR #60 the same day. Checkbox format repaired across the part on 2026-09-13."
 last_updated: 2026-11-05
 ---
 
@@ -4581,7 +4581,39 @@ others chase it (three samples for each decision).
 ### Acceptance criteria
 
 - [x] Every option is read in a screenshot before it is shown to the author.
-- [ ] The author picks; building the picks is a later milestone.
+- [x] The author picked, 2026-11-06: **K2**, but *"the hands are wrong visually"*, so the grip is
+      redrawn (a tripod grip seen from the thumb side, see M49); **L1b** at the foot of the gate;
+      **L3a** the robot turns and runs straight in, the crowd after it. **L2 was rejected:** *"too
+      diverse and unrealistic"*; no modern clothes, Ottoman dress for the Turkish figures, people of
+      the Ottoman trade world (Arabia, Africa, China, Iran), no headscarves added, and each person
+      carrying a sign of their trade. Kept: Bit (in a fez), Mei (more Chinese), Deniz (with a simit),
+      Leyla (with her spices); Kofi and Ivan dropped; five Iranian characters and three wise old men
+      to choose from (M49).
+
+## 🏁 Milestone M49: The hand redrawn, and the cast at the gate redrawn as the bazaar's traders — IN PROGRESS
+
+The author's picks and corrections of 2026-11-06 (M48). Done by the main session itself, at the
+author's request (*"do it yourself since subagents might not do it well"*); the redrawn hand is
+inspected by a Haiku reviewer at xhigh effort, as the author asked.
+
+### Deliverables
+
+- [x] K2's hand redrawn in `K-woman-hand.html` (shared by K1 and K3): the index finger along the
+      top of the pen to near its point, the thumb pinching it from the near side above the index
+      tip, the middle finger under it, the ring and little fingers folded into the fist, each part
+      outlined so overlaps separate; the henna moves onto the back of the new hand.
+- [ ] The Haiku review of the hand, and its findings fixed.
+- [x] `playground/2026-11-round-3/M-characters.html`: Bit, Mei (a cross-collared robe with wide
+      sleeves, a high bun with pins, a bolt of silk), Deniz (a simit) and Leyla (a bowl of spice
+      and a scoop, sacks at her feet); **N1 to N5**, five Iranian traders (Shirin with saffron,
+      Dariush with a carpet, Reza with a painted miniature, Kaveh with an astrolabe, Golnar with
+      pistachios); **W1 to W3**, three wise old men (Ahmet Hoca, a scholar in a kavuk with his
+      book; Piri, a map-maker; Lokman, a healer with a mortar); and a lineup in L1b's order.
+
+### Acceptance criteria
+
+- [x] Every figure read in a screenshot, at full size and as a face close-up.
+- [ ] The author picks the Iranian and the wise old man; then the cast and L1b + L3a are built.
 
 ---
 

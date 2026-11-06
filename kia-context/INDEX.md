@@ -167,7 +167,7 @@ maintained by an agent, and do not need reading to do the work. The root `CLAUDE
 
 ## 6. The numbering, and why it never restarts
 
-`M1…M15` are milestones in `logs/PROGRESS.md` and `M16…M48` are in `logs/PROGRESS_2.md` (M41 on PR #57). `D1…D25` are decisions in `logs/BRAINSTORM.md` and `D26…D91` are in `logs/BRAINSTORM_2.md` (D89 on PR #57), where `O1…O5` are the open questions
+`M1…M15` are milestones in `logs/PROGRESS.md` and `M16…M49` are in `logs/PROGRESS_2.md` (M41 on PR #57). `D1…D25` are decisions in `logs/BRAINSTORM.md` and `D26…D91` are in `logs/BRAINSTORM_2.md` (D89 on PR #57), where `O1…O5` are the open questions
 in `logs/BRAINSTORM_2.md`, of which all four are closed. Rules `1…18` are in
 `specs/MANIFESTO.md`.
 

@@ -4646,8 +4646,11 @@ inspected by a Haiku reviewer at xhigh effort before the author sees it, as the 
       (`scripts/capture-stall-scenes.mjs`, G1b) takes the same hand, so a regeneration keeps it.
 - [ ] **The cast at the foot of the gate (L1b)** on the home page's opening: Bit in the doorway;
       Leyla, Dariush and Deniz to its left; Mei and Piri to its right; the Janissary at the gate's
-      jamb as its guard. Each with a caption (name and what they do, as in M49) and their idle
-      motion. The pavement strip under the arch, which the page crops today, is shown so they have
+      jamb as its guard. Each has their idle motion and, at their starting place
+      before the escape, a minimal caption under them: the name, and the trade in a few words
+      (*"Dariush · carpet merchant"*), small and quiet like the Sipahi's and the Bezirgân's; the
+      captions fade out as the chase begins, and stay in the reduced-motion still and on a phone
+      (the author, 2026-11-06). The pavement strip under the arch, which the page crops today, is shown so they have
       somewhere to stand.
 - [ ] **The robot's escape (L3a)** on the walk's scroll: Bit turns his face, runs straight into the
       gate, the crowd throws up its arms and runs in after him, then the walk's own zoom through the

@@ -1,12 +1,12 @@
 'use client'
 
 import Link from 'next/link'
-import { usePathname } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
 import type MiniSearch from 'minisearch'
 import type { SearchResult } from 'minisearch'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { SEARCH_OPEN_EVENT } from '@/lib/search/events'
-import { SEARCH_LANGS, searchOptions, type SearchLang } from '@/lib/search/normalise'
+import { SEARCH_LANGS, normalise, searchOptions, type SearchLang } from '@/lib/search/normalise'
 import { readingTrackOf, trackLabel, type Track } from '@/lib/tracks'
 import { href } from '@/lib/url'
 
@@ -59,21 +59,46 @@ function MagnifierIcon() {
   )
 }
 
-/** The excerpt, with the words the reader typed marked where they appear as typed. */
-function Snippet({ text, terms }: { text: string; terms: string[] }) {
-  const words = terms.filter((t) => t.length > 1)
-  if (words.length === 0) return <>{text}</>
-  const pattern = new RegExp(`(${words.map((w) => w.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|')})`, 'giu')
-  const parts = text.split(pattern)
+const WINDOW = 220
+const WORD = /([\p{L}\p{N}\p{M}\u200c]+)/u
+
+/**
+ * The excerpt around the first word that matched, with every matching word marked. A word
+ * matches when the same normaliser the index uses makes it start with a typed word, so
+ * "gorev" marks "görev" and an Arabic yeh marks a Persian one (M59 review).
+ */
+function Snippet({ text, terms, lang }: { text: string; terms: string[]; lang: SearchLang }) {
+  const wanted = terms.map((t) => normalise(t, lang)).filter((t) => t.length > 1)
+  const parts = text.split(WORD)
+  const hit = (part: string, i: number) => i % 2 === 1 && wanted.some((w) => normalise(part, lang).startsWith(w))
+  let at = parts.findIndex(hit)
+  let from = 0
+  if (at > 0) {
+    const before = parts.slice(0, at).join('').length
+    if (before > WINDOW / 3) {
+      let chars = 0
+      for (from = at; from > 0 && chars < WINDOW / 4; from -= 1) chars += parts[from - 1].length
+    }
+  } else at = 0
+  const shown: Array<{ text: string; mark: boolean }> = []
+  let length = 0
+  for (let i = from; i < parts.length && length < WINDOW; i += 1) {
+    shown.push({ text: parts[i], mark: hit(parts[i], i) })
+    length += parts[i].length
+  }
+  const cut = shown.reduce((n, p) => n + p.text.length, 0) < parts.join('').length - parts.slice(0, from).join('').length
   return (
     <>
-      {parts.map((part, i) => (i % 2 === 1 ? <mark key={i}>{part}</mark> : part))}
+      {from > 0 ? '…' : null}
+      {shown.map((p, i) => (p.mark ? <mark key={i}>{p.text}</mark> : p.text))}
+      {cut ? '…' : null}
     </>
   )
 }
 
 export function SearchDialog() {
   const pathname = usePathname() ?? '/'
+  const router = useRouter()
   const dialog = useRef<HTMLDialogElement>(null)
   const field = useRef<HTMLInputElement>(null)
   const list = useRef<HTMLUListElement>(null)
@@ -90,6 +115,7 @@ export function SearchDialog() {
   const load = useCallback(async (langs: readonly SearchLang[]) => {
     const missing = langs.filter((l) => indexes.current[l] === undefined)
     if (missing.length === 0) return
+    setFailed(false)
     try {
       const { default: MiniSearchClass } = await import('minisearch')
       await Promise.all(
@@ -147,7 +173,9 @@ export function SearchDialog() {
       const index = indexes.current[l]
       if (!index) continue
       const filter = everything ? undefined : (r: SearchResult) => r.track === track
-      found.push(...(index.search(q, { filter }) as Hit[]))
+      /* with every language searched, the page's own wins a tie */
+      const own = l === lang ? 1.2 : 1
+      found.push(...(index.search(q, { filter }) as Hit[]).map((h) => ({ ...h, score: h.score * own })))
     }
     return found.sort((a, b) => b.score - a.score).slice(0, LIMIT)
     // `ready` is the signal that an index arrived; the indexes live in a ref
@@ -162,6 +190,29 @@ export function SearchDialog() {
     if (event.key === 'ArrowDown') {
       event.preventDefault()
       list.current?.querySelector<HTMLAnchorElement>('a')?.focus()
+    } else if (event.key === 'Enter' && hits.length > 0) {
+      event.preventDefault()
+      close()
+      router.push(hits[0].url)
+    } else if (event.key === 'Escape') {
+      /* a search field's own Escape empties it; here Escape closes the window, as everywhere */
+      event.preventDefault()
+      close()
+    }
+  }
+  /* Tab and Shift+Tab go round the window rather than out of it into the browser */
+  const onDialogKey = (event: React.KeyboardEvent<HTMLDialogElement>) => {
+    if (event.key !== 'Tab') return
+    const stops = [...(dialog.current?.querySelectorAll<HTMLElement>('input, button, a[href]') ?? [])]
+    if (stops.length === 0) return
+    const first = stops[0]
+    const last = stops[stops.length - 1]
+    if (event.shiftKey && document.activeElement === first) {
+      event.preventDefault()
+      last.focus()
+    } else if (!event.shiftKey && document.activeElement === last) {
+      event.preventDefault()
+      first.focus()
     }
   }
   const onListKey = (event: React.KeyboardEvent<HTMLUListElement>) => {
@@ -201,7 +252,8 @@ export function SearchDialog() {
       <dialog
         ref={dialog}
         className="bz-search"
-        aria-label="Search the course"
+        aria-label="Search"
+        onKeyDown={onDialogKey}
         onClick={(event) => {
           if (event.target === dialog.current) close()
         }}
@@ -220,6 +272,7 @@ export function SearchDialog() {
               autoComplete="off"
               spellCheck={false}
               enterKeyHint="search"
+              dir="auto"
             />
             <button type="button" className="bz-btn-quiet bz-search-close" onClick={close}>
               Close
@@ -234,22 +287,36 @@ export function SearchDialog() {
           </p>
           {hits.length > 0 && (
             <ul ref={list} className="bz-search-results" onKeyDown={onListKey}>
-              {hits.map((hit) => (
+              {hits.map((hit, n) => (
                 <li key={hit.id}>
-                  <Link href={hit.url} onClick={close} lang={hit.lang === 'en' ? undefined : hit.lang} dir={hit.lang === 'fa' ? 'rtl' : undefined}>
+                  <Link
+                    href={hit.url}
+                    onClick={close}
+                    lang={hit.lang === 'en' ? undefined : hit.lang}
+                    dir={hit.lang === 'fa' ? 'rtl' : undefined}
+                    aria-describedby={`bz-search-hit-${n}`}
+                  >
                     <span className="bz-search-title">
                       {hit.module}
-                      {hit.section ? <span className="bz-search-section"> · {hit.section}</span> : null}
+                      {hit.section ? (
+                        <span className="bz-search-section">
+                          {' · '}
+                          <Snippet text={hit.section} terms={typed} lang={hit.lang} />
+                        </span>
+                      ) : null}
                     </span>
-                    {hit.excerpt ? (
-                      <span className="bz-search-snippet">
-                        <Snippet text={hit.excerpt} terms={typed} />
-                      </span>
-                    ) : null}
-                    <span className="bz-search-meta" lang="en" dir="ltr">
+                    {/* named by its title; the excerpt and the line under it describe it */}
+                    <span id={`bz-search-hit-${n}`} aria-hidden="true" className="bz-search-more">
+                      {hit.excerpt ? (
+                        <span className="bz-search-snippet">
+                          <Snippet text={hit.excerpt} terms={typed} lang={hit.lang} />
+                        </span>
+                      ) : null}
+                      <span className="bz-search-meta" lang="en" dir="ltr">
                       {hit.kind === 'level' ? 'Level' : hit.level} · {trackLabel(hit.track)}
                       {everything ? ` · ${LANG_NAME[hit.lang]}` : ''}
                       {hit.ready ? '' : ' · Planned'}
+                      </span>
                     </span>
                   </Link>
                 </li>

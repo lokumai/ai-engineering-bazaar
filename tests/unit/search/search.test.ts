@@ -98,3 +98,15 @@ describe('the index (D95)', () => {
     }
   })
 })
+
+describe('ranking (D99)', () => {
+  it('puts a written module above a planned one, and an explanation above a list of links', () => {
+    const boost = searchOptions('en').searchOptions.boostDocument
+    expect(boost('x', 'y', { ready: true, section: 'Context Window' })).toBe(1)
+    expect(boost('x', 'y', { ready: false, section: '' })).toBeLessThan(1)
+    for (const list of ['References', 'Kaynaklar', 'منابع', 'Summary']) {
+      expect(boost('x', 'y', { ready: true, section: list }), list).toBeLessThan(boost('x', 'y', { ready: false, section: '' }))
+    }
+  })
+})
+

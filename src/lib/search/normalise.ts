@@ -8,7 +8,7 @@
  * - English: lower-case.
  * - Turkish: lower-case with the Turkish rules (I to ı, İ to i), then fold ı ğ ş ç ö ü â î
  *   û to plain letters, so a reader on an English keyboard finds "görev" by typing "gorev".
- * - Persian: the Arabic yeh and kaf become the Persian forms, the zero-width non-joiner, the
+ * - Persian: the Arabic yeh, kaf and teh marbuta become the Persian forms, the zero-width non-joiner, the
  *   short-vowel marks and the stretching mark go, and Persian and Arabic digits become
  *   ASCII ones; a Latin word inside the text is lower-cased.
  */
@@ -28,7 +28,7 @@ const TURKISH_FOLD: Readonly<Record<string, string>> = {
 }
 
 /* Arabic yeh and alef maksura to Persian yeh; Arabic kaf to Persian keheh. */
-const PERSIAN_LETTERS: Readonly<Record<string, string>> = { 'ي': 'ی', 'ى': 'ی', 'ك': 'ک' }
+const PERSIAN_LETTERS: Readonly<Record<string, string>> = { 'ي': 'ی', 'ى': 'ی', 'ك': 'ک', 'ة': 'ه' }
 /* The zero-width non-joiner, the tatweel, and the harakat with the superscript alef. */
 const PERSIAN_DROP = /[‌ـً-ْٰ]/g
 const PERSIAN_DIGIT = /[۰-۹٠-٩]/g
@@ -37,7 +37,7 @@ export function normalise(term: string, lang: SearchLang): string {
   if (lang === 'tr') return term.toLocaleLowerCase('tr').replace(/[ığşçöüâîû]/g, (c) => TURKISH_FOLD[c])
   if (lang === 'fa') {
     return term
-      .replace(/[يىك]/g, (c) => PERSIAN_LETTERS[c])
+      .replace(/[يىكة]/g, (c) => PERSIAN_LETTERS[c])
       .replace(PERSIAN_DROP, '')
       .replace(PERSIAN_DIGIT, (d) => String((d.charCodeAt(0) - (d >= '۰' ? 0x06f0 : 0x0660))))
       .toLowerCase()
@@ -71,6 +71,22 @@ export function tokenize(text: string): string[] {
     .flatMap((w) => (w.includes('\u200c') ? [...w.split('\u200c').filter(Boolean), w] : [w]))
 }
 
+/* The sections a reader does not search for: a list of links, and a module's own recap. */
+const LISTS = new Set(['references', 'summary', 'kaynaklar', 'özet', 'منابع', 'خلاصه'])
+
+/**
+ * D99 — what a match is worth beyond its words. A planned module holds only its title and
+ * a one-line promise, so a title boost put it above the written explanation of the same
+ * thing; a References or Summary section repeats a module's terms without explaining them.
+ * Both found by the browser review on the built index ("evaluation", "quantization").
+ */
+function rank(stored?: Record<string, unknown>): number {
+  if (!stored) return 1
+  if (stored.ready === false) return 0.7
+  const section = typeof stored.section === 'string' ? stored.section.toLocaleLowerCase('tr') : ''
+  return LISTS.has(section) ? 0.4 : 1
+}
+
 /** The options the index is built with and read back with: both sides must agree. */
 export function searchOptions(lang: SearchLang) {
   return {
@@ -81,6 +97,12 @@ export function searchOptions(lang: SearchLang) {
       const out = normalise(term, lang)
       return out.length < 2 ? null : out
     },
-    searchOptions: { boost: { title: 4, section: 2 }, prefix: true, fuzzy: 0.15, combineWith: 'AND' as const },
+    searchOptions: {
+      boost: { title: 4, section: 3 },
+      prefix: true,
+      fuzzy: 0.15,
+      combineWith: 'AND' as const,
+      boostDocument: (_id: string, _term: string, stored?: Record<string, unknown>) => rank(stored),
+    },
   }
 }

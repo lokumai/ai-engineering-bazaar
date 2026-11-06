@@ -88,3 +88,32 @@ test('on a phone the search icon leaves every main destination in view', async (
   }
   expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(390)
 })
+
+test('Escape closes the window even with text in the field; Enter opens the first result', async ({ page }) => {
+  await page.goto('/')
+  await page.keyboard.press('Control+k')
+  await field(page).fill(WRITTEN.frontmatter.title)
+  await expect(dialog(page).locator('.bz-search-results a').first()).toBeVisible()
+  await page.keyboard.press('Escape')
+  await expect(dialog(page)).toBeHidden()
+  await page.keyboard.press('Control+k')
+  await field(page).fill(WRITTEN.frontmatter.title)
+  const first = await dialog(page).locator('.bz-search-results a').first().getAttribute('href')
+  await field(page).press('Enter')
+  await expect(page).toHaveURL(new RegExp(`${first}$`))
+})
+
+test('Tab and Shift+Tab go round the window and never leave it', async ({ page }) => {
+  await page.goto('/')
+  await page.keyboard.press('Control+k')
+  await field(page).fill(WRITTEN.frontmatter.title)
+  await expect(dialog(page).locator('.bz-search-results a').first()).toBeVisible()
+  const stops = await dialog(page).locator('input, button, a[href]').count()
+  for (let i = 0; i < stops + 2; i++) {
+    await page.keyboard.press('Tab')
+    expect(await page.evaluate(() => document.querySelector('dialog.bz-search')?.contains(document.activeElement)), `Tab ${i + 1} left the window`).toBe(true)
+  }
+  await field(page).focus()
+  await page.keyboard.press('Shift+Tab')
+  expect(await page.evaluate(() => document.querySelector('dialog.bz-search')?.contains(document.activeElement)), 'Shift+Tab left the window').toBe(true)
+})

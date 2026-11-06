@@ -49,7 +49,8 @@ export interface SearchDoc {
 }
 
 const ROMAN = /^([IVXLC]+)\.\s+/
-const EXCERPT = 200
+/* Long enough that the window shown around a match (SearchDialog) usually holds it. */
+const EXCERPT = 400
 const parser = unified().use(remarkParse).use(remarkGfm)
 
 /* A block's text. A leaf block (a paragraph, a heading, a table cell) is read whole; a

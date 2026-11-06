@@ -1,0 +1,455 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Q · How the download files are made</title>
+<style>
+:root{
+  --ground:#fdfbf7;--raised:#ffffff;--sunken:#e6dac6;--line:#d8cbb4;--line-strong:#c3b299;
+  --text:#20242e;--title:#1b1b47;--muted:#6a6558;--faint:#948d7d;
+  --bar:#282864;--ornament:#c8a078;--success:#2f8c86;--danger:#a0503c;--caution:#b8873b;--focus:#a0503c;
+  --sans:"Avenir Next",ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+}
+*{box-sizing:border-box}
+html{background:var(--ground)}
+body{margin:0;background:var(--ground);color:var(--text);font:16px/1.6 var(--sans)}
+a{color:inherit}
+:focus-visible{outline:2px solid var(--focus);outline-offset:2px}
+.pg{max-width:1400px;margin:0 auto;padding:40px 20px 80px}
+.pg-q{margin:0;color:var(--title);font:600 30px/1.2 var(--sans);letter-spacing:-.01em;max-width:38ch}
+.pg-lede{margin:12px 0 0;color:var(--muted);font-size:15px;max-width:82ch}
+.pg-jump{display:flex;flex-wrap:wrap;gap:8px;margin:20px 0 0;padding:0;list-style:none}
+.pg-jump a{display:inline-flex;gap:8px;align-items:center;min-height:34px;padding:4px 12px;border:1px solid var(--line-strong);border-radius:5px;background:var(--raised);color:var(--title);font-size:14px;text-decoration:none}
+.pg-jump a:hover{border-color:var(--muted)}
+.pg-jump b{font-weight:700}
+.pg-gone{margin:22px 0 0;padding:14px 16px;border:1px solid var(--line);border-radius:7px;background:var(--raised);color:var(--muted);font-size:14px;max-width:110ch}
+.pg-gone strong{color:var(--text);font-weight:600}
+.pg-gone ul{margin:6px 0 0;padding-left:18px}
+.opt{margin:56px 0 0;scroll-margin-top:16px}
+.opt-head{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.1fr);gap:8px 40px;align-items:start;padding-top:24px;border-top:1px solid var(--line-strong)}
+.opt-title{display:flex;flex-wrap:wrap;align-items:center;gap:10px 14px;margin:0;color:var(--title);font:600 22px/1.25 var(--sans)}
+.opt-code{display:inline-grid;place-items:center;min-width:42px;height:32px;padding:0 8px;border-radius:5px;background:var(--bar);color:#fff;font:700 15px/1 var(--sans)}
+.opt-rec{display:inline-flex;align-items:center;gap:6px;height:26px;padding:0 10px;border-radius:9px;background:#1f6b66;color:#fff;font:600 13px/1 var(--sans)}
+.opt-what{margin:10px 0 0;color:var(--text);font-size:15.5px}
+.opt-why{margin:10px 0 0;padding-left:10px;border-left:3px solid var(--success);color:var(--text);font-size:14.5px}
+.opt-why b{color:var(--title)}
+.opt-list{margin:0;padding-left:18px;color:var(--text);font-size:14.5px;line-height:1.55}
+.opt-list li{margin:0 0 6px}
+.opt-list li::marker{color:var(--ornament)}
+h3.sub{margin:30px 0 8px;color:var(--title);font:600 16px/1.35 var(--sans)}
+.tablewrap{overflow-x:auto;margin:12px 0 0;border:1px solid var(--line);border-radius:8px;background:var(--raised)}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th,td{padding:8px 12px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+th{color:var(--title);font-weight:600;background:#faf6ee;white-space:nowrap}
+tr:last-child td{border-bottom:0}
+td.n,th.n{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+td b{color:var(--title)}
+.cmp th:first-child,.cmp td:first-child{position:sticky;left:0;background:#faf6ee;color:var(--title);font-weight:600;min-width:150px}
+.cmp td{min-width:170px}
+.cmp tr.rec td.r{background:#eef6f5}
+.shots{display:grid;gap:16px;margin:16px 0 0}
+.shots.two{grid-template-columns:repeat(2,minmax(0,1fr))}
+figure{margin:0;border:1px solid var(--line);border-radius:8px;background:var(--raised);padding:10px}
+figure a{display:block}
+figure img{display:block;width:100%;height:auto;border:1px solid var(--line);border-radius:4px;background:#fff}
+figcaption{margin:8px 2px 0;color:var(--muted);font-size:13.5px;line-height:1.5}
+figcaption b{color:var(--title)}
+pre{margin:10px 0 0;padding:12px 14px;border:1px solid var(--line);border-radius:7px;background:#1d1f27;color:#e7e3d8;font:12.5px/1.6 var(--mono);overflow:auto}
+.tree{margin:10px 0 0;padding:12px 14px;border:1px solid var(--line);border-radius:7px;background:var(--raised);font:12.5px/1.6 var(--mono);color:#30343f;overflow:auto;white-space:pre}
+.tree i{color:var(--muted);font-style:normal}
+details{margin:12px 0 0}
+details summary{min-height:36px;display:flex;align-items:center;cursor:pointer;color:var(--title);font-weight:600;font-size:14px}
+.bars{margin:14px 0 0;padding:14px 16px 16px;border:1px solid var(--line);border-radius:8px;background:var(--raised)}
+.bars h4{margin:0 0 10px;color:var(--title);font:600 14.5px/1.4 var(--sans)}
+.bar-row{display:grid;grid-template-columns:minmax(150px,300px) 1fr;gap:6px 14px;align-items:center;margin:0 0 8px;font-size:13.5px}
+.bar-row .lbl{color:var(--text);line-height:1.35}
+.bar-track{position:relative;height:22px;border:1px solid var(--line-strong);border-radius:4px;background:#faf6ee}
+.bar-fill{position:absolute;left:0;top:0;bottom:0;border-radius:3px 0 0 3px;background:var(--bar);min-width:2px}
+.bar-fill.hatch{background:repeating-linear-gradient(135deg,var(--danger) 0 6px,#c47a66 6px 12px)}
+.bar-fill.base{background:var(--faint)}
+.bar-val{position:absolute;right:8px;top:0;line-height:20px;font:600 12.5px/20px var(--sans);color:var(--title);font-variant-numeric:tabular-nums;background:rgba(250,246,238,.88);padding:0 4px;border-radius:3px}
+.limit{position:absolute;top:-3px;bottom:-3px;width:0;border-left:2px dashed var(--danger)}
+.bar-note{margin:10px 0 0;color:var(--muted);font-size:13px}
+.note{margin:14px 0 0;padding:12px 14px;border:1px solid var(--line);border-left:3px solid var(--caution);border-radius:6px;background:var(--raised);font-size:14px}
+.note b{color:var(--title)}
+.mono{font-family:var(--mono);font-size:.92em;overflow-wrap:anywhere}
+.shots>*{min-width:0}
+@media (max-width:980px){.opt-head{grid-template-columns:minmax(0,1fr)}.shots.two{grid-template-columns:minmax(0,1fr)}.bar-row{grid-template-columns:1fr}}
+@media (max-width:600px){td.n,th.n{white-space:normal;text-align:left}}
+@media (max-width:480px){.pg{padding:28px 12px 60px}.pg-q{font-size:25px}}
+@media (prefers-reduced-motion:reduce){*{transition:none !important;animation:none !important}}
+</style>
+</head>
+<body>
+<main class="pg">
+  <h1 class="pg-q">How are the download files made, on a site with no server?</h1>
+  <p class="pg-lede">The site is a static export served by GitHub Pages: nothing runs on the host when a reader presses Download, so a file is either made ahead of time, when the site is built, or made in the reader's browser. This page puts both choices to the author for each format, with a real sample from the real course behind every option: Markdown as a zip in Q1 and Q2, PDF in Q3, Q4 and Q5. The modal and the buttons are on <a href="P-download-modal.html">page P</a>.</p>
+  <ul class="pg-jump" aria-label="Sections">
+    <li><a href="#facts"><b>Facts</b> What the course weighs</a></li>
+    <li><a href="#Q1"><b>Q1</b> Markdown, prebuilt</a></li>
+    <li><a href="#Q2"><b>Q2</b> Markdown, zipped in the browser &middot; Recommended</a></li>
+    <li><a href="#Q3"><b>Q3</b> PDF, prebuilt</a></li>
+    <li><a href="#Q4"><b>Q4</b> PDF, drawn in the browser</a></li>
+    <li><a href="#Q5"><b>Q5</b> PDF, the browser's print</a></li>
+    <li><a href="#names"><b>N</b> Naming a file that mixes the tracks</a></li>
+    <li><a href="#compare"><b>Table</b> Side by side</a></li>
+    <li><a href="#rec"><b>Pick</b> Recommendation</a></li>
+  </ul>
+  <div class="pg-gone">
+    <strong>How the numbers were made.</strong>
+    <ul>
+      <li>Everything below was measured on this machine from a build of this branch (<span class="mono">npm run build</span>, 182 pages, 16.6 s wall time), with Chrome driven by Playwright. Sizes are exact. Times are from one run of each and are not GitHub Actions times. Browser timings used a local server, so they leave out network time: the bytes a reader would fetch are given instead.</li>
+      <li>Only written modules are made into files, never a draft: 19 modules, in English, Turkish and Persian, in the For Engineers track. No For Everyone module is written yet, so where this page gives a figure for both tracks it is the For Engineers figure doubled, and says so.</li>
+      <li>The site has no print stylesheet today (the only print rule hides one element of the progress export). The PDF samples use a 25-line stylesheet written for this page, shown under Q3; building the download means shipping something like it.</li>
+    </ul>
+  </div>
+
+  <!-- ===================== FACTS ===================== -->
+  <section class="opt" id="facts" aria-labelledby="facts-t">
+    <div class="opt-head">
+      <div>
+        <h2 class="opt-title" id="facts-t"><span class="opt-code">Facts</span> What the course weighs</h2>
+        <p class="opt-what">Three facts decide most of what follows. The images are photographs and screenshots, not SVG: 44 files, 29.2 MB, shared by all three languages. A module's figures are mostly Mermaid, which is text in the Markdown and is drawn by the browser on the site. And the 98 MB site is already a tenth of what GitHub Pages allows.</p>
+      </div>
+      <ul class="opt-list">
+        <li>The two biggest costs of any option are the images and how many times each option stores them. A 2.9 MB photograph that appears in three languages, in a module file, in a level file and in a whole-course file is stored nine times.</li>
+        <li>D87 says figures will be drawn as SVG from now on, which will shrink every number below that comes from images. None of the 44 image files is an SVG today.</li>
+      </ul>
+    </div>
+    <div class="tablewrap"><table>
+      <thead><tr><th>What</th><th class="n">Measured</th><th>Where it comes from</th></tr></thead>
+      <tbody>
+        <tr><td>The built site, <span class="mono">out/</span></td><td class="n">1,234 files, 97,974,259 bytes</td><td>after <span class="mono">npm run build</span>, wall time 16.6 s</td></tr>
+        <tr><td>Written modules</td><td class="n">19 of 38 (8 + 7 + 0 + 4 + 0 by level)</td><td><span class="mono">curriculum.yaml</span>; every written module has English, Turkish and Persian</td></tr>
+        <tr><td>Markdown text, written modules</td><td class="n">295,880 + 322,457 + 430,846 bytes</td><td>English + Turkish + Persian, 19 files each, 1,049,183 bytes in all</td></tr>
+        <tr><td>Images</td><td class="n">44 files, 29,232,736 bytes</td><td>28 PNG, 16 JPEG; the largest is 2.9 MB</td></tr>
+        <tr><td>Mermaid diagrams</td><td class="n">42 per language in written modules</td><td>83 fenced blocks per language in all: 42 Mermaid, the rest code</td></tr>
+        <tr><td>Level sizes, English, as Markdown plus its images</td><td class="n">Fundamentals 11.6 MB, Intermediate 17.6 MB, Ecosystem 16 KB</td><td>zips made for Q1 (Ecosystem has no images)</td></tr>
+      </tbody>
+    </table></div>
+  </section>
+
+  <!-- ===================== Q1 ===================== -->
+  <section class="opt" id="Q1" aria-labelledby="Q1-t">
+    <div class="opt-head">
+      <div>
+        <h2 class="opt-title" id="Q1-t"><span class="opt-code">Q1</span> Markdown, prebuilt at build time</h2>
+        <p class="opt-what">A build step reads <span class="mono">curriculum.yaml</span> and writes one zip per module, per level and for the whole course, in each language and track, into <span class="mono">out/</span>. Each zip holds the <span class="mono">.md</span> files in the course's own folder layout and the images they point at, so every relative link resolves. The modal's Download is then a plain link to a file that already exists.</p>
+      </div>
+      <ul class="opt-list">
+        <li>The reader's device does nothing. The file is the same for everybody and can be checked once, in CI.</li>
+        <li>Only the combinations that were built exist. A reader who ticks modules 1, 3 and 9 gets nothing prebuilt, so the modal could offer only whole modules, whole levels and the whole course, or fall back to Q2 for anything else.</li>
+        <li>It stores every image once per zip: 69 zips weigh 275.6 MB for the For Engineers track alone, which is the largest single cost on this page (chart under Pick).</li>
+        <li>Built in 1.0 s: the 69 zips took 976 ms with fflate in Node.</li>
+      </ul>
+    </div>
+    <div class="shots two">
+      <figure><a href="q-samples/q1-viewer-en.png"><img src="q-samples/q1-viewer-en.png" alt="A plain Markdown viewer showing the RAG module from the English zip: a hand-drawn diagram loads from beside the file, and the Mermaid diagram below it appears as its source text in a grey code block." width="700" height="856"></a>
+        <figcaption><b>English, read from the unzipped file in a plain viewer</b> (marked, no site styles). The image loads from <span class="mono">images/</span> beside the file. The Mermaid diagram is shown as source: GitHub draws it, a plain viewer does not (D87 notes VS Code needs an extension).</figcaption></figure>
+      <figure><a href="q-samples/q1-viewer-fa.png"><img src="q-samples/q1-viewer-fa.png" alt="The same viewer showing the Persian RAG module: right to left text, the same image above, and the Mermaid source below with Persian labels mixed into the code." width="700" height="856"></a>
+        <figcaption><b>Persian, same viewer.</b> The text reads right to left because the viewer detects direction from the letters; a viewer that does not will left-align it. The image links resolve.</figcaption></figure>
+    </div>
+    <h3 class="sub">What was built and checked</h3>
+    <div class="tablewrap"><table>
+      <thead><tr><th>Measured</th><th class="n">Value</th></tr></thead>
+      <tbody>
+        <tr><td>Zips written (57 modules, 9 levels, 3 whole-course; English, Turkish, Persian)</td><td class="n">69</td></tr>
+        <tr><td>Total size of the 69 zips</td><td class="n">275,648,022 bytes (275.6 MB)</td></tr>
+        <tr><td>&nbsp;&nbsp;module zips / level zips / whole-course zips</td><td class="n">100.2 MB / 87.7 MB / 87.7 MB</td></tr>
+        <tr><td>Fundamentals, English: size, entries</td><td class="n">11.64 MB, 26 entries (8 <span class="mono">.md</span>, 17 images, one README)</td></tr>
+        <tr><td>Whole course, English</td><td class="n">29.23 MB, 63 entries</td></tr>
+        <tr><td>Relative links and images checked inside the zips</td><td class="n">721 links, 405 images, 0 dangling</td></tr>
+        <tr><td>Links to modules that are not in the zip</td><td class="n">rewritten to the live page, for example <span class="mono">https://ai-bazaar.lokum.dev/courses/intermediate/security/</span> (14 in the Fundamentals zip)</td></tr>
+        <tr><td>Files this adds to the site, For Engineers only</td><td class="n">69; for both tracks, 264 at full build-out (228 modules + 30 levels + 6 whole-course)</td></tr>
+      </tbody>
+    </table></div>
+    <div class="note"><b>A decision hides here.</b> A module links to others by relative path (<span class="mono">[RAG](rag.md)</span>, <span class="mono">../4_ecosystem/agent_frameworks.md</span>). In a zip of one module, every such link points outside the zip. The sample turns links to modules outside the zip into links to the live site and keeps links inside the zip relative. The other choice is to leave them as they are, and have them break.</div>
+  </section>
+
+  <!-- ===================== Q2 ===================== -->
+  <section class="opt" id="Q2" aria-labelledby="Q2-t">
+    <div class="opt-head">
+      <div>
+        <h2 class="opt-title" id="Q2-t"><span class="opt-code">Q2</span> Markdown, zipped in the browser <span class="opt-rec">Recommended</span></h2>
+        <p class="opt-what">The build copies each written <span class="mono">.md</span> file into <span class="mono">out/</span> (the images are already there, in <span class="mono">course-images/</span>). When the reader presses Download, the browser fetches the chosen files and the images they use, and packs them with fflate (12.6 KB gzipped). The zip is the same bytes Q1 would have built.</p>
+        <p class="opt-why"><b>Recommended:</b> any selection works, so the modal never has to say "this combination is not available", and it adds 1 MB to the site instead of 276 MB.</p>
+      </div>
+      <ul class="opt-list">
+        <li>Adds 57 small files (1,049,183 bytes in all) for the For Engineers track. No build time, no extra storage for images.</li>
+        <li>The reader fetches the images again unless they are cached: 11.6 MB for the Fundamentals level. A reader who read the modules already has most of them in the cache.</li>
+        <li>Needs the preparing state from page P for a level or more: the eight Fundamentals modules together are 11.6 MB, and the reader's device does the work.</li>
+        <li>JSZip does the same job, 28 KB gzipped, but took 8 to 17 times longer (table below); fflate is the better choice.</li>
+      </ul>
+    </div>
+    <div class="tablewrap"><table>
+      <thead><tr><th>Measured in Chrome, local server</th><th class="n">fflate</th><th class="n">JSZip</th></tr></thead>
+      <tbody>
+        <tr><td>Library, minified and gzipped</td><td class="n">12.6 KB</td><td class="n">28.4 KB</td></tr>
+        <tr><td>Fundamentals, English: pack 8 modules and 17 images</td><td class="n">68 ms (first run), 78 ms (cached images)</td><td class="n">650 ms, 596 ms</td></tr>
+        <tr><td>Intermediate, English: 7 modules, 26 images</td><td class="n">72 ms, 74 ms</td><td class="n">1,257 ms, 911 ms</td></tr>
+        <tr><td>Fundamentals, Persian</td><td class="n">45 ms, 37 ms</td><td class="n">566 ms, 540 ms</td></tr>
+        <tr><td>All 19 written modules, English, three levels in a row</td><td class="n">207 ms, including fetching</td><td class="n">not run</td></tr>
+        <tr><td>Result: Fundamentals, English, zip size</td><td class="n">11,635,439 bytes</td><td class="n">9,849,419 bytes (it also compresses the images)</td></tr>
+        <tr><td>Heap in use after packing</td><td class="n">30 to 77 MB</td><td class="n">38 to 114 MB</td></tr>
+        <tr><td>Bytes the reader fetches for Fundamentals</td><td class="n" colspan="2">11,683,416 (the images are 11.6 MB of it)</td></tr>
+      </tbody>
+    </table></div>
+    <h3 class="sub">The sample: a Persian Fundamentals zip made in the browser</h3>
+    <div class="tree" role="img" aria-label="Contents of the zip made in the browser: eight Persian Markdown files and seventeen images under 1_fundamentals">1_fundamentals/llms_fa.md  training_fa.md  rag_fa.md  tools_fa.md
+                  memory_fa.md  agents_fa.md  multi_agent_fa.md  observability_fa.md
+1_fundamentals/images/  <i>17 files: 2 MB photographs, diagrams, screenshots</i>
+<i>25 entries, 11,642,093 bytes. Checked: 54 relative links and 19 image links.</i>
+<i>Every image resolves. 14 links to modules in other levels dangle until the same link rewrite as Q1 is applied in the browser (a six-line regex).</i></div>
+    <div class="note"><b>Limits.</b> The zip is built in memory, so a whole-course zip (29 MB) briefly needs about three times that in the page. The measured heap peak was 77 MB for 17.6 MB of images. A phone with little memory may refuse a very large one; this was not tried on a phone.</div>
+  </section>
+
+  <!-- ===================== Q3 ===================== -->
+  <section class="opt" id="Q3" aria-labelledby="Q3-t">
+    <div class="opt-head">
+      <div>
+        <h2 class="opt-title" id="Q3-t"><span class="opt-code">Q3</span> PDF, prebuilt with headless Chrome <span class="opt-rec">Recommended</span></h2>
+        <p class="opt-what">After <span class="mono">next build</span>, a script opens each built module page in headless Chrome (Playwright is already a dev dependency and the e2e job already installs Chrome), waits for the Mermaid diagrams, and prints it to PDF with the site's print styles. Chrome lays the page out, so the PDF is what the site looks like, as text.</p>
+        <p class="opt-why"><b>Recommended, for the module files only:</b> it is the only option that makes a PDF with real text, vector diagrams and highlighted code in all three languages, and it is already tested at this scale. Levels and the whole course are not prebuilt: the browser joins the module PDFs (pdf-lib, 207 KB gzipped; Fundamentals in 0.26 s, the whole English course in 0.6 s).</p>
+      </div>
+      <ul class="opt-list">
+        <li>Adds about 47 s to CI for the For Engineers track if the three languages run one after the other (14.9 s, 15.0 s and 16.9 s; the last two ran at the same time), and about twice that when For Everyone is written. Joining levels in advance would add 4.7 s more but 226 MB of files.</li>
+        <li>Adds 115 MB of module PDFs for the For Engineers track (57 files). Prebuilding the level and whole-course PDFs as well would make it 342 MB (chart under Pick).</li>
+        <li>Needs one thing that does not exist: a print stylesheet. The samples used the one below. The Persian font is the site's own Vazirmatn web font, so the CI machine's fonts do not matter.</li>
+        <li>The PDF is bigger than the Markdown because every PDF carries its own copy of the images, and each Persian PDF is about 1.2 times its English one.</li>
+      </ul>
+    </div>
+    <div class="shots">
+      <figure><a href="q-samples/q3-en.png"><img src="q-samples/q3-en.png" alt="Three pages of the English RAG module as a PDF: title and facts, the naive RAG diagram, and a Mermaid flowchart drawn as a dark panel." width="1365" height="644"></a>
+        <figcaption><b>English, pages 1 to 3 of 10.</b> The site's navigation, rail and quiz are gone. The hand-drawn figure is an embedded image; the flowchart is the site's own Mermaid drawing, vector, on its dark panel.</figcaption></figure>
+      <figure><a href="q-samples/q3-fa.png"><img src="q-samples/q3-fa.png" alt="Three pages of the Persian RAG module as a PDF, set right to left, with the Persian heading, text and diagrams." width="1365" height="644"></a>
+          <figcaption><b>Persian, pages 1 to 3 of 11.</b> Letters join, lines run right to left, and Latin words inside a sentence stay in place. The text is selectable and copies out as Persian (checked with pdftotext). The small blocks that the site prints in English stay English and left-aligned.</figcaption></figure>
+      <div class="shots two">
+        <figure><a href="q-samples/q3-tr.png"><img src="q-samples/q3-tr.png" alt="Two pages of the Turkish RAG module as a PDF, with the Turkish title and the diagram." width="910" height="644"></a>
+          <figcaption><b>Turkish, pages 1 and 2.</b> The dotted, cedilla and dotless letters are right. The "Before you start" block and the facts line are in English: that is what the site shows on its Turkish page today.</figcaption></figure>
+        <figure><a href="q-samples/q3-code.png"><img src="q-samples/q3-code.png" alt="Two pages of the Tool Calling module: a JSON block, a text block and a Python block, all in dark panels with coloured syntax." width="910" height="644"></a>
+        <figcaption><b>Code, Tool Calling pages 7 and 8.</b> The syntax colours and the language tag survive. Long lines wrap instead of being cut.</figcaption></figure>
+      </div>
+    </div>
+    <div class="tablewrap"><table>
+      <thead><tr><th>Measured, Chrome 1 page at a time</th><th class="n">English</th><th class="n">Turkish</th><th class="n">Persian</th></tr></thead>
+      <tbody>
+        <tr><td>Time to make 19 module PDFs</td><td class="n">14.9 s</td><td class="n">15.0 s</td><td class="n">16.9 s</td></tr>
+        <tr><td>Per module, shortest to longest</td><td class="n">0.53 to 0.99 s</td><td class="n">0.54 to 1.01 s</td><td class="n">0.59 to 1.21 s</td></tr>
+        <tr><td>Size of the 19 module PDFs</td><td class="n">35.9 MB</td><td class="n">36.0 MB</td><td class="n">43.6 MB</td></tr>
+        <tr><td>One module, median / largest</td><td class="n">784 KB / 8.3 MB</td><td class="n">792 KB / 8.3 MB</td><td class="n">1.3 MB / 8.8 MB</td></tr>
+        <tr><td>RAG module: pages, size</td><td class="n">10 pages, 336 KB</td><td class="n">10 pages, 341 KB</td><td class="n">11 pages, 776 KB</td></tr>
+        <tr><td>Fundamentals joined: pages, size</td><td class="n">70 pages, 16.7 MB</td><td class="n">72 pages, 16.7 MB</td><td class="n">70 pages, 19.4 MB</td></tr>
+        <tr><td>Intermediate joined</td><td class="n">90 pages, 18.4 MB</td><td class="n">93 pages, 18.4 MB</td><td class="n">84 pages, 21.4 MB</td></tr>
+        <tr><td>Whole course joined</td><td class="n">180 pages, 35.4 MB</td><td class="n">186 pages, 35.5 MB</td><td class="n">174 pages, 42.1 MB</td></tr>
+        <tr><td>Join in the browser (pdf-lib), whole course</td><td class="n">0.57 s, heap 101 MB</td><td class="n">not run</td><td class="n">2.7 s, heap 170 MB</td></tr>
+      </tbody>
+    </table></div>
+    <details>
+      <summary>The print stylesheet the samples used</summary>
+<pre>@page { size: A4; margin: 18mm 16mm 20mm; }
+html, body { background: #fff !important; }
+.bz-bar, .bz-band, .bz-rail, .bz-rail-tab, .bz-pager, .bz-complete, .bz-quiz, .skip-link,
+.bz-drawer-bar, .bz-aside, .bz-crumb, .bz-figure-tools, .bz-slab-tools, footer { display: none !important; }
+.bz-shell, .bz-main, .bz-col, .bz-sheet { display: block !important; max-width: none !important; padding: 0 !important; }
+.bz-prose { font-size: 10.5pt !important; line-height: 1.55 !important; }
+.bz-prose h2, .bz-prose h3 { break-after: avoid; }
+.bz-prose pre, .bz-slab-code, .bz-slab { white-space: pre-wrap !important; break-inside: avoid; font-size: 8.5pt !important; }
+.bz-figure, .bz-figure-body, .bz-fig, .bz-image { overflow: visible !important; break-inside: avoid; }
+.bz-figure svg { max-width: 100% !important; width: 100% !important; height: auto !important; max-height: 150mm; }
+.bz-prose img { max-width: 100% !important; height: auto !important; break-inside: avoid; }
+a { color: inherit !important; text-decoration: none !important; }</pre>
+    </details>
+    <div class="note"><b>Three things the samples show that would need a decision.</b> The Mermaid diagrams print on their dark panel (a flowchart can fill a page, so the sheet caps them at 150 mm). The page titled "On this page" and the quiz are left out. And the first page repeats the site's English facts line ("30 min, 2,341 words") on the Persian PDF.</div>
+  </section>
+
+  <!-- ===================== Q4 ===================== -->
+  <section class="opt" id="Q4" aria-labelledby="Q4-t">
+    <div class="opt-head">
+      <div>
+        <h2 class="opt-title" id="Q4-t"><span class="opt-code">Q4</span> PDF, drawn in the reader's browser</h2>
+        <p class="opt-what">The page's own DOM is drawn onto a canvas with html2canvas (45.6 KB gzipped), cut into A4 slices, and each slice is placed in a PDF with jsPDF (132 KB gzipped). Nothing is built ahead and nothing is added to the site. This is the sample: RAG in English and in Persian, at 1.5 times scale, JPEG quality 0.82.</p>
+      </div>
+      <ul class="opt-list">
+        <li>Zero build time and zero files added, which is its whole appeal.</li>
+        <li>The PDF is a stack of pictures. It cannot be searched, selected or copied (pdftotext found 9 characters in the 9-page English PDF), and a screen reader gets nothing.</li>
+        <li>Slices cut pages at fixed heights, so figures and lines of text are cut in two (the flowchart on pages 2 and 3 below).</li>
+        <li>The Persian heading came out wrong: html2canvas draws text with letter-spacing letter by letter, and the site's headings have negative tracking, which breaks Persian's joined letters. Body text came out right.</li>
+        <li>For a level, every module is drawn one after another: 7.3 s, 59 pages and 11.6 MB for Fundamentals in English, on a desktop. The longest module, Prompt Engineering, made a canvas 22,344 pixels tall; browsers differ in how tall a canvas may be, and this was only run in Chrome.</li>
+      </ul>
+    </div>
+    <div class="shots">
+      <figure><a href="q-samples/q4-en.png"><img src="q-samples/q4-en.png" alt="Three pages of the English RAG module drawn by html2canvas and jsPDF: the text is soft, and a heading is cut across the page boundary." width="1365" height="644"></a>
+        <figcaption><b>English, pages 1 to 3 of 9.</b> 1.65 MB for the RAG module, against 336 KB in Q3. Text is a picture of text, and the flowchart under "What RAG Does" is cut across the page 2 and page 3 boundary.</figcaption></figure>
+      <figure><a href="q-samples/q4-fa.png"><img src="q-samples/q4-fa.png" alt="Three pages of the Persian RAG module drawn by html2canvas and jsPDF, with several headings showing broken letters." width="1365" height="644"></a>
+        <figcaption><b>Persian, pages 1 to 3.</b> Body lines are right. The headings (<bdi lang="fa" dir="rtl">RAG و Embedding‌ها</bdi> and <bdi lang="fa" dir="rtl">چرا RAG لازمه</bdi>) have lost their joins. 1.39 MB.</figcaption></figure>
+    </div>
+    <div class="tablewrap"><table>
+      <thead><tr><th>Measured, Chrome</th><th class="n">Value</th></tr></thead>
+      <tbody>
+        <tr><td>RAG, English: time, size, pages</td><td class="n">1.49 s, 1,652,582 bytes, 9 pages</td></tr>
+        <tr><td>RAG, Persian</td><td class="n">1.54 s, 1,390,053 bytes, 8 pages</td></tr>
+        <tr><td>Prompt Engineering, English (the longest)</td><td class="n">1.42 s, 3,052,785 bytes, 15 pages</td></tr>
+        <tr><td>Fundamentals, English, 8 modules</td><td class="n">7.3 s, 11,565,641 bytes, 59 pages</td></tr>
+        <tr><td>Heap in use after one module</td><td class="n">40 to 50 MB</td></tr>
+      </tbody>
+    </table></div>
+    <div class="note"><b>Other browser libraries, and why they are not sampled.</b> paged.js lays pages out in the browser with CSS paged media and then hands the document to the browser's print dialog, so what it saves is Q5's PDF with better page breaks. pdf-lib cannot lay out HTML or shape Persian; it is used here, in Q3, only to join PDFs that already exist. pdfmake and similar libraries need a hand-made page description and a Persian font, which would be a second renderer for the whole course. These three statements are from how the libraries work, not from a run.</div>
+  </section>
+
+  <!-- ===================== Q5 ===================== -->
+  <section class="opt" id="Q5" aria-labelledby="Q5-t">
+    <div class="opt-head">
+      <div>
+        <h2 class="opt-title" id="Q5-t"><span class="opt-code">Q5</span> PDF, the browser's own print</h2>
+        <p class="opt-what">The button calls <span class="mono">window.print()</span> on the module page (or on a print page that joins chosen modules) and the reader chooses Save as PDF in the browser's dialog. There is nothing to build or store, and the PDF is made by the same print engine as Q3. The sample is what the module page prints today, with the browser's default settings: headers and footers on, background graphics off, and no print stylesheet.</p>
+      </div>
+      <ul class="opt-list">
+        <li>Costs nothing in build time or storage, and gives real text and correct Persian, because it is the same engine as Q3.</li>
+        <li>The reader is in charge of the result, and the defaults are poor: the browser's date, address and page-number lines overlap the text, background graphics are off, so the dark panels turn white and the diagrams' light text nearly disappears, and the site's navigation prints.</li>
+        <li>A print stylesheet fixes most of that, including a rule that asks browsers to print backgrounds (<span class="mono">print-color-adjust: exact</span>), but the dialog's header and footer lines are still the reader's setting.</li>
+        <li>It is one page at a time: a download of three chosen modules needs a print page that assembles them, and a level needs the browser to lay out 70 pages at once.</li>
+        <li>It is not a download in the sense the author described: there is no file name, no progress, and no "PDF or Markdown" step; the modal would become an explanation of the print dialog.</li>
+      </ul>
+    </div>
+    <div class="shots">
+      <figure><a href="q-samples/q5-en.png"><img src="q-samples/q5-en.png" alt="Three pages of the English RAG module printed by default: the first page shows the site navigation and a cramped header, the diagram on page 3 has lost its dark background so its labels are faint." width="1368" height="644"></a>
+        <figcaption><b>English, pages 1 to 3 of 11.</b> The site's bar, the Contents button and the breadcrumb print. A header line overlaps the first line of text on every page. The flowchart on page 3 has no panel behind it.</figcaption></figure>
+      <figure><a href="q-samples/q5-fa.png"><img src="q-samples/q5-fa.png" alt="Three pages of the Persian RAG module printed by default, set right to left with the site navigation visible on the left of page 1." width="1368" height="644"></a>
+        <figcaption><b>Persian, pages 1 to 3 of 10.</b> Text direction and letter joins are right, because the engine is Chrome's. The same navigation and header lines print.</figcaption></figure>
+    </div>
+    <div class="tablewrap"><table>
+      <thead><tr><th>Measured, Chrome print defaults</th><th class="n">English</th><th class="n">Persian</th></tr></thead>
+      <tbody>
+        <tr><td>RAG: pages, size</td><td class="n">11 pages, 397,283 bytes</td><td class="n">10 pages, 834,258 bytes</td></tr>
+        <tr><td>Build time, files added to the site</td><td class="n" colspan="2">none</td></tr>
+      </tbody>
+    </table></div>
+  </section>
+
+  <!-- ===================== NAMES ===================== -->
+  <section class="opt" id="names" aria-labelledby="names-t">
+    <div class="opt-head">
+      <div>
+        <h2 class="opt-title" id="names-t"><span class="opt-code">N</span> How a file that mixes the two tracks is named</h2>
+        <p class="opt-what">When the reader picks Both under Track, one download holds a For Engineers and a For Everyone version of every chosen module. The course already stores them side by side: <span class="mono">&lt;level&gt;/&lt;name&gt;.md</span> and <span class="mono">&lt;level&gt;/everyone/&lt;name&gt;.md</span>, with the same names and the same <span class="mono">_tr</span> and <span class="mono">_fa</span> suffixes. No For Everyone file exists yet, so the "everyone" lines in the trees below are what a build would produce, not files that can be opened today.</p>
+        <p class="opt-why"><b>Recommended: N1.</b> It copies the layout the author already uses, so the files need no renaming and no link changes, and a reader can drop the zip into the repository's layout.</p>
+      </div>
+      <ul class="opt-list">
+        <li>Every file name carries its track when it is a single track (<span class="mono">...-engineers.zip</span>, <span class="mono">...-everyone.pdf</span>), so two downloads never overwrite one another in a Downloads folder.</li>
+        <li>The name pattern is <span class="mono">ai-bazaar-&lt;what&gt;-&lt;language&gt;-&lt;track&gt;.&lt;zip or pdf&gt;</span>, where what is a module (<span class="mono">fundamentals-rag</span>), a level (<span class="mono">fundamentals</span>), <span class="mono">course</span> or <span class="mono">selection</span>. These are the names the modal on page P shows before a download.</li>
+      </ul>
+    </div>
+    <div class="shots two">
+      <div>
+        <h3 class="sub">N1 &middot; The track is a folder, the layout is the repository's</h3>
+        <div class="tree" role="img" aria-label="File tree for N1: a zip with a 1_fundamentals folder holding the engineers files, an everyone folder inside it with the everyone files, and a shared images folder.">ai-bazaar-fundamentals-en-both-tracks.zip
+  README.md
+  1_fundamentals/
+    llms.md  rag.md  ...            <i>For Engineers</i>
+    everyone/
+      llms.md  rag.md  ...          <i>For Everyone (none written yet)</i>
+    images/
+      rag.png  ...                  <i>shared by both</i>
+
+PDF, Both:
+ai-bazaar-fundamentals-en-both-tracks.zip
+  ai-bazaar-fundamentals-en-engineers.pdf
+  ai-bazaar-fundamentals-en-everyone.pdf</div>
+        <p class="hint" style="color:var(--muted);font-size:13.5px;margin:8px 0 0">A reader who opens one file sees a plain <span class="mono">rag.md</span>; which track it is comes from the folder. Relative links between modules of the same track keep working because they are the repository's own.</p>
+      </div>
+      <div>
+        <h3 class="sub">N2 &middot; The track is part of the file name</h3>
+        <div class="tree" role="img" aria-label="File tree for N2: one flat folder where each module appears twice, with the track in its file name.">ai-bazaar-fundamentals-en-both-tracks.zip
+  README.md
+  1_fundamentals/
+    llms.engineers.md   llms.everyone.md
+    rag.engineers.md    rag.everyone.md
+    ...
+    images/
+
+PDF, Both: one file, each module twice in turn
+ai-bazaar-fundamentals-en-both-tracks.pdf
+  RAG &amp; Embeddings, For Engineers
+  RAG &amp; Embeddings, For Everyone
+  ...</div>
+        <p class="hint" style="color:var(--muted);font-size:13.5px;margin:8px 0 0">A file out of context says which track it is. But the names differ from the repository's, and every link between modules must be rewritten per track (<span class="mono">training.md</span> becomes <span class="mono">training.everyone.md</span> inside the everyone files).</p>
+      </div>
+    </div>
+    <h3 class="sub">N3 &middot; Never mix</h3>
+    <p class="opt-what" style="margin-top:0">The Track control offers one track at a time, and a reader who wants both downloads twice. Every file is the single-track file from Q1 to Q3 and nothing needs a mixed name. The modal is simpler, and P's "Both" option disappears. The cost is the reader's: two downloads, two zips to merge by hand.</p>
+  </section>
+
+  <!-- ===================== COMPARE ===================== -->
+  <section class="opt" id="compare" aria-labelledby="compare-t">
+    <div class="opt-head">
+      <div>
+        <h2 class="opt-title" id="compare-t"><span class="opt-code">Table</span> Side by side</h2>
+        <p class="opt-what">All figures are for the For Engineers track, English, Turkish and Persian, 19 written modules, measured above. The row "Both tracks, projected" doubles the figure for today's 19 written modules and is an estimate until a For Everyone module exists; the full build-out of 38 modules in two tracks and three languages is 264 files per format (228 modules, 30 levels, 6 whole-course), and its size is not known until those modules are written.</p>
+      </div>
+    </div>
+    <div class="tablewrap"><table class="cmp">
+      <thead><tr><th></th><th>Q1 Markdown, prebuilt</th><th>Q2 Markdown, zipped in the browser</th><th>Q3 PDF, prebuilt</th><th>Q4 PDF, drawn in the browser</th><th>Q5 PDF, browser print</th></tr></thead>
+      <tbody>
+        <tr><td>Made by</td><td>the build</td><td class="r">the reader's browser (fflate)</td><td>headless Chrome in CI</td><td>the reader's browser (html2canvas, jsPDF)</td><td>the reader's browser print dialog</td></tr>
+        <tr><td>CI time added</td><td>1.0 s (69 zips)</td><td class="r">0</td><td>about 47 s one language after another; 4.7 s more to join levels</td><td>0</td><td>0</td></tr>
+        <tr><td>Added to the site, today</td><td>69 zips, 276 MB</td><td class="r">57 <span class="mono">.md</span> files, 1.0 MB</td><td>57 module PDFs, 115 MB (69 files, 342 MB if levels are prebuilt)</td><td>nothing</td><td>nothing</td></tr>
+        <tr><td>Both tracks, projected (today's set doubled)</td><td>551 MB, 138 zips</td><td class="r">2.1 MB, 114 files</td><td>231 MB, 114 files (683 MB, 138 files with levels)</td><td>nothing</td><td>nothing</td></tr>
+        <tr><td>Fundamentals in English</td><td>11.6 MB zip</td><td class="r">11.6 MB zip, made in 68 ms</td><td>16.7 MB, 70 pages</td><td>11.6 MB, 59 pages, 7.3 s</td><td>one module at a time</td></tr>
+        <tr><td>Any selection of modules</td><td>only the combinations built</td><td class="r">yes</td><td>yes if the browser joins them (0.3 s for a level)</td><td>yes, one module after another</td><td>only through a print page that assembles them</td></tr>
+        <tr><td>Figures</td><td>images beside the <span class="mono">.md</span>; Mermaid stays as source</td><td class="r">same</td><td>images embedded; Mermaid drawn as vector</td><td>pictures</td><td>backgrounds lost unless the stylesheet forces them</td></tr>
+        <tr><td>Code highlighting</td><td>decided by the reader's viewer</td><td class="r">same</td><td>kept</td><td>kept as pixels</td><td>lost unless backgrounds print</td></tr>
+        <tr><td>Persian</td><td>the author's text; direction is the viewer's</td><td class="r">same</td><td>correct: joined, right to left, selectable</td><td>body right, headings lose joins</td><td>correct, with the browser's header lines</td></tr>
+        <tr><td>Text selectable</td><td>yes</td><td class="r">yes</td><td>yes</td><td>no</td><td>yes</td></tr>
+        <tr><td>Reader's device</td><td>downloads one file</td><td class="r">fetches, packs, up to about 77 MB of memory</td><td>downloads one file; a joined level up to 170 MB of memory</td><td>seconds of work, 40 to 50 MB per module</td><td>the dialog</td></tr>
+        <tr><td>Main risk</td><td>storage: 276 MB before the second track</td><td class="r">a very large zip on a small phone (not tried)</td><td>storage and a print stylesheet to write</td><td>output quality</td><td>the reader's settings</td></tr>
+      </tbody>
+    </table></div>
+  </section>
+
+  <!-- ===================== REC ===================== -->
+  <section class="opt" id="rec" aria-labelledby="rec-t">
+    <div class="opt-head">
+      <div>
+        <h2 class="opt-title" id="rec-t"><span class="opt-code">Pick</span> Recommendation <span class="opt-rec">Q2 + Q3 + N1</span></h2>
+        <p class="opt-what">Markdown is zipped in the browser from the copied <span class="mono">.md</span> files and the images already on the site (Q2). PDF is prebuilt for each module with headless Chrome (Q3), and the browser joins the modules of a level or of a chosen set. Files that hold both tracks use the repository's layout (N1).</p>
+        <p class="opt-why"><b>Why:</b> the only things GitHub Pages cannot absorb are the images stored again and again. Q2 stores them zero extra times and Q3 stores them once per module and language. Everything the reader can choose in the modal then works, with no "not available" combinations.</p>
+      </div>
+      <ul class="opt-list">
+        <li>Adds, for the For Engineers track: 57 raw <span class="mono">.md</span> files (1.0 MB) and 57 PDFs (115.4 MB). Both tracks, projected: about 233 MB.</li>
+        <li>Adds to CI: about 47 s for the PDFs, and it rises to about 94 s when the For Everyone track is written. Printing three languages in parallel is likely to cut this to about 17 s; that was not run.</li>
+        <li>Ships two small libraries to the reader only when the modal opens: fflate (12.6 KB) and pdf-lib (207 KB), both gzipped.</li>
+        <li>Needs a print stylesheet, 25 lines in the sample, and a decision on what a PDF leaves out (the quiz, the contents list).</li>
+        <li>If the author prefers PDFs for a level to open at once with no joining wait, prebuild the level PDFs too (Q3 in full): +226 MB for the For Engineers track and about +452 MB with both tracks.</li>
+      </ul>
+    </div>
+    <div class="bars" role="group" aria-labelledby="bars-t">
+      <h4 id="bars-t">Size added to the 1 GB that GitHub Pages allows, in MB (the site itself is 98 MB)</h4>
+      <div class="bar-row"><span class="lbl">The site today</span><div class="bar-track"><div class="bar-fill base" style="width:9.8%"></div><span class="bar-val">98</span><span class="limit" style="left:100%"></span></div></div>
+      <div class="bar-row"><span class="lbl">Q1 all zips, For Engineers</span><div class="bar-track"><div class="bar-fill" style="width:27.6%"></div><span class="bar-val">276</span></div></div>
+      <div class="bar-row"><span class="lbl">Q3 all PDFs with levels, For Engineers</span><div class="bar-track"><div class="bar-fill" style="width:34.2%"></div><span class="bar-val">342</span></div></div>
+      <div class="bar-row"><span class="lbl">Q1 + Q3 everything, both tracks (projected)</span><div class="bar-track"><div class="bar-fill hatch" style="width:100%"></div><span class="bar-val">1,234 (over the limit)</span></div></div>
+      <div class="bar-row"><span class="lbl">Q2 + Q3 modules only, For Engineers</span><div class="bar-track"><div class="bar-fill" style="width:11.6%"></div><span class="bar-val">116</span></div></div>
+      <div class="bar-row"><span class="lbl">Q2 + Q3 modules only, both tracks (projected)</span><div class="bar-track"><div class="bar-fill hatch" style="width:23.3%"></div><span class="bar-val">233</span></div></div>
+      <p class="bar-note">Solid bars are measured; hatched bars are projections (twice the For Engineers figure). The dashed line at the end of the first bar is 1,000 MB. A bar that runs to the right edge is cut off at the limit; the number says how far it goes.</p>
+    </div>
+  </section>
+
+  <section class="opt" aria-labelledby="dec-t">
+    <div class="opt-head">
+      <div>
+        <h2 class="opt-title" id="dec-t"><span class="opt-code">Ask</span> What the author decides here</h2>
+        <p class="opt-what">Three decisions from this page; the other two, the modal and the buttons, are on <a href="P-download-modal.html">page P</a>.</p>
+      </div>
+      <ul class="opt-list">
+        <li><b>PDF prebuilt or made in the browser:</b> Q3 (prebuilt, with the browser joining modules), Q4 (drawn in the browser) or Q5 (the browser's print). The recommendation is Q3.</li>
+        <li><b>Markdown prebuilt or zipped in the browser:</b> Q1 or Q2. The recommendation is Q2.</li>
+        <li><b>How a file that mixes the two tracks is named:</b> N1, N2 or N3. The recommendation is N1.</li>
+      </ul>
+    </div>
+    <div class="note"><b>What was not done.</b> Nothing was timed on a GitHub Actions runner; the browser tests were Chrome only; Safari, Firefox and a phone were not tried. The three-languages-at-once PDF run was not made (two at once were). For Everyone sizes are projections. The print stylesheet and the scripts that made these samples live outside the repository (in a temporary folder); the sample files are not committed. Only the screenshots under <span class="mono">q-samples/</span> are.</div>
+  </section>
+</main>
+</body>
+</html>

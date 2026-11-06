@@ -1,21 +1,23 @@
 ---
 description: >
-  Part 2 of the decision log, and the ACTIVE part: a new decision is appended here. D26 onward — the
-  interface rebuilt on a portable design language, which is what D26 itself decided — plus the open
-  questions, which live here because one of them is still half open and a closed file may not be
-  appended to.
+  Part 2 of the decision log, CLOSED on 2026-11-06: a new decision goes in BRAINSTORM_3.md. D26 to D96
+  — the interface rebuilt on a portable design language, which is what D26 itself decided, through the
+  round-4 playground picks — plus open questions O1 to O5, all closed.
   The entry test and the house style for writing one of these are in part 1 and are not repeated.
   NOT here: what was built (PROGRESS.md / PROGRESS_2.md), or a rule that outlives the decision
   (MANIFESTO.md / ARCHITECTURE.md).
 authority: reasoning
 writes: agent, when a decision is taken
-status: active
-covers: "D26 to D88, D90 to D96, plus open questions O1 to O5 — 2026-09-09 to 2026-11-05 (D89 is on PR #57)"
+status: closed
+covers: "D26 to D88, D90 to D96, plus open questions O1 to O5 — 2026-09-09 to 2026-11-06 (D89 is on PR #57). D97 onward is in BRAINSTORM_3.md"
 last_updated: 2026-11-06
 ---
 
 # 🧠 BRAINSTORM, part 2 — the rebuild, D26 onward
 
+> **→ Part 3: [`BRAINSTORM_3.md`](BRAINSTORM_3.md)** — **D97 onward**, and the ACTIVE part: a new
+> decision goes there, not here.
+>
 > **← Part 1: [`BRAINSTORM.md`](BRAINSTORM.md)** — **D1 to D25**: the application, and the two
 > attempts at its interface that D26 replaced. **It also carries the entry test and the house style
 > for writing one of these, which are not repeated here** — one file states them.
@@ -2417,4 +2419,6 @@ then never become mergeable, so a sharded version needs one final job carrying t
 
 ---
 
+> **→ Part 3: [`BRAINSTORM_3.md`](BRAINSTORM_3.md)** — D97 onward, the ACTIVE part.
+>
 > **← Part 1: [`BRAINSTORM.md`](BRAINSTORM.md)** — D1 to D25, the entry test, and the house style.

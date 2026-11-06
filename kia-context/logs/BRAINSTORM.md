@@ -10,7 +10,7 @@ authority: background
 writes: agent, whenever a decision is made
 status: closed
 covers: "D1 to D25 — the application, and the two revisions of its interface. D26 onward is in BRAINSTORM_2.md"
-last_updated: 2026-09-10
+last_updated: 2026-11-06
 ---
 
 # 🧠 BRAINSTORM — Why we chose what we chose
@@ -55,8 +55,9 @@ command if a measurement decided it.
 
 ---
 
-> **→ Part 2: [`BRAINSTORM_2.md`](BRAINSTORM_2.md)** — **D26 onward**, and the ACTIVE part: a new
-> decision is appended there, and the open questions live there too. Split at **D26** because that is
+> **→ Part 2: [`BRAINSTORM_2.md`](BRAINSTORM_2.md)** — **D26 to D96**, closed, with the open
+> questions O1 to O5. **→ Part 3: [`BRAINSTORM_3.md`](BRAINSTORM_3.md)** — **D97 onward**, and the
+> ACTIVE part: a new decision is appended there. Split at **D26** because that is
 > where the subject changes: D1 to D25 are the application being built and its interface being
 > revised twice; D26 is *"the mockup is the specification"*, and everything after it is the rebuild
 > that followed from it. **The numbering continues and never restarts.**
@@ -604,4 +605,5 @@ not new; what is new is that an `aria-*` attribute counts as a mark.
 
 ---
 
-> **→ Part 2: [`BRAINSTORM_2.md`](BRAINSTORM_2.md)** — D26 onward, and the open questions.
+> **→ Part 2: [`BRAINSTORM_2.md`](BRAINSTORM_2.md)** — D26 to D96, and the open questions O1 to O5.
+> **→ Part 3: [`BRAINSTORM_3.md`](BRAINSTORM_3.md)** — D97 onward, the ACTIVE part.

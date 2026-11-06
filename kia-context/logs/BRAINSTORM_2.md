@@ -10,7 +10,7 @@ description: >
 authority: reasoning
 writes: agent, when a decision is taken
 status: active
-covers: "D26 to D88, D90 to D94, plus open questions O1 to O5 — 2026-09-09 to 2026-11-05 (D89 is on PR #57)"
+covers: "D26 to D88, D90 to D96, plus open questions O1 to O5 — 2026-09-09 to 2026-11-05 (D89 is on PR #57)"
 last_updated: 2026-11-06
 ---
 
@@ -2292,6 +2292,40 @@ beside the frameworks, providers and engines it belongs with.
   **Caravan** by the author (M62), and its decision is posted on issue #40.
 - **A reader's completion of the reference does not carry over:** progress is keyed by
   `level/module`, and the reference was a draft with no completion control, so nobody had any.
+
+### D95 · Search is a window on Ctrl/Cmd+K over a keyword index built with the site — 2026-11-06
+
+Playground round 4 (M56) offered six placements and four engines, measured on the course. The author
+picked **N2**, a search window opened by Ctrl/Cmd+K or `/` and by a search icon in the bar, and **O1**,
+a keyword index built at build time and searched in the browser (MiniSearch measured best: about 73
+to 96 KB per language gzipped, loaded on the first opening of search, queries under a millisecond).
+
+- **Rejected placements:** N1 the author's own wide centred bar (at 390 it needs a second row, which
+  makes the bar 104px instead of 58px), N3 a page of its own, N4 an expanding icon, N5 the catalog's
+  filter bar, N6 the sidebar (no sidebar under 880px).
+- **Rejected engines:** O2 Pagefind (no titles, prose or code scope, and weaker on Persian letter
+  forms), O3 an in-browser semantic model (118 MB per reader), O4 the hybrid, which stays possible
+  later because O1 is built so a semantic layer can be added on request.
+- **Known cost:** the icon in the bar squeezes the navigation at 390px, which breaks the "every
+  destination in view from 390 up" measurement of D91; M59 has to give it room.
+- **Turkish and Persian** need a small normaliser in front of the index (dotted and dotless i,
+  ğ, ş; the zero-width non-joiner; Arabic and Persian letter forms), measured in M56.
+- **Still the author's to set:** the default scope (everything, or the reader's own track and
+  language) and that unwritten For Everyone modules stay out of the index (recommended).
+
+### D96 · No download: the course is read on the site — 2026-11-06
+
+Issue #61 asked for a PDF and Markdown download, and playground round 4 (M57) designed a modal and
+measured how the files would be made. The author dropped the feature: *"I want no one to easily
+download it and anyone who wanna read them, must visit the website live. That's the currency they
+should pay."*
+
+- **Removed:** the download pages of round 4 (P and Q) and milestones M57 and M60; issue #61 is
+  closed with this reason. Nothing was built, so nothing in `src/` changes.
+- **What it does not mean:** the course's markdown is public in the GitHub repository and readable
+  there, so this is a choice about what the site offers, not a way to hide the text.
+- **What was learned, for the record:** prebuilding every PDF and Markdown zip for both tracks
+  would have been about 1.23 GB, over GitHub Pages' 1 GB limit.
 
 ## Open questions
 

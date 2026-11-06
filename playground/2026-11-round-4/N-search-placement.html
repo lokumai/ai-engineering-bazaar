@@ -1,0 +1,1182 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Search placement, round 4</title>
+<style>
+:root {
+  --ground: #fdfbf7; --raised: #ffffff; --sunken: #e6dac6; --tint: #f4eee3;
+  --line: #d8cbb4; --line-strong: #c3b299;
+  --ink: #20242e; --title: #1b1b47; --muted: #6a6558; --faint: #948d7d;
+  --bar: #282864; --on-bar: #ffffff; --on-bar-dim: #c9c6e4;
+  --bar-hover: rgba(255,255,255,.10); --bar-field: rgba(255,255,255,.08); --bar-field-line: rgba(255,255,255,.25);
+  --chip: #fdfbf7; --on-chip: #1b1b47; --gold: #b8873b; --focus: #a0503c; --mark: #f1dc9c;
+  --fund: #2f8c86; --inter: #282864; --expert: #7a4a86; --eco: #b8873b; --trends: #a0503c;
+  --shadow-menu: 0 12px 28px rgba(40,30,10,.13);
+  --sans: "Avenir Next", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+}
+* { box-sizing: border-box; }
+html { background: var(--ground); }
+body { margin: 0; background: var(--ground); color: var(--ink); font: 15px/1.55 var(--sans); }
+a { color: inherit; text-decoration: none; }
+button { font-family: inherit; }
+:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+.sr { position: absolute; width: 1px; height: 1px; margin: -1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+
+/* ---------- the document around the options ---------- */
+.page { max-width: 1320px; margin: 0 auto; padding: 44px 28px 96px; }
+.q { margin: 0 0 10px; max-width: 860px; color: var(--title); font-size: 28px; line-height: 1.2; font-weight: 650; }
+.lead { margin: 0 0 20px; max-width: 800px; color: var(--muted); font-size: 16px; }
+.jump { display: flex; flex-wrap: wrap; gap: 8px; margin: 0; padding: 0; list-style: none; }
+.jump a { display: inline-flex; align-items: center; gap: 7px; min-height: 33px; padding: 0 12px; border: 1px solid var(--line-strong); border-radius: 9px; background: var(--raised); color: var(--muted); font-size: 13.5px; font-weight: 600; }
+.jump a:hover { background: var(--sunken); color: var(--ink); }
+.jump b { color: var(--title); }
+
+.decide { margin: 26px 0 8px; padding: 16px 20px; border: 1px solid var(--line-strong); border-left: 4px solid var(--gold); border-radius: 8px; background: var(--raised); max-width: 1180px; }
+.decide h2 { margin: 0 0 8px; color: var(--title); font-size: 17px; }
+.decide ol { margin: 0; padding-left: 22px; }
+.decide li { margin: 6px 0; }
+.decide li b { color: var(--title); }
+
+.settings { display: flex; flex-wrap: wrap; gap: 10px 28px; margin: 18px 0 0; padding: 14px 18px; border: 1px solid var(--line); border-radius: 8px; background: var(--tint); max-width: 1180px; }
+.settings fieldset { margin: 0; padding: 0; border: 0; min-width: 0; }
+.settings legend { padding: 0; margin: 0 0 6px; color: var(--title); font-size: 13.5px; font-weight: 650; }
+.settings .seg { display: inline-flex; flex-wrap: wrap; gap: 6px; }
+.settings .note { flex-basis: 100%; margin: 0; color: var(--muted); font-size: 13.5px; }
+
+.opt { margin-top: 56px; padding-top: 34px; border-top: 1px solid var(--line); scroll-margin-top: 16px; }
+.opt-head { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; margin-bottom: 12px; }
+.code { padding: 2px 9px; border: 1px solid var(--line-strong); border-radius: 5px; background: var(--raised); color: var(--title); font-size: 15px; font-weight: 700; }
+.opt h2 { margin: 0; color: var(--title); font-size: 22px; line-height: 1.25; font-weight: 650; }
+.rec { padding: 3px 10px; border-radius: 9px; background: var(--bar); color: #fff; font-size: 13px; font-weight: 600; }
+.opt-text { display: grid; grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr); gap: 12px 40px; max-width: 1180px; }
+.opt-text p { margin: 0 0 8px; }
+.opt-text ul { margin: 0; padding-left: 20px; }
+.opt-text li { margin: 3px 0; }
+.opt-text h3 { margin: 0 0 4px; color: var(--title); font-size: 14.5px; font-weight: 650; }
+.why { margin-top: 10px !important; padding: 10px 12px; border: 1px solid var(--line); border-radius: 7px; background: var(--raised); }
+kbd { display: inline-block; min-width: 20px; padding: 0 6px; border: 1px solid var(--line-strong); border-bottom-width: 2px; border-radius: 4px; background: var(--raised); color: var(--ink); font: 600 12px/18px var(--sans); text-align: center; }
+
+.toolbar { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 14px; margin: 22px 0 10px; }
+.toolbar .tl { color: var(--muted); font-size: 13.5px; font-weight: 600; }
+.seg { display: inline-flex; flex-wrap: wrap; gap: 6px; }
+.tb { display: inline-flex; align-items: center; min-height: 31px; padding: 0 11px; border: 1px solid var(--line-strong); border-radius: 8px; background: var(--raised); color: var(--muted); font-size: 13px; font-weight: 600; cursor: pointer; }
+.tb:hover { background: var(--sunken); color: var(--ink); }
+.tb[aria-pressed="true"] { border-color: var(--bar); background: var(--bar); color: #fff; }
+.tb[aria-pressed="true"]::before { content: "\2713\00a0"; }
+.try { color: var(--muted); font-size: 13px; }
+.try .tb { min-height: 28px; font-weight: 500; }
+
+.fit { position: relative; overflow: hidden; width: 100%; border: 1px solid var(--line); border-radius: 9px; background: var(--ground); }
+.stage { container: stage / inline-size; position: absolute; left: 0; top: 0; overflow: hidden; transform-origin: 0 0; background: var(--ground); }
+.said { min-height: 22px; margin: 8px 0 0; color: var(--muted); font-size: 13.5px; }
+.said b { color: var(--title); font-weight: 600; }
+
+.below { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 28px; margin-top: 22px; max-width: 1180px; }
+.below h3 { margin: 0 0 8px; color: var(--title); font-size: 14.5px; font-weight: 650; }
+table.fit-table { width: 100%; border-collapse: collapse; background: var(--raised); border: 1px solid var(--line); font-size: 13.5px; }
+.fit-table th, .fit-table td { padding: 6px 10px; text-align: left; vertical-align: top; border-top: 1px solid var(--line); }
+.fit-table thead th { border-top: 0; background: var(--ground); color: var(--muted); font-weight: 600; }
+.fit-table td:first-child { width: 64px; color: var(--title); font-weight: 700; white-space: nowrap; }
+.specimen { padding: 14px; border: 1px solid var(--line); border-radius: 8px; background: var(--ground); }
+.legend { margin: 10px 0 0; padding: 0; list-style: none; font-size: 13.5px; }
+.legend li { display: flex; gap: 8px; margin: 4px 0; }
+.legend .n { flex: none; display: grid; place-items: center; width: 20px; height: 20px; border-radius: 50%; background: var(--title); color: #fff; font-size: 12px; font-weight: 700; }
+
+.cmp { margin-top: 64px; padding-top: 30px; border-top: 1px solid var(--line); }
+.cmp h2 { margin: 0 0 10px; color: var(--title); font-size: 22px; }
+.cmp-wrap { overflow-x: auto; max-width: 100%; }
+.cmp table { width: 100%; min-width: 880px; border-collapse: collapse; background: var(--raised); border: 1px solid var(--line); font-size: 13.5px; }
+.cmp th, .cmp td { padding: 8px 10px; text-align: left; vertical-align: top; border-top: 1px solid var(--line); }
+.cmp thead th { border-top: 0; background: var(--ground); color: var(--muted); font-weight: 600; }
+.cmp td:first-child, .cmp th:first-child { color: var(--title); font-weight: 700; white-space: nowrap; }
+.next { margin-top: 28px; }
+.next a { color: var(--title); font-weight: 650; text-decoration: underline; text-underline-offset: 3px; }
+
+/* ---------- the site's bar, transcribed from src/design/bazaar.css and shell.css ---------- */
+.bar { position: relative; z-index: 30; background: var(--bar); color: var(--on-bar); }
+.bar-inner { display: flex; align-items: center; gap: 16px; height: 58px; padding: 0 22px; }
+.brand { display: flex; flex: none; align-items: center; gap: 10px; color: var(--on-bar); font: 700 16px/1 var(--sans); white-space: nowrap; }
+.brand img { display: block; width: 32px; height: 32px; }
+.bar-nav { display: flex; min-width: 0; margin-left: 4px; }
+.bar-nav > ul { display: flex; align-items: center; gap: 2px; margin: 0; padding: 0; list-style: none; }
+.bar-link { display: inline-flex; align-items: center; gap: 6px; height: 32px; padding: 7px 11px; border: 0; border-radius: 5px; background: none; color: var(--on-bar-dim); font: 500 14.5px/1 var(--sans); white-space: nowrap; cursor: pointer; }
+.bar-link:hover { background: var(--bar-hover); color: var(--on-bar); }
+.bar :focus-visible { outline-color: var(--on-bar); }
+.spacer { flex: 1 1 0; min-width: 0; }
+.bar-icon { display: grid; flex: none; place-items: center; min-width: 33px; height: 33px; padding: 0 8px; border: 1px solid var(--bar-field-line); border-radius: 5px; background: var(--bar-field); color: var(--on-bar); font: 600 12.5px/1 var(--sans); cursor: pointer; }
+.bar-icon:hover, .bar-repo:hover { background: var(--bar-hover); }
+.bar-icon.lang { display: inline-flex; align-items: center; gap: 6px; padding: 0 9px; }
+.bar-icon:not(.lang) { padding: 0; }
+.flag { flex: none; width: 18px; height: 12px; border-radius: 2px; outline: 1px solid var(--bar-field-line); }
+.bar-repo { display: inline-flex; flex: none; align-items: center; gap: 6px; height: 33px; padding: 0 9px; border: 1px solid var(--bar-field-line); border-radius: 5px; background: var(--bar-field); color: var(--on-bar); font: 600 12.5px/1 var(--sans); }
+.star { color: var(--gold); }
+.tswitch { display: inline-flex; flex: none; align-items: center; gap: 2px; height: 33px; padding: 3px; border: 1px solid var(--bar-field-line); border-radius: 8px; background: var(--bar-field); }
+.tseg { display: inline-flex; align-items: center; gap: 6px; height: 25px; padding: 0 9px; border-radius: 5px; color: var(--on-bar-dim); font: 600 14.5px/1 var(--sans); white-space: nowrap; }
+.tseg:hover { background: var(--bar-hover); color: var(--on-bar); }
+.tseg[aria-current] { background: var(--gold); color: var(--on-chip); font-weight: 700; }
+.band { height: 18px; background-color: #282864; background-image: linear-gradient(45deg,#2f8c86 25%,transparent 25% 75%,#2f8c86 75%), linear-gradient(45deg,#c8a078 25%,transparent 25% 75%,#c8a078 75%), linear-gradient(45deg,#a0503c 25%,transparent 25% 75%,#a0503c 75%); background-size: 18px 18px, 18px 18px, 54px 18px; background-position: 0 0, 9px 9px, 27px 0; border-bottom: 2px solid #b8873b; }
+
+@container stage (max-width: 1180px) {
+  .tfor, .bar-nav li[data-home], .star, .stars, .langcode { display: none; }
+  .bar-nav .bar-link { padding-inline: 8px; }
+}
+@container stage (max-width: 880px) {
+  .bar-inner { gap: 8px; padding: 0 12px; }
+  .tseg { padding: 0 8px; }
+  .tlabel { position: absolute; width: 1px; height: 1px; margin: -1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+  .bar-nav > ul { overflow-x: auto; scrollbar-width: none; }
+}
+@container stage (max-width: 767px) {
+  .bar-repo { display: none; }
+  .bar-inner { gap: 6px; padding: 0 12px; }
+  .brand-word { position: absolute; width: 1px; height: 1px; margin: -1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+  .bar-nav .bar-link { padding-inline: 6px; }
+  .bar-nav { margin-left: 0; }
+}
+.noword .brand-word { position: absolute; width: 1px; height: 1px; margin: -1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+
+/* ---------- a page under the bar ---------- */
+.frag { position: relative; padding: 26px 36px; }
+.crumb { margin: 0 0 12px; color: var(--muted); font-size: 13.5px; }
+.crumb span { margin: 0 6px; color: var(--faint); }
+.display { margin: 0 0 6px; color: var(--title); font-size: 36px; line-height: 1.1; font-weight: 700; }
+.meta { margin: 0 0 18px; color: var(--muted); font-size: 14px; }
+.card { max-width: 620px; padding: 14px 18px; border: 1px solid var(--line); border-radius: 9px; background: var(--raised); }
+.card h4 { margin: 0 0 6px; color: var(--title); font-size: 15px; font-weight: 650; }
+.card ul { margin: 0; padding-left: 20px; }
+.card li { margin: 4px 0; }
+@container stage (max-width: 767px) { .frag { padding: 22px 18px; } .display { font-size: 28px; } }
+
+/* ---------- search: the field ---------- */
+.sfield { position: relative; display: flex; flex: 0 1 560px; align-items: center; gap: 8px; min-width: 0; height: 36px; padding: 0 10px; border: 1px solid var(--line-strong); border-radius: 6px; background: #fff; color: var(--ink); cursor: text; }
+.sfield:focus-within { outline: 2px solid var(--gold); outline-offset: 1px; }
+.sfield svg { flex: none; color: var(--muted); }
+.sfield input { flex: 1; min-width: 0; height: 100%; padding: 0; border: 0; outline: 0; background: transparent; color: var(--ink); font: 500 14.5px/1 var(--sans); }
+.sfield input::placeholder { color: var(--muted); opacity: 1; }
+.sfield .kbds { display: inline-flex; flex: none; gap: 4px; }
+.sfield kbd { min-width: 0; border-color: var(--line); border-bottom-width: 1px; color: var(--muted); background: var(--ground); font-size: 11.5px; line-height: 17px; }
+.stage[data-fill="glass"] .sfield { border-color: var(--bar-field-line); background: var(--bar-field); color: var(--on-bar); }
+.stage[data-fill="glass"] .sfield svg { color: var(--on-bar-dim); }
+.stage[data-fill="glass"] .sfield input { color: var(--on-bar); }
+.stage[data-fill="glass"] .sfield input::placeholder { color: var(--on-bar-dim); }
+.stage[data-fill="glass"] .sfield kbd { border-color: var(--bar-field-line); background: transparent; color: var(--on-bar-dim); }
+.s-short { display: none; }
+@container stage (max-width: 1180px) { .sfield .kbds { display: none; } .s-long { display: none; } .s-short { display: inline; } }
+.sbtn { display: grid; flex: none; place-items: center; width: 33px; height: 33px; padding: 0; border: 1px solid var(--bar-field-line); border-radius: 5px; background: var(--bar-field); color: var(--on-bar); cursor: pointer; }
+.sbtn:hover { background: var(--bar-hover); }
+.sbtn[aria-expanded="true"], .sbtn[aria-pressed="true"] { background: var(--bar-hover); }
+
+/* ---------- search: the panel (filters, results) ---------- */
+.s-panel { border: 1px solid var(--line-strong); border-radius: 10px; background: var(--raised); box-shadow: var(--shadow-menu); color: var(--ink); text-align: left; }
+.s-adv { padding: 12px 14px 4px; border-bottom: 1px solid var(--line); background: var(--tint); border-radius: 10px 10px 0 0; }
+.s-adv-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px; }
+.s-adv-head b { color: var(--title); font-size: 13.5px; }
+.linkbtn { padding: 2px 4px; border: 0; background: none; color: var(--title); font: 600 12.5px/1.2 var(--sans); text-decoration: underline; text-underline-offset: 2px; cursor: pointer; }
+.fg { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 8px; margin: 0 0 8px; }
+.fl { flex: 0 0 74px; color: var(--muted); font-size: 12.5px; font-weight: 650; }
+.chips { display: flex; flex-wrap: wrap; gap: 5px; min-width: 0; }
+.chip { display: inline-flex; align-items: center; gap: 6px; min-height: 28px; padding: 0 9px; border: 1px solid var(--line-strong); border-radius: 7px; background: var(--raised); color: var(--ink); font: 500 13px/1 var(--sans); cursor: pointer; }
+.chip:hover { background: var(--sunken); }
+.chip .ck { display: none; flex: none; }
+.chip[aria-pressed="true"] { border-color: var(--title); background: var(--title); color: #fff; font-weight: 600; }
+.chip[aria-pressed="true"] .ck { display: inline; }
+.chip .n { color: inherit; opacity: .75; font-size: 11.5px; font-variant-numeric: tabular-nums; }
+.chip .lk { flex: none; width: 4px; height: 13px; border-radius: 2px; }
+.chip[aria-pressed="true"] .lk { outline: 1px solid rgba(255,255,255,.7); }
+.chip .fa-name { font-family: Tahoma, "Segoe UI", system-ui, sans-serif; }
+.s-count { padding: 8px 14px 4px; color: var(--muted); font-size: 12.5px; }
+.s-count b { color: var(--title); }
+.s-results { margin: 0; padding: 4px 6px 6px; list-style: none; max-height: 330px; overflow-y: auto; }
+.s-foot { display: flex; flex-wrap: wrap; gap: 4px 14px; padding: 8px 14px; border-top: 1px solid var(--line); color: var(--muted); font-size: 12px; }
+
+/* ---------- search: one result ---------- */
+.res { position: relative; display: flex; gap: 10px; padding: 8px 10px 8px 8px; border-radius: 7px; cursor: pointer; }
+.res:hover { background: var(--tint); }
+.res.is-active { background: var(--tint); outline: 2px solid var(--title); outline-offset: -2px; }
+.res .lk { flex: none; width: 4px; align-self: stretch; border-radius: 2px; }
+.res-main { min-width: 0; flex: 1; }
+.res-title { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 8px; color: var(--title); font-size: 14.5px; font-weight: 650; line-height: 1.3; }
+.res-snip { margin-top: 2px; color: var(--ink); font-size: 13px; line-height: 1.45; overflow-wrap: anywhere; }
+.res-snip .where { color: var(--muted); font-size: 12px; }
+.res-meta2 { margin-top: 1px; color: var(--muted); font-size: 12px; }
+.res-meta { display: flex; flex-wrap: wrap; gap: 2px 8px; margin-top: 3px; color: var(--muted); font-size: 12px; }
+.res-meta .lv { color: var(--ink); font-weight: 600; }
+.res-meta2 .sep::before { content: "\00b7"; margin: 0 8px; color: var(--faint); }
+.res-meta2 .sep:first-child::before { content: none; }
+.res-meta .sep::before { content: "\00b7"; margin-right: 8px; color: var(--faint); }
+.res-meta svg { vertical-align: -2px; margin-right: 3px; }
+.res mark, .s-count mark { padding: 0 1px; border-radius: 2px; background: var(--mark); color: var(--ink); font-weight: 700; text-decoration: underline; text-decoration-thickness: 1.5px; text-underline-offset: 2px; }
+.tag { display: inline-block; padding: 0 6px; border: 1px solid var(--line-strong); border-radius: 4px; background: var(--raised); color: var(--muted); font-size: 11px; font-weight: 600; line-height: 17px; }
+.res code, .res pre { font-family: var(--mono); }
+.res .codeline { display: block; margin: 2px 0 0; padding: 4px 8px; border: 1px solid var(--line); border-radius: 5px; background: var(--ground); font: 12px/1.4 var(--mono); white-space: pre-wrap; overflow-wrap: anywhere; }
+.res .enter { display: none; flex: none; align-self: center; color: var(--muted); font-size: 12px; }
+.res.is-active .enter { display: inline; }
+.res.is-card { padding: 14px 16px; border: 1px solid var(--line); background: var(--raised); }
+.res.is-card:hover { background: var(--raised); border-color: var(--line-strong); }
+.res.is-card .res-title { font-size: 16px; }
+.res.is-card .res-snip { font-size: 14px; }
+.empty { padding: 14px; color: var(--muted); font-size: 13.5px; }
+.empty b { color: var(--title); }
+.s-note { margin: 6px 14px 10px; padding: 8px 10px; border: 1px dashed var(--line-strong); border-radius: 6px; background: var(--ground); color: var(--muted); font-size: 12.5px; }
+
+/* ---------- N1: the author's bar ---------- */
+.n1-slot { display: flex; flex: 1 1 0; justify-content: center; min-width: 0; }
+.n1-dd { position: absolute; top: 49px; left: 50%; z-index: 40; width: min(700px, calc(100cqw - 24px)); transform: translateX(-50%); display: none; }
+.stage[data-open="1"] .n1-dd { display: block; }
+.n1-row2 { display: none; }
+@container stage (max-width: 767px) { .n1-dd { top: 108px; } }
+@container stage (max-width: 480px) {
+  .n1-slot { display: none; }
+  .n1-row2 { display: flex; align-items: center; padding: 0 12px 10px; }
+  .n1-row2 .sfield { flex: 1 1 auto; }
+  .n1-dd { top: 128px; }
+}
+
+/* ---------- N2: palette ---------- */
+.pal-back { position: absolute; inset: 78px 0 0; z-index: 50; display: none; background: rgba(27,27,71,.42); }
+.stage[data-open="1"] .pal-back { display: block; }
+.pal { position: absolute; top: 34px; left: 50%; width: min(680px, calc(100cqw - 24px)); transform: translateX(-50%); }
+.pal .sfield { height: 46px; border: 0; border-bottom: 1px solid var(--line); border-radius: 10px 10px 0 0; box-shadow: none; }
+.pal .sfield:focus-within { outline: 0; box-shadow: inset 0 -2px 0 var(--gold); }
+.pal .sfield input { font-size: 16px; }
+.pal .s-panel { border-radius: 10px; }
+.pal .s-results { max-height: 250px; }
+.pal .s-adv .fg { display: inline-flex; margin-right: 16px; }
+.pal .s-adv .fl { flex: none; }
+
+/* ---------- N3: the page ---------- */
+.n3 { padding: 22px 36px 26px; }
+.n3-top { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 14px; margin-bottom: 4px; }
+.n3 h3 { margin: 0; color: var(--title); font-size: 26px; font-weight: 700; }
+.url { margin: 0 0 12px; padding: 4px 10px; border: 1px solid var(--line); border-radius: 6px; background: var(--raised); color: var(--muted); font: 12px/1.5 var(--mono); overflow-wrap: anywhere; }
+.n3-form { display: flex; gap: 8px; margin-bottom: 14px; }
+.n3-form .sfield { flex: 1; height: 44px; }
+.n3-form .sfield input { font-size: 16px; }
+.primary { display: inline-flex; align-items: center; min-height: 44px; padding: 0 18px; border: 0; border-radius: 6px; background: var(--bar); color: #fff; font: 650 14px/1 var(--sans); cursor: pointer; }
+.n3-grid { display: grid; grid-template-columns: 250px minmax(0, 1fr); gap: 22px; align-items: start; }
+.n3-grid .s-adv { border: 1px solid var(--line); border-radius: 10px; padding: 12px 12px 6px; }
+.n3-grid .fg { display: block; margin-bottom: 12px; }
+.n3-grid .fl { display: block; margin-bottom: 5px; }
+.cards { display: grid; gap: 10px; margin: 0; padding: 0; list-style: none; }
+@container stage (max-width: 880px) { .n3-grid { grid-template-columns: minmax(0, 1fr); } .n3 { padding: 20px 20px; } }
+.n3-filterbtn { display: none; }
+@container stage (max-width: 880px) { .n3-filterbtn { display: inline-flex; } .n3-grid .s-adv[data-collapsed="1"] { display: none; } }
+
+/* ---------- N4: icon that expands ---------- */
+.n4-field { display: none; flex: 1 1 0; min-width: 0; align-items: center; gap: 8px; }
+.n4-field .sfield { flex: 1 1 auto; }
+.stage[data-open="1"] .n4-field { display: flex; }
+#n4-stage[data-open="1"] .bar-nav, #n4-stage[data-open="1"] .n4-icon { display: none; }
+#n4-stage[data-open="1"] .spacer { display: none; }
+.n4-close { flex: none; height: 33px; padding: 0 10px; border: 1px solid var(--bar-field-line); border-radius: 5px; background: var(--bar-field); color: var(--on-bar); font: 600 12.5px/1 var(--sans); cursor: pointer; }
+.n4-close:hover { background: var(--bar-hover); }
+.n4-dd { position: absolute; top: 49px; right: 22px; z-index: 40; width: min(620px, calc(100cqw - 24px)); display: none; }
+.stage[data-open="1"] .n4-dd { display: block; }
+@container stage (max-width: 767px) {
+  #n4-stage[data-open="1"] .tswitch, #n4-stage[data-open="1"] .bar-icon, #n4-stage[data-open="1"] .bar-repo { display: none; }
+  .n4-dd { right: 12px; left: 12px; width: auto; }
+}
+
+/* ---------- N5: catalog filter bar ---------- */
+.n5 { padding: 22px 36px 26px; }
+.n5 h3 { margin: 0 0 4px; color: var(--title); font-size: 30px; font-weight: 700; }
+.n5-tabs { display: flex; gap: 6px; margin: 10px 0 12px; }
+.tab { height: 32px; padding: 0 14px; border: 1px solid var(--line-strong); border-radius: 9px; background: var(--raised); color: var(--muted); font: 600 13px/1 var(--sans); cursor: pointer; }
+.tab[aria-selected="true"] { border-color: var(--bar); background: var(--bar); color: #fff; }
+.n5-bar { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; padding: 10px; border: 1px solid var(--line); border-radius: 10px; background: var(--raised); }
+.n5-bar .sfield { flex: 1 1 260px; border-color: var(--line-strong); }
+.n5 .s-adv { margin-top: 10px; border: 1px solid var(--line); border-radius: 10px; }
+.n5 .s-adv[data-collapsed="1"] { display: none; }
+.n5-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 10px; margin: 14px 0 0; padding: 0; list-style: none; }
+.mcard { display: flex; gap: 10px; padding: 12px 14px; border: 1px solid var(--line); border-radius: 9px; background: var(--raised); }
+.mcard .lk { flex: none; width: 4px; align-self: stretch; border-radius: 2px; }
+.mcard b { display: block; color: var(--title); font-size: 15px; }
+.mcard span { color: var(--muted); font-size: 12.5px; }
+@container stage (max-width: 767px) { .n5 { padding: 18px 16px; } }
+
+/* ---------- N6: sidebar rail ---------- */
+.n6 { display: grid; grid-template-columns: 262px minmax(0, 1fr); min-height: 520px; }
+.rail { position: relative; padding: 16px 12px; border-right: 1px solid var(--line); background: var(--ground); }
+.rail h4 { margin: 0 0 8px; padding: 0 6px; color: var(--muted); font-size: 12.5px; letter-spacing: .02em; }
+.rail .sfield { height: 34px; margin-bottom: 10px; border-color: var(--line-strong); }
+.rail ul { margin: 0; padding: 0; list-style: none; }
+.rail li a { display: flex; align-items: center; gap: 8px; padding: 6px 8px; border-radius: 6px; color: var(--ink); font-size: 13.5px; }
+.rail li a .lk { width: 4px; height: 14px; border-radius: 2px; }
+.rail li a .c { margin-left: auto; color: var(--muted); font-size: 12px; }
+.n6-dd { position: absolute; top: 160px; left: 12px; z-index: 40; width: min(560px, calc(100cqw - 24px)); display: none; }
+.stage[data-open="1"] .n6-dd { display: block; }
+.n6 .frag { min-width: 0; }
+.n6-open { display: none; margin: 0 0 12px; }
+@container stage (max-width: 880px) {
+  .n6 { grid-template-columns: minmax(0, 1fr); }
+  .rail { display: none; }
+  .stage[data-drawer="1"] .rail { display: block; position: absolute; z-index: 45; top: 78px; bottom: 0; left: 0; width: min(300px, 86cqw); box-shadow: var(--shadow-menu); background: var(--ground); }
+  .n6-open { display: inline-flex; }
+  .n6-dd { left: 12px; }
+}
+
+@media (max-width: 1100px) { .opt-text, .below { grid-template-columns: minmax(0, 1fr); } }
+@media (max-width: 600px) {
+  .page { padding: 28px 16px 64px; }
+  .q { font-size: 23px; }
+  .fl { flex-basis: 100%; }
+}
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
+</style>
+</head>
+<body>
+<main class="page">
+  <h1 class="q">Where should search go, and what should it show?</h1>
+  <p class="lead">Milestone M56, issue #43. Search has to find a module or a level by its name and by what its pages say, in English, Turkish and Persian. Each option below is the real bar, working on the real module titles and the real text of the 19 written modules. Type in it, open its advanced panel, and change the width to see where the bar gives way (1440, 1180, 1024, 880, 767 and 390 are the widths where the live bar changes).</p>
+  <ul class="jump">
+    <li><a href="#n1"><b>N1</b> Wide field in the bar</a></li>
+    <li><a href="#n2"><b>N2</b> Palette on a key</a></li>
+    <li><a href="#n3"><b>N3</b> A search page</a></li>
+    <li><a href="#n4"><b>N4</b> Icon that expands</a></li>
+    <li><a href="#n5"><b>N5</b> Field in the catalog</a></li>
+    <li><a href="#n6"><b>N6</b> Field in the sidebar</a></li>
+    <li><a href="#cmp"><b>All</b> Side by side</a></li>
+    <li><a href="O-search-engine.html"><b>O</b> The engine behind it</a></li>
+  </ul>
+
+  <section class="decide" aria-labelledby="dec">
+    <h2 id="dec">Four decisions for you</h2>
+    <ol>
+      <li><b>The placement.</b> Pick one of N1 to N6 (or combine, for example N1 on a wide screen and N4's icon on a phone). Recommended: N1, your own idea, with <kbd>/</kbd> and <kbd>Ctrl</kbd> <kbd>K</kbd> also opening it.</li>
+      <li><b>The engine.</b> Page <a href="O-search-engine.html"><u>O</u></a> measures the options on the real corpus. It is independent of the placement: any option here can sit on any engine.</li>
+      <li><b>The default scope.</b> When a reader opens search, does it look only at their own track and language, or at everything? Recommended: their own track and language, with the other tracks and languages one click away. Try both with the setting below.</li>
+      <li><b>Unwritten For Everyone modules.</b> Today none of the For Everyone modules is written. Should search leave them out? Recommended: leave them out, so no result opens a page that says "not written yet". Try both with the setting below.</li>
+    </ol>
+    <p style="margin:10px 0 0;color:var(--muted)">Write back the codes, for example "N1, scope: own track and language, unwritten left out".</p>
+  </section>
+
+  <form class="settings" id="settings" aria-label="Settings for every demo on this page" onsubmit="return false">
+    <fieldset><legend>Default scope when search opens</legend>
+      <div class="seg" role="group" aria-label="Default scope">
+        <button type="button" class="tb" data-set="scope" data-v="mine" aria-pressed="true">Own track and language</button>
+        <button type="button" class="tb" data-set="scope" data-v="all" aria-pressed="false">Everything</button>
+      </div>
+    </fieldset>
+    <fieldset><legend>Unwritten For Everyone modules</legend>
+      <div class="seg" role="group" aria-label="Unwritten For Everyone modules">
+        <button type="button" class="tb" data-set="unwritten" data-v="out" aria-pressed="true">Left out</button>
+        <button type="button" class="tb" data-set="unwritten" data-v="in" aria-pressed="false">Included</button>
+      </div>
+    </fieldset>
+    <p class="note">The reader in these demos is on For Engineers, in English. "Own track and language" starts with For Engineers, English, titles and prose. "Everything" starts with both tracks, all three languages, titles, prose and code. The text is searched on your machine, from the files beside this page; the Turkish and Persian text loads the first time you switch to it.</p>
+  </form>
+
+  <section class="opt" id="n1">
+  <div class="opt-head"><span class="code">N1</span><h2>A wide centred field in the bar, with an advanced dropdown</h2><span class="rec">Recommended</span></div>
+  <div class="opt-text">
+    <div>
+      <p>Your own idea. A white field sits in the middle of the bar, between the menu and the track switch. Click it, or press <kbd>/</kbd> or <kbd>Ctrl</kbd> <kbd>K</kbd>, and a panel drops down: the advanced filters first (track, level, language, and whether to search titles, prose or code), then the results as you type.</p>
+      <ul>
+        <li>Search is on every page, in the place readers look for it, and needs no new page.</li>
+        <li>Room is the cost. Measured on this bar: 338px free at 1440, 276px at 1180, 120px at 1024 and 218px at 880. With the site name hidden beside the logo the field is 548px at 1440. At 390px the bar has 3px free, so the field becomes a second row and the bar is 104px tall instead of 58px.</li>
+        <li>A dropdown has no address, so a search cannot be linked to. Results open on Enter or a click.</li>
+        <li>The field's fill is your choice. White is 13.3:1 against the bar. The mockup's own translucent field with white text has a border at 2.2:1 against the bar (the same border the bar's other buttons have), and its text is 10.5:1 on its fill.</li>
+      </ul>
+      <p class="why"><b>Why recommended:</b> it is the pattern readers already know from documentation sites, it is always visible, and the two keys make it as quick as a palette (N2). The narrow-screen second row is the one real cost, and N4's icon can replace it on a phone if you prefer.</p>
+    </div>
+    <div>
+      <h3>Keyboard</h3>
+      <p><kbd>/</kbd> or <kbd>Ctrl</kbd> <kbd>K</kbd> focuses the field from anywhere, and focus opens the panel. <kbd>↓</kbd> <kbd>↑</kbd> move through the results while the field keeps focus (a combobox with <code>aria-activedescendant</code>), <kbd>Enter</kbd> opens the active one, <kbd>Tab</kbd> walks the filters (each a toggle button), <kbd>Esc</kbd> closes the panel and a second <kbd>Esc</kbd> clears the field. The count is announced in a live region.</p>
+      <h3>Seen on</h3>
+      <p>GitHub's search field in the top bar, MDN's header field, and Algolia DocSearch (a field in the bar that opens a panel).</p>
+    </div>
+  </div>
+  <div class="demo" data-opt="n1"></div>
+  <div class="below">
+    <div><h3>How it fits at each width</h3>
+      <table class="fit-table"><thead><tr><th>Width</th><th>The bar and the field</th></tr></thead><tbody>
+        <tr><td>1440</td><td>Everything shows. Field 338px (548px with the site name hidden). Placeholder and a <kbd>/</kbd> hint.</td></tr>
+        <tr><td>1180</td><td>Home, "For", the star count and the code beside the flag go, as today. Field 276px, placeholder "Search", no key hint.</td></tr>
+        <tr><td>1024</td><td>Field 120px: the magnifier and the word "Search". The tightest width.</td></tr>
+        <tr><td>880</td><td>The switch shows its two icons. Field 218px.</td></tr>
+        <tr><td>767</td><td>Logo only, the repository button gone. Field 380px.</td></tr>
+        <tr><td>390</td><td>No room. The field is a second row in the bar, 46px taller. The menu and the switch keep their places.</td></tr>
+      </tbody></table>
+    </div>
+    <div><h3>How one result reads</h3>
+      <div class="specimen" data-specimen="en" data-variant="row"></div>
+      <ul class="legend">
+        <li><span class="n">1</span><span>The module's title, with the matched words marked and underlined, so colour is not the only signal. Beside it a "Draft" tag when the module is not written.</span></li>
+        <li><span class="n">2</span><span>A snippet of about 170 characters around the first match, with an ellipsis where it is cut.</span></li>
+        <li><span class="n">3</span><span>The level (its name beside its colour key), the track with its icon and name, the language, the minutes.</span></li>
+        <li><span class="n">4</span><span>Where it matched (title, section heading, text or code), the section, and how many more matches the module has.</span></li>
+      </ul>
+      <p class="tl" style="margin:10px 0 4px">The same result in Persian runs right to left; the line of facts under it stays left to right:</p>
+      <div class="specimen" data-specimen="fa" data-variant="row"></div>
+    </div>
+  </div>
+</section>
+
+<section class="opt" id="n2">
+  <div class="opt-head"><span class="code">N2</span><h2>A palette on a key, opened from an icon in the bar</h2></div>
+  <div class="opt-text">
+    <div>
+      <p>The bar gets one 33px magnifier, like its other icons. <kbd>Ctrl</kbd> <kbd>K</kbd> (<kbd>⌘</kbd> <kbd>K</kbd> on a Mac) or <kbd>/</kbd> opens the same thing: a centred panel over a dimmed page with the field on top, the filters under it and the results below.</p>
+      <ul>
+        <li>Costs the bar almost nothing: 33px at every width, and the field and results get a wide panel to themselves. At 390px the navigation narrows to 124px and scrolls 36px sideways, which loses today's guarantee that every destination is in view.</li>
+        <li>The panel has room for a longer result with a snippet and for the filters, so it suits a corpus with lots of text.</li>
+        <li>Hidden until learned: a reader has to notice the icon, and the keys help only readers who know palettes. No address, so a search cannot be linked to.</li>
+      </ul>
+    </div>
+    <div>
+      <h3>Keyboard</h3>
+      <p><kbd>Ctrl</kbd> <kbd>K</kbd> or <kbd>/</kbd> opens it, and <kbd>Ctrl</kbd> <kbd>K</kbd> closes it again. It is a dialog with a focus trap: <kbd>Tab</kbd> cycles field, filters, field. <kbd>↓</kbd> <kbd>↑</kbd> and <kbd>Enter</kbd> work as in N1. <kbd>Esc</kbd> closes it and focus returns to the icon. The page behind is not reachable while it is open.</p>
+      <h3>Seen on</h3>
+      <p>The command palettes of Linear, Notion and GitHub, and the search dialog of many documentation sites.</p>
+    </div>
+  </div>
+  <div class="demo" data-opt="n2"></div>
+  <div class="below">
+    <div><h3>How it fits at each width</h3>
+      <table class="fit-table"><thead><tr><th>Width</th><th>The bar and the icon</th></tr></thead><tbody>
+        <tr><td>1440</td><td>The bar is as today plus one 33px icon before the switch. The panel is 680px wide, centred.</td></tr>
+        <tr><td>1180</td><td>As today plus the icon. Same panel.</td></tr>
+        <tr><td>1024</td><td>As today plus the icon (71px of free space left).</td></tr>
+        <tr><td>880</td><td>As today plus the icon (177px free).</td></tr>
+        <tr><td>767</td><td>As today plus the icon (341px free).</td></tr>
+        <tr><td>390</td><td>The icon fits only by squeezing the navigation to 124px, which then scrolls 36px. The panel is the full width.</td></tr>
+      </tbody></table>
+    </div>
+    <div><h3>How one result reads</h3>
+      <div class="specimen" data-specimen="en" data-variant="row"></div>
+      <ul class="legend">
+        <li><span class="n">1</span><span>Title, marked and underlined where it matched.</span></li>
+        <li><span class="n">2</span><span>Snippet around the first match.</span></li>
+        <li><span class="n">3</span><span>Level, track, language and minutes.</span></li>
+        <li><span class="n">4</span><span>Where it matched, the section, and how many more.</span></li>
+      </ul>
+      <p class="tl" style="margin:10px 0 4px">A result found in code shows the code in a box, in the same order:</p>
+      <div class="specimen" data-specimen="en" data-variant="row" data-query="get_weather" data-scopes="titles,prose,code"></div>
+    </div>
+  </div>
+</section>
+
+<section class="opt" id="n3">
+  <div class="opt-head"><span class="code">N3</span><h2>A search page of its own</h2></div>
+  <div class="opt-text">
+    <div>
+      <p>The bar gets a magnifier link to <code>/search/</code>. The page has a large field, the advanced filters in a column beside the results, and every result as a card. The address carries the search, so it can be bookmarked and shared (the grey line under the title shows it).</p>
+      <ul>
+        <li>The most room for a result: a card can hold a long snippet, and the filters are always visible at desktop width.</li>
+        <li>A search can be linked to, and the browser's Back button returns to it.</li>
+        <li>It is a new route and a page per language, and a reader leaves the page they were on. At 390px the filters sit behind a "Filters" button. The bar has the same 33px cost as N2 (narrowing the navigation to 124px at 390).</li>
+      </ul>
+    </div>
+    <div>
+      <h3>Keyboard</h3>
+      <p>The page is an ordinary form, so it needs nothing special: the field, the Search button, the filter toggles, then the results as links in reading order. <kbd>/</kbd> focuses the field from anywhere on the page. The address updates with the search.</p>
+      <h3>Seen on</h3>
+      <p>Wikipedia's search results page, MDN's search page, and most shop and library sites.</p>
+    </div>
+  </div>
+  <div class="demo" data-opt="n3"></div>
+  <div class="below">
+    <div><h3>How it fits at each width</h3>
+      <table class="fit-table"><thead><tr><th>Width</th><th>The bar and the page</th></tr></thead><tbody>
+        <tr><td>1440</td><td>The bar is as today plus the icon. Filters in a 250px column, results beside it.</td></tr>
+        <tr><td>1180</td><td>As today plus the icon. Same layout.</td></tr>
+        <tr><td>1024</td><td>As today plus the icon. Same layout.</td></tr>
+        <tr><td>880</td><td>The filters move behind a "Filters" button above the results.</td></tr>
+        <tr><td>767</td><td>As 880.</td></tr>
+        <tr><td>390</td><td>The icon squeezes the navigation to 124px (scrolls 36px). The page is one column.</td></tr>
+      </tbody></table>
+    </div>
+    <div><h3>How one result reads</h3>
+      <div class="specimen" data-specimen="en" data-variant="card"></div>
+      <ul class="legend">
+        <li><span class="n">1</span><span>Title, marked where it matched.</span></li>
+        <li><span class="n">2</span><span>A snippet, the same length as in the other options; a card could carry more.</span></li>
+        <li><span class="n">3</span><span>Level, track, language, minutes.</span></li>
+        <li><span class="n">4</span><span>Where it matched, the section, and how many more.</span></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section class="opt" id="n4">
+  <div class="opt-head"><span class="code">N4</span><h2>An icon in the bar that expands into a field</h2></div>
+  <div class="opt-text">
+    <div>
+      <p>A 33px magnifier sits in the bar. Pressing it expands a field in the place of the navigation (Home, Catalog and Progress step aside while it is open), with a Close button at its end. The results and the advanced filters drop down under it, aligned to the right edge.</p>
+      <ul>
+        <li>At rest the bar costs 33px, and while open the field has the whole middle of the bar: 536px at 1440 and 260px at 390.</li>
+        <li>The navigation disappears while searching, which is fine for a moment and surprising for a reader who wanted to switch page.</li>
+        <li>Two steps (press the icon, then type) where N1 needs one. At 390px, at rest, it has the same 124px navigation as N2.</li>
+      </ul>
+    </div>
+    <div>
+      <h3>Keyboard</h3>
+      <p><kbd>Enter</kbd> or <kbd>Space</kbd> on the icon expands it and moves focus to the field; <kbd>/</kbd> and <kbd>Ctrl</kbd> <kbd>K</kbd> do the same. Arrows and <kbd>Enter</kbd> work as in N1. <kbd>Esc</kbd> or Close collapses it and focus returns to the icon, so a keyboard reader is back where they were.</p>
+      <h3>Seen on</h3>
+      <p>The top app bar in Google's Material Design (a search icon that expands into a field).</p>
+    </div>
+  </div>
+  <div class="demo" data-opt="n4"></div>
+  <div class="below">
+    <div><h3>How it fits at each width</h3>
+      <table class="fit-table"><thead><tr><th>Width</th><th>Open: the field's width</th></tr></thead><tbody>
+        <tr><td>1440</td><td>536px, in place of the navigation.</td></tr>
+        <tr><td>1180</td><td>396px.</td></tr>
+        <tr><td>1024</td><td>240px.</td></tr>
+        <tr><td>880</td><td>329px.</td></tr>
+        <tr><td>767</td><td>637px.</td></tr>
+        <tr><td>390</td><td>260px. The switch, the flag and the theme button hide while it is open, so only the logo, the field and Close show. At rest the navigation is 124px and scrolls 36px.</td></tr>
+      </tbody></table>
+    </div>
+    <div><h3>How one result reads</h3>
+      <div class="specimen" data-specimen="en" data-variant="row"></div>
+      <ul class="legend">
+        <li><span class="n">1</span><span>Title, marked where it matched.</span></li>
+        <li><span class="n">2</span><span>Snippet around the first match.</span></li>
+        <li><span class="n">3</span><span>Level, track, language, minutes.</span></li>
+        <li><span class="n">4</span><span>Where it matched, the section, and how many more.</span></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section class="opt" id="n5">
+  <div class="opt-head"><span class="code">N5</span><h2>A search field in the catalog's filter bar</h2></div>
+  <div class="opt-text">
+    <div>
+      <p>Nothing changes in the bar. The Catalog page gets a field above its list of modules, and the advanced filters open from a Filters button beside it. With nothing typed the page shows every module as today; with a query it shows the results as cards.</p>
+      <ul>
+        <li>The bar keeps all its room at every width, and the track tabs already on the page set the track.</li>
+        <li>Search is only on the catalog. A reader on a module page has to go to the catalog first, so it does not answer "find the page that mentions X" from where they are.</li>
+        <li>Can be combined with another option: N5 as the home of the filters, and N1 or N4 as the way in from every page.</li>
+      </ul>
+    </div>
+    <div>
+      <h3>Keyboard</h3>
+      <p>An ordinary form: <kbd>Tab</kbd> to the field, then the Filters button, the filter toggles, then each result as a link. <kbd>/</kbd> focuses the field on the catalog. The count is announced in a live region.</p>
+      <h3>Seen on</h3>
+      <p>Course catalogs and model hubs, where a field and a filter column sit above or beside a grid of cards.</p>
+    </div>
+  </div>
+  <div class="demo" data-opt="n5"></div>
+  <div class="below">
+    <div><h3>How it fits at each width</h3>
+      <table class="fit-table"><thead><tr><th>Width</th><th>The bar and the page</th></tr></thead><tbody>
+        <tr><td>1440</td><td>The bar is as today (338px free, unused). The field spans the page.</td></tr>
+        <tr><td>1180</td><td>As today. Same page.</td></tr>
+        <tr><td>1024</td><td>As today. Same page.</td></tr>
+        <tr><td>880</td><td>As today. The filters wrap to the width.</td></tr>
+        <tr><td>767</td><td>As today.</td></tr>
+        <tr><td>390</td><td>As today: Home is already gone, and the navigation has its full 160px. The field is full width.</td></tr>
+      </tbody></table>
+    </div>
+    <div><h3>How one result reads</h3>
+      <div class="specimen" data-specimen="en" data-variant="card"></div>
+      <ul class="legend">
+        <li><span class="n">1</span><span>Title, marked where it matched.</span></li>
+        <li><span class="n">2</span><span>Snippet around the first match.</span></li>
+        <li><span class="n">3</span><span>Level, track, language, minutes.</span></li>
+        <li><span class="n">4</span><span>Where it matched, the section, and how many more.</span></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section class="opt" id="n6">
+  <div class="opt-head"><span class="code">N6</span><h2>A search field at the top of the curriculum sidebar</h2></div>
+  <div class="opt-text">
+    <div>
+      <p>The left sidebar that lists the levels on module and catalog pages gets a field at its top. Focusing it opens a panel over the page, with the filters and the results, the same panel as N1 but hung from the sidebar.</p>
+      <ul>
+        <li>It sits where a reader already looks for another module, and the bar is not touched.</li>
+        <li>Today the sidebar does not exist under 880px (the design language hides it), and it is not on Home or Progress. So on a phone, search would need a new drawer opened from a button (two taps), which this demo draws as "Curriculum and search".</li>
+        <li>Search sits behind the sidebar's fold: a reader who folded the sidebar has also folded search.</li>
+      </ul>
+    </div>
+    <div>
+      <h3>Keyboard</h3>
+      <p><kbd>/</kbd> focuses the field (and opens the drawer on a narrow screen). Focus opens the panel; arrows, <kbd>Enter</kbd> and <kbd>Esc</kbd> work as in N1, and <kbd>Esc</kbd> returns focus to the field. <kbd>Tab</kbd> from the field walks the filters.</p>
+      <h3>Seen on</h3>
+      <p>The sidebar search box of Read the Docs themes, and MDN's sidebar filter field.</p>
+    </div>
+  </div>
+  <div class="demo" data-opt="n6"></div>
+  <div class="below">
+    <div><h3>How it fits at each width</h3>
+      <table class="fit-table"><thead><tr><th>Width</th><th>The sidebar and the field</th></tr></thead><tbody>
+        <tr><td>1440</td><td>262px sidebar, the field spans it. The panel is 560px, hung from the field.</td></tr>
+        <tr><td>1180</td><td>As 1440 (the page's aside goes, the sidebar stays).</td></tr>
+        <tr><td>1024</td><td>As 1440.</td></tr>
+        <tr><td>880</td><td>The sidebar is hidden today. Search needs the new "Curriculum and search" drawer.</td></tr>
+        <tr><td>767</td><td>As 880.</td></tr>
+        <tr><td>390</td><td>As 880; the drawer is 300px wide at most.</td></tr>
+      </tbody></table>
+    </div>
+    <div><h3>How one result reads</h3>
+      <div class="specimen" data-specimen="en" data-variant="row"></div>
+      <ul class="legend">
+        <li><span class="n">1</span><span>Title, marked where it matched.</span></li>
+        <li><span class="n">2</span><span>Snippet around the first match.</span></li>
+        <li><span class="n">3</span><span>Level, track, language, minutes.</span></li>
+        <li><span class="n">4</span><span>Where it matched, the section, and how many more.</span></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+
+  <section class="cmp" id="cmp">
+    <h2>Side by side</h2>
+    <div class="cmp-wrap">
+    <table>
+      <thead><tr><th>Option</th><th>Reached from</th><th>Room at 390px</th><th>Keyboard</th><th>Link to a search</th><th>Cost</th></tr></thead>
+      <tbody>
+        <tr><td>N1</td><td>Every page, always visible</td><td>Needs a second row (46px taller bar)</td><td><kbd>/</kbd> or <kbd>Ctrl</kbd> <kbd>K</kbd> to focus; arrows; Enter</td><td>No (a dropdown has no address)</td><td>The tightest bar at 1180 and 1024; the field is 338px wide at 1440 with the site name shown</td></tr>
+        <tr><td>N2</td><td>Every page, by a key or an icon</td><td>An icon, 33px, and the nav scrolls 14px</td><td><kbd>Ctrl</kbd> <kbd>K</kbd> or <kbd>/</kbd>; focus trap; Esc</td><td>No</td><td>Hidden until learned; the best at a lot of results and filters</td></tr>
+        <tr><td>N3</td><td>Every page by an icon, then a page</td><td>An icon, 33px, and the nav scrolls 14px</td><td>A normal form; <kbd>/</kbd> on the page</td><td>Yes, a URL per search</td><td>A new page and route; an extra page load per search</td></tr>
+        <tr><td>N4</td><td>Every page by an icon</td><td>The field takes over the whole bar while open</td><td>Enter on the icon; arrows; Esc</td><td>No</td><td>The nav disappears while searching</td></tr>
+        <tr><td>N5</td><td>The catalog page only</td><td>Full width; the bar is unchanged</td><td>A normal form</td><td>Could be (a query string)</td><td>Not reachable from a module page</td></tr>
+        <tr><td>N6</td><td>Module and catalog pages (the rail)</td><td>Behind the Curriculum button (two taps)</td><td>Tab to the field; arrows; Esc</td><td>No</td><td>Not on Home or Progress; the rail is hidden under 880px</td></tr>
+      </tbody>
+    </table>
+    </div>
+    <p class="next">Next: <a href="O-search-engine.html">O, the engine behind it</a>, measured on the real corpus.</p>
+  </section>
+</main>
+
+<script src="search-data-en.js"></script>
+<script>
+const LOGO = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB3aWR0aD0iMTI4IiBoZWlnaHQ9IjEyOCIgdmlld0JveD0iMCAwIDEyOCAxMjgiPjxpbWFnZSB3aWR0aD0iMTI4IiBoZWlnaHQ9IjEyOCIgeGxpbms6aHJlZj0iZGF0YTppbWFnZS93ZWJwO2Jhc2U2NCxVa2xHUmd3WkFBQlhSVUpRVmxBNFdBb0FBQUFRQUFBQWZ3QUFmd0FBUVV4UVNMZ0ZBQUFCc0lYdG55RkoxaGYvZjQ1dHo2eDNQR3ZidG0zYnZEdTJiZHUyYmR2MkdVOW5SUHd1V3RVWkZYZDdFUkVUd0JPMUJndFZzd2F3eG1wbEJoTjNuUUdFeGtOOXpPQ2dGLzlxNEs4ZnVtMTNnTVpEVmN6aDBIZHE2TzFmZmU2Sms0RW1WTU1jOW5tSHBEYmxIRnRKK3ZXTGpuVndxMEp3MlBOVnJYTFUwRG0yU2RKM2I1b1BibjB2T096ODNLMVMxTWhUbTZSL3ZIUi9vTEYrRmh5V1BHT2pGTE5HbjZLVVhyUVBFRHowSzRjWmoveExhck42bTF0SjM3aGhkOEN0SHpsTXVPRTNVcHZWK3h3bERYejJtcGxnVGVnekRuYmg5NlUyYTR4VGxQU25GKzhQdVBVUk44SjVYNWRpVWdkempKSStkdlZjc05BbnpPSFVyMG94cWF1NWxmUzNGeDBJMWhjY2p2aXdGSk02SGFPa3R5N0MrZ0hyM3lHbHBNN25OdXZYdTJPbEJXc2UyYTRjVmVZT2ZXdGNjY1pibEtPS2pUb01MOHM1VGdOWjViYjVPcHJTM3BSYmxhVFNBczNQbE1xNnVyakZXNVJyNXV5cnJMS3VLZTdBd3FMT3dLdlc2bkthd2pZVWQwOWhJVXo1blZKWmR4Ukd3M1BWbG5WdGFjWUhGY3U2cmJDQS9WeXByS2NXTis1WHBkMVUzUFMvSzVkMVpYR3ovMWZhVXdvemxtOHI3ZVhGclZWcEw2UEJMQlMwT3BmMlhKc1lBR3RDR1lHRm0wdTdDVmkyY2hyZ1ZzYjBmNVoyN1M0UGZubEwvTnVIYmxnRWJ0MEQrNkZTU2RMZnQybm8vN3hrSFppSHJnVytvbGlXMU1hY2M0eFMrOXBWZ0hjck1QRlhTbVhscktGeksyMy8xRzFUTUErZG1ydFJ1YXdSNXlqcGg4Y0JidDBKcy83ZVI2UWNXK2tMMTgwRXQyNkVjZkFIcFQ0aUtXWHBUeTg1QUt5eE1Rc05USGtrWnZYYkdLWDAwcFdBMjVnRWg0a1AvRnA5T2JmU2pzL2V2eE9ZOWM1aHhoVS9sR0pma2hRbGJYcmJRZUNoSjhFREUyNyt2ZFFtOWUwY1d5bS81ekR3SGhod3dZK2ttTlRmYzVUMGhrWDRhS3pCTHZ1cUZMTXFHTFArZERJMklqZlk0MHRTU3Fwa3Ezd3VQcHdIMlAvVkc5VW0xVFBxUHpQRFVHWnd3c2NsSlZVMTZXZ0dCNGVUUGlrcFp0VzF6UmNPY2pqNFBWS0txbTZyaXdCbjRSdWxGRlhoVnBlQmNmUWZsYUtxbkhROEZ0WnRWYXRxcjhkNXZ3WlU2Nml6WU1vL2NxNVdxNHRoMlZiVksrbzgyRFZXTEdzL1dLbUtTYXRnNTRHcXJZY2xXK3FWdFcwNXJNdzErOTljbUwrcFpscUo4U1hGV2tsYVErQnJGY3ZhRitPTEZaTTJFTWIvWEtsV1dYa1Y3QktWYTZXcy9XQzlxcjRXMXRWdGRkMnl0TEp1a2xiRFRnUEtGVnNKOC85ZnI2eTBPeXpaVXJPQlhXRG5nWnB0WFFxN3REV0x1OEx1dVdaYUNXdFU3Nnk4SjZ5cjJwYUZzTFppTVg4bkdJY3AxU3BGbllSem1tSmhLUmFTVytsK0hFNVVLa3hLc1lRby9mVmlIRGlpc0pRLy9EWXB4YTdGcklFWExjWUJEbEl1YWtDWGM4NW5wWlM2bEpMMDVnM2dETjZ2ckFGdFhPNXc4bWVsbUxxU292VEJROEVEUSs2bVZFNUsrdWZabUFjNDcvdFNURjFJVWZyNmFlREcwTTU3dEtPUTNFcHYzd2tEUEREKytwOUlNWTFWYnFXZlhHbVlNYnlGaFQ5UmlybDd1WlYrZVFFNFF6cE11dUduVWt4amtWdnB0N2RNQW1mRWdUbXZrTlNtamtYcG40OU54NDFoZzhQazYzOGd4ZFN6S1AzcjhabmdqTmJnbURmL1QwcXhReWxwMjB1WGdqUGk0REQraXU5S0tmWWtTbHVlc1FROE1QcGdzUFN1SDBncDVtN2tLTDFsTlRTQjBRYUg1dEp2U0RtT0ttYmxONjJESnRCYmQyak8rSVNrTm85ZGJxVnZuZ1FlNkdWd3NMTStJYVU0a2h3bHZlTkE4RUR2UXdPYy9JRWRVa3hqRktYZjNlUzQwZXZnd0pFZmxuTE1RNlJXeXU4K0dOd1kyK0FCVmovdFQxS0t1WGRSMnY2VVdlQ01aWENEa3o0dEtiYXh6ZEtXMSs4SFpuVFFEV2JkOGpWSk1mY21acVczcjRPR01YZURJOS93UHczK3djTzdnaGtkdFFZNDRlM2JwWmhHRjdQMHJuM0JBMTMwQUV1dWVjM2JuM1NVZ1JzZERnMnc1dlVicFJUemlGS1czbnNJbU5GVmQ0WnVqSzY3dzRycnZ5RXA1bUZ5bEQ1NEZKalJaV3NhYnp4UW9qbUVVOTRmcFRaTFNxMzAxV1BCakhxR0Jsai91aWpsS09rdmR4cm1WTllOOW43eFh5WDkrUEg1NEZUWUhHWWRkTm82QjZmUzVneHVBdlVPN2haNElsdFdVRGdnTGhNQUFQQkNBSjBCS29BQWdBQStNUlNIUXFJaEREM0hNaEFCZ2xtQU5MZ0RzY3Z3M21xVmgvQWYxWDllOGhTWW51cC9wK2ovMWEvcGoyQVAwKy8ydlZVOHczN1BmdHY3di81QWU2SC9BZW9CL2ZmOHo2elAvVDlobjl5ZllBL1lEMDRmMmkrRFArMy83ajl1UGdJL212K0cvL0hzQWYvVDFBT0VBL2tINEFlQkg5OThDL3gzNkIvYWYzRHp4OE5mWFJxUjlxK0hYZWI4anRRWDJQNXhQMGZZcjdGL3FQUUw5d3Z1M2YwYWp2aGYyQVAxaDlIdjluNFUvbm5zQi96Lys1LzlIN3F2cGcvd1BIajljZXdML04vN1gveC9YcDlvZm9wZnJDNTVlRUI0K3FVc0lUSVI5c216YytnMEd4SSt5Y00vZUo5ZzZETjNwVDZyK3JBK3RSUHZJdnFKamR0UkFBWHFYVDdhWlRtTDUyZGJDTktOY3VqY09vMjQzLy8vL0NVQXBFUW5OdDlUbFZkNy9FVGVXSXplYzlPMGxKRytaaGpLWVlNdXU3M3JNY21aVkdsL3RaeU4xT1JPdThhNW1kUmZwME1qK0VpTGMvQ0dEa1ZRRzRtTEYvc3F5M0lrNmRyMkNWV1hPZStZVk9YOEJJTFZlTTl0QnRjTGF5SFlmb3A2OFl5c3ZKMldIV0tQbWR1Q09nS0YwQnEwcXZNb2UzS21lcTBYUTFWNHptY0FQTTRaREZhU1ZuUFRaTEtuNzN3RzFVb0tiWVRBQ3ZtU1pOZWV6MGxSVzFlV1p5TjB0U1Vab3E1V28vWVZMWURUZ2FvVEQwcjZBWWNWVE5QM3Q4SlN5YnJ5ZnZFKzlqdEpmTmJ0ZlVUWmpVVGxHdFRSVE1HL2Y2NmZPVDhHem43RWdhLzQyUkdXTUVETWkwMzl2MWRKdkFkTzRYaHhqS09oSkhyL3BsRStRZ0FBL3YrUHZDKy93Q0R2Zk85UVRPOFBBSHp5VFRQdkxJQXZQVGRxSmZNcDRRN2trR01EKzlHdHFycFArMFZWbHJGNGphejRNNERKbDBnWi9nK2U3RnpXM1VMVUhmaHNVcWpZN0N4VktBRW5nQy9nWm9FcWpLUEladGQ0czQ1OGdmKzV1SFJCRnZDR3JadXM3UGtKbGFVeGo4eUxIK3lUbkZ0OUpBTWI0dm5XK2w3K01KZnhrdmtpVlgzWVRJNTVvbGFoQjhyNjl6SWJVMVExTm1ialdaNkhKVk1OT0RUZFU4ekRBVEUrUzJ0Lzd5cEFDRi80dUpzZDJ0bkkwYUJ1NWE3SktlWi9ZblBpL3c4OVh2ckVtZXVuWEs2aExtZnptUHoyaUdYNEw1VjhRTVVCMG9uOWY5UXhOdnJtS3Jac3lzZjVyb0pOQk1LZzA5cTlWU1hXN1VDSzltaVVSaHlkRisvaXVIYVlrcVkrOGtSLzNjKzM4aWMyQTVtVXpJd0kvRXFFaEZxZ3AxZm5ZSzZUdlR2ZXFRd2JwV09IZ3BUUjEwcEFUZVprYm5aOEFEVm8ydGd2ajh2ZzBPNVdmR2Z3VUh1ZmR6Q1RZM3VnNFpZaHlWWWZyZXVuTUxEd3QzRUtSSy9ZdHp1UHZYU2VkU2tteHdhQlhVUjR6bXNWb3NuMnhxVDZ2TzdzdW5EY1hZdTNMRlNBUm5VVDNqNGtuRUNkNHNYQWdBelMyUUlnNjdldmdRaVdDdG1jWWtwcWpVQjlEVXZsOERLam9YNm1Nd3I3alNvRHJqaVFaVUtONDE2TGd3MDY5L1l4SXlIdjFmQWlSZjBQelg4WnhmdDhSZG80dVM1UHVlV1NlT09ra3gxdDRJU1FrblhBQ3F6dnRzaUNKOGVxak1VS2ZrbjJjTmVNT0tJZ3luby9NNXVZTVZKenBiS0labmVmY0VYeHVHbE9QeWVHMDlqRTM5NlpSUlpjc2FGUXhiemNLa05TenBhSlc2SWhtanB2L25Ddkw5N1MydHlPRVlQU0E0SkF1Ulh4K285dlFKeThESmx1SHRCUzQzS2xVTmwrUjl2eC9JRy83dzROVGdIOXN0dXl4NGNsS3dGS0dJOHRNSkUwUHZzTlQ1WGM1ZWdUeERWdHIxVVpVS29icWk0SDBpWW1ZdWx0VWJxSkdFT1NjU0FoVWVqNFA4WFI4Z3ozU2FoQi9uWkk5WHJMTEcrSi83cisrcHM3ZGlQbzhqKzFhRjg5MTZzS0VMcHZSb1ljb0RoQncvQTlGQmZSTjY2VGxIb1NOdnlUMnhVRmtwcG1QTVgyazR5STNiQms2SlFKekNkcXJTMHI0SVJjRlc3eVdCV2tMdEtnSnRtL1dYYkFWNUNSWlR3b0lHNDg4MVBwK0E0QTA3amkvRGNabXJMVHRTTURlWllqVWZkUFFoZ1poVW0wbzZqa3NTY2M5bXY0L3lyd1dMT0U3UTlHTkNRSU1kNjM2dldDSDE4RFRMOGQzSGNCdVEweXFlSEc5bVVxZTJ4ZTZIeDVnS2FKQVpGclAwTVNJVTRMSksrc2dWUGdUazkwNlAxOXlSNThDVnpyWmt0TkRrcFM3OVk3MUtsNkdKRVIwemk5SlpzL0Q0RnVacGJ1T0FFSnM5K3I5RVdlMDMya0JiR2I4TklmQ2RTUXU4N240UFlBLy9yOS82VXZOUmVhRFgybGJkMlVtKzZuVHdxVVE3S3pwbGlUWFVQUkhBS2lsRTRkaXhPM1RrR2hCaHNBcWFGeWNXblRGck5mT1FUTjc5RS9mQ3ArRmh4QmpSdC9wSDVhd1FxQzl6S0VhcFNpNGdPbEF0aTl0SHNrQnF1ZkZTeEhmc0Zrc1N3WnNrdXkxT3FWMmxSVkpWd2lQQkFvRHNhbmY1ZWxITHkwVGJnWnUxaDFQMGpyaXZYQk01b3g4RGlJRmF4MkVRbk9uVEJtTGVrdjcwMGRyamZCcDcrME1nSWpMQnB4d1FyS3YxOU9Zc3ViWEZuVEMvbjR5aWdhNllzaWlXcHNQYnk0NWtmVVpwRng5TFZjbVJyOWo5OWROekg4OTRUM2RVd3BFSmpSbk9JSXRJR1Q5dVg4cGFmUUVjWDdCL2EyNXRxdjlxTzFBdkRKaE1QNGJQTEdwVk82S2hMZjQza0szdjZGRnBDRlA1OS9mUE5uK1ZmckczdkdMOVdZeHQ5VUJhVlNBdUVUcU5ySlRYWjVpVFhpNmpHVU15ZWJSM1RMY28rbVdzdU9IVUxKZEtYSE9TQ1ZNVnhKTllnd0UxcS9NcjdXckNCN3NmOXVsUXU5ZGFmdGJOMDdNdzRud25CVllZcWJJYjdMYTFvQi9zR1J2YmVORFRvYmtvN1dCVkNyT0pKT1NQMG5HdUhLQUEwaDJQVlI1N0R0SXNiRUVtZmZuZHNCbDJwczFEZng3Tkd2Y1plSnJuQzMvTUgrNEVrSURiOFZuSU9TUURQUWQ3TnErYTZzOVAwaFJSa3MwbjhDSk53dWMvb3dpYmdqVHlmOER1Z0lSTGJqNUZQK3hLQXY3WW1TcTluaEQ2VElpNUwrZmdnc003YlFNOTFpOUFqbjI2UGp2dWdvdjNWVk1lT21hZkd4R040d2N3VGlPb0dhbC9tSjhTL3NzTWJ0QlMwa2ZkZlpYaVdtYzh3QTFGOWo1VnlwSU1LTU1icWx3a21jN3E5MndTV0VtRlhiQ0F4UU9TWTlYS1FqbGE1NTMxTVluODVKYkg0MG1XWi8zMHJVMVBJbFJFR3RLaUpQOEx0dHJzY09KTEFWY1ZNNkhkYVpyekdSVUR3MVBVa0MyT0ZHOURUVCs2MlNJSnpOSUVYR1dXTytKR2s2NHk0cW8rZ2dJMkc2d0hmVnQ4ZWxpYmd0bUlTa3prRzFzWldpZWlVOTNTQ0UwdWxKNlNsSjBpZFk1YVg5c3JyZHU1d1hZYndIaXpJMkZTZVRONU9Nd21SSlN4UlhnWEMxUWh1b0ZZSVYycC9iVDJtSUJuUzNCRWZ1Tzc2VlRTL0JGUURpNTVsMEVKZE1QMmkzU1dYcHRDVGpUT0hXamZpVTRNbTQ4R2tINDBpcjhUZit0SitwMXdaM2hGZEtvSlcwOGNrR0ptWkNpaVpnemMzbWlEUEdsNE8weXBMaDFXMHVsZkRHb1VkbEoveFNKUU1rVnF4ZEV5KzZ6WTdsL0YxdUhYYXpoWlRmcXZPdXBUbTNuK1FmLzBmYW4vRDNHanhGTUlsQzNhM0IrdFFPcnZOcWN5WFpnVGhMcitlcU11UVFVbDhSZFJ6WWhEdG14UFJqeEZxaEFNQnl0RzFiREhNT2l1ODlmRWtKbi9FRkdURjhVL3V2RXYrazNpek1XUncvYkJPZTdXSjI3VWlVMm5oNGhLUjhOaWgrbHRwUU1VL0ZUdGJUZllWQTJHci90aEJQUVgwZllKYWM3SjU4RWZVeUFaUzFpRmN1SnorZ0RKc2VmaUtkT2liSHFkaHQrQVc2SXdLUGN4RHZieXRONkxYUjlEZHdWV3R2TDQ5TkV4U1hiL3NzbU9LcTN6b29rWm9GOHRvMzRCdXYrbnkxVGV2NGZ2NXZPWWNvbU1MNm4rVW43SC9VZ3dKT3B1RHNIQS9jRThNTnFBNjNDVmpVRmdxNTdnVjJlS2FUdnVlWVhCbWMzVHRTdldzR0JnSkEyV2NxNTFKMThNbWJVZmFwK0NMeXB0K0xjbzlaaGIzZ2E5QU1HOFhBa0lmcWZsa01QYlRlcmM2UDJkbHg3MUFNUDk0T2hNOHp4TlY5TnZEZW8rL29WWmlTZlB1bzEvRkczdUVvTlJKNDFUZnVraGpqZ29sVHVqYzU1R2RpeDhZbEhiblB3eHZrcnpWaVVBVk45NS9vSWpybklZRVpuZDd6UHpjN2lyeWFNbnBTNzFzdk5tekxJUTRldlg1bm1wdUlrM1dSZHBrTlo1blVyZ2JWNE5jUyszUVRnVlFWdW4xcFN5VjdqMVN3cDI4TnVCZTdZbmJtUGFoN0piSUVnaFM0SE5RY2VTNkF0cWsyMktvd3pyTkdnUkN5R29UYk0yekc3Vlcyc21XQkdLVXZhOUIrc0ZiVVpIQmY1dlFPazFIYngycXF4SEt2cnRuMGNlZnNSdE5OTlYzTXBuR3hqLzVpakpYY0UzVzNmNzZ2V1E3TndTcDIvMW1id25nTEl3MUQvellveE9maExhQVYyT25FRFBOVTBlQjMra3lpT2RPdUVraGo0QjFnbCtRL2lWOVlzblR5LzhnQ0tObkJ5dGFBTFhNRFlWRi9jRjdvbkVmK0h2MytWM0RKNkJnUFY5N1Y4Lzl0ZlRITGxhcEdTeDZpbTdvOHNEWGEvNDRsUWdJa0RFSUlkUVAxbWsrRTdMazBlN2NVT0RoMERUSUJpZDhqcVlvQnhpbi9CUEpEVnQ0YlpMejNVcWxWNlZUQkEraW0zL21TK2NkTHNtUHZ3K3NIWVZDMEhTSHpTMUdFRnpiWTlKTWdGRHJEdFVWSmY2eXdmcyt1b2FZalc1K3E0MTg5cjdPci84Y3RKZElRLzZuTXZ0cG5ZWUJmUUQ2NDMyeHpBT2ZWaFZ1dllrajVoSTVUdkgwcGNRVTVGd0hqMzRINW1IUTNVSkc5YTNnM3JSc0E4OVZ0amxCa3RtWnFDajVOR3V6M0djQ2JsNWpSaExZMmpIY2dEVUxFZjJGTXJKbGZPR09jMENOMk1INnJ4dEQ0VEVXdjFJZmlXY0R6OXc2dGlUKzlsei9oN3crMStpbGpQMjJ1ZllwNTVyWXRXKzlsR0toWTJFTXh3eUJPcUNsVHFsQ01ZemJldVJ1S3c5QTRFYkQzNmdlQ3hlM3dLUGlZdUFWSnM0UXVKVk54ZDF5d0xwVjByZDNObkZFbDJVMzI2WkJzZG1sVUtYMGJTSUdPMjZFWnQzMVN2Sk5YTjF3QUM3bkdMQW5lc1NKTVZqalpDeXM4c3UxSm9ub0I1TEJjekpBblU2V21QM0xUZjM3bzB4RHJUWHRrZFVLRWhvNGcwS2R0LzdLMGVyY3RmMUFFMk1xZS9pQjFYZmtnN0ZuUjNNc2NKdEFHN1FJa21GTW1ZOFVaYjhURWcrbi9RYW95eFZLMVhDallabnFhS3l5ektXZVBBSWtHUS9ueDVEUHFvNHpYZCtxOFpZL1BRclltbGFoOE9NNjFDK1hxa2QyMVQ4SjZ2R2haYWFwL0FvZ2ErTSthdVpka1I3SU9qU3pQcXdxNG9NL3VZc1RmdnJkS293Mnc2dGx0NHlaMlZoWml4VHNpSmpwVVI5NzFlRU42NzVqTkNNaTY3clNNamo1K28zMHZHVVJMNllhcFNvd0xrTmZkUFBnUU1Raklna3F5aXErenN3NEhGUmM2SXh0MU5SMTJycSswb1JRRHVnU3ZLM2JpT2dEL0dFTlR1cHFFdkY2WUVzRkVMWUhYMmJSYXpMc3kxUE4xSUdPY2k1WVk3NUxWZUE5Q1NWZ05VSE9SZkk0eHpzT3E5VlZ4REdWRkJFd21tbHZaNWc1dENFeFhpS1hPZ1VJOU9RQ3gwVUdtVHBMbmRMQ2hRWEdKU1dNQTFtV09lWWFTK2RjWDl2YkZEQkp1NGFiNEx1T3hOTWpzMzVsK1VjYkJiblRZOG1uSUV3V1Nnc2lRWWZpdzRzY3pLdGV6VlczT29ObGpHcjQ5dWRXb2RNdG8vT3pyWG4vSlZuSFdwemVEVW9NOWgwUS9EbER3REJDV1NueUp2b0tRdGtubjhpdTd1cjBqK21EZkJJS2pjVndqempqWHZPNW54VXZac2phUkxzeHhmZWp3bUh5dHA3RnJkWHkvM3dHZ2Y4amVSejg2OU94dDZma3hDdXlEQXFMQzZlbGpTRFF3ZEd1VEFMWEV5Y3l0OG12elpsRENFb1Fmd1hZUlViTDExcmwzMndzZ2l4WDZQUWFrUUpzTEY3VTFHVVhoRzhBbGJVcWhlQlZ0bGdoMUc5azR2TXg1NmNaenNjL09LeUJsOTVUREk0clJOcnREYUhrZDRIeVRjZlRpaVZydjZ4QjdSY1IyTU1PN1grNTN0WVlZaDEyYkwyQmJmbU0wMEZ4anJmbnpCTW5FNGplbDMzNTZRencwZnN5Slg0dHVnNG5tSytYTDRLcHNLQWVray9KTE1SZjN2M3BYeml0eDBpNU9TTnFxV3U4Z3QzdWtPT2pYOTk2Y1dSMng0ektsWEVxOHNscVA4L2pzazFLY3JmdWJFYmk4c3ZCVHRzbGM4U3IwNXg5R3huajRxcXpZSEE3akZ6NW5UTzhodlV6V3NSMUxhVEtzNC90ejFQQ0wxV2QwbkMzdm5mMmYrZHQzVC84aGRhWGh1cjJSOEcwU3BUTEFXaWNIVVJ2cUtoY0tPem0rODMvRlJ3Qk0xQUltcm9lbnJRTWg4bnNOWUczbWtVTDdQZW42YlZydFZuNmI2WThtZEhWM3lzRjNzSi9FdkNvQXRqMFdvT2t3SVl5MGRNSzNTdlhUZFhJYm9LYklncEN6MEJKeHdSRE5vZitocldORmFLZ3FvcHNSVFJHTjNZdzQzZUJaZ3pycU15REtFenRUeGhrWjNjSUs3SGNycHhISCtaSE5iSURQb0JmTFdoY1lIcGNBZWJIbTVkbU9MZEFIWmtTWmR2Z2ZVUUpOLzZlVVRlK3NDSmVlTFVLZlpTOGlIcTJWcSsyV0hLa3NncHBHMEdZSHpIRUcvd2diK2ZocXhUS1JZdjFkVm4xVG4ralhzNXlic2tqRDVxVm92ZE1aNW16OCtTR3U0THZDWk5oRW42cHdEcDV2NURJZThrUi9EK1E5dUhYek1lMWpUaTdCOVJKcnNQWENFSzJHQ0gxTndqbjhpSWtXY21DV054SDkyTnQreWZpNER3b1hkNnJtMDBkTVl4NmdoYkRQT0YwTnlyT0Z4dytKaURkT1JaaS9wUkdYenNhalBvWmdEbUZ4ZzRjU0lKMWwxSlJHcXNhSmN6d0ZJOXhOUitPZi9mdTYvUEJMRFJZWHVFVVd1TmVub21pekNmaGMxSzJhU0l0UUs1Sm1CVk1qR055dzBDZndBQ2VPd2tFOTJkNTg4RVBScXVCQW1wWmpGUTJQZU4rT1RBSUQ2cUFBY0xIVUFmODlKSGs1bHo1VzNKVDg4TnN5V3JlUjU3WWZ2T3FzK1RUeHp3bTVUallmdjZrS29HNnJUTXFUZTFiRUkrV1diZE80eWxpTk1Yc0VRT2NKb08rdDZwTlhWVEdtenhVNXNiVkVMMGF6b1ptaGhFKzFMMmdzVXVXL0c2OHJmZ0J4UW1IVEpKMzlTWU1BK1QwYXFrRmhiMCtXYVJmT3ZFZTcwNmZocWdFSXQvOXRvZURJbjhQZjExd0E0aUJRa0tPSTU0QzZmL2dZZmZLL1ZpNkcrNkNJa2IrZmRKanQ0NW5MTGNtQm83VFMwRC9idUNVWEIxekVvNWZ1ck0vdW9kcmJ0S3ZqTmxMN1p3dEFFVnM4K01oeFpBbUR5blN1c3VIeHRBbWVQK1NXRGFFQk9EMmVDdmo1VS81eFJRL3FEU2Q1ZDAzTDI0NDZtLzlXOFgva0xWU0FVeHVGdGxxYzZBYU94TG9EM0g2V2FIcXU1L0Y0ZkVQbTI2bGNEa1pZbmQ1aXNwTERIQktmL3lkaEdWd20wSmdyem9kZW9BQW9YMjdxbmpJVVVUMzF4WkVsTVh5ZFVHSU9DOGFJT1IrUDg3Q1g0YVEvdEFSeS9sNkMrREFSWmIxYm9BQUFBQUFBIi8+PC9zdmc+Cg==';
+const META = {"levels":[{"slug":"fundamentals","title":"Fundamentals","count":8,"ready":8},{"slug":"intermediate","title":"Intermediate","count":8,"ready":7},{"slug":"expert","title":"Expert","count":12,"ready":0},{"slug":"ecosystem","title":"Ecosystem","count":6,"ready":4},{"slug":"trends","title":"Emerging Trends","count":4,"ready":0}],"modules":[{"n":"llms","t":"LLM Fundamentals","l":"fundamentals","s":"ready","min":25,"sum":"What a language model actually does, what the context window costs you, and which knobs change its output.","tr":"LLM Temelleri","fa":"مبانی LLM"},{"n":"training","t":"Training LLMs","l":"fundamentals","s":"ready","min":25,"sum":"How a general model is born in pre-training, and the two ways you specialise it afterwards.","tr":"Training LLMs","fa":"Training LLMs"},{"n":"rag","t":"RAG & Embeddings","l":"fundamentals","s":"ready","min":30,"sum":"Giving a model knowledge it was never trained on, using embeddings and a vector store.","tr":"Retrieval-Augmented Generation (RAG)","fa":"RAG و Embedding‌ها"},{"n":"tools","t":"Tool Calling","l":"fundamentals","s":"ready","min":25,"sum":"How a model reaches outside itself, the mechanism underneath every agent.","tr":"LLM Tool Calling","fa":"Tool Calling"},{"n":"memory","t":"Memory","l":"fundamentals","s":"ready","min":20,"sum":"Three kinds of memory, parametric, working and long-term, and where each one actually lives.","tr":"Memory","fa":"Memory"},{"n":"agents","t":"AI Agents","l":"fundamentals","s":"ready","min":25,"sum":"The agent loop, and what turns a single model call into multi-step work.","tr":"AI Agents","fa":"AI Agents"},{"n":"multi_agent","t":"Multi-Agent Systems","l":"fundamentals","s":"ready","min":25,"sum":"When one agent stops being enough, the two architectures to know, and the two problems you inherit.","tr":"Multi-Agent Systems","fa":"Multi-Agent Systems"},{"n":"observability","t":"Observability","l":"fundamentals","s":"ready","min":20,"sum":"Traces are the only record of what an agent actually did, and the loop that turns them into a better agent.","tr":"Observability","fa":"Observability"},{"n":"prompt_engineering","t":"Prompt Engineering","l":"intermediate","s":"ready","min":30,"sum":"Writing the input that makes the output you want the most likely one, and why the job title disappeared.","tr":"Prompt Engineering","fa":"Prompt Engineering"},{"n":"context_engineering","t":"Context Engineering","l":"intermediate","s":"ready","min":30,"sum":"Deciding what earns a place in a limited context window, and why more context makes answers worse.","tr":"Context Engineering","fa":"Context Engineering"},{"n":"coding_agents","t":"Code Agents","l":"intermediate","s":"ready","min":30,"sum":"Why an agent that can write and run code can do almost anything, and the eight standard ways you extend one.","tr":"Code Agent'lar","fa":"Code Agent‌ها"},{"n":"harness_engineering","t":"Harness Engineering","l":"intermediate","s":"ready","min":30,"sum":"The mechanical scaffolding around a model that keeps a non-deterministic agent on track, and why the same model scores differently in different harnesses.","tr":"Harness Engineering","fa":"Harness Engineering"},{"n":"loop_engineering","t":"Loop Engineering","l":"intermediate","s":"ready","min":30,"sum":"Designing the loop that keeps an agent working until a goal is met, and what happens when nobody is left to press enter.","tr":"Loop Engineering","fa":"Loop Engineering"},{"n":"ui","t":"Generative UI","l":"intermediate","s":"draft","min":0,"sum":"","tr":"Generative UI","fa":null},{"n":"security","t":"Security","l":"intermediate","s":"ready","min":30,"sum":"How people get models to produce what they should not, and the guardrails, guard models and red-teaming tools used to stop them.","tr":"Security","fa":"Security"},{"n":"personal_agents","t":"Personal Agents","l":"intermediate","s":"ready","min":30,"sum":"Agents that live with you rather than in a repository: lifelong memory, self-written skills, and reachable from the chat apps you already use.","tr":"Personal Agent'lar","fa":"Personal Agent‌ها"},{"n":"advanced_tools","t":"Advanced Tools","l":"expert","s":"draft","min":0,"sum":"","tr":"İleri Seviye Tool'lar","fa":null},{"n":"advanced_memory","t":"Advanced Memory","l":"expert","s":"draft","min":0,"sum":"","tr":"İleri Seviye Hafıza","fa":null},{"n":"advanced_multiagent","t":"Advanced Multi-Agent","l":"expert","s":"draft","min":0,"sum":"","tr":"İleri Seviye Multi-Agent","fa":null},{"n":"advanced_prompting","t":"Advanced Prompting","l":"expert","s":"draft","min":0,"sum":"","tr":"İleri Seviye Prompting","fa":null},{"n":"advanced_context_engineering","t":"Advanced Context Engineering","l":"expert","s":"draft","min":0,"sum":"","tr":"İleri Seviye Context Engineering","fa":null},{"n":"advanced_coding_agents","t":"Advanced Coding Agents","l":"expert","s":"draft","min":0,"sum":"","tr":"İleri Seviye Coding Agent'lar","fa":null},{"n":"advanced_harness_engineering","t":"Advanced Harness Engineering","l":"expert","s":"draft","min":0,"sum":"","tr":"İleri Seviye Harness Engineering","fa":null},{"n":"advanced_agent_architectures","t":"Advanced Agent Architectures","l":"expert","s":"draft","min":0,"sum":"","tr":"İleri Seviye Mimariler","fa":null},{"n":"advanced_ui","t":"Advanced UI","l":"expert","s":"draft","min":0,"sum":"","tr":"İleri Seviye UI","fa":null},{"n":"advanced_deployment","t":"Advanced Deployment","l":"expert","s":"draft","min":0,"sum":"","tr":"İleri Seviye Deployment","fa":null},{"n":"advanced_llm_evaluation","t":"Advanced LLM Evaluation","l":"expert","s":"draft","min":0,"sum":"","tr":"Advanced LLM Evaluation","fa":null},{"n":"advanced_training","t":"Advanced Training","l":"expert","s":"draft","min":0,"sum":"","tr":"İleri Seviye Training","fa":null},{"n":"agent_frameworks","t":"Agent Frameworks","l":"ecosystem","s":"ready","min":20,"sum":"What an agent framework actually gives you, the three layers of the LangChain stack, and when a workflow tool is the better answer.","tr":"Agent Framework'leri","fa":"Agent Framework‌ها"},{"n":"inference_providers","t":"Inference Providers","l":"ecosystem","s":"ready","min":20,"sum":"Who runs the model for you: the gateway, the first-party vendors, and what actually differs between them once you are paying.","tr":"Inference Provider'lar","fa":"Inference Provider‌ها"},{"n":"inference_engines","t":"Inference Engines","l":"ecosystem","s":"ready","min":20,"sum":"The software that actually runs the weights, when you should care, and what changes once you are serving more than yourself.","tr":"Inference Engine'ler","fa":"Inference Engine‌ها"},{"n":"ui_design","t":"UI Design","l":"ecosystem","s":"ready","min":20,"sum":"Getting an interface out of a model, and the one file that stops every generated screen looking like a different product.","tr":"UI Design","fa":"UI Design"},{"n":"choosing_tech_stack","t":"Choosing a Tech Stack","l":"ecosystem","s":"draft","min":0,"sum":"","tr":"Tech Stack Seçimi","fa":null},{"n":"protocols_reference","t":"Protocols Reference","l":"ecosystem","s":"draft","min":0,"sum":"","tr":"Protokol Referansı","fa":null},{"n":"llms_cant_jump","t":"LLMs Can't Jump","l":"trends","s":"draft","min":0,"sum":"","tr":"LLM'ler Sıçrayamaz","fa":null},{"n":"video_rendering","t":"Video Rendering","l":"trends","s":"draft","min":0,"sum":"","tr":"Video Rendering","fa":null},{"n":"recursive_self_improvement","t":"Recursive Self-Improvement","l":"trends","s":"draft","min":0,"sum":"","tr":"Recursive Self-Improvement","fa":null},{"n":"decision_models","t":"Decision Models","l":"trends","s":"draft","min":0,"sum":"","tr":"Karar Modelleri","fa":null}]};
+</script>
+<script>
+(function () {
+'use strict';
+const $ = (s, r = document) => r.querySelector(s);
+const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
+const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+
+/* ================= data ================= */
+const LV = { fundamentals: 'var(--fund)', intermediate: 'var(--inter)', expert: 'var(--expert)', ecosystem: 'var(--eco)', trends: 'var(--trends)' };
+const LVT = Object.fromEntries(META.levels.map((l) => [l.slug, l.title]));
+const LVN = Object.fromEntries(META.levels.map((l) => [l.slug, l]));
+const MOD = Object.fromEntries(META.modules.map((m) => [m.n, m]));
+const ORDER = Object.fromEntries(META.modules.map((m, i) => [m.n, i]));
+const WRITTEN = META.modules.filter((m) => m.s === 'ready').length;
+const LANGS = { en: { name: 'English', code: 'EN' }, tr: { name: 'Türkçe', code: 'TR' }, fa: { name: 'فارسی', code: 'FA' } };
+const TRACKS = { eng: { name: 'For Engineers', written: WRITTEN }, ev: { name: 'For Everyone', written: 0 } };
+const DATA = (window.SEARCH_DATA = window.SEARCH_DATA || {});
+const SETTINGS = { scope: 'mine', unwritten: 'out' };
+
+/* ================= text handling (the normaliser measured on page O) ================= */
+const TRF = { 'ı': 'i', 'İ': 'i', 'ğ': 'g', 'Ğ': 'g', 'ş': 's', 'Ş': 's', 'ç': 'c', 'Ç': 'c', 'ö': 'o', 'Ö': 'o', 'ü': 'u', 'Ü': 'u', 'â': 'a', 'î': 'i', 'û': 'u' };
+const FAM = { 'ي': 'ی', 'ى': 'ی', 'ك': 'ک', 'ۀ': 'ه', 'ة': 'ه', 'أ': 'ا', 'إ': 'ا', 'ٱ': 'ا' };
+function norm(lang, s) {
+  if (lang === 'tr') s = s.toLocaleLowerCase('tr').replace(/[ıİğĞşŞçÇöÖüÜâîû]/g, (c) => TRF[c] || c);
+  else if (lang === 'fa') {
+    s = s.normalize('NFKD').replace(/[يىكۀةأإٱ]/g, (c) => FAM[c]).replace(/[ً-ٰٟـ‌]/g, '');
+    s = s.replace(/[۰-۹]/g, (c) => String(c.charCodeAt(0) - 0x06F0)).replace(/[٠-٩]/g, (c) => String(c.charCodeAt(0) - 0x0660));
+  } else s = s.toLowerCase();
+  return s.normalize('NFKD').replace(/[̀-ͯ]/g, '').toLowerCase();
+}
+const WORD = /[\p{L}\p{N}‌]+/gu;
+function words(lang, text) {
+  const out = []; let m; WORD.lastIndex = 0;
+  while ((m = WORD.exec(text))) { const w = norm(lang, m[0]); if (w) out.push({ w, s: m.index, e: m.index + m[0].length }); }
+  return out;
+}
+const wl = (lang, text) => words(lang, text).map((x) => x.w);
+const tokens = (lang, q) => wl(lang, q);
+const all = (ws, qt) => qt.every((t) => ws.some((w) => w.startsWith(t)));
+const titleOf = (m, lang) => (lang === 'en' ? m.t : (m[lang] || m.t));
+
+function prep(lang) {
+  const D = DATA[lang]; if (!D || D.rw) return;
+  D.rw = D.rows.map((r) => wl(lang, r[2]));
+  D.hw = D.heads.map((h) => wl(lang, h));
+  D.hm = new Array(D.heads.length).fill(-1);
+  D.rows.forEach((r) => { D.hm[r[1]] = r[0]; });
+}
+const waiting = {};
+function load(lang, cb) {
+  if (DATA[lang]) { prep(lang); return cb(); }
+  if (waiting[lang]) { waiting[lang].push(cb); return; }
+  waiting[lang] = [cb];
+  const s = document.createElement('script'); s.src = `search-data-${lang}.js`;
+  s.onload = () => { prep(lang); const q = waiting[lang]; delete waiting[lang]; q.forEach((f) => f()); };
+  document.head.appendChild(s);
+}
+
+const slug = (h) => h.toLowerCase().replace(/[^\p{L}\p{N}\s-]/gu, '').trim().replace(/\s+/g, '-');
+const pathOf = (it) => {
+  const pre = (it.lang === 'en' ? '' : '/' + it.lang) + (it.track === 'ev' ? '/everyone' : '');
+  if (it.kind === 'level') return `${pre}/courses/${it.level}/`;
+  return `${pre}/courses/${it.level}/${it.mod.replace(/_/g, '-')}/` + (it.section ? '#' + slug(it.section) : '');
+};
+
+function mark(lang, text, qt) {
+  const ws = words(lang, text).filter((x) => qt.some((t) => x.w.startsWith(t)));
+  let out = '', at = 0;
+  for (const x of ws) { out += esc(text.slice(at, x.s)) + '<mark>' + esc(text.slice(x.s, x.e)) + '</mark>'; at = x.e; }
+  return out + esc(text.slice(at));
+}
+function snippet(lang, text, qt, span = 170) {
+  const ws = words(lang, text).filter((x) => qt.some((t) => x.w.startsWith(t)));
+  let a = 0, b = text.length;
+  if (text.length > span && ws.length) {
+    a = Math.max(0, ws[0].s - 55); b = Math.min(text.length, a + span);
+    if (a > 0) { const p = text.indexOf(' ', a); if (p > -1 && p < ws[0].s) a = p + 1; }
+    if (b < text.length) { const p = text.lastIndexOf(' ', b); if (p > a + 40) b = p; }
+  } else if (text.length > span) b = text.lastIndexOf(' ', span);
+  const part = text.slice(a, b);
+  const shifted = qt; // match again on the cut text
+  return (a > 0 ? '…' : '') + mark(lang, part, shifted) + (b < text.length ? '…' : '');
+}
+
+/* ================= the search ================= */
+function search(st) {
+  const out = { items: [], waiting: false, notice: '' };
+  const q = st.q.trim();
+  const levelOK = (lv) => st.levels.size === 0 || st.levels.has(lv);
+  if (st.tracks.has('ev') && SETTINGS.unwritten === 'out') out.notice = 'No For Everyone module is written yet, so none is searched.';
+  if (q.length < 2) return out;
+  const items = [];
+  for (const lang of st.langs) {
+    const D = DATA[lang]; if (!D || !D.rw) { out.waiting = true; continue; }
+    const qt = tokens(lang, q); if (!qt.length) continue;
+    const per = {}; const get = (n) => per[n] || (per[n] = { n, score: 0, in: '', rows: [], head: -1 });
+    if (st.scopes.has('titles')) {
+      for (const l of META.levels) if (levelOK(l.slug) && all(wl(lang, l.title), qt) && st.tracks.has('eng')) items.push({ kind: 'level', lang, track: 'eng', level: l.slug, title: l.title, score: 130, qt });
+      for (const m of META.modules) { if (!levelOK(m.l)) continue; if (all(wl(lang, titleOf(m, lang)), qt)) { const o = get(m.n); o.score = 100; o.in = 'title'; } }
+      D.hw.forEach((ws, hi) => { const mi = D.hm[hi]; if (mi < 0 || !all(ws, qt)) return; const n = D.mods[mi]; if (!levelOK(MOD[n].l) || D.heads[hi] === MOD[n].t) return; const o = get(n); if (o.score < 60) { o.score = 60; o.in = 'section'; o.head = hi; } });
+    }
+    D.rows.forEach((r, i) => {
+      const kind = r[3];
+      if ((kind === 'p' && !st.scopes.has('prose')) || (kind === 'c' && !st.scopes.has('code'))) return;
+      const n = D.mods[r[0]]; if (!levelOK(MOD[n].l) || !all(D.rw[i], qt)) return;
+      const o = get(n); o.rows.push(i); const sc = kind === 'p' ? 10 : 6; if (sc > o.score) { o.score = sc; o.in = kind === 'p' ? 'text' : 'code'; }
+    });
+    for (const o of Object.values(per)) {
+      const m = MOD[o.n]; const draft = m.s !== 'ready';
+      const rowsP = o.rows.filter((i) => D.rows[i][3] === 'p'), rowsC = o.rows.filter((i) => D.rows[i][3] === 'c');
+      const best = rowsP[0] ?? rowsC[0];
+      const base = { kind: 'module', lang, level: m.l, mod: m.n, qt, score: o.score + Math.min(o.rows.length, 8) * 0.1, in: o.in, draft, minutes: m.min, title: titleOf(m, lang) };
+      if (st.tracks.has('eng')) {
+        const it = { ...base, track: 'eng' };
+        if (best !== undefined) { it.row = D.rows[best]; it.section = D.heads[it.row[1]]; it.more = o.rows.length - 1; it.rowKind = it.row[3]; if (it.in !== 'title') it.in = it.rowKind === 'c' ? 'code' : 'text'; }
+        else if (o.in === 'section') { it.section = D.heads[o.head]; it.rowKind = 'h'; }
+        else if (lang === 'en' && m.sum) { it.summary = m.sum; }
+        items.push(it);
+      }
+      if (st.tracks.has('ev') && SETTINGS.unwritten === 'in' && (o.in === 'title' || o.in === 'section')) items.push({ ...base, track: 'ev', unwritten: true, rowKind: 'x' });
+    }
+  }
+  items.sort((a, b) => b.score - a.score || (ORDER[a.mod] ?? -1) - (ORDER[b.mod] ?? -1));
+  out.items = items; return out;
+}
+
+/* ================= one result ================= */
+const ICON_ENG = '<svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5.5 4.5 2 8l3.5 3.5M10.5 4.5 14 8l-3.5 3.5"/></svg>';
+const ICON_EV = '<svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 4.2C6.6 3.2 4.6 3 2.5 3.3v8.9c2.1-.3 4.1-.1 5.5.9 1.4-1 3.4-1.2 5.5-.9V3.3C11.4 3 9.4 3.2 8 4.2Zm0 0v8.9"/></svg>';
+const MATCHED = { title: 'title', section: 'section heading', text: 'text', code: 'code' };
+function resultHTML(it, id, variant, active) {
+  const rtl = it.lang === 'fa';
+  const dir = rtl ? ' dir="rtl" lang="fa"' : (it.lang === 'tr' ? ' lang="tr"' : '');
+  const color = LV[it.level];
+  const titleHTML = mark(it.lang, it.title, it.qt);
+  let snip = '';
+  if (it.kind === 'level') {
+    const L = LVN[it.level];
+    snip = `<div class="res-snip">${L.count} modules, ${L.ready} written. Opens the level's page in the catalog.</div>`;
+  } else if (it.unwritten) {
+    snip = `<div class="res-snip">Not written yet. This opens a page that says so and links back to the For Engineers module.</div>`;
+  } else if (it.row && it.rowKind === 'c') {
+    snip = `<div class="res-snip"><span class="where">Code in "${esc(it.section)}"</span><code class="codeline" dir="ltr">${snippet('en', it.row[2], it.qt, 150)}</code></div>`;
+  } else if (it.row) {
+    snip = `<div class="res-snip"${dir}>${snippet(it.lang, it.row[2], it.qt)}</div>`;
+  } else if (it.rowKind === 'h') {
+    snip = `<div class="res-snip"${dir}><span class="where">Section:</span> ${mark(it.lang, it.section, it.qt)}</div>`;
+  } else if (it.summary) {
+    snip = `<div class="res-snip">${esc(it.summary)}</div>`;
+  }
+  const showSec = it.section && it.rowKind !== 'h' && it.section !== (MOD[it.mod] && titleOf(MOD[it.mod], it.lang));
+  const where = it.kind === 'level' ? '' : (showSec ? `<span class="sep">in "${esc(it.section)}"</span>` : '');
+  const more = it.more > 0 ? `<span class="sep">${it.more} more in this module</span>` : '';
+  const lvlName = LVT[it.level];
+  const meta = it.kind === 'level'
+    ? `<span class="lv">Level</span><span class="sep">${esc(lvlName)}</span>`
+    : `<span class="lv">${esc(lvlName)}</span><span class="sep">${it.track === 'eng' ? ICON_ENG + 'For Engineers' : ICON_EV + 'For Everyone'}</span><span class="sep">${LANGS[it.lang].code}</span>${it.minutes ? `<span class="sep">${it.minutes} min</span>` : ''}`;
+  const meta2 = it.kind === 'level' ? '' : `<span class="sep">matched in ${MATCHED[it.in] || 'title'}</span>${where}${more}`;
+  const tags = (it.draft && it.kind === 'module' ? '<span class="tag">Draft</span>' : '') + (it.unwritten ? '<span class="tag">Not written yet</span>' : '');
+  const card = variant === 'card' ? ' is-card' : '';
+  const tag = variant === 'card' ? 'li' : 'li';
+  const inner = `<span class="lk" style="background:${color}" aria-hidden="true"></span>
+    <div class="res-main">
+      <div class="res-title"><span${dir}>${titleHTML}</span>${tags}</div>
+      ${snip}
+      <div class="res-meta">${meta}</div>${meta2 ? `<div class="res-meta2">${meta2}</div>` : ''}
+    </div>`;
+  if (variant === 'card') return `<${tag} class="res${card}" id="${id}"><a href="#" data-open="${esc(it.mod || it.level)}|${it.lang}|${it.track}|${it.kind}" style="display:flex;gap:10px;flex:1;min-width:0">${inner}</a></${tag}>`;
+  return `<li role="option" class="res${active ? ' is-active' : ''}" id="${id}" aria-selected="${active ? 'true' : 'false'}" data-i="${id.split('-').pop()}">${inner}<span class="enter" aria-hidden="true">Enter</span></li>`;
+}
+
+/* ================= filters ================= */
+const CHECK = '<svg class="ck" width="11" height="11" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.5 6.5l2.3 2.3 4.7-5"/></svg>';
+const FLAG = {
+  en: '<svg class="flag" viewBox="0 0 60 30" aria-hidden="true" preserveAspectRatio="xMidYMid slice"><rect width="60" height="30" fill="#012169"/><path d="M0,0 L60,30 M60,0 L0,30" stroke="#fff" stroke-width="6"/><path d="M0,0 L60,30 M60,0 L0,30" stroke="#C8102E" stroke-width="2.5"/><path d="M30,0 v30 M0,15 h60" stroke="#fff" stroke-width="10"/><path d="M30,0 v30 M0,15 h60" stroke="#C8102E" stroke-width="6"/></svg>',
+  tr: '<svg class="flag" viewBox="0 0 1200 800" aria-hidden="true" preserveAspectRatio="xMidYMid slice"><rect width="1200" height="800" fill="#E30A17"/><circle cx="425" cy="400" r="200" fill="#fff"/><circle cx="475" cy="400" r="160" fill="#E30A17"/><polygon fill="#fff" points="583.3,400 764.2,458.8 652.4,304.9 652.4,495.1 764.2,341.2"/></svg>',
+  fa: '<svg class="flag" viewBox="0 0 630 360" aria-hidden="true" preserveAspectRatio="xMidYMid slice"><rect width="630" height="120" fill="#239F40"/><rect y="120" width="630" height="120" fill="#fff"/><rect y="240" width="630" height="120" fill="#DA0000"/></svg>',
+};
+const chip = (f, v, label, extra = '') => `<button type="button" class="chip" data-f="${f}" data-v="${v}" aria-pressed="false">${CHECK}${extra}${label}</button>`;
+function filtersHTML(id, title = 'Advanced search', noTrack = false) {
+  return `<div class="s-adv" role="group" aria-label="${esc(title)}" data-adv>
+    <div class="s-adv-head"><b>${esc(title)}</b><button type="button" class="linkbtn" data-f="reset">Reset filters</button></div>
+    ${noTrack ? '' : `<div class="fg" role="group" aria-labelledby="${id}-ft"><span class="fl" id="${id}-ft">Track</span><div class="chips">
+      ${chip('track', 'eng', 'For Engineers', '')}${chip('track', 'ev', 'For Everyone')}</div></div>`}
+    <div class="fg" role="group" aria-labelledby="${id}-fl"><span class="fl" id="${id}-fl">Level</span><div class="chips">
+      ${META.levels.map((l) => chip('level', l.slug, `${esc(l.title)} <span class="n">${l.ready}<span class="sr"> written</span></span>`, `<span class="lk" style="background:${LV[l.slug]}" aria-hidden="true"></span>`)).join('')}</div></div>
+    <div class="fg" role="group" aria-labelledby="${id}-fg"><span class="fl" id="${id}-fg">Language</span><div class="chips">
+      ${['en', 'tr', 'fa'].map((l) => chip('lang', l, `<span class="${l === 'fa' ? 'fa-name' : ''}">${LANGS[l].name}</span>`, FLAG[l])).join('')}</div></div>
+    <div class="fg" role="group" aria-labelledby="${id}-fs"><span class="fl" id="${id}-fs">Search in</span><div class="chips">
+      ${chip('scope', 'titles', 'Titles')}${chip('scope', 'prose', 'Prose')}${chip('scope', 'code', 'Code')}</div></div>
+  </div>`;
+}
+function defaultState() {
+  const all3 = SETTINGS.scope === 'all';
+  return { q: '', tracks: new Set(all3 ? ['eng', 'ev'] : ['eng']), levels: new Set(), langs: new Set(all3 ? ['en', 'tr', 'fa'] : ['en']), scopes: new Set(all3 ? ['titles', 'prose', 'code'] : ['titles', 'prose']) };
+}
+function syncFilters(root, st) {
+  $$('[data-f][data-v]', root).forEach((b) => {
+    const f = b.dataset.f, v = b.dataset.v;
+    const on = f === 'track' ? st.tracks.has(v) : f === 'level' ? st.levels.has(v) : f === 'lang' ? st.langs.has(v) : st.scopes.has(v);
+    b.setAttribute('aria-pressed', on ? 'true' : 'false');
+  });
+  // a level chip row with nothing chosen means "all levels"
+}
+function toggle(st, f, v) {
+  const set = f === 'track' ? st.tracks : f === 'level' ? st.levels : f === 'lang' ? st.langs : st.scopes;
+  if (set.has(v)) { if (f !== 'level' && set.size === 1) return; set.delete(v); } else set.add(v);
+}
+
+/* ================= a controller for one stage ================= */
+const CTL = [];
+function makeCtl(stage, cfg) {
+  const st = defaultState();
+  const c = { stage, st, cfg, items: [], active: 0, shown: 0 };
+  const input = $(cfg.input, stage), list = $(cfg.list, stage), count = cfg.count && $(cfg.count, stage), live = $('.sr-live', stage);
+  c.input = input;
+  const variant = cfg.variant || 'row';
+  c.render = () => {
+    const r = search(st); c.items = r.items;
+    const max = cfg.max || 8; c.shown = Math.min(max, r.items.length);
+    c.active = Math.min(c.active, Math.max(0, c.shown - 1));
+    const q = st.q.trim();
+    let html = '';
+    if (r.waiting) html = `<li class="empty" role="presentation">Loading the text of the other languages…</li>`;
+    else if (q.length < 2) html = `<li class="empty" role="presentation">${cfg.hint || 'Type at least two letters. Try <b>memory</b>, <b>context window</b> or <b>embedding</b>.'}</li>`;
+    else if (!r.items.length) html = `<li class="empty" role="presentation"><b>No results</b> for "${esc(q)}" with these filters. ${st.scopes.size === 1 || st.levels.size ? 'Reset the filters to search everything.' : ''}</li>`;
+    else html = r.items.slice(0, c.shown).map((it, i) => resultHTML(it, `${stage.id}-r-${i}`, variant, variant === 'row' && i === c.active)).join('');
+    if (r.notice && q.length >= 2) html += `<li class="s-note" role="presentation">${esc(r.notice)}</li>`;
+    list.innerHTML = html;
+    if (count) {
+      count.innerHTML = q.length < 2 ? 'Searching ' + describe(st) : r.items.length ? `<b>${r.items.length}</b> result${r.items.length === 1 ? '' : 's'}${r.items.length > c.shown ? `, showing ${c.shown}` : ''} for <mark>${esc(q)}</mark> in ${describe(st)}` : `No results for <mark>${esc(q)}</mark> in ${describe(st)}`;
+    }
+    if (variant === 'row') {
+      if (c.shown && q.length >= 2) input.setAttribute('aria-activedescendant', `${stage.id}-r-${c.active}`); else input.removeAttribute('aria-activedescendant');
+    }
+    if (live) { clearTimeout(c.t); c.t = setTimeout(() => { live.textContent = q.length < 2 ? '' : r.items.length ? `${r.items.length} results for ${q}` : `No results for ${q}`; }, 250); }
+    if (cfg.onRender) cfg.onRender(c, r);
+    syncFilters(stage, st);
+  };
+  c.set = (patch) => { Object.assign(st, patch); c.ensure(); };
+  c.ensure = () => { const need = [...st.langs].filter((l) => !DATA[l] || !DATA[l].rw); if (!need.length) { c.render(); return; } c.render(); need.forEach((l) => load(l, () => c.render())); };
+  c.reset = () => { const d = defaultState(); const q = st.q; Object.assign(st, d, { q }); c.ensure(); };
+  c.move = (d) => { if (!c.shown) return; c.active = (c.active + d + c.shown) % c.shown; c.render(); const el = $(`#${stage.id}-r-${c.active}`, stage); if (el) el.scrollIntoView({ block: 'nearest' }); };
+  c.open = (i) => {
+    const it = c.items[i ?? c.active]; if (!it) return;
+    say(stage, it);
+    if (cfg.onOpen) cfg.onOpen(c, it);
+  };
+  input.addEventListener('input', () => { st.q = input.value; c.active = 0; c.render(); if (cfg.onType) cfg.onType(c); });
+  input.addEventListener('keydown', (e) => {
+    if (e.key === 'Tab' && !e.shiftKey && cfg.panel) {
+      const panel = $(cfg.panel, stage);
+      if (panel && getComputedStyle(panel).display !== 'none') { const f = $('button', panel); if (f) { e.preventDefault(); f.focus(); } }
+    }
+    if (variant !== 'row') { if (e.key === 'Escape' && input.value) { input.value = ''; st.q = ''; c.render(); } return; }
+    if (e.key === 'ArrowDown') { e.preventDefault(); if (cfg.openIt) cfg.openIt(c); c.move(1); }
+    else if (e.key === 'ArrowUp') { e.preventDefault(); c.move(-1); }
+    else if (e.key === 'Enter') { e.preventDefault(); c.open(); }
+    else if (e.key === 'Escape') { if (cfg.closeIt && stage.dataset.open === '1') { e.preventDefault(); cfg.closeIt(c, true); } else if (input.value) { input.value = ''; st.q = ''; c.render(); } }
+  });
+  list.addEventListener('click', (e) => { const li = e.target.closest('[data-i]'); if (li) { c.active = Number(li.dataset.i); c.open(c.active); } const a = e.target.closest('[data-open]'); if (a) { e.preventDefault(); const idx = $$('[data-open]', list).indexOf(a); c.open(idx); } });
+  list.addEventListener('mousemove', (e) => { const li = e.target.closest('[data-i]'); if (li && Number(li.dataset.i) !== c.active) { c.active = Number(li.dataset.i); $$('.res', list).forEach((x, i) => { x.classList.toggle('is-active', i === c.active); x.setAttribute('aria-selected', i === c.active ? 'true' : 'false'); }); input.setAttribute('aria-activedescendant', `${stage.id}-r-${c.active}`); } });
+  stage.addEventListener('click', (e) => {
+    const b = e.target.closest('[data-f]'); if (!b || !stage.contains(b)) return;
+    if (b.dataset.f === 'reset') c.reset(); else { toggle(st, b.dataset.f, b.dataset.v); c.active = 0; c.ensure(); }
+  });
+  if (cfg.panel) {
+    const panel = $(cfg.panel, stage);
+    panel.addEventListener('keydown', (e) => {
+      if (e.key !== 'Tab') return;
+      const f = $$('button', panel).filter((x) => x.offsetParent !== null); if (!f.length) return;
+      if (e.shiftKey && document.activeElement === f[0]) { e.preventDefault(); input.focus(); }
+      else if (!e.shiftKey && document.activeElement === f[f.length - 1]) { e.preventDefault(); if (cfg.closeIt) cfg.closeIt(c, false); const nxt = $('.tswitch a', stage); if (nxt) nxt.focus(); }
+    });
+  }
+  CTL.push(c); c.ensure();
+  return c;
+}
+function describe(st) {
+  const t = st.tracks.size === 2 ? 'both tracks' : st.tracks.has('eng') ? 'For Engineers' : 'For Everyone';
+  const l = st.langs.size === 3 ? 'all languages' : [...st.langs].map((x) => LANGS[x].name).join(' and ');
+  const lv = st.levels.size ? [...st.levels].map((x) => LVT[x]).join(', ') : 'all levels';
+  const sc = [...st.scopes].map((x) => ({ titles: 'titles', prose: 'prose', code: 'code' }[x])).join(', ');
+  return `${t}, ${l}, ${lv}, ${sc}`;
+}
+function say(stage, it) {
+  const el = stage.closest('.demo').querySelector('.said'); if (!el) return;
+  el.innerHTML = `Opens <b>${esc(it.kind === 'level' ? it.title + ' (level)' : it.title)}</b> at <code>${esc(pathOf(it))}</code>${it.unwritten ? ', a page that says the module is not written yet' : ''}.`;
+}
+
+/* ================= the bar ================= */
+const chevron = '<svg width="10" height="10" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M2.5 4.5L6 8l3.5-3.5"/></svg>';
+const theme = '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M13 9.5A5.5 5.5 0 0 1 6.5 3 5.5 5.5 0 1 0 13 9.5Z"/></svg>';
+const gh = '<svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 0c4.42 0 8 3.58 8 8a8.013 8.013 0 0 1-5.45 7.59c-.4.08-.55-.17-.55-.38 0-.27.01-1.13.01-2.2 0-.75-.25-1.23-.54-1.48 1.78-.2 3.65-.88 3.65-3.95 0-.88-.31-1.59-.82-2.15.08-.2.36-1.02-.08-2.12 0 0-.67-.22-2.2.82-.64-.18-1.32-.27-2-.27-.68 0-1.36.09-2 .27-1.53-1.03-2.2-.82-2.2-.82-.44 1.1-.16 1.92-.08 2.12-.51.56-.82 1.28-.82 2.15 0 3.06 1.86 3.75 3.64 3.95-.23.2-.44.55-.51 1.07-.46.21-1.61.55-2.33-.66-.15-.24-.6-.83-1.23-.82-.67.01-.27.38.01.53.34.19.73.9.82 1.13.16.45.68 1.31 2.69.94 0 .67.01 1.3.01 1.49 0 .21-.15.45-.55.38A7.995 7.995 0 0 1 0 8c0-4.42 3.58-8 8-8Z"/></svg>';
+const star = '<svg class="star" width="11" height="11" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 .9l2.2 4.6 5 .7-3.6 3.5.9 5L8 12.3l-4.5 2.4.9-5L.8 6.2l5-.7z"/></svg>';
+const mag = '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" aria-hidden="true"><circle cx="7" cy="7" r="4.6"/><path d="M10.5 10.5 14 14"/></svg>';
+function bar({ mid = '', before = '', after = '', cls = '', row2 = '' }) {
+  return `<header class="bar ${cls}"><div class="bar-inner">
+    <a class="brand" href="#"><img src="${LOGO}" alt=""><span class="brand-word">AI Engineering Bazaar</span></a>
+    <nav class="bar-nav" aria-label="Main"><ul>
+      <li data-home><a class="bar-link" href="#">Home</a></li>
+      <li><button type="button" class="bar-link">Catalog ${chevron}</button></li>
+      <li><a class="bar-link" href="#">Progress</a></li>
+    </ul></nav>
+    ${mid || '<span class="spacer"></span>'}
+    ${before}
+    <nav class="tswitch" aria-label="Track"><a class="tseg" href="#" aria-current="true">${ICON_ENG.replace('12', '14').replace('12', '14')}<span class="tlabel"><span class="tfor">For </span>Engineers</span></a><a class="tseg" href="#">${ICON_EV.replace('12', '14').replace('12', '14')}<span class="tlabel"><span class="tfor">For </span>Everyone</span></a></nav>
+    <button type="button" class="bar-icon lang" aria-label="Language: English">${FLAG.en}<span class="langcode">EN</span></button>
+    <button type="button" class="bar-icon" aria-label="Theme">${theme}</button>
+    <a class="bar-repo" href="#" aria-label="Repository, 6 stars">${gh}${star}<span class="stars">6</span></a>
+    ${after}
+  </div>${row2}</header><div class="band"></div>`;
+}
+const frag = (extra = '') => `<div class="frag"><p class="crumb">Home<span>/</span>Catalog<span>/</span>Fundamentals<span>/</span>Memory</p>
+  <h3 class="display">Memory</h3><p class="meta">20 min · Fundamentals · For Engineers</p>
+  <div class="card"><h4>What you will be able to do</h4><ul>
+    <li>Tell the three kinds of memory apart and say where each one lives</li>
+    <li>Explain why a model that is stateless still seems to remember a chat</li>
+    <li>Choose between putting a fact in the prompt and storing it for later</li></ul></div>${extra}</div>`;
+const field = (id, ph, short, kbd = true) => `<label class="sfield" data-keep for="${id}"><span class="sr">Search</span>${mag}<input id="${id}" type="search" role="combobox" aria-expanded="false" aria-controls="${id}-list" aria-autocomplete="list" autocomplete="off" spellcheck="false" placeholder="${ph}">${kbd ? '<span class="kbds" aria-hidden="true"><kbd>/</kbd></span>' : ''}</label>`;
+
+/* ================= the six stages ================= */
+const SPEC = {
+  n1: { build(stage) {
+    const id = stage.id;
+    stage.innerHTML = bar({ mid: `<div class="n1-slot" data-keep><label class="sfield" for="${id}-in"><span class="sr">Search modules and content</span>${mag}<input id="${id}-in" type="search" role="combobox" aria-expanded="false" aria-controls="${id}-list" aria-autocomplete="list" autocomplete="off" spellcheck="false" placeholder="Search modules and content"><span class="kbds" aria-hidden="true"><kbd>/</kbd></span></label></div>`, row2: `<div class="n1-row2" data-keep><label class="sfield" for="${id}-in2"><span class="sr">Search modules and content</span>${mag}<input id="${id}-in2" type="search" autocomplete="off" placeholder="Search modules and content"></label></div>` }) +
+      frag() +
+      `<div class="n1-dd s-panel" data-keep>${filtersHTML(id)}<div class="s-count" id="${id}-count"></div><ul class="s-results" id="${id}-list" role="listbox" aria-label="Results"></ul><div class="s-foot"><span><kbd>↑</kbd> <kbd>↓</kbd> move</span><span><kbd>Enter</kbd> open</span><span><kbd>Tab</kbd> filters</span><span><kbd>Esc</kbd> close</span></div></div><div class="sr sr-live" role="status" aria-live="polite"></div>`;
+    const input = $(`#${id}-in`, stage); const row2 = $(`#${id}-in2`, stage);
+    const ctl = makeCtl(stage, { panel: '.n1-dd', input: `#${id}-in`, list: `#${id}-list`, count: `#${id}-count`, openIt: (c) => openDD(stage, c, true), closeIt: (c, focus) => closeDD(stage, c, focus), onOpen: (c) => closeDD(stage, c, true), onType: () => openDD(stage, ctl, false) });
+    // the narrow row writes into the same state
+    row2.addEventListener('input', () => { input.value = row2.value; ctl.st.q = row2.value; ctl.active = 0; ctl.render(); openDD(stage, ctl, false); });
+    [input, row2].forEach((el) => el.addEventListener('focus', () => openDD(stage, ctl, false)));
+    [input, row2].forEach((el) => el.addEventListener('click', () => openDD(stage, ctl, false)));
+    ctl.open0 = () => { input.value = 'memory'; row2.value = 'memory'; ctl.st.q = 'memory'; ctl.render(); stage.dataset.open = '1'; input.setAttribute('aria-expanded', 'true'); };
+    ctl.focusField = () => { (getComputedStyle($('.n1-slot', stage)).display === 'none' ? row2 : input).focus(); };
+    return ctl;
+  } },
+  n2: { build(stage) {
+    const id = stage.id;
+    stage.innerHTML = bar({ before: `<button type="button" class="sbtn" id="${id}-btn" aria-label="Search (Ctrl K)" aria-haspopup="dialog" aria-expanded="false" data-keep>${mag}</button>` }) + frag() +
+      `<div class="pal-back" data-back><div class="pal s-panel" role="dialog" aria-modal="true" aria-label="Search" data-keep style="padding:0">
+        <label class="sfield" for="${id}-in"><span class="sr">Search</span>${mag}<input id="${id}-in" type="search" role="combobox" aria-expanded="true" aria-controls="${id}-list" aria-autocomplete="list" autocomplete="off" spellcheck="false" placeholder="Search modules and content"><span class="kbds" aria-hidden="true"><kbd>Esc</kbd></span></label>
+        ${filtersHTML(id, 'Filters')}<div class="s-count" id="${id}-count"></div><ul class="s-results" id="${id}-list" role="listbox" aria-label="Results"></ul>
+        <div class="s-foot"><span><kbd>↑</kbd> <kbd>↓</kbd> move</span><span><kbd>Enter</kbd> open</span><span><kbd>Tab</kbd> filters</span><span><kbd>Esc</kbd> close</span></div></div></div><div class="sr sr-live" role="status" aria-live="polite"></div>`;
+    const btn = $(`#${id}-btn`, stage), input = $(`#${id}-in`, stage), dlg = $('.pal', stage);
+    const ctl = makeCtl(stage, { input: `#${id}-in`, list: `#${id}-list`, count: `#${id}-count`, closeIt: (c) => closePal(stage, btn), onOpen: (c) => closePal(stage, btn) });
+    btn.addEventListener('click', () => (stage.dataset.open === '1' ? closePal(stage, btn) : openPal(stage, btn, input)));
+    $('[data-back]', stage).addEventListener('mousedown', (e) => { if (e.target.matches('[data-back]')) closePal(stage, btn); });
+    dlg.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') { e.preventDefault(); closePal(stage, btn); return; }
+      if (e.key !== 'Tab') return;
+      const f = $$('input, button', dlg).filter((x) => x.offsetParent !== null); if (!f.length) return;
+      const first = f[0], last = f[f.length - 1];
+      if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); } else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+    });
+    ctl.open0 = () => { input.value = 'context window'; ctl.st.q = 'context window'; ctl.render(); stage.dataset.open = '1'; btn.setAttribute('aria-expanded', 'true'); };
+    ctl.focusField = () => openPal(stage, btn, input);
+    ctl.toggleKey = () => (stage.dataset.open === '1' ? closePal(stage, btn) : openPal(stage, btn, input));
+    return ctl;
+  } },
+  n3: { build(stage) {
+    const id = stage.id;
+    stage.innerHTML = bar({ before: `<a class="sbtn" id="${id}-btn" href="#" aria-label="Search" data-keep>${mag}</a>` }) +
+      `<div class="n3"><div class="n3-top"><h3>Search</h3></div>
+        <p class="url" id="${id}-url" aria-label="Address of this search"></p>
+        <form class="n3-form" role="search" onsubmit="return false"><label class="sfield" for="${id}-in"><span class="sr">Search modules and content</span>${mag}<input id="${id}-in" type="search" autocomplete="off" spellcheck="false" placeholder="Search modules and content"></label><button class="primary" type="submit">Search</button></form>
+        <button type="button" class="tb n3-filterbtn" id="${id}-fb" aria-expanded="false" aria-controls="${id}-adv" style="margin-bottom:10px">Filters</button>
+        <div class="n3-grid"><div id="${id}-adv" data-adv-wrap>${filtersHTML(id, 'Advanced search')}</div><div><div class="s-count" id="${id}-count" style="padding-left:0"></div><ol class="cards" id="${id}-list" aria-label="Results"></ol></div></div></div><div class="sr sr-live" role="status" aria-live="polite"></div>`;
+    const input = $(`#${id}-in`, stage); const adv = $('.s-adv', stage); adv.dataset.collapsed = '1';
+    const ctl = makeCtl(stage, { input: `#${id}-in`, list: `#${id}-list`, count: `#${id}-count`, variant: 'card', max: 20, onRender: (c) => { $(`#${id}-url`, stage).textContent = '/search/?' + urlOf(c.st); }, hint: 'Type at least two letters. Try <b>memory</b>, <b>context window</b> or <b>embedding</b>.' });
+    $(`#${id}-fb`, stage).addEventListener('click', (e) => { const c = adv.dataset.collapsed === '1'; adv.dataset.collapsed = c ? '0' : '1'; e.currentTarget.setAttribute('aria-expanded', c ? 'true' : 'false'); });
+    $(`#${id}-btn`, stage).addEventListener('click', (e) => { e.preventDefault(); input.focus(); });
+    ctl.open0 = () => { input.value = 'memory'; ctl.st.q = 'memory'; ctl.render(); };
+    ctl.focusField = () => input.focus();
+    return ctl;
+  } },
+  n4: { build(stage) {
+    const id = stage.id;
+    stage.innerHTML = bar({ mid: `<span class="spacer"></span><div class="n4-field" data-keep><label class="sfield" for="${id}-in"><span class="sr">Search modules and content</span>${mag}<input id="${id}-in" type="search" role="combobox" aria-expanded="false" aria-controls="${id}-list" aria-autocomplete="list" autocomplete="off" spellcheck="false" placeholder="Search modules and content"></label><button type="button" class="n4-close" id="${id}-x">Close</button></div>`, before: `<button type="button" class="sbtn n4-icon" id="${id}-btn" aria-label="Search" aria-expanded="false" aria-controls="${id}-in" data-keep>${mag}</button>` }) + frag() +
+      `<div class="n4-dd s-panel" data-keep>${filtersHTML(id)}<div class="s-count" id="${id}-count"></div><ul class="s-results" id="${id}-list" role="listbox" aria-label="Results"></ul><div class="s-foot"><span><kbd>↑</kbd> <kbd>↓</kbd> move</span><span><kbd>Enter</kbd> open</span><span><kbd>Esc</kbd> close</span></div></div><div class="sr sr-live" role="status" aria-live="polite"></div>`;
+    const btn = $(`#${id}-btn`, stage), input = $(`#${id}-in`, stage);
+    const ctl = makeCtl(stage, { panel: '.n4-dd', input: `#${id}-in`, list: `#${id}-list`, count: `#${id}-count`, openIt: () => {}, closeIt: (c) => closeX(stage, btn, true), onOpen: () => closeX(stage, btn, true) });
+    btn.addEventListener('click', () => openX(stage, btn, input));
+    $(`#${id}-x`, stage).addEventListener('click', () => closeX(stage, btn, true));
+    ctl.open0 = () => { input.value = 'memory'; ctl.st.q = 'memory'; ctl.render(); stage.dataset.open = '1'; btn.setAttribute('aria-expanded', 'true'); input.setAttribute('aria-expanded', 'true'); };
+    ctl.focusField = () => openX(stage, btn, input);
+    return ctl;
+  } },
+  n5: { build(stage) {
+    const id = stage.id;
+    const cards = META.modules.map((m) => `<li class="mcard" data-card="${m.n}"><span class="lk" style="background:${LV[m.l]}" aria-hidden="true"></span><div><b>${esc(m.t)}</b><span>${esc(LVT[m.l])} · ${m.s === 'ready' ? m.min + ' min' : 'Draft'}</span></div></li>`).join('');
+    stage.innerHTML = bar({}) +
+      `<div class="n5"><p class="crumb" style="margin:0 0 8px">Home<span>/</span>Catalog</p><h3>Catalog</h3>
+        <div class="n5-tabs" role="tablist" aria-label="Track"><button class="tab" role="tab" aria-selected="true" type="button">For Engineers</button><button class="tab" role="tab" aria-selected="false" type="button">For Everyone</button></div>
+        <form class="n5-bar" role="search" onsubmit="return false"><label class="sfield" for="${id}-in"><span class="sr">Search modules and content</span>${mag}<input id="${id}-in" type="search" autocomplete="off" spellcheck="false" placeholder="Search all levels, titles and text"></label><button type="button" class="tb" id="${id}-fb" aria-expanded="true" aria-controls="${id}-adv">Filters</button></form>
+        <div id="${id}-adv">${filtersHTML(id, 'Advanced search', true)}</div>
+        <div class="s-count" id="${id}-count" style="padding-left:0"></div>
+        <ol class="cards" id="${id}-list" aria-label="Results"></ol>
+        <ul class="n5-grid" id="${id}-grid" aria-label="All modules">${cards}</ul></div><div class="sr sr-live" role="status" aria-live="polite"></div>`;
+    const input = $(`#${id}-in`, stage); const adv = $('.s-adv', stage);
+    const ctl = makeCtl(stage, { input: `#${id}-in`, list: `#${id}-list`, count: `#${id}-count`, variant: 'card', max: 20, hint: '', onRender: (c) => {
+      const q = c.st.q.trim().length >= 2; $(`#${id}-grid`, stage).style.display = q ? 'none' : ''; $(`#${id}-list`, stage).style.display = q ? '' : 'none';
+      if (!q) $(`#${id}-count`, stage).innerHTML = `${META.modules.length} modules listed, ${WRITTEN} written`;
+      const lv = c.st.levels; $$('.mcard', stage).forEach((el) => { el.style.display = lv.size && !lv.has(MOD[el.dataset.card].l) ? 'none' : ''; });
+    } });
+    $$('.tab', stage).forEach((tab, i) => tab.addEventListener('click', () => { $$('.tab', stage).forEach((t) => t.setAttribute('aria-selected', String(t === tab))); ctl.st.tracks = new Set([i === 0 ? 'eng' : 'ev']); ctl.active = 0; ctl.ensure(); }));
+    $(`#${id}-fb`, stage).addEventListener('click', (e) => { const open = adv.dataset.collapsed !== '1'; adv.dataset.collapsed = open ? '1' : '0'; e.currentTarget.setAttribute('aria-expanded', open ? 'false' : 'true'); });
+    ctl.open0 = () => { input.value = 'memory'; ctl.st.q = 'memory'; ctl.render(); };
+    ctl.focusField = () => input.focus();
+    return ctl;
+  } },
+  n6: { build(stage) {
+    const id = stage.id;
+    const lv = META.levels.map((l) => `<li><a href="#"><span class="lk" style="background:${LV[l.slug]}" aria-hidden="true"></span>${esc(l.title)}<span class="c">${l.ready}/${l.count}</span></a></li>`).join('');
+    stage.innerHTML = bar({}) +
+      `<div class="n6"><nav class="rail" aria-label="Curriculum" data-keep><h4>Curriculum</h4>
+        <label class="sfield" for="${id}-in"><span class="sr">Search modules and content</span>${mag}<input id="${id}-in" type="search" role="combobox" aria-expanded="false" aria-controls="${id}-list" aria-autocomplete="list" autocomplete="off" spellcheck="false" placeholder="Search"><span class="kbds" aria-hidden="true"><kbd>/</kbd></span></label>
+        <ul>${lv}</ul></nav>
+        <div><div class="frag" style="padding-bottom:0"><button type="button" class="tb n6-open" id="${id}-dr" aria-expanded="false" aria-controls="${id}-rail">Curriculum and search</button></div>${frag().replace('<div class="frag">', '<div class="frag" style="padding-top:0">')}</div></div>
+      <div class="n6-dd s-panel" data-keep>${filtersHTML(id)}<div class="s-count" id="${id}-count"></div><ul class="s-results" id="${id}-list" role="listbox" aria-label="Results"></ul><div class="s-foot"><span><kbd>↑</kbd> <kbd>↓</kbd> move</span><span><kbd>Enter</kbd> open</span><span><kbd>Esc</kbd> close</span></div></div><div class="sr sr-live" role="status" aria-live="polite"></div>`;
+    const input = $(`#${id}-in`, stage);
+    const ctl = makeCtl(stage, { panel: '.n6-dd', input: `#${id}-in`, list: `#${id}-list`, count: `#${id}-count`, openIt: (c) => { stage.dataset.open = '1'; input.setAttribute('aria-expanded', 'true'); }, closeIt: (c, f) => { stage.dataset.open = '0'; input.setAttribute('aria-expanded', 'false'); if (f) input.focus(); }, onOpen: (c) => { stage.dataset.open = '0'; input.setAttribute('aria-expanded', 'false'); }, onType: () => { stage.dataset.open = '1'; input.setAttribute('aria-expanded', 'true'); } });
+    input.addEventListener('focus', () => { stage.dataset.open = '1'; input.setAttribute('aria-expanded', 'true'); });
+    $(`#${id}-dr`, stage).addEventListener('click', (e) => { const on = stage.dataset.drawer !== '1'; stage.dataset.drawer = on ? '1' : '0'; e.currentTarget.setAttribute('aria-expanded', on ? 'true' : 'false'); if (on) input.focus(); });
+    ctl.open0 = () => { input.value = 'memory'; ctl.st.q = 'memory'; ctl.render(); stage.dataset.open = '1'; input.setAttribute('aria-expanded', 'true'); };
+    ctl.focusField = () => { if (getComputedStyle($('.rail', stage)).display === 'none') { stage.dataset.drawer = '1'; } input.focus(); };
+    return ctl;
+  } },
+};
+function urlOf(st) {
+  const p = new URLSearchParams(); p.set('q', st.q);
+  p.set('track', [...st.tracks].map((t) => (t === 'eng' ? 'engineers' : 'everyone')).join(','));
+  p.set('lang', [...st.langs].join(',')); if (st.levels.size) p.set('level', [...st.levels].join(','));
+  p.set('in', [...st.scopes].join(','));
+  return decodeURIComponent(p.toString().replace(/\+/g, '+'));
+}
+function openDD(stage, c, focus) { stage.dataset.open = '1'; c.input.setAttribute('aria-expanded', 'true'); if (focus) c.input.focus(); }
+function closeDD(stage, c, focus) { stage.dataset.open = '0'; c.input.setAttribute('aria-expanded', 'false'); if (focus) c.input.focus(); }
+function openPal(stage, btn, input) { stage.dataset.open = '1'; btn.setAttribute('aria-expanded', 'true'); input.focus(); input.select(); }
+function closePal(stage, btn) { stage.dataset.open = '0'; btn.setAttribute('aria-expanded', 'false'); btn.focus(); }
+function openX(stage, btn, input) { stage.dataset.open = '1'; btn.setAttribute('aria-expanded', 'true'); input.setAttribute('aria-expanded', 'true'); input.focus(); }
+function closeX(stage, btn, focus) { stage.dataset.open = '0'; btn.setAttribute('aria-expanded', 'false'); const i = $('input[role=combobox]', stage); if (i) i.setAttribute('aria-expanded', 'false'); if (focus) btn.focus(); }
+
+/* ================= the demo frames: width switcher, fit, specimens ================= */
+const WIDTHS = [1440, 1180, 1024, 880, 767, 390];
+const HEIGHTS = { n1: [690, 740], n2: [650, 740], n3: [640, 900], n4: [690, 740], n5: [640, 860], n6: [640, 760] };
+const TRY = [['memory', 'en'], ['context window', 'en'], ['embedding', 'en'], ['get_weather', 'en'], ['bağlam', 'tr'], ['حافظه', 'fa']];
+function buildDemo(demo) {
+  const key = demo.dataset.opt;
+  demo.innerHTML = `<div class="toolbar"><span class="tl" id="${key}-wl">Window width</span><div class="seg" role="group" aria-labelledby="${key}-wl">${WIDTHS.map((w) => `<button type="button" class="tb" data-w="${w}" aria-pressed="false">${w}</button>`).join('')}</div>
+    ${key === 'n1' ? `<span class="tl" id="${key}-fl" style="margin-left:10px">Field</span><div class="seg" role="group" aria-labelledby="${key}-fl"><button type="button" class="tb" data-fill="white" aria-pressed="true">White fill</button><button type="button" class="tb" data-fill="glass" aria-pressed="false">Mockup fill, white text</button></div><span class="tl" id="${key}-nl" style="margin-left:10px">Site name</span><div class="seg" role="group" aria-labelledby="${key}-nl"><button type="button" class="tb" data-name="show" aria-pressed="true">Shown</button><button type="button" class="tb" data-name="hide" aria-pressed="false">Hidden</button></div>` : ''}</div>
+    <div class="toolbar" style="margin-top:0"><span class="try">Try:</span><span class="seg">${TRY.map(([q, l]) => `<button type="button" class="tb" data-try="${esc(q)}" data-lang="${l}" aria-pressed="false">${esc(q)}</button>`).join('')}</span></div>
+    <div class="fit"><div class="stage" id="${key}-stage" data-open="0" data-fill="white"></div></div>
+    <p class="said" aria-live="polite">Click a result, or press Enter on one, to see where it would go.</p>`;
+  const stage = $('.stage', demo); const fit = $('.fit', demo);
+  const ctl = SPEC[key].build(stage); demo._ctl = ctl; ctl.open0();
+  const setW = (w) => {
+    demo._w = w; const h = HEIGHTS[key][w <= 480 ? 1 : 0];
+    stage.style.width = w + 'px'; stage.style.height = h + 'px'; demo._h = h;
+    if (key === 'n1') { const i = $('.n1-slot input', stage); if (i) i.placeholder = w <= 1180 ? 'Search' : 'Search modules and content'; }
+    $$('[data-w]', demo).forEach((b) => b.setAttribute('aria-pressed', String(Number(b.dataset.w) === w)));
+    scale();
+  };
+  const scale = () => { const s = Math.min(1, fit.clientWidth / demo._w); stage.style.transform = `scale(${s})`; fit.style.height = Math.round(demo._h * s) + 'px'; };
+  new ResizeObserver(scale).observe(fit);
+  demo.addEventListener('click', (e) => {
+    const w = e.target.closest('[data-w]'); if (w) { setW(Number(w.dataset.w)); if (['n1', 'n2', 'n4', 'n6'].includes(key)) stage.dataset.open = '1'; if (key === 'n6') stage.dataset.drawer = Number(w.dataset.w) <= 880 ? '1' : '0'; }
+    const f = e.target.closest('[data-fill]'); if (f) { stage.dataset.fill = f.dataset.fill; $$('[data-fill]', demo).forEach((b) => b.setAttribute('aria-pressed', String(b === f))); }
+    const n = e.target.closest('[data-name]'); if (n) { $('.bar', stage).classList.toggle('noword', n.dataset.name === 'hide'); $$('[data-name]', demo).forEach((b) => b.setAttribute('aria-pressed', String(b === n))); }
+    const t = e.target.closest('[data-try]'); if (t) { const lang = t.dataset.lang; const c = demo._ctl; c.st.q = t.dataset.try; c.st.langs.add(lang); if (t.dataset.try === 'get_weather') c.st.scopes.add('code'); $$('input[type=search]', stage).forEach((i) => { i.value = t.dataset.try; }); c.active = 0; c.ensure(); if (key === 'n2' || key === 'n1' || key === 'n4' || key === 'n6') stage.dataset.open = '1'; }
+  });
+  setW(window.innerWidth < 700 ? 390 : 1440);
+}
+function specimen(box, lang) {
+  const q = box.dataset.query || (lang === 'fa' ? '\u062d\u0627\u0641\u0638\u0647' : 'context window');
+  const st = { ...defaultState(), q, langs: new Set([lang]) };
+  if (box.dataset.scopes) st.scopes = new Set(box.dataset.scopes.split(','));
+  const variant = box.dataset.variant || 'row';
+  const go = () => {
+    const r = search(st); const it = r.items.find((x) => (box.dataset.query ? x.rowKind === 'c' : x.in === 'text')) || r.items[0]; if (!it) return;
+    const html = resultHTML(it, 'sp-' + Math.random().toString(36).slice(2), variant, false).replace(/ role="option"/, '').replace(/ aria-selected="[a-z]*"/, '');
+    box.innerHTML = `<ol class="${variant === 'card' ? 'cards' : 's-results'}" style="padding:0;margin:0;list-style:none;max-height:none">${html}</ol>`;
+  };
+  load(lang, go);
+}
+
+/* ================= keys, settings, boot ================= */
+function activeDemo() {
+  let best = null, area = -1;
+  $$('.demo').forEach((d) => { const r = d.getBoundingClientRect(); const vis = Math.max(0, Math.min(r.bottom, innerHeight) - Math.max(r.top, 0)); if (vis > area) { area = vis; best = d; } });
+  return best;
+}
+document.addEventListener('keydown', (e) => {
+  const tag = (e.target.tagName || '').toLowerCase();
+  const typing = tag === 'input' || tag === 'textarea' || e.target.isContentEditable;
+  const isK = (e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k';
+  if (!(isK || (e.key === '/' && !typing && !e.ctrlKey && !e.metaKey && !e.altKey))) return;
+  const d = activeDemo(); if (!d || !d._ctl) return;
+  e.preventDefault();
+  if (d._ctl.toggleKey && isK) d._ctl.toggleKey(); else d._ctl.focusField();
+});
+document.addEventListener('pointerdown', (e) => {
+  $$('.stage[data-open="1"]').forEach((s) => {
+    if (s.id === 'n2-stage') return;
+    if (!s.contains(e.target) || (!e.target.closest('[data-keep]') && !e.target.closest('.sbtn'))) {
+      if (s.id === 'n6-stage' && e.target.closest('.rail')) return;
+      s.dataset.open = '0'; $$('[aria-expanded]', s).forEach((x) => { if (x.matches('input,button.sbtn')) x.setAttribute('aria-expanded', 'false'); });
+    }
+  });
+});
+$('#settings').addEventListener('click', (e) => {
+  const b = e.target.closest('[data-set]'); if (!b) return;
+  SETTINGS[b.dataset.set] = b.dataset.v;
+  $$(`[data-set="${b.dataset.set}"]`).forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
+  CTL.forEach((c) => { const q = c.st.q; Object.assign(c.st, defaultState(), { q }); c.active = 0; c.ensure(); });
+});
+function boot() {
+  prep('en');
+  $$('.demo').forEach(buildDemo);
+  $$('[data-specimen]').forEach((b) => specimen(b, b.dataset.specimen));
+}
+if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot); else boot();
+})();
+
+</script>
+</body>
+</html>

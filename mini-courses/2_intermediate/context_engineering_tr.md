@@ -81,6 +81,9 @@ Buradaki uyarı aynıdır ve kökü de aynıdır. Neyin saklanmaya değer olduğ
 
 Bazı bilgiler gerçekten değerlidir ve sık sık değişmez; örneğin şirketinin iç API'sinin nasıl çalıştığı gibi. Bunları her prompt'a yapıştırmak yerine agent'ın gidip bakabileceği bir yere koy: okuyup arayabileceği bir markdown dosyaları klasörüne.
 
+![Agent'ın keşfettiği bir bilgi tabanı](./images/explorable-knowledge-base.png)  
+*Bilgi tabanı context window'un dışında durur ve her etkileşimle büyür. Agent yalnızca sorunun ihtiyaç duyduğu sayfayı okur; bildiği geri kalan her şey kullanılana kadar hiçbir maliyet çıkarmaz.*
+
 Agent dokümantasyona ihtiyaç duyduğuna karar verdiğinde onu çeker. Yalnızca önemli kısmı okur ve context'inde o kadarını öğrenmiş olur. Bu çekme işi [Retrieval-Augmented Generation (RAG)](../1_fundamentals/rag_tr.md) gibi tam bir RAG ile yapılabilir, ya da agent sadece dosyaları açar. Hangisi olursa olsun alternatif, tüm API referansını pencereye dökmek ve bunun bedelini her turda ödemektir.
 
 Burada bilmeye değer bir araç daha var: [DeepWiki](https://deepwiki.org/) bir GitHub deposu için wiki üretir. Diyelim ki agent'ın bir kütüphanenin iç yapısı, mimarisi ya da API'si hakkında bir sorusu var. Depoyu kendisi tarayıp context'ini kaynak dosyalarla doldurmak yerine, DeepWiki'nin yazdığı metni okuyabilir.
@@ -99,6 +102,9 @@ Kodlama agent'ının sana, bir milyon satırlık bir deponun hangi mimariyi kull
 **Nasıl çalışır?** Subagent, temiz bir context'e sahip yeni bir agent. Ana agent, diğer herhangi bir aracı çağırdığı gibi onu çağırır. Örneğin şuna benzer bir çağrı yapar: `Task("find out what architecture this repo uses")`. [LLM Tool Calling](../1_fundamentals/tools_tr.md) açısından bakınca ortada yeni bir şey yok: bir araç çağrıldı ve bir araç sonucu geri geldi. Subagent kendi döngüsünü çalıştırır, her ara adımı gizler ve son cevabı bu araç sonucu olarak geri döndürür. Anthropic, bu özetlerin genellikle 1,000 ile 2,000 token civarında olduğunu bildiriyor.
 
 Günümüzün agent'ları subagent'ları ya art arda ya da paralel çağırıyor. Bu sayede ana agent, gerçekten iyi olduğu işe odaklanabilir: planı tutmak ve sonra neyin olacağına karar vermek.
+
+![Paralel çalışan subagent'lar](./images/subagents-in-parallel.webp)  
+*Üç subagent aynı anda, her biri kendi temiz context'inde çalışıyor. Uzun tool çıktıları, çıkmaz yollar ve yeniden yazmalar onların penceresinde kalır; ana thread her birinden yalnızca tek ve kısa bir sonuç alır.*
 
 ## Açık planlama (TODO'lar)
 

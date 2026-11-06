@@ -4875,6 +4875,10 @@ protocols reference moved into Ecosystem, and four draft modules scaffolded for 
 - [x] `README.md`, `mini-courses/index.md`, `ROADMAP.md` and `scratchpad/topics.txt` (the four
       modules as 34 to 37, and #40's other ideas as candidates) updated; `ARCHITECTURE.md` counts
       re-measured (37 modules, 19 ready).
+- [x] Also, at the author's request the same day: **Advanced LLM Evaluation** (issue #46) added to
+      Expert before Advanced Training, as a draft in English and Turkish listing #46's metrics:
+      BLEU, ROUGE, METEOR, accuracy and precision, BERTScore; faithfulness, LLM-as-judge, human
+      preference. Expert now has 12 modules, the course 38 (19 ready).
 - [ ] The full gate and the browser suite on the branch (with M51).
 
 ## 🏁 Milestone M62: Caravan, the trends timeline — PLACEHOLDER, LATER

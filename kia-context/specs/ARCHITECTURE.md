@@ -167,9 +167,9 @@ order of the `CategorySlug` union in `src/lib/content/categories.ts`.
 
 **A module** has a `name` (the file stem, and the source of its URL slug), a required `title`, a
 `status` of `ready` or `draft`, a duration in `minutes`, a list of `needs` naming prerequisites **by
-name**, and free-text `notes` that nothing reads. There are **37**, of which **19** are `ready`
+name**, and free-text `notes` that nothing reads. There are **38**, of which **19** are `ready`
 (measured 2026-11-06, after D94 renamed the fifth level Emerging Trends and moved the protocols
-reference into Ecosystem).
+reference into Ecosystem, and Advanced LLM Evaluation was added to Expert for issue #46).
 
 **A module has no number of its own.** Its number is its position in the config, computed in exactly
 one place — `src/lib/content/loader.ts` — and written nowhere else. Filenames carry no number, prose

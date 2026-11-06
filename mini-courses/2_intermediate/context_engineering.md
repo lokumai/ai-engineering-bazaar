@@ -3,7 +3,7 @@ summary: "Deciding what earns a place in a limited context window, and why more 
 objectives:
   - "Explain context rot and why a model degrades before its window is full"
   - "Say what context engineering decides, and why the decision repeats every turn"
-  - "Apply summarisation, offloading, a knowledge base, subagents and explicit planning"
+  - "Apply summarisation, offloading, subagents, explicit planning and a knowledge base the agent explores"
   - "Name what a deep agent must have, and why coding agents are already one"
   - "Explain how chain of thought keeps a long session on track"
 ---
@@ -239,15 +239,15 @@ matters, and learns that much in context. Retrieval can be full RAG from
 [RAG & Embeddings](../1_fundamentals/rag.md), or just an agent opening files. Either way, the
 alternative is to dump the entire API reference into the window and pay for it on every turn.
 
-Here is an example that every coding agent meets. Libraries change all the time: a new version
-renames a function, removes an option, or adds a better way to do something. But a model only knows
+Here is an example that every coding agent meets. Libraries change all the time. A new version can
+rename a function or remove an option. It can also add a better way to do something. But a model only knows
 what was in its training data, and that data stops at a date called the **knowledge cutoff**. So
 when an agent writes code against a library, it often needs the library's current documentation,
 not the version it remembers. Here is how the industry has been solving that, one step at a time.
 
-**First, `llms.txt`.** A website puts a plain markdown file at `/llms.txt`. The file tells a model
-what the site is and where its important pages are, so the model can find the right page without
-reading the whole site. A minimal one looks like this:
+**First, `llms.txt`.** A website puts a plain markdown file at `/llms.txt`. The file says what the
+site is, and where its important pages are. So a model can find the right page without reading the
+whole site. A minimal one looks like this:
 
 ```markdown
 # Acme SDK
@@ -256,7 +256,7 @@ reading the whole site. A minimal one looks like this:
 ```
 
 The idea is from [The /llms.txt file, v2](https://llmstxt.org/), a proposal by Jeremy Howard from
-2024.
+September 2024.
 
 **Then, MCP.** The Model Context Protocol came out, and many projects started to offer their
 documentation as tools that an agent can call. We cover MCP properly in
@@ -264,9 +264,9 @@ documentation as tools that an agent can call. We cover MCP properly in
 install, into your agent. One of those tools might be "search the docs".
 
 **Then, one place for all of them.** There were soon too many of these files and servers to set up
-one by one. So [Context7](https://context7.com/) gathered the documentation of many libraries into a
+one by one. So [Context7](https://context7.com/), a project by Upstash, gathered the documentation of many libraries into a
 single place. It gives your agent one MCP server, and through it, the current docs and code examples
-of thousands of projects.
+of many libraries.
 
 [DeepWiki](https://deepwiki.org/) works in a similar way, but for code. It generates a wiki for a
 GitHub repository. Say your agent has a question about a library's internals, its architecture or
@@ -466,7 +466,7 @@ actually save you?
 
 ### 🛠️ Tools
 
-- [Context7](https://context7.com/): current documentation for thousands of libraries, through one MCP server
+- [Context7](https://context7.com/): current documentation for many libraries, through one MCP server
 - [DeepWiki](https://deepwiki.org/): a wiki per repository, so your agent reads about the code instead of reading the code
 
 ### 🗃️ Repositories

@@ -763,18 +763,41 @@ code, and a closing paragraph names what all of them share. Sources fetched: "Th
 v2" (Jeremy Howard, 2024-09-03) and Context7 (Upstash, "Up-to-date docs for AI agents"). Turkish
 and Persian written as prose; the Persian mermaid check passes.
 
-## 🏁 Milestone M67: Loop Engineering split into intermediate and advanced (#48) — PLANNED
+**Reviews (two Haiku, xhigh).** *Content:* "thousands of projects" was not supported by Context7's
+own page, so it says "many libraries" in all three languages; two English sentences over the
+length rule split; "a project by Upstash" and "September 2024" added; two Persian calques; the
+objective reordered to match the body. The rendered-page review is reported under M67.
+
+## 🏁 Milestone M67: Loop Engineering split into intermediate and advanced (#48) — DONE
 
 ### Deliverables
 
-- [ ] Agent Teams, Dynamic Workflows and Recursive Language Models move whole, with their figures
-      and tables, into Advanced Loop Engineering, in English and Turkish.
-- [ ] Loop Engineering keeps a short section saying these techniques exist and where they are
+- [x] Agent Teams, Dynamic Workflows and Recursive Language Models move whole, with their figures
+      and tables, into Advanced Loop Engineering, in English and Turkish (the Persian waits in
+      `mini-courses/scratchpad/drafts/`, since a planned module has no `_fa.md`).
+- [x] Loop Engineering keeps a short section saying these techniques exist and where they are
       taught; its summary, references, quiz and translations follow.
 
 ### Acceptance criteria
 
-- [ ] No paragraph lost: every moved paragraph is found verbatim in the advanced file; the gate green.
+- [x] No paragraph lost: every moved paragraph is found verbatim in the advanced file; the gate green.
+
+**Report, 2026-11-06.** "Agent Teams & Dynamic Workflows" (with Agent Teams, Dynamic Workflows,
+both comparison tables and the subagents-vs-teams figure, which moved to `3_expert/images/`) and
+"Recursive Language Models" (with CodeAct) left Loop Engineering for Advanced Loop Engineering.
+In their place, "Beyond the Loops You Design": every loop so far is one a person designed; the next
+step is an agent that designs the loop; three techniques, one line each, and a link to the advanced
+module. The objectives, the summary's last paragraph, the four references and the Modules link
+followed, in all three languages; "The Trend" stays. **Verbatim check, measured:** of the 27
+English paragraphs moved, 25 are byte-identical in the new file and 2 changed only to re-anchor a
+link ("Everything up to this point" now names Loop Engineering; the Advanced Agent Architectures
+link is relative to `3_expert/`); the same two edits in Turkish. The planned page renders the
+sections under its schedule (D102): two sections, FIG. 26.1, two tables, the references. Two unit
+tests needed the D102 rule: "no figures on a draft" now reads "no figures on a draft with no
+written sections" (with a length guard), and the Turkish coverage test passed once the Turkish
+moved too. The Expert README's one line now names every Expert topic. The quiz asked nothing about
+the moved sections. **Gate:** typecheck, 1,158 unit tests, the build and the link check (191
+pages, 12,452 internal links).
 
 ## 🏁 Milestone M68: Agents in Practice, Claude Duet, and the Claude logo — PLANNED
 

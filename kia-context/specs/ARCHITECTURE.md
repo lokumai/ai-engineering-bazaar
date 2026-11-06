@@ -11,7 +11,7 @@ description: >
 authority: blueprint
 writes: agent, when explicitly refactoring
 status: active
-covers: the whole system as built on 2026-09-10, with M16 shipped — every route on the design language; the record, channel A and the render step corrected for M24 on 2026-10-11, and the quiz and the end of a module for M25 on 2026-10-12, the Bazaar Street front door for M27 and the Persian pages for M28 the same day, and the progress page slimmed to its circles and its data row for M38 on 2026-11-05, and the account layer, role paths, record of work and two thirds of the test suite removed for M40 the same day, and the two tracks (For Engineers, For Everyone) and their per-track record for M43 the same day; the custom domain (D92), Emerging Trends and moved addresses (D94) on 2026-11-06
+covers: the whole system as built on 2026-09-10, with M16 shipped — every route on the design language; the record, channel A and the render step corrected for M24 on 2026-10-11, and the quiz and the end of a module for M25 on 2026-10-12, the Bazaar Street front door for M27 and the Persian pages for M28 the same day, and the progress page slimmed to its circles and its data row for M38 on 2026-11-05, and the account layer, role paths, record of work and two thirds of the test suite removed for M40 the same day, and the two tracks (For Engineers, For Everyone) and their per-track record for M43 the same day; the custom domain (D92), Emerging Trends and moved addresses (D94) on 2026-11-06, and the people at the gate (M58), search (M59) and the catalog without its Sources count (M55) the same day
 last_updated: "2026-11-06"
 ---
 
@@ -449,7 +449,7 @@ section number is kept, because sections are cited by number.
 ## 7. What a request actually does
 
 There is no server at run time. `npm run build` produces a static export into `out/`, served from
-GitHub Pages under a sub-path.
+GitHub Pages at the root of its own domain (D92), so with no base path.
 
 ```
 mini-courses/              src/lib/content/                 src/app/
@@ -516,7 +516,8 @@ Four components import `CategorySlug` from `categories.ts` and all four use `imp
 erased; a value import from `curriculum-file.ts` into a client island pulls the file system into the
 browser bundle and stops the build.
 
-**10 routes** (`find src/app -name page.tsx | wc -l`), producing 89 HTML pages (measured 2026-11-05, after M40). `/` is a home page
+**15 page routes and 1 route handler** (`find src/app -name page.tsx | wc -l`, `-name route.ts`),
+producing 181 HTML pages and 3 JSON files (measured 2026-11-06, after M59). `/` is a home page
 built from components; `mini-courses/index.md` is no longer the published home page and is read only as
 a link target. Since **D79** `/` is Bazaar Street: its words, its level doors (one per category in
 `curriculum.yaml`) and its way in are server-rendered markup, its illustration is SVG read from
@@ -524,9 +525,34 @@ a link target. Since **D79** `/` is Bazaar Street: its words, its level doors (o
 motion is one client island that imports `gsap` on demand and turns the stacked page into a walk on a
 wide screen.
 
-**Two of the ten are forwards, and a static export has no other way to redirect.** M17 folded
-`/courses/` and `/courses/[category]/` into the catalog (M14's three forwards to `/profile/` were
-removed in M40); `output: 'export'` means `next.config`'s
+**The people at the gate (M58, D98).** Seven figures stand on the pavement the gate art draws below
+its arch, each a `<button>` named by its caption and described by its story (`Cast.tsx`, data in
+`street/cast.ts`). They are positioned in the gate art's own units, so they scale with the gate. On
+the walk they spread across the facade and play the escape first: `street/chase.ts` draws every pose
+as a pure function of the chase's time T, writing SVG `transform` attributes so it never touches the
+figures' idle CSS animations, and `motion.ts` puts it at the head of the walk's timeline, before the
+zoom through the gate. While they run they leave the tab order and the accessibility tree. Below
+900px a second rendering, a row of tiles under the gate, replaces them, and CSS shows one of the two.
+The figures come from the playground (`playground/2026-11-round-3/N-cast-final.html`) by
+`scripts/capture-cast.mjs`, the same way `capture-stall-scenes.mjs` brings the stalls. The story
+clouds are `street/clouds.ts`, loaded with the page like the track choice; with no script, CSS opens a
+cloud on pointing and focus.
+
+**Search (M59, D95, D97, D99).** `app/search/[file]/route.ts` is a static route handler that writes
+`/search/en.json`, `tr.json` and `fa.json` at build time: a MiniSearch index over documents built from
+the corpus through `loadModuleIn` (`lib/search/documents.ts`), one per level, one per module and one
+per `##` section of a written module, so an unwritten For Everyone module or a missing translation is
+absent. A section links to the id `rehype-slug` gives its heading, computed with the same slugger after
+the same Roman-numeral split, and the series map is skipped as the page drops it. `lib/search/normalise.ts`
+holds the normaliser and tokenizer both sides use (Turkish folding, Persian letter forms and the
+non-joiner). The window is `SearchDialog.tsx`, a native modal `<dialog>` in the bar that imports
+`minisearch` and fetches the page's language's index the first time it opens, never with the page;
+`/` reaches it through the site's key map and Ctrl/Cmd+K through its own listener. MEASURED gzipped:
+76.9, 100.3 and 101.2 KB for English, Turkish and Persian.
+
+**Six of the routes render forwards, and a static export has no other way to redirect.** M17
+folded `/courses/` and `/courses/[category]/` into the catalog (M14's three forwards to `/profile/`
+were removed in M40), and D94 forwards a renamed level and a moved module from four more; `output: 'export'` means `next.config`'s
 `redirects` are never applied and a page's own `redirect()` throws at build time, so each of them
 renders `MovedTo` instead — an inline script (the only one of the three mechanisms that can carry the
 fragment), a `<meta http-equiv="refresh">` for a reader with scripting off, and a visible link. The
@@ -634,9 +660,8 @@ npm test               # vitest: tests/unit/** + tests/corpus/**
 npm run test:e2e       # playwright: builds, serves out/ on :3111, real Chrome
 ```
 
-CI runs typecheck → test → build under the Pages sub-path → link check → e2e, in that order (one
-build since M40; the base-path-less build before it asked the same questions of a build nobody
-publishes). A green `npm test` alone means little: the link gate and the export itself only
+CI runs typecheck → test → build → link check → e2e, in that order (one build since M40, with no
+base path since D92, which is the build the deploy publishes). A green `npm test` alone means little: the link gate and the export itself only
 fail in `build`.
 
 **`main` is protected by a ruleset named `main-require-pr`**, so a direct push is rejected even for a
@@ -707,9 +732,9 @@ it (301).
 The workflow guards the two failures that would otherwise publish **green** and serve a broken site:
 
 - **A dropped `.nojekyll`**, which makes Jekyll delete `_next/` and leave unstyled HTML.
-- **A `basePath` that never reached `assetPrefix`**, which 404s every stylesheet. This is why the
-  build runs twice in CI, the second time under the Pages sub-path, with the link checker run against
-  each.
+- **A `basePath` that never reached `assetPrefix`**, which 404s every stylesheet. The site has no
+  base path since D92, but `next.config.mjs` keeps it configurable for a sub-path host, so the
+  deploy still checks it.
 
 It also checks the **published** site rather than the artifact, because the worst failures happen
 after the upload.

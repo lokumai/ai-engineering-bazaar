@@ -9,7 +9,7 @@ description: >
 authority: reasoning
 writes: agent, when a decision is taken
 status: active
-covers: "D97 onward — 2026-11-06 onward"
+covers: "D97 to D100 so far — 2026-11-06 onward"
 last_updated: 2026-11-06
 ---
 
@@ -23,6 +23,71 @@ Split from part 2 on 2026-11-06 at the author's request, at a phase boundary: pa
 last playground decisions (D95 search, D96 no download), and this part starts with building them.
 
 ## Decision log, continued
+
+### D97 · Search looks first in the reader's own track and language; one switch widens it — 2026-11-06
+
+**Considered:** (a) every track and language at once / (b) the reader's own track and language, with
+a switch to everything / (c) the reader's own language only, both tracks. D95 left the default scope
+to the author; the author's instruction of 2026-11-06 was to complete every milestone without
+waiting, so this was chosen in the build (M59) and stands until the author says otherwise.
+
+**Chose (b).** A reader on a Persian For Engineers page who searches "مدل" wants that page's
+siblings, not the same word in two other languages and a track they did not choose. (a) shows three
+copies of most results, one per language; (c) mixes a beginner's and an engineer's version of one
+module. The switch, "All tracks and languages", loads the other two indexes only when it is ticked.
+
+**Also chosen, as D95 recommended:** an unwritten For Everyone module and a module with no
+translation are absent from the index, not found and then sent to a "not written" page. Both follow
+from building the documents through `loadModuleIn`, which already returns nothing for them.
+
+### D98 · The escape at the gate is drawn from the scroll's own clock, not tweened — 2026-11-06
+
+**Considered:** (a) the playground's way (L3a): GSAP tweens on the figures with `svgOrigin`, driven by
+the walk's timeline / (b) one pure function of the chase's time T that writes every pose as a
+`transform` attribute, called from the timeline's `onUpdate`.
+
+**Chose (b).** The figures breathe, blink and hold their goods in CSS animations on inner groups;
+GSAP writing CSS transforms on the same elements fights them, and the playground's head turn was
+invisible for that reason. A function of T also scrubs both ways by construction: a scroll position
+always draws one frame, and nothing is left half-tweened by a fast scroll. **MEASURED** on the built
+page, a scripted scroll through the chase: median frame 16.7 ms and 95th percentile 33.4 ms on both
+this build and the live site, no long tasks, 7 to 11 frames over 33 ms of about 110 against 2 to 5
+on the live page; writes that change nothing are skipped.
+
+**Also decided in the build:** the people stand in the gate art's own units, so they scale with the
+gate in every mode; on the walk they spread across the facade by the window-to-art ratio (at most
+2.3, MEASURED as what 900x560 needs for no two captions to touch); below 900px a row of tiles under
+the gate replaces them (P1), rendered separately and hidden by CSS, which costs one more copy of the
+figures in the HTML (about 37 KB raw).
+
+### D99 · Two indexing rules the corpus forced — 2026-11-06
+
+**A measurement changed our minds twice, both found by the index's own unit test** (a word taken
+from each section's prose must find that section):
+
+1. **A section is not searched by its module's title.** First built with the title on every section,
+   a search for a module's name ranked its first section above the module itself (the e2e test
+   caught it: `/courses/fundamentals/llms/#what-is-an-llm` before `/courses/fundamentals/llms/`).
+   A section now carries the module's name only to display it.
+2. **Persian words are split where the text joins them.** The Persian modules write an English
+   term with a Persian suffix (`hyperparameter‌های`) and a plural with a non-joiner
+   (`محدودیت‌ها`). Removing the non-joiner, as O1's normaliser did, fused the word and its suffix
+   into a token nobody types. The tokenizer now splits Latin from Persian and keeps a non-joined
+   word three ways (each part and the whole), because readers type it with the non-joiner,
+   without it, or with a space. Rejected: dropping exact matching for prefix-only search, which
+   hid the defect rather than fixing it.
+
+### D100 · The round-3 art went ahead without a second look from the author — 2026-11-06
+
+M50's acceptance criterion was the author's approval of the Janissary, the props, the running poses
+and the stories before M58 built them. On 2026-11-06 the author asked for every milestone to be
+completed, reviewed by subagents, and shipped in one pull request. **Taken as the approval**, with
+two reviews at each step standing in for the look the author would have given. What the reviews
+raised and was deliberately left for the author, not changed: one reviewer read Leyla's face (the
+only dark-skinned figure: broad nose, wide eyes, full lips, a puff of hair) as at risk of
+caricature, and Mei's upturned almond eyes as the one feature that marks ethnicity. Both are as the
+author kept them in M49 (D93), so they were not redrawn; they are listed for the author in M50's
+report.
 
 ## Open questions
 

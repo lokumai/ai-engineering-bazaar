@@ -10,11 +10,12 @@ authority: state
 writes: agent, every session
 status: closed
 covers: "2026-07-07 to 2026-09-09 — M1 to M15; M9 to M14 shipped and reviewed. M16 is in PROGRESS_2.md"
-last_updated: 2026-09-10
+last_updated: 2026-11-06
 ---
 
 # 📈 PROGRESS — What we are building
-> **→ Part 2: [`PROGRESS_2.md`](PROGRESS_2.md)** — milestone M16, the interface rebuilt on the
+> **→ Part 3: [`PROGRESS_3.md`](PROGRESS_3.md)** — M50 onward, the ACTIVE part.
+> **→ Part 2: [`PROGRESS_2.md`](PROGRESS_2.md)** — milestones M16 to M49, from the interface rebuilt on the
 > design language, in ten stages. Split there because M16 is a phase of its own and this file had
 > reached 2,500 lines; the numbering continues rather than restarting.
 
@@ -1476,6 +1477,7 @@ description of whatever already exists.
 
 ---
 
-> **→ Part 2: [`PROGRESS_2.md`](PROGRESS_2.md)** — milestone M16, the interface rebuilt on the
+> **→ Part 3: [`PROGRESS_3.md`](PROGRESS_3.md)** — M50 onward, the ACTIVE part.
+> **→ Part 2: [`PROGRESS_2.md`](PROGRESS_2.md)** — milestones M16 to M49, from the interface rebuilt on the
 > design language, in ten stages. Split there because M16 is a phase of its own and this file had
 > reached 2,500 lines; the numbering continues rather than restarting.

@@ -128,6 +128,7 @@ test.describe('on a touch screen', () => {
 })
 
 test('an open story stays inside the window, at both ends of the cast', async ({ page }) => {
+  test.setTimeout(90_000) // several page loads: past 30s on a CI runner
   for (const width of [1024, 1440]) {
     await page.setViewportSize({ width, height: 768 })
     await page.goto('/')
@@ -185,6 +186,7 @@ test('no caption is covered by a person, in the walk and in the still picture', 
 /* `.bz-street` clips sideways, so a person off the edge would never widen the document:
    each person and caption is measured against the window instead (M58 review). */
 test('every person and caption stays inside the window, in any mode and at any width', async ({ page }) => {
+  test.setTimeout(90_000) // several page loads: past 30s on a CI runner
   for (const reducedMotion of ['no-preference', 'reduce'] as const) {
     for (const width of [390, 1024, 1440, 1920]) {
       await page.setViewportSize({ width, height: width === 390 ? 844 : 900 })
@@ -227,6 +229,7 @@ test('opening the stories writes nothing to storage', async ({ page }) => {
 })
 
 test('on the walk no two captions touch and none leaves the window, from the smallest walk up', async ({ page }) => {
+  test.setTimeout(90_000) // several page loads: past 30s on a CI runner
   for (const size of [{ width: 900, height: 560 }, { width: 900, height: 600 }, { width: 1280, height: 720 }, WALK]) {
     await page.setViewportSize(size)
     await page.emulateMedia({ reducedMotion: 'no-preference' })

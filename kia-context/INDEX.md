@@ -9,7 +9,7 @@ authority: map
 writes: agent, when files move
 status: active
 covers: the whole harness
-last_updated: 2026-11-05
+last_updated: 2026-11-06
 ---
 
 # 🗺️ INDEX — What each file is, and when to open it

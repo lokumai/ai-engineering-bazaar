@@ -11,7 +11,7 @@ authority: reasoning
 writes: agent, when a decision is taken
 status: active
 covers: "D26 to D88, D90 to D94, plus open questions O1 to O5 — 2026-09-09 to 2026-11-05 (D89 is on PR #57)"
-last_updated: 2026-11-05
+last_updated: 2026-11-06
 ---
 
 # 🧠 BRAINSTORM, part 2 — the rebuild, D26 onward

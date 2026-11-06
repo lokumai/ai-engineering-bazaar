@@ -441,18 +441,14 @@
   /* On a phone the repository button goes (the footer links it on every
      page) and the gaps tighten. Narrower than 390 the navigation still
      scrolls inside itself, as the bar's narrow rules above intend. */
-  @media (max-width: 767px) {
-    .bz-bar-repo { display: none; }
-    .bz-bar-inner { gap: 6px; }
-    .bz-bar-nav .bz-bar-link { padding-inline: 6px; }
-  }
-
   /* M59 (D95): the search icon needs 39px on a phone, and at 390 on a module page the bar
      was exactly full (390 of 390, MEASURED with the flag beside the switch). It is found in
      the bar's own spacing rather than by dropping anything: 2px less per gap, 2px per side,
      3px per link and per switch segment, which keeps Catalog and Progress inside the
-     navigation at 390 (D91's guarantee, \`tracks.spec.ts\` and \`search.spec.ts\`). */
-  @media (max-width: 480px) {
+     navigation at 390 (D91's guarantee, \`tracks.spec.ts\` and \`search.spec.ts\`). At the
+     language's own phone breakpoint, since it declares no narrower one. */
+  @media (max-width: 767px) {
+    .bz-bar-repo { display: none; }
     .bz-bar-inner { gap: 4px; padding-inline: 10px; }
     .bz-bar-nav .bz-bar-link { padding-inline: 3px; }
     .bz-trackswitch-seg { padding: 0 5px; }

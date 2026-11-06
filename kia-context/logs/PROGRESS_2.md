@@ -4630,12 +4630,12 @@ content):
 | Phase | Milestones, in order |
 |---|---|
 | **Design and site, now** | M61 (Emerging Trends, done) · M50 (round-3 art, approved) → M55 (no Sources count) → M58 (round 3 built) → M51 (ship) |
-| **Playground round 4**, alongside M50 (playground files only) | M56 (search), M57 (download), M54 (certificate: should it exist at all) |
-| **Site, after M51 merges** | M59 (search built), M60 (download built) |
+| **Playground round 4** | M56 search, **picked (D95)**; M57 download, **cancelled (D96)**; M54 certificate (should it exist at all) still open |
+| **Site, after M51 merges** | M59 (search built) |
 | **Content, last** | M52 (For Everyone modules), M53 (readers' feedback and issues) |
 | **Later, a component kept over time** | M62 (Caravan, the trends timeline page) |
 
-Builds that touch the bar or the catalog (M59, M60, M61) branch from `main` after M51 merges, so
+Builds that touch the bar or the catalog (M59) branch from `main` after M51 merges, so
 they start from the bar and catalog that M47 and M55 change.
 
 **The gate every build ends on** (stated once here, not repeated): `npm run typecheck`, `npm test`,
@@ -4746,8 +4746,8 @@ download, built before this, must already treat unwritten modules as absent.
 ## 🏁 Milestone M53: The readers' feedback and the GitHub issues — PLANNED, CONTENT PHASE
 
 The six readers' notes of 2026-11-05 and the open GitHub issues, applied to the For Engineers
-modules, last of all, as the author ordered. Issues #43 (search, M56 and M59), #61 (download, M57
-and M60) and #40 (trends, M61 and M62) are not part of this.
+modules, last of all, as the author ordered. Issues #43 (search, M56 and M59), #61 (download, cancelled by D96)
+and #40 (trends, M61 and M62) are not part of this.
 
 - [ ] The notes and issues listed against the modules they touch, for the author to rank.
 
@@ -4783,7 +4783,7 @@ REMOVE THE SOURCE. No need for such metadata."* Built on `feat/round-3`, ships w
 - [ ] The catalog's views measured at 1440 and 390 after the column goes (no gap, no sideways
       scroll).
 
-## 🏁 Milestone M56: Search — PLAYGROUND ROUND 4
+## 🏁 Milestone M56: Search — PICKED (D95): N2 ON O1
 
 Issue #43: search not only module and level names but their content, by keyword or even
 semantically. The author, 2026-11-06: options for where it goes (his own idea: a wide, centred,
@@ -4806,40 +4806,25 @@ numbered decision when picked; built in M59.
       first-query time on a mid-range phone stated plainly), and a hybrid (keyword first, the
       semantic layer loaded on demand). How each handles Turkish (dotted and dotless i, ğ, ş) and
       Persian (the zero-width non-joiner, Arabic and Persian letter forms).
-- [ ] **Decisions for the author:** the placement; the engine; the default scope (the reader's
-      own track and language, or everything); whether unwritten For Everyone modules are left out
-      of the index (recommended).
+- [x] Pages N and O built in `playground/2026-11-round-4/` (six placements; four engines measured
+      on the corpus). **The author picked N2** (a search window on Ctrl/Cmd+K or `/`, from an icon in
+      the bar) **and O1** (a keyword index built with the site), 2026-11-06, recorded as D95.
+- [ ] **Still open:** the default scope (the reader's own track and language, or everything), and
+      that unwritten For Everyone modules stay out of the index (recommended).
 
-## 🏁 Milestone M57: Download — PLAYGROUND ROUND 4
+## ~~🏁 Milestone M57: Download (issue #61)~~ — CANCELLED (D96)
 
-Issue #61: download as PDF and Markdown. The author, 2026-11-06: a download button in the catalog
-page and in each module (not in the navbar), opening a feature-rich modal like Canva's where the
-reader picks modules or whole levels and the format (PDF or Markdown). Recorded as a numbered
-decision when picked; built in M60.
+The author, 2026-11-06, after seeing the round-4 designs: no download. *"anyone who wanna read
+them, must visit the website live. That's the currency they should pay."* The download pages (P, Q)
+were removed from the playground and issue #61 was closed with the reason. M60, its build, is
+cancelled with it.
 
-- [ ] **Page P, the modal and its buttons:** three or more designs at 1440 and 390, with where the
-      button sits on the catalog and on the (already full) module page; the selection of levels
-      and modules, the format, the track and language of what is downloaded, unwritten For
-      Everyone modules shown as unavailable, and what the reader sees while a large download is
-      prepared. Each design keyboard-usable: a focus trap, Escape, labelled controls, a live region
-      for "preparing", reduced motion, and right-to-left for Persian.
-- [ ] **Page Q, how the files are made**, for a site with no server, each option with a real sample
-      file in English, Turkish and Persian read by the main session: Markdown from the corpus at
-      build time, zipped in the browser or prebuilt per level, with the images packed beside it so
-      every relative image link resolves (D87: a module reads in a plain markdown viewer); PDF
-      prebuilt at build time with a headless browser from the site's own print styles, made in the
-      browser, or the browser's own print. For each: build time added to CI, the file size of a
-      whole level, figures (SVG and Mermaid) and code highlighting, Persian shaping and direction,
-      and how many files it adds to the site (3 languages x 2 tracks x modules, levels and the
-      whole course x 2 formats; GitHub Pages allows 1 GB).
-- [ ] **Decisions for the author:** the modal; where the buttons go; PDF prebuilt or made in the
-      browser; Markdown zipped in the browser or prebuilt; how a file that mixes the two tracks is
-      named.
+## 🏁 Milestone M59: Search built (N2 on O1) — PLANNED, AFTER M51
 
-## 🏁 Milestone M59: Search built — PLANNED, AFTER M51 AND M56
-
-Branches from `main` after M51. Builds the M56 picks; `ARCHITECTURE.md` gains the index and how it
-is built.
+Branches from `main` after M51. Builds D95: a search window on Ctrl/Cmd+K or `/`, opened from an
+icon in the bar, over a MiniSearch index built at build time per language with a normaliser for
+Turkish and Persian, loaded on the first opening; `ARCHITECTURE.md` gains the index and how it is
+built. The icon must not push Catalog or Progress out of view at 390px (D91's measurement).
 
 - [ ] Tests that hold for any content: terms are taken at test time from the corpus itself (a
       module's title, a word drawn from its body), never typed into the test; each language finds
@@ -4848,14 +4833,7 @@ is built.
 - [ ] The index size and the query time measured and recorded against the targets the author picks
       in M56.
 
-## 🏁 Milestone M60: Download built — PLANNED, AFTER M51 AND M57
-
-Branches from `main` after M51. Builds the M57 picks; `ARCHITECTURE.md` gains the download build.
-
-- [ ] Tests: a downloaded file holds exactly the modules chosen, in the chosen track and language,
-      with no "not written yet" placeholder in it; every relative image link in a Markdown download
-      resolves; the modal's focus trap, Escape and labels work; the button is not in the navbar.
-- [ ] A Persian and a Turkish PDF read by eye before merging.
+## ~~🏁 Milestone M60: Download built~~ — CANCELLED (D96)
 
 ## 🏁 Milestone M61: The fifth level becomes Emerging Trends — SHIPPED AS PR #66
 

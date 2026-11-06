@@ -202,6 +202,14 @@ categories:
           agent server, langchain agent protocol, the tech stack for UI REDIS
           WORKER etc, Human-in-the-Lopp (Interrupt, Steering), Runtime
           (Checkpoints, Fault Tolerance, Time Travel)
+      - name: advanced_llm_evaluation
+        title: Advanced LLM Evaluation
+        status: draft
+        notes: >-
+          issue #46. Static and objective metrics: BLEU (n-gram word matching),
+          ROUGE (overlap or recall), METEOR (penalizing order), accuracy and
+          precision, cosine similarity (BERTScore). Dynamic and subjective
+          metrics: faithfulness, LLM-as-judge, human preference
       - name: advanced_training
         title: Advanced Training
         status: draft
@@ -253,13 +261,28 @@ categories:
         minutes: 20
         notes: Google Stitch with DESIGN.md, Claude Design Design Systems
       - { name: choosing_tech_stack, title: Choosing a Tech Stack, status: draft }
-
-  - slug: protocols
-    title: Protocols & Specs
-    status: draft
-    blurb: One reference for every protocol and spec the series touches.
-    modules:
       - name: protocols_reference
         title: Protocols Reference
         status: draft
         notes: all mentioned and also NLWeb, UCP, AP2
+
+  - slug: trends
+    title: Emerging Trends
+    status: draft
+    blurb: Ideas that are hot in industry and research but not settled yet.
+    modules:
+      - name: llms_cant_jump
+        title: LLMs Can't Jump
+        status: draft
+      - name: video_rendering
+        title: Video Rendering
+        status: draft
+        notes: HyperFrames, Brag, motion (issue #40)
+      - name: recursive_self_improvement
+        title: Recursive Self-Improvement
+        status: draft
+        notes: RSI, such as AutoHarness (issue #40)
+      - name: decision_models
+        title: Decision Models
+        status: draft
+        notes: System 1 decision models (issue #40)

@@ -455,6 +455,34 @@
      other is a quiet hairlined chip. A tab changes only which track the levels
      below open into.
      --------------------------------------------------------------------------- */
+  /* M47 — the switch is felt: the old track's levels slide out to the left
+     and fade, then the new track's come in from the right one after another
+     (`--bz-menu-row` is each row's place, set by the markup). Keyframes, not transitions: the language
+     transitions no opacity or transform, and these run once per switch. */
+  @keyframes bz-menu-leave {
+    to { opacity: 0; transform: translateX(-10px); }
+  }
+
+  @keyframes bz-menu-enter {
+    from { opacity: 0; transform: translateX(12px); }
+  }
+
+  .bz-bar-nav ul[data-leave] > li {
+    animation: bz-menu-leave var(--duration-swift) var(--ease-bazaar) forwards;
+  }
+
+  .bz-bar-nav ul > li { --bz-menu-row: 0; }
+
+  .bz-bar-nav ul[data-enter] > li {
+    animation: bz-menu-enter var(--duration-fold) var(--ease-bazaar) backwards;
+    animation-delay: calc(var(--bz-menu-row) * 28ms);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .bz-bar-nav ul[data-leave] > li,
+    .bz-bar-nav ul[data-enter] > li { animation: none; }
+  }
+
   .bz-menu-tabs {
     display: grid;
     grid-template-columns: 1fr 1fr;

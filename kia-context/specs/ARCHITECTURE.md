@@ -11,8 +11,8 @@ description: >
 authority: blueprint
 writes: agent, when explicitly refactoring
 status: active
-covers: the whole system as built on 2026-09-10, with M16 shipped — every route on the design language; the record, channel A and the render step corrected for M24 on 2026-10-11, and the quiz and the end of a module for M25 on 2026-10-12, the Bazaar Street front door for M27 and the Persian pages for M28 the same day, and the progress page slimmed to its circles and its data row for M38 on 2026-11-05, and the account layer, role paths, record of work and two thirds of the test suite removed for M40 the same day, and the two tracks (For Engineers, For Everyone) and their per-track record for M43 the same day
-last_updated: "2026-11-05"
+covers: the whole system as built on 2026-09-10, with M16 shipped — every route on the design language; the record, channel A and the render step corrected for M24 on 2026-10-11, and the quiz and the end of a module for M25 on 2026-10-12, the Bazaar Street front door for M27 and the Persian pages for M28 the same day, and the progress page slimmed to its circles and its data row for M38 on 2026-11-05, and the account layer, role paths, record of work and two thirds of the test suite removed for M40 the same day, and the two tracks (For Engineers, For Everyone) and their per-track record for M43 the same day; the custom domain (D92), Emerging Trends and moved addresses (D94) on 2026-11-06
+last_updated: "2026-11-06"
 ---
 
 # 🏗️ ARCHITECTURE — How this project is built
@@ -167,7 +167,9 @@ order of the `CategorySlug` union in `src/lib/content/categories.ts`.
 
 **A module** has a `name` (the file stem, and the source of its URL slug), a required `title`, a
 `status` of `ready` or `draft`, a duration in `minutes`, a list of `needs` naming prerequisites **by
-name**, and free-text `notes` that nothing reads. There are **33**, of which **19** are `ready`.
+name**, and free-text `notes` that nothing reads. There are **38**, of which **19** are `ready`
+(measured 2026-11-06, after D94 renamed the fifth level Emerging Trends and moved the protocols
+reference into Ecosystem, and Advanced LLM Evaluation was added to Expert for issue #46).
 
 **A module has no number of its own.** Its number is its position in the config, computed in exactly
 one place — `src/lib/content/loader.ts` — and written nowhere else. Filenames carry no number, prose
@@ -185,6 +187,11 @@ Turkish is not (**D80**). `src/lib/content/languages.ts` is the one list of tran
 the route segment, the menu's label, the text direction and whether every module must carry one.
 Everything that used to say `'tr'` asks it. A translation is a different body for the same module,
 never a module of its own, so it changes no count, no number and no record key.
+
+**A retired address still answers (D94).** When `curriculum.yaml` renames a level or moves a module,
+the old address is listed in `src/lib/content/moved.ts`, and the catalog, the `/courses/<level>/`
+stub and the module routes (both tracks) prerender it as a forward (`MovedTo`, `noindex`). The list
+is the site's address history, not a fact about the course.
 
 **Every module has two tracks (M43, D86, D91).** *For Engineers* is the module as it always was and
 keeps every address it had. *For Everyone* is the same module in plain words, written as

@@ -89,7 +89,7 @@ export const FACES: readonly Face[] = [
   defineFace('F2', 'LEFT', 'intermediate', true, ['L', 'C', 'Bp', 'Lp']),
   defineFace('F3', 'RIGHT', 'expert', true, ['C', 'R', 'Rp', 'Bp']),
   defineFace('F4', 'BACK-LEFT', 'ecosystem', false, ['T', 'C', 'Lp', 'L']),
-  defineFace('F5', 'BACK-RIGHT', 'protocols', false, ['T', 'R', 'Rp', 'C']),
+  defineFace('F5', 'BACK-RIGHT', 'trends', false, ['T', 'R', 'Rp', 'C']),
 ]
 
 /**
@@ -118,7 +118,7 @@ export const FLAVOURS = {
   intermediate: 'LACİVERT',
   expert: 'ERİK',
   ecosystem: 'BAL',
-  protocols: 'KİREMİT',
+  trends: 'KİREMİT',
 } as const satisfies Record<CategorySlug, string>
 
 /**

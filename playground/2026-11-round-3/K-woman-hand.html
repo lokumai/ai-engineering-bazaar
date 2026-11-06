@@ -1,0 +1,420 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>A woman's hand at the first stall</title>
+<meta name="description" content="Three women's hands for the home street's first stall, each drawn at the same pose as the picked G1b scene.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght,SOFT@9..144,500..800,0..100&display=swap">
+<style>
+:root{
+  --ground:#FDFBF7; --raised:#FFFFFF; --sand:#E6DAC6; --line:#D8CBB4; --line-strong:#C3B299;
+  --ink:#20242E; --title:#1B1B47; --muted:#6A6558; --cobalt:#282864;
+  --on-bar-dim:#C9C6E4; --focus:#A0503C; --teal:#2F8C86; --brick:#A0503C;
+  --sans:"Avenir Next", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --display:"Fraunces", "Iowan Old Style", Georgia, serif;
+}
+*{box-sizing:border-box}
+html{overflow-x:clip}
+body{margin:0; background:var(--ground); color:var(--ink); font-family:var(--sans); font-size:17px; line-height:1.55; -webkit-font-smoothing:antialiased; overflow-x:clip}
+a{color:inherit}
+:focus-visible{outline:2px solid var(--focus); outline-offset:3px; border-radius:5px}
+.defs{position:absolute; width:0; height:0; overflow:hidden}
+
+/* the page around the options */
+.top-bar{background:var(--cobalt); color:#fff}
+.top-bar .in{max-width:1400px; margin:0 auto; padding:14px 24px; display:flex; align-items:center; gap:12px; font-weight:700}
+.top-bar svg{width:30px; height:30px}
+.top-bar a{text-decoration:none; display:flex; align-items:center; gap:12px}
+.top-bar .dim{color:var(--on-bar-dim); font-weight:500; font-size:15px}
+.band{height:18px; background-color:#282864; background-image:linear-gradient(45deg,#2f8c86 25%,transparent 25% 75%,#2f8c86 75%),linear-gradient(45deg,#c8a078 25%,transparent 25% 75%,#c8a078 75%),linear-gradient(45deg,#a0503c 25%,transparent 25% 75%,#a0503c 75%); background-size:18px 18px,18px 18px,54px 18px; background-position:0 0,9px 9px,27px 0; border-bottom:2px solid #b8873b}
+main{max-width:1400px; margin:0 auto; padding:40px 24px 96px}
+.intro h1{font-family:var(--display); font-weight:650; font-variation-settings:"SOFT" 100, "opsz" 72; color:var(--title); font-size:clamp(28px, 3.4vw, 42px); line-height:1.15; margin:0 0 12px; letter-spacing:-.01em; max-width:28ch}
+.intro p{max-width:74ch; margin:0 0 14px}
+.jump{display:flex; flex-wrap:wrap; gap:8px; margin:22px 0 0; padding:0; list-style:none}
+.jump a{display:inline-flex; align-items:center; gap:8px; text-decoration:none; border:1px solid var(--line-strong); background:var(--raised); border-radius:6px; padding:7px 12px; font-weight:600; font-size:15px; color:var(--title)}
+.jump a:hover{border-color:var(--title)}
+.jump .code{font-weight:700}
+.motion-toggle{margin-top:14px; font:inherit; font-size:15px; background:none; border:1px solid var(--line-strong); border-radius:6px; padding:6px 12px; color:var(--title); cursor:pointer}
+.motion-toggle:hover{border-color:var(--title)}
+.opt{margin-top:72px; scroll-margin-top:20px}
+.opt-head{display:flex; flex-wrap:wrap; align-items:baseline; gap:10px 14px; margin-bottom:8px}
+.opt-head .code{display:inline-flex; align-items:center; justify-content:center; min-width:44px; height:34px; padding:0 10px; border-radius:6px; background:var(--cobalt); color:#fff; font-weight:700; font-size:18px}
+.opt-head h2{font-family:var(--display); font-weight:650; font-variation-settings:"SOFT" 100, "opsz" 48; color:var(--title); font-size:clamp(24px, 2.4vw, 30px); line-height:1.2; margin:0}
+.rec{display:inline-flex; align-items:center; gap:6px; border:1px solid var(--teal); color:#1F6A65; background:#EEF6F4; border-radius:6px; padding:3px 10px; font-weight:700; font-size:15px}
+.opt-body{display:grid; grid-template-columns:minmax(0,1fr); gap:14px 40px; margin-bottom:20px; align-items:start}
+@media (min-width:900px){ .opt-body{grid-template-columns:minmax(0,1fr) 300px} }
+.opt-body p{margin:0 0 8px; max-width:74ch}
+.opt-body ul{margin:0; padding-left:20px; max-width:74ch}
+.opt-body li{margin:3px 0}
+.why{color:#1F6A65; font-weight:600}
+.closeup{margin:0; background:#F3EBDD; border:1px solid var(--line); border-radius:9px; padding:10px 10px 8px; text-align:center}
+.closeup svg{width:100%; height:auto; display:block}
+.closeup figcaption{font-size:14px; line-height:1.35; color:var(--muted); margin-top:4px}
+
+/* a 1920 x 1080 street, scaled to the column */
+.frame{position:relative; width:100%; aspect-ratio:16/9; overflow:hidden; border:1px solid var(--line-strong); border-radius:9px; background:#E6DAC6}
+.stage{position:absolute; left:0; top:0; width:1920px; height:1080px; transform-origin:0 0}
+.stage .bg{position:absolute; left:0; top:0}
+.stage .scene{position:absolute; width:900px; height:700px; overflow:visible}
+.s-bar{position:absolute; left:0; top:0; width:100%; height:58px; background:#282864; display:flex; align-items:center; gap:16px; padding:0 22px; z-index:3}
+.s-bar .brand{display:flex; align-items:center; gap:10px; color:#fff; font:600 17px var(--sans); white-space:nowrap}
+.s-bar .brand svg{width:32px; height:32px}
+.s-bar .lk{color:#c9c6e4; font-size:15px; font-weight:500; padding:7px 11px; border-radius:5px}
+.s-bar .lk.on{background:#fdfbf7; color:#1b1b47; font-weight:600}
+.sign{position:absolute; width:490px; perspective:900px; z-index:2}
+.sign .rail{position:relative; height:7px; margin:0 -6px; border-radius:4px; background:#1b1b47}
+.sign .rail::before,.sign .rail::after{content:""; position:absolute; top:-5px; width:10px; height:17px; border-radius:3px; background:#1b1b47}
+.sign .rail::before{left:-4px}.sign .rail::after{right:-4px}
+.sign .swing{position:relative; padding-top:30px; transform-origin:50% 0}
+.sign .swing::before,.sign .swing::after{content:""; position:absolute; top:0; width:2px; height:34px; background:#1b1b47}
+.sign .swing::before{left:16%}.sign .swing::after{right:16%}
+.sign .board{position:relative; padding:22px 24px 24px; border:1px solid #d8cbb4; border-top:7px solid var(--hue); border-radius:14px 14px 4px 4px; background:#fff}
+.sign .board::before,.sign .board::after{content:""; position:absolute; top:-13px; width:10px; height:10px; border:2px solid #1b1b47; border-radius:50%; background:#fff}
+.sign .board::before{left:calc(16% - 5px)}.sign .board::after{right:calc(16% - 5px)}
+.sign .ico{display:block; width:30px; height:30px; margin-bottom:10px}
+.sign h3{margin:0 0 12px; font:650 27px/1.14 var(--display); letter-spacing:-.01em; font-variation-settings:"SOFT" 40,"opsz" 60; text-wrap:balance; color:#1b1b47}
+.sign p{margin:0; font-size:16.5px; line-height:1.55; color:#1b1b47}
+.ctl{display:flex; align-items:center; gap:12px; margin:10px 0 0; font-size:14px; color:var(--muted)}
+.ctl button{background:var(--raised); border:1px solid var(--line); border-radius:6px; padding:4px 12px; cursor:pointer; font-weight:600; font-size:14px; color:var(--ink); min-width:74px}
+.ctl button:hover{border-color:var(--line-strong)}
+.ctl input[type=range]{flex:1; max-width:520px; accent-color:#2f8c86}
+.sum{margin-top:72px; border-top:1px solid var(--line); padding-top:28px}
+.sum h2{font-family:var(--display); font-weight:650; color:var(--title); font-size:26px; margin:0 0 10px}
+.sum p{max-width:74ch; margin:0 0 14px}
+table{width:100%; border-collapse:collapse; background:var(--raised); border:1px solid var(--line); border-radius:8px; overflow:hidden}
+th,td{text-align:left; padding:10px 14px; font-size:15px; vertical-align:top}
+thead th{background:var(--ground); color:var(--muted); font-weight:600; border-bottom:1px solid var(--line)}
+tbody tr + tr td{border-top:1px solid var(--line)}
+td:first-child{font-weight:700; color:var(--title); width:60px}
+@media (max-width:700px){ main{padding:28px 16px 72px} .ctl{flex-wrap:wrap} .ctl input[type=range]{flex-basis:100%; max-width:none; order:3} }
+</style>
+</head>
+<body>
+<svg class="defs" aria-hidden="true" focusable="false"><defs>
+<pattern id="tileA" width="36" height="36" patternUnits="userSpaceOnUse"><rect width="36" height="36" fill="#F6EEDF"/><path d="M18,3 L22,14 L33,18 L22,22 L18,33 L14,22 L3,18 L14,14Z" fill="#2F8C86"/><circle cx="18" cy="18" r="3.2" fill="#F6EEDF"/><path d="M0,0H7L0,7Z M36,0H29L36,7Z M0,36H7L0,29Z M36,36H29L36,29Z" fill="#282864"/><circle cx="18" cy="18" r="1.4" fill="#A0503C"/></pattern>
+<pattern id="lattice2" width="12" height="12" patternUnits="userSpaceOnUse"><path d="M0,6 L6,0 L12,6 L6,12Z" fill="none" stroke="#C3B299" stroke-width="1.4"/></pattern>
+<pattern id="zig" width="22" height="10" patternUnits="userSpaceOnUse"><rect width="22" height="10" fill="#C8A078"/><path d="M0,10 L5.5,2 L11,10 L16.5,2 L22,10" fill="none" stroke="#A0503C" stroke-width="2.4"/></pattern>
+<pattern id="brick" width="110.4" height="96" patternUnits="userSpaceOnUse" y="316"><path d="M0,0H110.4M0,48H110.4M0,0V48M55.2,48V96" stroke="#D7C8AE" stroke-width="1.6" fill="none"/></pattern>
+<pattern id="flr" width="92" height="76" patternUnits="userSpaceOnUse" y="950"><path d="M0,30H92M0,68H92M20,30V68M66,0V30" stroke="#CDBC9F" stroke-width="2" fill="none"/></pattern>
+<radialGradient id="gLamp"><stop offset="0" stop-color="#FFFDF7" stop-opacity=".9"/><stop offset=".45" stop-color="#E8C682" stop-opacity=".28"/><stop offset="1" stop-color="#E8C682" stop-opacity="0"/></radialGradient>
+<radialGradient id="gGlow"><stop offset="0" stop-color="#FFFDF7" stop-opacity="1"/><stop offset=".35" stop-color="#FFFDF7" stop-opacity=".75"/><stop offset="1" stop-color="#FFFDF7" stop-opacity="0"/></radialGradient>
+<linearGradient id="gBeam" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFFDF7" stop-opacity=".62"/><stop offset=".55" stop-color="#FFFDF7" stop-opacity=".2"/><stop offset="1" stop-color="#FFFDF7" stop-opacity="0"/></linearGradient>
+</defs></svg>
+
+<header class="top-bar"><div class="in"><a href="index.html"><svg viewBox="0 0 34 34" aria-hidden="true"><path d="M4 13l8-5 8 5-8 5z" fill="#E0876B"/><path d="M4 13v9l8 5v-9z" fill="#A0503C"/><path d="M20 13v9l-8 5v-9z" fill="#76392A"/><path d="M14 19l8-5 8 5-8 5z" fill="#63B2AB"/><path d="M14 19v8l8 5v-8z" fill="#2F8C86"/><path d="M30 19v8l-8 5v-8z" fill="#21665F"/><path d="M10 7l6-4 6 4-6 4z" fill="#DDB46A"/><path d="M10 7v6l6 4v-6z" fill="#B8873B"/><path d="M22 7v6l-6 4v-6z" fill="#8A6328"/></svg><span>AI Engineering Bazaar <span class="dim">Round 3 choices</span></span></a></div></header><div class="band"></div>
+
+<main>
+<section class="intro">
+<h1>Which woman's hand should write at the first stall?</h1>
+<p>The first stall's scene is the picked G1b, the edited draft: a hand writes, crosses out a word, writes a better one above it, ticks the margin and signs with an inked thumbprint. Below, the same scene plays three times, once for each hand. The timeline, the page, the lamp and the pen are identical; only the hand and the sleeve change, and the pen tip stays where it was, so the writing still lines up with it.</p>
+<p>Each hand is drawn at the same pose in the street's flat style, with a different sleeve, a different natural skin tone and slimmer fingers than today's. Write back the code you pick, for example "K2".</p>
+<ul class="jump">
+  <li><a href="#k1"><span class="code">K1</span> Fitted sleeve, embroidered cuff</a></li>
+  <li><a href="#k2"><span class="code">K2</span> Loose sleeve, bangles, henna</a></li>
+  <li><a href="#k3"><span class="code">K3</span> Rolled sleeve, a ring</a></li>
+</ul>
+<button type="button" class="motion-toggle" id="motion">Stop the motion</button>
+</section>
+<div id="opts"></div>
+
+<section class="sum" id="sum">
+<h2>Side by side</h2>
+<table>
+  <thead><tr><th></th><th>Hand</th><th>Skin</th><th>Sleeve</th><th>Detail</th></tr></thead>
+  <tbody>
+    <tr><td>K1</td><td>Slender, long fingers</td><td>Light</td><td>Teal, fitted, embroidered cuff</td><td>None; the cuff carries it</td></tr>
+    <tr><td>K2</td><td>Slender, relaxed grip</td><td>Medium brown</td><td>Plum, loose and wide</td><td>Two brass bangles, a henna line</td></tr>
+    <tr><td>K3</td><td>Slender, firm grip</td><td>Deep brown</td><td>Brick, rolled to the forearm</td><td>A thin gold ring</td></tr>
+  </tbody>
+</table>
+</section>
+</main>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" integrity="sha384-g4NTh/Iv5PPU4xPyhEWqPcwtNXOvdaDI8LLnyYfyNZOjKJeYQyjzQ9X5275eBjpt" crossorigin="anonymous"></script>
+<script>
+/* ======================================================================
+   helpers, copied from G-home-stall-scenes.html
+   ====================================================================== */
+const $ = (s, r = document) => r.querySelector(s)
+const $$ = (s, r = document) => [...r.querySelectorAll(s)]
+const f1 = (n) => Math.round(n * 10) / 10
+function RNG(seed) { let a = seed >>> 0; return () => { a = (a + 0x6D2B79F5) | 0; let t = Math.imul(a ^ (a >>> 15), 1 | a); t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0) / 4294967296 } }
+const REDUCED = matchMedia('(prefers-reduced-motion: reduce)').matches
+
+/* handwriting: little bumps and gaps, like the scribe's lines on the site */
+function script(x0, x1, y, seed) {
+  const r = RNG(seed); let x = x0; let d = `M${x0},${y}`
+  while (x < x1 - 9) {
+    if (r() < 0.12) { const g = 5 + r() * 4; d += `m${f1(g)},0`; x += g; continue }
+    const w = 4.5 + r() * 4.5; const h = r() < 0.14 ? 9 : 2.5 + r() * 3.5
+    d += `c${f1(w * 0.3)},${-f1(h)} ${f1(w * 0.7)},${-f1(h)} ${f1(w)},0`; x += w
+  }
+  return { d, x1: x }
+}
+const pool = (cx, w = 1) => `<g class="light" pointer-events="none"><ellipse cx="${cx}" cy="672" rx="${330 * w}" ry="34" fill="url(#gGlow)" opacity=".42"/></g>`
+const beam = (cx) => `<path pointer-events="none" d="M${cx - 300},-290H${cx - 150}L${cx + 190},660H${cx - 110}Z" fill="url(#gBeam)" opacity=".3"/>`
+const shadow = (cx, rx, y = 676) => `<ellipse cx="${cx}" cy="${y}" rx="${rx}" ry="13" fill="#25233F" opacity=".16"/>`
+
+/* ======================================================================
+   the hands. The pen tip is at 0,0 and the pen runs to 66,-88, exactly as
+   in G-home-stall-scenes.html, so the timeline moves them like the old one.
+   The forearm leaves the wrist along (0.77,-0.64); fa(a, b) is a point
+   a units up the forearm from the wrist line and b units across it.
+   ====================================================================== */
+const fa = (a, b) => `${f1(81 + 0.77 * a + 0.63 * b)},${f1(-27 - 0.64 * a + 0.77 * b)}`
+const fq = (rows) => 'M' + rows.map(([a, b]) => fa(a, b)).join('L') + 'Z'
+
+const PEN_SHAFT = `<path d="M6,-8 L66,-88" stroke="#8A6328" stroke-width="6" stroke-linecap="round"/><path d="M6.6,-8.8 L66,-88" stroke="#A47A3A" stroke-width="1.6" stroke-linecap="round"/>`
+/* a cut reed nib: the shaft narrows to a point, darkened with ink */
+const PEN_NIB = `<path d="M0,0 L3.4,-9.6 L8.6,-6.4Z" fill="#25233F"/><path d="M3.4,-9.6 L8.6,-6.4" stroke="#6E4F22" stroke-width="1.2"/>`
+const PEN = ''  // drawn inside the grip now: behind the thumb, in front of the index
+
+/* the hand on the pen: a tripod grip seen from the thumb side, redrawn after
+   the author found the first version visually wrong (the index finger and the
+   thumb read as two loose stubs, the pen lay across the back of the hand, and
+   the curled fingers hung below it). The index finger lies along the top of
+   the pen to near its point, the thumb pinches the pen from the near side above
+   the index tip, the middle finger supports it from below, and the ring and
+   little fingers are folded into the fist. P(a, b) is a point a units up the
+   pen from its tip and b units across it, toward the wrist. */
+const P = (a, b) => `${f1(0.6 * a + 0.8 * b)},${f1(-0.8 * a + 0.6 * b)}`
+function blob(pts) {
+  const q = pts.map(([a, b]) => [0.6 * a + 0.8 * b, -0.8 * a + 0.6 * b])
+  const n = q.length
+  let d = `M${f1(q[0][0])},${f1(q[0][1])}`
+  for (let i = 0; i < n; i++) {
+    const p0 = q[(i - 1 + n) % n], p1 = q[i], p2 = q[(i + 1) % n], p3 = q[(i + 2) % n]
+    const c1 = [p1[0] + (p2[0] - p0[0]) / 6, p1[1] + (p2[1] - p0[1]) / 6]
+    const c2 = [p2[0] - (p3[0] - p1[0]) / 6, p2[1] - (p3[1] - p1[1]) / 6]
+    d += `C${f1(c1[0])},${f1(c1[1])} ${f1(c2[0])},${f1(c2[1])} ${f1(p2[0])},${f1(p2[1])}`
+  }
+  return d + 'Z'
+}
+const path = (d, fill, extra = '') => `<path d="${d}" fill="${fill}" ${extra}/>`
+function grip(c, v = {}) {
+  const edge = `stroke="${c.shade}" stroke-width="1.5" stroke-linejoin="round"`
+  // back of the hand and the closed fist; the knuckles sit high and close
+  const back = path(blob([[44, 3], [58, 5], [71, 18], [75, 36], [69, 53], [57, 59], [48, 54], [44, 40], [42, 20]]), c.skin, edge)
+  // index finger, behind the pen: tapered, its pad near the nib
+  const index = path(blob([[50, -5], [38, -6.6], [26, -8], [16, -7.6], [9.2, -5.4], [6.4, -1.8], [8, 2.2], [18, 3.2], [33, 4.4], [50, 7]]), c.skin, edge)
+  // middle finger, under the pen, its pad supporting it a little further up
+  const middle = path(blob([[40, 10], [30, 9.4], [20, 8.4], [14, 8], [12.6, 11.2], [16.4, 14.2], [28, 15.6], [40, 18]]), c.skin, edge)
+  // thumb, in front: from the base of the hand near the wrist, its tip pressing the pen
+  // thumb, in front: bent at its middle joint so it curves round the pen, its
+  // pad pressing the pen's near side; its root is covered below so it grows
+  // out of the thumb mound with no corner
+  const thumb = path(blob([[52, 20], [44, 13], [37, 8.5], [30, 4.6], [25.6, 2.6], [24, 6.2], [27.6, 9.8], [33, 13.8], [39, 19.4], [46, 27], [52, 31]]), c.skin, edge)
+    + path(blob([[56, 18], [47, 20.5], [45, 27], [50, 33], [58, 30], [60, 23]]), c.skin)
+  const lines = `<g fill="none" stroke="${c.shade}" stroke-width="1.5" stroke-linecap="round">
+    <path d="M${P(24, -7.4)} L${P(23.4, -3.6)}"/>
+    <path d="M${P(31, 12)} L${P(30, 15.4)}"/>
+    <path d="M${P(50, 44)} C${P(54, 47)} ${P(60, 48)} ${P(64, 47)}"/><path d="M${P(52, 53)} C${P(56, 55)} ${P(61, 56)} ${P(64, 55)}"/>
+  </g>`
+  const nail = (a, b, rot = -53) => { const [x, y] = P(a, b).split(','); return `<ellipse cx="${x}" cy="${y}" rx="3" ry="2" transform="rotate(${rot} ${x} ${y})" fill="${c.nail}"/>` }
+  const henna = v.henna
+    ? `<path d="M${P(66, 22)} C${P(61, 14)} ${P(56, 18)} ${P(53, 12)} C${P(50, 7)} ${P(47, 9)} ${P(45, 6)}" stroke="#8A2F1A" stroke-width="1.4" fill="none" stroke-linecap="round"/>`
+      + [[62, 12], [58, 9.6], [54, 7.6], [64, 26]].map(([a, b]) => { const [x, y] = P(a, b).split(','); return `<circle cx="${x}" cy="${y}" r="1.8" fill="#8A2F1A"/>` }).join('')
+    : ''
+  return back + henna + index + middle + nail(9.4, -4.8, -40) + PEN_SHAFT + PEN_NIB + thumb + nail(27.8, 5.2, -62) + lines
+}
+
+/* K1: a fitted teal sleeve and an embroidered cuff. Light skin. */
+const K1 = (cls = 'hand') => {
+  const c = { skin: '#F0C8A8', shade: '#D6A07C', nail: '#F7DECB' }
+  let stitch = ''
+  for (let b = -15; b <= 15; b += 7.5) stitch += `<path d="M${fa(18, b)}L${fa(21, b - 3.2)}L${fa(24, b)}L${fa(21, b + 3.2)}Z" fill="#F6EEDF"/>`
+  return `<g class="${cls}"><g class="hand-in">${PEN}
+  <path d="${fq([[0, -19], [14, -20.5], [14, 20.5], [0, 19]])}" fill="${c.skin}"/>
+  <path d="${fq([[12, -21], [110, -31], [110, 31], [12, 21]])}" fill="#2F8C86"/>
+  <path d="${fq([[12, -21], [30, -22.5], [30, 22.5], [12, 21]])}" fill="#A0503C"/>
+  <path d="M${fa(14, -21.3)}L${fa(14, 21.3)}M${fa(28, -22.4)}L${fa(28, 22.4)}" stroke="#F6EEDF" stroke-width="1.6" fill="none"/>
+  ${stitch}
+  <path d="M${fa(30, -22.5)}L${fa(30, 22.5)}" stroke="#21665F" stroke-width="2" fill="none"/>
+  ${grip(c)}
+</g></g>`
+}
+
+/* K2: a loose plum sleeve, two brass bangles and a henna line. Medium brown skin. */
+const K2 = (cls = 'hand') => {
+  const c = { skin: '#C48A5E', shade: '#A06A44', nail: '#D9A67E' }
+  return `<g class="${cls}"><g class="hand-in">${PEN}
+  <path d="${fq([[-6, -19], [26, -20], [26, 20], [-6, 19]])}" fill="${c.skin}"/>
+  <path d="${fq([[24, -24], [44, -26.4], [58, -27], [63, -14], [64.5, 0], [63, 14], [58, 27], [44, 26.4], [24, 24]])}" fill="#7A4A86"/>
+  <path d="${fq([[24, -24], [30, -24.5], [30, 24.5], [24, 24]])}" fill="#A57AB0"/>
+  <path d="M${fa(27, -24.3)}L${fa(27, 24.3)}" stroke="#DDB46A" stroke-width="1.6" fill="none"/>
+  <path d="M${fa(31, -14)}Q${fa(40, -12)} ${fa(50, -17)}M${fa(31, 2)}Q${fa(41, 4)} ${fa(53, 0)}M${fa(31, 15)}Q${fa(40, 17)} ${fa(49, 13)}" stroke="#5A3366" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+  ${grip(c, { henna: true })}
+  <path d="${fq([[8, -19.4], [12.5, -19.5], [12.5, 19.5], [8, 19.4]])}" fill="#B8873B"/>
+  <path d="${fq([[15, -19.6], [19.5, -19.8], [19.5, 19.8], [15, 19.6]])}" fill="#B8873B"/>
+  <path d="M${fa(9.2, -19)}L${fa(9.2, 19)}M${fa(16.2, -19.2)}L${fa(16.2, 19.2)}" stroke="#DDB46A" stroke-width="1.4" fill="none"/>
+</g></g>`
+}
+
+/* K3: a sleeve rolled up to the forearm and a thin gold ring. Deep brown skin. */
+const K3 = (cls = 'hand') => {
+  const c = { skin: '#8A5A3C', shade: '#6A432B', nail: '#A47452' }
+  return `<g class="${cls}"><g class="hand-in">${PEN}
+  <path d="${fq([[0, -18], [30, -19], [70, -21], [70, 21], [30, 19], [0, 18]])}" fill="${c.skin}"/>
+  <path d="${fq([[66, -33], [110, -35], [110, 35], [66, 33]])}" fill="#A0503C"/>
+  <path d="${fq([[58, -26], [76, -29], [76, 29], [58, 26]])}" fill="#C9785F"/>
+  <path d="M${fa(67, -29)}L${fa(67, 29)}M${fa(75, -30)}L${fa(75, 30)}" stroke="#76392A" stroke-width="1.8" fill="none"/>
+  ${grip(c)}
+  <path d="M${P(36, -6.8)} L${P(36.4, 4.6)}" stroke="#DDB46A" stroke-width="2.6" stroke-linecap="round" fill="none"/>
+</g></g>`
+}
+
+const HANDS = { K1, K2, K3 }
+
+/* ======================================================================
+   the scene: G1b, the edited draft, with the hand passed in
+   ====================================================================== */
+const G1b = (() => {
+  const ys = [228, 264, 300, 336, 372, 408, 444]
+  const L = ys.map((y, i) => { const end = [612, 596, 618, 604, 610, 590, 480][i]; const s = script(282, end, y, 70 + i); return { y, x0: 282, x1: s.x1, d: s.d } })
+  const fix = script(432, 500, 318, 99)
+  return {
+    svg: (hand) => `${pool(450, 1.3)}${shadow(450, 330)}
+      <rect x="140" y="606" width="26" height="70" fill="#73501F"/><rect x="734" y="606" width="26" height="70" fill="#73501F"/>
+      <rect x="126" y="562" width="648" height="48" fill="#9C6C34"/><rect x="146" y="570" width="608" height="32" fill="url(#tileA)" stroke="#73501F" stroke-width="3"/>
+      <rect x="108" y="540" width="684" height="24" rx="4" fill="#C3965A"/>
+      <g transform="rotate(-2 450 360)"><rect x="238" y="160" width="424" height="384" rx="4" fill="#9C6C34"/><rect x="252" y="172" width="396" height="356" fill="#FFFDF7"/></g>
+      <path d="M270,544 L246,520 M630,544 L654,520" stroke="#73501F" stroke-width="10" stroke-linecap="round"/>
+      <g transform="rotate(-2 450 360)"><g class="ink">
+        ${L.map((l) => `<path class="hl" d="${l.d}" pathLength="1" stroke-dasharray="1 1" stroke-dashoffset="1" stroke="#20242E" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>`).join('')}
+        <path class="strike" d="M424,332 Q462,328 506,331" pathLength="1" stroke-dasharray="1 1" stroke-dashoffset="1" stroke="#A0503C" stroke-width="3" fill="none" stroke-linecap="round"/>
+        <path class="caret" d="M454,344 L462,334 L470,344" stroke="#A0503C" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round" opacity="0"/>
+        <path class="fix" d="${fix.d}" pathLength="1" stroke-dasharray="1 1" stroke-dashoffset="1" stroke="#2F8C86" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+        <path class="margin" d="M634,226 q8,8 0,16 M634,400 l6,-6 m-6,6 l6,6" pathLength="1" stroke-dasharray="1 1" stroke-dashoffset="1" stroke="#A0503C" stroke-width="2.4" fill="none" stroke-linecap="round"/>
+        <g class="print" opacity="0">${[0, 1, 2, 3, 4, 5].map((k) => `<ellipse cx="590" cy="482" rx="${6 + k * 4.2}" ry="${8 + k * 5}" fill="none" stroke="#A0503C" stroke-width="2.2" stroke-dasharray="${9 + k * 4} 3" opacity="${0.92 - k * 0.07}"/>`).join('')}</g>
+      </g></g>
+      <g><path d="M682,540 h96 v-10 a8,8 0 0 0 -8,-8 h-80 a8,8 0 0 0 -8,8Z" fill="#73501F"/><ellipse cx="730" cy="524" rx="40" ry="5" fill="#A0503C"/></g>
+      <g><circle class="flame-glow" cx="176" cy="470" r="110" fill="url(#gLamp)"/>
+        <path d="M128,540 C128,508 150,500 176,500 C206,500 226,508 232,520 L248,512 L244,532 C236,540 140,544 128,540Z" fill="#C8A078"/>
+        <path d="M150,522 H214" stroke="#8A6328" stroke-width="3"/><rect x="170" y="490" width="12" height="12" rx="2" fill="#8A6328"/>
+        <path class="flame" d="M176,490 C166,476 170,460 176,446 C182,460 186,476 176,490Z" fill="#E8C682"/><path d="M176,488 C172,480 173,472 176,464 C179,472 180,480 176,488Z" fill="#FFFDF7"/></g>
+      ${hand}${beam(470)}`,
+    build(root, tl) {
+      const hand = $('.hand', root), lines = $$('.hl', root), strike = $('.strike', root), caret = $('.caret', root), fix = $('.fix', root), margin = $('.margin', root), print = $('.print', root), ink = $('.ink', root)
+      const R = (x, y) => { const a = -2 * Math.PI / 180; const dx = x - 450, dy = y - 360; return [450 + dx * Math.cos(a) - dy * Math.sin(a), 360 + dx * Math.sin(a) + dy * Math.cos(a)] }
+      tl.set(lines.concat([strike, fix, margin]), { attr: { 'stroke-dashoffset': 1 } }, 0).set([caret, print], { opacity: 0 }, 0).set(ink, { opacity: 1 }, 0).set(hand, { x: 560, y: 160, rotation: -10 }, 0)
+      let t = 0.1
+      const write = (el, x0, x1, y, dur) => { const [ax, ay] = R(x0, y), [bx, by] = R(x1, y); tl.to(hand, { x: ax, y: ay, rotation: 0, duration: 0.2, ease: 'power1.inOut' }, t).to(el, { attr: { 'stroke-dashoffset': 0 }, duration: dur, ease: 'none' }, t + 0.2).to(hand, { x: bx, y: by, duration: dur, ease: 'none' }, t + 0.2); t += dur + 0.24 }
+      for (let i = 0; i < 4; i++) write(lines[i], L[i].x0, L[i].x1, L[i].y, 0.62)
+      write(strike, 424, 506, 331, 0.3)
+      tl.to(caret, { opacity: 1, duration: 0.12 }, t)
+      write(fix, 432, 500, 318, 0.4)
+      write(margin, 634, 640, 232, 0.25)
+      for (let i = 4; i < 7; i++) write(lines[i], L[i].x0, L[i].x1, L[i].y, 0.6)
+      const [px, py] = R(590, 482)
+      tl.to(hand, { x: 712, y: 548, rotation: 28, duration: 0.45, ease: 'power1.inOut' }, t)
+        .to(hand, { y: 556, duration: 0.14, yoyo: true, repeat: 1 }, t + 0.45)
+        .to(hand, { x: px - 34, y: py + 40, rotation: 28, duration: 0.45, ease: 'power1.inOut' }, t + 0.8)
+        .to(hand, { y: py + 46, duration: 0.14, yoyo: true, repeat: 1 }, t + 1.25)
+        .fromTo(print, { opacity: 0, scale: 0.85, svgOrigin: '590 482' }, { opacity: 1, scale: 1, svgOrigin: '590 482', duration: 0.3 }, t + 1.4)
+        .to(hand, { x: 560, y: 160, rotation: -10, duration: 0.6, ease: 'power2.out' }, t + 1.55)
+        .to(ink, { opacity: 0, duration: 0.5 }, t + 3.6)
+        .to({}, { duration: 0.2 }, t + 4.1)
+      tl.fromTo($('.flame', root), { scaleY: 1, svgOrigin: '176 490' }, { scaleY: 1.14, svgOrigin: '176 490', duration: 0.22, repeat: Math.floor((t + 4.2) / 0.22) - 1, yoyo: true, ease: 'sine.inOut' }, 0)
+    },
+    /* G used 0.86, the moment after the signing. The hand is the subject here,
+       so the still frame is the middle of the writing instead. */
+    still: 0.3,
+  }
+})()
+
+/* ======================================================================
+   the page
+   ====================================================================== */
+const OPTS = [
+  { code: 'K1', name: 'Fitted sleeve, embroidered cuff', rec: false,
+    what: 'A light-skinned hand with long, slim fingers. The sleeve is the stall\'s own teal, cut close to the arm, and ends in a brick and cream embroidered cuff, a row of small diamonds like the ones on the street\'s tiles.',
+    good: ['The nearest to the hand on the street today: the same teal sleeve, so the stall keeps its colour.', 'The cuff borrows the tile diamonds, so the detail belongs to the street.'],
+    cost: ['The plainest of the three: nothing but the slim fingers and the cuff says it is a woman\'s hand.', 'The diamonds are about 3 pixels wide at full width, so they read as a pattern, not a stitch.'],
+    cap: 'Light skin, teal sleeve, embroidered cuff' },
+  { code: 'K2', name: 'Loose sleeve, bangles, henna', rec: true,
+    what: 'A medium-brown hand in a wide plum sleeve that gathers at the cuff. Two brass bangles sit on the wrist and a thin henna line, with a few dots, runs over the back of the hand.',
+    why: 'The bangles tell it is a woman\'s hand at once, at any size, without a caricature: one real object, drawn plainly.',
+    good: ['Bangles are the clearest signal at walking speed, and brass is a colour the street already uses.', 'The henna line and dots are small and quiet, and they give the hand a character of its own.'],
+    cost: ['The wide sleeve is the largest shape of the three and hides the most arm.', 'Plum is the colour of the fourth stall, not the first stall\'s teal.'],
+    cap: 'Medium brown skin, plum sleeve, two bangles, henna' },
+  { code: 'K3', name: 'Rolled sleeve, a ring', rec: false,
+    what: 'A deep-brown hand with the sleeve rolled up past the wrist, brick on the outside and a lighter lining in the roll, so the whole forearm shows. One thin gold ring sits on the index finger.',
+    good: ['A working hand: a sleeve rolled up for a long day of writing, which suits the sign.', 'The bare slim forearm shows the shape of the arm, so nothing else is needed to read it.'],
+    cost: ['The roll is the most to draw: at small size it is two stripes, not a fold.', 'The ring is the smallest detail on the page and is lost at full width.'],
+    cap: 'Deep brown skin, rolled brick sleeve, a gold ring' },
+]
+
+const ICON = '<svg class="ico" viewBox="0 0 32 32" aria-hidden="true"><path d="M16 3 L25 13 L19.5 28 H12.5 L7 13 Z" fill="#2F8C86"/><path d="M16 16.5 V28" stroke="#FFFFFF" stroke-width="2"/><circle cx="16" cy="14.5" r="2.4" fill="#FFFFFF"/><path d="M11 29.5 H21" stroke="#1B1B47" stroke-width="2.2" stroke-linecap="round"/></svg>'
+const SIGN = `<div class="sign" style="left:390px;top:308px;--hue:#2F8C86"><div class="rail"></div><div class="swing"><div class="board">${ICON}<h3>Written by Humans. No AI Slop.</h3><p>LLMs only know what shows up often enough in their training data. The newest AI engineering topics are not there yet, so a model cannot teach them well. Every module here is written by AI engineers who build this for a living.</p></div></div></div>`
+const CUBE = '<svg viewBox="0 0 34 34" aria-hidden="true"><path d="M4 13l8-5 8 5-8 5z" fill="#E0876B"/><path d="M4 13v9l8 5v-9z" fill="#A0503C"/><path d="M20 13v9l-8 5v-9z" fill="#76392A"/><path d="M14 19l8-5 8 5-8 5z" fill="#63B2AB"/><path d="M14 19v8l8 5v-8z" fill="#2F8C86"/><path d="M30 19v8l-8 5v-8z" fill="#21665F"/><path d="M10 7l6-4 6 4-6 4z" fill="#DDB46A"/><path d="M10 7v6l6 4v-6z" fill="#B8873B"/><path d="M22 7v6l-6 4v-6z" fill="#8A6328"/></svg>'
+const BAR = `<div class="s-bar"><span class="brand">${CUBE}AI Engineering Bazaar</span><span class="lk on">Home</span><span class="lk">Catalog</span><span class="lk">Your progress</span></div>`
+
+function bgSVG(W) {
+  let s = `<svg class="bg" width="${W}" height="1080" viewBox="0 0 ${W} 1080" aria-hidden="true">`
+  s += `<rect width="${W}" height="1080" fill="#E6DAC6"/><rect y="58" width="${W}" height="72" fill="#EEE4D3"/>`
+  for (let x = 240; x < W; x += 680) s += `<circle cx="${x}" cy="94" r="90" fill="url(#gLamp)" opacity=".7"/><circle cx="${x}" cy="94" r="21" fill="#FFFDF7" stroke="#D6C7AC" stroke-width="5"/>`
+  s += `<rect y="128" width="${W}" height="12" fill="url(#zig)"/><rect y="140" width="${W}" height="130" fill="#F3EBDD"/>`
+  for (let c = 120; c < W + 100; c += 205) s += `<path d="M${c - 56},270V204C${c - 56},182 ${c - 30},168 ${c},160C${c + 30},168 ${c + 56},182 ${c + 56},204V270Z" fill="#E6DAC6"/><path d="M${c - 56},270V204C${c - 56},182 ${c - 30},168 ${c},160C${c + 30},168 ${c + 56},182 ${c + 56},204V270Z" fill="url(#lattice2)" stroke="#D6C7AC" stroke-width="6"/>`
+  s += `<rect y="268" width="${W}" height="14" fill="#A0503C" opacity=".82"/><rect y="282" width="${W}" height="3" fill="#C8A078"/><rect y="285" width="${W}" height="14" fill="#E9DFCD"/>`
+  let sc = ''; for (let x = 5; x < W; x += 26) sc += `M${x},316V309C${x},304.7 ${x + 4.7},302.7 ${x + 9},302C${x + 13.3},302.7 ${x + 18},304.7 ${x + 18},309V316Z`
+  s += `<path d="${sc}" fill="#D6C7AC"/><rect y="316" width="${W}" height="624" fill="url(#brick)"/>`
+  s += `<rect y="940" width="${W}" height="140" fill="#DCCEB5"/><rect y="940" width="${W}" height="10" fill="#D6C7AC"/><rect y="950" width="${W}" height="130" fill="url(#flr)"/>`
+  for (let x = 260; x < W; x += 760) s += `<path d="M${x},58H${x + 130}L${x + 470},940H${x + 230}Z" fill="url(#gBeam)" opacity=".5"/>`
+  return s + '</svg>'
+}
+const NICHE = `<svg width="900" height="760" viewBox="0 0 900 760" style="position:absolute;left:940px;top:250px" aria-hidden="true"><path d="M60,690V300C60,180 270,90 450,66C630,90 840,180 840,300V690Z" fill="#DFD2BB"/><path d="M60,690V300C60,180 270,90 450,66C630,90 840,180 840,300V690" fill="none" stroke="#A0503C" stroke-width="22"/><path d="M60,690V300C60,180 270,90 450,66C630,90 840,180 840,300V690" pathLength="100" fill="none" stroke="#F6EEDF" stroke-width="22" stroke-dasharray="3 3"/></svg>`
+
+/* every live scene: its timeline, paused while off screen or while stopped */
+const live = []
+let stopped = REDUCED
+const sync = (r) => { if (!stopped && r.want && r.seen) r.tl.play(); else r.tl.pause() }
+const io = new IntersectionObserver((es) => es.forEach((e) => { const r = live.find((x) => x.el === e.target); if (r) { r.seen = e.isIntersecting; sync(r) } }), { rootMargin: '120px' })
+
+function mount(o, svgEl) {
+  svgEl.innerHTML = G1b.svg(HANDS[o.code]())
+  const tl = gsap.timeline({ repeat: -1, repeatDelay: 0.7, paused: true })
+  G1b.build(svgEl, tl)
+  const rec = { tl, el: svgEl, want: true, seen: false, code: o.code }
+  if (REDUCED) tl.progress(G1b.still).pause()
+  live.push(rec); io.observe(svgEl)
+  return rec
+}
+
+const opts = $('#opts')
+OPTS.forEach((o) => {
+  const sec = document.createElement('section'); sec.className = 'opt'; sec.id = o.code.toLowerCase()
+  sec.innerHTML = `<div class="opt-head"><span class="code">${o.code}</span><h2>${o.name}</h2>${o.rec ? '<span class="rec">Recommended</span>' : ''}</div>
+    <div class="frame"><div class="stage">${bgSVG(1920)}${NICHE}${BAR}${SIGN}<svg class="scene" viewBox="0 0 900 700" style="left:940px;top:290px" role="img" aria-label="${o.code}: ${o.cap}, writing at the first stall"></svg></div></div>
+    <div class="ctl"><button type="button">${REDUCED ? 'Play' : 'Pause'}</button><input type="range" min="0" max="1000" value="0" aria-label="Scrub the ${o.code} scene"><span>Scrub, as the scroll will</span></div>
+    <div class="opt-body" style="margin-top:20px"><div>
+      <p>${o.what}</p>${o.why ? `<p class="why">Why this one: ${o.why}</p>` : ''}
+      <ul>${o.good.map((g) => `<li>Good: ${g}</li>`).join('')}${o.cost.map((c) => `<li>Cost: ${c}</li>`).join('')}</ul></div>
+      <figure class="closeup"><svg viewBox="-24 -150 236 190" aria-label="${o.cap}">${HANDS[o.code]('fig')}</svg><figcaption>${o.cap}</figcaption></figure></div>`
+  opts.appendChild(sec)
+  const rec = mount(o, $('.scene', sec))
+  rec.want = !REDUCED
+  const [btn, rng] = [$('.ctl button', sec), $('.ctl input', sec)]
+  btn.addEventListener('click', () => { rec.want = !rec.want; sync(rec); btn.textContent = rec.want ? 'Pause' : 'Play' })
+  rng.addEventListener('input', () => { rec.want = false; rec.tl.pause(); rec.tl.progress(rng.value / 1000); btn.textContent = 'Play' })
+  gsap.ticker.add(() => { if (rec.want && !stopped && rec.seen) rng.value = Math.round(rec.tl.progress() * 1000) })
+})
+window.__recs = live
+
+function scaleFrames() { $$('.frame').forEach((f) => { $('.stage', f).style.transform = `scale(${f.clientWidth / 1920})` }) }
+new ResizeObserver(scaleFrames).observe(document.body)
+scaleFrames()
+
+const mt = $('#motion')
+const paint = () => { mt.textContent = stopped ? 'Start the motion' : 'Stop the motion' }
+paint()
+mt.addEventListener('click', () => {
+  stopped = !stopped; paint()
+  live.forEach((r) => { if (!stopped) r.want = true; sync(r) })
+  $$('.ctl button').forEach((b) => { b.textContent = stopped ? 'Play' : 'Pause' })
+})
+</script>
+</body>
+</html>

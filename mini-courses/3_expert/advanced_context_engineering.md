@@ -10,7 +10,6 @@ Context Engineering.
 - SpecKit
 - GSD
 - AgentOS
-- Claude Native Plan / Goals / Ultrathink / Playground
 
 ## Tutorial Progress
 

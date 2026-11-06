@@ -77,13 +77,18 @@ export const SHEETS: readonly Sheet[] = [
   sheet(24, '/courses/expert/advanced-agent-architectures/', 'Advanced Agent Architectures', 'A4'),
   sheet(25, '/courses/expert/advanced-ui/', 'Advanced UI', 'A4'),
   sheet(26, '/courses/expert/advanced-deployment/', 'Advanced Deployment', 'A4'),
-  sheet(27, '/courses/expert/advanced-training/', 'Advanced Training', 'A4'),
-  sheet(28, '/courses/ecosystem/agent-frameworks/', 'Agent Frameworks', 'A0'),
-  sheet(29, '/courses/ecosystem/inference-providers/', 'Inference Providers', 'A0'),
-  sheet(30, '/courses/ecosystem/inference-engines/', 'Inference Engines', 'A0'),
-  sheet(31, '/courses/ecosystem/ui-design/', 'UI Design', 'A0'),
-  sheet(32, '/courses/ecosystem/choosing-tech-stack/', 'Choosing a Tech Stack', 'A4'),
-  sheet(33, '/courses/protocols/protocols-reference/', 'Protocols Reference', 'A4'),
+  sheet(27, '/courses/expert/advanced-llm-evaluation/', 'Advanced LLM Evaluation', 'A4'),
+  sheet(28, '/courses/expert/advanced-training/', 'Advanced Training', 'A4'),
+  sheet(29, '/courses/ecosystem/agent-frameworks/', 'Agent Frameworks', 'A0'),
+  sheet(30, '/courses/ecosystem/inference-providers/', 'Inference Providers', 'A0'),
+  sheet(31, '/courses/ecosystem/inference-engines/', 'Inference Engines', 'A0'),
+  sheet(32, '/courses/ecosystem/ui-design/', 'UI Design', 'A0'),
+  sheet(33, '/courses/ecosystem/choosing-tech-stack/', 'Choosing a Tech Stack', 'A4'),
+  sheet(34, '/courses/ecosystem/protocols-reference/', 'Protocols Reference', 'A4'),
+  sheet(35, '/courses/trends/llms-cant-jump/', "LLMs Can't Jump", 'A4'),
+  sheet(36, '/courses/trends/video-rendering/', 'Video Rendering', 'A4'),
+  sheet(37, '/courses/trends/recursive-self-improvement/', 'Recursive Self-Improvement', 'A4'),
+  sheet(38, '/courses/trends/decision-models/', 'Decision Models', 'A4'),
 ]
 
 /**
@@ -117,7 +122,7 @@ export const CATEGORY_PATHS = [
   '/sheets/intermediate/',
   '/sheets/expert/',
   '/sheets/ecosystem/',
-  '/sheets/protocols/',
+  '/sheets/trends/',
 ] as const
 
 /**
@@ -131,7 +136,7 @@ export const LEVEL_STUB_PATHS = [
   '/courses/intermediate/',
   '/courses/expert/',
   '/courses/ecosystem/',
-  '/courses/protocols/',
+  '/courses/trends/',
 ] as const
 
 /**

@@ -1076,7 +1076,7 @@ test.describe('M16 stage 7 — completion', () => {
 
     const read = await page.evaluate(() => {
       const dial = document.querySelector('.bz-cc-level[data-cat="fundamentals"] .bz-dial')!
-      const other = document.querySelector('.bz-cc-level[data-cat="protocols"] .bz-dial')!
+      const other = document.querySelector('.bz-cc-level[data-cat="trends"] .bz-dial')!
       const at = (node: Element) => getComputedStyle(node).getPropertyValue('--bz-done').trim()
       return {
         stamped: document.documentElement.style.getPropertyValue('--bz-done-fundamentals'),

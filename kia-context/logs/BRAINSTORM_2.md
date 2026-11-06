@@ -10,8 +10,8 @@ description: >
 authority: reasoning
 writes: agent, when a decision is taken
 status: active
-covers: "D26 to D88, D90 to D92, plus open questions O1 to O5 — 2026-09-09 to 2026-11-05 (D89 is on PR #57)"
-last_updated: 2026-11-05
+covers: "D26 to D88, D90 to D94, plus open questions O1 to O5 — 2026-09-09 to 2026-11-05 (D89 is on PR #57)"
+last_updated: 2026-11-06
 ---
 
 # 🧠 BRAINSTORM, part 2 — the rebuild, D26 onward
@@ -2254,6 +2254,44 @@ Cloudflare) and asked for the site to be rebuilt for it.
   is reachable only by backing it up there first. Accepted: there is no server to carry it across,
   and the site has run for a short time with few readers. The new origin also ends the one risk
   `SECURITY.md` listed, the record being readable by every site on `lokumai.github.io`.
+
+### D93 · The people at the gate are the bazaar's own traders, in the dress of the period — 2026-11-06
+
+The round-3 playground (M48) offered a cast of seven in three looks (L2): all in Ottoman dress, all
+in today's clothes, or a mix, picked to show women and men, a child and many skin tones. The author
+rejected all three: *"too diverse and unrealistic"*.
+
+- **Chosen:** people of the Ottoman bazaar and the trade it lived on: Ottoman Turks, and traders
+  from the lands it dealt with (Arabia and Africa, China, Iran), each in the dress of the period
+  and each carrying a sign of their trade. Nobody wears today's clothes; no headscarf is added to
+  a woman who does not need one. The variety comes from the trade routes, not from a quota.
+- **The cast:** Bit (an AI robot, in a fez), Mei (a Chinese silk trader), Deniz (a child with a
+  simit), Leyla (a spice seller), Dariush (a Persian carpet merchant, N2), Piri (an old map-maker,
+  W2) and a Janissary at the gate, his weapon at rest.
+- **Rejected:** a cast chosen to tick categories (two women, two men, a child, six skin tones),
+  modern professions (an ML engineer, a developer) beside the costume figures, and a mixed street
+  of old and new dress.
+
+### D94 · The fifth level becomes Emerging Trends; the protocols reference moves into Ecosystem — 2026-11-06
+
+The author called "Protocols & Specs" *"a very bad level"* and wanted it renamed so it can hold
+what is new (issue #40). Of the names offered he chose **Emerging Trends**, and because the
+protocols reference (MCP, A2A and the rest) is established, not emerging, it moved into Ecosystem,
+beside the frameworks, providers and engines it belongs with.
+
+- **The level:** slug `trends` (`/sheets/trends/`), folder `mini-courses/5_trends`, title
+  Emerging Trends, four draft modules to start: LLMs Can't Jump, Video Rendering, Recursive
+  Self-Improvement and Decision Models, each in English and Turkish. Its hue stays category 5.
+- **Old addresses forward**, so no bookmark breaks: `/sheets/protocols/`, `/courses/protocols/`
+  and the reference's old module page, in both tracks, are built as forwards from
+  `src/lib/content/moved.ts`.
+- **Rejected:** a sixth level for trends beside a renamed fifth (two small levels outside the main
+  path, competing for one reader); keeping the reference under a broader name (Emerging Trends was
+  the author's pick, and a standard is not a trend).
+- **The trends timeline is not a level.** It is a separate page kept up over time, named
+  **Caravan** by the author (M62), and its decision is posted on issue #40.
+- **A reader's completion of the reference does not carry over:** progress is keyed by
+  `level/module`, and the reference was a draft with no completion control, so nobody had any.
 
 ## Open questions
 

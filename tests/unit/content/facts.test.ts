@@ -119,7 +119,11 @@ describe('curriculumFacts — what it may not carry', () => {
     // §12.2 / D11: this object is serialised into every page.
     const json = JSON.stringify(facts)
     expect(json).not.toContain('http')
-    expect(json.length).toBeLessThan(8000)
+    // A budget per module, not a total, so it holds as modules are added: a
+    // module's facts are a title, a slug and a few counts (about 210 characters
+    // measured on 2026-11-06), and a single paragraph of body text is several
+    // times that.
+    expect(json.length / facts.sheets.length).toBeLessThan(320)
   })
 
   it('is plain, serialisable data with no functions and no cycles', () => {

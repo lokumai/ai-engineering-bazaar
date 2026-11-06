@@ -9,7 +9,7 @@ const DIR_TO_SLUG = {
   '2_intermediate': 'intermediate',
   '3_expert': 'expert',
   '4_ecosystem': 'ecosystem',
-  '5_protocols_specs': 'protocols',
+  '5_trends': 'trends',
 }
 
 fs.rmSync(TARGET_ROOT, { recursive: true, force: true })

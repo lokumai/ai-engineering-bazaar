@@ -21,7 +21,7 @@ description: >
 authority: state
 writes: agent, every session
 status: active
-covers: "M16 to M40 and M42 to M49 (M41 on PR #57), 2026-09-09 onward — M16 the ten stages and the review pass, M17 the curriculum fold, M18 the front door, M20 the catalog's descriptions, M21 the module page, M22 the progress redesign and M19's pipeline, all six done; M23 — the interface's own strings — is written and not started; M24 — the author's requests of 2026-10-11 — shipped and merged as PR #23, with a same-day follow-up (the level chip `All`, a filter bar that no longer sticks, the current level marked); M25 — the end of a module rebuilt, and a quick quiz — shipped and merged as PR #25; M26 — headings, the requested additions and ASD-STE-like English across the corpus — merged as PR #26. M27 — the Bazaar Street front door — merged as PR #27. Released as v1.0.0 on 2026-10-12. M28 — Persian, the third language — merged as PR #30 the same day. M29 — both translations rewritten in their own language (D81) — merged as PR #31 the same day. M30 — the Persian rewritten by meaning and a clarity hunt in all three languages (D82, D83) — merged as PR #32 the same day. M31 — two promo videos, one made with HyperFrames and one with /brag (D84) — removed at the author's request before merging. M32 — the README rewritten for readers — squash-merged as PR #33 on 2026-10-13. M33 — a tray of lokum offered at each door on hover — merged as PR #34 on 2026-10-14. M34 — the star count refreshed by the deploy (D85) — merged as PR #36 on 2026-10-15. M35 — Harness Engineering names its parts in plain words — merged as PR #38 on 2026-10-15. M36 — three references for Observability and Context Engineering — merged as PR #42 on 2026-10-18. M37 — ten stale mockups removed from playground/ — merged as PR #54 on 2026-11-05. M38 — the progress page slimmed to its circles, the continue card and the data row — merged as PR #55 on 2026-11-05. M43 to M45 — the round-2 picks (D91) — merged as PR #59 on 2026-11-05. M46 — the home page tidied and Iran's flag for Persian — merged as PR #60 the same day. Checkbox format repaired across the part on 2026-09-13."
+covers: "M16 to M40 and M42 to M54 (M41 on PR #57), 2026-09-09 onward — M16 the ten stages and the review pass, M17 the curriculum fold, M18 the front door, M20 the catalog's descriptions, M21 the module page, M22 the progress redesign and M19's pipeline, all six done; M23 — the interface's own strings — is written and not started; M24 — the author's requests of 2026-10-11 — shipped and merged as PR #23, with a same-day follow-up (the level chip `All`, a filter bar that no longer sticks, the current level marked); M25 — the end of a module rebuilt, and a quick quiz — shipped and merged as PR #25; M26 — headings, the requested additions and ASD-STE-like English across the corpus — merged as PR #26. M27 — the Bazaar Street front door — merged as PR #27. Released as v1.0.0 on 2026-10-12. M28 — Persian, the third language — merged as PR #30 the same day. M29 — both translations rewritten in their own language (D81) — merged as PR #31 the same day. M30 — the Persian rewritten by meaning and a clarity hunt in all three languages (D82, D83) — merged as PR #32 the same day. M31 — two promo videos, one made with HyperFrames and one with /brag (D84) — removed at the author's request before merging. M32 — the README rewritten for readers — squash-merged as PR #33 on 2026-10-13. M33 — a tray of lokum offered at each door on hover — merged as PR #34 on 2026-10-14. M34 — the star count refreshed by the deploy (D85) — merged as PR #36 on 2026-10-15. M35 — Harness Engineering names its parts in plain words — merged as PR #38 on 2026-10-15. M36 — three references for Observability and Context Engineering — merged as PR #42 on 2026-10-18. M37 — ten stale mockups removed from playground/ — merged as PR #54 on 2026-11-05. M38 — the progress page slimmed to its circles, the continue card and the data row — merged as PR #55 on 2026-11-05. M43 to M45 — the round-2 picks (D91) — merged as PR #59 on 2026-11-05. M46 — the home page tidied and Iran's flag for Persian — merged as PR #60 the same day. Checkbox format repaired across the part on 2026-09-13."
 last_updated: 2026-11-05
 ---
 
@@ -4299,7 +4299,7 @@ progress per track (D86) is not part of this milestone and waits for the track s
 - [x] Typecheck, 2,107 unit and corpus tests, and the full browser suite (1,175 passed, 59 skipped) pass.
 
 
-## 🏁 Milestone M39: Two tracks and a new front door, chosen in the playground — IN PROGRESS, WAITING ON THE AUTHOR'S PICKS
+## 🏁 Milestone M39: Two tracks and a new front door, chosen in the playground — DONE, BUILT AS M43 TO M45 (PR #59)
 
 Branch `design/round-2026-11`. The author, 2026-11-05, after six readers had used the site, set the
 order: decide the designs in `playground/` first, then build the site from the picks, and revise the
@@ -4538,7 +4538,7 @@ under them; and give Persian Iran's flag.
 - [x] The full gate is green: typecheck; 1,154 unit and corpus tests; the base-path build and its
       link gate; the browser suite, 466 passed and 10 skipped.
 
-## 🏁 Milestone M47: "AI Engineering" in capitals, and the catalog menu's tabs that visibly switch — IN PROGRESS
+## 🏁 Milestone M47: "AI Engineering" in capitals, and the catalog menu's tabs that visibly switch — BUILT ON `feat/round-3`, SHIPS WITH M51
 
 Branch `feat/round-3`, from `main` at `15316aa`. The author, 2026-11-06: *"make the first letters of
 'AI Engineering' both capital"*, and when the catalog's For Engineers / For Everyone switch
@@ -4561,7 +4561,7 @@ people can really feel they are switching something"*.
       plays no entry; forcing the no-motion path fails it.
 - [ ] The full gate is green, and the PR is merged.
 
-## 🏁 Milestone M48: Round-3 playground — a woman's hand, and the people at the gate — IN PROGRESS
+## 🏁 Milestone M48: Round-3 playground — a woman's hand, and the people at the gate — DONE
 
 The author, 2026-11-06, asked for options before anything is built. The hand writing in the "No
 AI Slop" stall becomes a woman's (three samples). The opening of the home page gains people, in
@@ -4590,7 +4590,7 @@ others chase it (three samples for each decision).
       Leyla (with her spices); Kofi and Ivan dropped; five Iranian characters and three wise old men
       to choose from (M49).
 
-## 🏁 Milestone M49: The hand redrawn, and the cast at the gate redrawn as the bazaar's traders — IN PROGRESS
+## 🏁 Milestone M49: The hand redrawn, and the cast at the gate redrawn as the bazaar's traders — DONE, PICKED
 
 The author's picks and corrections of 2026-11-06 (M48). Done by the main session itself, at the
 author's request (*"do it yourself since subagents might not do it well"*); the redrawn hand is
@@ -4619,7 +4619,86 @@ inspected by a Haiku reviewer at xhigh effort, as the author asked.
 ### Acceptance criteria
 
 - [x] Every figure read in a screenshot, at full size and as a face close-up.
-- [ ] The author picks the Iranian and the wise old man; then the cast and L1b + L3a are built.
+- [x] The author picked, 2026-11-06: **N2 Dariush** (the carpet merchant) and **W2 Piri** (the
+      map-maker), and asked for one more figure: *"a jannisary of your choice with its weapon and
+      famous clothes visible"*. Built in M50.
+
+## 🏁 Milestone M50: Round 3 on the home page — the hand, the cast at the gate, the robot's escape — PLANNED
+
+Branch `feat/round-3`. Builds the picks of M48 and M49: **K2** (as redrawn in M49), **L1b**, **L3a**,
+and the cast **Bit, Mei, Deniz, Leyla, Dariush (N2), Piri (W2)** plus a **Janissary**. The art is
+drawn by the main session, not a subagent (the author, 2026-11-06), and every drawn figure is
+inspected by a Haiku reviewer at xhigh effort before the author sees it, as the hand was.
+
+### Deliverables
+
+- [ ] **The Janissary**, drawn in the M49 generator first and shown in `M-characters.html`: the
+      *börk* (the tall white felt cap with its long cloth falling down the back and the brass
+      spoon-holder at the front), a long kaftan over a sash, and his weapon visible but held at
+      rest, never pointed: a *yatağan* at the sash and a long musket shouldered. Haiku-reviewed.
+- [ ] **K2 in the stall:** the redrawn tripod grip, plum sleeve, bangles and henna replace the hand
+      in `src/components/home/street/art/stall-draft.html`; the G1b timeline still drives it (the
+      pen tip stays at 0,0). The playground source the capture script reads
+      (`scripts/capture-stall-scenes.mjs`, G1b) takes the same hand, so a regeneration keeps it.
+- [ ] **The cast at the foot of the gate (L1b)** on the home page's opening: Bit in the doorway;
+      Leyla, Dariush and Deniz to its left; Mei and Piri to its right; the Janissary at the gate's
+      jamb as its guard. Each with a caption (name and what they do, as in M49) and their idle
+      motion. The pavement strip under the arch, which the page crops today, is shown so they have
+      somewhere to stand.
+- [ ] **The robot's escape (L3a)** on the walk's scroll: Bit turns his face, runs straight into the
+      gate, the crowd throws up its arms and runs in after him, then the walk's own zoom through the
+      gate plays as today. Reduced motion shows a still with everyone in place; the stacked layout
+      (a phone, no script) shows the cast as a row under the headline with no chase.
+- [ ] Tests that hold for any content: every figure has a caption; the cast does not push the page
+      sideways at any width; the escape leaves the doors and the mottos reachable; nothing is
+      written to storage. Each guard seen failing under a mutation.
+
+### Acceptance criteria
+
+- [ ] The opening, the chase at four scroll points and the stall are read in screenshots at
+      1024x768, 1440x900, 1920x1080 and 390x844, and in reduced motion, and compared with the
+      playground options they come from.
+- [ ] A browser review (the walk, the chase, the captions, the phone layout) finds nothing open.
+- [ ] The full gate is green.
+
+## 🏁 Milestone M51: Ship round 3 — PLANNED
+
+One PR from `feat/round-3` to `main`, carrying M47 (the capital E and the menu's switch), the
+round-3 playground pages (M48, M49) and M50. CI, merge, and the live site at
+`https://ai-bazaar.lokum.dev/` checked after the deploy.
+
+- [ ] PR opened, its number recorded here before merging; CI green; merged; deploy checked live.
+
+## 🏁 Milestone M52: The For Everyone modules — PLANNED, CONTENT PHASE
+
+D86: every module gets a For Everyone version, written from scratch for readers with no technical
+background (not a simplified copy), English first, then Turkish, then Persian, each language
+rewritten for its readers. The site already serves an unwritten page for each (D91); a module goes
+live For Everyone the day its file lands in `mini-courses/<level>/everyone/<name>.md`. The order of
+modules, and who writes what, are the author's to set when this starts.
+
+- [ ] The author sets the order and the first module; then one module at a time, each reviewed
+      for meaning before the next.
+
+## 🏁 Milestone M53: The readers' feedback and the GitHub issues — PLANNED, CONTENT PHASE
+
+The six readers' notes of 2026-11-05 and the open GitHub issues, applied to the For Engineers
+modules, last of all as the author ordered (*design first, then the site, then the content*).
+
+- [ ] The notes and issues listed against the modules they touch, for the author to rank.
+
+## 🏁 Milestone M54: A certificate and an exam per track — TO DECIDE IN THE PLAYGROUND
+
+Raised by the author on 2026-11-05 as an idea, not decided: a certificate and an exam for each
+track, the Advanced level excluded. Nothing is built before a playground round shows the options
+(where the exam lives, what passing means with no server, what the certificate proves).
+
+- [ ] A playground round of options; the author picks.
+
+Not milestones, but open: four old branches with commits found nowhere else (`backup/pre-scrub-2026-09-04`,
+`merge/main-into-revision`, `origin/backup/before-local-user`, `origin/feat/mkdocs`) wait for the
+author's word to delete; M23 (the interface's own strings) stays written and not started; PR #57 is
+the colleague's and stays unmerged without the author's word (D90).
 
 ---
 

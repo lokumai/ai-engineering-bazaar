@@ -10,7 +10,7 @@ description: >
 authority: reasoning
 writes: agent, when a decision is taken
 status: active
-covers: "D26 to D88, D90 to D92, plus open questions O1 to O5 — 2026-09-09 to 2026-11-05 (D89 is on PR #57)"
+covers: "D26 to D88, D90 to D93, plus open questions O1 to O5 — 2026-09-09 to 2026-11-05 (D89 is on PR #57)"
 last_updated: 2026-11-05
 ---
 
@@ -2254,6 +2254,23 @@ Cloudflare) and asked for the site to be rebuilt for it.
   is reachable only by backing it up there first. Accepted: there is no server to carry it across,
   and the site has run for a short time with few readers. The new origin also ends the one risk
   `SECURITY.md` listed, the record being readable by every site on `lokumai.github.io`.
+
+### D93 · The people at the gate are the bazaar's own traders, in the dress of the period — 2026-11-06
+
+The round-3 playground (M48) offered a cast of seven in three looks (L2): all in Ottoman dress, all
+in today's clothes, or a mix, picked to show women and men, a child and many skin tones. The author
+rejected all three: *"too diverse and unrealistic"*.
+
+- **Chosen:** people of the Ottoman bazaar and the trade it lived on: Ottoman Turks, and traders
+  from the lands it dealt with (Arabia and Africa, China, Iran), each in the dress of the period
+  and each carrying a sign of their trade. Nobody wears today's clothes; no headscarf is added to
+  a woman who does not need one. The variety comes from the trade routes, not from a quota.
+- **The cast:** Bit (an AI robot, in a fez), Mei (a Chinese silk trader), Deniz (a child with a
+  simit), Leyla (a spice seller), Dariush (a Persian carpet merchant, N2), Piri (an old map-maker,
+  W2) and a Janissary at the gate, his weapon at rest.
+- **Rejected:** a cast chosen to tick categories (two women, two men, a child, six skin tones),
+  modern professions (an ML engineer, a developer) beside the costume figures, and a mixed street
+  of old and new dress.
 
 ## Open questions
 

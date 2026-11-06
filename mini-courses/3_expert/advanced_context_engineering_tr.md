@@ -10,7 +10,6 @@ yapılandırmak için framework'ler ve spec'ler.
 - SpecKit
 - GSD
 - AgentOS
-- Claude Native Plan / Goals / Ultrathink / Playground
 
 ## Eğitim İlerlemesi
 

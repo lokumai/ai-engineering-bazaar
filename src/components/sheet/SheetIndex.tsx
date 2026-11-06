@@ -97,7 +97,7 @@ interface Column {
  *
  * It wrapped onto a second line inside the 52px row. Nothing about the type is
  * negotiable — the tracking is §3.4's rule for machine values and the padding
- * is §5.3's — so the column takes the room it needs (152) out of the flexible
+ * is §5.3's — so the column takes the room it needs (176 since M55) out of the flexible
  * one. §4.8's `STATUS` is gone (M17, see `ModuleRow`'s `RowState`), and `LANG`
  * — the second of these, measured at 80 — went with M20.
  *
@@ -201,9 +201,8 @@ export function SheetIndex({
       tabIndex={0}
       aria-label={label}
       // §6.5's overflow fade, measured by `Affordances` in the shell. At 390px
-      // this table is 1178px wide in a 350px box and most of its columns are
-      // off-screen; without the cue nothing says so. (It read 1060px, which was
-      // the hand-computed constant M16 stage 4 replaced with this sum.)
+      // this table is several times wider than its box and most of its columns
+      // are off-screen; without the cue nothing says so.
       data-hl-scroller=""
     >
       <table

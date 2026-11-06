@@ -12,7 +12,7 @@ import { sheetCount } from '@/lib/content/curriculum'
  * Every number in `CurriculumFacts` is serialised into every page (§12.2), and
  * a page cannot correct a number it was handed. So the assertions here are the
  * corpus itself: 32 sheets, 15 drawn, 15 self-checks, 8 checklist items on one
- * sheet, 209 distinct sources, 32 traces, and the 2,440 XP ceiling those four
+ * sheet, 32 traces, and the 2,440 XP ceiling those four
  * facts derive.
  */
 

@@ -1,11 +1,5 @@
 import fs from 'node:fs'
 import matter from 'gray-matter'
-import remarkGfm from 'remark-gfm'
-import remarkParse from 'remark-parse'
-import remarkRehype from 'remark-rehype'
-import { unified } from 'unified'
-import { visit } from 'unist-util-visit'
-import type { Element } from 'hast'
 import { stripBuildFurniture, stripLeadIn } from './strip'
 import { type TranslatedLang, siblingSuffix } from './languages'
 
@@ -57,8 +51,6 @@ const FENCE = /^[ \t]*(`{3,}|~{3,})[ \t]*(\S*)/
 const IMAGE = /!\[[^\]]*\]\([^)]*\)/g
 const TABLE_DELIMITER =
   /^[ \t]*\|?[ \t]*:?-+:?[ \t]*(\|[ \t]*:?-+:?[ \t]*)+\|?[ \t]*$/
-/** §6.3's rule, restated here because `render.ts` cannot import this module. */
-const EXTERNAL_HREF = /^https?:\/\//i
 
 interface Line {
   text: string
@@ -160,60 +152,6 @@ export function countTables(body: string): number {
 /** The figure count the sheet header states: real diagrams plus images. */
 export function countFigures(body: string): number {
   return countDiagrams(body) + countImages(body)
-}
-
-/**
- * The markdown pipeline, up to the point where links become `<a href>`. Built
- * once: `parse` and `runSync` are re-entrant, and the corpus goes through here
- * thirty-two times per build.
- */
-const links = unified().use(remarkParse).use(remarkGfm).use(remarkRehype)
-
-/**
- * Every external http(s) link occurrence in the body, in document order.
- *
- * Read off the parsed tree rather than matched out of the raw string, because
- * the two disagree in the places that matter: `curl https://openclaw.ai/…`
- * inside a ```bash fence and a bare `https://www.moltbook.com` inside inline
- * backticks are *text about* a URL, not links, and no reader can open them.
- * §5.5 counts "distinct external http(s) links" and §5.11 indexes them as
- * "external primary-source links"; a curl target is neither.
- *
- * This is the same node set `rehypeExternalLinks` decorates with the `↗` mark
- * (render.ts, §6.3), reached through the same parser, so the number the header
- * prints is by construction the number of marks on the page.
- */
-export function externalLinks(body: string): string[] {
-  const found: string[] = []
-  visit(links.runSync(links.parse(body)), 'element', (node: Element) => {
-    if (node.tagName !== 'a') return
-    const href = node.properties?.href
-    if (typeof href === 'string' && EXTERNAL_HREF.test(href)) found.push(href)
-  })
-  return found
-}
-
-/**
- * §12.8 — the same links, deduped, in first-appearance order.
- *
- * `externalLinks` returns *occurrences* (397 corpus-wide) where the `SOURCES`
- * count and the reader's `sources` record hold *distinct* URLs (209). A UI
- * listing the occurrences beside the header's number looks broken on any sheet
- * that cites a URL twice, so the list a reader is shown and the number beside
- * it are derived here from one function rather than two.
- *
- * It delegates rather than re-scanning. A regex-based scraper disagrees with
- * the rendered page on sheets 10, 11 and 15 — a `curl https://…` inside a
- * ```bash fence and a bare host inside backticks are text about a URL, not
- * links a reader can open — which is what `externalLinks`'s own tests pin.
- *
- * First-appearance order, because §12.8 reprints the list as "the actual
- * reading surface of the curriculum" and document order is the only ordering
- * the sheet itself asserts. `Set` preserves insertion order, so this is that
- * order and not an alphabetical rearrangement of it.
- */
-export function distinctExternalLinks(body: string): string[] {
-  return [...new Set(externalLinks(body))]
 }
 
 /**

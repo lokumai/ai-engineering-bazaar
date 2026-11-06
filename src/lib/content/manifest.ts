@@ -4,7 +4,7 @@ import { EMPTY_RECORD } from '../record/schema'
 import { plural } from '../text'
 import type { Category } from './curriculum-file'
 import { categoryPath, sheetPath } from './curriculum'
-import { LANG_DISPLAY, countFigures } from './derive'
+import { LANG_DISPLAY } from './derive'
 import { moduleGraph } from './edges'
 import { curriculumFacts } from './facts'
 import { loadAllModules, loadModuleIn } from './loader'
@@ -17,7 +17,7 @@ import { topicsFor } from './topics'
  * §4.8 and §4.9 — the manifest.
  *
  * One row per sheet, and every cell in it is a fact about the *drawing*: its
- * extent, its sources, its language coverage, whether it is drawn, and what it
+ * extent, its language coverage, whether it is drawn, and what it
  * requires. Not one value here is a fact about the reader. That is the whole
  * point of §1's second question, and it is why this module is the only place
  * the two listing pages get their numbers from — a count computed twice starts
@@ -30,7 +30,7 @@ import { topicsFor } from './topics'
  *
  * §4.8's ninth column does not change that. `slots` names the sign-off slots a
  * sheet SUPPLIES — which is a property of the drawing, exactly like its extent
- * and its sources — and never which of them a reader has filled. The filling is
+ * — and never which of them a reader has filled. The filling is
  * §12.2 channel B's job, after mount, in one island; nothing here has an
  * opinion about it.
  */

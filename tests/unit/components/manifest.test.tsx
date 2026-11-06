@@ -116,8 +116,8 @@ describe('ModuleRow — the index row (§5.3)', () => {
   it('says an unready module is unready without using colour', () => {
     expect(dashed).toContain('data-draft=""')
     expect(dashed).toContain('data-drawn="false"')
-    // Length and Sources, both undeclared, both spelled the house way.
-    expect(dashed.match(/<td class="bz-row-value">—<\/td>/g)?.length).toBeGreaterThanOrEqual(2)
+    // Length, undeclared, spelled the house way. It is the first value cell.
+    expect(dashed.match(/<td class="bz-row-value">([^<]*)<\/td>/)?.[1]).toBe('—')
 
     expect(drawn).not.toContain('data-draft')
     expect(drawn).not.toContain('data-drawn="false"')

@@ -275,8 +275,8 @@ export function loadModule(slug: string): CourseModule | undefined {
  *
  * **The whole of the second language is this function**, and that is the point
  * of doing it here rather than in the page. A module's page derives everything
- * from `body`: the quick check, the authored summary, the figure sequence, the
- * external sources, the word count. Swapping the body at the loader means every
+ * from `body`: the quick check, the authored summary, the figure sequence and
+ * the word count. Swapping the body at the loader means every
  * one of those derivations runs against the Turkish text with no page code
  * knowing a second language exists — and a derivation that was correct in
  * English cannot be wrong in Turkish, because it is the same derivation.

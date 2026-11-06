@@ -43,8 +43,6 @@ interface Sheet {
   diagrams: number
   images: number
   tables: number
-  /** Distinct external destinations a reader can actually open. */
-  sources: number
 }
 
 const read = () => {
@@ -63,11 +61,6 @@ const read = () => {
     diagrams: document.querySelectorAll('.bz-fig.bz-diagram').length,
     images: document.querySelectorAll('.bz-fig.bz-image').length,
     tables: document.querySelectorAll('.bz-fig.bz-tablefig').length,
-    sources: new Set(
-      [...document.querySelectorAll('main a[data-hl-external]')].map(
-        (a) => (a as HTMLAnchorElement).href,
-      ),
-    ).size,
   }
 }
 
@@ -106,7 +99,6 @@ for (const sheet of DRAWN) {
     // lose the only place the browser ever looked at them.
     expect(found.diagrams + found.images + found.tables, `${sheet.path} figures`)
       .toBeGreaterThanOrEqual(0)
-    expect(found.sources, `${sheet.path} sources`).toBeGreaterThanOrEqual(0)
   })
 }
 

@@ -127,8 +127,8 @@ export function CatalogCards({ rows }: { rows: readonly SheetRow[] }) {
                       closes up rather than printing an empty line. */}
                   <Description row={row} />
 
-                  {/* Each fact labelled, because a bare `23` beside a bare
-                      `5,008 W · 30 MIN` is the kind of meta strip DESIGN.md
+                  {/* Each fact labelled, because a bare `5,008 W · 30 MIN`
+                      beside a bare `1, 3` is the kind of meta strip DESIGN.md
                       names as a tell. A dash is printed with its label rather
                       than dropped: the reader learns that the module declares
                       no length, which is what a draft is. */}

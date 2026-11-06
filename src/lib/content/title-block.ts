@@ -100,16 +100,14 @@ export function sheetLabel(facts: SheetFacts): string {
 /**
  * §5.5 Variant A — the twelve rows of the title block, in the spec's order.
  *
- * `EXTENT`, `FIGURES` and `SOURCES` are the three rows a draft sheet cannot
- * fill, and §4.5 item 4 dashes all three. Its words are the schedule of parts,
+ * `EXTENT` and `FIGURES` are the rows a draft sheet cannot fill, and §4.5
+ * item 4 dashes both. Its words are the schedule of parts,
  * which the sheet already prints in full, and its duration is undeclared;
  * `92 W · 0 MIN` would be an estimate of how long it takes to read a drawing
  * that does not exist.
  *
- * The gate is `status`, never a zero. A dash is the honest rendering of
- * "nobody counted this", and on a *drawn* sheet somebody did: modules 2, 4 and
- * 5 cite no external source at all, and `SOURCES 0` is the true statement
- * about them where `SOURCES —` claims the count was never taken.
+ * The gate is `status`, never a zero: a dash is the honest rendering of
+ * "nobody counted this", and on a *drawn* sheet somebody did.
  */
 export const CHECKED_BY_LABEL = 'CHECKED BY'
 
@@ -149,9 +147,6 @@ export const REPOSITORIES_LABEL = 'REPOSITORIES'
 export function carriesRepositories(facts: SheetFacts): boolean {
   return facts.status === 'ready'
 }
-
-/** The six rows §4.5 item 4 gives a draft sheet's strip, in its order. */
-const DRAFT_STRIP = ['LENGTH', 'FIGURES', 'SOURCES', 'REQUIREMENTS', 'LANG', 'REVISION']
 
 /**
  * §5.5 Variant B — the same rows, laid out horizontally beneath the h1.

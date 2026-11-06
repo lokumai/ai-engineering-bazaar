@@ -19,16 +19,16 @@ import type { Track } from '../tracks'
  * imports nothing so that a client island may import it.
  *
  * **It is deliberately small.** §12.2 / D11 serialise it into every page, so it
- * carries counts, not content: no body text, no section spines, no source URL
- * lists, no checklist item text. Anything a single sheet's page needs — the
- * question, the item texts, the URLs — the sheet's own page derives for itself
- * from `quickCheckOf`, `checklistOf` and `distinctExternalLinks`.
+ * carries counts, not content: no body text, no section spines, no checklist
+ * item text. Anything a single sheet's page needs — the question, the item
+ * texts — the sheet's own page derives for itself from `quickCheckOf` and
+ * `checklistOf`.
  *
  * **Every field is derived or absent (§11.25).** Nothing here is typed by hand,
  * including the four numbers §12.5.1 multiplies into `2,380 ATTAINABLE TODAY`.
  * `revision` is `null` on a checkout where git cannot tell us, which is the one
  * honest answer; §11.25's dash gate is on `status`, not on zero, so a sheet
- * nobody has drawn reports `0` sources and `0` checklist items rather than a
+ * nobody has drawn reports `0` checklist items rather than a
  * dash — the count was taken, and it came to zero.
  */
 

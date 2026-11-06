@@ -37,7 +37,6 @@ export interface CurriculumFacts {
     drawn: boolean
     hasQuickCheck: boolean
     checklistItems: number
-    sources: number
     /** M13 — the module's own declared minutes, which `readingMinutes` sums. */
     duration: number
   }>

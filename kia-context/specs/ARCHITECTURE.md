@@ -249,12 +249,7 @@ fact in this repository:
 ```
   nothing stored
         │
-        ├─ observeReachedEnd ──► reachedEnd: true      (scrolled to the end)
-        ├─ recordSourceOpened ─► sources: [...]        (clicked a citation)
         ├─ setChecklistItem ───► checklist: { n: bool }
-        ├─ setQuizAnswer ──────► quiz.answer
-        ├─ assessQuiz ─────────► quiz.assessed: 'matched' | 'missed'
-        ├─ addSubmittal ───────► submittals: [...]     (max 3)
         │
         └─ signOff ────────────► signedOff: <ISO>, signedRevision: <hash>
                     ◄─ unsign ── back to null

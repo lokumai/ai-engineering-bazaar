@@ -139,8 +139,12 @@ function columnsFor(column: RowColumn): Column[] {
        lines inside the row instead of to eight. The trigger is the same width
        either way; it is the open state that has a measure to honour. */
     { key: 'description', label: 'Description', width: 280 },
-    { key: 'extent', label: 'Length', width: 152 },
-    { key: 'sources', label: 'Sources', width: 88 },
+    /* 176, not 152 (M55): at 152 `2,498 W · 25 MIN` wrapped its `MIN` onto a
+       second line at 1440, measured by screenshot before and after the Sources
+       column went; that column's 88px paid for it. */
+    { key: 'extent', label: 'Length', width: 176 },
+    /* `Sources` was 88px here and it is gone (M55): the author, 2026-11-06,
+       "REMOVE THE SOURCE. No need for such metadata." */
     /* `Lang` was 80px here and it is gone (M20). It printed `EN · TR`, which is
        a fact about the REPOSITORY — a `_tr.md` file exists — and the site
        renders none of those files. The listing stated a translation it cannot

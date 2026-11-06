@@ -36,7 +36,6 @@ export interface SheetFacts {
    */
   diagrams: number
   tables: number
-  sources: number
   requires: readonly number[]
   feeds: readonly number[]
   revision: Revision | null
@@ -77,7 +76,6 @@ export function sheetFacts(
     duration: module.frontmatter.duration,
     diagrams: countDiagrams(module.body),
     tables: countTables(module.body),
-    sources: module.sources,
     requires: context.requires,
     feeds: context.feeds,
     revision: module.revision,

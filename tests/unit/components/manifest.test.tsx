@@ -31,7 +31,6 @@ const DRAWN: SheetRow = {
   status: 'READY',
   subsystem: { order: 2, title: 'Intermediate', path: '/courses/intermediate/', slug: 'intermediate' },
   extent: '4,883 W · 30 MIN',
-  sources: '23',
   lang: 'EN',
   bilingual: false,
   requires: '12',
@@ -53,7 +52,6 @@ const DASHED: SheetRow = {
   status: 'PLANNED',
   subsystem: { order: 3, title: 'Expert', path: '/courses/expert/', slug: 'expert' },
   extent: '—',
-  sources: '—',
   lang: 'EN · TR',
   bilingual: true,
   requires: '—',
@@ -86,7 +84,7 @@ describe('ModuleRow — the index row (§5.3)', () => {
 
   it('prints every derived value the manifest measured', () => {
     expect(drawn).toContain('4,883 W · 30 MIN')
-    expect(drawn).toContain('>23<')
+    // `>23<`, the Sources count, was here; M55 removed the column.
     // `>EN<` was here and M20 took the `Lang` column off the table. The row's
     // own "states no language" case below is what holds that in place.
     expect(drawn).toContain('Intermediate')
@@ -247,7 +245,8 @@ describe('ModuleIndex — the manifest table (§4.8 item 4)', () => {
       // column the retired `/courses/` pages carried and this one did not.
       // M20: `Topics` became `Description` and `Lang` went with the language
       // filter — the listing stops stating a translation the site cannot serve.
-      '#', 'Module', 'Level', 'Description', 'Length', 'Sources',
+      // M55: `Sources` went at the author's word.
+      '#', 'Module', 'Level', 'Description', 'Length',
       // §12.18's ninth column. §4.8 put it after `STATUS`, which M17 removed —
       // the state is on the cells that were already carrying it, `ModuleRow`'s
       // `RowState`. REQUIRES is the column this implementation added, so it is
@@ -345,7 +344,6 @@ const FACTS: CurriculumFacts = {
       drawn: true,
       hasQuickCheck: true,
       checklistItems: 8,
-      sources: 23,
       duration: 30,
     },
     {
@@ -355,7 +353,6 @@ const FACTS: CurriculumFacts = {
       drawn: false,
       hasQuickCheck: false,
       checklistItems: 0,
-      sources: 0,
       duration: 0,
     },
   ],

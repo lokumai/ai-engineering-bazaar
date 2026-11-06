@@ -40,13 +40,12 @@ describe('curriculumFacts — the modules', () => {
     }
   })
 
-  it('agrees with the loader on title, category, status and sources', () => {
+  it('agrees with the loader on title, category and status', () => {
     for (const m of modules) {
       const sheet = facts.sheets.find((s) => s.slug === m.slug)!
       expect(sheet.title, m.slug).toBe(m.frontmatter.title)
       expect(sheet.category, m.slug).toBe(m.category.slug)
       expect(sheet.drawn, m.slug).toBe(m.frontmatter.status === 'ready')
-      expect(sheet.sources, m.slug).toBe(m.sources)
       expect(sheet.revision, m.slug).toBe(m.revision?.hash ?? null)
     }
   })
@@ -130,16 +129,16 @@ describe('curriculumFacts — what it may not carry', () => {
     expect(JSON.parse(JSON.stringify(facts))).toEqual(facts)
   })
 
-  it('holds exactly the ten fields a module contributes, and no eleventh', () => {
+  it('holds exactly the nine fields a module contributes, and no tenth', () => {
     // M13 added `duration`: the module's own declared minutes, which
     // `readingMinutes` sums over the completed modules to print a reading time
-    // where XP used to be (O2, D22). The list is here so that a field added to
+    // where XP used to be (O2, D22). M55 removed `sources`. The list is here so that a field added to
     // an object serialised into all 58 pages is a decision somebody made
     // rather than a page that quietly grew.
     for (const sheet of facts.sheets) {
       expect(Object.keys(sheet).sort(), sheet.slug).toEqual([
         'category', 'checklistItems', 'drawn', 'duration', 'hasQuickCheck',
-        'module', 'revision', 'slug', 'sources', 'title',
+        'module', 'revision', 'slug', 'title',
       ])
     }
   })

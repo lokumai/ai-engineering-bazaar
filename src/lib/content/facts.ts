@@ -1,6 +1,5 @@
 import { CATEGORIES } from './curriculum-file'
 import { checklistOf } from './checklist'
-import { countSources } from './derive'
 import { moduleGraph } from './edges'
 import { loadAllModules } from './loader'
 import { quickCheckOf } from './quickcheck'
@@ -51,8 +50,6 @@ export interface SheetFact {
   hasQuickCheck: boolean
   /** §12.7 — how many `- [ ]` items. 8 on one sheet, 0 on the other 31. */
   checklistItems: number
-  /** §12.8 / §5.5 `SOURCES` — distinct external links. */
-  sources: number
   /**
    * M13 — the module's own declared reading time, in minutes.
    *
@@ -127,8 +124,6 @@ export function curriculumFacts(track: Track = 'engineers'): CurriculumFacts {
       drawn: track === 'everyone' ? everyone !== null : m.frontmatter.status === 'ready',
       hasQuickCheck: track === 'engineers' && quickCheckOf(body) !== null,
       checklistItems: track === 'everyone' && everyone === null ? 0 : checklistOf(body).length,
-      // The page counts the body it shows, so the fact must count the same one.
-      sources: track === 'everyone' ? (everyone ? countSources(everyone.body) : 0) : m.sources,
       duration: m.frontmatter.duration,
       revision: (everyone ? everyone.revision : m.revision)?.hash ?? null,
     }

@@ -246,7 +246,6 @@ export function ModuleRow({ row, column }: { row: SheetRow; column: RowColumn })
       </td>
 
       <td className="bz-row-value">{row.extent}</td>
-      <td className="bz-row-value">{row.sources}</td>
 
       <td className="bz-row-signoff">
         <SignOffSquares row={row} />

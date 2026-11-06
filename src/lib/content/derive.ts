@@ -193,11 +193,6 @@ export function externalLinks(body: string): string[] {
   return found
 }
 
-/** §5.5 `SOURCES` — the count of *distinct* external links. */
-export function countSources(body: string): number {
-  return new Set(externalLinks(body)).size
-}
-
 /**
  * §12.8 — the same links, deduped, in first-appearance order.
  *

@@ -9,7 +9,6 @@ import {
   countDiagrams,
   countFigures,
   countImages,
-  countSources,
   countTables,
   distinctExternalLinks,
   extent,
@@ -193,7 +192,7 @@ describe('countFigures', () => {
   })
 })
 
-describe('externalLinks / countSources', () => {
+describe('externalLinks', () => {
   it('finds http and https links', () => {
     expect(externalLinks('see [a](https://a.example) and http://b.example here'))
       .toEqual(['https://a.example', 'http://b.example'])
@@ -207,8 +206,8 @@ describe('externalLinks / countSources', () => {
     expect(externalLinks('[a](../1_fundamentals/llms.md) [b](#section)')).toEqual([])
   })
 
-  it('counts distinct links only', () => {
-    expect(countSources('[a](https://x.example) [b](https://x.example)')).toBe(1)
+  it('dedupes a link cited twice', () => {
+    expect(distinctExternalLinks('[a](https://x.example) [b](https://x.example)')).toEqual(['https://x.example'])
   })
 
   it('does not count a URL inside a fenced code block', () => {
@@ -266,15 +265,6 @@ describe('distinctExternalLinks', () => {
       expect(distinctExternalLinks(m.body), m.slug).toEqual([...new Set(externalLinks(m.body))])
       expect(distinctExternalLinks(m.body).length, m.slug)
         .toBeLessThanOrEqual(externalLinks(m.body).length)
-    }
-  })
-
-  it('agrees with `countSources` sheet by sheet', () => {
-    // §12.8: the list a reader is shown and the number beside it must dedupe
-    // identically, or the sheet contradicts itself.
-    for (const m of modules) {
-      expect(distinctExternalLinks(m.body).length, m.slug).toBe(countSources(m.body))
-      expect(distinctExternalLinks(m.body).length, m.slug).toBe(m.sources)
     }
   })
 

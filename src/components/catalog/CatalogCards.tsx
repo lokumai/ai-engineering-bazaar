@@ -137,10 +137,6 @@ export function CatalogCards({ rows }: { rows: readonly SheetRow[] }) {
                       <dt>Length</dt>
                       <dd>{row.drawn ? row.extent : 'Planned'}</dd>
                     </div>
-                    <div>
-                      <dt>Sources</dt>
-                      <dd>{row.sources}</dd>
-                    </div>
                     {/* `Languages` — `EN · TR` — was the third fact and M20
                         removed it with the table's `Lang` column. The site
                         renders none of the 33 `_tr.md` files, so the card was

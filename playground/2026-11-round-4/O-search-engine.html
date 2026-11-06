@@ -1,0 +1,315 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Search engine, round 4</title>
+<style>
+:root {
+  --ground: #fdfbf7; --raised: #ffffff; --sunken: #e6dac6; --tint: #f4eee3;
+  --line: #d8cbb4; --line-strong: #c3b299;
+  --ink: #20242e; --title: #1b1b47; --muted: #6a6558; --faint: #948d7d;
+  --bar: #282864; --gold: #b8873b; --focus: #a0503c; --teal: #2f8c86;
+  --sans: "Avenir Next", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+}
+* { box-sizing: border-box; }
+html { background: var(--ground); }
+body { margin: 0; background: var(--ground); color: var(--ink); font: 15px/1.55 var(--sans); }
+a { color: var(--title); }
+:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+.page { max-width: 1180px; margin: 0 auto; padding: 44px 28px 96px; }
+.q { margin: 0 0 10px; max-width: 860px; color: var(--title); font-size: 28px; line-height: 1.2; font-weight: 650; }
+.lead { margin: 0 0 20px; max-width: 800px; color: var(--muted); font-size: 16px; }
+.jump { display: flex; flex-wrap: wrap; gap: 8px; margin: 0; padding: 0; list-style: none; }
+.jump a { display: inline-flex; align-items: center; gap: 7px; min-height: 33px; padding: 0 12px; border: 1px solid var(--line-strong); border-radius: 9px; background: var(--raised); color: var(--muted); font-size: 13.5px; font-weight: 600; text-decoration: none; }
+.jump a:hover { background: var(--sunken); color: var(--ink); }
+.jump b { color: var(--title); }
+.decide { margin: 26px 0 8px; padding: 16px 20px; border: 1px solid var(--line-strong); border-left: 4px solid var(--gold); border-radius: 8px; background: var(--raised); }
+.decide h2 { margin: 0 0 8px; color: var(--title); font-size: 17px; }
+.decide ol { margin: 0; padding-left: 22px; }
+.decide li { margin: 6px 0; }
+.decide li b { color: var(--title); }
+h2.sec { margin: 56px 0 8px; padding-top: 30px; border-top: 1px solid var(--line); color: var(--title); font-size: 22px; line-height: 1.25; font-weight: 650; scroll-margin-top: 16px; }
+h2.sec + p { margin-top: 0; max-width: 820px; color: var(--muted); }
+.opt { margin-top: 56px; padding-top: 34px; border-top: 1px solid var(--line); scroll-margin-top: 16px; }
+.opt-head { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; margin-bottom: 12px; }
+.code { padding: 2px 9px; border: 1px solid var(--line-strong); border-radius: 5px; background: var(--raised); color: var(--title); font-size: 15px; font-weight: 700; }
+.opt h2 { margin: 0; color: var(--title); font-size: 22px; line-height: 1.25; font-weight: 650; }
+.rec { padding: 3px 10px; border-radius: 9px; background: var(--bar); color: #fff; font-size: 13px; font-weight: 600; }
+.opt-text { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); gap: 12px 40px; }
+.opt-text p { margin: 0 0 8px; }
+.opt-text ul { margin: 0; padding-left: 20px; }
+.opt-text li { margin: 3px 0; }
+.opt-text h3, .opt h3.t { margin: 0 0 4px; color: var(--title); font-size: 14.5px; font-weight: 650; }
+.why { margin-top: 10px !important; padding: 10px 12px; border: 1px solid var(--line); border-radius: 7px; background: var(--raised); }
+.tw { overflow-x: auto; max-width: 100%; margin: 14px 0 0; }
+table.m { width: 100%; min-width: 640px; border-collapse: collapse; background: var(--raised); border: 1px solid var(--line); font-size: 13.5px; }
+.m caption { padding: 0 0 6px; text-align: left; color: var(--title); font-size: 13.5px; font-weight: 650; caption-side: top; }
+.m th, .m td { padding: 6px 10px; text-align: left; vertical-align: top; border-top: 1px solid var(--line); }
+.m thead th { border-top: 0; background: var(--ground); color: var(--muted); font-weight: 600; }
+.m td.n, .m th.n { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.m td:first-child { color: var(--title); font-weight: 650; }
+.m tr.bad td { background: #f7ebe6; }
+.m .fail { color: #8a2f1c; font-weight: 700; }
+.m .pass { color: #1f6a64; font-weight: 700; }
+.note { margin: 8px 0 0; color: var(--muted); font-size: 13.5px; max-width: 900px; }
+code, kbd { font-family: var(--mono); font-size: .9em; }
+code { padding: 0 4px; border: 1px solid var(--line); border-radius: 4px; background: var(--raised); }
+.cmp { overflow-x: auto; }
+.cmp table { min-width: 960px; }
+.small { font-size: 13px; color: var(--muted); }
+@media (max-width: 1000px) { .opt-text { grid-template-columns: minmax(0, 1fr); } }
+@media (max-width: 600px) { .page { padding: 28px 16px 64px; } .q { font-size: 23px; } }
+</style>
+</head>
+<body>
+<main class="page">
+  <h1 class="q">What should search run on, with no server?</h1>
+  <p class="lead">Milestone M56, issue #43. The site is static files on GitHub Pages, so search runs in the reader's browser, on an index built when the site is built. Every number below was measured on this repository's own corpus (the 19 written modules, in English, Turkish and Persian), not quoted from documentation. The placement of search is on page <a href="N-search-placement.html">N</a>; any placement there can sit on any engine here.</p>
+  <ul class="jump">
+    <li><a href="#how"><b>How</b> it was measured</a></li>
+    <li><a href="#corpus"><b>The</b> corpus</a></li>
+    <li><a href="#o1"><b>O1</b> Index and a small library</a></li>
+    <li><a href="#o2"><b>O2</b> Pagefind</a></li>
+    <li><a href="#o3"><b>O3</b> Semantic search</a></li>
+    <li><a href="#o4"><b>O4</b> Hybrid</a></li>
+    <li><a href="#cmp"><b>All</b> Side by side</a></li>
+    <li><a href="#unmeasured"><b>Not</b> measured</a></li>
+  </ul>
+
+  <section class="decide" aria-labelledby="dec">
+    <h2 id="dec">Decisions for you on this page</h2>
+    <ol>
+      <li><b>The engine.</b> One of O1 to O4. Recommended: O1 now (a build-time index with MiniSearch and our own small text normaliser, loaded the first time the field is focused), built so that O4's semantic layer can be added later as an opt-in.</li>
+      <li><b>The default scope.</b> Search the reader's own track and language by default, or everything. This costs nothing in the engine either way: one index per language is loaded, and a second only when the reader asks for it. Page <a href="N-search-placement.html">N</a> lets you try both. Recommended: own track and language.</li>
+      <li><b>Unwritten For Everyone modules.</b> Leave them out of the index, so no result opens a page that says "not written yet". Recommended: leave them out. Today none of the For Everyone modules is written, so this leaves the index unchanged; the build then includes a module the day its file exists.</li>
+      <li><b>Semantic search.</b> Whether to offer it at all, given its download (O3 and O4 give the sizes). Recommended: not in the first version; keep the door open.</li>
+    </ol>
+    <p style="margin:10px 0 0;color:var(--muted)">Write back the codes, for example "O1, own track and language, unwritten left out, no semantic yet".</p>
+  </section>
+
+  <h2 class="sec" id="how">How this was measured</h2>
+  <p>Scripts in a scratch folder outside the repository (nothing was installed into it). Machine: 13th Gen Intel Core i7-13620H, 16 threads, Node 22.16, Google Chrome 157 driven by Playwright, files served from a local server with gzip on for JavaScript, JSON and WebAssembly (as GitHub Pages does for those types) and no throttled network. Libraries: MiniSearch 7.2.0, FlexSearch 0.8.212, Lunr 2.3.9, Pagefind 1.6.0, Transformers.js 4.3.2 (ONNX Runtime Web 1.31). The site export came from <code>npm run build</code> in this worktree: 46.8 seconds, 1.75 GB of memory at its peak (that build exists today whatever search is chosen).</p>
+  <ul>
+    <li><b>Sizes</b> are bytes of the file a browser would download. "gz" is gzip level 9 (the one GitHub Pages applies). Pagefind and the model files are not compressible by the server, so their raw size is the download.</li>
+    <li><b>Query times</b> come from 50 queries drawn from the corpus (whole words, four-letter beginnings, in each language), run in Chrome after the index is loaded. "4x" means Chrome with its CPU slowed four times, a stand-in for a mid-range phone, not a phone (see "Not measured").</li>
+    <li><b>Turkish and Persian handling</b> is a test on 25 words per language drawn from the corpus itself (words that appear in at least three modules, with ı ğ ş ç ö ü in Turkish and a zero-width non-joiner in Persian), each typed four ways. A word passes when the search returns at least one module that contains it. The recall column is the average share of those modules returned.</li>
+    <li><b>Meaning queries</b> are 16 questions per language written without the module's own title words (for example "how do I stop users from tricking the model into bad answers" for Security), each with the modules a reader would be right to land on. One person labelled them (me, from the module summaries), so read the result as a direction, not a score.</li>
+  </ul>
+
+  <h2 class="sec" id="corpus">The corpus</h2>
+  <p>What an index has to hold, counted from <code>mini-courses/</code>.</p>
+  <div class="tw"><table class="m">
+    <thead><tr><th>Measured</th><th class="n">English</th><th class="n">Turkish</th><th class="n">Persian</th></tr></thead>
+    <tbody>
+      <tr><td>Modules with a page in this language (of 38 listed; 19 are written)</td><td class="n">19</td><td class="n">19</td><td class="n">19</td></tr>
+      <tr><td>Sections indexed (a heading and the text under it)</td><td class="n">289</td><td class="n">289</td><td class="n">289</td></tr>
+      <tr><td>Words in the written modules</td><td class="n">42,006</td><td class="n">35,297</td><td class="n">42,960</td></tr>
+      <tr><td>Text, as JSON, bytes (raw / gzip)</td><td class="n">264,139 / 88,042</td><td class="n">298,555 / 99,405</td><td class="n">406,413 / 109,235</td></tr>
+      <tr><td>Words with a Turkish letter (ı İ ğ ş ç ö ü)</td><td class="n">n/a</td><td class="n">12,431 of 35,297</td><td class="n">n/a</td></tr>
+      <tr><td>Words with a zero-width non-joiner (U+200C)</td><td class="n">n/a</td><td class="n">n/a</td><td class="n">5,789 of 42,960</td></tr>
+      <tr><td>Arabic yeh or kaf (ي ك) in the text</td><td class="n">n/a</td><td class="n">n/a</td><td class="n">0 (the text uses the Persian ی ک, 16,680 and 5,114 times)</td></tr>
+      <tr><td>For Everyone modules written</td><td class="n">0</td><td class="n">0</td><td class="n">0</td></tr>
+    </tbody>
+  </table></div>
+  <p class="note">The three languages hold the same 19 modules, so the section counts match. About a third of Turkish words and about one Persian word in seven would be mishandled by an engine that treats them as English text. Nothing in the Persian corpus uses the Arabic forms of yeh and kaf, so that case concerns what a reader types on an Arabic keyboard, not what is indexed.</p>
+
+  <section class="opt" id="o1">
+    <div class="opt-head"><span class="code">O1</span><h2>A build-time index and a small client library</h2><span class="rec">Recommended</span></div>
+    <div class="opt-text">
+      <div>
+        <p>A script reads the markdown at build time and writes one index file per language. The browser downloads the library and the index the first time the field is focused, and searches in memory. Three libraries were tried on the same sections: MiniSearch, FlexSearch and Lunr.</p>
+        <ul>
+          <li>The smallest download of the real options: 64 to 88 KB of index per language plus a 6 KB library (MiniSearch), and a query takes a fraction of a millisecond.</li>
+          <li>Fields are searchable on their own, so the "titles, prose, code" scope of page N is a query option (tested: for "memory", MiniSearch returns 53 sections over all three fields, 6 for headings only, 44 for prose only and 10 for code only).</li>
+          <li>None of the three handles Turkish or Persian text correctly as shipped (see the tables). A text normaliser of about 25 lines, applied to the index and to the query, fixed every case tested. We own that code.</li>
+          <li>Snippets need the text. Storing it costs another 88 to 109 KB (gzip) per language, loaded with the index or fetched per module.</li>
+        </ul>
+        <p class="why"><b>Why recommended:</b> it is the cheapest to load, has no build tool beyond a short script, and it is the only option here where Turkish and Persian are fully in our hands. The cost is that we write and test the normaliser, and the ranking is ours to tune.</p>
+      </div>
+      <div>
+        <h3>When it loads</h3>
+        <p>On the first focus of the field, never on page load: the library (5.9 KB gzip) and the language's index. Measured first-focus download: English 72.8 KB, Turkish 96.4 KB, Persian 89.2 KB. The index is read into memory in 12 to 21 ms on this machine, 41 to 60 ms with the CPU slowed four times. The first query takes 2 ms (6 to 9 ms slowed).</p>
+        <h3>Cost to build</h3>
+        <p>Indexing one language takes 29 to 36 ms. A script of about 60 lines reads <code>curriculum.yaml</code> and the written modules, and writes three JSON files. One dependency, 6 KB in the browser.</p>
+      </div>
+    </div>
+    <div class="tw"><table class="m">
+      <caption>Index size per language, in bytes (sections as records; text kept apart, for snippets)</caption>
+      <thead><tr><th>Library</th><th class="n">English gz</th><th class="n">Turkish gz</th><th class="n">Persian gz</th><th class="n">Library gz</th><th class="n">Query median</th><th>Note</th></tr></thead>
+      <tbody>
+        <tr><td>MiniSearch 7.2.0</td><td class="n">63,664</td><td class="n">87,690</td><td class="n">79,830</td><td class="n">5,871</td><td class="n">0.10 to 0.30 ms</td><td>Fuzzy and prefix matching, fields, ranking boosts. Measured in Chrome; the index is a JSON file read at load.</td></tr>
+        <tr><td>Lunr 2.3.9</td><td class="n">201,230</td><td class="n">249,263</td><td class="n">231,536</td><td class="n">8,588</td><td class="n">0.06 to 0.10 ms</td><td>Three times larger. Measured in Node.</td></tr>
+        <tr><td>FlexSearch 0.8.212 (forward tokenizer)</td><td class="n">132,375</td><td class="n">210,194</td><td class="n">166,351</td><td class="n">17,725</td><td class="n">0.005 ms</td><td>Fastest query. With its leaner "strict" tokenizer: 67,270 / 99,480 / 88,557, but only whole words. Measured in Node.</td></tr>
+      </tbody>
+    </table></div>
+    <p class="note">MiniSearch's raw index is 282,416 / 402,532 / 345,416 bytes; brotli would make it 51,473 / 71,756 / 64,131, but GitHub Pages serves gzip. The text for snippets is 88,042 / 99,405 / 109,235 bytes gzip per language (shown in "The corpus").</p>
+
+    <div class="tw"><table class="m">
+      <caption>Turkish: 25 corpus words, each typed four ways. Found = at least one right module returned.</caption>
+      <thead><tr><th>Library</th><th class="n">Exact</th><th class="n">ASCII spelling (ş as s, ı as i)</th><th class="n">CAPITALS, Turkish rules (ı to I)</th><th class="n">CAPITALS, English rules (ı stays i)</th></tr></thead>
+      <tbody>
+        <tr class="bad"><td>MiniSearch as shipped</td><td class="n">25/25</td><td class="n fail">0/25</td><td class="n fail">5/25</td><td class="n fail">10/25</td></tr>
+        <tr><td>MiniSearch + our normaliser</td><td class="n">25/25</td><td class="n pass">25/25</td><td class="n pass">25/25</td><td class="n pass">25/25</td></tr>
+        <tr class="bad"><td>Lunr as shipped (English stemmer and stop words)</td><td class="n fail">13/25</td><td class="n fail">0/25</td><td class="n fail">3/25</td><td class="n fail">6/25</td></tr>
+        <tr><td>Lunr + our normaliser (stemmer and stop words off)</td><td class="n">25/25</td><td class="n pass">25/25</td><td class="n pass">25/25</td><td class="n pass">25/25</td></tr>
+        <tr class="bad"><td>FlexSearch as shipped</td><td class="n">25/25</td><td class="n fail">10/25</td><td class="n fail">10/25</td><td class="n fail">10/25</td></tr>
+        <tr><td>FlexSearch + our normaliser</td><td class="n">25/25</td><td class="n pass">25/25</td><td class="n pass">25/25</td><td class="n pass">25/25</td></tr>
+      </tbody>
+    </table></div>
+    <div class="tw"><table class="m">
+      <caption>Persian: 25 corpus words that contain a zero-width non-joiner (ZWNJ), each typed four ways</caption>
+      <thead><tr><th>Library</th><th class="n">Exact, with the ZWNJ</th><th class="n">ZWNJ typed as a space</th><th class="n">ZWNJ left out</th><th class="n">Arabic yeh and kaf (ي ك)</th></tr></thead>
+      <tbody>
+        <tr class="bad"><td>MiniSearch as shipped</td><td class="n">25/25</td><td class="n">25/25 *</td><td class="n fail">0/25</td><td class="n fail">3/25</td></tr>
+        <tr><td>MiniSearch + our normaliser</td><td class="n">25/25</td><td class="n pass">25/25 *</td><td class="n pass">25/25</td><td class="n pass">25/25</td></tr>
+        <tr class="bad"><td>Lunr as shipped</td><td class="n fail">0/25</td><td class="n fail">0/25</td><td class="n fail">0/25</td><td class="n fail">0/25</td></tr>
+        <tr><td>Lunr + our normaliser</td><td class="n">25/25</td><td class="n pass">25/25 *</td><td class="n pass">25/25</td><td class="n pass">25/25</td></tr>
+        <tr class="bad"><td>FlexSearch as shipped</td><td class="n">25/25</td><td class="n">25/25 *</td><td class="n fail">0/25</td><td class="n fail">3/25</td></tr>
+        <tr><td>FlexSearch + our normaliser</td><td class="n">25/25</td><td class="n fail">11/25</td><td class="n pass">25/25</td><td class="n pass">25/25</td></tr>
+      </tbody>
+    </table></div>
+    <p class="note">* A word typed with a space becomes two short words, and an engine that matches any of them returns the module; this counts that as found, and says nothing about the order of the results. Lunr's trimmer treats every character outside A to Z as a non-word character and strips it from the ends of a word: tested directly, it turns the Persian word "می" into nothing and the Turkish "şimdi" into "imdi", so Lunr finds no Persian word as shipped. FlexSearch with our normaliser returns fewer modules for the spaced form because it requires both halves to match.</p>
+    <p class="note">What the normaliser does, per language. Turkish: lower-case with the Turkish rules (I to ı, İ to i), then fold ı ğ ş ç ö ü â î û to their plain letters, so a reader on an English keyboard finds "görev" by typing "gorev". Persian: replace Arabic yeh and kaf with the Persian forms, remove the zero-width non-joiner, the short-vowel marks and the stretching mark, and turn Persian digits into ASCII ones. English: lower-case.</p>
+  </section>
+
+  <section class="opt" id="o2">
+    <div class="opt-head"><span class="code">O2</span><h2>Pagefind, built from the static export</h2></div>
+    <div class="opt-text">
+      <div>
+        <p>Pagefind reads the built HTML pages after the export, writes a set of small index chunks, and its own JavaScript and WebAssembly download only the chunks a query needs. It also stores a short text fragment per page for the snippet and highlights.</p>
+        <ul>
+          <li>Almost no code of our own: one command after <code>npm run build</code>. It returns snippets with the match marked, and sections of a page (6 sections for the first hit in the English test).</li>
+          <li>Its Persian handling is partial (see the table): Arabic yeh and kaf failed on 14 of 25 words, and a ZWNJ typed as a space returned only 74% of the right modules. Turkish ASCII spelling found 22 of 25 words.</li>
+          <li>It searches one body of text per page. Limiting a query to titles or to code, which page N offers, is not an option it has; a separate small titles index would be needed, and code could only be left out (not tested).</li>
+          <li>The exported Persian pages declare <code>&lt;html lang="en"&gt;</code> (measured), so Pagefind would file them under English. The numbers here come from running it once per language with <code>--force-language</code>; the real build would either run it that way or set the page's language.</li>
+        </ul>
+      </div>
+      <div>
+        <h3>When it loads</h3>
+        <p>On first use, from Pagefind's own script: its JavaScript (13.4 KB gzip), a worker (12.4 KB gzip), a WebAssembly file (55 to 60 KB), a small header and the one index chunk the query touches. Measured for one query: English 118.6 KB, Turkish 125.5 KB, Persian 116.0 KB before any result text, and about 7 to 10 KB more for each result's fragment. First query, in Chrome, import and search together: 94, 92 and 99 ms. Warm queries take 0.4 to 0.5 ms.</p>
+        <h3>Cost to build</h3>
+        <p>0.09 to 0.14 seconds per language, after the 46.8-second export that exists today. One dependency (a 13 MB platform binary, used only at build time). The index covers 46 English pages (everything under /courses/, drafts included) and 19 pages each in Turkish and Persian.</p>
+      </div>
+    </div>
+    <div class="tw"><table class="m">
+      <caption>Pagefind index files per language, bytes (already compressed by Pagefind, so the server adds nothing)</caption>
+      <thead><tr><th>Language</th><th class="n">Index chunks (all)</th><th class="n">Chunks loaded by one query</th><th class="n">Result fragments (all pages)</th><th class="n">Script, worker, wasm, header</th><th class="n">First query in Chrome</th></tr></thead>
+      <tbody>
+        <tr><td>English</td><td class="n">126,909</td><td class="n">32,314</td><td class="n">127,993 (46 pages)</td><td class="n">86,237</td><td class="n">94 ms</td></tr>
+        <tr><td>Turkish</td><td class="n">162,765</td><td class="n">39,309</td><td class="n">135,637 (19 pages)</td><td class="n">86,183</td><td class="n">92 ms</td></tr>
+        <tr><td>Persian</td><td class="n">182,583</td><td class="n">34,223</td><td class="n">146,359 (19 pages)</td><td class="n">81,729</td><td class="n">99 ms</td></tr>
+      </tbody>
+    </table></div>
+    <div class="tw"><table class="m">
+      <caption>Pagefind on the same 25 words per language, typed four ways (found = at least one right module)</caption>
+      <thead><tr><th>Turkish</th><th class="n">Exact</th><th class="n">ASCII spelling</th><th class="n">CAPITALS, Turkish rules</th><th class="n">CAPITALS, English rules</th></tr></thead>
+      <tbody><tr><td>Pagefind 1.6.0</td><td class="n">25/25</td><td class="n">22/25 (recall 0.69)</td><td class="n">22/25 (0.69)</td><td class="n">22/25 (0.69)</td></tr></tbody>
+      <thead><tr><th>Persian</th><th class="n">Exact, with the ZWNJ</th><th class="n">ZWNJ typed as a space</th><th class="n">ZWNJ left out</th><th class="n">Arabic yeh and kaf</th></tr></thead>
+      <tbody><tr><td>Pagefind 1.6.0</td><td class="n">25/25</td><td class="n">21/25 (recall 0.74)</td><td class="n">25/25</td><td class="n fail">11/25 (recall 0.31)</td></tr></tbody>
+    </table></div>
+  </section>
+
+  <section class="opt" id="o3">
+    <div class="opt-head"><span class="code">O3</span><h2>Semantic search: embeddings at build time, a model in the browser</h2></div>
+    <div class="opt-text">
+      <div>
+        <p>At build time every section is turned into a vector (a list of 384 numbers) by a model; the vectors ship as a file. In the browser the same model turns the reader's question into a vector and the page finds the nearest sections. Two models were run, both quantised to 8 bits: <code>all-MiniLM-L6-v2</code> (English only) and <code>multilingual-e5-small</code> (100 languages, including Turkish and Persian).</p>
+        <ul>
+          <li>It finds what the reader means, not only the words: "how do I stop users from tricking the model into bad answers" lands on Security. On the 16 meaning queries it put the right module in the top three 13, 9 and 11 times (English, Turkish, Persian), against 9, 9 and 9 for keyword search. An English question also found the right Persian module in the top three 12 times of 16.</li>
+          <li>The download is the cost, and it is large: 129.3 MB for the multilingual model on first use, 30.2 MB for the English-only one (and that one found the right Turkish module 4 times of 16 and the Persian 3).</li>
+          <li>It does not find an exact word as well as it finds a meaning, and it cannot highlight a match. Titles typed as queries were found as well by both (19 of 19 each).</li>
+        </ul>
+      </div>
+      <div>
+        <h3>When it loads</h3>
+        <p>Only on demand, never on page load: the model and its runtime on the first semantic query, the vectors with them. Fetched in Chrome (gzip where the server applies it): multilingual-e5-small 129,329,399 bytes in all (model 118,308,185, tokenizer 3,984,739, ONNX Runtime WebAssembly 6,690,348, Transformers.js 171,573, vectors 155,136). MiniLM: 30,217,258 bytes (model 22,972,370).</p>
+        <p>Time to load and run, on this machine, files from a local server so no network time: model ready in 2.2 s (MiniLM 1.2 s), first query 60 ms (50 ms), later queries 17 ms (7 ms). With the CPU slowed four times: ready in 5.6 s (2.8 s), first query 208 ms (161 ms), later queries 67 ms (30 ms). The download then dominates: 129.3 MB takes about 103 seconds at 10 Mbit/s and about 21 seconds at 50 Mbit/s (30.2 MB takes 24 and 5 seconds).</p>
+        <h3>Cost to build</h3>
+        <p>Embedding the sections takes 7.3, 7.9 and 9.1 s for English, Turkish and Persian with the multilingual model (18 to 23 ms per chunk, on 16 cores), plus a 118 MB model download in CI, which can be cached. Chunks are at most 900 characters: 404 English, 427 Turkish, 401 Persian.</p>
+      </div>
+    </div>
+    <div class="tw"><table class="m">
+      <caption>What ships, per language, bytes</caption>
+      <thead><tr><th>Piece</th><th class="n">English</th><th class="n">Turkish</th><th class="n">Persian</th><th>Note</th></tr></thead>
+      <tbody>
+        <tr><td>Vectors, 8-bit, gzip</td><td class="n">93,564</td><td class="n">99,084</td><td class="n">93,057</td><td>155,136 / 163,968 / 153,984 bytes before gzip. Float32 would be four times larger.</td></tr>
+        <tr><td>Chunk text for snippets, gzip</td><td class="n">81,656</td><td class="n">93,353</td><td class="n">102,036</td><td>Needed to show a snippet; shared with O1's text.</td></tr>
+        <tr><td>The model, once</td><td class="n" colspan="3">118,308,185 (multilingual-e5-small); 22,972,370 (all-MiniLM-L6-v2)</td><td>The server cannot compress it much: gzip gives 78.3 MB and 15.8 MB.</td></tr>
+        <tr><td>Runtime and tokenizer, once</td><td class="n" colspan="3">10.9 MB (e5), 7.1 MB (MiniLM), after gzip</td><td>ONNX Runtime WebAssembly 6.7 MB; the e5 tokenizer is 17.1 MB raw, 4.0 MB gzip.</td></tr>
+      </tbody>
+    </table></div>
+    <div class="tw"><table class="m">
+      <caption>Questions written without the module's own words (16 per language; the right module in the first place, or in the first three)</caption>
+      <thead><tr><th>Method</th><th class="n">English hit@1 / hit@3</th><th class="n">Turkish hit@1 / hit@3</th><th class="n">Persian hit@1 / hit@3</th></tr></thead>
+      <tbody>
+        <tr><td>Keyword (MiniSearch, any word, prefixes, small typos)</td><td class="n">3 / 9</td><td class="n">5 / 9</td><td class="n">3 / 9</td></tr>
+        <tr><td>Semantic, multilingual-e5-small</td><td class="n">6 / 13</td><td class="n">6 / 9</td><td class="n">7 / 11</td></tr>
+        <tr><td>Semantic, all-MiniLM-L6-v2 (English-only model)</td><td class="n">6 / 13</td><td class="n fail">2 / 4</td><td class="n fail">1 / 3</td></tr>
+        <tr><td>Hybrid (keyword and e5 merged by rank)</td><td class="n">6 / 13</td><td class="n">6 / 9</td><td class="n">5 / 13</td></tr>
+        <tr><td>An English question on the Turkish / Persian pages, e5</td><td class="n" colspan="1">n/a</td><td class="n">1 / 9</td><td class="n">2 / 12</td></tr>
+      </tbody>
+    </table></div>
+    <p class="note">The keyword method here has to read a whole sentence, which it does poorly by design (it matches any word). A reader who types one or two words, the usual case for module and level names, does as well with either: all 19 module titles typed as queries came first for both. The questions are in <code>queries.mjs</code> in the scratch folder, one labeller, 16 per language: a direction, not a benchmark.</p>
+    <p class="note">Hosting the model: GitHub Pages sites may be up to 1 GB, but git refuses a single file over 100 MB and the e5 model is 118.3 MB. A site deployed from CI as an artifact may not hit that limit, and the alternative is to let the browser fetch the model from Hugging Face's servers, which is what Transformers.js does by default and which makes every semantic search a request to a third party. Neither was tested.</p>
+  </section>
+
+  <section class="opt" id="o4">
+    <div class="opt-head"><span class="code">O4</span><h2>Hybrid: keyword first, the semantic layer on demand</h2></div>
+    <div class="opt-text">
+      <div>
+        <p>O1 answers every query. A reader who wants more presses one button under the results ("Search by meaning", with its size stated); only then is the model downloaded, once, and kept by the browser. The semantic results are merged with the keyword ones by rank.</p>
+        <ul>
+          <li>The everyday search stays as light as O1: 73 to 96 KB on first focus.</li>
+          <li>Merging helped where keyword alone was weakest: top-three hits on the meaning questions were 13, 9 and 13 (English, Turkish, Persian), against 9, 9 and 9 for keyword alone and 13, 9 and 11 for semantic alone.</li>
+          <li>The cost is complexity: two engines, a merge rule, a download prompt, and two sets of files to build and keep in step. The 129 MB download is for readers who ask for it.</li>
+        </ul>
+        <p class="why"><b>Why not first:</b> on this corpus the gain is on long questions, not on names or single words, and the corpus has 19 written modules today. Keyword search with our normaliser answers the author's stated need (module and level names and their content). O4 can be added later without changing O1: the keyword index stays as is.</p>
+      </div>
+      <div>
+        <h3>When it loads</h3>
+        <p>Keyword part on the first focus, as O1. Semantic part only when the reader presses the button (or never). Sizes and times as O3: 129.3 MB, ready in 2.2 s (5.6 s slowed), 17 ms per later query (67 ms slowed).</p>
+        <h3>Turkish and Persian</h3>
+        <p>The keyword part uses our normaliser (all cases tested pass). The multilingual model needs no normaliser: it handles the Turkish and Persian letters itself.</p>
+        <h3>Cost to build</h3>
+        <p>O1's script, plus O3's embedding step: 7 to 9 s per language and a 118 MB model in CI.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="opt cmp" id="cmp">
+    <h2 class="sec" style="margin-top:0;border-top:0;padding-top:0">Side by side</h2>
+    <div class="tw"><table class="m">
+      <thead><tr><th></th><th>O1 MiniSearch + normaliser</th><th>O2 Pagefind</th><th>O3 Semantic (e5)</th><th>O4 Hybrid</th></tr></thead>
+      <tbody>
+        <tr><td>Index per language (gz)</td><td>64 / 88 / 80 KB (+ text 88 / 99 / 109 KB)</td><td>127 / 163 / 183 KB total; 32 / 39 / 34 KB per query</td><td>94 / 99 / 93 KB vectors (+ text)</td><td>O1 + O3</td></tr>
+        <tr><td>Fixed download</td><td>5.9 KB library</td><td>about 86 KB (script, worker, wasm)</td><td>129.3 MB (model 118.3 MB)</td><td>O1 at first focus; 129.3 MB on request</td></tr>
+        <tr><td>First focus to first answer (Chrome, this machine)</td><td>about 25 to 35 ms fetch + 12 to 21 ms read + 2 ms query</td><td>92 to 99 ms</td><td>2.2 s ready + 60 ms (5.6 s + 208 ms slowed)</td><td>as O1; semantic as O3</td></tr>
+        <tr><td>Query, warm</td><td>0.1 to 0.3 ms (0.6 to 0.8 slowed)</td><td>0.4 to 0.5 ms</td><td>17 ms (67 ms slowed)</td><td>O1 first</td></tr>
+        <tr><td>Loads when</td><td>first focus</td><td>first query</td><td>first semantic query</td><td>keyword on focus, semantic on request</td></tr>
+        <tr><td>Turkish (ASCII spelling, capitals)</td><td class="pass">25/25 in every form</td><td>22/25 in every form</td><td>handled by the model (9 of 16 meaning questions in the top three)</td><td>as O1</td></tr>
+        <tr><td>Persian (ZWNJ, Arabic letters)</td><td class="pass">25/25 in every form</td><td>ZWNJ left out 25/25; spaced 21/25; Arabic letters 11/25</td><td>handled by the model (11 of 16)</td><td>as O1</td></tr>
+        <tr><td>Scopes (titles, prose, code)</td><td>per field, tested</td><td>not an option (separate titles index needed; code can only be left out)</td><td>by chunk kind, built by us</td><td>as O1</td></tr>
+        <tr><td>Snippet and highlight</td><td>from the stored text, ours</td><td>built in</td><td>snippet from the text; no match to mark</td><td>as O1</td></tr>
+        <tr><td>Cost to build</td><td>29 to 36 ms per language; about 60 lines of script</td><td>0.09 to 0.14 s per language; one command and one binary dependency</td><td>7 to 9 s per language; a 118 MB model in CI</td><td>both</td></tr>
+        <tr><td>Our own code</td><td>a normaliser, a build script, ranking</td><td>almost none; a language fix for Persian pages</td><td>a build step and a loader</td><td>all of O1 and O3 plus a merge</td></tr>
+        <tr><td>Meaning questions, top three (en / tr / fa)</td><td>9 / 9 / 9 of 16</td><td>not tested</td><td>13 / 9 / 11 of 16</td><td>13 / 9 / 13 of 16</td></tr>
+      </tbody>
+    </table></div>
+    <p class="note"><b>Recommendation:</b> O1 now. It loads least, answers fastest, is exact on every Turkish and Persian case tested, and supports the scopes page N draws. Keep its index and its snippet text separate from the engine so that O4's semantic layer can be added later, on request, if you decide the 129 MB opt-in is worth it. O2 is the choice if you would rather own no search code at all and accept its Persian gaps (Arabic-letter queries, spaced ZWNJ) and the missing scopes.</p>
+  </section>
+
+  <h2 class="sec" id="unmeasured">What could not be measured</h2>
+  <ul>
+    <li><b>A real phone.</b> There is no phone in this setup. "Slowed four times" is Chrome's CPU throttle on the main thread, which does not slow Pagefind's worker, so no slowed figure is given for Pagefind. A semantic first query on a mid-range phone is therefore not measured; the load and query times above are a lower bound.</li>
+    <li><b>Download time on a real network.</b> The files were served locally, so only sizes were measured. The seconds given for the model are arithmetic from its size at 10 and 50 Mbit/s.</li>
+    <li><b>Multi-threaded WebAssembly.</b> It needs two response headers that GitHub Pages cannot set, so the semantic timings are single-threaded, which is what the real site would get.</li>
+    <li><b>Hosting the 118 MB model</b> on GitHub Pages or from a third party, as noted under O3.</li>
+    <li><b>Search quality beyond the 16 questions per language,</b> and Pagefind and Lunr on those questions. Ranking was not tuned for any engine.</li>
+    <li><b>The For Everyone modules:</b> none is written, so an index of them was not measured. The sizes above are the For Engineers track; a written For Everyone track adds its own index per language, built the same way.</li>
+  </ul>
+  <p class="note">Back to <a href="N-search-placement.html">N, the placement</a>.</p>
+</main>
+</body>
+</html>

@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Round 4 choices, November 2026</title>
+<style>
+:root{
+  --ground:#fdfbf7;--raised:#fff;--sand:#e6dac6;--line:#d8cbb4;--line-2:#c3b299;
+  --ink:#20242e;--title:#1b1b47;--muted:#6a6558;--bar:#282864;--teal:#2f8c86;--brick:#a0503c;
+  --sans:"Avenir Next",ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--ground);color:var(--ink);font:16px/1.6 var(--sans)}
+.bar{background:var(--bar);color:#fff;padding:14px 24px;font-weight:700}
+.band{height:18px;background-color:#282864;background-image:linear-gradient(45deg,#2f8c86 25%,transparent 25% 75%,#2f8c86 75%),linear-gradient(45deg,#c8a078 25%,transparent 25% 75%,#c8a078 75%),linear-gradient(45deg,#a0503c 25%,transparent 25% 75%,#a0503c 75%);background-size:18px 18px,18px 18px,54px 18px;background-position:0 0,9px 9px,27px 0;border-bottom:2px solid #b8873b}
+.wrap{max-width:1000px;margin:0 auto;padding:44px 24px 96px}
+h1{color:var(--title);font-size:34px;line-height:1.15;margin:0 0 12px}
+.lede{color:var(--muted);max-width:66ch;margin:0}
+h2{color:var(--title);font-size:21px;margin:44px 0 8px}
+h2 + p{color:var(--muted);margin:0 0 16px;max-width:70ch}
+.deck{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px}
+.item{display:block;background:var(--raised);border:1px solid var(--line);border-left:4px solid var(--edge,var(--line-2));
+  border-radius:8px;padding:16px 18px;text-decoration:none;color:inherit}
+.item:hover,.item:focus-visible{border-color:var(--line-2);outline:none}
+.item .id{display:inline-block;background:var(--title);color:#fff;border-radius:5px;padding:0 8px;font:700 13px/22px var(--sans);margin-bottom:8px}
+.item b{display:block;font-size:16.5px;color:var(--title);margin-bottom:4px}
+.item p{margin:0;color:var(--muted);font-size:14px;line-height:1.5}
+.item p.rec{margin-top:8px;color:var(--title);font-weight:600}
+table{width:100%;border-collapse:collapse;background:var(--raised);border:1px solid var(--line);border-radius:8px;overflow:hidden}
+th,td{text-align:left;padding:10px 14px;font-size:14.5px;vertical-align:top}
+thead th{background:var(--ground);color:var(--muted);font-weight:600;border-bottom:1px solid var(--line)}
+tbody tr + tr td{border-top:1px solid var(--line)}
+td:first-child{font-weight:700;color:var(--title);width:60px}
+td.pick{color:var(--muted)}
+:focus-visible{outline:2px solid var(--brick);outline-offset:2px}
+</style>
+</head>
+<body>
+<div class="bar">AI Engineering Bazaar · round 4 choices</div>
+<div class="band"></div>
+<div class="wrap">
+  <h1>Pick one option for each question</h1>
+  <p class="lede">Each page shows its options inside a piece of the real site, labelled with a code, with the
+  trade-offs and one recommendation. Write back the codes you pick, for example "N1, O1", and change
+  anything you like. The website gets built from your picks.</p>
+
+  <h2>Search</h2>
+  <p>Milestone M56, issue #43: find a module or a level by its name and by what its pages say. Where it goes, and what runs behind it.</p>
+  <div class="deck">
+    <a class="item" href="N-search-placement.html" style="--edge:#2f8c86"><span class="id">N</span><b>Where search goes</b><p>Six designs, each working on the real module titles at 1440, 1180, 1024, 880, 767 and 390px, with its advanced panel and how one result reads: a wide field in the bar, a palette on a key, a page of its own, an icon that expands, a field in the catalog, a field in the sidebar.</p><p class="rec">Recommended: N1, your wide centred field in the bar, with <kbd>/</kbd> and <kbd>Ctrl</kbd> <kbd>K</kbd> also opening it</p></a>
+    <a class="item" href="O-search-engine.html" style="--edge:#2f8c86"><span class="id">O</span><b>What search runs on</b><p>A build-time index with a small library, Pagefind, semantic search and a hybrid, each measured on the real corpus in English, Turkish and Persian: index size, load, query time, and how each handles ı ğ ş and the zero-width non-joiner.</p><p class="rec">Recommended: O1, an index with MiniSearch and our own text normaliser, loaded on first focus</p></a>
+  </div>
+
+  <h2>Download</h2>
+  <p>Milestone M57, issue #61: download as PDF and Markdown, from the catalog and from each module.</p>
+  <div class="deck">
+    <a class="item" href="P-download-modal.html" style="--edge:#b8873b"><span class="id">P</span><b>The download modal</b><p>The modal where a reader picks modules or whole levels and the format, and where its buttons sit on the catalog and on a module page.</p></a>
+    <a class="item" href="Q-download-files.html" style="--edge:#b8873b"><span class="id">Q</span><b>How downloads are made</b><p>How the Markdown and PDF files are produced with no server, with sample files and what each option adds to the build and to the site.</p></a>
+  </div>
+
+  <h2>Already decided</h2>
+  <table>
+    <thead><tr><th></th><th>Decision</th><th>Where it is written</th></tr></thead>
+    <tbody>
+      <tr><td>1</td><td>Search covers module and level names and their content, by keyword or by meaning, in English, Turkish and Persian.</td><td class="pick">Issue #43, M56</td></tr>
+      <tr><td>2</td><td>Download is offered from the catalog page and from each module, not from the navbar, as PDF and as Markdown.</td><td class="pick">Issue #61, M57</td></tr>
+    </tbody>
+  </table>
+</div>
+</body>
+</html>

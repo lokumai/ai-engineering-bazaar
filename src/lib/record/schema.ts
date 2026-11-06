@@ -97,10 +97,11 @@ export interface Envelope {
 }
 
 /**
- * §12.1.1 — one key, one owning module. The `hl-` prefix is mandatory and is
- * the only isolation available: the origin is `lokumai.github.io`, shared with
- * every other project site the owner publishes, because an origin is a
- * scheme/host/port tuple and excludes the path. `basePath` isolates nothing.
+ * §12.1.1 — one key, one owning module. The `hl-` prefix is mandatory. It was
+ * the only isolation while the site lived on `lokumai.github.io`, an origin
+ * shared with every other project site the owner publishes; since D92 the site
+ * has its own origin, ai-bazaar.lokum.dev, and the prefix is kept so a key can
+ * never collide if the site is ever served from a shared host again.
  */
 export const RECORD_STORAGE_KEY = 'hl-record'
 

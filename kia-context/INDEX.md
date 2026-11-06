@@ -23,7 +23,7 @@ to start work.
 
 **AI Engineering Bazaar** is a short, human-written course on how modern AI systems are actually
 built: **33 modules in 5 levels, 19 of them written, every one in English and Turkish, and the 19 written ones in Persian too.**
-It is free, ungated, and published as a static site at `lokumai.github.io/ai-engineering-bazaar`.
+It is free, ungated, and published as a static site at `ai-bazaar.lokum.dev` (D92; it was `lokumai.github.io/ai-engineering-bazaar`).
 
 Two halves live in one repository and meet at one file. The **corpus** is markdown under
 `mini-courses/`, written by hand by the author. The **application** is a Next.js static export under
@@ -167,7 +167,7 @@ maintained by an agent, and do not need reading to do the work. The root `CLAUDE
 
 ## 6. The numbering, and why it never restarts
 
-`M1…M15` are milestones in `logs/PROGRESS.md` and `M16…M49` are in `logs/PROGRESS_2.md` (M41 on PR #57). `D1…D25` are decisions in `logs/BRAINSTORM.md` and `D26…D91` are in `logs/BRAINSTORM_2.md` (D89 on PR #57), where `O1…O5` are the open questions
+`M1…M15` are milestones in `logs/PROGRESS.md` and `M16…M49` are in `logs/PROGRESS_2.md` (M41 on PR #57). `D1…D25` are decisions in `logs/BRAINSTORM.md` and `D26…D92` are in `logs/BRAINSTORM_2.md` (D89 on PR #57), where `O1…O5` are the open questions
 in `logs/BRAINSTORM_2.md`, of which all four are closed. Rules `1…18` are in
 `specs/MANIFESTO.md`.
 

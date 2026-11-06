@@ -4,7 +4,7 @@
 
 AI Engineering made simple, short, and useful.
 
-📖 **Read online:** [lokumai.github.io/ai-engineering-bazaar](https://lokumai.github.io/ai-engineering-bazaar/)
+📖 **Read online:** [ai-bazaar.lokum.dev](https://ai-bazaar.lokum.dev/)
 
 A reference to help you learn practical topics in modern AI engineering. Our goal with this project is to provide material that includes only the most important parts, and not the details or things that have no significant real-life use. We only discuss practical topics, in an easy-to-understand and fast way, so that beginner researchers and engineers can quickly learn the essentials. It includes pictures, visualizations, code samples, and also external references for further reading, such as YouTube videos, to help you understand the topics better, and sometimes Gen Z-style brain rot, memes or short videos.
 
@@ -12,21 +12,21 @@ A reference to help you learn practical topics in modern AI engineering. Our goa
 
 | Category | Modules | Description |
 | --- | --- | --- |
-| [Fundamentals](https://lokumai.github.io/ai-engineering-bazaar/courses/fundamentals/) | 8 | LLMs, training, RAG, tools, memory, agents, multi-agent systems, observability. **Start here.** |
-| [Intermediate](https://lokumai.github.io/ai-engineering-bazaar/courses/intermediate/) | 8 | Prompt engineering, context engineering, code agents, harness engineering, loop engineering, generative UI, security, personal agents. |
-| [Ecosystem](https://lokumai.github.io/ai-engineering-bazaar/courses/ecosystem/) | 5 | Agent frameworks, inference providers, inference engines, UI design, choosing a tech stack. |
-| [IN PROGRESS] [Expert](https://lokumai.github.io/ai-engineering-bazaar/courses/expert/) | 11 | Advanced tools, memory, multi-agent, prompting, context engineering, coding agents, harness engineering, agent architectures, UI, deployment, training. |
-| [IN PROGRESS] [Protocols & Specs](https://lokumai.github.io/ai-engineering-bazaar/courses/protocols/) | 1 | A single reference of every protocol and spec mentioned across the series. |
+| [Fundamentals](https://ai-bazaar.lokum.dev/courses/fundamentals/) | 8 | LLMs, training, RAG, tools, memory, agents, multi-agent systems, observability. **Start here.** |
+| [Intermediate](https://ai-bazaar.lokum.dev/courses/intermediate/) | 8 | Prompt engineering, context engineering, code agents, harness engineering, loop engineering, generative UI, security, personal agents. |
+| [Ecosystem](https://ai-bazaar.lokum.dev/courses/ecosystem/) | 5 | Agent frameworks, inference providers, inference engines, UI design, choosing a tech stack. |
+| [IN PROGRESS] [Expert](https://ai-bazaar.lokum.dev/courses/expert/) | 11 | Advanced tools, memory, multi-agent, prompting, context engineering, coding agents, harness engineering, agent architectures, UI, deployment, training. |
+| [IN PROGRESS] [Protocols & Specs](https://ai-bazaar.lokum.dev/courses/protocols/) | 1 | A single reference of every protocol and spec mentioned across the series. |
 
 ### How to Use
 
-1. Start with [Fundamentals](https://lokumai.github.io/ai-engineering-bazaar/courses/fundamentals/) to learn must-know concepts in AI Engineering.
-2. Move on to [Intermediate](https://lokumai.github.io/ai-engineering-bazaar/courses/intermediate/) to build your core skills.
-3. Jump to [Ecosystem](https://lokumai.github.io/ai-engineering-bazaar/courses/ecosystem/) to learn the tools and frameworks needed to become a well-rounded AI engineer.
+1. Start with [Fundamentals](https://ai-bazaar.lokum.dev/courses/fundamentals/) to learn must-know concepts in AI Engineering.
+2. Move on to [Intermediate](https://ai-bazaar.lokum.dev/courses/intermediate/) to build your core skills.
+3. Jump to [Ecosystem](https://ai-bazaar.lokum.dev/courses/ecosystem/) to learn the tools and frameworks needed to become a well-rounded AI engineer.
 
 🎉 Congrats! You are now an **AI engineer**. You can now build your own AI agents and systems.
 
-4. ⚜️ [ADVANCED] ⚜️ If you want to become a rare, highly-skilled AI engineer, take the [Expert](https://lokumai.github.io/ai-engineering-bazaar/courses/expert/) course to learn advanced topics.
+4. ⚜️ [ADVANCED] ⚜️ If you want to become a rare, highly-skilled AI engineer, take the [Expert](https://ai-bazaar.lokum.dev/courses/expert/) course to learn advanced topics.
 
 ## Why This Is Valuable
 

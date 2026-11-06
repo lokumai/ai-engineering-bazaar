@@ -1,6 +1,6 @@
 import { expect, test } from '@playwright/test'
 import { readRawRecord, seedRecord, signedSheet, slugOf, waitForHydratedReadout } from './record'
-import { A0 } from './sheets'
+import { A0, INDEX_SHEET } from './sheets'
 
 /**
  * M43 / D91 — the two tracks. Rules that hold for any content: the switch
@@ -237,3 +237,29 @@ test('a track sign carries its icon and its name on one row', async ({ page }) =
     }
   }
 })
+
+for (const reducedMotion of ['no-preference', 'reduce'] as const) {
+  test(`switching the catalog menu's tab lands on that track's levels (${reducedMotion})`, async ({ page }) => {
+    // M47 — with motion the old list leaves and the new one enters; either way
+    // the reader ends on the list of the tab they chose, and only that one.
+    await page.emulateMedia({ reducedMotion })
+    await page.goto(INDEX_SHEET)
+    await page.locator('.bz-bar-nav summary').click()
+    const everyone = page.locator('#bz-menu-panel-everyone')
+    const engineers = page.locator('#bz-menu-panel-engineers')
+    await expect(engineers).toBeVisible()
+    await expect(engineers, 'opening the menu plays the entry').not.toHaveAttribute('data-enter', '')
+
+    await page.getByRole('tab', { name: 'For Everyone' }).click()
+    await expect(everyone).toBeVisible()
+    await expect(engineers).toBeHidden()
+    if (reducedMotion === 'reduce') {
+      await expect(everyone).not.toHaveAttribute('data-enter', '')
+    } else {
+      await expect(everyone, 'the new list arrives with no entry').toHaveAttribute('data-enter', '')
+      const animation = await everyone.locator('li').nth(1).evaluate((li) => getComputedStyle(li).animationName)
+      expect(animation).toBe('bz-menu-enter')
+    }
+    await expect(everyone.locator('.bz-menu-item[data-cat]').first()).toHaveAttribute('href', /\/everyone\/sheets\//)
+  })
+}

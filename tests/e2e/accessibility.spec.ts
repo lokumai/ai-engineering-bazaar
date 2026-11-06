@@ -334,7 +334,7 @@ test('the home page is titled once, and the title claims no state (§15.2.2)', a
   // gives: an expectation read from the same constant the page renders can only
   // prove the constant agrees with itself. A reader's state may never appear in
   // it — "Welcome back" would be a lie for anybody the build has never met.
-  await expect(h1).toHaveText('AI engineering, written by the people who build it.')
+  await expect(h1).toHaveText('AI Engineering, written by the people who build it.')
   expect(await h1.innerText()).not.toMatch(/\b(you|your|welcome|back)\b/i)
 
   /* M18 — NOTHING on this page is keyed to the reader's record any more, which

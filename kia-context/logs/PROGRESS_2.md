@@ -21,7 +21,7 @@ description: >
 authority: state
 writes: agent, every session
 status: active
-covers: "M16 to M40 and M42 to M46 (M41 on PR #57), 2026-09-09 onward — M16 the ten stages and the review pass, M17 the curriculum fold, M18 the front door, M20 the catalog's descriptions, M21 the module page, M22 the progress redesign and M19's pipeline, all six done; M23 — the interface's own strings — is written and not started; M24 — the author's requests of 2026-10-11 — shipped and merged as PR #23, with a same-day follow-up (the level chip `All`, a filter bar that no longer sticks, the current level marked); M25 — the end of a module rebuilt, and a quick quiz — shipped and merged as PR #25; M26 — headings, the requested additions and ASD-STE-like English across the corpus — merged as PR #26. M27 — the Bazaar Street front door — merged as PR #27. Released as v1.0.0 on 2026-10-12. M28 — Persian, the third language — merged as PR #30 the same day. M29 — both translations rewritten in their own language (D81) — merged as PR #31 the same day. M30 — the Persian rewritten by meaning and a clarity hunt in all three languages (D82, D83) — merged as PR #32 the same day. M31 — two promo videos, one made with HyperFrames and one with /brag (D84) — removed at the author's request before merging. M32 — the README rewritten for readers — squash-merged as PR #33 on 2026-10-13. M33 — a tray of lokum offered at each door on hover — merged as PR #34 on 2026-10-14. M34 — the star count refreshed by the deploy (D85) — merged as PR #36 on 2026-10-15. M35 — Harness Engineering names its parts in plain words — merged as PR #38 on 2026-10-15. M36 — three references for Observability and Context Engineering — merged as PR #42 on 2026-10-18. M37 — ten stale mockups removed from playground/ — merged as PR #54 on 2026-11-05. M38 — the progress page slimmed to its circles, the continue card and the data row — merged as PR #55 on 2026-11-05. M43 to M45 — the round-2 picks (D91) — merged as PR #59 on 2026-11-05. M46 — the home page tidied and Iran's flag for Persian — merged as PR #60 the same day. Checkbox format repaired across the part on 2026-09-13."
+covers: "M16 to M40 and M42 to M48 (M41 on PR #57), 2026-09-09 onward — M16 the ten stages and the review pass, M17 the curriculum fold, M18 the front door, M20 the catalog's descriptions, M21 the module page, M22 the progress redesign and M19's pipeline, all six done; M23 — the interface's own strings — is written and not started; M24 — the author's requests of 2026-10-11 — shipped and merged as PR #23, with a same-day follow-up (the level chip `All`, a filter bar that no longer sticks, the current level marked); M25 — the end of a module rebuilt, and a quick quiz — shipped and merged as PR #25; M26 — headings, the requested additions and ASD-STE-like English across the corpus — merged as PR #26. M27 — the Bazaar Street front door — merged as PR #27. Released as v1.0.0 on 2026-10-12. M28 — Persian, the third language — merged as PR #30 the same day. M29 — both translations rewritten in their own language (D81) — merged as PR #31 the same day. M30 — the Persian rewritten by meaning and a clarity hunt in all three languages (D82, D83) — merged as PR #32 the same day. M31 — two promo videos, one made with HyperFrames and one with /brag (D84) — removed at the author's request before merging. M32 — the README rewritten for readers — squash-merged as PR #33 on 2026-10-13. M33 — a tray of lokum offered at each door on hover — merged as PR #34 on 2026-10-14. M34 — the star count refreshed by the deploy (D85) — merged as PR #36 on 2026-10-15. M35 — Harness Engineering names its parts in plain words — merged as PR #38 on 2026-10-15. M36 — three references for Observability and Context Engineering — merged as PR #42 on 2026-10-18. M37 — ten stale mockups removed from playground/ — merged as PR #54 on 2026-11-05. M38 — the progress page slimmed to its circles, the continue card and the data row — merged as PR #55 on 2026-11-05. M43 to M45 — the round-2 picks (D91) — merged as PR #59 on 2026-11-05. M46 — the home page tidied and Iran's flag for Persian — merged as PR #60 the same day. Checkbox format repaired across the part on 2026-09-13."
 last_updated: 2026-11-05
 ---
 
@@ -4537,6 +4537,50 @@ under them; and give Persian Iran's flag.
       a row (390 and 1440), and every language in the menu carries a flag.
 - [x] The full gate is green: typecheck; 1,154 unit and corpus tests; the base-path build and its
       link gate; the browser suite, 466 passed and 10 skipped.
+
+## 🏁 Milestone M47: "AI Engineering" in capitals, and the catalog menu's tabs that visibly switch — IN PROGRESS
+
+Branch `feat/round-3`, from `main` at `15316aa`. The author, 2026-11-06: *"make the first letters of
+'AI Engineering' both capital"*, and when the catalog's For Engineers / For Everyone switch
+changes, *"some quick appearance-disappearance animation should happen for the levels below it so
+people can really feel they are switching something"*.
+
+### Deliverables
+
+- [x] The home page's headline and lede read "AI Engineering"; the tests that pin the headline
+      follow.
+- [x] In the catalog menu, changing tab plays a short leave on the old level list and a staggered
+      entry on the new one, as keyframe animations (the stylesheet guard bans transitions of
+      opacity and transform); with reduced motion the lists swap at once.
+
+### Acceptance criteria
+
+- [x] The animation is seen in a screenshot sequence (0 to 400ms after the click: the old list
+      fades out left, then the new rows come in 28ms apart), and a browser test proves the switch
+      lands on the chosen tab's list with and without reduced motion, and that opening the menu
+      plays no entry; forcing the no-motion path fails it.
+- [ ] The full gate is green, and the PR is merged.
+
+## 🏁 Milestone M48: Round-3 playground — a woman's hand, and the people at the gate — IN PROGRESS
+
+The author, 2026-11-06, asked for options before anything is built. The hand writing in the "No
+AI Slop" stall becomes a woman's (three samples). The opening of the home page gains people, in
+the headline band, at the gate or both: women, men and a child, with different skin tones and
+faces, and an AI robot that, as the reader scrolls, turns and escapes through the gate while the
+others chase it (three samples for each decision).
+
+### Deliverables
+
+- [ ] `playground/2026-11-round-3/K-woman-hand.html`: K1 to K3, three women's hands on the G1b
+      scene.
+- [ ] `playground/2026-11-round-3/L-gate-characters.html`: L1 where the people stand, L2 the cast
+      and its look, L3 the robot's escape on scroll, three options each.
+- [ ] `playground/2026-11-round-3/index.html` lists both pages.
+
+### Acceptance criteria
+
+- [ ] Every option is read in a screenshot before it is shown to the author.
+- [ ] The author picks; building the picks is a later milestone.
 
 ---
 

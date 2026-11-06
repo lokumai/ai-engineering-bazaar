@@ -69,7 +69,7 @@ test('a clean browser meets the whole page, and it claims nothing about the read
   // 2026-09-11, so what is asserted is what remains true: the page opens with
   // sentences about the course, and not one of them is about the reader.
   await expect(page.locator('main h1')).toHaveText(
-    'AI engineering, written by the people who build it.',
+    'AI Engineering, written by the people who build it.',
   )
   const lede = (await page.locator('.bz-lede').innerText()).trim()
   expect(lede.length, 'the front door says nothing at all').toBeGreaterThan(40)
@@ -240,7 +240,7 @@ test('a level door opens that level, and the page it leaves still works', async 
   await expect(page).toHaveURL(new RegExp(`${INDEX_SHEET}${level}/$`))
   await page.goBack()
   await expect(page.locator('main h1')).toHaveText(
-    'AI engineering, written by the people who build it.',
+    'AI Engineering, written by the people who build it.',
   )
 
   expect(problems.consoleErrors).toEqual([])

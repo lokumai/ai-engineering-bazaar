@@ -264,11 +264,11 @@ export default function HomePage() {
             {/* §15.2.2 — one h1 for one document. The break is the author's line
                 break; the space before it keeps the text one sentence. */}
             <h1 id="home-title" className={`bz-hero-title ${display.className}`}>
-              AI engineering,{' '}
+              AI Engineering,{' '}
               <br />
               written by the people who build it.
             </h1>
-            <p className="bz-lede">AI engineering, made simple, short and useful.</p>
+            <p className="bz-lede">AI Engineering, made simple, short and useful.</p>
             <Link className="bz-btn" href={INDEX_ROUTE}>
               Open the curriculum
             </Link>

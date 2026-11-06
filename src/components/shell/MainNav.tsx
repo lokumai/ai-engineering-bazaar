@@ -194,6 +194,9 @@ function Chevron() {
  */
 const CLOSE_DELAY_MS = 260
 
+/** How long the old level list takes to leave when the menu's tab switches (M47). */
+const LEAVE_MS = 110
+
 export function MainNav({ categories }: { categories: readonly CategoryLabel[] }) {
   const pathname = usePathname() ?? '/'
   /* M39 D2 — the menu's two tabs. The tab of the track the reader is in is the
@@ -202,6 +205,33 @@ export function MainNav({ categories }: { categories: readonly CategoryLabel[] }
   const readingTrack: Track = useReadingTrack(pathname)
   const pageTrack = trackOfPath(pathname)
   const [tab, setTab] = useState<Track>('engineers')
+  /* M47 — a switch the reader can feel: the old list leaves, then the new one's
+     rows come in one after another. `leaving` holds the list on screen for the
+     leave; `entered` marks the list that arrived by a switch, so opening the
+     menu itself does not play the entry. Reduced motion swaps at once. */
+  const [leaving, setLeaving] = useState<Track | null>(null)
+  const [entered, setEntered] = useState<Track | null>(null)
+  const leaveTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
+  useEffect(() => () => {
+    if (leaveTimer.current !== null) clearTimeout(leaveTimer.current)
+  }, [])
+  function switchTab(next: Track): void {
+    if (next === tab && leaving === null) return
+    if (leaveTimer.current !== null) clearTimeout(leaveTimer.current)
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      setLeaving(null)
+      setEntered(null)
+      setTab(next)
+      return
+    }
+    setLeaving(tab)
+    setTab(next)
+    leaveTimer.current = setTimeout(() => {
+      setLeaving(null)
+      setEntered(next)
+      leaveTimer.current = null
+    }, LEAVE_MS)
+  }
   const panel = useRef<HTMLDetailsElement>(null)
   /**
    * The PANEL, not the disclosure — and the difference is the whole of a bug
@@ -350,7 +380,11 @@ export function MainNav({ categories }: { categories: readonly CategoryLabel[] }
                 <details
                   ref={panel}
                   onToggle={(event) => {
-                    if (event.currentTarget.open) setTab(readingTrack)
+                    if (event.currentTarget.open) {
+                      setTab(readingTrack)
+                      setLeaving(null)
+                      setEntered(null)
+                    }
                   }}
                   onPointerLeave={leave}
                   onPointerEnter={cancelClose}
@@ -384,7 +418,7 @@ export function MainNav({ categories }: { categories: readonly CategoryLabel[] }
                           aria-selected={tab === one.id}
                           tabIndex={tab === one.id ? 0 : -1}
                           className="bz-menu-tab"
-                          onClick={() => setTab(one.id)}
+                          onClick={() => switchTab(one.id)}
                           onKeyDown={(event) => {
                             // The ARIA tabs pattern: arrows and Home / End move
                             // between the two and select; Tab goes on into the list.
@@ -396,7 +430,7 @@ export function MainNav({ categories }: { categories: readonly CategoryLabel[] }
                               : null
                             if (to === null) return
                             event.preventDefault()
-                            setTab(TRACKS[to].id)
+                            switchTab(TRACKS[to].id)
                             document.getElementById(`bz-menu-tab-${TRACKS[to].id}`)?.focus()
                           }}
                         >
@@ -410,7 +444,9 @@ export function MainNav({ categories }: { categories: readonly CategoryLabel[] }
                         role="list"
                         id={`bz-menu-panel-${one.id}`}
                         aria-labelledby={`bz-menu-tab-${one.id}`}
-                        hidden={tab !== one.id}
+                        hidden={leaving !== null ? leaving !== one.id : tab !== one.id}
+                        data-leave={leaving === one.id ? '' : undefined}
+                        data-enter={leaving === null && entered === one.id ? '' : undefined}
                       >
                         {/* The whole curriculum, named here because a
                             disclosure cannot also be a link. */}
@@ -425,8 +461,8 @@ export function MainNav({ categories }: { categories: readonly CategoryLabel[] }
                             <span className="bz-menu-count">All</span>
                           </Link>
                         </li>
-                        {categories.map((category) => (
-                          <li key={category.slug}>
+                        {categories.map((category, i) => (
+                          <li key={category.slug} style={{ '--bz-menu-row': i + 1 } as React.CSSProperties}>
                             <Link
                               href={catalogRoute(one.id, category.slug)}
                               className="bz-menu-item"

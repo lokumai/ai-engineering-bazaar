@@ -5,28 +5,9 @@
 Reasoning and prompting strategies that go well beyond the basics from Prompt Engineering.
 
 **Topics this module will cover**:
+- Forcing structured output. Asking for a format in the prompt works most of the time, but it is fragile. **Constrained decoding** guarantees the format instead: when the model picks its next token, the pool of possible tokens is filtered by a grammar, so only tokens that keep the output valid can be chosen. Libraries such as [Outlines](https://github.com/dottxt-ai/outlines) and [XGrammar](https://github.com/mlc-ai/xgrammar) do this, and most LLM APIs, local and cloud, support it out of the box.
 - Reflexion
 - Tree of Thought
 - LLM Council
 - Caveman
 - Ponytail
-
-## Tutorial Progress
-
-```mermaid
-graph LR
-    A[Advanced Tools] --> B[Advanced Memory]
-    B --> C[Advanced Multi-Agent]
-    C --> D[Advanced Prompting]
-    D --> E[Adv. Context Eng.]
-    E --> F[Adv. Coding Agents]
-    F --> G[Adv. Harness Eng.]
-    G --> H[Adv. Agent Arch.]
-    H --> I[Advanced UI]
-    I --> J[Advanced Deployment]
-    J --> K[Advanced Training]
-    style A fill:#90EE90
-    style B fill:#90EE90
-    style C fill:#90EE90
-    style D fill:#FFFF00
-```

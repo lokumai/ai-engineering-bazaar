@@ -4,7 +4,8 @@ description: >
   the plan of what was left after the round-3 playground (the order table and the gate every build
   ends on), then M50 to M62: the round-3 art finished, the catalog without its Sources count, round 3
   built on the home page, search, the content phase, a certificate still to decide, download
-  cancelled, Emerging Trends, and Caravan. Each milestone carries its deliverables and acceptance
+  cancelled, Emerging Trends, Caravan, the gate revised (M63), and content revision 4
+  (M64 to M69). Each milestone carries its deliverables and acceptance
   criteria as `- [ ]` checkboxes, ticked as the work lands, and closes with a dated report; the loop
   that governs that is in part 1.
   NOT here: why a choice was made (BRAINSTORM.md), or any rule that outlives the milestone
@@ -12,7 +13,7 @@ description: >
 authority: state
 writes: agent, every session
 status: active
-covers: "M50 to M63, 2026-11-06 onward"
+covers: "M50 to M69, 2026-11-06 onward"
 last_updated: 2026-11-06
 ---
 
@@ -642,6 +643,126 @@ that the walk draws the people larger than the still picture at the same window 
 `WALK_GROW` at 1); the caption test in `home.spec.ts` reads the accessible name, since a caption now
 holds its hidden story. **Gate:** typecheck, 1,153 unit tests, the link check, 496 browser tests
 passed and 10 skipped.
+
+---
+
+## Content revision 4: M64 to M69
+
+The author, 2026-11-06, in one message of six content changes (issues #39, #48, #49, #50 and two
+new modules), approved as M64 to M69 after four questions: the RAG figure the message named is the
+one already in `rag.md`; Agents in Practice is written twice, as the engineer page and as the first
+For Everyone page (which settles M52's first module); Advanced Training is split into Advanced
+Fine-tuning and Advanced Post-training and retired (D101); and the text moved out of Loop
+Engineering shows on its planned page now. One branch, `feat/content-revision-4`, one PR. Each
+milestone is reviewed by two Haiku reviewers at xhigh from different angles; the PR by one Sonnet
+High subagent and one Gemini 3.8 Flash High run, then fixed and merged.
+
+## 🏁 Milestone M64: The planned modules scaffolded — DONE
+
+### Deliverables
+
+- [x] **Advanced LLM**, first in Expert: transformers as the author explains them (why, without
+      softmax, encoder or decoder), the inference loop, MoE, prefill and decode, the
+      model-norm-position-attention-KV-FFN-sparse table, static and continuous batching, serving
+      metrics (TTFT, generation speed), speculative decoding; plus self-supervised pre-training
+      from the retired Advanced Training.
+- [x] **Advanced RAG & Embeddings**, before Advanced Tools, with the author's topic list.
+- [x] **Advanced Loop Engineering**, after Advanced Harness Engineering (its body arrives in M67).
+- [x] **Advanced Fine-tuning** and **Advanced Post-training**, at the end of Expert; **Advanced
+      Training retired** end to end, its old address forwarded.
+- [x] **Forcing Structured Output** is the first topic of Advanced Prompting (#39), carrying the
+      brief: prompting is fragile, constrained decoding filters the next-token pool by a grammar,
+      Outlines and xgrammar, and most APIs support it.
+- [x] `curriculum.yaml`, `topics.txt` and `lokum-modules.css` agree with the files.
+
+### Acceptance criteria
+
+- [x] Every new module has its `.md` and `_tr.md`; no `_fa.md` for a planned module; the full gate
+      green and `/courses/expert/advanced-training/` forwards.
+
+**Report, 2026-11-06.** Five placeholder modules in English and Turkish: Advanced LLM first in
+Expert, Advanced RAG & Embeddings before Advanced Tools, Advanced Loop Engineering after Advanced
+Harness Engineering, Advanced Fine-tuning and Advanced Post-training at the end. Advanced Training
+is removed end to end (D101): its two files, its line, the pointer in Training LLMs (all three
+languages now point self-supervised learning at Advanced LLM), the ROADMAP line, and the retired
+title on every Expert page's hand-drawn progress map, which the site strips and which were removed;
+`/courses/expert/advanced-training/` forwards to Advanced Post-training. Advanced Prompting opens
+with Forcing Structured Output (#39), linking Outlines and XGrammar, whose repositories were
+checked. `curriculum.yaml`, `topics.txt` (renumbered: the five new lines take positions 17, 18,
+26, 31 and 32) and `lokum-modules.css` regenerated. **Gate:** typecheck, 1,153 unit tests, the
+build and the link check.
+
+## 🏁 Milestone M65: Memory's two kinds weighed, and RAG measured (#50) — PLANNED
+
+### Deliverables
+
+- [ ] **Memory**: a pros and cons table beside the side-by-side comparison. Its sharpest row: what
+      is retrieved can be cited and is live; what is in the weights is frozen and has no source.
+- [ ] **RAG & Embeddings**: "Why Not Just Fine-tune" gains that RAG is citable, verifiable and
+      traceable and fine-tuning is not; a short section on measuring retrieval (Recall@k,
+      Precision@k, MRR, nDCG@k) where the flow needs it.
+- [ ] Turkish, Persian and both quizzes follow.
+
+### Acceptance criteria
+
+- [ ] Every formula's arithmetic checked by hand on a worked example; the gate green.
+
+## 🏁 Milestone M66: Where an agent finds current docs: llms.txt, MCP, Context7 (#49) — PLANNED
+
+### Deliverables
+
+- [ ] In Context Engineering, "Using a Knowledge Base as Explorable Context" moves after
+      "Explicit Planning (TODOs)" and, before DeepWiki, tells the story: knowledge cutoff, then
+      `llms.txt` (a three-line example), then docs as MCP tools, then Context7 as one MCP server
+      for many libraries; the existing figure stays.
+- [ ] Turkish, Persian and the quiz follow.
+
+### Acceptance criteria
+
+- [ ] Every link fetched and titled from the page; the gate green.
+
+## 🏁 Milestone M67: Loop Engineering split into intermediate and advanced (#48) — PLANNED
+
+### Deliverables
+
+- [ ] Agent Teams, Dynamic Workflows and Recursive Language Models move whole, with their figures
+      and tables, into Advanced Loop Engineering, in English and Turkish.
+- [ ] Loop Engineering keeps a short section saying these techniques exist and where they are
+      taught; its summary, references, quiz and translations follow.
+
+### Acceptance criteria
+
+- [ ] No paragraph lost: every moved paragraph is found verbatim in the advanced file; the gate green.
+
+## 🏁 Milestone M68: Agents in Practice, Claude Duet, and the Claude logo — PLANNED
+
+### Deliverables
+
+- [ ] **Agents in Practice**, after Code Agents: why take these courses and why Claude, then one
+      section per Claude Academy course with what it is and who it is for. The engineer page:
+      Claude 101, Claude Code 101, Claude Code in Action, Introduction to Claude Cowork. The For
+      Everyone page (`everyone/agents_in_practice.md`, the first one): Claude 101, Claude Code 101
+      as optional, Introduction to Claude Cowork. Cowork is explained against Duet, with a note in
+      parentheses not to confuse them. English, Turkish, Persian, and a quiz.
+- [ ] **Claude Duet** in Personal Agents, with the three languages.
+- [ ] **An inline logo**: the Claude logo, at text height, in both themes.
+
+### Acceptance criteria
+
+- [ ] Every course link fetched and described from its page; the For Everyone page renders on the
+      For Everyone track; the gate green.
+
+## 🏁 Milestone M69: Vendor logos where modules name them — PLANNED
+
+### Deliverables
+
+- [ ] A Sonnet High audit of where modules name an agent or vendor, and a logo placed where it
+      helps the reader find the thing.
+- [ ] Each SVG checked visually by a Haiku reviewer at xhigh before it is used, in both themes.
+
+### Acceptance criteria
+
+- [ ] Every logo file is the vendor's own mark or Simple Icons', unaltered; the gate green.
 
 ---
 

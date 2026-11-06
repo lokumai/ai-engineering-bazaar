@@ -115,7 +115,9 @@ categories:
         status: ready
         minutes: 30
         needs: [harness_engineering]
-        notes: Agent Teams, Dynamic Workflows, Rubric Evals
+        notes: >-
+          Rubric Evals; Agent Teams, Dynamic Workflows and RLMs moved to
+          Advanced Loop Engineering (issue #48)
       - name: ui
         title: Generative UI
         status: draft
@@ -138,8 +140,30 @@ categories:
   - slug: expert
     title: Expert
     status: draft
-    blurb: Tools, memory, multi-agent, prompting, context, coding agents, harnesses, architectures, UI, deployment, training.
+    blurb: Inside the LLM, advanced RAG, tools, memory, multi-agent, prompting, context, coding agents, harnesses, loops, architectures, UI, deployment, evaluation, fine-tuning and post-training.
     modules:
+      - name: advanced_llm
+        title: Advanced LLM
+        status: draft
+        notes: >-
+          Transformers using Amirkia's explanation of why, without softmax,
+          encoder, decoder or other neural-network and foundation-model detail;
+          self-supervised learning in pre-training (from the retired Advanced
+          Training); LLM inference loop; MoE; prefill vs. decode;
+          model-norm-position-attention-KV-FFN-sparse table or selection;
+          static vs. continuous batching; serving metrics (TTFT, generation
+          speed); speculative decoding
+      - name: advanced_rag
+        title: Advanced RAG & Embeddings
+        status: draft
+        notes: >-
+          RAG vs. long context vs. fine-tuning, ingesting data, chunking
+          strategies (fixed size, sliding window, recursive, document-based,
+          semantic chunking), indexing hyperparameters, retrieval (semantic
+          and/or BM25, reranker cross-encoder), bi-encoder vs. cross-encoder,
+          hybrid retrieval, Anthropic's contextual retrieval, correct vs.
+          faithful, architectures (naive RAG, HyDE, corrective RAG, multi-hop
+          RAG, GraphRAG, agentic RAG, multimodal RAG), RAG security
       - name: advanced_tools
         title: Advanced Tools
         status: draft
@@ -163,6 +187,10 @@ categories:
         title: Advanced Prompting
         status: draft
         notes: >-
+          issue #39, first topic: Forcing Structured Output (prompting is
+          fragile; constrained decoding filters the next-token pool by a
+          grammar; Outlines https://github.com/dottxt-ai/outlines, xgrammar
+          https://github.com/mlc-ai/xgrammar, most LLM APIs support it). Then
           Reflextion and Self-critique, Tree of Thought, LLM Consul, caveman,
           ponytail, ADHD
       - name: advanced_context_engineering
@@ -185,6 +213,12 @@ categories:
           harness profiles, system prompts, changing tool names, self evolving
           harnessess, context and harness embedded in llm anthtropic article:
           https://claude.com/blog/the-new-rules-of-context-engineering-for-claude-5-generation-models
+      - name: advanced_loop_engineering
+        title: Advanced Loop Engineering
+        status: draft
+        notes: >-
+          issue #48. Agent Teams, Dynamic Workflows and RLMs, moved here from
+          Loop Engineering
       - name: advanced_agent_architectures
         title: Advanced Agent Architectures
         status: draft
@@ -210,12 +244,23 @@ categories:
           ROUGE (overlap or recall), METEOR (penalizing order), accuracy and
           precision, cosine similarity (BERTScore). Dynamic and subjective
           metrics: faithfulness, LLM-as-judge, human preference
-      - name: advanced_training
-        title: Advanced Training
+      - name: advanced_fine_tuning
+        title: Advanced Fine-tuning
         status: draft
         notes: >-
-          self-supervised learning in pre-training, post-training, RL and RLHF,
-          preference alignment, DPO, PPO, GRPO, knowledge distillation
+          Full Fine-Tuning: What Actually Changes?, Why Full Fine-Tuning Is
+          Expensive, Why Parameter-Efficient Fine-Tuning (PEFT)?, LoRA, One
+          Frozen Model: Save and Swap LoRA Adapters
+      - name: advanced_post_training
+        title: Advanced Post-training
+        status: draft
+        notes: >-
+          Model Alignment & Post-Training, Why Preference Tuning, Preference
+          Data Formats, RLHF, Prompt Policy and Reward, Reward Model: Learning
+          From a Preferred Pair, What Exactly Is a Policy Model?, PPO, SFT vs.
+          DPO: One Training Example, DPO, GRPO, PPO vs. GRPO: Which Models Are
+          Needed?, RLAIF; knowledge distillation (from the retired Advanced
+          Training)
 
   - slug: ecosystem
     title: Ecosystem

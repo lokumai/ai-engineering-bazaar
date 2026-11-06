@@ -43,7 +43,7 @@ selection has something real to work from.
 
 ## 4. Advanced material
 
-The Expert track, from Advanced UI through Advanced Training. This waits for the Intermediate tier
+The Expert track, from Advanced LLM through Advanced Post-training. This waits for the Intermediate tier
 deliberately: the advanced modules assume the vocabulary the earlier ones establish, and writing
 them first would mean writing them twice.
 

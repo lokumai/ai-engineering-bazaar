@@ -46,7 +46,7 @@ Ortaya çıkan şey **genel amaçlı** bir model: birçok işte iyi, ama hiçbir
 > gizliyor, bir tahmin yapıyor ve bu tahmini gerçekte orada olan kelimeyle karşılaştırıyor. Yani
 > veri kendi kendini etiketliyor ve buna **self-supervised learning** denir. Diyagramlarda ise bu
 > çoğu zaman "unsupervised" diye geçer. Bunu tam olarak
-> [İleri Seviye Training](../3_expert/advanced_training_tr.md) modülünde anlatıyoruz.
+> [İleri Seviye LLM](../3_expert/advanced_llm_tr.md) modülünde anlatıyoruz.
 
 ## Pre-training Yapmak Zorunda Değil misin?
 

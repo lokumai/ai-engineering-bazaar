@@ -9,7 +9,7 @@
    there has to be. What the generator removes is writing them out by hand,
    keyed on a number the curriculum computes.
 
-   38 modules, 19 of them drawn. */
+   42 modules, 19 of them drawn. */
 
 @layer components {
   /* A. Every module. The segment fills with its own category's hue.
@@ -53,7 +53,11 @@
   html.hl-signed-35 [data-track="engineers"] .bz-seg[data-module="35"],
   html.hl-signed-36 [data-track="engineers"] .bz-seg[data-module="36"],
   html.hl-signed-37 [data-track="engineers"] .bz-seg[data-module="37"],
-  html.hl-signed-38 [data-track="engineers"] .bz-seg[data-module="38"] {
+  html.hl-signed-38 [data-track="engineers"] .bz-seg[data-module="38"],
+  html.hl-signed-39 [data-track="engineers"] .bz-seg[data-module="39"],
+  html.hl-signed-40 [data-track="engineers"] .bz-seg[data-module="40"],
+  html.hl-signed-41 [data-track="engineers"] .bz-seg[data-module="41"],
+  html.hl-signed-42 [data-track="engineers"] .bz-seg[data-module="42"] {
     background: var(--bz-cat);
     border-color: var(--bz-cat);
   }
@@ -81,10 +85,10 @@
   html.hl-signed-13 [data-track="engineers"] .bz-item[data-module="13"] .bz-tick,
   html.hl-signed-15 [data-track="engineers"] .bz-item[data-module="15"] .bz-tick,
   html.hl-signed-16 [data-track="engineers"] .bz-item[data-module="16"] .bz-tick,
-  html.hl-signed-29 [data-track="engineers"] .bz-item[data-module="29"] .bz-tick,
-  html.hl-signed-30 [data-track="engineers"] .bz-item[data-module="30"] .bz-tick,
-  html.hl-signed-31 [data-track="engineers"] .bz-item[data-module="31"] .bz-tick,
-  html.hl-signed-32 [data-track="engineers"] .bz-item[data-module="32"] .bz-tick {
+  html.hl-signed-33 [data-track="engineers"] .bz-item[data-module="33"] .bz-tick,
+  html.hl-signed-34 [data-track="engineers"] .bz-item[data-module="34"] .bz-tick,
+  html.hl-signed-35 [data-track="engineers"] .bz-item[data-module="35"] .bz-tick,
+  html.hl-signed-36 [data-track="engineers"] .bz-item[data-module="36"] .bz-tick {
     display: grid;
   }
 
@@ -107,10 +111,10 @@
   html.hl-signed-13 [data-track="engineers"] .bz-cmod[data-module="13"] .bz-cmod-mark,
   html.hl-signed-15 [data-track="engineers"] .bz-cmod[data-module="15"] .bz-cmod-mark,
   html.hl-signed-16 [data-track="engineers"] .bz-cmod[data-module="16"] .bz-cmod-mark,
-  html.hl-signed-29 [data-track="engineers"] .bz-cmod[data-module="29"] .bz-cmod-mark,
-  html.hl-signed-30 [data-track="engineers"] .bz-cmod[data-module="30"] .bz-cmod-mark,
-  html.hl-signed-31 [data-track="engineers"] .bz-cmod[data-module="31"] .bz-cmod-mark,
-  html.hl-signed-32 [data-track="engineers"] .bz-cmod[data-module="32"] .bz-cmod-mark {
+  html.hl-signed-33 [data-track="engineers"] .bz-cmod[data-module="33"] .bz-cmod-mark,
+  html.hl-signed-34 [data-track="engineers"] .bz-cmod[data-module="34"] .bz-cmod-mark,
+  html.hl-signed-35 [data-track="engineers"] .bz-cmod[data-module="35"] .bz-cmod-mark,
+  html.hl-signed-36 [data-track="engineers"] .bz-cmod[data-module="36"] .bz-cmod-mark {
     display: inline-flex;
   }
 
@@ -139,10 +143,10 @@
   html.hl-signed-13 [data-track="engineers"] .bz-cmod[data-module="13"] .bz-cmod-said,
   html.hl-signed-15 [data-track="engineers"] .bz-cmod[data-module="15"] .bz-cmod-said,
   html.hl-signed-16 [data-track="engineers"] .bz-cmod[data-module="16"] .bz-cmod-said,
-  html.hl-signed-29 [data-track="engineers"] .bz-cmod[data-module="29"] .bz-cmod-said,
-  html.hl-signed-30 [data-track="engineers"] .bz-cmod[data-module="30"] .bz-cmod-said,
-  html.hl-signed-31 [data-track="engineers"] .bz-cmod[data-module="31"] .bz-cmod-said,
-  html.hl-signed-32 [data-track="engineers"] .bz-cmod[data-module="32"] .bz-cmod-said {
+  html.hl-signed-33 [data-track="engineers"] .bz-cmod[data-module="33"] .bz-cmod-said,
+  html.hl-signed-34 [data-track="engineers"] .bz-cmod[data-module="34"] .bz-cmod-said,
+  html.hl-signed-35 [data-track="engineers"] .bz-cmod[data-module="35"] .bz-cmod-said,
+  html.hl-signed-36 [data-track="engineers"] .bz-cmod[data-module="36"] .bz-cmod-said {
     display: inline;
   }
 }
@@ -169,10 +173,10 @@
   html.hl-signed-13 [data-track="engineers"] .bz-seg[data-module="13"],
   html.hl-signed-15 [data-track="engineers"] .bz-seg[data-module="15"],
   html.hl-signed-16 [data-track="engineers"] .bz-seg[data-module="16"],
-  html.hl-signed-29 [data-track="engineers"] .bz-seg[data-module="29"],
-  html.hl-signed-30 [data-track="engineers"] .bz-seg[data-module="30"],
-  html.hl-signed-31 [data-track="engineers"] .bz-seg[data-module="31"],
-  html.hl-signed-32 [data-track="engineers"] .bz-seg[data-module="32"] {
+  html.hl-signed-33 [data-track="engineers"] .bz-seg[data-module="33"],
+  html.hl-signed-34 [data-track="engineers"] .bz-seg[data-module="34"],
+  html.hl-signed-35 [data-track="engineers"] .bz-seg[data-module="35"],
+  html.hl-signed-36 [data-track="engineers"] .bz-seg[data-module="36"] {
     /* Filled with the system colour, so "signed off" is still a filled cell
        against an empty one: a difference in fill, not in hue. `forced-color-
        adjust` is set to `none` on `.bz-seg` where that segment is drawn. */

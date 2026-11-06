@@ -9,7 +9,7 @@ description: >
 authority: reasoning
 writes: agent, when a decision is taken
 status: active
-covers: "D97 to D100 so far — 2026-11-06 onward"
+covers: "D97 to D101 so far — 2026-11-06 onward"
 last_updated: 2026-11-06
 ---
 
@@ -95,6 +95,25 @@ only dark-skinned figure: broad nose, wide eyes, full lips, a puff of hair) as a
 caricature, and Mei's upturned almond eyes as the one feature that marks ethnicity. Both are as the
 author kept them in M49 (D93), so they were not redrawn; they are listed for the author in M50's
 report.
+
+### D101 · Advanced Training is split into Advanced Fine-tuning and Advanced Post-training, and retired — 2026-11-06
+
+The author asked for two new planned modules, Advanced Fine-tuning (full fine-tuning, PEFT, LoRA,
+swapping adapters) and Advanced Post-training (alignment, preference data, RLHF, reward and policy
+models, PPO, DPO, GRPO, RLAIF). The planned Advanced Training already listed post-training, RLHF,
+DPO, PPO and GRPO, so keeping it would teach those topics twice. **Rejected: keeping all three**,
+which the author was offered and declined. Advanced Training's topics were redistributed rather than
+dropped: post-training and the RL methods to Advanced Post-training; knowledge distillation there
+too, since it is something done to a model after pre-training; and self-supervised learning to the
+new Advanced LLM, because it explains how pre-training gets its signal, which is about how the
+model works and not about tuning it. The old address forwards to Advanced Post-training
+(`src/lib/content/moved.ts`), which kept most of the topics. The Expert placeholders' hand-drawn
+"Tutorial Progress" maps, which the site strips and which already omitted Advanced LLM Evaluation,
+were removed rather than redrawn, so the retired title is named nowhere.
+
+The same message settled the first For Everyone module (M52's open question): Agents in Practice,
+written twice, the engineer page and `everyone/agents_in_practice.md`, each with its own list of
+courses.
 
 ## Open questions
 

@@ -20,6 +20,10 @@ export const MOVED_LEVELS: Readonly<Record<string, string>> = {
 export const MOVED_MODULES: Readonly<Record<string, string>> = {
   // The protocols reference moved into Ecosystem (D94).
   'protocols/protocols-reference': 'ecosystem/protocols-reference',
+  // Advanced Training was split into Advanced Fine-tuning and Advanced
+  // Post-training (D101); its address goes to the second, which kept most of
+  // its topics.
+  'expert/advanced-training': 'expert/advanced-post-training',
 }
 
 export function movedModuleOf(category: string, module: string): string | null {

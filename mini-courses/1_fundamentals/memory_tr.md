@@ -69,6 +69,23 @@ Bazen çalışma belleğinin oturum bitince yok olmasına izin vermeyiz. Bunun y
 
 Asıl önemli nokta şu: **LLM'in kendisinin bir belleği yoktur. Parametrik bellek, eğitimin ağırlıklara yazdığı şeydir. Çalışma belleği, uygulamanın modele o anda gösterdiği şeydir. Uzun süreli bellek ise uygulamanın kaydedip daha sonra geri getirdiği şeydir.**
 
+## Artıları ve Eksileri
+
+Çalışma belleği ile uzun süreli belleğin ortak bir yanı var: ikisinde de bilgi ağırlıkların dışında, modelin okuduğu bir metin olarak duruyor. Bu yüzden bu ikisi genellikle tek bir isim altında toplanır: **non-parametric memory** (parametrik olmayan bellek). İki ailenin karşılaştırması şöyle:
+
+| | Parametrik (ağırlıkların içinde) | Parametrik olmayan (context'te ya da oraya getirilen) |
+|---|---|---|
+| Her çağrının maliyeti | Ek bir maliyet yok, bilgi zaten modelin içinde | Context'e koyduğun her token'ın parasını her çağrıda ödersin |
+| Değiştirmek | Yeniden eğitmen gerekir; bu saatler, hatta günler sürer ve ciddi para tutar | Bir dosyayı ya da bir veritabanı satırını düzenlersin, bir sonraki çağrı değişikliği görür |
+| Güncellik | Eğitimin bittiği anda donmuş halde | Canlı: sakladığın veri ne kadar günselse o kadar günsel |
+| Cevabın nereden geldiği | Bilinmez: cevabı hangi training verisinin ürettiğini göremezsin | Bilinir: modelin okuduğu dokümanı tam olarak gösterebilirsin |
+| Bir cevabı kontrol etmek | Zor, çünkü karşılaştıracak hiçbir şey yok | Kolay: cevabı modele gösterilen metinle karşılaştırırsın |
+| Neye uygun | Modelin nasıl davrandığına: bir üslup, bir format, bir beceri | Modelin ne bilmesi gerektiğine: gerçekler, dokümanlar, değişen veriler |
+
+En önemli satır, kaynak satırı. Model ağırlıklarından cevap verdiğinde hangi training verisini kullandığını ya da o verinin doğru olup olmadığını hiçbir zaman bilemezsin; bilgi donmuştur ve bir adresi yoktur. 1,000 kitap okumuş kişiyi hatırla: sana bir bilgiyi söyleyebilir ama hangi kitaptan aldığını söyleyemez. Şimdi ona kendi notlarını ver; artık sayfayı parmağıyla gösterebilir.
+
+Parametrik olmayan bir cevaba ise **kaynak gösterilebilir**: uygulama, cevabın arkasındaki dokümanı kullanıcıya açıp gösterebilir. Kendi dokümanlarını bir modele vermek için [RAG](rag_tr.md) yönteminin fine-tuning'den genellikle daha iyi olmasının başlıca sebeplerinden biri de budur.
+
 ## Bu serinin neresindeyiz
 
 ```mermaid

@@ -692,20 +692,33 @@ checked. `curriculum.yaml`, `topics.txt` (renumbered: the five new lines take po
 26, 31 and 32) and `lokum-modules.css` regenerated. **Gate:** typecheck, 1,153 unit tests, the
 build and the link check.
 
-## 🏁 Milestone M65: Memory's two kinds weighed, and RAG measured (#50) — PLANNED
+## 🏁 Milestone M65: Memory's two kinds weighed, and RAG measured (#50) — DONE
 
 ### Deliverables
 
-- [ ] **Memory**: a pros and cons table beside the side-by-side comparison. Its sharpest row: what
+- [x] **Memory**: a pros and cons table beside the side-by-side comparison. Its sharpest row: what
       is retrieved can be cited and is live; what is in the weights is frozen and has no source.
-- [ ] **RAG & Embeddings**: "Why Not Just Fine-tune" gains that RAG is citable, verifiable and
+- [x] **RAG & Embeddings**: "Why Not Just Fine-tune" gains that RAG is citable, verifiable and
       traceable and fine-tuning is not; a short section on measuring retrieval (Recall@k,
       Precision@k, MRR, nDCG@k) where the flow needs it.
-- [ ] Turkish, Persian and both quizzes follow.
+- [x] Turkish, Persian and both quizzes follow.
 
 ### Acceptance criteria
 
-- [ ] Every formula's arithmetic checked by hand on a worked example; the gate green.
+- [x] Every formula's arithmetic checked by hand on a worked example; the gate green.
+
+**Report, 2026-11-06.** Memory gains **Pros and Cons**: working and long-term memory named
+together as non-parametric, then six rows against parametric (cost per call, changing it,
+freshness, where an answer came from, checking it, what each is good for), and the source row
+argued with the module's own 1,000-books analogy and tied to RAG. RAG gains **Measuring
+Retrieval** after the process and its figure: a four-row table of what each measure answers, then
+one worked question from the module's own `add` example, relevant at positions 2 and 4 of 5:
+Recall@5 1.0, Precision@5 0.4, reciprocal rank 0.5, nDCG@5 1.0616 / 1.6309 = 0.65 (computed, not
+typed), and why a reranker raises the last two. "Why Not Just Fine-tune" gains that a RAG answer
+can be cited, verified and traced. One new source, Weaviate's "Evaluation Metrics for Search and
+Recommendation Systems" (title fetched). Turkish and Persian written as prose, not mirrored; one
+quiz question each (citation; reciprocal rank). The online/offline figure was already in place
+(e9769ca). **Gate:** the content tests.
 
 ## 🏁 Milestone M66: Where an agent finds current docs: llms.txt, MCP, Context7 (#49) — PLANNED
 

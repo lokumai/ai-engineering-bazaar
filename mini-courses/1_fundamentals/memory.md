@@ -5,6 +5,7 @@ objectives:
   - "Explain why working memory is just the context window"
   - "Explain why an LLM is stateless during generation, and how a conversation is faked"
   - "Describe how long-term memory persists across sessions"
+  - "Weigh parametric against non-parametric memory, including why only one of them can cite its source"
 ---
 
 # Memory
@@ -77,6 +78,23 @@ Sometimes we do not let working memory disappear when a session ends. Instead, w
 | Analogy | Someone who has read 1,000 books | Someone reading a book open right in front of them | Someone's own notes, looked up later |
 
 The main point: **the LLM itself has no memory of its own. Parametric memory is what training stored in its weights. Working memory is what your app is showing it right now. Long-term memory is what your app saves and brings back later.**
+
+## Pros and Cons
+
+Working memory and long-term memory have one thing in common. In both, the information sits outside the weights, as text that the model reads. So the two are often grouped together under one name: **non-parametric memory**. Here is how the two families compare.
+
+| | Parametric (in the weights) | Non-parametric (in the context, or retrieved into it) |
+|---|---|---|
+| Cost on each call | Nothing extra: the knowledge is already inside the model | You pay for every token you put into the context, on every call |
+| Changing it | You have to train again, which takes hours or days and costs real money | You edit a file or a database row, and the next call sees the change |
+| Freshness | Frozen at the moment training ended | Live: as current as the data you store |
+| Where an answer came from | Unknown: you cannot see which training data produced it | Known: you can point at the exact document the model read |
+| Checking an answer | Hard, because there is nothing to compare it with | Easy: compare the answer with the text the model was shown |
+| Good for | How the model behaves: a style, a format, a skill | What the model should know: facts, documents, data that changes |
+
+The row that matters most is the source. When a model answers from its weights, you can never know which training data it is using, or whether that data was right. The knowledge is frozen and has no address. Go back to the person who has read 1,000 books. They can tell you a fact, but they cannot tell you which book it came from. Now give them their own notes. They can point at the page.
+
+A non-parametric answer can be **cited**: the app can show the user the document behind it. That is one of the main reasons why [RAG](rag.md) is usually a better way than fine-tuning to give a model your own documents.
 
 
 ## Where this fits in the series

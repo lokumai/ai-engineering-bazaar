@@ -4,6 +4,7 @@ objectives:
   - "Explain why retrieval beats fine-tuning for facts that change"
   - "Describe how text becomes an embedding and how similarity is measured"
   - "Walk through the retrieve-then-generate pipeline end to end"
+  - "Measure retrieval with Recall@k, Precision@k, MRR and nDCG@k"
   - "Decide, for a given problem, whether you want RAG or fine-tuning"
 ---
 
@@ -178,6 +179,49 @@ graph TD
 
 Replace "code chunks" with "contract clauses", and the flow is exactly the same.
 
+## Measuring Retrieval
+
+The answer can only be as good as the chunks that reach the desk. If retrieval misses the right
+chunk, the model never sees it. So before you judge the answers, measure the retrieval on its own.
+
+To do that, you need a small test set: a list of questions, and for each question, the chunks that a
+person marked as relevant. You run retrieval for each question and look at the top **k** results,
+where k is the number of chunks you keep (for example, 5). Four measures are common:
+
+| Measure | The question it answers |
+|---|---|
+| **Recall@k** | Of all the relevant chunks, how many are in the top k? |
+| **Precision@k** | Of the top k chunks, how many are relevant? |
+| **MRR** (mean reciprocal rank) | How high is the *first* relevant chunk? |
+| **nDCG@k** (normalized discounted cumulative gain) | Are the relevant chunks near the top, in the best order? |
+
+Here is one question from the example above: "how does the add function work?". Two chunks are
+relevant: `def add` and the test for `add`. Retrieval returns five chunks, and the relevant ones
+come second and fourth:
+
+| Position | 1 | 2 | 3 | 4 | 5 |
+|---|---|---|---|---|---|
+| Chunk | `def multiply` | `def add` | `def subtract` | `test_add` | `def divide` |
+| Relevant? | no | **yes** | no | **yes** | no |
+
+- **Recall@5 = 2 / 2 = 1.0.** Both relevant chunks are in the top 5. For RAG, this is usually the
+  first number to watch, because a chunk that is not retrieved can never be used.
+- **Precision@5 = 2 / 5 = 0.4.** Three of the five chunks are noise. They still go on the desk,
+  where they take up space and can distract the model.
+- **Reciprocal rank = 1 / 2 = 0.5**, because the first relevant chunk is at position 2. MRR is the
+  average of this number over all the questions in the test set.
+- **nDCG@5 = 0.65.** Each relevant chunk scores less the lower it sits: position p is divided by
+  log2(p + 1). Here that gives 1/log2(3) + 1/log2(5) = 0.63 + 0.43 = 1.06. The best possible order,
+  with both relevant chunks at the top, would give 1 + 0.63 = 1.63. And 1.06 / 1.63 = 0.65. A score
+  of 1.0 means a perfect order. nDCG can also give some chunks more weight than others, when a
+  person grades them as "very relevant" or "a little relevant".
+
+Recall and precision only count what is in the top k. MRR and nDCG also care about the order. A
+reranker, like the one in the figure above, exists to push MRR and nDCG up: it moves the best
+chunks to the top. Weaviate's
+[Evaluation Metrics for Search and Recommendation Systems](https://weaviate.io/blog/retrieval-evaluation-metrics)
+gives the formula and a code example for each of the four.
+
 ## Tools for RAG
 
 You will almost never write the retrieval loop yourself. Pick a level, and let something else do
@@ -262,6 +306,12 @@ library. Fine-tuning tries to put your documents on a shelf somewhere in a libra
 Then it hopes that the model remembers the right shelf. RAG puts the one page you need on the
 desk, open, at the moment someone asks the question.
 
+**Because a RAG answer can be checked.** With RAG, you know exactly which chunks the model read,
+so the app can cite them next to the answer. A user can open the source and verify the answer, and
+when an answer is wrong, you can trace it back to the chunk that caused it. A fine-tuned model gives
+you none of this. Its knowledge is mixed into the weights, and nobody can say which training
+document produced a given answer. [Memory](memory.md) comes back to this difference.
+
 In one line: **fine-tuning changes what the model *knows*; RAG changes what the model *sees*.**
 
 One more point: this is not a choice of one or the other. You can fine-tune a model for how it
@@ -303,6 +353,7 @@ fine-tuning again?
 ### 📄 Articles
 
 - [RAG vs fine-tuning](https://www.redhat.com/en/topics/ai/rag-vs-fine-tuning): Red Hat's comparison, the long version of the section above
+- [Evaluation Metrics for Search and Recommendation Systems](https://weaviate.io/blog/retrieval-evaluation-metrics): Recall, precision, MRR and nDCG, each with its formula and code
 
 ### 🎬 Videos
 

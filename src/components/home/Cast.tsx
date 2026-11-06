@@ -26,16 +26,16 @@ const pct = (n: number) => `${(Math.round(n * 1000) / 10).toFixed(1)}%`
 /** The hit box is the body (120 of the drawing's 220 units), so neighbours do not overlap. */
 const BODY = 120
 
-/* Across, a person stands at their distance from the middle of the gate times `--spread`:
-   1 on a page that does not walk, and wider on the walk, where the facade runs far past the
-   art's box (`motion.ts` sets it), so neighbours' captions never meet. */
+/* Where a person stands, as shares of the art box that `home.css` combines with two factors the
+   walk sets: `--spread`, how far apart they stand across the facade, and `--grow`, how much larger
+   they are drawn (M63). Both are 1 on a page that does not walk. The feet stay where they are. */
 function place(m: CastMember): CSSProperties {
   return {
-    '--cx': pct(0.5 - ((BODY / 2) * m.s) / ART_W),
     '--off': pct((m.x - ART_W / 2) / ART_W),
-    top: pct((m.y - 392 * m.s) / ART_H),
-    width: pct((BODY * m.s) / ART_W),
-    height: pct((392 * m.s) / ART_H),
+    '--hw': pct(((BODY / 2) * m.s) / ART_W),
+    '--w': pct((BODY * m.s) / ART_W),
+    '--feet': pct(m.y / ART_H),
+    '--h': pct((392 * m.s) / ART_H),
   } as CSSProperties
 }
 

@@ -1,5 +1,6 @@
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
+import { WALK_GROW } from './cast'
 import { CHASE_END, ZOOM_AT, makeChase } from './chase'
 import { STALL_TIMELINES } from './stall-timelines'
 import { CHOSEN } from './track'
@@ -204,7 +205,13 @@ export function initBazaar(root: HTMLElement): Cleanup {
          half-width, and at most 2.3 times (MEASURED: what 900x560, the smallest walk, needs
          for its captions not to touch). */
       const art = $('#archBox', gate).offsetWidth
-      if (chase && art > 0) chase.spread(Math.min(2.3, Math.max(1, (0.85 * VW) / art)))
+      if (chase && art > 0) {
+        const spread = Math.min(2.3, Math.max(1, (0.85 * VW) / art))
+        /* M63: the people drawn WALK_GROW larger, less where the facade is too narrow to
+           spread them that far apart (a body is 120 of the drawing's units, neighbours stand
+           115 to 125 apart): never larger than 1.25 times the spread */
+        chase.layout(spread, Math.min(WALK_GROW, Math.max(1, spread * 1.25)))
+      }
     }
     /* The pull-back is full at the choice and gone EASE_OUT units either side, so every other stop is drawn as it always was. */
     const pull = (x: number): number => {
@@ -327,7 +334,7 @@ export function initBazaar(root: HTMLElement): Cleanup {
       if (target.closest('.who-btn')) return
       const p = target.closest('.door, .cta-wrap')
         ? 1
-        : target.closest('.track-sign') ? choiceAt / master.duration() : 0
+        : target.closest('.track-sign, .who-story') ? choiceAt / master.duration() : 0
       const y = st.start + p * (st.end - st.start)
       if (Math.abs(window.scrollY - y) > 4) {
         window.scrollTo(0, y)

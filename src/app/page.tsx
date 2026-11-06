@@ -131,7 +131,8 @@ const TRACKS: ReadonlyArray<{
   art: ArtName
   hue: string
   signX: number
-  who: { name: string; english: string; x: number; left: number }
+  /** M63: the character's story, told in a cloud like the people at the gate's. */
+  who: { name: string; english: string; story: string; x: number; left: number }
 }> = [
   {
     id: 'eng',
@@ -141,7 +142,13 @@ const TRACKS: ReadonlyArray<{
     hue: 'var(--color-category-2)',
     /** The centre of the stall the sign hangs over. */
     signX: TRACK_START + 545,
-    who: { name: 'Sipahi', english: 'Horseman', x: TRACK_START + 190, left: 24.4 },
+    who: {
+      name: 'Sipahi',
+      english: 'Horseman',
+      story: 'The Sipahi learns a road by riding it himself. He wants to know how each part works before he trusts it.',
+      x: TRACK_START + 190,
+      left: 24.4,
+    },
   },
   {
     id: 'all',
@@ -150,7 +157,13 @@ const TRACKS: ReadonlyArray<{
     art: 'track-all',
     hue: 'var(--color-category-1)',
     signX: TRACK_START + 760 + 335,
-    who: { name: 'Bezirgân', english: 'Merchant', x: TRACK_START + 760 + 645, left: 81.4 },
+    who: {
+      name: 'Bezirgân',
+      english: 'Merchant',
+      story: 'The Bezirgân sells in many cities, so he explains his goods in plain words. If a buyer cannot follow him, he says, the explanation is wrong.',
+      x: TRACK_START + 760 + 645,
+      left: 81.4,
+    },
   },
 ]
 
@@ -342,12 +355,19 @@ export default function HomePage() {
                   </div>
                   <div className="track-art">
                     <div aria-hidden="true" dangerouslySetInnerHTML={{ __html: art(track.art) }} />
-                    <p
-                      className="who"
+                    {/* M63: the caption is a button that tells the character's story, as the
+                        people at the gate do (`street/clouds.ts`). */}
+                    <button
+                      type="button"
+                      className="who who-story"
+                      aria-describedby={`story-${track.id}`}
                       style={at({ '--x': track.who.x, '--y': 800, '--l': `${track.who.left}%`, '--hue': track.hue })}
                     >
                       <span lang="tr">{track.who.name}</span> ({track.who.english})
-                    </p>
+                      <span className="who-cloud" id={`story-${track.id}`} aria-hidden="true">
+                        {track.who.story}
+                      </span>
+                    </button>
                   </div>
                 </article>
               ))}

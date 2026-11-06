@@ -48,7 +48,7 @@ export const CAST: readonly CastMember[] = [
     id: 'dariush',
     name: 'Dariush',
     trade: 'carpet merchant',
-    story: 'Dariush brought his carpets from Tabriz, each one tied by hand, knot by knot. He says you only see the pattern when you step back.',
+    story: 'Dariush brought his carpets from Iran, each one tied by hand, knot by knot. He says you only see the pattern when you step back.',
     x: 125,
     y: FEET,
     s: ADULT,
@@ -93,12 +93,19 @@ export const CAST: readonly CastMember[] = [
     id: 'piri',
     name: 'Piri',
     trade: 'map-maker',
-    story: 'Piri draws coasts he has sailed and coasts he has only heard of, and he marks which is which. A good map, he says, shows where it might be wrong.',
+    story: 'Piri draws maps for sailors. Where he is not sure of a coast, he writes so on the map, because a wrong map is worse than no map.',
     x: 995,
     y: FEET,
     s: ADULT,
   },
 ]
+
+/**
+ * M63 — how much larger the walk draws the people than their scale above (the author, 2026-11-06:
+ * "about 75% larger"). The walk can afford it because it spreads them across the facade; a page
+ * that does not walk keeps them at 1, since at 900px the art box leaves no room between them.
+ */
+export const WALK_GROW = 1.75
 
 /** The far end of the vaulted street, where the walk's zoom is centred and the chase runs to. */
 export const VANISHING = { x: 500, y: 432 }

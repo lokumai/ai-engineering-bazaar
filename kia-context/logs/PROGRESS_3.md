@@ -174,8 +174,11 @@ already shipped as PR #66. **Since 2026-11-06 it also carries M59** (search), on
 one branch, `feat/m50-m59`, and one pull request, reviewed by a Sonnet reviewer and a Gemini run
 before it merges. The gate above, then:
 
-- [ ] The live site checked after the deploy: the chase on the home page, the catalog with no
-      Sources count, a Persian module page.
+- [x] The live site checked after the deploy: the chase on the home page, the catalog with no
+      Sources count, a Persian module page. Checked 2026-11-06 after a redeploy (the first deploy of
+      the merge timed out in GitHub Pages' own step, as twice before): the home page carries the
+      cast and plays the chase (screenshot at 450px of scroll), the catalog has no Sources header,
+      `/search/en.json` is served, and the Persian module page answers 200.
 
 **Report, 2026-11-06.** Shipped as **PR #69**. The PR was reviewed by a Sonnet subagent at high
 effort and by Gemini 3.8 Flash High (`agy`). Sonnet found no high-severity defect; it found a section

@@ -4571,15 +4571,16 @@ others chase it (three samples for each decision).
 
 ### Deliverables
 
-- [ ] `playground/2026-11-round-3/K-woman-hand.html`: K1 to K3, three women's hands on the G1b
-      scene.
-- [ ] `playground/2026-11-round-3/L-gate-characters.html`: L1 where the people stand, L2 the cast
-      and its look, L3 the robot's escape on scroll, three options each.
-- [ ] `playground/2026-11-round-3/index.html` lists both pages.
+- [x] `playground/2026-11-round-3/K-woman-hand.html`: K1 to K3, three women's hands on the G1b
+      scene (K2 recommended: bangles and henna).
+- [x] `playground/2026-11-round-3/L-gate-characters.html`: L1 where the people stand, L2 the cast
+      and its look, L3 the robot's escape on scroll, three options each (L1b, L2c, L3a recommended).
+      Seven figures: Leyla, Mei, Hatice, Kofi, Ivan, the boy Deniz and the robot Bit, six skin tones.
+- [x] `playground/2026-11-round-3/index.html` lists both pages.
 
 ### Acceptance criteria
 
-- [ ] Every option is read in a screenshot before it is shown to the author.
+- [x] Every option is read in a screenshot before it is shown to the author.
 - [ ] The author picks; building the picks is a later milestone.
 
 ---

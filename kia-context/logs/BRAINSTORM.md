@@ -9,7 +9,7 @@ description: >
 authority: reasoning
 writes: agent, when a decision is taken
 status: active
-covers: "D97 to D101 so far — 2026-11-06 onward"
+covers: "D97 to D102 so far — 2026-11-06 onward"
 last_updated: 2026-11-06
 ---
 
@@ -109,11 +109,25 @@ new Advanced LLM, because it explains how pre-training gets its signal, which is
 model works and not about tuning it. The old address forwards to Advanced Post-training
 (`src/lib/content/moved.ts`), which kept most of the topics. The Expert placeholders' hand-drawn
 "Tutorial Progress" maps, which the site strips and which already omitted Advanced LLM Evaluation,
-were removed rather than redrawn, so the retired title is named nowhere.
+were removed rather than redrawn, so no page a reader sees names the retired title (the author's
+planning notes in `curriculum.yaml` and `topics.txt` still say where its topics went).
 
 The same message settled the first For Everyone module (M52's open question): Agents in Practice,
 written twice, the engineer page and `everyone/agents_in_practice.md`, each with its own list of
 courses.
+
+### D102 · A planned module renders the sections it already has — 2026-11-06
+
+Loop Engineering gave three finished sections (agent teams, dynamic workflows, recursive language
+models) to the planned Advanced Loop Engineering (#48), and the author chose to keep them readable
+on the site now rather than parked off-site. A planned sheet drew only its lead sentence and its
+schedule of parts, so the sections would have reached GitHub and not the site. **Taken:** the sheet
+renders everything from a planned module's first `##` as prose under the schedule
+(`writtenSections`, `src/lib/content/schedule.ts`); a stub with no `##` draws exactly as before.
+**Rejected:** marking the module `ready`, which would give a mostly unwritten module a completion
+mark, a quiz slot and a place in the reader's progress. The same review found that the lead
+sentence and schedule are printed as plain text, so a markdown link there showed as literal
+brackets; a test now holds every planned module's lead and schedule free of markdown.
 
 ## Open questions
 

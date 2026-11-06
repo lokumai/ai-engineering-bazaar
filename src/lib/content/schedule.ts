@@ -75,3 +75,46 @@ export function summarySentence(markdown: string): string | null {
 
   return paragraph.length === 0 ? null : paragraph.join(' ')
 }
+
+/** A fence opener or closer, as `lines.ts` reads it. */
+const FENCE_LINE = /^[ \t]*(`{3,}|~{3,})/
+/** An h2: where a written section starts. */
+const H2_LINE = /^##[ \t]/
+
+/**
+ * The sections a planned module already has written, from its first h2 to the
+ * end, as raw markdown; null when it has none (D102).
+ *
+ * A planned module is a sentence and a schedule of parts, and the sheet draws
+ * only those. When a written module gives a section away to a planned one
+ * (Loop Engineering's agent teams, dynamic workflows and recursive language
+ * models went to Advanced Loop Engineering, #48), the author chose to keep the
+ * text readable on the site rather than parked in a scratch file, so the sheet
+ * renders these sections as prose under the schedule. Rejected: marking the
+ * module `ready`, which would offer a completion mark and a place in the
+ * reader's progress for a module that is mostly unwritten.
+ *
+ * Fences are tracked here rather than through `unfenced`, which drops lines
+ * and so cannot say where in the source a heading sits; an `## ` inside a code
+ * block is not a section.
+ */
+export function writtenSections(markdown: string): string | null {
+  const lines = markdown.split('\n')
+  let fence: string | null = null
+
+  for (let index = 0; index < lines.length; index += 1) {
+    const match = FENCE_LINE.exec(lines[index])
+    if (match) {
+      const marker = match[1][0]
+      if (fence === null) fence = marker
+      else if (fence === marker) fence = null
+      continue
+    }
+    if (fence === null && H2_LINE.test(lines[index])) {
+      const rest = lines.slice(index).join('\n').trim()
+      return rest === '' ? null : rest
+    }
+  }
+
+  return null
+}

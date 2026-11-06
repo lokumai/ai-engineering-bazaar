@@ -2,7 +2,7 @@
 
 *(Placeholder module: a short overview for now, full lesson content is coming soon.)*
 
-[LLM Fundamentals](../1_fundamentals/llms.md) treated the model as a box that predicts the next token. This module opens the box, but only as far as an engineer who builds with models needs: why the transformer works, what happens on every step of generation, and what decides how fast and how cheaply a model answers.
+LLM Fundamentals treated the model as a box that predicts the next token. This module opens the box, but only as far as an engineer who builds with models needs: why the transformer works, what happens on every step of generation, and what decides how fast and how cheaply a model answers.
 
 **Topics this module will cover**:
 - Transformers, explained from why they work, without the neural-network details such as softmax, encoders and decoders

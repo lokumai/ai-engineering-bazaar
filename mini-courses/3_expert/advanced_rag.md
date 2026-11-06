@@ -2,7 +2,7 @@
 
 *(Placeholder module: a short overview for now, full lesson content is coming soon.)*
 
-[RAG & Embeddings](../1_fundamentals/rag.md) built the simplest pipeline that works: chunk, embed, search, answer. This module covers what changes when that pipeline has to work well on real documents, and the choices behind every step of it.
+RAG & Embeddings built the simplest pipeline that works: chunk, embed, search, answer. This module covers what changes when that pipeline has to work well on real documents, and the choices behind every step of it.
 
 **Topics this module will cover**:
 - RAG vs. long context vs. fine-tuning

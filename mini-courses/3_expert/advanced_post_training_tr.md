@@ -18,7 +18,7 @@ Pre-training'i bitmiş bir base model bir metni devam ettirebilir, ama henüz bi
 - GRPO (group relative policy optimization)
 - PPO ve GRPO: hangi modellere ihtiyaç var?
 - RLAIF (yapay zekâ geri bildirimiyle reinforcement learning)
-- Knowledge distillation: büyük bir modelden küçük bir model öğretmek
+- Knowledge distillation (bilgi damıtma): büyük bir modelin bildiklerini küçük bir modele aktarmak
 
 **Başlangıç için kaynaklar**:
 - [Unsloth: reinforcement learning rehberi](https://unsloth.ai/docs/get-started/reinforcement-learning-rl-guide)

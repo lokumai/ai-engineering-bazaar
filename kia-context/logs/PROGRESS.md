@@ -692,6 +692,19 @@ checked. `curriculum.yaml`, `topics.txt` (renumbered: the five new lines take po
 26, 31 and 32) and `lokum-modules.css` regenerated. **Gate:** typecheck, 1,153 unit tests, the
 build and the link check.
 
+**Reviews (two Haiku, xhigh).** *Content:* the browser suite's typed drawing set
+(`tests/e2e/sheets.ts`) still listed 38 sheets with Advanced Training, so it was regenerated from
+`curriculum.yaml` (42); the structured-output sentence was 34 words and overclaimed (an answer cut
+off at the length limit is the exception); two Turkish calques; a pre-existing em dash in Advanced
+Prompting; D101's "named nowhere" narrowed to what a reader sees. *Built site:* a planned sheet
+prints its lead and topics as plain text, so the new leads' links and the topic's bold showed as
+raw markdown: the leads lost their links, the Advanced Prompting topic became one plain line with
+its explanation and references below it, and a test now holds every planned lead and schedule free
+of markdown (seen failing against the old lead). That also showed the moved Loop Engineering
+sections would not have reached the site, hence D102. Not changed, and pre-existing: a forwarding
+page's crumb reads the old slug, and the Expert README lists the old topics (Expert README updated
+in M67).
+
 ## 🏁 Milestone M65: Memory's two kinds weighed, and RAG measured (#50) — DONE
 
 ### Deliverables

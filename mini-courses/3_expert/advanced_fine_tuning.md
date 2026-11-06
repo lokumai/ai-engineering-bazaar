@@ -2,7 +2,7 @@
 
 *(Placeholder module: a short overview for now, full lesson content is coming soon.)*
 
-[Training LLMs](../1_fundamentals/training.md) introduced fine-tuning and PEFT at a high level. This module goes under that: what fine-tuning really changes inside a model, why changing all of it is so expensive, and how LoRA lets one frozen model carry many small adapters.
+Training LLMs introduced fine-tuning and PEFT at a high level. This module goes under that: what fine-tuning really changes inside a model, why changing all of it is so expensive, and how LoRA lets one frozen model carry many small adapters.
 
 **Topics this module will cover**:
 - Full fine-tuning: what actually changes?

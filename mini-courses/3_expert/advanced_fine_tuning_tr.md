@@ -2,7 +2,7 @@
 
 *(Bu bir placeholder modül: şimdilik kısa bir özet, tam ders içeriği yakında geliyor.)*
 
-[Training LLMs](../1_fundamentals/training_tr.md) modülü fine-tuning'i ve PEFT'i yüksek seviyede tanıttı. Bu modül onun altına iniyor: fine-tuning bir modelin içinde gerçekte neyi değiştirir, hepsini değiştirmek neden bu kadar pahalıdır ve LoRA, donmuş tek bir modelin birçok küçük adapter taşımasını nasıl sağlar.
+Training LLMs modülü fine-tuning'i ve PEFT'i yüksek seviyede tanıttı. Bu modül bir adım daha derine iniyor: fine-tuning bir modelin içinde gerçekte neyi değiştirir, hepsini değiştirmek neden bu kadar pahalıdır ve LoRA, donmuş tek bir modelin birçok küçük adapter taşımasını nasıl sağlar.
 
 **Bu modülde işlenecek konular**:
 - Full fine-tuning: gerçekte ne değişiyor?

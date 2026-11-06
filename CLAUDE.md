@@ -129,13 +129,18 @@ by an agent, out of a conversation — nobody maintains them by hand. Your job i
 **How to use them.**
 
 - **Before proposing or building anything:** `specs/MANIFESTO.md` for the boundary you may not cross, and
-  the ACTIVE part of `logs/BRAINSTORM.md` — currently `BRAINSTORM_3.md` — to check whether your
-  idea was already considered and rejected.
+  the active `logs/BRAINSTORM.md` to check whether your idea was already considered and rejected.
+- **This repository has not been migrated to the bare-name layout yet** (see *Splitting a file* below).
+  Until it is, the ACTIVE parts are `logs/PROGRESS_3.md` and `logs/BRAINSTORM_3.md`; the files named
+  `PROGRESS.md` and `BRAINSTORM.md` here are the closed part 1 of each. The `kia-context-migrate`
+  skill does the renaming.
 - **Before touching anything structural:** `specs/ARCHITECTURE.md`.
-- **Every session:** `logs/PROGRESS.md` **and its later parts** hold the current milestone, its
-  deliverables and their
+- **Every session:** `logs/PROGRESS.md` holds the current milestone, its deliverables and their
   acceptance criteria — what is being built, and how far it got. How to work through it is written in
-  that file, not here.
+  that file, not here — with one exception, because the procedure there depends on it mechanically:
+  **a milestone carries its deliverables as `- [ ]` checkboxes, ticked `[x]` as each lands.** The
+  procedure's first step takes the first unchecked one, so a milestone written without them stalls it.
+  Everything else about how a milestone looks is yours to choose.
 - **Every file states its own terms.** Its frontmatter says how binding it is, who may write to it,
   whether it is still active, and — in the description — what does *not* belong in it. Read that before
   editing; it beats guessing from the filename.
@@ -155,7 +160,7 @@ Four levels under `kia-context/`, split by **authority**, not by topic.
 | **Map** | `kia-context/INDEX.md` | agent, when files move | What exists, and what points at what |
 | **0** | `kia-context/genesis/` | agent, at t=0 | Where this came from. `SEED.md`, `GENESIS.md` |
 | **1–2** | `kia-context/specs/` | agent, when explicitly refactoring | The law. `MANIFESTO.md`, `ARCHITECTURE.md`, `DESIGN.md` |
-| **3** | `kia-context/logs/` | agent, every session | State. `PROGRESS.md` + `PROGRESS_2.md` + `PROGRESS_3.md`, `BRAINSTORM.md` + `BRAINSTORM_2.md` + `BRAINSTORM_3.md` |
+| **3** | `kia-context/logs/` | agent, every session | State. `PROGRESS.md` + `PROGRESS_2.md` + `PROGRESS_3.md`, `BRAINSTORM.md` + `BRAINSTORM_2.md` + `BRAINSTORM_3.md` (active: the `_3` parts, until migrated) |
 
 `docs/` is a different thing entirely: human-facing artifacts, written **only when a human asks for one**.
 Agents do not maintain them and do not need to read them to do the work.
@@ -206,7 +211,14 @@ commit message covers the rest.
 
 Split on a **phase boundary** first, and on **length** second — roughly 1,500 lines, or whenever the file
 has stopped being readable. Continue the numbering, never restart it, and put the next/previous
-navigation block at the top and bottom of both parts. Name the parts `NAME.md`, `NAME_2.md`, `NAME_3.md`.
+navigation block at the top and bottom of both parts.
+
+**The active part always keeps the bare name.** Splitting moves the closed history *out* to `NAME_1.md`,
+`NAME_2.md`, … and leaves the live part in `NAME.md`. It is the opposite of what feels natural, and it is
+the whole point: the file every session opens keeps the name every document points at, and the sections
+that say *how to work* — the loop, the circuit breakers — stay in a file that is never closed. Split the
+other way and the procedure ends up in an archive nobody opens, which fails silently and can go unnoticed
+for months.
 
 Files that describe **one current state** — `ARCHITECTURE.md`, `DESIGN.md`, `MANIFESTO.md` — are never
 split. They change in place.

@@ -4652,6 +4652,13 @@ inspected by a Haiku reviewer at xhigh effort before the author sees it, as the 
       captions fade out as the chase begins, and stay in the reduced-motion still and on a phone
       (the author, 2026-11-06). The pavement strip under the arch, which the page crops today, is shown so they have
       somewhere to stand.
+- [ ] **A story cloud over each person** (the author, 2026-11-06): pointing at a figure at the
+      gate opens a small speech cloud above them with their story in one or two sentences (Bit's
+      says why a robot is loose in a bazaar). A hover may never be the only way in, so the cloud
+      also opens on keyboard focus (each figure is a focusable button) and on a tap, closes on
+      Escape or a tap elsewhere, and its text is the button's description for a screen reader. Not
+      during the chase. The stories are drafted in `M-characters.html` for the author to edit
+      before they go into the site, and they follow the copy register (no exclamation marks).
 - [ ] **The robot's escape (L3a)** on the walk's scroll: Bit turns his face, runs straight into the
       gate, the crowd throws up its arms and runs in after him, then the walk's own zoom through the
       gate plays as today. Reduced motion shows a still with everyone in place; the stacked layout

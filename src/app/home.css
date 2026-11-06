@@ -39,6 +39,13 @@
     --del: 0s;
     --dx: 24px;
     --dy: -70px;
+    /* M58: a figure's idle delay, a story cloud's sideways nudge, and how far apart the
+       walk stands the people at the gate */
+    --dl: 0s;
+    --shift: 0px;
+    --spread: 1;
+    --cx: 50%;
+    --off: 0%;
     overflow-x: clip;
   }
 
@@ -111,9 +118,240 @@
     height: 100%;
   }
 
-  @media (min-width: 700px) {
+  /* ---------- the people at the gate (M58) ----------
+     The pavement the gate art draws below the arch (y 620 to 820 in its units) is shown
+     for 130 units, so the cast has somewhere to stand: a margin of 130/1000 of the box's
+     width (a percentage margin is a share of the same width the box's own is). The cast
+     box lies exactly over the art box, in the same units, so the people scale with it. */
+  .bz-street .arch-box {
+    margin-bottom: calc(max(100%, 560px) * 0.13);
+  }
+
+  .bz-street .cast-box {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    z-index: 2;
+    width: max(100%, 560px);
+    aspect-ratio: 1000 / 620;
+    transform: translateX(-50%);
+    pointer-events: none;
+  }
+
+  .bz-street .who-btn {
+    position: absolute;
+    left: calc(var(--cx) + var(--off) * var(--spread));
+    display: block;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    cursor: pointer;
+    pointer-events: auto;
+  }
+
+  .bz-street .who-btn:focus-visible {
+    outline: 3px solid var(--color-focus);
+    outline-offset: 4px;
+    border-radius: var(--radius-lg);
+  }
+
+  /* The drawing is 220 units wide and the button is the body's 120 of them, so the
+     picture overflows the button on both sides and only the body takes the pointer. */
+  .bz-street .who-fig {
+    position: absolute;
+    top: 0;
+    left: calc(-50% / 120 * 100);
+    width: calc(100% * 220 / 120);
+    height: calc(100% * 400 / 392);
+    pointer-events: none;
+  }
+
+  .bz-street .who-fig > svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+  }
+
+  /* The caption: the Sipahi's chip, smaller: the name, and the trade under it. */
+  .bz-street .who-cap {
+    position: absolute;
+    top: calc(100% + 2px);
+    left: 50%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: max-content;
+    white-space: nowrap;
+    padding: 2px 6px 1px;
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-lg);
+    background: var(--color-on-bar);
+    color: var(--color-on-bar-chip);
+    font-size: 11px;
+    line-height: 1.15;
+    text-align: center;
+    transform: translateX(-50%);
+  }
+
+  .bz-street .who-cap b {
+    font-size: 12px;
+  }
+
+  /* The story, in a cloud above the head. Shown by pointing or focus with no script, and
+     by street/clouds.ts otherwise (one at a time, by tap too, kept inside the window). */
+  .bz-street .who-cloud {
+    position: absolute;
+    bottom: calc(100% + 10px);
+    left: 50%;
+    z-index: 3;
+    width: max-content;
+    max-width: min(260px, 80vw);
+    padding: 10px 13px;
+    border: 1px solid var(--color-line-strong);
+    border-radius: var(--radius-xl);
+    background: var(--color-on-bar);
+    color: var(--color-on-bar-chip);
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 1.45;
+    text-align: left;
+    white-space: normal;
+    transform: translateX(calc(-50% + var(--shift, 0px)));
+    visibility: hidden;
+    opacity: 0;
+  }
+
+  .bz-street .who-cloud::after {
+    content: "";
+    position: absolute;
+    top: 100%;
+    left: calc(50% - var(--shift, 0px));
+    width: 12px;
+    height: 12px;
+    border-right: 1px solid var(--color-line-strong);
+    border-bottom: 1px solid var(--color-line-strong);
+    background: var(--color-on-bar);
+    transform: translate(-50%, -6px) rotate(45deg);
+  }
+
+  .bz-street .who-btn[data-below] .who-cloud {
+    top: calc(100% + 44px);
+    bottom: auto;
+  }
+
+  .bz-street .who-btn[data-below] .who-cloud::after {
+    top: auto;
+    bottom: 100%;
+    transform: translate(-50%, 6px) rotate(225deg);
+  }
+
+  .bz-street:not([data-clouds]) .who-btn:is(:hover, :focus-visible) .who-cloud,
+  .bz-street .who-btn[data-open] .who-cloud {
+    visibility: visible;
+    opacity: 1;
+  }
+
+  /* Phones: the two rows under the gate (P1, M50), and nobody at the gate itself. */
+  .bz-street .cast-row {
+    position: relative;
+    z-index: 4;
+    padding: 18px 16px 26px;
+    background: var(--color-surface);
+  }
+
+  /* Four to a row, the last row centred (a grid would leave its fourth cell empty). */
+  .bz-street .cast-row ul {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 14px 0;
+    max-width: 560px;
+    margin: 0 auto;
+    padding: 0;
+    list-style: none;
+  }
+
+  .bz-street .cast-row li {
+    flex: 0 0 25%;
+    min-width: 0;
+  }
+
+  .bz-street .who-tile .who-cap {
+    font-size: 13px;
+  }
+
+  .bz-street .who-tile .who-cap b {
+    font-size: 14px;
+  }
+
+  .bz-street .who-tile {
+    position: relative;
+    left: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    min-height: 44px;
+    padding-top: 4px;
+  }
+
+  .bz-street .who-tile .who-fig {
+    position: relative;
+    left: auto;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    width: 100%;
+    height: 112px;
+  }
+
+  .bz-street .who-tile .who-fig > svg {
+    width: auto;
+    height: 112px;
+  }
+
+  .bz-street .who-tile .who-fig > svg.child {
+    height: 84px;
+  }
+
+  .bz-street .who-tile .who-cap {
+    position: static;
+    width: auto;
+    max-width: 100%;
+    margin-top: 4px;
+    white-space: normal;
+    transform: none;
+  }
+
+  .bz-street .who-tile .who-cloud {
+    bottom: calc(100% - 6px);
+  }
+
+  @media (max-width: 899.98px) {
+    .bz-street .cast-box {
+      display: none;
+    }
     .bz-street .arch-box {
+      margin-bottom: 0;
+    }
+  }
+
+  @media (min-width: 900px) {
+    .bz-street .cast-row {
+      display: none;
+    }
+  }
+
+  @media (min-width: 700px) {
+    .bz-street .arch-box,
+    .bz-street .cast-box {
       width: min(94%, 920px);
+    }
+    .bz-street .arch-box {
+      margin-bottom: calc(min(94%, 920px) * 0.13);
     }
     .bz-street .bz-hero-title {
       font-size: clamp(40px, 5.6vw, 84px);
@@ -664,6 +902,26 @@
   .bz-street .f-sipahi .falcon-wing { transform-origin: 166px 148px; animation: bz-fig-wing 4s ease-in-out infinite; }
   .bz-street .horse .tail { transform-box: fill-box; transform-origin: 100% 0%; animation: bz-fig-tail 3.2s ease-in-out infinite alternate; }
   .bz-street .horse .head { transform-box: fill-box; transform-origin: 0% 80%; animation: bz-fig-hnod 5s ease-in-out infinite; }
+  /* The people at the gate (M58): a figure is drawn from the front and from behind in one
+     drawing, and the chase swaps them by putting \`back\` on the drawing. Their idle motion
+     is the playground's: a hand holding its goods, Bit's light and tinkering hand. */
+  .bz-street .who-fig .v-b { visibility: hidden; }
+  .bz-street .who-fig .back .v-f { visibility: hidden; }
+  .bz-street .who-fig .back .v-b { visibility: visible; }
+  /* While the people run, their idle motion waits: the chase is the only thing moving them. */
+  .bz-street[data-chasing] .who-fig .fig * { animation-play-state: paused; }
+  .bz-street .fig { animation-delay: var(--dl, 0s); }
+  .bz-street .fig .breathe, .bz-street .fig .head, .bz-street .fig .blink, .bz-street .fig .sash { animation-delay: var(--dl, 0s); }
+  .bz-street .fig .arm-r .gest { transform-origin: 138px 160px; }
+  .bz-street .fig .arm-l .gest { transform-origin: 82px 160px; }
+  .bz-street .fig .holding .gest { animation: bz-fig-hold 4.4s ease-in-out infinite; animation-delay: var(--dl, 0s); }
+  .bz-street .f-robot .led { animation: bz-fig-led 1.6s steps(1) infinite; }
+  .bz-street .f-robot .aitext { animation: bz-fig-glow 2.4s ease-in-out infinite alternate; }
+  .bz-street .f-robot .arm-l .gest { animation: bz-fig-tinker 2.8s ease-in-out infinite; }
+  @keyframes bz-fig-hold { 0%, 100% { transform: rotate(0); } 40% { transform: rotate(-6deg); } 70% { transform: rotate(3deg); } }
+  @keyframes bz-fig-led { 0%, 50% { opacity: 1; } 51%, 100% { opacity: 0.25; } }
+  @keyframes bz-fig-glow { from { opacity: 0.65; } to { opacity: 1; } }
+  @keyframes bz-fig-tinker { 0%, 100% { transform: rotate(0); } 30% { transform: rotate(12deg); } 60% { transform: rotate(-4deg); } }
 
   @keyframes bz-fig-breathe { 0%, 100% { transform: scale(1, 1); } 50% { transform: scale(1.008, 1.018); } }
   @keyframes bz-fig-nod { 0%, 100% { transform: rotate(0); } 30% { transform: rotate(-2deg); } 60% { transform: rotate(1.5deg); } }
@@ -838,12 +1096,17 @@
     margin-top: clamp(16px, 3.6vh, 44px);
   }
 
-  html.is-walk .bz-street .arch-box {
+  /* On the walk the art box hangs 130/750 of the arch's height above the bottom, so the
+     pavement the people stand on is in the window; the cast box keeps to it exactly. */
+  html.is-walk .bz-street .arch-box,
+  html.is-walk .bz-street .cast-box {
     position: absolute;
-    bottom: 0;
+    top: auto;
+    bottom: calc(100% * 130 / 750);
     left: 50%;
     width: auto;
-    height: 100%;
+    height: calc(100% * 620 / 750);
+    margin: 0;
     aspect-ratio: 1000 / 620;
     transform: translateX(-50%);
   }
@@ -1059,9 +1322,15 @@
   @media (prefers-reduced-motion: reduce) {
     .bz-street .lamp svg,
     .bz-street .twinkle,
-    .bz-street .fig *,
     .bz-street .horse * {
       animation: none;
+    }
+    /* \`!important\`: the figures' own rules (\`.fig .holding .gest\`, \`.fig .breathe\`) are
+       more specific than any one rule here could be, and a figure that kept breathing
+       under reduced motion broke this file's promise (found by M50's review). */
+    .bz-street .fig,
+    .bz-street .fig * {
+      animation: none !important;
     }
     .bz-street .mote {
       animation: none;

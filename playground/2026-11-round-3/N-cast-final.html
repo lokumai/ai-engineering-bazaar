@@ -22,23 +22,23 @@ body{margin:0; background:var(--ground); color:var(--ink); font-family:var(--san
 .v-b{visibility:hidden}
 .back .v-f{visibility:hidden} .back .v-b{visibility:visible}
 /* M50 — the run, as the chase draws it: a bob, the feet lifting in turn, the free arm swinging */
-.run .fg{animation:run-bob .34s ease-in-out infinite}
-@keyframes run-bob{0%,100%{transform:translateY(0)} 50%{transform:translateY(-12px)}}
+.run .fg{transform-box:view-box; transform-origin:110px 392px; animation:run-bob .34s ease-in-out infinite}
+@keyframes run-bob{0%,100%{transform:translateY(0) rotate(-2.5deg)} 50%{transform:translateY(-10px) rotate(2.5deg)}}
 .run .foot{transform-box:view-box; animation:run-leg .34s ease-in-out infinite alternate}
 .run .foot-l{transform-origin:96px 240px} .run .foot-r{transform-origin:124px 240px; animation-direction:alternate-reverse}
 /* seen from behind, a runner's feet lift in turn; they do not swing sideways (a sideways swing
    crossed Bit's long legs) */
-@keyframes run-leg{from{transform:translateY(0) rotate(0)} to{transform:translateY(-16px) rotate(3deg)}}
+@keyframes run-leg{from{transform:translateY(0)} to{transform:translateY(-9px)}}
 .run .arm .gest{animation:run-arm .34s ease-in-out infinite alternate !important}
 .run .arm-r .gest{animation-direction:alternate-reverse !important}
-@keyframes run-arm{from{transform:rotate(-30deg)} to{transform:rotate(30deg)}}
+@keyframes run-arm{from{transform:rotate(-16deg)} to{transform:rotate(16deg)}}
 /* what each carried thing does in the run (the decision per prop) */
 .run[data-run="level"] .holding .gest, .run[data-run="roll"] .holding .gest, .run[data-run="gun"] .gun-arm .gest{animation:none !important}
 .run[data-run="raise"] .holding .gest{animation:none !important; transform:rotate(-24deg)}
 .run[data-run="flutter"] .holding .gest{animation:none !important}
 .run[data-run="flutter"] .tail{transform-box:fill-box; transform-origin:50% 0; animation:run-flutter .2s ease-in-out infinite alternate}
 @keyframes run-flutter{from{transform:skewX(-14deg) scaleY(1)} to{transform:skewX(12deg) scaleY(.92)}}
-@media (prefers-reduced-motion: reduce){ .run *{animation:none !important} }
+@media (prefers-reduced-motion: reduce){ .run *, .run .arm .gest{animation:none !important} }
 .fig .breathe{transform-box:view-box; transform-origin:110px 392px; animation:fg-breathe 4.2s ease-in-out infinite; animation-delay:var(--dl,0s)}
 @keyframes fg-breathe{0%,100%{transform:scale(1,1)} 50%{transform:scale(1.008,1.018)}}
 .fig .head{transform-box:view-box; transform-origin:110px 140px; animation:fg-nod 6s ease-in-out infinite; animation-delay:var(--dl,0s)}
@@ -182,7 +182,7 @@ const PROP = {
   carpet:(x,y)=>{const L=x-26, T=y-8, W=70, H=132, R=L+W, B=T+H, mx=L+W/2, my=T+H/2;
     const fringe=(yy,d)=>Array.from({length:12},(_,k)=>`M${(L+4+k*5.6).toFixed(1)},${yy} v${d}`).join(' ');
     const corner=(px,py,sx,sy)=>`<path d="M${px},${py} h${sx*16} q${-sx*2},${sy*10} ${-sx*16},${sy*16}Z" fill="#282864"/><path d="M${px+sx*3},${py+sy*3} h${sx*7} q${-sx*1},${sy*4} ${-sx*7},${sy*7}Z" fill="#DDB46A"/>`;
-    return `<path d="${fringe(T,-7)}" stroke="#F6EEDF" stroke-width="2" stroke-linecap="round"/><path d="${fringe(B,8)}" stroke="#F6EEDF" stroke-width="2" stroke-linecap="round"/>`+
+    return `<path d="${fringe(T,-11)}" stroke="#F6EEDF" stroke-width="2" stroke-linecap="round"/><path d="${fringe(B,13)}" stroke="#F6EEDF" stroke-width="2" stroke-linecap="round"/>`+
     `<rect x="${L}" y="${T}" width="${W}" height="${H}" rx="2" fill="#282864"/><rect x="${L+6}" y="${T+6}" width="${W-12}" height="${H-12}" fill="#A0503C"/>`+
     `<rect x="${L+3}" y="${T+3}" width="${W-6}" height="${H-6}" fill="none" stroke="#DDB46A" stroke-width="1.4" stroke-dasharray="4 3"/><rect x="${L+9}" y="${T+9}" width="${W-18}" height="${H-18}" fill="none" stroke="#DDB46A" stroke-width="1.2"/>`+
     corner(L+9,T+9,1,1)+corner(R-9,T+9,-1,1)+corner(L+9,B-9,1,-1)+corner(R-9,B-9,-1,-1)+
@@ -257,7 +257,7 @@ function hatSVG(h){
 // M50 — the börk's cloth: from the folded top of the cap down the back to the shoulder
 // blades. From the front only its edge shows, behind the head on one side.
 function borkCloth(view){
-  if(view==='b') return `<path d="M98,40 Q110,30 122,40 L127,196 Q110,206 93,196Z" fill="#F4EFE6"/><path d="M103,52 L100,192 M110,46 V198 M117,52 L120,192" stroke="#DCD3C3" stroke-width="2"/><path d="M93,196 Q110,206 127,196 L127,190 Q110,200 93,190Z" fill="#E4DCCD"/>`;
+  if(view==='b') return `<path d="M102,40 Q110,32 118,40 L122,196 Q110,204 98,196Z" fill="#F4EFE6"/><path d="M106,52 L104,192 M110,46 V198 M114,52 L116,192" stroke="#DCD3C3" stroke-width="1.6"/><path d="M98,196 Q110,204 122,196 L122,190 Q110,198 98,190Z" fill="#E4DCCD"/>`;
   return `<path d="M124,38 Q144,34 147,54 L150,170 Q146,180 139,172 L137,70 Q134,48 124,46Z" fill="#E9E2D5"/><path d="M142,58 L145,168" stroke="#D2C8B7" stroke-width="2"/>`;
 }
 function hairSVG(c){
@@ -365,7 +365,7 @@ function torsoSVG(c, o, view){
     if(view==='f') s+=`<path d="M98,148 Q110,162 122,148" stroke="${o.c2}" stroke-width="3" fill="none"/>`;
     // M50 — the yatağan: a short curved sword in its scabbard, tucked across the sash, the
     // bone hilt with its two 'ears' up at the wearer's right
-    if(view==='f' && o.blade) s+=`<path d="M100,236 Q124,240 146,270 Q148,276 143,277 Q121,248 99,244Z" fill="#3A2A22"/><path d="M100,236 Q124,240 146,270" stroke="#C99A4B" stroke-width="1.6" fill="none"/><path d="M118,240 l3,7 M132,251 l4,6" stroke="#C99A4B" stroke-width="3"/><path d="M143,272 Q149,276 146,280" stroke="#C99A4B" stroke-width="3" fill="none" stroke-linecap="round"/><rect x="95" y="233" width="7" height="13" rx="1.5" fill="#C99A4B" transform="rotate(-62 98.5 239.5)"/><path d="M95,237 L82,226" stroke="#EDE3CF" stroke-width="7" stroke-linecap="round"/><ellipse cx="78" cy="222" rx="4.2" ry="2.6" fill="#EDE3CF" transform="rotate(-20 78 222)"/><ellipse cx="82" cy="219" rx="4.2" ry="2.6" fill="#EDE3CF" transform="rotate(-70 82 219)"/>`;
+    if(view==='f' && o.blade) s+=`<path d="M100,236 Q124,240 146,270 Q148,276 143,277 Q121,248 99,244Z" fill="#3A2A22"/><path d="M100,236 Q124,240 146,270" stroke="#C99A4B" stroke-width="1.6" fill="none"/><path d="M118,240 l3,7 M132,251 l4,6" stroke="#C99A4B" stroke-width="3"/><path d="M142,271 L147,278" stroke="#C99A4B" stroke-width="4" stroke-linecap="round"/><rect x="95" y="233" width="7" height="13" rx="1.5" fill="#C99A4B" transform="rotate(-62 98.5 239.5)"/><path d="M95,237 L82,226" stroke="#EDE3CF" stroke-width="7" stroke-linecap="round"/><ellipse cx="78" cy="222" rx="4.2" ry="2.6" fill="#EDE3CF" transform="rotate(-20 78 222)"/><ellipse cx="82" cy="219" rx="4.2" ry="2.6" fill="#EDE3CF" transform="rotate(-70 82 219)"/>`;
     return neck+s;
   }
   if(b==='tee'||b==='hoodie'||b==='blazer'||b==='cardigan'){
@@ -413,7 +413,7 @@ const ARM = { l:'M82,160 L72,214 L86,242', r:'M138,160 L148,214 L134,242',
 const HAND = { l:[86,242], r:[134,242], hold:[166,176], wave:[178,120] };
 // M50 — the musket, shouldered at rest: the butt in the left hand at the hip, the barrel up
 // along the shoulder and past the head, the muzzle to the sky; never pointed
-const MUSKET = `<g class="musket"><path d="M84,284 Q92,288 100,283 L91,204 L82,205Z" fill="#7A4E2A"/><path d="M85,281 Q92,284 99,280" stroke="#C99A4B" stroke-width="2.4" fill="none"/><path d="M84.5,204 L58,18" stroke="#5E6070" stroke-width="5" stroke-linecap="round"/><path d="M88.5,204 L63,30" stroke="#7A4E2A" stroke-width="3.4" stroke-linecap="round"/><path d="M90,206 L64.5,32" stroke="#3E4050" stroke-width="1.2"/><path d="M76,150 l7,1 M68.5,98 l7,1 M62.5,56 l6,1" stroke="#C99A4B" stroke-width="3"/><rect x="81" y="200" width="11" height="9" rx="2" fill="#C99A4B"/><path d="M86,200 l-3,-6" stroke="#3E4050" stroke-width="2.4" stroke-linecap="round"/><path d="M57,14 l3,0.4" stroke="#3E4050" stroke-width="4" stroke-linecap="round"/></g>`;
+const MUSKET = `<g class="musket"><path d="M80,286 Q92,292 104,285 L93,204 L81,205Z" fill="#7A4E2A"/><path d="M81,283 Q92,289 103,282" stroke="#C99A4B" stroke-width="3.4" fill="none"/><path d="M84.5,204 L58,18" stroke="#5E6070" stroke-width="6.5" stroke-linecap="round"/><rect x="85" y="214" width="8" height="16" rx="2" fill="#B8873B" transform="rotate(-8 89 222)"/><path d="M88.5,204 L63,30" stroke="#7A4E2A" stroke-width="3.4" stroke-linecap="round"/><path d="M90,206 L64.5,32" stroke="#3E4050" stroke-width="1.2"/><path d="M76,150 l7,1 M68.5,98 l7,1 M62.5,56 l6,1" stroke="#C99A4B" stroke-width="3"/><rect x="81" y="200" width="11" height="9" rx="2" fill="#C99A4B"/><path d="M86,200 l-3,-6" stroke="#3E4050" stroke-width="2.4" stroke-linecap="round"/><path d="M57,14 l3,0.4" stroke="#3E4050" stroke-width="4" stroke-linecap="round"/></g>`;
 function armSVG(side, c, o, pose, view, part='all'){
   const key = side==='l' ? 'l' : (pose||'r');
   const d = ARM[key], hand = HAND[key];
@@ -501,8 +501,8 @@ function robotSVG(acc, opt={}){
 const WHO = {
   leyla:   { cap:'Leyla · spice seller', story:'Leyla mixes her spices by smell, not by weight. She says the order you add things in matters as much as the things themselves.' },
   dariush: { cap:'Dariush · carpet merchant', story:'Dariush brought his carpets from Tabriz, each one tied by hand, knot by knot. He says you only see the pattern when you step back.' },
-  deniz:   { cap:'Deniz · simit seller', story:'Deniz sells his father\'s simit at the gate every morning. He is the first to see who comes in, and the first to follow them.' },
-  bit:     { cap:'Bit · AI robot', story:'Bit was built to answer questions. In the bazaar it found out how many it could not answer, so it went inside to learn.' },
+  deniz:   { cap:'Deniz · simit seller', story:'Deniz sells his father\'s simit at the gate every morning. He is the first to see who comes in, and the first to call out to them.' },
+  bit:     { cap:'Bit · AI robot', story:'Bit was built to answer questions. In the bazaar it found more questions than it could answer, so it went inside to learn.' },
   murat:   { cap:'Murat · Janissary', story:'Murat guards the gate. He has watched every kind of trader pass through it, and he lets in anyone who comes to learn.' },
   mei:     { cap:'Mei · silk trader', story:'Mei carried her silk along the long road from the east. She writes down every bolt she sells, because a trader who forgets loses money.' },
   piri:    { cap:'Piri · map-maker', story:'Piri draws coasts he has sailed and coasts he has only heard of, and he marks which is which. A good map, he says, shows where it might be wrong.' },

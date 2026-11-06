@@ -31,7 +31,7 @@ https://www.langchain.com/blog/traces-start-agent-improvement-loop
 20) advanced_prompting (Reflextion and Self-critique, Tree of Thought, LLM Consul, caveman, ponytail)
 21) advanced_context_engineering (Context engineering for software development like Superpowers, SpecKit, GSD, AgentOS, Claude Native Plan Goals Ultrathink Playground, TODO: Intent-driven development where specifications define the "what" before the "how")
 22) advanced_coding_agents (claude code best practices: https://code.claude.com/docs/en/best-practices#use-cli-tools, rewind, resume, subagent-cli-skills, /fork, btw)
-23) advanced_harness_engineering (harness profiles, lintins (LSP), system prompts, changing tool names, self evolving harnessess, context and harness embedded in llm anthtropic article: https://claude.com/blog/the-new-rules-of-context-engineering-for-claude-5-generation-models)
+23) advanced_harness_engineering (harness profiles, linting (LSP) and pre-commit gate with security scan and Ruff, system prompts, changing tool names, self evolving harnessess, context and harness embedded in llm anthtropic article: https://claude.com/blog/the-new-rules-of-context-engineering-for-claude-5-generation-models)
 24) advanced_agent_architectures (THREAD, ReAct, Deep, CodeAct, RLM, Dynamic Workflows)
 25) advanced_ui (agentic UI, AG-UI, MCP-Apps UI, A2UI, Copilotkit, Agent Client Protocol ACP, TUI for agents)
 26) advanced_deployment (agent server, langchain agent protocol, the tech stack for UI REDIS WORKER et, Human-in-the-Lopp (Interrupt, Steering), Runtime (Checkpoints, Fault Tolerance, Time Travel)) 

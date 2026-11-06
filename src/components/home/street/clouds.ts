@@ -19,7 +19,8 @@ const closers = new WeakMap<HTMLElement, () => void>()
 const SCROLL_AWAY = 40
 
 export function initClouds(root: HTMLElement): () => void {
-  const buttons = [...root.querySelectorAll<HTMLButtonElement>('.who-btn')]
+  /* the people at the gate, and since M63 the two characters at the choice of track */
+  const buttons = [...root.querySelectorAll<HTMLButtonElement>('.who-btn, .who-story')]
   let open: HTMLButtonElement | null = null
   /* Where the page was when the cloud opened: focus can scroll the page a little to bring
      the person into view, so only a scroll that goes on past that closes the cloud. */

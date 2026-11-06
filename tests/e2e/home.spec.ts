@@ -417,8 +417,9 @@ test('the track choice and its two characters stack on a phone without pushing t
   }
   // A caption names each character, Turkish first and the English in brackets.
   await expect(page.locator('.bz-street .who')).toHaveCount(2)
+  // the name, not the text: since M63 a caption also holds its story, hidden until opened
   for (const who of await page.locator('.bz-street .who').all()) {
-    await expect(who).toHaveText(/^\S.* \(\S.*\)$/)
+    await expect(who).toHaveAccessibleName(/^\S.* \(\S.*\)$/)
   }
   const sideways = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth)
   expect(sideways).toBeLessThanOrEqual(0)

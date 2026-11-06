@@ -500,12 +500,12 @@ function robotSVG(acc, opt={}){
 /* M50 — the captions and the stories, drafted for the author to edit. English only (D80). */
 const WHO = {
   leyla:   { cap:'Leyla · spice seller', story:'Leyla mixes her spices by smell, not by weight. She says the order you add things in matters as much as the things themselves.' },
-  dariush: { cap:'Dariush · carpet merchant', story:'Dariush brought his carpets from Tabriz, each one tied by hand, knot by knot. He says you only see the pattern when you step back.' },
+  dariush: { cap:'Dariush · carpet merchant', story:'Dariush brought his carpets from Iran, each one tied by hand, knot by knot. He says you only see the pattern when you step back.' },
   deniz:   { cap:'Deniz · simit seller', story:'Deniz sells his father\'s simit at the gate every morning. He is the first to see who comes in, and the first to call out to them.' },
   bit:     { cap:'Bit · AI robot', story:'Bit was built to answer questions. In the bazaar it found more questions than it could answer, so it went inside to learn.' },
   murat:   { cap:'Murat · Janissary', story:'Murat guards the gate. He has watched every kind of trader pass through it, and he lets in anyone who comes to learn.' },
   mei:     { cap:'Mei · silk trader', story:'Mei carried her silk along the long road from the east. She writes down every bolt she sells, because a trader who forgets loses money.' },
-  piri:    { cap:'Piri · map-maker', story:'Piri draws coasts he has sailed and coasts he has only heard of, and he marks which is which. A good map, he says, shows where it might be wrong.' },
+  piri:    { cap:'Piri · map-maker', story:'Piri draws maps for sailors. Where he is not sure of a coast, he writes so on the map, because a wrong map is worse than no map.' },
 };
 const ORDER = ['leyla', 'dariush', 'deniz', 'bit', 'murat', 'mei', 'piri'];
 const draw = (id, opt={}) => id === 'bit' ? robotSVG('fez', opt) : personSVG(id, 'ott', opt);

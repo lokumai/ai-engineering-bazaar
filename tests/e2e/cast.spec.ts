@@ -247,3 +247,36 @@ test('on the walk no two captions touch and none leaves the window, from the sma
     }
   }
 })
+
+test('the character beside each track tells a story too, opened like the people at the gate (M63)', async ({ page }) => {
+  await page.setViewportSize(WALK)
+  await page.emulateMedia({ reducedMotion: 'reduce' })
+  await page.goto('/')
+  await cloudsReady(page)
+  const tracks = await page.locator('.bz-street .track').count()
+  const tellers = page.locator('.bz-street .who-story')
+  expect(tracks, 'no track on the page').toBeGreaterThan(0)
+  await expect(tellers).toHaveCount(tracks)
+  for (const teller of await tellers.all()) {
+    await expect(teller).toHaveAccessibleDescription(/\S{2,}/)
+    await teller.scrollIntoViewIfNeeded()
+    await teller.click()
+    await expect(teller.locator('.who-cloud')).toBeVisible()
+    await page.keyboard.press('Escape')
+    await expect(teller.locator('.who-cloud')).toBeHidden()
+  }
+})
+
+test('the walk draws the people larger than the still picture does, at the same window (M63)', async ({ page }) => {
+  const height = async (reducedMotion: 'reduce' | 'no-preference') => {
+    await page.setViewportSize(WALK)
+    await page.emulateMedia({ reducedMotion })
+    await page.goto('/')
+    const art = (await page.locator('#archBox').boundingBox())!.height
+    const person = (await gate(page).first().boundingBox())!.height
+    return person / art
+  }
+  const still = await height('reduce')
+  const walking = await height('no-preference')
+  expect(walking / still, 'a person on the walk, against the gate art, is not larger').toBeGreaterThan(1.3)
+})

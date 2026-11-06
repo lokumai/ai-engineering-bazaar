@@ -586,6 +586,46 @@ Not milestones, but open: four old branches with commits found nowhere else (`ba
 author's word to delete; M23 (the interface's own strings) stays written and not started; PR #57 is
 the colleague's and stays unmerged without the author's word (D90).
 
+## 🏁 Milestone M63: The gate revised — larger people, a clear way in, plainer stories — DONE
+
+The author, 2026-11-06, after seeing M58 live: *"the characters in the homepage in the very
+beginning are very small and should become about 75% larger, while the 'Open the curriculum' is
+moved a bit upper since currently it sits right at the edge of the second row … the story of piri
+reis is difficult to understand … dariush should come from Iran not Tabriz … bezirgan and sepahi
+should get a story as well in the next stall."* Branch `feat/m63-gate-revision`, one PR.
+
+### Deliverables
+
+- [x] **The people 75% larger on the walk's opening frame**, still standing on the pavement, with
+      their captions clear of each other and of the window at every walk size.
+- [x] **"Open the curriculum" moved up**, clear of the wall's top edge on the walk.
+- [x] **Piri's story rewritten plainly; Dariush comes from Iran**, in the site and the playground.
+- [x] **The Sipahi and the Bezirgân tell a story too**, opened the same way as the people at the
+      gate (pointing, focus, tap), at the choice between the tracks.
+
+### Acceptance criteria
+
+- [x] The cast spec still passes at every walk size (no caption touches another or leaves the
+      window), and a new test opens each track character's story; each new guard seen failing
+      under a mutation.
+- [x] Screenshots read at 1920x800, 1440x900 and 1024x768 on the walk, and the full gate green.
+
+**Report, 2026-11-06.** The walk draws the people `WALK_GROW` (1.75) times their scale, set by
+`motion.ts` beside `--spread` (`chase.layout`), and capped at 1.25 times the spread where the facade
+is too narrow to stand them that far apart; a page that does not walk keeps them at 1, since at
+900px the art box leaves no room between them. The feet stay on the pavement and the chase converts
+by the same factor. The way in sits 4px under the lede on the walk and the arch starts 40 to 80px
+below it (the art's facade paints above its box, so its wall had reached the button). Piri: "Piri
+draws maps for sailors. Where he is not sure of a coast, he writes so on the map, because a wrong
+map is worse than no map." Dariush's carpets come from Iran. The Sipahi's and the Bezirgân's
+captions are buttons with a story cloud, worked by `street/clouds.ts` like the cast; on the walk a
+focused caption brings the walk to the choice, not back to its start. **Tests and mutations:** a
+test that each track's character tells a story (red when the clouds ignore the new captions) and one
+that the walk draws the people larger than the still picture at the same window (red with
+`WALK_GROW` at 1); the caption test in `home.spec.ts` reads the accessible name, since a caption now
+holds its hidden story. **Gate:** typecheck, 1,153 unit tests, the link check, 496 browser tests
+passed and 10 skipped.
+
 ---
 
 > **← Part 2: [`PROGRESS_2.md`](PROGRESS_2.md)** — M16 to M49. **← Part 1: [`PROGRESS.md`](PROGRESS.md)**

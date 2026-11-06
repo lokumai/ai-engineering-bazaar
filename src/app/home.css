@@ -44,8 +44,12 @@
     --dl: 0s;
     --shift: 0px;
     --spread: 1;
-    --cx: 50%;
+    --grow: 1;
     --off: 0%;
+    --hw: 0%;
+    --w: 0%;
+    --feet: 0%;
+    --h: 0%;
     overflow-x: clip;
   }
 
@@ -140,7 +144,10 @@
 
   .bz-street .who-btn {
     position: absolute;
-    left: calc(var(--cx) + var(--off) * var(--spread));
+    top: calc(var(--feet) - var(--h) * var(--grow));
+    left: calc(50% + var(--off) * var(--spread) - var(--hw) * var(--grow));
+    width: calc(var(--w) * var(--grow));
+    height: calc(var(--h) * var(--grow));
     display: block;
     padding: 0;
     border: 0;
@@ -237,19 +244,19 @@
     transform: translate(-50%, -6px) rotate(45deg);
   }
 
-  .bz-street .who-btn[data-below] .who-cloud {
+  .bz-street :is(.who-btn, .who-story)[data-below] .who-cloud {
     top: calc(100% + 44px);
     bottom: auto;
   }
 
-  .bz-street .who-btn[data-below] .who-cloud::after {
+  .bz-street :is(.who-btn, .who-story)[data-below] .who-cloud::after {
     top: auto;
     bottom: 100%;
     transform: translate(-50%, 6px) rotate(225deg);
   }
 
-  .bz-street:not([data-clouds]) .who-btn:is(:hover, :focus-visible) .who-cloud,
-  .bz-street .who-btn[data-open] .who-cloud {
+  .bz-street:not([data-clouds]) :is(.who-btn, .who-story):is(:hover, :focus-visible) .who-cloud,
+  .bz-street :is(.who-btn, .who-story)[data-open] .who-cloud {
     visibility: visible;
     opacity: 1;
   }
@@ -289,7 +296,9 @@
 
   .bz-street .who-tile {
     position: relative;
+    top: auto;
     left: auto;
+    height: auto;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -847,6 +856,22 @@
     transform: translateX(-50%);
   }
 
+  /* M63: the Sipahi's and the Bezirgân's captions are buttons that open a story, so they take the
+     chip's own font and a pointer; the story sits in a cloud above the chip. */
+  .bz-street button.who-story {
+    font-family: inherit;
+    cursor: pointer;
+  }
+
+  .bz-street .who-story .who-cloud {
+    font-weight: 500;
+    white-space: normal;
+  }
+
+  .bz-street .who-story[data-below] .who-cloud {
+    top: calc(100% + 10px);
+  }
+
   /* The line under the doors: which track they open, and the way to the other. */
   .bz-street .cta-wrap {
     display: flex;
@@ -1107,10 +1132,17 @@
     padding: clamp(26px, 5vh, 60px) 24px 0;
   }
 
+  /* M63: the way in sits higher and the arch further below it. The art's facade paints above its
+     box, so with the pavement shown (M58) the wall's top edge had come up to the button's
+     bottom (the author: "it sits right at the edge"). */
+  html.is-walk .bz-street .gate-copy .bz-btn {
+    margin-top: 4px;
+  }
+
   html.is-walk .bz-street .gate-arch {
     flex: 1 1 0;
     min-height: 0;
-    margin-top: clamp(16px, 3.6vh, 44px);
+    margin-top: clamp(40px, 7vh, 80px);
   }
 
   /* On the walk the art box hangs 130/750 of the arch's height above the bottom, so the

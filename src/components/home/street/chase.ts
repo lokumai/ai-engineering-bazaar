@@ -150,8 +150,8 @@ const set = (el: Element | null, transform: string) => {
 export interface Chase {
   render(T: number): void
   reset(): void
-  /** How far apart the walk stands the people (`--spread` on the cast box). */
-  spread(n: number): void
+  /** How far apart the walk stands the people and how much larger it draws them (`--spread`, `--grow`). */
+  layout(spread: number, grow: number): void
 }
 
 export function makeChase(street: HTMLElement, gate: HTMLElement): Chase | null {
@@ -190,6 +190,7 @@ export function makeChase(street: HTMLElement, gate: HTMLElement): Chase | null 
   if (actors.length === 0) return null
   let busy = false
   let spreadBy = 1
+  let growBy = 1
   const across = (x: number) => VANISHING.x + (x - VANISHING.x) * spreadBy
 
   /** A turn's squash: 1 to 0.12 and back, and whether the turn has passed its middle. */
@@ -209,8 +210,9 @@ export function makeChase(street: HTMLElement, gate: HTMLElement): Chase | null 
     const k = 1 + (0.06 - 1) * depth
     const X = VANISHING.x + (xc - VANISHING.x) * k
     const Y = VANISHING.y + (a.y - VANISHING.y) * k
-    const dx = (X - x0) / a.s
-    const dy = (Y - a.y) / a.s
+    /* the drawing's own units: one of them is s × grow of the art's */
+    const dx = (X - x0) / (a.s * growBy)
+    const dy = (Y - a.y) / (a.s * growBy)
     set(a.mover, k === 1 && dx === 0 && dy === 0 ? '' : `translate(${dx.toFixed(2)} ${dy.toFixed(2)}) translate(110 392) scale(${k.toFixed(4)}) translate(-110 -392)`)
     const fade = span(T, p.runAt + p.lat + p.dep * 0.82, p.dep * 0.18)
     const opacity = fade > 0 ? String(1 - fade) : ''
@@ -314,9 +316,11 @@ export function makeChase(street: HTMLElement, gate: HTMLElement): Chase | null 
     })
   }
 
-  function spread(n: number) {
-    spreadBy = n
-    box!.style.setProperty('--spread', n.toFixed(3))
+  function layout(spread: number, grow: number) {
+    spreadBy = spread
+    growBy = grow
+    box!.style.setProperty('--spread', spread.toFixed(3))
+    box!.style.setProperty('--grow', grow.toFixed(3))
   }
 
   return {
@@ -324,7 +328,8 @@ export function makeChase(street: HTMLElement, gate: HTMLElement): Chase | null 
     reset: () => {
       reset()
       box!.style.removeProperty('--spread')
+      box!.style.removeProperty('--grow')
     },
-    spread,
+    layout,
   }
 }

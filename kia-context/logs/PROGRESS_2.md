@@ -4538,7 +4538,7 @@ under them; and give Persian Iran's flag.
 - [x] The full gate is green: typecheck; 1,154 unit and corpus tests; the base-path build and its
       link gate; the browser suite, 466 passed and 10 skipped.
 
-## 🏁 Milestone M47: "AI Engineering" in capitals, and the catalog menu's tabs that visibly switch — BUILT ON `feat/round-3`, SHIPS WITH M51
+## 🏁 Milestone M47: "AI Engineering" in capitals, and the catalog menu's tabs that visibly switch — SHIPPED AS PR #66
 
 Branch `feat/round-3`, from `main` at `15316aa`. The author, 2026-11-06: *"make the first letters of
 'AI Engineering' both capital"*, and when the catalog's For Engineers / For Everyone switch
@@ -4725,9 +4725,9 @@ windows, and no script).
 
 ## 🏁 Milestone M51: Ship round 3 — PLANNED
 
-One PR from `feat/round-3` to `main`, carrying **M47** (the capital E and the menu's switch),
-**M48 and M49** (the round-3 playground), **M50** (the approved art), **M61** (Emerging Trends), **M55** (no Sources count)
-and **M58** (round 3 built). The gate above, then:
+One PR to `main` carrying **M50** (the approved art), **M55** (no Sources count) and **M58** (round
+3 built), from a branch cut from `main` after PR #66. M47, the round-3 playground (M48, M49) and M61
+already shipped as PR #66. The gate above, then:
 
 - [ ] The live site checked after the deploy: the chase on the home page, the catalog with no
       Sources count, a Persian module page.
@@ -4857,7 +4857,7 @@ Branches from `main` after M51. Builds the M57 picks; `ARCHITECTURE.md` gains th
       resolves; the modal's focus trap, Escape and labels work; the button is not in the navbar.
 - [ ] A Persian and a Turkish PDF read by eye before merging.
 
-## 🏁 Milestone M61: The fifth level becomes Emerging Trends — BUILT ON `feat/round-3`, SHIPS WITH M51
+## 🏁 Milestone M61: The fifth level becomes Emerging Trends — SHIPPED AS PR #66
 
 Issue #40 and the author, 2026-11-06 (D94): "Protocols & Specs" renamed **Emerging Trends**, the
 protocols reference moved into Ecosystem, and four draft modules scaffolded for later writing.
@@ -4879,7 +4879,8 @@ protocols reference moved into Ecosystem, and four draft modules scaffolded for 
       Expert before Advanced Training, as a draft in English and Turkish listing #46's metrics:
       BLEU, ROUGE, METEOR, accuracy and precision, BERTScore; faithfulness, LLM-as-judge, human
       preference. Expert now has 12 modules, the course 38 (19 ready).
-- [ ] The full gate and the browser suite on the branch (with M51).
+- [x] The full gate and the browser suite on the branch, shipped with M47 and the round-3 playground
+      as PR #66 (2026-11-06), ahead of M51.
 
 ## 🏁 Milestone M62: Caravan, the trends timeline — PLACEHOLDER, LATER
 

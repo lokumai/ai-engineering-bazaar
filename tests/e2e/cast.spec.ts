@@ -20,6 +20,8 @@ const INTO_CHASE = 420
 
 const gate = (page: Page) => page.locator('.bz-street .cast-box .who-btn')
 const row = (page: Page) => page.locator('.bz-street .cast-row .who-btn')
+/** The clouds' script marks the street when it is wired; a click before that only focuses. */
+const cloudsReady = (page: Page) => expect(page.locator('.bz-street[data-clouds]')).toHaveCount(1)
 /** ScrollTrigger scrubs with a lag (`scrub: 0.9`), so a pose is read after it settles. */
 const settle = (page: Page) => page.waitForTimeout(1600)
 
@@ -93,6 +95,7 @@ test('on a phone the people stand in a row under the gate, captioned, and none a
 
 test('a story opens by keyboard focus, one at a time, and Escape closes it', async ({ page }) => {
   await walk(page)
+  await cloudsReady(page)
   const first = gate(page).first()
   for (let i = 0; i < 40; i++) {
     await page.keyboard.press('Tab')
@@ -111,6 +114,7 @@ test.describe('on a touch screen', () => {
   test.use({ hasTouch: true, isMobile: true, viewport: { width: 390, height: 844 } })
   test('a tap opens a story, a second tap or a tap elsewhere closes it', async ({ page }) => {
     await page.goto('/')
+    await cloudsReady(page)
     const last = row(page).last()
     await last.scrollIntoViewIfNeeded()
     await last.tap()
@@ -127,6 +131,7 @@ test('an open story stays inside the window, at both ends of the cast', async ({
   for (const width of [1024, 1440]) {
     await page.setViewportSize({ width, height: 768 })
     await page.goto('/')
+    await cloudsReady(page)
     for (const btn of [gate(page).first(), gate(page).last()]) {
       // A click, not `.focus()` and Enter: focus already opens a story, and Enter toggles it.
       await btn.click()
@@ -153,6 +158,8 @@ test('once the people run they leave the tab order, and come back when the reade
 })
 
 test('no caption is covered by a person, in the walk and in the still picture', async ({ page }) => {
+  // six page loads: more than the default 30s on a CI runner (measured 34s there)
+  test.setTimeout(90_000)
   for (const reducedMotion of ['no-preference', 'reduce'] as const) {
     for (const size of [{ width: 1024, height: 768 }, WALK, { width: 1920, height: 1080 }]) {
       await page.setViewportSize(size)
@@ -200,6 +207,7 @@ test('clicking a person opens their story and leaves the walk where it is', asyn
   await page.evaluate(() => window.scrollTo(0, 40))
   await settle(page)
   const before = await page.evaluate(() => window.scrollY)
+  await cloudsReady(page)
   await gate(page).first().click()
   await expect(gate(page).first().locator('.who-cloud')).toBeVisible()
   expect(Math.abs((await page.evaluate(() => window.scrollY)) - before), 'the click moved the walk').toBeLessThan(4)
@@ -209,6 +217,7 @@ test('opening the stories writes nothing to storage', async ({ page }) => {
   await walk(page)
   const before = await page.evaluate(() => [JSON.stringify(localStorage), JSON.stringify(sessionStorage)])
   await expect(gate(page)).toHaveCount(CAST.length)
+  await cloudsReady(page)
   for (const btn of await gate(page).all()) {
     await btn.click()
     await expect(btn.locator('.who-cloud')).toBeVisible()

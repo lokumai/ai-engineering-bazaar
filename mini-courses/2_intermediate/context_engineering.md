@@ -152,25 +152,6 @@ is the long-term one. In practice, it is usually organised into three kinds:
 ![Three kinds of long-term memory](./images/semantic-episodic-procedural.png)  
 *The split matters because the agent writes and reads the three at different times. Facts about you collect quietly over time. Past actions are what stop an agent from repeating a mistake. And the instructions layer is just the system prompt from [Tool Calling](../1_fundamentals/tools.md) under another name.*
 
-## Using a Knowledge Base as Explorable Context
-
-Some information is really valuable and does not change often, such as how your company's internal
-API works. Do not paste it into every prompt. Put it in a place where the agent can go and look: a
-folder of markdown files that it can read and search.
-
-![A knowledge base the agent explores](./images/explorable-knowledge-base.png)  
-*The knowledge base lives outside the window and grows with every interaction. The agent reads only the page a question needs, so the rest of what it knows costs nothing until it is used.*
-
-Then, when the agent decides it needs your documentation, it retrieves it. It reads the part that
-matters, and learns that much in context. Retrieval can be full RAG from
-[RAG & Embeddings](../1_fundamentals/rag.md), or just an agent opening files. Either way, the
-alternative is to dump the entire API reference into the window and pay for it on every turn.
-
-One tool is worth knowing here. [DeepWiki](https://deepwiki.org/) generates a wiki for a GitHub
-repository. Say your agent has a question about a library's internals, its architecture or its
-API. It can read DeepWiki's write-up, instead of crawling the repository itself and filling its
-context with source files.
-
 ## Context Isolation
 
 Here is the example that makes this clear.
@@ -243,6 +224,58 @@ not the only thing that does it.
 
 **How it works.** Modern agents offer this as a built-in tool. If your agent does not have one but
 it can reach a filesystem, it can keep a markdown file and get the same result.
+
+## Using a Knowledge Base as Explorable Context
+
+Some information is really valuable and does not change often, such as how your company's internal
+API works. Do not paste it into every prompt. Put it in a place where the agent can go and look: a
+folder of markdown files that it can read and search.
+
+![A knowledge base the agent explores](./images/explorable-knowledge-base.png)  
+*The knowledge base lives outside the window and grows with every interaction. The agent reads only the page a question needs, so the rest of what it knows costs nothing until it is used.*
+
+Then, when the agent decides it needs your documentation, it retrieves it. It reads the part that
+matters, and learns that much in context. Retrieval can be full RAG from
+[RAG & Embeddings](../1_fundamentals/rag.md), or just an agent opening files. Either way, the
+alternative is to dump the entire API reference into the window and pay for it on every turn.
+
+Here is an example that every coding agent meets. Libraries change all the time: a new version
+renames a function, removes an option, or adds a better way to do something. But a model only knows
+what was in its training data, and that data stops at a date called the **knowledge cutoff**. So
+when an agent writes code against a library, it often needs the library's current documentation,
+not the version it remembers. Here is how the industry has been solving that, one step at a time.
+
+**First, `llms.txt`.** A website puts a plain markdown file at `/llms.txt`. The file tells a model
+what the site is and where its important pages are, so the model can find the right page without
+reading the whole site. A minimal one looks like this:
+
+```markdown
+# Acme SDK
+> A Python library for sending invoices.
+- [Quickstart](https://acme.dev/docs/quickstart.md): install it and send the first invoice
+```
+
+The idea is from [The /llms.txt file, v2](https://llmstxt.org/), a proposal by Jeremy Howard from
+2024.
+
+**Then, MCP.** The Model Context Protocol came out, and many projects started to offer their
+documentation as tools that an agent can call. We cover MCP properly in
+[Code Agents](coding_agents.md). For now, think of an MCP server as a set of tools that you add, or
+install, into your agent. One of those tools might be "search the docs".
+
+**Then, one place for all of them.** There were soon too many of these files and servers to set up
+one by one. So [Context7](https://context7.com/) gathered the documentation of many libraries into a
+single place. It gives your agent one MCP server, and through it, the current docs and code examples
+of thousands of projects.
+
+[DeepWiki](https://deepwiki.org/) works in a similar way, but for code. It generates a wiki for a
+GitHub repository. Say your agent has a question about a library's internals, its architecture or
+its API. It can read DeepWiki's write-up, instead of crawling the repository itself and filling its
+context with source files.
+
+Notice what all of these have in common. Each one is a knowledge base that lives outside the
+window, stays there between sessions, and is explored by the agent. The agent pulls in only the
+page that the current task needs.
 
 > **NOTE:** these are not all of the techniques. [Advanced Context Engineering](../3_expert/advanced_context_engineering.md) covers the harder ones,
 > especially for software work.
@@ -425,6 +458,7 @@ actually save you?
 - [Context Engineering: How Deep Agents Remember](https://www.langchain.com/blog/context-engineering-deep-agents-remember): how deepagents keeps the context of a long run small (offloading, summarization, skills, subagents and memory files), and why memory kept as plain files lets you change models
 - [Measuring AI Ability to Complete Long Software Tasks](https://arxiv.org/abs/2503.14499): where the time-horizon number comes from, and the doubling trend
 - [Task-completion time horizons](https://metr.org/time-horizons/): the current numbers per model, kept up to date
+- [The /llms.txt file, v2](https://llmstxt.org/): the proposal, and the format in full
 
 ### 🎬 Videos
 
@@ -432,6 +466,7 @@ actually save you?
 
 ### 🛠️ Tools
 
+- [Context7](https://context7.com/): current documentation for thousands of libraries, through one MCP server
 - [DeepWiki](https://deepwiki.org/): a wiki per repository, so your agent reads about the code instead of reading the code
 
 ### 🗃️ Repositories

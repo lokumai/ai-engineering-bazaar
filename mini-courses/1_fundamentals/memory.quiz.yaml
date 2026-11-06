@@ -110,7 +110,7 @@ questions:
         - "Because you know exactly which document the model read"
       explain: "Retrieved text sits in the context, so the app can show which document the answer came from. Knowledge in the weights has no address, so nobody can say which training data produced it."
     tr:
-      question: "Parametrik olmayan bellekten gelen bir cevaba neden kaynak gösterilebilir de ağırlıklardan gelen bir cevaba gösterilemez?"
+      question: "Parametrik olmayan bellekten gelen bir cevaba neden kaynak gösterilebilirken ağırlıklardan gelen bir cevaba gösterilemez?"
       options:
         - "Çünkü ağırlıklar eğitim bittikten sonra şifrelenir"
         - "Çünkü parametrik olmayan bellek her zaman daha doğrudur"

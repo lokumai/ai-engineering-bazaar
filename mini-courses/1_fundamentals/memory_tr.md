@@ -17,13 +17,13 @@ Agent'lara geçmeden önce, şimdiye kadar anlattığımız her şeyin altında 
 - **Kalıcıdır**: Oturum bittiğinde kaybolmaz ve her çağrıda yeniden göndermen de gerekmez, çünkü bilgi zaten modelin *içinde* durur.
 - **Ölçek büyüdükçe bulanıklaşır**: Bir modelin ağırlıkları milyarlarca dokümandan gelen çok büyük miktarda bilgiyi taşır. Senin tek dokümanını bu devasa bilginin arasına koyduğunda, modelin onu *tam olarak* ezberleyip geri çağırması zorlaşır.
 
-Bunu şöyle düşün: 1,000 kitap okumuş bir insan, bu kitapların genel olarak ne hakkında olduğunu bilir. Ama ondan #537 numaralı kitabın 214. sayfasını kelimesi kelimesine aktarmasını istersen zorlanır. Bilgi onun kafasında bir yerdedir, ama bunu tam olarak geri çağıramaz.
+Bunu şöyle düşün: bin kitap okumuş bir insan, bu kitapların genel olarak ne hakkında olduğunu bilir. Ama ondan #537 numaralı kitabın 214. sayfasını kelimesi kelimesine aktarmasını istersen zorlanır. Bilgi onun kafasında bir yerdedir, ama bunu tam olarak geri çağıramaz.
 
 ## Çalışma Belleği
 
 Bu belleğe asıl adıyla, **çalışma belleği** (working memory) demek daha doğru olur. Bu, LLM'in tam şu anda aktif olarak "üzerinde çalıştığı" bellektir, yani context window'unun içindeki metin.
 
-Daha önce gördüğümüz 1,000 kitaplı insan benzetmesine dönelim. Çalışma belleği, aynı insanın gözünün önüne tek bir kitabın açılmış olması gibidir. Artık okudukları her şeyin bulanık bir anısından bir şey hatırlamaya çalışmaları gerekmez, kitabı sadece okuyabilirler. LLM'lerin parametrik bellekle değil de çalışma belleğiyle çok daha iyi sonuç vermesinin nedeni budur. Bilgi milyarlarca başka doküman arasına gömülü değildir, tam gözlerinin önündedir.
+Daha önce gördüğümüz bin kitaplı insan benzetmesine dönelim. Çalışma belleği, aynı insanın gözünün önüne tek bir kitabın açılmış olması gibidir. Artık okudukları her şeyin bulanık bir anısından bir şey hatırlamaya çalışmaları gerekmez, kitabı sadece okuyabilirler. LLM'lerin parametrik bellekle değil de çalışma belleğiyle çok daha iyi sonuç vermesinin nedeni budur. Bilgi milyarlarca başka doküman arasına gömülü değildir, tam gözlerinin önündedir.
 
 **Sorun**: Çalışma belleğinin boyutu sınırlıdır (örneğin 200K ya da 1M token) ve dolabilir. Yeni bir oturum açtığında, yani yeni bir Claude Code ya da ChatGPT konuşması başlattığında, bu bellek tamamen gider. Her yeni oturum, tamamen boş bir context window ile başlar. Bunun nedeni, LLM'in oturumlar arasında kendi durumunu hiçbir şekilde tutmamasıdır.
 
@@ -65,7 +65,7 @@ Bazen çalışma belleğinin oturum bitince yok olmasına izin vermeyiz. Bunun y
 | Kalıcılık | Kalıcı | Geçici: oturum biter ya da context dolarsa kaybolur | Oturumlar arasında kalır |
 | Hassasiyet | Bulanık: milyarlarca doküman arasında tam olarak hatırlamak zordur | Çok hassas: LLM onu doğrudan okur | Context'e geri alındıktan sonra hassas |
 | Nasıl oluşur | [Training LLMs](training_tr.md) (eğitim ve fine-tuning) | Büyüyen bir mesaj yığını | Açık kayıt ve geri getirme, çoğu zaman [RAG](rag_tr.md) ile |
-| Benzetme | 1,000 kitap okumuş biri | Önünde açık duran bir kitabı okuyan biri | Kendi notlarına sonradan bakan biri |
+| Benzetme | Bin kitap okumuş biri | Önünde açık duran bir kitabı okuyan biri | Kendi notlarına sonradan bakan biri |
 
 Asıl önemli nokta şu: **LLM'in kendisinin bir belleği yoktur. Parametrik bellek, eğitimin ağırlıklara yazdığı şeydir. Çalışma belleği, uygulamanın modele o anda gösterdiği şeydir. Uzun süreli bellek ise uygulamanın kaydedip daha sonra geri getirdiği şeydir.**
 
@@ -76,15 +76,15 @@ Asıl önemli nokta şu: **LLM'in kendisinin bir belleği yoktur. Parametrik bel
 | | Parametrik (ağırlıkların içinde) | Parametrik olmayan (context'te ya da oraya getirilen) |
 |---|---|---|
 | Her çağrının maliyeti | Ek bir maliyet yok, bilgi zaten modelin içinde | Context'e koyduğun her token'ın parasını her çağrıda ödersin |
-| Değiştirmek | Yeniden eğitmen gerekir; bu saatler, hatta günler sürer ve ciddi para tutar | Bir dosyayı ya da bir veritabanı satırını düzenlersin, bir sonraki çağrı değişikliği görür |
-| Güncellik | Eğitimin bittiği anda donmuş halde | Canlı: sakladığın veri ne kadar günselse o kadar günsel |
+| Değiştirmek | Yeniden eğitmen gerekir; bu saatler, hatta günler sürer ve ciddi bir masrafı var | Bir dosyayı ya da bir veritabanı satırını düzenlersin, bir sonraki çağrı değişikliği görür |
+| Güncellik | Eğitimin bittiği anda donmuş halde | Canlı: sakladığın veri ne kadar güncelse, o kadar güncel |
 | Cevabın nereden geldiği | Bilinmez: cevabı hangi training verisinin ürettiğini göremezsin | Bilinir: modelin okuduğu dokümanı tam olarak gösterebilirsin |
 | Bir cevabı kontrol etmek | Zor, çünkü karşılaştıracak hiçbir şey yok | Kolay: cevabı modele gösterilen metinle karşılaştırırsın |
 | Neye uygun | Modelin nasıl davrandığına: bir üslup, bir format, bir beceri | Modelin ne bilmesi gerektiğine: gerçekler, dokümanlar, değişen veriler |
 
-En önemli satır, kaynak satırı. Model ağırlıklarından cevap verdiğinde hangi training verisini kullandığını ya da o verinin doğru olup olmadığını hiçbir zaman bilemezsin; bilgi donmuştur ve bir adresi yoktur. 1,000 kitap okumuş kişiyi hatırla: sana bir bilgiyi söyleyebilir ama hangi kitaptan aldığını söyleyemez. Şimdi ona kendi notlarını ver; artık sayfayı parmağıyla gösterebilir.
+En önemli satır, kaynak satırı. Model ağırlıklarından cevap verdiğinde hangi training verisini kullandığını ya da o verinin doğru olup olmadığını hiçbir zaman bilemezsin; bilgi donmuştur ve bir adresi yoktur. bin kitap okumuş kişiyi hatırla: sana bir bilgiyi söyleyebilir ama hangi kitaptan aldığını söyleyemez. Şimdi ona kendi notlarını ver; artık sayfayı parmağıyla gösterebilir.
 
-Parametrik olmayan bir cevaba ise **kaynak gösterilebilir**: uygulama, cevabın arkasındaki dokümanı kullanıcıya açıp gösterebilir. Kendi dokümanlarını bir modele vermek için [RAG](rag_tr.md) yönteminin fine-tuning'den genellikle daha iyi olmasının başlıca sebeplerinden biri de budur.
+Parametrik olmayan bir cevaba ise **kaynak gösterilebilir**: uygulama, cevabın arkasındaki dokümanı kullanıcıya açıp gösterebilir. Kendi dokümanlarını bir modele vermek için genellikle fine-tuning yerine [RAG](rag_tr.md) tercih edilir; bunun başlıca nedenlerinden biri de budur.
 
 ## Bu serinin neresindeyiz
 

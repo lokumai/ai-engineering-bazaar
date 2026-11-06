@@ -733,19 +733,35 @@ Recommendation Systems" (title fetched). Turkish and Persian written as prose, n
 quiz question each (citation; reciprocal rank). The online/offline figure was already in place
 (e9769ca). **Gate:** the content tests.
 
-## 🏁 Milestone M66: Where an agent finds current docs: llms.txt, MCP, Context7 (#49) — PLANNED
+**Reviews (two Haiku, xhigh).** *Translation:* a wrong Turkish word ("günsel" for "güncel"),
+"1,000" which a Turkish reader reads as one (now "bin", in the four places the analogy appears),
+three calques in Persian and two in Turkish, and one quiz stem; all fixed. The Turkish "RAG" link
+label was left: the file uses that short form throughout.
+
+## 🏁 Milestone M66: Where an agent finds current docs: llms.txt, MCP, Context7 (#49) — DONE
 
 ### Deliverables
 
-- [ ] In Context Engineering, "Using a Knowledge Base as Explorable Context" moves after
+- [x] In Context Engineering, "Using a Knowledge Base as Explorable Context" moves after
       "Explicit Planning (TODOs)" and, before DeepWiki, tells the story: knowledge cutoff, then
       `llms.txt` (a three-line example), then docs as MCP tools, then Context7 as one MCP server
       for many libraries; the existing figure stays.
-- [ ] Turkish, Persian and the quiz follow.
+- [x] Turkish and Persian follow; the quiz already holds five questions, the limit, and none asks
+      about the moved section, so it is unchanged.
 
 ### Acceptance criteria
 
-- [ ] Every link fetched and titled from the page; the gate green.
+- [x] Every link fetched and titled from the page; the gate green.
+
+**Report, 2026-11-06.** "Using a Knowledge Base as Explorable Context" now follows "Explicit
+Planning (TODOs)", and the closing NOTE that points at Advanced Context Engineering moved after it,
+so it still closes the techniques. Before DeepWiki the section tells the author's sequence:
+knowledge cutoff, then `llms.txt` with a three-line markdown example (a made-up library, so no
+real site's file is misquoted), then documentation as MCP tools with a pointer forward to Code
+Agents, then Context7 as one MCP server for many libraries; DeepWiki follows as the same idea for
+code, and a closing paragraph names what all of them share. Sources fetched: "The /llms.txt file,
+v2" (Jeremy Howard, 2024-09-03) and Context7 (Upstash, "Up-to-date docs for AI agents"). Turkish
+and Persian written as prose; the Persian mermaid check passes.
 
 ## 🏁 Milestone M67: Loop Engineering split into intermediate and advanced (#48) — PLANNED
 

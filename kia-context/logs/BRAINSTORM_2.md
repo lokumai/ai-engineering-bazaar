@@ -2235,7 +2235,7 @@ F2 also took out the progress page's continue card and statistics row: the tabs 
 are the whole page. The language menu keeps the track (a For Everyone page's menu offers the For
 Everyone page in each language).
 
-### D92 · The site moves to its own domain, ai-bazaar.lokum.dev — 2026-11-06
+### D92 · The site moves to its own domain, ai-bazaar.lokum.dev — 2026-11-06 (PR #62)
 
 The author pointed `ai-bazaar.lokum.dev` at GitHub Pages (a CNAME to `lokumai.github.io` in
 Cloudflare) and asked for the site to be rebuilt for it.

@@ -26,9 +26,9 @@ const pct = (n: number) => `${(Math.round(n * 1000) / 10).toFixed(1)}%`
 /** The hit box is the body (120 of the drawing's 220 units), so neighbours do not overlap. */
 const BODY = 120
 
-/* Across, a person stands at their distance from the middle of the gate times \`--spread\`:
+/* Across, a person stands at their distance from the middle of the gate times `--spread`:
    1 on a page that does not walk, and wider on the walk, where the facade runs far past the
-   art's box (\`motion.ts\` sets it), so neighbours' captions never meet. */
+   art's box (`motion.ts` sets it), so neighbours' captions never meet. */
 function place(m: CastMember): CSSProperties {
   return {
     '--cx': pct(0.5 - ((BODY / 2) * m.s) / ART_W),

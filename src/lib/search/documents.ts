@@ -54,7 +54,7 @@ const parser = unified().use(remarkParse).use(remarkGfm)
 
 /* A block's text. A leaf block (a paragraph, a heading, a table cell) is read whole; a
    container (a list, an item, a table, a quote) is read child by child with a space
-   between, because \`toString\` alone joins two list items into one word. */
+   between, because `toString` alone joins two list items into one word. */
 const LEAF = new Set(['paragraph', 'heading', 'tableCell'])
 function blockText(node: RootContent): string {
   if (node.type === 'code' || node.type === 'html') return ''

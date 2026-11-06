@@ -56,7 +56,7 @@ interface Plan {
   turnAt: number
   turnDur: number
   armsUpAt?: number
-  armsDownAt: number
+  armsDownAt?: number
   runAt: number
   runDur: number
   /** along the pavement to this lane (relative to the far end), then down the street */
@@ -86,7 +86,6 @@ function plans(): Record<CastId, Plan> {
       headAt: 1.0,
       turnAt: 1.8,
       turnDur: 0.45,
-      armsDownAt: 2.2,
       runAt: 2.4,
       runDur: 3.2,
       lane: 0,
@@ -138,7 +137,7 @@ interface Actor {
   plan: Plan
 }
 
-/* The walk calls \`render\` on every frame of its scroll, long after the chase is over, so a
+/* The walk calls `render` on every frame of its scroll, long after the chase is over, so a
    write that would not change anything is skipped: an SVG repaints on any attribute set. */
 const written = new WeakMap<Element, string>()
 const set = (el: Element | null, transform: string) => {
@@ -151,7 +150,7 @@ const set = (el: Element | null, transform: string) => {
 export interface Chase {
   render(T: number): void
   reset(): void
-  /** How far apart the walk stands the people (\`--spread\` on the cast box). */
+  /** How far apart the walk stands the people (`--spread` on the cast box). */
   spread(n: number): void
 }
 
@@ -216,9 +215,12 @@ export function makeChase(street: HTMLElement, gate: HTMLElement): Chase | null 
     const fade = span(T, p.runAt + p.lat + p.dep * 0.82, p.dep * 0.18)
     const opacity = fade > 0 ? String(1 - fade) : ''
     if (a.btn.style.opacity !== opacity) a.btn.style.opacity = opacity
-    /* whoever is nearer is drawn in front: the ones still on the pavement over the ones
-       already down the street */
-    const z = depth > 0 ? String(Math.round(k * 100)) : ''
+    /* gone down the street: not there to point at or click either */
+    const visibility = fade >= 1 ? 'hidden' : ''
+    if (a.btn.style.visibility !== visibility) a.btn.style.visibility = visibility
+    /* whoever is nearer is drawn in front: the ones still on the pavement (k = 1) over the
+       ones already down the street */
+    const z = String(Math.round(k * 100) + 1)
     if (a.btn.style.zIndex !== z) a.btn.style.zIndex = z
 
     /* the run: a window in which the gait is drawn from the clock */
@@ -254,12 +256,15 @@ export function makeChase(street: HTMLElement, gate: HTMLElement): Chase | null 
       })
     }
 
-    /* the arms: the free ones go up when Bit runs, down before the turn, and swing in the run */
-    const up = p.armsUpAt === undefined ? 0 : ease.back(span(T, p.armsUpAt, 0.35)) * (1 - ease.inOut1(span(T, p.armsDownAt, 0.25)))
+    /* the arms: the crowd's free ones go up when Bit turns away and down before their own
+       turn; every free arm swings in the run */
+    const up = p.armsUpAt === undefined || p.armsDownAt === undefined ? 0 : ease.back(span(T, p.armsUpAt, 0.35)) * (1 - ease.inOut1(span(T, p.armsDownAt, 0.25)))
+    /* the shoulders the arms turn about: the people's, or Bit's, which sit 6 units lower */
+    const [lx, rx, sy] = a.id === 'bit' ? [80, 140, 166] : [82, 138, 160]
     const arm = (g: SVGGElement, side: 'l' | 'r') => {
       const held = a.holding === side
       const deg = held ? 0 : (side === 'l' ? 150 : -150) * up + (side === 'l' ? -swing : swing)
-      set(g, Math.abs(deg) < 0.01 ? '' : `rotate(${deg.toFixed(2)} ${side === 'l' ? 82 : 138} 160)`)
+      set(g, Math.abs(deg) < 0.01 ? '' : `rotate(${deg.toFixed(2)} ${side === 'l' ? lx : rx} ${sy})`)
     }
     a.front.forEach((g) => arm(g, g.classList.contains('arm-l') ? 'l' : 'r'))
     a.back.forEach((g) => arm(g, g.classList.contains('arm-l') ? 'l' : 'r'))
@@ -272,6 +277,9 @@ export function makeChase(street: HTMLElement, gate: HTMLElement): Chase | null 
       if (busy) {
         closeClouds(street)
         street.dataset.chasing = 'true'
+        /* focus must not stay on a person about to leave the accessibility tree */
+        const focused = document.activeElement
+        if (focused instanceof HTMLElement && actors.some((a) => a.btn.contains(focused))) focused.blur()
       } else delete street.dataset.chasing
       /* On the move, the people leave the tab order and the accessibility tree; scrolling
          back to the top brings them back. */
@@ -298,6 +306,7 @@ export function makeChase(street: HTMLElement, gate: HTMLElement): Chase | null 
     delete street.dataset.chasing
     actors.forEach((a) => {
       a.btn.style.removeProperty('opacity')
+      a.btn.style.removeProperty('visibility')
       a.btn.style.removeProperty('z-index')
       a.btn.removeAttribute('tabindex')
       a.btn.removeAttribute('aria-hidden')

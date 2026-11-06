@@ -330,6 +330,23 @@
     bottom: calc(100% - 6px);
   }
 
+  /* On a tile, below means under the tile itself: the gate's 44px is for the caption under
+     a standing person's feet (M58 review). */
+  .bz-street .who-tile[data-below] .who-cloud {
+    top: calc(100% + 10px);
+  }
+
+  /* On the walk the people are drawn at the walk's own scale (--u, a 900-unit window), so
+     in a short window their captions shrink with them, to a floor that stays readable;
+     at 900x600 and 1280x720 the fixed size ran chips into each other and off the bottom. */
+  html.is-walk .bz-street .cast-box .who-cap {
+    font-size: clamp(10px, calc(var(--u) * 12px), 11px);
+  }
+
+  html.is-walk .bz-street .cast-box .who-cap b {
+    font-size: clamp(10.5px, calc(var(--u) * 13px), 12px);
+  }
+
   @media (max-width: 899.98px) {
     .bz-street .cast-box {
       display: none;
@@ -903,7 +920,7 @@
   .bz-street .horse .tail { transform-box: fill-box; transform-origin: 100% 0%; animation: bz-fig-tail 3.2s ease-in-out infinite alternate; }
   .bz-street .horse .head { transform-box: fill-box; transform-origin: 0% 80%; animation: bz-fig-hnod 5s ease-in-out infinite; }
   /* The people at the gate (M58): a figure is drawn from the front and from behind in one
-     drawing, and the chase swaps them by putting \`back\` on the drawing. Their idle motion
+     drawing, and the chase swaps them by putting `back` on the drawing. Their idle motion
      is the playground's: a hand holding its goods, Bit's light and tinkering hand. */
   .bz-street .who-fig .v-b { visibility: hidden; }
   .bz-street .who-fig .back .v-f { visibility: hidden; }
@@ -1102,7 +1119,10 @@
   html.is-walk .bz-street .cast-box {
     position: absolute;
     top: auto;
-    bottom: calc(100% * 130 / 750);
+    /* + the band: before the walk pins, the stage starts under the bar's band and its last
+       --layout-band of height is below the window (MEASURED: 18px at 900x600), which is
+       where the captions stand */
+    bottom: calc(100% * 130 / 750 + var(--layout-band));
     left: 50%;
     width: auto;
     height: calc(100% * 620 / 750);
@@ -1325,7 +1345,7 @@
     .bz-street .horse * {
       animation: none;
     }
-    /* \`!important\`: the figures' own rules (\`.fig .holding .gest\`, \`.fig .breathe\`) are
+    /* `!important`: the figures' own rules (`.fig .holding .gest`, `.fig .breathe`) are
        more specific than any one rule here could be, and a figure that kept breathing
        under reduced motion broke this file's promise (found by M50's review). */
     .bz-street .fig,

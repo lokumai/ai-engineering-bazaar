@@ -55,11 +55,11 @@ const SCRIPT_SEAM = /(?<=[A-Za-z0-9])\u200c?(?=[\u0600-\u06ff])|(?<=[\u0600-\u06
 
 /**
  * Words, split also where a Latin word meets a Persian one: the Persian text writes an
- * English term with a Persian suffix (\`hyperparameter‌های\`, the term and the plural joined
+ * English term with a Persian suffix (`hyperparameter‌های`, the term and the plural joined
  * by a non-joiner), and a reader searches for the term.
  *
- * A Persian word written with a non-joiner (\`محدودیت‌ها\`, a word and its plural) is kept
- * three ways: each part, and the whole (which \`normalise\` joins), because a reader types
+ * A Persian word written with a non-joiner (`محدودیت‌ها`, a word and its plural) is kept
+ * three ways: each part, and the whole (which `normalise` joins), because a reader types
  * it with the non-joiner, without it, or with a space. Both found by the index's own test.
  */
 export function tokenize(text: string): string[] {

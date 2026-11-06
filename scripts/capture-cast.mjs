@@ -52,7 +52,9 @@ const figures = await page.evaluate(() => {
     const mover = document.createElementNS('http://www.w3.org/2000/svg', 'g')
     mover.setAttribute('class', 'mover')
     const shad = full.querySelector(':scope > .shad')
-    mover.append(shad, full.querySelector(':scope > .fg'))
+    const fg = full.querySelector(':scope > .fg')
+    if (shad === null || fg === null) throw new Error(`${id}: the drawing has no .shad or .fg`)
+    mover.append(shad, fg)
     full.append(mover) // after the goods, so the person is drawn in front of them
     const tile = full.cloneNode(true)
     tile.querySelectorAll('.v-b').forEach((n) => n.remove())

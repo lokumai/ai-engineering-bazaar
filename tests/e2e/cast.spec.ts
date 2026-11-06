@@ -43,6 +43,7 @@ test('every person at the gate is a named button, in the cast order, with a stor
 
 test('the captions show before the chase and are gone once it begins (walk)', async ({ page }) => {
   await walk(page)
+  await expect(page.locator('.bz-street .cast-box .who-cap')).toHaveCount(CAST.length)
   for (const cap of await page.locator('.bz-street .cast-box .who-cap').all()) await expect(cap).toBeVisible()
   await page.evaluate((y) => window.scrollTo(0, y), INTO_CHASE)
   await settle(page)
@@ -127,7 +128,7 @@ test('an open story stays inside the window, at both ends of the cast', async ({
     await page.setViewportSize({ width, height: 768 })
     await page.goto('/')
     for (const btn of [gate(page).first(), gate(page).last()]) {
-      // A click, not \`.focus()\` and Enter: focus already opens a story, and Enter toggles it.
+      // A click, not `.focus()` and Enter: focus already opens a story, and Enter toggles it.
       await btn.click()
       const cloud = btn.locator('.who-cloud')
       await expect(cloud).toBeVisible()
@@ -141,6 +142,7 @@ test('an open story stays inside the window, at both ends of the cast', async ({
 
 test('once the people run they leave the tab order, and come back when the reader scrolls back up', async ({ page }) => {
   await walk(page)
+  await expect(gate(page)).toHaveCount(CAST.length)
   await page.evaluate((y) => window.scrollTo(0, y), INTO_CHASE)
   await settle(page)
   expect(await gate(page).evaluateAll((b) => b.filter((x) => x.getAttribute('tabindex') === '-1' && x.getAttribute('aria-hidden') === 'true').length)).toBe(CAST.length)
@@ -156,6 +158,7 @@ test('no caption is covered by a person, in the walk and in the still picture', 
       await page.setViewportSize(size)
       await page.emulateMedia({ reducedMotion })
       await page.goto('/')
+      await expect(page.locator('.bz-street .cast-box .who-cap')).toHaveCount(CAST.length)
       for (const cap of await page.locator('.bz-street .cast-box .who-cap').all()) {
         await cap.scrollIntoViewIfNeeded()
         const covered = await cap.evaluate((c) => {
@@ -172,25 +175,63 @@ test('no caption is covered by a person, in the walk and in the still picture', 
   }
 })
 
-test('the cast pushes no page sideways, in any mode and at any width', async ({ page }) => {
+/* `.bz-street` clips sideways, so a person off the edge would never widen the document:
+   each person and caption is measured against the window instead (M58 review). */
+test('every person and caption stays inside the window, in any mode and at any width', async ({ page }) => {
   for (const reducedMotion of ['no-preference', 'reduce'] as const) {
     for (const width of [390, 1024, 1440, 1920]) {
       await page.setViewportSize({ width, height: width === 390 ? 844 : 900 })
       await page.emulateMedia({ reducedMotion })
       await page.goto('/')
-      const sideways = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth)
-      expect(sideways, `${reducedMotion} ${width}`).toBeLessThanOrEqual(0)
+      const shown = page.locator('.bz-street .who-btn:visible, .bz-street .who-cap:visible')
+      expect(await shown.count(), `${reducedMotion} ${width}: no person is shown`).toBeGreaterThanOrEqual(CAST.length)
+      const outside = await shown.evaluateAll((els) => els
+        .map((el) => el.getBoundingClientRect())
+        .filter((r) => r.left < -0.5 || r.right > document.documentElement.clientWidth + 0.5).length)
+      expect(outside, `${reducedMotion} ${width}: a person or caption is off the window`).toBe(0)
     }
   }
+})
+
+test('clicking a person opens their story and leaves the walk where it is', async ({ page }) => {
+  await walk(page)
+  // Before the chase begins (later, a person refuses to open), and past the point the
+  // old focus handler jumped the walk back to.
+  await page.evaluate(() => window.scrollTo(0, 40))
+  await settle(page)
+  const before = await page.evaluate(() => window.scrollY)
+  await gate(page).first().click()
+  await expect(gate(page).first().locator('.who-cloud')).toBeVisible()
+  expect(Math.abs((await page.evaluate(() => window.scrollY)) - before), 'the click moved the walk').toBeLessThan(4)
 })
 
 test('opening the stories writes nothing to storage', async ({ page }) => {
   await walk(page)
   const before = await page.evaluate(() => [JSON.stringify(localStorage), JSON.stringify(sessionStorage)])
+  await expect(gate(page)).toHaveCount(CAST.length)
   for (const btn of await gate(page).all()) {
-    await btn.focus()
-    await btn.press('Enter')
+    await btn.click()
+    await expect(btn.locator('.who-cloud')).toBeVisible()
   }
   const after = await page.evaluate(() => [JSON.stringify(localStorage), JSON.stringify(sessionStorage)])
   expect(after).toEqual(before)
+})
+
+test('on the walk no two captions touch and none leaves the window, from the smallest walk up', async ({ page }) => {
+  for (const size of [{ width: 900, height: 560 }, { width: 900, height: 600 }, { width: 1280, height: 720 }, WALK]) {
+    await page.setViewportSize(size)
+    await page.emulateMedia({ reducedMotion: 'no-preference' })
+    await page.goto('/')
+    await expect(page.locator('html')).toHaveClass(/is-walk/)
+    const caps = page.locator('.bz-street .cast-box .who-cap')
+    await expect(caps).toHaveCount(CAST.length)
+    const boxes = await caps.evaluateAll((els) => els.map((el) => {
+      const r = el.getBoundingClientRect()
+      return { left: r.left, right: r.right, bottom: r.bottom, text: el.textContent ?? '' }
+    }))
+    for (const [i, box] of boxes.entries()) {
+      expect(box.bottom, `${size.width}x${size.height}: ${box.text} runs off the bottom`).toBeLessThanOrEqual(size.height + 0.5)
+      if (i > 0) expect(boxes[i - 1].right, `${size.width}x${size.height}: ${boxes[i - 1].text} touches ${box.text}`).toBeLessThanOrEqual(box.left + 0.5)
+    }
+  }
 })

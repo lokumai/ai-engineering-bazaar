@@ -199,10 +199,12 @@ export function initBazaar(root: HTMLElement): Cleanup {
       K = Math.min(1, (VW - 2 * EDGE) / (GROUP * U))
       stage.style.setProperty('--u', String(U))
       stage.style.setProperty('--k', String(K))
-      /* The cast stands across the facade, not only the art's box (M58): up to 1.7 times
-         as far from the middle, and never past 85% of the window's half-width. */
+      /* The cast stands across the facade, not only the art's box (M58): further from the
+         middle the narrower the art is against the window, never past 85% of the window's
+         half-width, and at most 2.3 times (MEASURED: what 900x560, the smallest walk, needs
+         for its captions not to touch). */
       const art = $('#archBox', gate).offsetWidth
-      if (chase && art > 0) chase.spread(Math.min(1.7, Math.max(1, (0.85 * VW) / art)))
+      if (chase && art > 0) chase.spread(Math.min(2.3, Math.max(1, (0.85 * VW) / art)))
     }
     /* The pull-back is full at the choice and gone EASE_OUT units either side, so every other stop is drawn as it always was. */
     const pull = (x: number): number => {
@@ -310,12 +312,19 @@ export function initBazaar(root: HTMLElement): Cleanup {
       anticipatePin: 1,
     })
     ScrollTrigger.addEventListener('refreshInit', size)
-    ScrollTrigger.addEventListener('refresh', apply)
+    const redraw = () => {
+      apply()
+      chase?.render(chaseT.t)
+    }
+    ScrollTrigger.addEventListener('refresh', redraw)
     toDoors = () => window.scrollTo({ top: st.end, behavior: 'smooth' })
 
     /* keyboard: a control inside the walk brings the walk to where that control is visible */
     const onFocus = (e: FocusEvent) => {
       const target = e.target as HTMLElement
+      /* A person at the gate is reached only before the chase, where the walk already is,
+         and a click focuses them too: scrolling there would jump the walk back (M58 review). */
+      if (target.closest('.who-btn')) return
       const p = target.closest('.door, .cta-wrap')
         ? 1
         : target.closest('.track-sign') ? choiceAt / master.duration() : 0
@@ -332,7 +341,7 @@ export function initBazaar(root: HTMLElement): Cleanup {
       toDoors = null
       section.removeEventListener('focusin', onFocus)
       ScrollTrigger.removeEventListener('refreshInit', size)
-      ScrollTrigger.removeEventListener('refresh', apply)
+      ScrollTrigger.removeEventListener('refresh', redraw)
       st.kill(true)
       master.kill()
       chase?.reset()

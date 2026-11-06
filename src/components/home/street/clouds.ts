@@ -13,14 +13,16 @@
  */
 
 const MARGIN = 8
+/* Each street's own close, so the walk closes a cloud the same way a tap elsewhere does. */
+const closers = new WeakMap<HTMLElement, () => void>()
 /** How far, in pixels, the page has to scroll before an open cloud closes. */
 const SCROLL_AWAY = 40
 
 export function initClouds(root: HTMLElement): () => void {
   const buttons = [...root.querySelectorAll<HTMLButtonElement>('.who-btn')]
   let open: HTMLButtonElement | null = null
-  /* Where the page was when the cloud opened: focus on the walk scrolls the page to the
-     control it lands on, so only a scroll that goes on past that closes the cloud. */
+  /* Where the page was when the cloud opened: focus can scroll the page a little to bring
+     the person into view, so only a scroll that goes on past that closes the cloud. */
   let openedAt = 0
 
   const close = () => {
@@ -85,7 +87,9 @@ export function initClouds(root: HTMLElement): () => void {
   }, { passive: true })
 
   root.setAttribute('data-clouds', '')
+  closers.set(root, close)
   return () => {
+    closers.delete(root)
     close()
     off.forEach((undo) => undo())
     root.removeAttribute('data-clouds')
@@ -94,8 +98,5 @@ export function initClouds(root: HTMLElement): () => void {
 
 /** Closes whatever cloud is open; the walk calls it when the chase begins. */
 export function closeClouds(root: HTMLElement): void {
-  root.querySelectorAll('.who-btn[data-open]').forEach((b) => {
-    b.removeAttribute('data-open')
-    b.removeAttribute('data-below')
-  })
+  closers.get(root)?.()
 }

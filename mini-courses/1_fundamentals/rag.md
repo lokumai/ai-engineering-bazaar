@@ -161,6 +161,9 @@ Then you pass those to the LLM.
 5. Put that text into the context, together with the question.
 6. The LLM answers from what it can now see.
 
+![RAG offline and online](./images/rag-offline-online.png)  
+*The offline half runs once and again whenever the documents change; the online half runs for every question. The picture adds one step the lists leave out: a reranker reads the 20 closest chunks and keeps the best 3, so the context holds only what answers the question.*
+
 ```mermaid
 graph TD
     A["User asks: how does the add function work?"] --> B["Question becomes a vector"]

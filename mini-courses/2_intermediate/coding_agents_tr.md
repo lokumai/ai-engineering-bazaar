@@ -137,6 +137,9 @@ Yukarıdaki her şey modele verilen bir tavsiyedir, yani model çoğu zaman bunl
 
 İlkini aklında tut, çünkü ana fikri o taşıyor. AGENTS.md içinde agent'tan bir dosyaya hiç dokunmamasını isteyen bir talimat bir istektir; yazmayı engelleyen bir `PreToolUse` hook'u ise bir kuraldır. Bu fikir bir sonraki modülde açılıyor ve o modülün var olma sebebi de tam olarak budur.
 
+![Bir pre-tool hook](./images/pre-tool-hook.webp)  
+*Hook, model kararını verdikten sonra ve tool çalışmadan önce devreye girer, yani son kapıdır. Tirith gibi bir doğrulayıcı hazırlanan çağrıyı kontrol eder ve modelin niyeti ne olursa olsun ya çalışmasına izin verir ya da durdurur.*
+
 ## Plugin'ler
 
 Plugin, yukarıdaki şeylerden oluşan bir pakettir: command'lar, skill'ler, subagent'lar, hook'lar ve MCP server'lar. Hepsi birlikte gelir ve tek adımda kurulur. Yeni bir ekip arkadaşının `.claude/` klasörüne altı dosya kopyalaması gerekmez; ona tek bir plugin vermek yeter.

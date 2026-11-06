@@ -118,6 +118,9 @@ Bir vektör veritabanı bu parmak izlerinden milyonlarcasını saklar, her birin
 5. Bu metni soruyla birlikte context'e koy.
 6. LLM, artık gördüğü şeye bakarak cevap verir.
 
+![RAG'in offline ve online yarıları](./images/rag-offline-online.png)  
+*Offline yarı bir kez, sonra da belgeler her değiştiğinde çalışır; online yarı ise her soruda çalışır. Resim, listelerde olmayan bir adımı da gösteriyor: bir reranker en yakın 20 chunk'ı okur ve en iyi 3'ünü tutar, böylece context'te yalnızca soruyu cevaplayan şey kalır.*
+
 ```mermaid
 graph TD
     A["Kullanıcı şunu sorar: add fonksiyonu nasıl çalışır?"] --> B["Soru bir vektöre dönüşür"]

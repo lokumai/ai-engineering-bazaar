@@ -147,6 +147,9 @@ The [hooks reference](https://code.claude.com/docs/en/hooks) lists more than thi
 
 Remember the first one, because it carries the main point. An instruction in AGENTS.md that asks the agent never to touch a file is a request. A `PreToolUse` hook that blocks the write is a rule. This idea is where the next module begins, and it is the reason that module exists.
 
+![A pre-tool hook](./images/pre-tool-hook.webp)  
+*The hook runs after the model has decided and before the tool runs, so it is the last gate. A validator such as Tirith checks the assembled call and either lets it run or stops it, whatever the model intended.*
+
 ## Plugins
 
 A plugin is a package of the things above: commands, skills, subagents, hooks and MCP servers. They ship together, and you install them in one step. A new teammate does not have to copy six files into their `.claude/` directory. You give them one plugin instead.

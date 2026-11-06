@@ -158,6 +158,9 @@ Some information is really valuable and does not change often, such as how your 
 API works. Do not paste it into every prompt. Put it in a place where the agent can go and look: a
 folder of markdown files that it can read and search.
 
+![A knowledge base the agent explores](./images/explorable-knowledge-base.png)  
+*The knowledge base lives outside the window and grows with every interaction. The agent reads only the page a question needs, so the rest of what it knows costs nothing until it is used.*
+
 Then, when the agent decides it needs your documentation, it retrieves it. It reads the part that
 matters, and learns that much in context. Retrieval can be full RAG from
 [RAG & Embeddings](../1_fundamentals/rag.md), or just an agent opening files. Either way, the
@@ -197,6 +200,9 @@ the final answer as that tool result. Anthropic reports that these summaries are
 
 Modern agents call subagents one after another or in parallel. This leaves the main agent free to
 do what it is actually good at: holding the plan and deciding what happens next.
+
+![Subagents running in parallel](./images/subagents-in-parallel.webp)  
+*Three subagents work at the same time, each in a clean context of its own. All the long tool output, the dead ends and the rewrites stay in their windows; the main thread receives one short result from each.*
 
 ## Explicit Planning (TODOs)
 

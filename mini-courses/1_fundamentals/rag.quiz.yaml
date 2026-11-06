@@ -103,3 +103,28 @@ questions:
         - "fine-tuning توی یاد دادن اطلاعات خوبه، ولی توی یاد دادن یه فرمت ضعیفه."
         - "RAG، weight‌های مدل رو سریع‌تر از fine-tuning به‌روز می‌کنه."
       explain: "fine-tuning ساعت‌ها یا روزها طول می‌کشه و خرج داره، پس نمی‌تونی با هر تغییر یه فایل از نو اجراش کنی. RAG چیزی رو عوض می‌کنه که مدل می‌بینه، نه چیزی که می‌دونه."
+  - answer: 2
+    en:
+      question: "Retrieval returns five chunks, and the only relevant one is third. What is the reciprocal rank?"
+      options:
+        - "3"
+        - "1/5"
+        - "1/3"
+        - "3/5"
+      explain: "Reciprocal rank is 1 divided by the position of the first relevant chunk, so 1/3. MRR is the average of this number over all the questions in a test set."
+    tr:
+      question: "Retrieval beş chunk döndürüyor ve alakalı olan tek chunk üçüncü sırada. Reciprocal rank kaçtır?"
+      options:
+        - "3"
+        - "1/5"
+        - "1/3"
+        - "3/5"
+      explain: "Reciprocal rank, 1'in ilk alakalı chunk'ın sırasına bölünmesidir, yani 1/3. MRR ise bir test setindeki bütün soruların bu sayısının ortalamasıdır."
+    fa:
+      question: "retrieval پنج تا chunk برمی‌گردونه و تنها chunk مرتبط جای سومه. reciprocal rank چنده؟"
+      options:
+        - "3"
+        - "1/5"
+        - "1/3"
+        - "3/5"
+      explain: "reciprocal rank یعنی 1 تقسیم بر جایگاه اولین chunk مرتبط، که می‌شه 1/3. MRR هم میانگین همین عدد روی همه‌ی سؤال‌های یه test set‌ه."

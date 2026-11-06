@@ -32,7 +32,7 @@ graph TD
 
 Avusturyalı geliştirici Peter Steinberger, **Clawd** adında bir kişisel asistan projesi üzerinde çalışıyordu. Adını Claude'dan almıştı, çünkü projenin çalıştığı model Claude'du. Projeyi Kasım 2025'te **Warelay** adıyla yayımladı ve proje GitHub'da yıllardır görülmemiş bir hızla büyüdü.
 
-Sonra Anthropic'in avukatları ona yazdı, çünkü "Clawd" adı Claude'a biraz fazla benziyordu. Steinberger istenileni hemen yaptı: 27 Ocak 2026'da projenin adını **Moltbot** yaptı ve ıstakoz temasını korudu. Üç gün sonra adı bir kez daha değiştirdi ve **OpenClaw** oldu; gerekçesi, Moltbot adının bir türlü kolay söylenememesiydi.
+Sonra Anthropic'in avukatları ona yazdı, çünkü "Clawd" adı Claude'a biraz fazla benziyordu. Steinberger istenileni hemen yaptı: 27 Ocak 2026'da projenin adını **Moltbot** yaptı ve ıstakoz temasını korudu. Üç gün sonra adı bir kez daha değiştirdi ve ![](./images/logos/openclaw.svg)**OpenClaw** oldu; gerekçesi, Moltbot adının bir türlü kolay söylenememesiydi.
 
 Yeniden adlandırma sırasında iki şey daha yaşandı. Birincisi, eski GitHub organizasyonunu ve X kullanıcı adını bırakıp yenilerini aldı. Ama bu iki adım arasındaki yaklaşık on saniyede başka biri ikisini de kaptı. İkincisi, Solana üzerinde sahte bir `$CLAWD` token'ı ortaya çıktı. Kısa bir süre piyasa değeri 16 milyon dolara ulaştı ve sonra çöktü. Bunun dersi açık: bir projenin isimleri ve hesapları da altyapısının bir parçasıdır, bu yüzden onları da kodun kadar dikkatle korumalısın.
 
@@ -103,10 +103,11 @@ Hiçbirini kendin çalıştırmak istemiyorsan, bir başkasının senin için ba
 
 OpenClaw ve Hermes açık kaynak projeler ve topluluktan çıktılar. 2026'da büyük yapay zekâ şirketleri de kendi personal agent'larını yayımladı. Bu agent'ların ortak bir fikri var: uygulamayı kapattıktan sonra da arka planda çalışmaya devam eden bir agent.
 
-- OpenAI'ın **[dots](https://openai.com/index/introducing-dots/)** agent'ları her zaman açık çalışır ve her dot'ın kendi bulut bilgisayarı vardır. Zaman içinde geri bildirimlerinden öğrenir, plugin'ler aracılığıyla binlerce uygulamaya bağlanır ve ChatGPT, Slack ya da Teams üzerinden onunla konuşabilirsin. OpenAI, dots'ı Eylül 2026'da Pro ve Business Premium kullanıcılarına kademeli olarak sunmaya başladı.
-- **[Muse](https://ai.meta.com/muse/)**, Meta'nın personal agent'ı; web'de gezinir, satın alma yapar ve doküman oluşturur. Connector'lar üzerinden e-postanı ve takvimini de yönetir, arka planda çalışmaya devam eder. Mobilde ya da Mac'te Muse uygulamasından, ya da doğrudan WhatsApp'tan ulaşırsın. Bir mesaj göndermeden, bir şey satın almadan ya da bir bilgiyi paylaşmadan önce sana sorar.
-- **[Grok Bot](https://x.ai/bot)**, Grok'un yapımcılarından geliyor ve araçlarına giriş yapıp onları senin gibi kullanan yapay zekâ takım arkadaşları veriyor. Sen çalışırken izlemesine izin vererek ona bir iş akışını öğretebilirsin. Bütün bot'lar tek bir kalıcı bulut bilgisayarını paylaşır, bu yüzden dizüstü bilgisayarın kapalıyken de çalışmaya devam ederler.
-- **[Gemini Spark](https://gemini.google/overview/agent/spark/)**, Google'ın personal agent'ı; telefonun ve dizüstü bilgisayarın kapalıyken bile arka planda çalışır. Gmail, Calendar, Drive ve diğer Google uygulamalarına bağlanır (hepsi varsayılan olarak kapalıdır) ve büyük bir eylem yapmadan önce sana danışır.
+- OpenAI'ın ![](./images/logos/openai-mono.svg)**[dots](https://openai.com/index/introducing-dots/)** agent'ları her zaman açık çalışır ve her dot'ın kendi bulut bilgisayarı vardır. Zaman içinde geri bildirimlerinden öğrenir, plugin'ler aracılığıyla binlerce uygulamaya bağlanır ve ChatGPT, Slack ya da Teams üzerinden onunla konuşabilirsin. OpenAI, dots'ı Eylül 2026'da Pro ve Business Premium kullanıcılarına kademeli olarak sunmaya başladı.
+- ![](./images/logos/meta.svg)**[Muse](https://ai.meta.com/muse/)**, Meta'nın personal agent'ı; web'de gezinir, satın alma yapar ve doküman oluşturur. Connector'lar üzerinden e-postanı ve takvimini de yönetir, arka planda çalışmaya devam eder. Mobilde ya da Mac'te Muse uygulamasından, ya da doğrudan WhatsApp'tan ulaşırsın. Bir mesaj göndermeden, bir şey satın almadan ya da bir bilgiyi paylaşmadan önce sana sorar.
+- ![](./images/logos/xai-mono.svg)**[Grok Bot](https://x.ai/bot)**, Grok'un yapımcılarından geliyor ve araçlarına giriş yapıp onları senin gibi kullanan yapay zekâ takım arkadaşları veriyor. Sen çalışırken izlemesine izin vererek ona bir iş akışını öğretebilirsin. Bütün bot'lar tek bir kalıcı bulut bilgisayarını paylaşır, bu yüzden dizüstü bilgisayarın kapalıyken de çalışmaya devam ederler.
+- ![](./images/logos/googlegemini.svg)**[Gemini Spark](https://gemini.google/overview/agent/spark/)**, Google'ın personal agent'ı; telefonun ve dizüstü bilgisayarın kapalıyken bile arka planda çalışır. Gmail, Calendar, Drive ve diğer Google uygulamalarına bağlanır (hepsi varsayılan olarak kapalıdır) ve büyük bir eylem yapmadan önce sana danışır.
+- ![](./images/logos/claude.svg)**[Claude Duet](https://claude.com/product/claude-duet)**, Anthropic'in Claude Opus 5.5 ile çalışan kişisel agent'ı. Burada işi sen değil, Claude başlatıyor: bulutta kendine ait bir bilgisayarda, bağladığın Gmail, Slack, Shopify ya da QuickBooks gibi uygulamalarla çalışıyor. Her sabah sana bir özet sunuyor, sonraki adımların taslağını hazırlıyor ve senin bir şeye ihtiyaç duyacağın ana kadar sessiz kalıyor. Mesaj göndermek ya da ödeme yapmak gibi hassas işlerden önce sana soruyor. Şimdilik bir araştırma önizlemesi (research preview); ABD'deki Pro, Max ve Ultra kullanıcılarına bekleme listesiyle açık. Onu, [Agent'lar Pratikte](agents_in_practice_tr.md) modülündeki Cowork ile karıştırma: Cowork sen başlattığında çalışır.
 
 OpenClaw ve Hermes'ten asıl fark, nerede çalıştıklarında yatıyor. Bu agent'lar senin makinende değil, şirketin makinelerinde çalıştığı için kurulacak ya da bakımı yapılacak bir şey yoktur. Takas ise yukarıdaki barındırılan seçeneklerdekiyle aynı: bakımını sen yapmayı bırakırsın ve agent yalnızca senin olmaktan çıkar.
 
@@ -139,11 +140,12 @@ Bu modülün Security'den sonra gelmesinin bir nedeni var ve bu neden müfredatt
 graph LR
     A[Prompt Engineering] --> B[Context Engineering]
     B --> C[Code Agents]
-    C --> D[Harness Engineering]
-    D --> E[Loop Engineering]
-    E --> F[Generative UI]
-    F --> G[Security]
-    G --> H[Personal Agents]
+    C --> D[Agents in Practice]
+    D --> E[Harness Engineering]
+    E --> F[Loop Engineering]
+    F --> G[Generative UI]
+    G --> H[Security]
+    H --> I[Personal Agents]
     style A fill:#90EE90
     style B fill:#90EE90
     style C fill:#90EE90
@@ -151,7 +153,8 @@ graph LR
     style E fill:#90EE90
     style F fill:#90EE90
     style G fill:#90EE90
-    style H fill:#FFFF00
+    style H fill:#90EE90
+    style I fill:#FFFF00
 ```
 
 ## Özet
@@ -184,7 +187,7 @@ Ve hepsinin altında aynı takas yatıyor: personal agent'ı faydalı kılan eri
 ### 🛠️ Araçlar
 
 - [Kimi Claw](https://www.kimi.com/en/help/kimi-claw) ve [myclaw.ai](https://myclaw.ai/): kendin çalıştıramadığında kullanabileceğin barındırılan sürümler
-- [Introducing dots](https://openai.com/index/introducing-dots/), [Muse](https://ai.meta.com/muse/), [Grok Bot](https://x.ai/bot) ve [Gemini Spark](https://gemini.google/overview/agent/spark/): büyük yapay zekâ şirketlerinin senin için barındırdığı personal agent'lar
+- [Introducing dots](https://openai.com/index/introducing-dots/), [Muse](https://ai.meta.com/muse/), [Grok Bot](https://x.ai/bot), [Gemini Spark](https://gemini.google/overview/agent/spark/) ve [Claude Duet](https://claude.com/product/claude-duet): büyük yapay zekâ şirketlerinin senin için barındırdığı personal agent'lar
 
 ### 🗃️ Repolar
 

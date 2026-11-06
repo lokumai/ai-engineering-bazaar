@@ -121,6 +121,17 @@
     grid-template-columns: 0px minmax(0, 1fr);
   }
 
+  /* …and below the width where the rail leaves, one column, as `bazaar.css`
+     says for every shell. The two rules above out-rank that one, so without
+     this a page with no aside kept an empty rail track at 390px and drew its
+     column 214px wide in a 375px window (found on a planned module, M67). */
+  @media (max-width: 880px) {
+    .bz-shell:not([data-bz-aside]),
+    [data-bz-rail="folded"] .bz-shell {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+
   /* ---------------------------------------------------------------------------
      THE SKIP LINK'S TARGET DOES NOT PAINT A RING.
 

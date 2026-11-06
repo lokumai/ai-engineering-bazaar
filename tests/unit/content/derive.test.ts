@@ -2,6 +2,7 @@ import fs from 'node:fs'
 import path from 'node:path'
 import matter from 'gray-matter'
 import { describe, expect, it } from 'vitest'
+import { writtenSections } from '@/lib/content/schedule'
 import { CATEGORIES } from '@/lib/content/curriculum-file'
 import {
   LANG_DISPLAY,
@@ -175,8 +176,12 @@ describe('countFigures', () => {
     }
   })
 
-  it('counts no figures on any draft stub', () => {
-    for (const n of draftNumbers()) {
+  it('counts no figures on a draft stub that has no written sections', () => {
+    // D102: a draft may carry sections a written module gave it, and those
+    // render with their figures; a bare stub is a sentence and a schedule.
+    const stubs = draftNumbers().filter((n) => writtenSections(body(n)) === null)
+    expect(stubs.length).toBeGreaterThan(0)
+    for (const n of stubs) {
       expect(countFigures(body(n)), `module ${n}`).toBe(0)
     }
   })

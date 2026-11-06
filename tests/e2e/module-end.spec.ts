@@ -139,6 +139,8 @@ test('with no script there is no quiz to press', async ({ browser }) => {
 test('the prerequisites are named and linked at the top, and absent where there are none', async ({
   page,
 }) => {
+  // It visits every module; with 43 of them the CI runner needs more than 30s.
+  test.setTimeout(90_000)
   // Every drawn module, asked of the page: the box exists exactly where the
   // module has prerequisites, every link in it resolves to a module, and it
   // sits above the prose.

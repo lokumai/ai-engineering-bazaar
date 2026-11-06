@@ -65,6 +65,8 @@ test.describe('the rail scrollbar', () => {
  */
 test.describe('the page index', () => {
   test('scrolls itself, with the rail’s bar, and leaves the page where it is', async ({ page }) => {
+    // It walks many module pages; the CI runner needs more than 30s.
+    test.setTimeout(90_000)
     await page.setViewportSize({ width: 1440, height: 640 })
     let overflowed = 0
 

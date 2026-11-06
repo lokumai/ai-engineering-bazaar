@@ -135,7 +135,7 @@ disable-model-invocation: true
 - **`Stop`**، وقتی نوبت agent تموم می‌شه. می‌تونی test suite رو اجرا کنی و اگه تستی قرمز شد، به agent بگی کار رو ادامه بده.
 - **`SessionStart`**، وقتی یه session شروع می‌شه. می‌تونی branch فعلی و ticket‌های باز رو بریزی توی context.
 
-اولی رو یادت بمونه، چون حرف اصلی توشه. اگه توی AGENTS.md بنویسی agent هیچ‌وقت به یه فایل دست نزنه، این یه خواهشه؛ ولی یه hook از نوع `PreToolUse` که جلوی نوشتن رو می‌گیره، یه قانونه. درس بعدی از همین ایده شروع می‌شه، و اصلاً به خاطر همین ایده نوشته شده.
+اولی رو یادت بمونه، چون حرف اصلی توشه. اگه توی AGENTS.md بنویسی agent هیچ‌وقت به یه فایل دست نزنه، این یه خواهشه؛ ولی یه hook از نوع `PreToolUse` که جلوی نوشتن رو می‌گیره، یه قانونه. درس [Harness Engineering](harness_engineering_fa.md) از همین ایده شروع می‌شه، و اصلاً به خاطر همین ایده نوشته شده.
 
 ![یه pre-tool hook](./images/pre-tool-hook.webp)  
 *Hook بعد از اینکه مدل تصمیمشو گرفت و قبل از اینکه tool اجرا بشه کار می‌کنه، یعنی آخرین دروازه‌ست. یه validator مثل Tirith فراخوانی آماده‌شده رو چک می‌کنه و، هر نیتی که مدل داشته باشه، یا می‌ذاره اجرا بشه یا جلوشو می‌گیره.*
@@ -209,11 +209,12 @@ plan mode یه حالت فقط‌خوندنیه برای همین وضعیت. ag
 graph LR
     A[Prompt Engineering] --> B[Context Engineering]
     B --> C[Code Agents]
-    C --> D[Harness Engineering]
-    D --> E[Loop Engineering]
-    E --> F[Generative UI]
-    F --> G[Security]
-    G --> H[Personal Agents]
+    C --> D[Agents in Practice]
+    D --> E[Harness Engineering]
+    E --> F[Loop Engineering]
+    F --> G[Generative UI]
+    G --> H[Security]
+    H --> I[Personal Agents]
     style A fill:#90EE90
     style B fill:#90EE90
     style C fill:#FFFF00
@@ -231,7 +232,7 @@ coding agent خیلی قوی‌تر از چیزیه که از اسمش برمی�
 
 تقریباً همه‌ش markdown توی یه پوشه‌ست، یعنی همون فرمتی که هم تو و هم مدل باهاش راحتید.
 
-درس بعدی: hook‌ها اولین چیزی توی این درس بودن که نظر مدل توش اهمیتی نداشت. اسم این ایده harness engineering‌ه و درس بعدی کلاً درباره‌ی همینه.
+درس بعدی: hook‌ها اولین چیزی توی این درس بودن که نظر مدل توش اهمیتی نداشت. اسم این ایده harness engineering‌ه و درست بعد از یه توقف کوتاه عملی میاد سراغش: [Agent‌ها در عمل](agents_in_practice_fa.md)، جایی که این تیکه‌ها رو توی دوره‌های رایگان خودت امتحان می‌کنی.
 
 **بررسی سریع**: skill و subagent سفارشی هر دو به agent یه تخصص می‌دن. فرق اصلی‌شون چیه و هر کدوم کجا به کار میاد؟
 

@@ -29,6 +29,25 @@ describe('renderMarkdown', () => {
     expect(html).toContain('src="https://example.com/a.png"')
   })
 
+  it('draws a mark under images/logos/ inline, beside its name, never as a figure', async () => {
+    const { html } = await renderMarkdown(
+      '![](./images/logos/acme.svg) Acme makes things.\n\n![A real figure](./images/a.png)',
+      { imageBase: '/course-images/intermediate' },
+    )
+    expect(html).toContain('<img src="/course-images/intermediate/logos/acme.svg" alt="" class="bz-logo">')
+    expect(html.match(/<figure/g)?.length).toBe(1)
+    expect(html).not.toMatch(/<img src="[^"]*a\.png"[^>]*bz-logo/)
+  })
+
+  it('keeps a logo inline even when it stands alone in its paragraph', async () => {
+    const { html } = await renderMarkdown(
+      '![](./images/logos/acme.svg)',
+      { imageBase: '/course-images/intermediate' },
+    )
+    expect(html).not.toContain('<figure')
+    expect(html).toContain('class="bz-logo"')
+  })
+
 })
 
 describe('renderMarkdown — B6.2, the italic dek', () => {

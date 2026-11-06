@@ -27,8 +27,10 @@ import { loadModule } from '@/lib/content/loader'
  * both onto other modules while every test stayed green.
  */
 
-/** Loop Engineering: the widest table in the corpus, at five columns. */
-const WIDEST = sheetByPath('/courses/intermediate/loop-engineering/')
+/** RAG & Embeddings: the widest table in the corpus, at six columns (its
+ * worked retrieval example, M65). Loop Engineering held it at five until its
+ * tables moved to Advanced Loop Engineering (M67). */
+const WIDEST = sheetByPath('/courses/fundamentals/rag/')
 /** Context Engineering: the longest sheet, and the most figures. */
 const LONGEST = sheetByPath('/courses/intermediate/context-engineering/')
 
@@ -166,7 +168,7 @@ test('the widest table scrolls inside its own container', async ({ page }) => {
     }),
   )
 
-  expect(report.length, 'module 10 still has tables').toBeGreaterThan(0)
+  expect(report.length, 'the widest module still has tables').toBeGreaterThan(0)
   for (const figure of report) {
     expect(figure.overflowX).toBe('auto')
   }
@@ -557,6 +559,14 @@ test('the draft module keeps its band and schedule at every width', async ({ pag
   await expect(page.locator('table.bz-schedule')).toBeVisible()
   await expect(page.locator('.bz-aside')).toHaveCount(0)
 
+  // Below the rail's breakpoint the sheet takes the whole column. A shell with
+  // no aside once kept an empty rail track here and drew a 214px column in a
+  // 375px window (M67).
+  if (width < 880) {
+    const sheet = await page.locator('.bz-sheet').boundingBox()
+    expect(sheet!.width).toBeGreaterThan(width * 0.8)
+  }
+
   const curriculum = page.locator('.bz-rail')
   const drawer = page.getByRole('button', { name: 'Contents', exact: true })
 
@@ -714,6 +724,8 @@ test('no module route scrolls the document sideways, at any width', async ({ pag
  * of the tile saying where the reader is going.
  */
 test('the pager always says where it goes', async ({ page }) => {
+  // It visits every module; with 43 of them the CI runner needs more than 30s.
+  test.setTimeout(90_000)
   const narrowest: { path: string; width: number }[] = []
 
   for (const sheet of SHEETS) {

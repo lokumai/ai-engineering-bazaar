@@ -135,6 +135,35 @@ graph TD
 
 Kod chunk'larını sözleşme maddeleriyle değiştirirsen, akış tamamen aynı kalır.
 
+## Retrieval'ı Ölçmek
+
+Cevap, ancak masaya ulaşan chunk'lar kadar iyi olabilir. Retrieval doğru chunk'ı kaçırırsa model onu hiç görmez. Bu yüzden cevapları değerlendirmeden önce retrieval'ı tek başına ölçmen gerekir.
+
+Bunun için küçük bir test setine ihtiyacın var: bir soru listesi ve her soru için bir insanın alakalı (relevant) diye işaretlediği chunk'lar. Her soru için retrieval'ı çalıştırır ve ilk **k** sonuca bakarsın; burada k, sakladığın chunk sayısıdır (örneğin 5). Yaygın olarak kullanılan dört ölçü var:
+
+| Ölçü | Cevapladığı soru |
+|---|---|
+| **Recall@k** | Alakalı chunk'ların hepsinden kaçı ilk k sonucun içinde? |
+| **Precision@k** | İlk k chunk'tan kaçı alakalı? |
+| **MRR** (mean reciprocal rank) | *İlk* alakalı chunk ne kadar yukarıda? |
+| **nDCG@k** (normalized discounted cumulative gain) | Alakalı chunk'lar en üstte ve en iyi sırada mı? |
+
+### Bir Örnek Üzerinden
+
+Yukarıdaki örnekteki "add fonksiyonu nasıl çalışıyor?" sorusunu alalım ve onu beş chunk döndüren daha zayıf bir retriever'a verelim. İki chunk alakalı: `def add` ve `add`'in testi. Bu retriever onları ikinci ve dördüncü sıraya koyuyor:
+
+| Sıra | 1 | 2 | 3 | 4 | 5 |
+|---|---|---|---|---|---|
+| Chunk | `def multiply` | `def add` | `def subtract` | `test_add` | `def divide` |
+| Alakalı mı? | hayır | **evet** | hayır | **evet** | hayır |
+
+- **Recall@5 = 2 / 2 = 1.0.** İki alakalı chunk'ın ikisi de ilk 5'te. RAG için genellikle ilk bakılacak sayı budur, çünkü getirilmeyen bir chunk hiçbir zaman kullanılamaz.
+- **Precision@5 = 2 / 5 = 0.4.** Beş chunk'ın üçü gürültü. Yine de masaya konuyorlar; orada yer kaplıyor ve modelin dikkatini dağıtabiliyorlar.
+- **Reciprocal rank = 1 / 2 = 0.5**, çünkü ilk alakalı chunk 2. sırada. MRR, test setindeki bütün soruların bu sayısının ortalamasıdır.
+- **nDCG@5 = 0.65.** Alakalı her chunk, ne kadar aşağıdaysa o kadar az puan alır: p. sıradaki alakalı bir chunk'ın puanı log2(p + 1)'e bölünür. Burada bu, 1/log2(3) + 1/log2(5) = 0.63 + 0.43 = 1.06 eder. İki alakalı chunk'ın da en üstte olduğu en iyi sıralama ise 1 + 0.63 = 1.63 verirdi. 1.06 / 1.63 = 0.65 olur ve 1.0 kusursuz bir sıralama demektir. Bir insan chunk'ları "çok alakalı" ya da "biraz alakalı" diye derecelendirdiğinde nDCG bazı chunk'lara diğerlerinden daha fazla ağırlık da verebilir.
+
+Recall ve precision yalnızca ilk k sonucun içinde ne olduğunu sayar; MRR ve nDCG ise sırayı da önemser. Yukarıdaki şekildeki gibi bir reranker en iyi chunk'ları en üste taşır. Bu, MRR ve nDCG'yi yükseltir; daha az chunk sakladığında precision'ı da artırır. Weaviate'in [Evaluation Metrics for Search and Recommendation Systems](https://weaviate.io/blog/retrieval-evaluation-metrics) yazısı bu dördünün her biri için formülü, çoğu için de kodu veriyor.
+
 ## RAG için Araçlar
 
 Retrieval döngüsünü neredeyse hiçbir zaman kendin yazmayacaksın. Bu yüzden bir seviye seç ve geri kalanını başka bir şeye bırak:
@@ -181,6 +210,8 @@ Kendin kurmak yerine hazır bir RAG sisteminden başlamayı tercih edersen, şu 
 
 **Çünkü retrieval, cevabı modelin önüne koyar.** Masaya ve kütüphaneye geri dönersek, fine-tuning belgelerini milyarlarca kitap barındıran bir kütüphanenin bir yerindeki rafa koymaya çalışır ve sonra modelin doğru rafı hatırlamasını umar. RAG ise birisi soruyu sorduğu anda, ihtiyaç duyulan tek sayfayı masaya açık olarak koyar.
 
+**Çünkü bir RAG cevabı kontrol edilebilir.** RAG'de modelin hangi chunk'ları okuduğunu tam olarak bilirsin, bu yüzden uygulama onları cevabın yanında kaynak olarak gösterebilir. Kullanıcı kaynağı açıp cevabı doğrulayabilir; bir cevap yanlış çıktığında da modelin o sırada elinde hangi chunk'lar olduğunu görebilirsin. Fine-tune edilmiş bir model bunların hiçbirini sunmaz: bilgisi ağırlıklara karışmıştır ve belli bir cevabı hangi training dokümanının ürettiğini söylemek çok zordur. [Memory](memory_tr.md) modülü bu farka tekrar dönüyor.
+
 Tek cümleyle özetlersek: **fine-tuning modelin *bildiğini* değiştirir, RAG ise modelin *gördüğünü* değiştirir.**
 
 Bir nokta daha var ve o da şu: bu ikisinden birini seçmek zorunda değilsin. Modelin nasıl davranması gerektiği için fine-tuning yapabilir, neyi bilmesi gerektiği için de RAG kullanabilirsin. Bu kombinasyon production ortamlarında oldukça yaygındır.
@@ -216,6 +247,7 @@ Sırada araçlar var, çünkü bir modelin yalnızca okuyan olmaktan çıkıp i�
 ### 📄 Makaleler
 
 - [RAG vs fine-tuning](https://www.redhat.com/en/topics/ai/rag-vs-fine-tuning): Red Hat'in karşılaştırması, yukarıdaki bölümün daha uzun hali.
+- [Evaluation Metrics for Search and Recommendation Systems](https://weaviate.io/blog/retrieval-evaluation-metrics): recall, precision, MRR ve nDCG, her biri formülü ve koduyla
 
 ### 🎬 Videolar
 

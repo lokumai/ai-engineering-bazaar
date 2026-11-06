@@ -64,7 +64,7 @@ Bir **AI workflow**, birinin önceden yazdığı bir yolu izler. Adımlar sabitt
 
 Hata, agent'ı workflow'un olgunlaşmış hali sanmaktır. Oysa durum bu değil. Gereksinimler sabitse ve adımları biliyorsan, bir workflow daha öngörülebilir, daha ucuz ve hata ayıklaması daha kolay olur; üretimde de genellikle istenen şey tam olarak bu öngörülebilirliktir. Agent'ı, adımların önceden kimse tarafından yazılamadığı açık uçlu işler için sakla.
 
-**[n8n](https://github.com/n8n-io/n8n)**, workflow tarafı için çoğu insanın sonunda seçtiği araç. Onunla şunları yaparsın:
+![](./images/logos/n8n.svg)**[n8n](https://github.com/n8n-io/n8n)**, workflow tarafı için çoğu insanın sonunda seçtiği araç. Onunla şunları yaparsın:
 
 - görsel bir canvas üzerinde kurarsın
 - 400'den fazla entegrasyona bağlanırsın

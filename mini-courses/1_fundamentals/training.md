@@ -60,7 +60,7 @@ The result is a **general-purpose** model: good at many things, specialised in n
 > a guess, and checks the guess against the word that was really there. So the data labels
 > itself. This is called **self-supervised learning**. Diagrams often label it "unsupervised"
 > instead. We explain it fully in
-> [Advanced Training](../3_expert/advanced_training.md).
+> [Advanced LLM](../3_expert/advanced_llm.md).
 
 ## Why We don't Have to Pre-train?
 
@@ -274,7 +274,7 @@ at training.
 
 Both code examples above import from it, so it is worth one paragraph.
 
-[Hugging Face](https://huggingface.co/) is the place where the open-source machine learning
+![](./images/logos/huggingface.svg)[Hugging Face](https://huggingface.co/) is the place where the open-source machine learning
 community keeps its work. Its **Models** page is, in practice, the central registry for open
 models of every kind, not only LLMs. It has models for computer vision, speech and audio, and many
 other areas. When a research group releases an open model, this is usually where it appears.

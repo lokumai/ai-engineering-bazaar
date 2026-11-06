@@ -4,7 +4,8 @@ description: >
   the plan of what was left after the round-3 playground (the order table and the gate every build
   ends on), then M50 to M62: the round-3 art finished, the catalog without its Sources count, round 3
   built on the home page, search, the content phase, a certificate still to decide, download
-  cancelled, Emerging Trends, and Caravan. Each milestone carries its deliverables and acceptance
+  cancelled, Emerging Trends, Caravan, the gate revised (M63), and content revision 4
+  (M64 to M69). Each milestone carries its deliverables and acceptance
   criteria as `- [ ]` checkboxes, ticked as the work lands, and closes with a dated report; the loop
   that governs that is in part 1.
   NOT here: why a choice was made (BRAINSTORM.md), or any rule that outlives the milestone
@@ -12,7 +13,7 @@ description: >
 authority: state
 writes: agent, every session
 status: active
-covers: "M50 to M63, 2026-11-06 onward"
+covers: "M50 to M69, 2026-11-06 onward"
 last_updated: 2026-11-06
 ---
 
@@ -642,6 +643,305 @@ that the walk draws the people larger than the still picture at the same window 
 `WALK_GROW` at 1); the caption test in `home.spec.ts` reads the accessible name, since a caption now
 holds its hidden story. **Gate:** typecheck, 1,153 unit tests, the link check, 496 browser tests
 passed and 10 skipped.
+
+---
+
+## Content revision 4: M64 to M69
+
+The author, 2026-11-06, in one message of six content changes (issues #39, #48, #49, #50 and two
+new modules), approved as M64 to M69 after four questions: the RAG figure the message named is the
+one already in `rag.md`; Agents in Practice is written twice, as the engineer page and as the first
+For Everyone page (which settles M52's first module); Advanced Training is split into Advanced
+Fine-tuning and Advanced Post-training and retired (D101); and the text moved out of Loop
+Engineering shows on its planned page now. One branch, `feat/content-revision-4`, one PR. Each
+milestone is reviewed by two Haiku reviewers at xhigh from different angles; the PR by one Sonnet
+High subagent and one Gemini 3.8 Flash High run, then fixed and merged.
+
+## 🏁 Milestone M64: The planned modules scaffolded — DONE
+
+### Deliverables
+
+- [x] **Advanced LLM**, first in Expert: transformers as the author explains them (why, without
+      softmax, encoder or decoder), the inference loop, MoE, prefill and decode, the
+      model-norm-position-attention-KV-FFN-sparse table, static and continuous batching, serving
+      metrics (TTFT, generation speed), speculative decoding; plus self-supervised pre-training
+      from the retired Advanced Training.
+- [x] **Advanced RAG & Embeddings**, before Advanced Tools, with the author's topic list.
+- [x] **Advanced Loop Engineering**, after Advanced Harness Engineering (its body arrives in M67).
+- [x] **Advanced Fine-tuning** and **Advanced Post-training**, at the end of Expert; **Advanced
+      Training retired** end to end, its old address forwarded.
+- [x] **Forcing Structured Output** is the first topic of Advanced Prompting (#39), carrying the
+      brief: prompting is fragile, constrained decoding filters the next-token pool by a grammar,
+      Outlines and xgrammar, and most APIs support it.
+- [x] `curriculum.yaml`, `topics.txt` and `lokum-modules.css` agree with the files.
+
+### Acceptance criteria
+
+- [x] Every new module has its `.md` and `_tr.md`; no `_fa.md` for a planned module; the full gate
+      green and `/courses/expert/advanced-training/` forwards.
+
+**Report, 2026-11-06.** Five placeholder modules in English and Turkish: Advanced LLM first in
+Expert, Advanced RAG & Embeddings before Advanced Tools, Advanced Loop Engineering after Advanced
+Harness Engineering, Advanced Fine-tuning and Advanced Post-training at the end. Advanced Training
+is removed end to end (D101): its two files, its line, the pointer in Training LLMs (all three
+languages now point self-supervised learning at Advanced LLM), the ROADMAP line, and the retired
+title on every Expert page's hand-drawn progress map, which the site strips and which were removed;
+`/courses/expert/advanced-training/` forwards to Advanced Post-training. Advanced Prompting opens
+with Forcing Structured Output (#39), linking Outlines and XGrammar, whose repositories were
+checked. `curriculum.yaml`, `topics.txt` (renumbered: the five new lines take positions 17, 18,
+26, 31 and 32) and `lokum-modules.css` regenerated. **Gate:** typecheck, 1,153 unit tests, the
+build and the link check.
+
+**Reviews (two Haiku, xhigh).** *Content:* the browser suite's typed drawing set
+(`tests/e2e/sheets.ts`) still listed 38 sheets with Advanced Training, so it was regenerated from
+`curriculum.yaml` (42); the structured-output sentence was 34 words and overclaimed (an answer cut
+off at the length limit is the exception); two Turkish calques; a pre-existing em dash in Advanced
+Prompting; D101's "named nowhere" narrowed to what a reader sees. *Built site:* a planned sheet
+prints its lead and topics as plain text, so the new leads' links and the topic's bold showed as
+raw markdown: the leads lost their links, the Advanced Prompting topic became one plain line with
+its explanation and references below it, and a test now holds every planned lead and schedule free
+of markdown (seen failing against the old lead). That also showed the moved Loop Engineering
+sections would not have reached the site, hence D102. Not changed, and pre-existing: a forwarding
+page's crumb reads the old slug, and the Expert README lists the old topics (Expert README updated
+in M67).
+
+## 🏁 Milestone M65: Memory's two kinds weighed, and RAG measured (#50) — DONE
+
+### Deliverables
+
+- [x] **Memory**: a pros and cons table beside the side-by-side comparison. Its sharpest row: what
+      is retrieved can be cited and is live; what is in the weights is frozen and has no source.
+- [x] **RAG & Embeddings**: "Why Not Just Fine-tune" gains that RAG is citable, verifiable and
+      traceable and fine-tuning is not; a short section on measuring retrieval (Recall@k,
+      Precision@k, MRR, nDCG@k) where the flow needs it.
+- [x] Turkish, Persian and both quizzes follow.
+
+### Acceptance criteria
+
+- [x] Every formula's arithmetic checked by hand on a worked example; the gate green.
+
+**Report, 2026-11-06.** Memory gains **Pros and Cons**: working and long-term memory named
+together as non-parametric, then six rows against parametric (cost per call, changing it,
+freshness, where an answer came from, checking it, what each is good for), and the source row
+argued with the module's own 1,000-books analogy and tied to RAG. RAG gains **Measuring
+Retrieval** after the process and its figure: a four-row table of what each measure answers, then
+one worked question from the module's own `add` example, relevant at positions 2 and 4 of 5:
+Recall@5 1.0, Precision@5 0.4, reciprocal rank 0.5, nDCG@5 1.0616 / 1.6309 = 0.65 (computed, not
+typed), and why a reranker raises the last two. "Why Not Just Fine-tune" gains that a RAG answer
+can be cited, verified and traced. One new source, Weaviate's "Evaluation Metrics for Search and
+Recommendation Systems" (title fetched). Turkish and Persian written as prose, not mirrored; one
+quiz question each (citation; reciprocal rank). The online/offline figure was already in place
+(e9769ca). **Gate:** the content tests.
+
+**Reviews (two Haiku, xhigh).** *Translation:* a wrong Turkish word ("günsel" for "güncel"),
+"1,000" which a Turkish reader reads as one (now "bin", in the four places the analogy appears),
+three calques in Persian and two in Turkish, and one quiz stem; all fixed. The Turkish "RAG" link
+label was left: the file uses that short form throughout.
+*Accuracy:* the arithmetic and the four definitions held. Fixed in three languages: the worked
+example claimed to be the earlier example's question, whose diagram had ranked `add` first, so it is
+now that question given to a weaker retriever; Weaviate's article has no code for MRR ("code for
+most of them"); overstatements ("can never know", "nobody can say", "trace it back to the chunk that
+caused it", "Easy", "Nothing extra") softened to what is true; "non-parametric memory" is now
+credited to the original RAG paper (Lewis et al., 2020, arXiv 2005.11401), added to the references;
+"position p is divided" corrected to the chunk's score; the reranker also raises precision when
+fewer chunks are kept; the Summary now carries the source point; long sentences split.
+
+## 🏁 Milestone M66: Where an agent finds current docs: llms.txt, MCP, Context7 (#49) — DONE
+
+### Deliverables
+
+- [x] In Context Engineering, "Using a Knowledge Base as Explorable Context" moves after
+      "Explicit Planning (TODOs)" and, before DeepWiki, tells the story: knowledge cutoff, then
+      `llms.txt` (a three-line example), then docs as MCP tools, then Context7 as one MCP server
+      for many libraries; the existing figure stays.
+- [x] Turkish and Persian follow; the quiz already holds five questions, the limit, and none asks
+      about the moved section, so it is unchanged.
+
+### Acceptance criteria
+
+- [x] Every link fetched and titled from the page; the gate green.
+
+**Report, 2026-11-06.** "Using a Knowledge Base as Explorable Context" now follows "Explicit
+Planning (TODOs)", and the closing NOTE that points at Advanced Context Engineering moved after it,
+so it still closes the techniques. Before DeepWiki the section tells the author's sequence:
+knowledge cutoff, then `llms.txt` with a three-line markdown example (a made-up library, so no
+real site's file is misquoted), then documentation as MCP tools with a pointer forward to Code
+Agents, then Context7 as one MCP server for many libraries; DeepWiki follows as the same idea for
+code, and a closing paragraph names what all of them share. Sources fetched: "The /llms.txt file,
+v2" (Jeremy Howard, 2024-09-03) and Context7 (Upstash, "Up-to-date docs for AI agents"). Turkish
+and Persian written as prose; the Persian mermaid check passes.
+
+**Reviews (two Haiku, xhigh).** *Content:* "thousands of projects" was not supported by Context7's
+own page, so it says "many libraries" in all three languages; two English sentences over the
+length rule split; "a project by Upstash" and "September 2024" added; two Persian calques; the
+objective reordered to match the body. The rendered-page review is reported under M67.
+
+## 🏁 Milestone M67: Loop Engineering split into intermediate and advanced (#48) — DONE
+
+### Deliverables
+
+- [x] Agent Teams, Dynamic Workflows and Recursive Language Models move whole, with their figures
+      and tables, into Advanced Loop Engineering, in English and Turkish (the Persian waits in
+      `mini-courses/scratchpad/drafts/`, since a planned module has no `_fa.md`).
+- [x] Loop Engineering keeps a short section saying these techniques exist and where they are
+      taught; its summary, references, quiz and translations follow.
+
+### Acceptance criteria
+
+- [x] No paragraph lost: every moved paragraph is found verbatim in the advanced file; the gate green.
+
+**Report, 2026-11-06.** "Agent Teams & Dynamic Workflows" (with Agent Teams, Dynamic Workflows,
+both comparison tables and the subagents-vs-teams figure, which moved to `3_expert/images/`) and
+"Recursive Language Models" (with CodeAct) left Loop Engineering for Advanced Loop Engineering.
+In their place, "Beyond the Loops You Design": every loop so far is one a person designed; the next
+step is an agent that designs the loop; three techniques, one line each, and a link to the advanced
+module. The objectives, the summary's last paragraph, the four references and the Modules link
+followed, in all three languages; "The Trend" stays. **Verbatim check, measured:** of the 27
+English paragraphs moved, 25 are byte-identical in the new file and 2 changed only to re-anchor a
+link ("Everything up to this point" now names Loop Engineering; the Advanced Agent Architectures
+link is relative to `3_expert/`); the same two edits in Turkish. The planned page renders the
+sections under its schedule (D102): two sections, FIG. 26.1, two tables, the references. Two unit
+tests needed the D102 rule: "no figures on a draft" now reads "no figures on a draft with no
+written sections" (with a length guard), and the Turkish coverage test passed once the Turkish
+moved too. The Expert README's one line now names every Expert topic. **Gate:** typecheck, 1,158 unit tests, the build and the link check (191
+pages, 12,452 internal links).
+
+**Reviews (two Haiku, xhigh).** *Content:* the quiz's fourth question asked how a dynamic workflow
+differs from an agent team, which this module no longer teaches (my grep had looked only at the
+options); removed in three languages, three questions remain. Advanced Agent Architectures no
+longer lists dynamic workflows, which Advanced Loop Engineering now owns. The car analogy is
+restated in one clause where the advanced module calls it back. The Persian draft got the same two
+edits and a Modules group. Two wording fixes; the new heading is "Agents That Design the Loop".
+Left: a pre-existing Videos reference the body never links. *Rendered page, measured at 1440 and
+390:* (1) at 390px every page with no in-page index kept an empty rail track, so a planned page's
+column was 214px in a 375px window; `bazaar.css` collapses the shell to one column below 880px, but
+the no-aside rule in `shell.css` out-ranked it. Fixed there, and `responsive.spec.ts` now asserts the
+sheet takes over 80% of a narrow window. (2) The band read "PlannedSchedule of parts only", with no
+separator, and "only" is false on a planned page that has written sections; it now reads
+"Planned · Partly written" there (`StatusBand written`, unit-tested). (3) RAG's two tables shared
+the caption "Measuring Retrieval" (a table takes its nearest heading), so the worked example has its
+own heading in three languages. Left, pre-existing: a planned page has no contents rail (the
+anatomy spec requires none), a light PNG on the dark ground, and "Reading time 0 m" in a planned
+page's footer.
+
+## 🏁 Milestone M68: Agents in Practice, Claude Duet, and the Claude logo — DONE
+
+### Deliverables
+
+- [x] **Agents in Practice**, after Code Agents: why take these courses and why Claude, then one
+      section per Claude Academy course with what it is and who it is for. The engineer page:
+      Claude 101, Claude Code 101, Claude Code in Action, Introduction to Claude Cowork. The For
+      Everyone page (`everyone/agents_in_practice.md`, the first one): Claude 101, Claude Code 101
+      as optional, Introduction to Claude Cowork. Cowork is explained against Duet, with a note in
+      parentheses not to confuse them. English, Turkish, Persian, and a quiz.
+- [x] **Claude Duet** in Personal Agents, with the three languages.
+- [x] **An inline logo**: the Claude logo, at text height, in both themes.
+
+### Acceptance criteria
+
+- [x] Every course link fetched and described from its page; the For Everyone page renders on the
+      For Everyone track; the gate green.
+
+**Report, 2026-11-06.** **Agents in Practice** is module 12, after Code Agents, `ready`, 10
+minutes, needing Code Agents. The engineer page opens by connecting to Code Agents, argues why
+practice teaches what reading cannot, gives the author's three reasons for Claude as our view at the
+time of writing, then a mermaid map of the order, then one section per course with what it covers,
+who it is for, what it needs and how long it takes, each tied back to the module it puts to work;
+the Cowork section explains Cowork (you start the work) and ends with the parenthesis not to confuse
+it with Duet (Claude starts the work). Every course fact is from its own page, fetched today:
+Claude 101 (13 lessons, about 2.5 hours, any plan), Claude Code 101 (12 lessons, about 1.5 hours,
+developers, paid plan or API key), Claude Code in action (9 lessons, about 1 hour), Introduction to
+Claude Cowork (14 lessons, about 2.5 hours, paid plan, no coding). The pages do not say a course is
+free; that is the author's statement. Claude Code 101's page does not say non-programmers can use
+Claude Code; the For Everyone page says it as our view. **The first For Everyone module**
+(`everyone/agents_in_practice.md`, with Turkish and Persian, settling M52's first module): written
+from scratch in plain words, three courses, Claude Code 101 marked optional. Quiz: four questions in
+three languages. **Claude Duet** joins "More Personal Agents" in three languages, from Anthropic's
+own page ("Claude Duet | A proactive AI agent to assist you"): Opus 5.5, its own computer in the
+cloud, a morning brief, asks before sensitive actions, a US research preview for Pro, Max and Ultra.
+**The inline logo:** a mark under `images/logos/` gets the class `bz-logo` from the renderer and is
+drawn inline at 1.1em (measured 17.6px on 16px text), with an empty alt because the name beside it
+says it; a paragraph holding only a logo would still become a figure, so a logo always sits beside
+text. Claude's mark is Simple Icons 16.36.0's, with its brand colour `#D97757` and a 20px size set on
+the root so GitHub draws it small; screenshots read in light and dark. The render test was seen
+failing with the class line removed. The series map in the 21 Intermediate files (seven modules,
+three languages) gained the new module, and Code Agents' last line now points to it. The browser
+suite's drawing set is 43 sheets. **Gate:** typecheck, 1,160 unit tests, the build and the link
+check.
+
+**Reviews (two Haiku, xhigh).** *Content:* Duet's launch date is not on Anthropic's page, so it is
+gone; Claude 101 now says Cowork and Research need a paid plan to try; the For Everyone page gives
+Claude Code 101's real prerequisite (a code editor and the command line) and the API-key option;
+the desktop app is needed for the folder lessons only; one quiz explanation now uses the module's
+words and two weak distractors were replaced; idioms ("above all", "carries over", "from the
+ground up") and four calques fixed. **Kept, and why:** "free" for the courses is the author's word;
+no course page states a price. The For Everyone page has no quiz on purpose (`ModuleSheet`: the
+quiz asks about the For Engineers text). The Office add-ins are on the Cowork course's page.
+*Rendered site:* the logo, catalog, counts (43), pager, quiz (four questions in three languages)
+and the For Everyone page were clean; at 390px the course-order diagram scrolls inside its figure,
+as wide figures do. The For Everyone page's pager and prerequisite lead to For Engineers pages:
+that is D91's rule (a For Everyone page where one is written, otherwise the For Engineers page) and
+it is the only one written so far, so every link goes across; left as decided.
+
+## 🏁 Milestone M69: Vendor logos where modules name them — DONE
+
+### Deliverables
+
+- [x] A Sonnet High audit of where modules name an agent or vendor, and a logo placed where it
+      helps the reader find the thing.
+- [x] Each SVG checked visually by a Haiku reviewer at xhigh before it is used, in both themes.
+
+### Acceptance criteria
+
+- [x] Every logo file is the vendor's own mark or Simple Icons', the shape unaltered (size, brand
+      colour or black set on the root; xAI's empty canvas cropped to the mark); the gate green.
+
+**Report, 2026-11-06.** **The audit (Sonnet, high)** read every written module and proposed 14
+places where a product is introduced as one of a set of choices or for the first time, and
+rejected passing mentions, tables, headings, references and lists where only a few brands have a
+mark (the benchmark list would have read as a ranking). Taken: its 14, plus dots (OpenAI) and Grok
+Bot (xAI) so that the five personal agents all carry one. **16 placements, 48 lines in three
+languages, 13 distinct files** under each level's `images/logos/`: Simple Icons 16.36.0 for Meta,
+Google Gemini, n8n, Replit, vLLM, NVIDIA, OpenRouter and LangChain; the official Hugging Face
+logo and OpenClaw's favicon; OpenAI's 2025 symbol and xAI's mark from Wikimedia Commons; Claude as
+in M68. A brand whose colour is near-black or too pale on cream (OpenAI, xAI, OpenRouter, LangChain)
+ships black as `*-mono.svg`, and one rule turns it light on the dark ground (`prose.css`, `html.dark
+.bz-logo[src*="-mono."]`). **The visual check (Haiku, xhigh), before commit:** 23 placements on 9
+pages at three times the pixel density, light and dark: right brand, undistorted, visible in both
+themes, centred within 0.4px of the text. It found two Persian lines where the logo sat beside the
+English "personal agent" rather than the name (the bidirectional run carried it); a Persian word
+after the name fixed both. Left: Hugging Face's yellow, NVIDIA's green and vLLM's blue are faint
+(1.4 to 2.6:1) on the light ground, which is the brands' own colour; each sits beside its name.
+**Gate:** 1,160 unit tests, the build, the link check.
+
+**Second review (Haiku, xhigh), on the markdown.** Paths, counts across the three languages and the
+SVG roots were clean. It caught three lists where one item carried a mark and its neighbours did
+not (Replit beside Lovable and Bolt; vLLM and TensorRT-LLM with SGLang unmarked between them;
+LangSmith beside Langfuse and Latitude), which breaks the audit's own rule, so those four marks
+and their files are gone. Google Stitch now carries Google's mark (Simple Icons `google`, 4285F4)
+rather than Gemini's. The SVGs have plain English titles (OpenClaw's favicon carried Portuguese
+ones). **10 placements remain, 30 lines, 10 files.**
+
+**PR #74 reviews, 2026-11-07.** *Sonnet (high):* it ran the whole gate in its own copy (all green)
+and judged the code sound. Fixed: README and `index.md` still counted 8 Intermediate and 12 Expert
+modules and named Training (now 9 and 16, listed); the Advanced LLM topic carried the author's
+instruction to the writer ("without softmax, encoders and decoders"); the structured-output notes
+sat where a planned sheet drops them, so they are now a `## Forcing Structured Output` section that
+D102 renders, with item 01 shortened; Advanced Memory, whose only `##` is its references, said
+"Partly written", so a references-only module now counts as not written (unit test, seen failing
+without the check); "the other three assume Claude 101" is not on the course pages, so it is our
+suggestion now (module and quiz); Code Agents named the "next module" for Harness Engineering;
+`topics.txt`, the Generative UI series map, a double blank line. The Persian loss of the moved
+Loop Engineering sections is recorded in D102 for the author.
+*Gemini 3.8 Flash (high), through `agy`:* its first run returned nothing with exit 0 (it tried a
+shell command, which headless mode denies); rerun told to use only file reads. Fixed, each guard
+seen failing first: below 880px a folded rail still left a 0px column on pages with an aside, so
+the one-column rule now covers every folded shell; a logo alone on its line would have become a
+full-width numbered figure, so a `bz-logo` image is never a figure; the manifest test checks every
+planned row, not the first; the dark-theme rule for mono marks sat in a surface stylesheet as
+`html.dark`, so it is now a token (`--bz-logo-mono-filter`, `none` and `invert(1)` in
+`bazaar.css`) read by `prose.css` on `-mono.svg` only; a fence now closes only on a run at least as
+long as the one that opened it, so a ```` block may hold a ``` example.
 
 ---
 

@@ -145,7 +145,7 @@ The [hooks reference](https://code.claude.com/docs/en/hooks) lists more than thi
 - **`Stop`**, when the agent finishes its turn. You can run the test suite, and tell the agent to continue if a test is red.
 - **`SessionStart`**, when a session begins. You can print the current branch and the open tickets into the context.
 
-Remember the first one, because it carries the main point. An instruction in AGENTS.md that asks the agent never to touch a file is a request. A `PreToolUse` hook that blocks the write is a rule. This idea is where the next module begins, and it is the reason that module exists.
+Remember the first one, because it carries the main point. An instruction in AGENTS.md that asks the agent never to touch a file is a request. A `PreToolUse` hook that blocks the write is a rule. This idea is where [Harness Engineering](harness_engineering.md) begins, and it is the reason that module exists.
 
 ![A pre-tool hook](./images/pre-tool-hook.webp)  
 *The hook runs after the model has decided and before the tool runs, so it is the last gate. A validator such as Tirith checks the assembled call and either lets it run or stops it, whatever the model intended.*
@@ -219,11 +219,12 @@ That is not laziness. It is the one format that both you and the model handle we
 graph LR
     A[Prompt Engineering] --> B[Context Engineering]
     B --> C[Code Agents]
-    C --> D[Harness Engineering]
-    D --> E[Loop Engineering]
-    E --> F[Generative UI]
-    F --> G[Security]
-    G --> H[Personal Agents]
+    C --> D[Agents in Practice]
+    D --> E[Harness Engineering]
+    E --> F[Loop Engineering]
+    F --> G[Generative UI]
+    G --> H[Security]
+    H --> I[Personal Agents]
     style A fill:#90EE90
     style B fill:#90EE90
     style C fill:#FFFF00
@@ -241,7 +242,7 @@ The last two are about control. Hooks are the mechanical part: the things that h
 
 Almost all of it is markdown in a folder. That is the format that you and the model both handle well.
 
-Next: hooks were the first thing in this module that the model does not get a vote on. That idea is called harness engineering, and it is the subject of the next module.
+Next: hooks were the first thing in this module that the model does not get a vote on. That idea is called harness engineering, and it comes right after a short practical stop: [Agents in Practice](agents_in_practice.md), where you try these parts yourself in free courses.
 
 **Quick Check**: a skill and a custom subagent both give an agent a specialism. What is the real difference between them, and when does each one fit?
 

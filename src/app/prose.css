@@ -156,6 +156,27 @@
     border-radius: var(--radius-lg);
   }
 
+  /* A vendor's mark beside its name (M68): inline, at the height of the text,
+     never a figure. The renderer gives it the class (`rehypeRewriteImages`)
+     for any image under `images/logos/`; it carries no frame because it is
+     not a picture of anything, and its alt is empty because the name it sits
+     beside already says it. */
+  .bz-logo {
+    display: inline-block;
+    width: auto;
+    height: 1.1em;
+    margin-inline-end: 0.3em;
+    vertical-align: -0.18em;
+  }
+
+  /* A brand whose mark is one dark colour (OpenAI, xAI, OpenRouter)
+     ships it black, named `*-mono.svg`; the theme says what to do with it
+     (`--bz-logo-mono-filter`, inverted under `.dark`). A coloured mark is
+     left alone. */
+  .bz-logo[src$="-mono.svg"] {
+    filter: var(--bz-logo-mono-filter);
+  }
+
   /* The three-part caption. `01` has one flat `figcaption`, which the language
      carries as `.bz-caption`; the corpus's captions have a label, an optional
      authored sentence and, on a diagram, a control. */

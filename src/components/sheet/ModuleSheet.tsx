@@ -49,7 +49,7 @@ import { renderMarkdown } from '@/lib/content/render'
 import { href } from '@/lib/url'
 import { type Track, catalogRoute, moduleRoute } from '@/lib/tracks'
 import Link from 'next/link'
-import { scheduleOfParts, summarySentence } from '@/lib/content/schedule'
+import { scheduleOfParts, writtenSections, summarySentence } from '@/lib/content/schedule'
 import { sheetFacts, sheetLabel } from '@/lib/content/title-block'
 import {
   type ReadingLang,
@@ -349,6 +349,18 @@ export async function ModuleSheet({
     })
     : null
 
+  // D102 — a planned module may already hold sections a written one gave it
+  // (`writtenSections`). They render as prose under the schedule; the sentence
+  // and the schedule above them are read exactly as before.
+  const early = drawn ? null : writtenSections(sheet.body)
+  const earlyRendered = early === null
+    ? null
+    : await renderMarkdown(early, {
+      imageBase: imageBaseFor(sheet.category.slug),
+      sheet: number,
+      localiseRoute: translated || track === 'everyone' ? localise : undefined,
+    })
+
   // M11 — the RIGHT rail: what is on this page, and what sits either side of
   // it in the dependency graph. A draft has neither: no sections, because §4.5
   // gives it one sentence and a schedule, and nothing to depend on it.
@@ -418,7 +430,7 @@ export async function ModuleSheet({
             fixed`, so its place in the document decides only the TAB ORDER —
             and from here a keyboard reader could not reach it in 30 presses. */}
 
-        {format === 'A4' && <StatusBand />}
+        {format === 'A4' && <StatusBand written={early !== null} />}
 
         {/* Below the width where a rail can sit beside the prose, both rails'
             content moves behind one control (§4.7). Which widths that is
@@ -530,6 +542,9 @@ export async function ModuleSheet({
             />
             {summary && <p className="bz-lead" lang={translated ? 'en' : undefined}>{summary}</p>}
             <ScheduleOfParts parts={scheduleOfParts(sheet.body)} />
+            {earlyRendered && (
+              <Prose html={earlyRendered.html} lang={contentLang} dir={contentDir} />
+            )}
           </>
         )}
 

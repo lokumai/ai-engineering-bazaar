@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { loadAllModules } from '@/lib/content/loader'
-import { scheduleOfParts, summarySentence } from '@/lib/content/schedule'
+import { scheduleOfParts, summarySentence, writtenSections } from '@/lib/content/schedule'
 
 const STUB = `# Module 20: Advanced Multi-Agent
 
@@ -73,5 +73,53 @@ describe('every draft module in the corpus', () => {
       expect(summary, draft.slug).toBeTruthy()
       expect(summary, draft.slug).not.toMatch(/^\*|Placeholder module|^Category:/)
     }
+  })
+})
+
+describe('writtenSections (D102)', () => {
+  it('is null for a stub that is only a sentence and a schedule', () => {
+    expect(writtenSections(STUB)).toBeNull()
+  })
+
+  it('returns everything from the first h2 on', () => {
+    const text = `${STUB}\n## Agent Teams\n\nA paragraph.\n\n### A Detail\n\nMore.\n`
+    expect(writtenSections(text)).toBe('## Agent Teams\n\nA paragraph.\n\n### A Detail\n\nMore.')
+  })
+
+  it('treats a module whose only h2 is its references as not written yet', () => {
+    expect(writtenSections(`${STUB}\n## References\n\n- [A](https://a.example)\n`)).toBeNull()
+    expect(writtenSections(`${STUB}\n## Kaynaklar\n\n- [A](https://a.example)\n`)).toBeNull()
+    expect(writtenSections(`${STUB}\n## Agent Teams\n\nText.\n\n## References\n\n- x\n`)).not.toBeNull()
+  })
+
+  it('does not let a shorter fence close a longer one', () => {
+    // One inner ``` and then a heading: a closing rule that ignores length
+    // ends the block at the inner fence and takes the heading for a section.
+    const text = `${STUB}\n\`\`\`\`markdown\n\`\`\`\n## still inside\n\`\`\`\`\n`
+    expect(writtenSections(text)).toBeNull()
+  })
+
+  it('does not take an h2 inside a code block for a section', () => {
+    const text = `${STUB}\n\`\`\`markdown\n## not a section\n\`\`\`\n`
+    expect(writtenSections(text)).toBeNull()
+  })
+})
+
+describe('a planned module, as the sheet draws it', () => {
+  // The sheet prints the lead sentence and the schedule as plain text, so any
+  // markdown in them reaches the page as literal brackets and asterisks.
+  const MARKUP = /\]\(|\*\*|`/
+  const drafts = loadAllModules().filter((module) => module.sheetFormat === 'A4')
+
+  it('has drafts to check', () => {
+    expect(drafts.length).toBeGreaterThan(0)
+  })
+
+  it('keeps its lead sentence and its schedule of parts free of markdown', () => {
+    const offending = drafts.flatMap((module) => {
+      const lines = [summarySentence(module.body) ?? '', ...scheduleOfParts(module.body)]
+      return lines.filter((line) => MARKUP.test(line)).map((line) => `${module.name}: ${line}`)
+    })
+    expect(offending).toEqual([])
   })
 })

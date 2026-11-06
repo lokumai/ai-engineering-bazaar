@@ -42,7 +42,7 @@ graph TD
 
 An Austrian developer, Peter Steinberger, had a personal assistant project called **Clawd**. He named it after Claude, because Claude was the model it ran on. He released it in November 2025 as **Warelay**, and it grew faster than anything on GitHub had grown in years.
 
-Then Anthropic's lawyers wrote to him, because "Clawd" is a little too close to "Claude". He did what they asked at once. On 27 January 2026 he renamed the project **Moltbot**, and he kept the lobster theme. Three days later he renamed it again, to **OpenClaw**. His reason was that the name Moltbot was never easy to say.
+Then Anthropic's lawyers wrote to him, because "Clawd" is a little too close to "Claude". He did what they asked at once. On 27 January 2026 he renamed the project **Moltbot**, and he kept the lobster theme. Three days later he renamed it again, to ![](./images/logos/openclaw.svg)**OpenClaw**. His reason was that the name Moltbot was never easy to say.
 
 Two things happened during the renaming. First, he gave up the old GitHub organisation and X handle, and then he claimed the new ones. In the roughly ten seconds between those two steps, someone else took both. Second, a fake `$CLAWD` token appeared on Solana. For a short time its market value reached $16 million, and then it collapsed. There is a lesson in this: a project's names and accounts are part of its infrastructure, so you have to protect them as carefully as its code.
 
@@ -113,10 +113,11 @@ And if you do not want to run any of it, you can use one that someone else hosts
 
 OpenClaw and Hermes are open source, and they come from the community. In 2026 the large AI companies shipped their own personal agents. These agents share one idea: an agent that keeps working in the background after you close the app.
 
-- **[dots](https://openai.com/index/introducing-dots/)** from OpenAI are always-on agents. Each dot has its own cloud computer. It learns from your feedback over time, and it connects to thousands of apps through plugins. You talk to it in ChatGPT, Slack or Teams. OpenAI started to release it gradually in September 2026, to Pro and Business Premium users.
-- **[Muse](https://ai.meta.com/muse/)** is Meta's personal agent. It browses the web, makes purchases and creates documents. It also manages your email and calendar through connectors, and it keeps working in the background. You reach it in the Muse app on mobile or Mac, or directly in WhatsApp. It asks you before it sends a message, buys something or shares information.
-- **[Grok Bot](https://x.ai/bot)** comes from the makers of Grok. It gives you AI teammates that sign in to your tools and use them the way you do. You can teach it a workflow by letting it watch you work. All your bots share one persistent cloud computer, so they keep working when your laptop is closed.
-- **[Gemini Spark](https://gemini.google/overview/agent/spark/)** is Google's personal agent. It works in the background, even when your phone and laptop are off. It connects to Gmail, Calendar, Drive and other Google apps (all of them are turned off by default). It checks with you before it takes a major action.
+- ![](./images/logos/openai-mono.svg)**[dots](https://openai.com/index/introducing-dots/)** from OpenAI are always-on agents. Each dot has its own cloud computer. It learns from your feedback over time, and it connects to thousands of apps through plugins. You talk to it in ChatGPT, Slack or Teams. OpenAI started to release it gradually in September 2026, to Pro and Business Premium users.
+- ![](./images/logos/meta.svg)**[Muse](https://ai.meta.com/muse/)** is Meta's personal agent. It browses the web, makes purchases and creates documents. It also manages your email and calendar through connectors, and it keeps working in the background. You reach it in the Muse app on mobile or Mac, or directly in WhatsApp. It asks you before it sends a message, buys something or shares information.
+- ![](./images/logos/xai-mono.svg)**[Grok Bot](https://x.ai/bot)** comes from the makers of Grok. It gives you AI teammates that sign in to your tools and use them the way you do. You can teach it a workflow by letting it watch you work. All your bots share one persistent cloud computer, so they keep working when your laptop is closed.
+- ![](./images/logos/googlegemini.svg)**[Gemini Spark](https://gemini.google/overview/agent/spark/)** is Google's personal agent. It works in the background, even when your phone and laptop are off. It connects to Gmail, Calendar, Drive and other Google apps (all of them are turned off by default). It checks with you before it takes a major action.
+- ![](./images/logos/claude.svg)**[Claude Duet](https://claude.com/product/claude-duet)** is Anthropic's personal agent, powered by Claude Opus 5.5. Here, Claude starts the work, not you. It works on its own computer in the cloud, with the apps you connect, such as Gmail, Slack, Shopify or QuickBooks. It briefs you every morning, drafts the next steps, and then stays quiet until something needs you. It asks you before sensitive actions, such as sending a message or paying. It is a research preview, on a waitlist for Pro, Max and Ultra users in the US. Do not confuse it with Cowork from [Agents in Practice](agents_in_practice.md), which works when you start it.
 
 The big difference from OpenClaw and Hermes is where they run. These agents run on the company's machines, not on yours. So there is nothing to install or maintain. The trade-off is the same as with the hosted options above: you stop maintaining it, and it stops being only yours.
 
@@ -149,11 +150,12 @@ This module comes after Security on purpose, and the reason is not the order of 
 graph LR
     A[Prompt Engineering] --> B[Context Engineering]
     B --> C[Code Agents]
-    C --> D[Harness Engineering]
-    D --> E[Loop Engineering]
-    E --> F[Generative UI]
-    F --> G[Security]
-    G --> H[Personal Agents]
+    C --> D[Agents in Practice]
+    D --> E[Harness Engineering]
+    E --> F[Loop Engineering]
+    F --> G[Generative UI]
+    G --> H[Security]
+    H --> I[Personal Agents]
     style A fill:#90EE90
     style B fill:#90EE90
     style C fill:#90EE90
@@ -161,7 +163,8 @@ graph LR
     style E fill:#90EE90
     style F fill:#90EE90
     style G fill:#90EE90
-    style H fill:#FFFF00
+    style H fill:#90EE90
+    style I fill:#FFFF00
 ```
 
 ## Summary
@@ -194,7 +197,7 @@ And all of it is the same trade-off. The access that makes a personal agent usef
 ### 🛠️ Tools
 
 - [Kimi Claw](https://www.kimi.com/en/help/kimi-claw) and [myclaw.ai](https://myclaw.ai/): hosted versions, for when you cannot run it yourself
-- [Introducing dots](https://openai.com/index/introducing-dots/), [Muse](https://ai.meta.com/muse/), [Grok Bot](https://x.ai/bot) and [Gemini Spark](https://gemini.google/overview/agent/spark/): the personal agents that the large AI companies host for you
+- [Introducing dots](https://openai.com/index/introducing-dots/), [Muse](https://ai.meta.com/muse/), [Grok Bot](https://x.ai/bot), [Gemini Spark](https://gemini.google/overview/agent/spark/) and [Claude Duet](https://claude.com/product/claude-duet): the personal agents that the large AI companies host for you
 
 ### 🗃️ Repositories
 

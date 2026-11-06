@@ -74,7 +74,7 @@ An **AI workflow** runs a path that somebody wrote down. The steps are fixed. Co
 
 The mistake is to assume that the agent is the grown-up version. It is not. If the requirements are stable and you know the steps, a workflow is more predictable, cheaper and easier to debug. And when real users depend on a system in production, you usually want that system to be predictable. Keep the agent for open-ended work, where nobody can write down the steps in advance.
 
-**[n8n](https://github.com/n8n-io/n8n)** is the tool that most people finally choose for the workflow half. With it, you:
+![](./images/logos/n8n.svg)**[n8n](https://github.com/n8n-io/n8n)** is the tool that most people finally choose for the workflow half. With it, you:
 
 - build on a visual canvas
 - connect more than 400 integrations

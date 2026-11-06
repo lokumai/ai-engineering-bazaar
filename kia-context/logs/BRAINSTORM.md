@@ -9,7 +9,7 @@ description: >
 authority: reasoning
 writes: agent, when a decision is taken
 status: active
-covers: "D97 to D100 so far — 2026-11-06 onward"
+covers: "D97 to D102 so far — 2026-11-06 onward"
 last_updated: 2026-11-06
 ---
 
@@ -95,6 +95,46 @@ only dark-skinned figure: broad nose, wide eyes, full lips, a puff of hair) as a
 caricature, and Mei's upturned almond eyes as the one feature that marks ethnicity. Both are as the
 author kept them in M49 (D93), so they were not redrawn; they are listed for the author in M50's
 report.
+
+### D101 · Advanced Training is split into Advanced Fine-tuning and Advanced Post-training, and retired — 2026-11-06
+
+The author asked for two new planned modules, Advanced Fine-tuning (full fine-tuning, PEFT, LoRA,
+swapping adapters) and Advanced Post-training (alignment, preference data, RLHF, reward and policy
+models, PPO, DPO, GRPO, RLAIF). The planned Advanced Training already listed post-training, RLHF,
+DPO, PPO and GRPO, so keeping it would teach those topics twice. **Rejected: keeping all three**,
+which the author was offered and declined. Advanced Training's topics were redistributed rather than
+dropped: post-training and the RL methods to Advanced Post-training; knowledge distillation there
+too, since it is something done to a model after pre-training; and self-supervised learning to the
+new Advanced LLM, because it explains how pre-training gets its signal, which is about how the
+model works and not about tuning it. The old address forwards to Advanced Post-training
+(`src/lib/content/moved.ts`), which kept most of the topics. The Expert placeholders' hand-drawn
+"Tutorial Progress" maps, which the site strips and which already omitted Advanced LLM Evaluation,
+were removed rather than redrawn, so no page a reader sees names the retired title (the author's
+planning notes in `curriculum.yaml` and `topics.txt` still say where its topics went).
+
+The same message settled the first For Everyone module (M52's open question): Agents in Practice,
+written twice, the engineer page and `everyone/agents_in_practice.md`, each with its own list of
+courses.
+
+### D102 · A planned module renders the sections it already has — 2026-11-06
+
+Loop Engineering gave three finished sections (agent teams, dynamic workflows, recursive language
+models) to the planned Advanced Loop Engineering (#48), and the author chose to keep them readable
+on the site now rather than parked off-site. A planned sheet drew only its lead sentence and its
+schedule of parts, so the sections would have reached GitHub and not the site. **Taken:** the sheet
+renders everything from a planned module's first `##` as prose under the schedule
+(`writtenSections`, `src/lib/content/schedule.ts`); a stub with no `##` draws exactly as before.
+**Rejected:** marking the module `ready`, which would give a mostly unwritten module a completion
+mark, a quiz slot and a place in the reader's progress. The same review found that the lead
+sentence and schedule are printed as plain text, so a markdown link there showed as literal
+brackets; a test now holds every planned module's lead and schedule free of markdown.
+
+Two limits, found in the PR #74 review. A planned module whose only `##` is its references list
+counts as not written, so it keeps the old sheet and band. And **the Persian text of the moved
+sections is no longer on the site**: a planned module has no `_fa.md`, so Persian readers lost
+Agent Teams, Dynamic Workflows and RLMs, which they could read in Loop Engineering before; the
+text is kept in `mini-courses/scratchpad/drafts/advanced_loop_engineering_fa.md`. Allowing a
+`_fa.md` for a planned module with written sections would bring it back; that is the author's call.
 
 ## Open questions
 

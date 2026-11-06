@@ -77,17 +77,6 @@ Buradaki uyarı aynıdır ve kökü de aynıdır. Neyin saklanmaya değer olduğ
 ![Uzun vadeli belleğin üç türü](./images/semantic-episodic-procedural.png)  
 *Bu ayrım önemli, çünkü agent üçünü farklı zamanlarda yazar ve okur. Senin hakkındaki bilgiler zamanla sessizce birikir. Geçmiş eylemler, agent'ın aynı hatayı tekrarlamasını engeller. Talimat katmanı ise [LLM Tool Calling](../1_fundamentals/tools_tr.md) bölümündeki system prompt'un başka bir adla anılmasından ibaret.*
 
-## Keşfedilebilir bağlam olarak bilgi tabanı
-
-Bazı bilgiler gerçekten değerlidir ve sık sık değişmez; örneğin şirketinin iç API'sinin nasıl çalıştığı gibi. Bunları her prompt'a yapıştırmak yerine agent'ın gidip bakabileceği bir yere koy: okuyup arayabileceği bir markdown dosyaları klasörüne.
-
-![Agent'ın keşfettiği bir bilgi tabanı](./images/explorable-knowledge-base.png)  
-*Bilgi tabanı context window'un dışında durur ve her etkileşimle büyür. Agent yalnızca sorunun ihtiyaç duyduğu sayfayı okur; bildiği geri kalan her şey kullanılana kadar hiçbir maliyet çıkarmaz.*
-
-Agent dokümantasyona ihtiyaç duyduğuna karar verdiğinde onu çeker. Yalnızca önemli kısmı okur ve context'inde o kadarını öğrenmiş olur. Bu çekme işi [Retrieval-Augmented Generation (RAG)](../1_fundamentals/rag_tr.md) gibi tam bir RAG ile yapılabilir, ya da agent sadece dosyaları açar. Hangisi olursa olsun alternatif, tüm API referansını pencereye dökmek ve bunun bedelini her turda ödemektir.
-
-Burada bilmeye değer bir araç daha var: [DeepWiki](https://deepwiki.org/) bir GitHub deposu için wiki üretir. Diyelim ki agent'ın bir kütüphanenin iç yapısı, mimarisi ya da API'si hakkında bir sorusu var. Depoyu kendisi tarayıp context'ini kaynak dosyalarla doldurmak yerine, DeepWiki'nin yazdığı metni okuyabilir.
-
 ## Context izolasyonu
 
 Bunu açıkça gösteren bir örnek var.
@@ -135,6 +124,35 @@ Sonra listeyi tek tek işler. Her adımdan sonra listeye döner, bitirdiğini i�
 Recitation (tekrar) kelimesini aklında tut; bu modülün sonunda yeniden karşına çıkacak, çünkü bunu yapan tek şey yapılacaklar listesi değil.
 
 **Nasıl çalışır?** Günümüzün agent'ları bunu hazır bir araç olarak sunuyor. Agent'ın böyle bir aracı yoksa ama bir dosya sistemine erişebiliyorsa, bir markdown dosyası tutarak aynı sonucu alabilir.
+
+## Keşfedilebilir bağlam olarak bilgi tabanı
+
+Bazı bilgiler gerçekten değerlidir ve sık sık değişmez; örneğin şirketinin iç API'sinin nasıl çalıştığı gibi. Bunları her prompt'a yapıştırmak yerine agent'ın gidip bakabileceği bir yere koy: okuyup arayabileceği bir markdown dosyaları klasörüne.
+
+![Agent'ın keşfettiği bir bilgi tabanı](./images/explorable-knowledge-base.png)  
+*Bilgi tabanı context window'un dışında durur ve her etkileşimle büyür. Agent yalnızca sorunun ihtiyaç duyduğu sayfayı okur; bildiği geri kalan her şey kullanılana kadar hiçbir maliyet çıkarmaz.*
+
+Agent dokümantasyona ihtiyaç duyduğuna karar verdiğinde onu çeker. Yalnızca önemli kısmı okur ve context'inde o kadarını öğrenmiş olur. Bu çekme işi [Retrieval-Augmented Generation (RAG)](../1_fundamentals/rag_tr.md) gibi tam bir RAG ile yapılabilir, ya da agent sadece dosyaları açar. Hangisi olursa olsun alternatif, tüm API referansını pencereye dökmek ve bunun bedelini her turda ödemektir.
+
+Her coding agent'ın er ya da geç karşılaştığı bir örnek var. Kütüphaneler sürekli değişir: yeni bir sürüm bir fonksiyonun adını değiştirir, bir seçeneği kaldırır ya da bir işi yapmanın daha iyi bir yolunu ekler. Ama model yalnızca training verisinde olanı bilir ve bu veri **knowledge cutoff** denen bir tarihte biter. Bu yüzden agent bir kütüphaneyle kod yazarken çoğu zaman o kütüphanenin hatırladığı sürümüne değil, güncel dokümantasyonuna ihtiyaç duyar. Sektör bu sorunu adım adım şöyle çözdü.
+
+**Önce `llms.txt`.** Bir web sitesi `/llms.txt` adresine düz bir markdown dosyası koyar. Bu dosya modele sitenin ne olduğunu ve önemli sayfalarının nerede durduğunu söyler; böylece model bütün siteyi okumadan doğru sayfayı bulabilir. En basit hali şöyle görünür:
+
+```markdown
+# Acme SDK
+> A Python library for sending invoices.
+- [Quickstart](https://acme.dev/docs/quickstart.md): install it and send the first invoice
+```
+
+Bu fikir, Jeremy Howard'ın Eylül 2024'te yaptığı bir öneri olan [The /llms.txt file, v2](https://llmstxt.org/) metninden geliyor.
+
+**Sonra MCP.** Model Context Protocol çıktı ve birçok proje dokümantasyonunu agent'ın çağırabileceği tool'lar olarak sunmaya başladı. MCP'yi [Code Agent'lar](coding_agents_tr.md) modülünde ayrıntılı anlatıyoruz. Şimdilik bir MCP server'ı, agent'ına eklediğin ya da kurduğun bir tool seti olarak düşünebilirsin; bu tool'lardan biri de "dokümanlarda ara" olabilir.
+
+**Sonra hepsi için tek bir yer.** Kısa sürede bu dosyalar ve server'lar tek tek kurulamayacak kadar çoğaldı. Bunun üzerine Upstash'in bir projesi olan [Context7](https://context7.com/), birçok kütüphanenin dokümantasyonunu tek bir yerde topladı. Agent'ına tek bir MCP server'ı verir ve bu server üzerinden birçok kütüphanenin güncel dokümanlarına ve kod örneklerine ulaşırsın.
+
+[DeepWiki](https://deepwiki.org/) de benzer bir şekilde çalışır, ama kod için: bir GitHub deposu için wiki üretir. Diyelim ki agent'ın bir kütüphanenin iç yapısı, mimarisi ya da API'si hakkında bir sorusu var. Depoyu kendisi tarayıp context'ini kaynak dosyalarla doldurmak yerine, DeepWiki'nin yazdığı metni okuyabilir.
+
+Bunların hepsinin ortak noktasına dikkat et: her biri context window'un dışında duran, oturumlar arasında kalıcı olan ve agent'ın içinde gezindiği bir bilgi tabanı. Agent, o anki işin ihtiyaç duyduğu sayfadan fazlasını içeri almaz.
 
 > **NOT:** Bunlar tekniklerin tamamı değil. [İleri Seviye Context Engineering](../3_expert/advanced_context_engineering_tr.md) daha zor olanları ele alıyor,
 > özellikle yazılım işleri için.
@@ -219,11 +237,12 @@ Bu, yapılacaklar listesinin de yaptığı şeydir ve recitation kelimesini hat�
 graph LR
     A[Prompt Engineering] --> B[Context Engineering]
     B --> C[Code Agents]
-    C --> D[Harness Engineering]
-    D --> E[Loop Engineering]
-    E --> F[Generative UI]
-    F --> G[Security]
-    G --> H[Personal Agents]
+    C --> D[Agents in Practice]
+    D --> E[Harness Engineering]
+    E --> F[Loop Engineering]
+    F --> G[Generative UI]
+    G --> H[Security]
+    H --> I[Personal Agents]
     style A fill:#90EE90
     style B fill:#FFFF00
 ```
@@ -264,6 +283,7 @@ Sırada kodlama agent'larının kendisi ve birini genişletmenin altı yolu var.
 - [Context Engineering: How Deep Agents Remember](https://www.langchain.com/blog/context-engineering-deep-agents-remember): deepagents'ın uzun bir çalışmada context'i nasıl küçük tuttuğu (offloading, özetleme, skill'ler, subagent'lar ve memory dosyaları) ve memory'yi düz dosyalarda tutmanın model değiştirmeyi neden kolaylaştırdığı.
 - [Measuring AI Ability to Complete Long Software Tasks](https://arxiv.org/abs/2503.14499): zaman ufku sayısının kaynağı ve ikiye katlanma trendi.
 - [Task-completion time horizons](https://metr.org/time-horizons/): her model için güncel sayılar.
+- [The /llms.txt file, v2](https://llmstxt.org/): önerinin kendisi ve formatın tamamı
 
 ### 🎬 Videolar
 
@@ -271,6 +291,7 @@ Sırada kodlama agent'larının kendisi ve birini genişletmenin altı yolu var.
 
 ### 🛠️ Araçlar
 
+- [Context7](https://context7.com/): birçok kütüphanenin güncel dokümantasyonu, tek bir MCP server üzerinden
 - [DeepWiki](https://deepwiki.org/): her depo için bir wiki. Böylece agent kodu okumak yerine kod hakkında okur.
 
 ### 🗃️ Repolar

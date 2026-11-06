@@ -11,25 +11,3 @@ The practices that go past the defaults, building on what Code Agents set up.
 - Forking a session to try two directions from the same point
 
 <!-- NEED: what "btw" refers to in the topic notes for this module. -->
-
-## Tutorial Progress
-
-```mermaid
-graph LR
-    A[Advanced Tools] --> B[Advanced Memory]
-    B --> C[Advanced Multi-Agent]
-    C --> D[Advanced Prompting]
-    D --> E[Adv. Context Eng.]
-    E --> F[Adv. Coding Agents]
-    F --> G[Adv. Harness Eng.]
-    G --> H[Adv. Agent Arch.]
-    H --> I[Advanced UI]
-    I --> J[Advanced Deployment]
-    J --> K[Advanced Training]
-    style A fill:#90EE90
-    style B fill:#90EE90
-    style C fill:#90EE90
-    style D fill:#90EE90
-    style E fill:#90EE90
-    style F fill:#FFFF00
-```

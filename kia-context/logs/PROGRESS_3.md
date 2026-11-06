@@ -511,6 +511,22 @@ unwritten For Everyone module indexed (the unit test red). The first attempt at 
 not compile, so its test ran against the old build and passed; it was redone, and a mutation is now
 only counted after its build succeeds.
 
+**Two Haiku reviews (xhigh) and what they changed.** The browser one: the meta, status and placeholder
+text failed AA in the faint ink (3.30:1 light, 2.49:1 dark), now the muted one; a load failure never
+cleared; marks ignored the normaliser and the excerpt was the section's first 200 characters, so most
+rows showed no reason they matched (now a window around the first match, headings marked too, excerpts
+stored to 400 characters); planned modules and References sections outranked written explanations;
+Escape only emptied the field; Tab left the window; Enter in the field did nothing; each link's name
+was 300 characters. The code one: a Persian word typed with a non-joiner or a space missed text that
+wrote it joined; each level was in all three indexes and marked Persian on a Persian page; the track
+went stale on pages in neither track; Ctrl+K opened under the shortcut sheet; prefix matching at two
+letters ("go" matched 97 sections); a double fetch; a drag closing the window; alef forms not folded.
+All fixed, and it compared every section's id with the page's own headings: no mismatch in the
+corpus, now a test. The full browser suite then failed four record tests that counted any
+`<dialog>` as a raised one; they now count an open one. **Indexes after the fixes:** 89.3, 113.5
+and 116.4 KB gzipped. Left as it is: the magnifier is 33px like the bar's other icons (bounded in
+`responsive.spec.ts`), and For Everyone finds no module until one is written (D97).
+
 ## ~~🏁 Milestone M60: Download built~~ — CANCELLED (D96)
 
 ## 🏁 Milestone M61: The fifth level becomes Emerging Trends — SHIPPED AS PR #66

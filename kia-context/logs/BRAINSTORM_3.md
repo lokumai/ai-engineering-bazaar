@@ -60,9 +60,9 @@ gate in every mode; on the walk they spread across the facade by the window-to-a
 the gate replaces them (P1), rendered separately and hidden by CSS, which costs one more copy of the
 figures in the HTML (about 37 KB raw).
 
-### D99 · Two indexing rules the corpus forced — 2026-11-06
+### D99 · Three indexing rules the corpus forced — 2026-11-06
 
-**A measurement changed our minds twice, both found by the index's own unit test** (a word taken
+**A measurement changed our minds three times; the first two were found by the index's own unit test** (a word taken
 from each section's prose must find that section):
 
 1. **A section is not searched by its module's title.** First built with the title on every section,
@@ -75,7 +75,14 @@ from each section's prose must find that section):
    into a token nobody types. The tokenizer now splits Latin from Persian and keeps a non-joined
    word three ways (each part and the whole), because readers type it with the non-joiner,
    without it, or with a space. Rejected: dropping exact matching for prefix-only search, which
-   hid the defect rather than fixing it.
+   hid the defect rather than fixing it. The review then found the other half: a QUERY typed with
+   the non-joiner was split into parts no joined text holds, so a query keeps such a word whole, and
+   a spaced prefix or suffix (`می خواهم`) is searched joined as well.
+3. **What a match is worth beyond its words** (the browser review, on the built index): a planned
+   module holds only a title and a promise, so the title boost put "Advanced LLM Evaluation" above
+   every written page; References and Summary sections repeat a module's terms without explaining
+   them. Both rank lower (0.7 and 0.4), and a heading weighs more than prose. 0.5 for a planned module
+   was tried first and let "UI Design" beat "Generative UI" on its own exact title.
 
 ### D100 · The round-3 art went ahead without a second look from the author — 2026-11-06
 

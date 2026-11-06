@@ -548,7 +548,8 @@ holds the normaliser and tokenizer both sides use (Turkish folding, Persian lett
 non-joiner). The window is `SearchDialog.tsx`, a native modal `<dialog>` in the bar that imports
 `minisearch` and fetches the page's language's index the first time it opens, never with the page;
 `/` reaches it through the site's key map and Ctrl/Cmd+K through its own listener. MEASURED gzipped:
-76.9, 100.3 and 101.2 KB for English, Turkish and Persian.
+89.3, 113.5 and 116.4 KB for English, Turkish and Persian, each excerpt stored to 400 characters so the
+window shows the text around a match.
 
 **Six of the routes render forwards, and a static export has no other way to redirect.** M17
 folded `/courses/` and `/courses/[category]/` into the catalog (M14's three forwards to `/profile/`

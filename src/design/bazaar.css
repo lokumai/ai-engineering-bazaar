@@ -309,6 +309,9 @@
     --bz-swatch-paper-ink: var(--color-bar);
     --bz-swatch-blueprint-ground: var(--color-bar);
     --bz-swatch-blueprint-ink: var(--color-on-bar-dim);
+    /* A one-colour vendor mark ships black (`*-mono.svg`, M69); `.dark` turns
+       it light, because black on the dark ground vanishes. */
+    --bz-logo-mono-filter: none;
   }
 
   body {
@@ -2448,6 +2451,7 @@
      near-black ground. Both are already the language's own dark values. */
   --color-slab-info:            #848bd0;
   --color-slab-fault:           #ad5b47;
+  --bz-logo-mono-filter:        invert(1);
 }
 
 /* The fold is instant, not animated. */

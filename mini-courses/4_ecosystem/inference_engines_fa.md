@@ -42,9 +42,9 @@ graph TD
 
 **روی یه سرور GPU با کاربرهای واقعی**، wrapper‌ها دیگه جواب نمی‌دن و یه serving engine لازم داری.
 
-- ![](./images/logos/vllm.svg)**vLLM** انتخاب پیش‌فرض بیشتر آدم‌هاست. سخت‌افزارهای خیلی متنوعی رو پشتیبانی می‌کنه، و throughput خوبش رو مدیون continuous batching‌ه.
+- **vLLM** انتخاب پیش‌فرض بیشتر آدم‌هاست. سخت‌افزارهای خیلی متنوعی رو پشتیبانی می‌کنه، و throughput خوبش رو مدیون continuous batching‌ه.
 - **[SGLang](https://github.com/sgl-project/sglang)** یه framework پرسرعت برای serve کردن مدل‌های زبانی و multimodal‌ه، و وقتی درخواست‌ها یه prefix طولانی مشترک دارن، خیلی خوب جواب می‌ده. اگه همه‌ی درخواست‌هات با یه system prompt بزرگ و یکسان شروع می‌شن، دقیقاً حالت تو همینه.
-- ![](./images/logos/nvidia.svg)**[TensorRT-LLM](https://github.com/NVIDIA/TensorRT-LLM)** مال NVIDIA‌ه و حداکثر استفاده رو از سخت‌افزار خود NVIDIA می‌کنه. مدل رو از قبل به یه engine بهینه‌شده کامپایل می‌کنی؛ این یه مرحله‌ی build اضافه برات خرج داره، ولی در عوض latency پایین‌تری می‌گیری.
+- **[TensorRT-LLM](https://github.com/NVIDIA/TensorRT-LLM)** مال NVIDIA‌ه و حداکثر استفاده رو از سخت‌افزار خود NVIDIA می‌کنه. مدل رو از قبل به یه engine بهینه‌شده کامپایل می‌کنی؛ این یه مرحله‌ی build اضافه برات خرج داره، ولی در عوض latency پایین‌تری می‌گیری.
 
 **وقتی کار به چند تا سرور می‌کشه**، دیگه مسئله این نیست که یه برنامه رو روی یه سرور خوب اجرا کنی؛ مسئله اینه که کل یه cluster از سرورها رو با هم هماهنگ کنی. **[llm-d](https://github.com/llm-d/llm-d)** برای همین ساخته شده: inference رو روی Kubernetes و با accelerator‌های جدید اجرا می‌کنه، و scheduling و routing رو هم خود پلتفرم انجام می‌ده تا تو درگیرش نشی؛ یعنی خودش تصمیم می‌گیره هر درخواست روی کدوم سرور اجرا بشه. یه کار دیگه‌ش هم جاگذاری با در نظر گرفتن cache‌ه (cache-aware placement): سروری رو ترجیح می‌ده که داده‌ی لازم از قبل توی cache‌ش باشه.
 

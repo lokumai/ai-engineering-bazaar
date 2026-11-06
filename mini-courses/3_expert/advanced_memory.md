@@ -12,7 +12,6 @@ Long-term memory systems that live outside the context window entirely, referenc
 - Agent KnowledgeBase
 - Entire Provenance
 
-
 ## References
 
 ### 📄 Articles

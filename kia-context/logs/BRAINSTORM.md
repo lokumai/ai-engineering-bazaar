@@ -129,6 +129,13 @@ mark, a quiz slot and a place in the reader's progress. The same review found th
 sentence and schedule are printed as plain text, so a markdown link there showed as literal
 brackets; a test now holds every planned module's lead and schedule free of markdown.
 
+Two limits, found in the PR #74 review. A planned module whose only `##` is its references list
+counts as not written, so it keeps the old sheet and band. And **the Persian text of the moved
+sections is no longer on the site**: a planned module has no `_fa.md`, so Persian readers lost
+Agent Teams, Dynamic Workflows and RLMs, which they could read in Loop Engineering before; the
+text is kept in `mini-courses/scratchpad/drafts/advanced_loop_engineering_fa.md`. Allowing a
+`_fa.md` for a planned module with written sections would bring it back; that is the author's call.
+
 ## Open questions
 
 None open in this part yet. New ones go here, numbered after O5.

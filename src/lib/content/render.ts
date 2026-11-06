@@ -569,6 +569,10 @@ function imageParagraph(
   }
 
   if (!image) return null
+  // A vendor's mark (M69) stays inline even when it stands alone: it is not
+  // a picture of anything, so it gets no number, no caption and no frame.
+  const classes = image.properties?.className
+  if (Array.isArray(classes) && classes.includes('bz-logo')) return null
   const alt = image.properties?.alt
   const note = em ? hastToString(em).trim() : null
   return {

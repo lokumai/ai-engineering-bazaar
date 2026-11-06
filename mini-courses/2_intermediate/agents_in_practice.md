@@ -44,7 +44,8 @@ flowchart TD
     A --> D["Introduction to Claude Cowork"]
 ```
 
-Start with Claude 101, because the other three assume it. Then follow the branch you need: the
+We suggest that you start with Claude 101, because it gives you the basics that the other three
+build on. Then follow the branch you need: the
 Claude Code branch for code, the Cowork branch for work with documents, files and apps. As an
 engineer, take both.
 

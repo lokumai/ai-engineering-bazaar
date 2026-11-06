@@ -127,7 +127,7 @@
      column 214px wide in a 375px window (found on a planned module, M67). */
   @media (max-width: 880px) {
     .bz-shell:not([data-bz-aside]),
-    [data-bz-rail="folded"] .bz-shell:not([data-bz-aside]) {
+    [data-bz-rail="folded"] .bz-shell {
       grid-template-columns: minmax(0, 1fr);
     }
   }

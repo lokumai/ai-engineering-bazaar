@@ -13,7 +13,6 @@ sistemleri.
 - Agent KnowledgeBase
 - Entire Provenance
 
-
 ## Kaynaklar
 
 ### 📄 Makaleler

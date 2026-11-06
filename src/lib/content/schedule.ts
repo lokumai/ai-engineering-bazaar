@@ -80,6 +80,11 @@ export function summarySentence(markdown: string): string | null {
 const FENCE_LINE = /^[ \t]*(`{3,}|~{3,})/
 /** An h2: where a written section starts. */
 const H2_LINE = /^##[ \t]/
+/**
+ * A references list in any of the three languages. A planned module that has
+ * only this has nothing written yet: it keeps its old sheet (PR #74 review).
+ */
+const REFERENCES_H2 = /^##[ \t]+(References|Kaynaklar|منابع)[ \t]*$/
 
 /**
  * The sections a planned module already has written, from its first h2 to the
@@ -100,21 +105,46 @@ const H2_LINE = /^##[ \t]/
  */
 export function writtenSections(markdown: string): string | null {
   const lines = markdown.split('\n')
-  let fence: string | null = null
+  const fences = fenceTracker()
 
   for (let index = 0; index < lines.length; index += 1) {
-    const match = FENCE_LINE.exec(lines[index])
-    if (match) {
-      const marker = match[1][0]
-      if (fence === null) fence = marker
-      else if (fence === marker) fence = null
-      continue
-    }
-    if (fence === null && H2_LINE.test(lines[index])) {
+    if (fences.isFenceOrInside(lines[index])) continue
+    if (H2_LINE.test(lines[index])) {
       const rest = lines.slice(index).join('\n').trim()
-      return rest === '' ? null : rest
+      return hasWrittenSection(rest) ? rest : null
     }
   }
 
   return null
+}
+
+/** True when some h2 outside a fence is a section and not a references list. */
+function hasWrittenSection(markdown: string): boolean {
+  const fences = fenceTracker()
+  for (const line of markdown.split('\n')) {
+    if (fences.isFenceOrInside(line)) continue
+    if (H2_LINE.test(line) && !REFERENCES_H2.test(line.trim())) return true
+  }
+  return false
+}
+
+/**
+ * Reads lines in order and says whether each is a fence or inside one. A fence
+ * closes only on the same character, at least as long as the one that opened
+ * it, so a ```` block may hold a ``` example (CommonMark's rule).
+ */
+function fenceTracker(): { isFenceOrInside: (line: string) => boolean } {
+  let open: string | null = null
+  return {
+    isFenceOrInside(line: string): boolean {
+      const match = FENCE_LINE.exec(line)
+      if (match) {
+        const run = match[1]
+        if (open === null) open = run
+        else if (run[0] === open[0] && run.length >= open.length) open = null
+        return true
+      }
+      return open !== null
+    },
+  }
 }

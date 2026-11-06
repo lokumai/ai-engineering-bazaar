@@ -86,6 +86,19 @@ describe('writtenSections (D102)', () => {
     expect(writtenSections(text)).toBe('## Agent Teams\n\nA paragraph.\n\n### A Detail\n\nMore.')
   })
 
+  it('treats a module whose only h2 is its references as not written yet', () => {
+    expect(writtenSections(`${STUB}\n## References\n\n- [A](https://a.example)\n`)).toBeNull()
+    expect(writtenSections(`${STUB}\n## Kaynaklar\n\n- [A](https://a.example)\n`)).toBeNull()
+    expect(writtenSections(`${STUB}\n## Agent Teams\n\nText.\n\n## References\n\n- x\n`)).not.toBeNull()
+  })
+
+  it('does not let a shorter fence close a longer one', () => {
+    // One inner ``` and then a heading: a closing rule that ignores length
+    // ends the block at the inner fence and takes the heading for a section.
+    const text = `${STUB}\n\`\`\`\`markdown\n\`\`\`\n## still inside\n\`\`\`\`\n`
+    expect(writtenSections(text)).toBeNull()
+  })
+
   it('does not take an h2 inside a code block for a section', () => {
     const text = `${STUB}\n\`\`\`markdown\n## not a section\n\`\`\`\n`
     expect(writtenSections(text)).toBeNull()

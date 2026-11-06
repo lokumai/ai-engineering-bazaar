@@ -25,7 +25,7 @@ flowchart TD
     A --> D["Introduction to Claude Cowork"]
 ```
 
-Claude 101 ile başla, çünkü diğer üçü onu bildiğini varsayıyor. Sonra ihtiyacın olan dalı takip et: kod için Claude Code dalını, dokümanlar, dosyalar ve uygulamalarla yapılan işler için Cowork dalını. Bir mühendis olarak ikisini de al.
+Claude 101 ile başlamanı öneriyoruz, çünkü diğer üçünün üzerine kurulduğu temelleri veriyor. Sonra ihtiyacın olan dalı takip et: kod için Claude Code dalını, dokümanlar, dosyalar ve uygulamalarla yapılan işler için Cowork dalını. Bir mühendis olarak ikisini de al.
 
 ## Claude 101
 

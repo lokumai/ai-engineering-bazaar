@@ -145,7 +145,7 @@ The [hooks reference](https://code.claude.com/docs/en/hooks) lists more than thi
 - **`Stop`**, when the agent finishes its turn. You can run the test suite, and tell the agent to continue if a test is red.
 - **`SessionStart`**, when a session begins. You can print the current branch and the open tickets into the context.
 
-Remember the first one, because it carries the main point. An instruction in AGENTS.md that asks the agent never to touch a file is a request. A `PreToolUse` hook that blocks the write is a rule. This idea is where the next module begins, and it is the reason that module exists.
+Remember the first one, because it carries the main point. An instruction in AGENTS.md that asks the agent never to touch a file is a request. A `PreToolUse` hook that blocks the write is a rule. This idea is where [Harness Engineering](harness_engineering.md) begins, and it is the reason that module exists.
 
 ![A pre-tool hook](./images/pre-tool-hook.webp)  
 *The hook runs after the model has decided and before the tool runs, so it is the last gate. A validator such as Tirith checks the assembled call and either lets it run or stops it, whatever the model intended.*

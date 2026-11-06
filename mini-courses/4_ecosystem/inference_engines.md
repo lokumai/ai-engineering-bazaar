@@ -50,9 +50,9 @@ graph TD
 
 **On a GPU server with real users**, the wrappers are no longer enough. Here you want a serving engine.
 
-- ![](./images/logos/vllm.svg)**vLLM** is the usual default. It supports a broad range of hardware. Its continuous batching is what gives it good throughput.
+- **vLLM** is the usual default. It supports a broad range of hardware. Its continuous batching is what gives it good throughput.
 - **[SGLang](https://github.com/sgl-project/sglang)** is a high-performance serving framework for language and multimodal models. It is strong when requests share a long common prefix. If every request starts with the same big system prompt, that is exactly your case.
-- ![](./images/logos/nvidia.svg)**[TensorRT-LLM](https://github.com/NVIDIA/TensorRT-LLM)** comes from NVIDIA. It gets the most out of NVIDIA hardware specifically. You compile the model into an optimised engine ahead of time. That costs you a build step, and it gives you lower latency.
+- **[TensorRT-LLM](https://github.com/NVIDIA/TensorRT-LLM)** comes from NVIDIA. It gets the most out of NVIDIA hardware specifically. You compile the model into an optimised engine ahead of time. That costs you a build step, and it gives you lower latency.
 
 **Across many machines**, the problem is no longer how to run one server program well. The problem becomes how to coordinate a whole cluster of machines. That is what **[llm-d](https://github.com/llm-d/llm-d)** is for. It runs inference on Kubernetes with modern accelerators. The platform then handles scheduling and routing for you, which means that it decides which machine runs each request. It also does cache-aware placement: it prefers a machine that already holds the needed data in its cache.
 

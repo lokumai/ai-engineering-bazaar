@@ -2,29 +2,29 @@
 questions:
   - answer: 1
     en:
-      question: "Which course should you take before the other three?"
+      question: "Which course does the module suggest you take before the other three?"
       options:
         - "Claude Code in Action"
         - "Claude 101"
         - "Introduction to Claude Cowork"
         - "Claude Code 101"
-      explain: "Claude 101 is the start for everyone, because the other three assume it. Then you follow the Claude Code branch, the Cowork branch, or both."
+      explain: "We suggest Claude 101 as the start for everyone, because it gives the basics the other three build on. Then you follow the Claude Code branch, the Cowork branch, or both."
     tr:
-      question: "Diğer üç kurstan önce hangisini almalısın?"
+      question: "Modül, diğer üç kurstan önce hangisini almanı öneriyor?"
       options:
         - "Claude Code in Action"
         - "Claude 101"
         - "Introduction to Claude Cowork"
         - "Claude Code 101"
-      explain: "Claude 101 herkes için başlangıç noktası, çünkü diğer üçü onu bildiğini varsayıyor. Sonra Claude Code dalını, Cowork dalını ya da ikisini birden takip edersin."
+      explain: "Claude 101 herkes için önerdiğimiz başlangıç noktası, çünkü diğer üçünün üzerine kurulduğu temelleri veriyor. Sonra Claude Code dalını, Cowork dalını ya da ikisini birden takip edersin."
     fa:
-      question: "قبل از سه تا دوره‌ی دیگه، کدوم رو باید بگذرونی؟"
+      question: "این درس پیشنهاد می‌کنه قبل از سه تا دوره‌ی دیگه کدوم رو بگذرونی؟"
       options:
         - "Claude Code in Action"
         - "Claude 101"
         - "Introduction to Claude Cowork"
         - "Claude Code 101"
-      explain: "Claude 101 نقطه‌ی شروع همه‌ست، چون سه تای دیگه فرض می‌کنن اون رو دیدی. بعدش می‌ری سراغ شاخه‌ی Claude Code، شاخه‌ی Cowork، یا هر دو."
+      explain: "پیشنهاد ما اینه که همه با Claude 101 شروع کنن، چون پایه‌هایی رو می‌ده که سه تای دیگه روشون ساخته می‌شن. بعدش می‌ری سراغ شاخه‌ی Claude Code، شاخه‌ی Cowork، یا هر دو."
   - answer: 3
     en:
       question: "Who is Claude Code in Action written for?"

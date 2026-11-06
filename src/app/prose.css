@@ -169,11 +169,12 @@
     vertical-align: -0.18em;
   }
 
-  /* A brand whose mark is one dark colour (OpenAI, xAI, LangChain, OpenRouter)
-     ships it black, named `*-mono.svg`, and the dark theme turns it light: a
-     black mark on the dark ground would vanish. A coloured mark is left alone. */
-  html.dark .bz-logo[src*="-mono."] {
-    filter: invert(1);
+  /* A brand whose mark is one dark colour (OpenAI, xAI, OpenRouter)
+     ships it black, named `*-mono.svg`; the theme says what to do with it
+     (`--bz-logo-mono-filter`, inverted under `.dark`). A coloured mark is
+     left alone. */
+  .bz-logo[src$="-mono.svg"] {
+    filter: var(--bz-logo-mono-filter);
   }
 
   /* The three-part caption. `01` has one flat `figcaption`, which the language

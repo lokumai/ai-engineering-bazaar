@@ -84,7 +84,7 @@ MCP üzerinden workflow kurmak v2.13 sürümüyle geldi. Böylece agent ile work
 
 ## No-code Seçenekleri
 
-Bunu açıkça söylemek gerekiyor, çünkü mühendisler genelde bunu atlar. Pek çok iş için doğru cevap bir no-code platform. **[Lovable](https://lovable.dev/)**, **[Bolt](https://bolt.new/)** ve ![](./images/logos/replit.svg)**[Replit](https://replit.com/)** bir açıklamayı çalışan bir uygulamaya çeviriyor. Uygulamayı yayınlıyorlar ve değiştirmek için prompt yazmaya devam edebilirsin. Bir prototip, dahili bir araç ya da arkasında formu olan bir landing page için bu, haftalar yerine saatler sürer.
+Bunu açıkça söylemek gerekiyor, çünkü mühendisler genelde bunu atlar. Pek çok iş için doğru cevap bir no-code platform. **[Lovable](https://lovable.dev/)**, **[Bolt](https://bolt.new/)** ve **[Replit](https://replit.com/)** bir açıklamayı çalışan bir uygulamaya çeviriyor. Uygulamayı yayınlıyorlar ve değiştirmek için prompt yazmaya devam edebilirsin. Bir prototip, dahili bir araç ya da arkasında formu olan bir landing page için bu, haftalar yerine saatler sürer.
 
 Takas da bildiğin türden: şimdi hız kazanırsın, sonra daha az kontrol elde edersin. Platformdan ayrılırsan uygulamayı baştan yazman gerekir. Bu takasın hangi tarafını satın aldığını bilerek karar ver.
 

@@ -914,6 +914,35 @@ after the name fixed both. Left: Hugging Face's yellow, NVIDIA's green and vLLM'
 (1.4 to 2.6:1) on the light ground, which is the brands' own colour; each sits beside its name.
 **Gate:** 1,160 unit tests, the build, the link check.
 
+**Second review (Haiku, xhigh), on the markdown.** Paths, counts across the three languages and the
+SVG roots were clean. It caught three lists where one item carried a mark and its neighbours did
+not (Replit beside Lovable and Bolt; vLLM and TensorRT-LLM with SGLang unmarked between them;
+LangSmith beside Langfuse and Latitude), which breaks the audit's own rule, so those four marks
+and their files are gone. Google Stitch now carries Google's mark (Simple Icons `google`, 4285F4)
+rather than Gemini's. The SVGs have plain English titles (OpenClaw's favicon carried Portuguese
+ones). **10 placements remain, 30 lines, 10 files.**
+
+**PR #74 reviews, 2026-11-07.** *Sonnet (high):* it ran the whole gate in its own copy (all green)
+and judged the code sound. Fixed: README and `index.md` still counted 8 Intermediate and 12 Expert
+modules and named Training (now 9 and 16, listed); the Advanced LLM topic carried the author's
+instruction to the writer ("without softmax, encoders and decoders"); the structured-output notes
+sat where a planned sheet drops them, so they are now a `## Forcing Structured Output` section that
+D102 renders, with item 01 shortened; Advanced Memory, whose only `##` is its references, said
+"Partly written", so a references-only module now counts as not written (unit test, seen failing
+without the check); "the other three assume Claude 101" is not on the course pages, so it is our
+suggestion now (module and quiz); Code Agents named the "next module" for Harness Engineering;
+`topics.txt`, the Generative UI series map, a double blank line. The Persian loss of the moved
+Loop Engineering sections is recorded in D102 for the author.
+*Gemini 3.8 Flash (high), through `agy`:* its first run returned nothing with exit 0 (it tried a
+shell command, which headless mode denies); rerun told to use only file reads. Fixed, each guard
+seen failing first: below 880px a folded rail still left a 0px column on pages with an aside, so
+the one-column rule now covers every folded shell; a logo alone on its line would have become a
+full-width numbered figure, so a `bz-logo` image is never a figure; the manifest test checks every
+planned row, not the first; the dark-theme rule for mono marks sat in a surface stylesheet as
+`html.dark`, so it is now a token (`--bz-logo-mono-filter`, `none` and `invert(1)` in
+`bazaar.css`) read by `prose.css` on `-mono.svg` only; a fence now closes only on a run at least as
+long as the one that opened it, so a ```` block may hold a ``` example.
+
 ---
 
 > **← Part 2: [`PROGRESS_2.md`](PROGRESS_2.md)** — M16 to M49. **← Part 1: [`PROGRESS_1.md`](PROGRESS_1.md)**

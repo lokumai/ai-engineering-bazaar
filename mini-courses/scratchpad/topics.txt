@@ -36,7 +36,7 @@ https://www.langchain.com/blog/traces-start-agent-improvement-loop
 25) advanced_coding_agents (claude code best practices: https://code.claude.com/docs/en/best-practices#use-cli-tools, rewind, resume, subagent-cli-skills, /fork, btw, Claude Native Plan / Goals / Ultrathink / Playground)
 26) advanced_harness_engineering (harness profiles, linting (LSP) and pre-commit gate with security scan and Ruff, system prompts, changing tool names, self evolving harnessess, context and harness embedded in llm anthtropic article: https://claude.com/blog/the-new-rules-of-context-engineering-for-claude-5-generation-models)
 27) advanced_loop_engineering (Agent Teams, Dynamic Workflows, RLMs, moved from loop_engineering, issue #48)
-28) advanced_agent_architectures (THREAD, ReAct, Deep, CodeAct, RLM, Dynamic Workflows)
+28) advanced_agent_architectures (THREAD, ReAct, Deep, CodeAct, RLM; Dynamic Workflows moved to advanced_loop_engineering)
 29) advanced_ui (agentic UI, AG-UI, MCP-Apps UI, A2UI, Copilotkit, Agent Client Protocol ACP, TUI for agents)
 30) advanced_deployment (agent server, langchain agent protocol, the tech stack for UI REDIS WORKER et, Human-in-the-Lopp (Interrupt, Steering), Runtime (Checkpoints, Fault Tolerance, Time Travel)) 
 31) advanced_llm_evaluation (issue #46. Static and objective metrics: BLEU (n-gram word matching), ROUGE (overlap or recall), METEOR (penalizing order), accuracy and precision, cosine similarity (BERTScore). Dynamic and subjective metrics: faithfulness, LLM-as-judge, human preference)

@@ -39,6 +39,15 @@ describe('renderMarkdown', () => {
     expect(html).not.toMatch(/<img src="[^"]*a\.png"[^>]*bz-logo/)
   })
 
+  it('keeps a logo inline even when it stands alone in its paragraph', async () => {
+    const { html } = await renderMarkdown(
+      '![](./images/logos/acme.svg)',
+      { imageBase: '/course-images/intermediate' },
+    )
+    expect(html).not.toContain('<figure')
+    expect(html).toContain('class="bz-logo"')
+  })
+
 })
 
 describe('renderMarkdown — B6.2, the italic dek', () => {

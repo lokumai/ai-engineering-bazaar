@@ -13,7 +13,7 @@ Loop Engineering modülü bir insanın tasarladığı döngüleri anlattı: bir 
 
 [Loop Engineering](../2_intermediate/loop_engineering_tr.md) modülünde anlatılan her şey bir insanın tasarladığı döngülerdi: betik mekaniktir, kriterleri sen yazarsın ve yapı ya senin ya da Ralph'inki gibi bilinen bir desendir.
 
-Bir sonraki adım, döngünün kendisini agent'ın tasarlayıp çalıştırmasına izin vermektir. Arabaya bir kez daha dönelim: burada AI yalnızca sürmüyor, rotayı da o belirliyor. Yani bu, diğer AI'ları koordine eden bir AI demektir.
+Bir sonraki adım, döngünün kendisini agent'ın tasarlayıp çalıştırmasına izin vermektir. Loop Engineering'deki arabaya bir kez daha dönelim; orada prompt motordu, context gövdeydi, harness pistti ve arabayı zaten AI sürüyordu. Burada AI yalnızca sürmüyor, rotayı da o belirliyor. Yani bu, diğer AI'ları koordine eden bir AI demektir.
 
 Bu ikisinin ne olduğunu net söyleyelim: agent team'ler ve dinamik workflow'lar **ileri seviye multi-agent mimarileridir** ve [Multi-Agent Systems](../1_fundamentals/multi_agent_tr.md) modülündeki desenler üzerine kurulurlar. Bunları loop engineering'in kendisiyle karıştırma. Loop engineering bir pratiktir; bir çalışmayı neyin başlattığına, agent'a neyin verildiğine ve ne zaman durduğuna sen karar verirsin. Bu mimariler bu pratiğe uyar ve onu çok daha büyük bir ölçekte mümkün kılar.
 

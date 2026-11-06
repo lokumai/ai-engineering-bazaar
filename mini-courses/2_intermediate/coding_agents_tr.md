@@ -209,11 +209,12 @@ Bu tembellik değildir; hem senin hem de modelin iyi kullandığı tek format bu
 graph LR
     A[Prompt Engineering] --> B[Context Engineering]
     B --> C[Code Agents]
-    C --> D[Harness Engineering]
-    D --> E[Loop Engineering]
-    E --> F[Generative UI]
-    F --> G[Security]
-    G --> H[Personal Agents]
+    C --> D[Agents in Practice]
+    D --> E[Harness Engineering]
+    E --> F[Loop Engineering]
+    F --> G[Generative UI]
+    G --> H[Security]
+    H --> I[Personal Agents]
     style A fill:#90EE90
     style B fill:#90EE90
     style C fill:#FFFF00
@@ -231,7 +232,7 @@ Son ikisi kontrolle ilgilidir. Hook'lar, model onları seçse de seçmese de ger
 
 Neredeyse tamamı klasörde duran markdown'dır; hem sen hem modelin iyi kullandığı format da budur.
 
-Sırada: bu modülde modelin söz hakkı olmadığı ilk şey hook'lardı. Bu fikre harness engineering deniyor ve bir sonraki modülün konusu da bu.
+Sırada: bu modülde modelin söz hakkı olmadığı ilk şey hook'lardı. Bu fikre harness engineering deniyor ve kısa bir pratik molasından hemen sonra geliyor: bu parçaları ücretsiz kurslarda kendi elinle denediğin [Agent'lar Pratikte](agents_in_practice_tr.md).
 
 **Hızlı Kontrol**: bir skill ile bir custom subagent, ikisi de agent'a bir uzmanlık alanı kazandırır. Aralarındaki gerçek fark nedir ve her biri ne zaman uygundur?
 

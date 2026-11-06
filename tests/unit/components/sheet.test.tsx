@@ -81,6 +81,12 @@ describe('StatusBand (§4.5)', () => {
     expect(markup).toContain('Planned')
     expect(markup).toContain('Schedule of parts only')
   })
+
+  it('says a planned module with written sections is partly written (D102)', () => {
+    const written = renderToStaticMarkup(<StatusBand written />)
+    expect(written).toContain('Partly written')
+    expect(written).not.toContain('Schedule of parts only')
+  })
 })
 
 describe('ScheduleOfParts (§4.5)', () => {

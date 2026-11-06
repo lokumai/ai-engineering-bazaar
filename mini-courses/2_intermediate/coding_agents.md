@@ -219,11 +219,12 @@ That is not laziness. It is the one format that both you and the model handle we
 graph LR
     A[Prompt Engineering] --> B[Context Engineering]
     B --> C[Code Agents]
-    C --> D[Harness Engineering]
-    D --> E[Loop Engineering]
-    E --> F[Generative UI]
-    F --> G[Security]
-    G --> H[Personal Agents]
+    C --> D[Agents in Practice]
+    D --> E[Harness Engineering]
+    E --> F[Loop Engineering]
+    F --> G[Generative UI]
+    G --> H[Security]
+    H --> I[Personal Agents]
     style A fill:#90EE90
     style B fill:#90EE90
     style C fill:#FFFF00
@@ -241,7 +242,7 @@ The last two are about control. Hooks are the mechanical part: the things that h
 
 Almost all of it is markdown in a folder. That is the format that you and the model both handle well.
 
-Next: hooks were the first thing in this module that the model does not get a vote on. That idea is called harness engineering, and it is the subject of the next module.
+Next: hooks were the first thing in this module that the model does not get a vote on. That idea is called harness engineering, and it comes right after a short practical stop: [Agents in Practice](agents_in_practice.md), where you try these parts yourself in free courses.
 
 **Quick Check**: a skill and a custom subagent both give an agent a specialism. What is the real difference between them, and when does each one fit?
 

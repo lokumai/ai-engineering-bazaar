@@ -1,0 +1,80 @@
+---
+summary: "Three free courses that teach you to work with an AI agent, by doing the work yourself."
+objectives:
+  - "Say why you learn to work with an agent by using one"
+  - "Know which course to take first, and which one is optional"
+  - "Tell Claude Cowork apart from Claude Duet"
+---
+
+# Agents in Practice
+
+An AI agent is an AI that does not only answer you. It also does things for you: it opens files,
+writes documents, searches the web and uses your apps, one step after another, until a job is
+done. You can read about agents for a long time. But the fastest way to understand them is to
+give one a real job and watch what it does.
+
+## Why Take These Courses
+
+When you read about an agent, everything goes well. When you work with one, it sometimes
+misunderstands you or takes a wrong turn. Then you have to notice it and guide it back. That is the
+real skill, and only practice teaches it.
+
+The three courses below are free and short, and you learn by doing. The company that makes the
+tools wrote them, and each one ends with a short quiz and a badge.
+
+All three use ![](../images/logos/claude.svg)**Claude**, the AI assistant made by Anthropic. At
+the time of writing, we think it is the most capable assistant for this kind of work, the most
+trusted, and the one with the most features. What you learn with it also helps you with other AI
+assistants.
+
+## Claude 101
+
+[Claude 101](https://academy.claude.com/courses/claude-101) is where everyone should start. It
+shows you how to use Claude in your daily work: your first conversation, how to ask so that you get
+better answers, and how to keep the documents and instructions for one piece of work together in a
+project. It also shows how Claude connects to tools you already use.
+
+You need a Claude account. The free plan is enough, and you need no experience with AI. It takes
+about two and a half hours.
+
+## Claude Code 101 (Optional)
+
+[Claude Code 101](https://academy.claude.com/courses/claude-code-101) teaches Claude Code. Claude
+Code is an agent that you talk to in a text window called a terminal. It was made for writing
+software, and this course is written for developers.
+
+That is why this course is optional if you are not an engineer. Still, we think it is worth a
+look. You can describe what you want in plain words, and Claude Code writes the code and runs it
+for you. People who know nothing about coding use it to build small tools, clean up spreadsheets
+and automate boring tasks. It needs a paid Claude plan.
+
+## Introduction to Claude Cowork
+
+If you do not write code, take this course after Claude 101. **Claude Cowork** is Claude working
+directly with the files, folders and apps on your computer. It is part of the normal
+Claude app. You start the work: you give it a goal, such as "sort these invoices into folders and
+make me a summary". Claude makes a plan, does the steps, and you can guide it along the way. At the
+end you get a real result, such as a report, a spreadsheet or a tidy folder.
+
+[Introduction to Claude Cowork](https://academy.claude.com/courses/introduction-to-claude-cowork)
+teaches you to hand it work like this. It also shows Claude inside Chrome, Word, Excel,
+PowerPoint and Outlook, and how to check its work before you trust it. You do not need to code.
+You need a paid Claude plan and the Claude desktop app. It takes about two and a half hours.
+
+(Do not confuse Cowork with **Claude Duet**. With Cowork, you start the work. With Duet, Claude
+starts it: Duet keeps an eye on the apps you connect, does work in the background, and comes to
+you with a short summary every morning.)
+
+## Summary
+
+You learn to work with an AI agent by working with one. Start with Claude 101. Then take
+Introduction to Claude Cowork, which teaches an agent that works with your files and apps. Claude
+Code 101 is optional for you, but it shows that you can build things without knowing how to code.
+
+## References
+
+### 📄 Articles
+
+- [Claude 101](https://academy.claude.com/courses/claude-101): Claude for everyday work
+- [Claude Code 101](https://academy.claude.com/courses/claude-code-101): the coding agent, for developers and the curious
+- [Introduction to Claude Cowork](https://academy.claude.com/courses/introduction-to-claude-cowork): handing work on files and apps to Claude

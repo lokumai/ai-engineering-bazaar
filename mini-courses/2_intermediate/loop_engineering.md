@@ -127,14 +127,14 @@ You can get a real one in a few places. The [ralph-loop plugin](https://claude.c
 
 > **NOTE:** LangChain names a different top level: the **hill climbing loop**. It reads production traces to find problems, and it improves the agent's own configuration. It is worth knowing as the level above this one. It is a loop whose output is a better harness, not finished work.
 
-## Beyond the Loops You Design
+## Agents That Design the Loop
 
 Every loop in this module is one that a person designed. You write the script, you set the
 criteria, and you decide what starts a run and when it stops. The structure is either yours or a
 known pattern, like Ralph's.
 
 The next step is to let the agent design and run the loop itself. Back to the car one last time:
-here the AI is not only driving, it also decides the route. Three techniques make that possible at
+here the AI is not only driving. It also decides the route. Three techniques make that possible at
 a much larger scale:
 
 - **Agent teams**: several full agent sessions that share a task list, with a lead that
@@ -166,16 +166,18 @@ None of the layers replaced the one before it. They stacked. That is why the who
 graph LR
     A[Prompt Engineering] --> B[Context Engineering]
     B --> C[Code Agents]
-    C --> D[Harness Engineering]
-    D --> E[Loop Engineering]
-    E --> F[Generative UI]
-    F --> G[Security]
-    G --> H[Personal Agents]
+    C --> D[Agents in Practice]
+    D --> E[Harness Engineering]
+    E --> F[Loop Engineering]
+    F --> G[Generative UI]
+    G --> H[Security]
+    H --> I[Personal Agents]
     style A fill:#90EE90
     style B fill:#90EE90
     style C fill:#90EE90
     style D fill:#90EE90
-    style E fill:#FFFF00
+    style E fill:#90EE90
+    style F fill:#FFFF00
 ```
 
 ## Summary

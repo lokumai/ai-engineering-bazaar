@@ -118,7 +118,7 @@ done
 
 > **نکته:** LangChain بالاترین سطح رو یه چیز دیگه می‌دونه: **hill climbing loop**. این loop، trace‌های production رو می‌خونه تا مشکل‌ها رو پیدا کنه و تنظیمات خود agent رو بهتر می‌کنه. خوبه به‌عنوان یه سطح بالاتر از این یکی بشناسیش، چون خروجیش یه harness بهتره، نه یه کار تموم‌شده.
 
-## فراتر از Loop‌هایی که خودت طراحی می‌کنی
+## Agent‌هایی که خودشون loop رو طراحی می‌کنن
 
 همه‌ی loop‌های این درس رو یه آدم طراحی کرده: script رو تو می‌نویسی، معیارها رو تو می‌ذاری، و تویی که تصمیم می‌گیری چی یه اجرا رو شروع کنه و کی تمومش کنه. ساختار کار هم یا مال خودته یا یه الگوی شناخته‌شده مثل Ralph.
 
@@ -149,16 +149,18 @@ done
 graph LR
     A[Prompt Engineering] --> B[Context Engineering]
     B --> C[Code Agents]
-    C --> D[Harness Engineering]
-    D --> E[Loop Engineering]
-    E --> F[Generative UI]
-    F --> G[Security]
-    G --> H[Personal Agents]
+    C --> D[Agents in Practice]
+    D --> E[Harness Engineering]
+    E --> F[Loop Engineering]
+    F --> G[Generative UI]
+    G --> H[Security]
+    H --> I[Personal Agents]
     style A fill:#90EE90
     style B fill:#90EE90
     style C fill:#90EE90
     style D fill:#90EE90
-    style E fill:#FFFF00
+    style E fill:#90EE90
+    style F fill:#FFFF00
 ```
 
 ## خلاصه

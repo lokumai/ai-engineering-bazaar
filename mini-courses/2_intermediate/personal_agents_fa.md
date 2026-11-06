@@ -107,6 +107,7 @@ OpenClaw و Hermes متن‌بازن و از دل community درومدن. ولی
 - **[Muse](https://ai.meta.com/muse/)** personal agent شرکت Meta‌ه. توی وب می‌گرده، خرید می‌کنه و سند درست می‌کنه؛ ایمیل و تقویمت رو هم از طریق connector‌ها مدیریت می‌کنه و توی پس‌زمینه کارش رو ادامه می‌ده. توی اپ Muse روی موبایل یا Mac، یا مستقیم توی WhatsApp بهش دسترسی داری. قبل از اینکه پیامی بفرسته، چیزی بخره یا اطلاعاتی رو با کسی به اشتراک بذاره، ازت می‌پرسه.
 - **[Grok Bot](https://x.ai/bot)** کار سازنده‌های Grok‌ه و بهت هم‌تیمی‌های AI می‌ده که توی ابزارهات login می‌کنن و درست مثل خودت باهاشون کار می‌کنن. یه workflow رو هم می‌تونی این‌طوری بهش یاد بدی که بذاری موقع کار کردن نگاهت کنه. همه‌ی bot‌هات یه کامپیوتر ابری دائمی مشترک دارن، پس وقتی در لپ‌تاپت بسته‌ست هم به کارشون ادامه می‌دن.
 - **[Gemini Spark](https://gemini.google/overview/agent/spark/)** personal agent گوگله که توی پس‌زمینه کار می‌کنه، حتی وقتی گوشی و لپ‌تاپت خاموشن. به Gmail، Calendar، Drive و بقیه‌ی اپ‌های گوگل وصل می‌شه (که همه‌شون به‌طور پیش‌فرض خاموشن)، و قبل از هر کار مهمی با خودت هماهنگ می‌کنه.
+- **[Claude Duet](https://claude.com/product/claude-duet)** هم personal agent خود Anthropic‌ه که با Claude Opus 5.5 کار می‌کنه. این‌جا کار رو تو شروع نمی‌کنی، خود Claude شروعش می‌کنه: روی یه کامپیوتر مخصوص خودش توی cloud کار می‌کنه، با اپ‌هایی که بهش وصل می‌کنی، مثل Gmail، Slack، Shopify یا QuickBooks. هر روز صبح یه خلاصه بهت می‌ده، قدم‌های بعدی رو پیش‌نویس می‌کنه و بعد ساکت می‌مونه تا وقتی که یه چیزی واقعاً به تو نیاز داشته باشه. قبل از کارهای حساس، مثل فرستادن پیام یا پرداخت پول، ازت اجازه می‌گیره. اکتبر 2026 به‌صورت research preview باز شد، با لیست انتظار و فقط برای کاربرهای Pro، Max و Ultra توی آمریکا. با Cowork توی [Agent‌ها در عمل](agents_in_practice_fa.md) قاطی‌ش نکن؛ Cowork وقتی کار می‌کنه که خودت شروعش کنی.
 
 فرق بزرگشون با OpenClaw و Hermes جاییه که اجرا می‌شن. این agent‌ها روی سرورهای خود شرکت اجرا می‌شن، نه روی سیستم تو، برای همین چیزی هم برای نصب یا نگهداری نداری. بده‌بستونش همونیه که برای گزینه‌های host‌شده‌ی بالا گفتیم: زحمت نگهداریش دیگه با تو نیست، ولی دیگه فقط مال تو هم نیست.
 
@@ -139,11 +140,12 @@ OpenClaw و Hermes متن‌بازن و از دل community درومدن. ولی
 graph LR
     A[Prompt Engineering] --> B[Context Engineering]
     B --> C[Code Agents]
-    C --> D[Harness Engineering]
-    D --> E[Loop Engineering]
-    E --> F[Generative UI]
-    F --> G[Security]
-    G --> H[Personal Agents]
+    C --> D[Agents in Practice]
+    D --> E[Harness Engineering]
+    E --> F[Loop Engineering]
+    F --> G[Generative UI]
+    G --> H[Security]
+    H --> I[Personal Agents]
     style A fill:#90EE90
     style B fill:#90EE90
     style C fill:#90EE90
@@ -151,7 +153,8 @@ graph LR
     style E fill:#90EE90
     style F fill:#90EE90
     style G fill:#90EE90
-    style H fill:#FFFF00
+    style H fill:#90EE90
+    style I fill:#FFFF00
 ```
 
 ## خلاصه
@@ -184,7 +187,7 @@ OpenAI، Meta، Google و سازنده‌های Grok هم حالا personal agen
 ### 🛠️ ابزارها
 
 - [Kimi Claw](https://www.kimi.com/en/help/kimi-claw) و [myclaw.ai](https://myclaw.ai/): نسخه‌های host‌شده، برای وقتی که خودت نمی‌تونی اجراش کنی
-- [Introducing dots](https://openai.com/index/introducing-dots/)، [Muse](https://ai.meta.com/muse/)، [Grok Bot](https://x.ai/bot) و [Gemini Spark](https://gemini.google/overview/agent/spark/): personal agent‌هایی که شرکت‌های بزرگ AI برات host می‌کنن
+- [Introducing dots](https://openai.com/index/introducing-dots/)، [Muse](https://ai.meta.com/muse/)، [Grok Bot](https://x.ai/bot)، [Gemini Spark](https://gemini.google/overview/agent/spark/) و [Claude Duet](https://claude.com/product/claude-duet): personal agent‌هایی که شرکت‌های بزرگ AI برات host می‌کنن
 
 ### 🗃️ Repository‌ها
 

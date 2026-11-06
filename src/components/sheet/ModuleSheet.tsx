@@ -430,7 +430,7 @@ export async function ModuleSheet({
             fixed`, so its place in the document decides only the TAB ORDER —
             and from here a keyboard reader could not reach it in 30 presses. */}
 
-        {format === 'A4' && <StatusBand />}
+        {format === 'A4' && <StatusBand written={early !== null} />}
 
         {/* Below the width where a rail can sit beside the prose, both rails'
             content moves behind one control (§4.7). Which widths that is

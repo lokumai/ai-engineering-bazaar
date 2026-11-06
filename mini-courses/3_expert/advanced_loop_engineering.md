@@ -13,7 +13,7 @@ Loop Engineering covered loops that a human designs: what starts a run, what the
 
 Everything in [Loop Engineering](../2_intermediate/loop_engineering.md) is a loop that a human designed. The script is mechanical, and you write the criteria. The structure is either yours or a known pattern like Ralph's.
 
-The next step is to let the agent design and run the loop itself. Back to the car one last time: here the AI is not only driving. It also decides the route. It is an AI that orchestrates other AIs.
+The next step is to let the agent design and run the loop itself. Back to the car from Loop Engineering one last time, where the prompt is the engine, the context is the body, the harness is the track, and the AI already drives: here the AI is not only driving. It also decides the route. It is an AI that orchestrates other AIs.
 
 Be clear about what these two are. Agent teams and dynamic workflows are **advanced multi-agent architectures**. They build on the patterns in [Multi-Agent Systems](../1_fundamentals/multi_agent.md). Do not mistake them for loop engineering itself. Loop engineering is the practice: you decide what starts a run, what the agent gets, and when it stops. Agent teams and dynamic workflows are architectures that suit that practice. They make it possible at a much larger scale.
 

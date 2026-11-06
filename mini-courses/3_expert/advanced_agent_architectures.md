@@ -9,4 +9,3 @@ Architectural patterns that go beyond the basic Observe-Decide-Act loop from AI 
 - ReAct
 - CodeAct
 - RLM
-- Dynamic Workflows

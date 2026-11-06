@@ -116,11 +116,11 @@ Gerçek bir Ralph döngüsünü birkaç yerde bulabilirsin. [ralph-loop plugin](
 
 > **NOT:** LangChain farklı bir en üst seviye adlandırıyor: **hill climbing loop**. Bu döngü, sorunları bulmak için üretim trace'lerini (production traces) okur ve agent'ın kendi yapılandırmasını iyileştirir. Bu döngü, bu seviyenin bir üstünde yer alır ve bilmeye değer; çıktısı tamamlanmış bir iş değil, daha iyi bir harness'tir.
 
-## Senin Tasarladığın Döngülerin Ötesi
+## Döngüyü tasarlayan agent'lar
 
 Bu modüldeki her döngü, bir insanın tasarladığı bir döngü. Betiği sen yazıyorsun, kriterleri sen koyuyorsun ve bir çalışmayı neyin başlatacağına, ne zaman duracağına sen karar veriyorsun. Yapı ya senin ya da Ralph'inki gibi bilinen bir desen.
 
-Bir sonraki adım, döngünün kendisini agent'ın tasarlayıp çalıştırmasına izin vermek. Arabaya son bir kez dönelim: burada AI yalnızca sürmüyor, rotayı da o belirliyor. Bunu çok daha büyük bir ölçekte mümkün kılan üç teknik var:
+Bir sonraki adım, döngünün kendisini agent'ın tasarlayıp çalıştırmasına izin vermektir. Arabaya son bir kez dönelim: burada AI yalnızca sürmüyor, rotayı da o belirliyor. Bunu çok daha büyük bir ölçekte mümkün kılan üç teknik var:
 
 - **Agent team'ler**: ortak bir görev listesini paylaşan ve bir liderin koordine ettiği birkaç tam agent oturumu.
 - **Dinamik workflow'lar**: agent'ın yazdığı, düzinelerce hatta yüzlerce subagent'ı çalıştıran ve planı kodda tutan bir betik.
@@ -147,16 +147,18 @@ Hiçbir katman kendinden öncekinin yerini almadı; hepsi üst üste yığıldı
 graph LR
     A[Prompt Engineering] --> B[Context Engineering]
     B --> C[Code Agents]
-    C --> D[Harness Engineering]
-    D --> E[Loop Engineering]
-    E --> F[Generative UI]
-    F --> G[Security]
-    G --> H[Personal Agents]
+    C --> D[Agents in Practice]
+    D --> E[Harness Engineering]
+    E --> F[Loop Engineering]
+    F --> G[Generative UI]
+    G --> H[Security]
+    H --> I[Personal Agents]
     style A fill:#90EE90
     style B fill:#90EE90
     style C fill:#90EE90
     style D fill:#90EE90
-    style E fill:#FFFF00
+    style E fill:#90EE90
+    style F fill:#FFFF00
 ```
 
 ## Özet

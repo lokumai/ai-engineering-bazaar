@@ -148,6 +148,8 @@ Bunun için küçük bir test setine ihtiyacın var: bir soru listesi ve her sor
 | **MRR** (mean reciprocal rank) | *İlk* alakalı chunk ne kadar yukarıda? |
 | **nDCG@k** (normalized discounted cumulative gain) | Alakalı chunk'lar en üstte ve en iyi sırada mı? |
 
+### Bir Örnek Üzerinden
+
 Yukarıdaki örnekten bir soru alalım: "add fonksiyonu nasıl çalışıyor?". İki chunk alakalı: `def add` ve `add`'in testi. Retrieval beş chunk döndürüyor ve alakalı olanlar ikinci ve dördüncü sırada geliyor:
 
 | Sıra | 1 | 2 | 3 | 4 | 5 |

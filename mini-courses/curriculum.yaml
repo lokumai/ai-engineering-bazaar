@@ -82,7 +82,7 @@ categories:
   - slug: intermediate
     title: Intermediate
     status: ready
-    blurb: Prompting, context, coding agents, harnesses, loops, generative UI, and security.
+    blurb: Prompting, context, coding agents and practice with them, harnesses, loops, generative UI, and security.
     modules:
       - name: prompt_engineering
         title: Prompt Engineering
@@ -104,6 +104,20 @@ categories:
         minutes: 30
         needs: [agents]
         notes: Slash Commands, Skills, AGENTS.md, Subagents, hooks, MCP, Plugins
+      - name: agents_in_practice
+        title: Agents in Practice
+        status: ready
+        minutes: 10
+        needs: [coding_agents]
+        notes: >-
+          right after Code Agents, so people can try agents in practice. Why
+          take these courses and why Claude (most capable, most trusted, most
+          feature-rich), then a section per Claude Academy course. Engineers:
+          claude-101, claude-code-101, claude-code-in-action,
+          introduction-to-claude-cowork. Everyone: claude-101, claude-code-101
+          (optional; Claude Code can be used by people who do not code),
+          introduction-to-claude-cowork. Explain Cowork against Duet; a note in
+          parentheses not to confuse them. Claude logo inline.
       - name: harness_engineering
         title: Harness Engineering
         status: ready
@@ -222,7 +236,9 @@ categories:
       - name: advanced_agent_architectures
         title: Advanced Agent Architectures
         status: draft
-        notes: THREAD, ReAct, Deep, CodeAct, RLM, Dynamic Workflows
+        notes: >-
+          THREAD, ReAct, Deep, CodeAct, RLM (Dynamic Workflows are taught in
+          Advanced Loop Engineering, issue #48)
       - name: advanced_ui
         title: Advanced UI
         status: draft

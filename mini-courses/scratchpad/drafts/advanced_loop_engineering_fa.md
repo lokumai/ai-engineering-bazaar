@@ -3,16 +3,16 @@
 These sections were moved out of `2_intermediate/loop_engineering_fa.md` when Loop Engineering was
 split (issue #48). A planned module gets no `_fa.md`, so the Persian text waits here until Advanced
 Loop Engineering is written. The English and Turkish live in `3_expert/advanced_loop_engineering.md`
-and `_tr.md`; when the module is written, the figure path below becomes `./images/` under
-`3_expert/` and the module links are re-pointed from `3_expert/`.
+and `_tr.md`; when the module is written, the paths below, written relative to this file,
+are re-pointed from `3_expert/`.
 
 ## Agent Teams و Dynamic Workflows
 
-همه‌ی loop‌هایی که تا اینجا دیدیم رو یه آدم طراحی کرده: script فقط کورکورانه تکرار می‌کنه، معیارها رو تو می‌نویسی، و ساختار کار یا مال خودته یا یه الگوی شناخته‌شده مثل Ralph.
+همه‌ی loop‌های [Loop Engineering](../../2_intermediate/loop_engineering_fa.md) رو یه آدم طراحی کرده: script فقط کورکورانه تکرار می‌کنه، معیارها رو تو می‌نویسی، و ساختار کار یا مال خودته یا یه الگوی شناخته‌شده مثل Ralph.
 
 قدم بعدی اینه که طراحی و اجرای loop رو هم بسپری به خود agent. برای آخرین بار برگردیم سراغ ماشین: اینجا AI فقط رانندگی نمی‌کنه، مسیر رو هم خودش انتخاب می‌کنه. یعنی یه AI داریم که بقیه‌ی AI‌ها رو هماهنگ می‌کنه.
 
-ولی حواست باشه این دو تا دقیقاً چی هستن. agent teams و dynamic workflows **معماری‌های پیشرفته‌ی multi-agent** هستن و روی الگوهای [Multi-Agent Systems](../1_fundamentals/multi_agent_fa.md) ساخته شدن، پس با خود loop engineering قاطیشون نکن. loop engineering یه روش کاره: تو تعیین می‌کنی چی اجرا رو راه بندازه، چی به agent بدی و کِی وایسه. agent teams و dynamic workflows معماری‌هایی هستن که به کار این روش میان و کمک می‌کنن همین کار رو توی مقیاس خیلی بزرگ‌تری انجام بدی.
+ولی حواست باشه این دو تا دقیقاً چی هستن. agent teams و dynamic workflows **معماری‌های پیشرفته‌ی multi-agent** هستن و روی الگوهای [Multi-Agent Systems](../../1_fundamentals/multi_agent_fa.md) ساخته شدن، پس با خود loop engineering قاطیشون نکن. loop engineering یه روش کاره: تو تعیین می‌کنی چی اجرا رو راه بندازه، چی به agent بدی و کِی وایسه. agent teams و dynamic workflows معماری‌هایی هستن که به کار این روش میان و کمک می‌کنن همین کار رو توی مقیاس خیلی بزرگ‌تری انجام بدی.
 
 Claude Code برای این کار دو تا قابلیت داره که ساختارشون با هم فرق داره.
 
@@ -22,7 +22,7 @@ agent team یعنی چند تا session کامل Claude Code که با هم کا
 
 این‌طوری تقریباً ناخواسته یه loop شکل می‌گیره: سرگروه حواسش به کار بقیه هست و تصمیم می‌گیره قدم بعدی چی باشه، یعنی همون کاری که قبلاً خودت می‌کردی.
 
-![Subagent‌ها و agent team کنار هم](./images/subagents-vs-teams.png)  
+![Subagent‌ها و agent team کنار هم](../../3_expert/images/subagents-vs-teams.png)  
 *به دایره‌های خط‌چین سمت چپ دقت کن: وقتی کار یه subagent تموم می‌شه، فقط نتیجه‌ش می‌مونه، و همه‌ی اون کار فقط به agent اصلی برمی‌گرده. سمت راست، چیزی سر راهش به بالا خلاصه نمی‌شه، چون هیچ window‌ی نیست که همه‌چیز رو ببینه. هزینه‌ی token بیشتری که توی جدول پایین می‌بینی از همین‌جا میاد، و برای همینه که ممکنه رشته‌ی کار تیم از دست خود سرگروه هم در بره.*
 
 [Orchestrate teams of Claude Code sessions](https://code.claude.com/docs/en/agent-teams) این دو تا رو این‌طوری با هم مقایسه می‌کنه:
@@ -75,7 +75,7 @@ dynamic workflow‌ها فقط به خاطر loop engineering به وجود نی
 - **RLM همون loop engineering نیست.** نه تعیین می‌کنه چی اجرا رو راه بندازه، نه اینکه کِی تموم بشه. ولی هم loop engineering رو ممکن می‌کنه و هم بهترش می‌کنه، چون loop‌ی که چند روز کار می‌کنه بالاخره باید راهی داشته باشه که با متنی بیشتر از ظرفیت یه window کار کنه.
 - **RLM یه معماری single-agent‌ه.** یعنی توضیح می‌ده یه agent از داخل چطور کار می‌کنه: یه مدل که از طریق کد خودش رو صدا می‌زنه. درسته که کلی call به مدل می‌زنه، ولی با معماری‌های multi-agent بالا اشتباهش نگیر.
 
-**CodeAct** که از مقاله‌ی [Executable Code Actions Elicit Better LLM Agents](https://arxiv.org/abs/2402.01030) اومده، فامیل نزدیک همین ایده‌ست: به‌جای tool call‌های JSON، کد اجرایی رو action space agent می‌کنه، یعنی agent کارهاش رو با نوشتن کد انجام می‌ده. [Advanced Agent Architectures](../3_expert/advanced_agent_architectures.md) هر دو رو مفصل توضیح می‌ده. [یادداشت Alex Zhang](https://alexzhang13.github.io/blog/2025/rlm/) نسخه‌ی خوش‌خوان‌تر مقاله‌ست و [rlm](https://github.com/alexzhang13/rlm) هم کتابخونه‌شه.
+**CodeAct** که از مقاله‌ی [Executable Code Actions Elicit Better LLM Agents](https://arxiv.org/abs/2402.01030) اومده، فامیل نزدیک همین ایده‌ست: به‌جای tool call‌های JSON، کد اجرایی رو action space agent می‌کنه، یعنی agent کارهاش رو با نوشتن کد انجام می‌ده. [Advanced Agent Architectures](../../3_expert/advanced_agent_architectures.md) هر دو رو مفصل توضیح می‌ده. [یادداشت Alex Zhang](https://alexzhang13.github.io/blog/2025/rlm/) نسخه‌ی خوش‌خوان‌تر مقاله‌ست و [rlm](https://github.com/alexzhang13/rlm) هم کتابخونه‌شه.
 
 ## منابع
 
@@ -85,3 +85,9 @@ dynamic workflow‌ها فقط به خاطر loop engineering به وجود نی
 - [Orchestrate subagents at scale with dynamic workflows](https://code.claude.com/docs/en/workflows): یه workflow script چه شکلیه، محدودیت‌هاش، و مقایسه‌ی چهارتایی
 - [Executable Code Actions Elicit Better LLM Agents](https://arxiv.org/abs/2402.01030): CodeAct، که توش کد می‌شه action space
 - [Recursive Language Models](https://arxiv.org/abs/2512.24601): خود مقاله، همراه با [یادداشت Alex Zhang](https://alexzhang13.github.io/blog/2025/rlm/) و کتابخونه‌ی [rlm](https://github.com/alexzhang13/rlm)
+
+### 🧭 ماژول‌ها
+
+- [Loop Engineering](../../2_intermediate/loop_engineering_fa.md): loop‌هایی که یه آدم طراحی می‌کنه، و این درس روی اون‌ها ساخته می‌شه
+- [Multi-Agent Systems](../../1_fundamentals/multi_agent_fa.md): الگوهایی که agent teams و workflow‌ها گسترششون می‌دن
+- [Advanced Agent Architectures](../../3_expert/advanced_agent_architectures.md): CodeAct و recursive language models، با جزئیات کامل

@@ -1,0 +1,102 @@
+# Quick quiz: Agents in Practice. Reinforcement, not assessment.
+questions:
+  - answer: 1
+    en:
+      question: "Which course should you take before the other three?"
+      options:
+        - "Claude Code in Action"
+        - "Claude 101"
+        - "Introduction to Claude Cowork"
+        - "Claude Code 101"
+      explain: "Claude 101 is the start for everyone, because the other three assume it. Then you follow the Claude Code branch, the Cowork branch, or both."
+    tr:
+      question: "Diğer üç kurstan önce hangisini almalısın?"
+      options:
+        - "Claude Code in Action"
+        - "Claude 101"
+        - "Introduction to Claude Cowork"
+        - "Claude Code 101"
+      explain: "Claude 101 herkes için başlangıç noktası, çünkü diğer üçü onu bildiğini varsayıyor. Sonra Claude Code dalını, Cowork dalını ya da ikisini birden takip edersin."
+    fa:
+      question: "قبل از سه تا دوره‌ی دیگه، کدوم رو باید بگذرونی؟"
+      options:
+        - "Claude Code in Action"
+        - "Claude 101"
+        - "Introduction to Claude Cowork"
+        - "Claude Code 101"
+      explain: "Claude 101 نقطه‌ی شروع همه‌ست، چون سه تای دیگه فرض می‌کنن اون رو دیدی. بعدش می‌ری سراغ شاخه‌ی Claude Code، شاخه‌ی Cowork، یا هر دو."
+  - answer: 3
+    en:
+      question: "Who is Claude Code in Action written for?"
+      options:
+        - "People who have never used an AI assistant"
+        - "People who want Claude to sort files without coding"
+        - "Developers who have not used a coding agent yet"
+        - "Developers who already use Claude Code for single prompts"
+      explain: "It moves people who already use Claude Code for single prompts to longer runs with less supervision, and it expects Git and the command line."
+    tr:
+      question: "Claude Code in Action kimin için yazıldı?"
+      options:
+        - "Hiç yapay zekâ asistanı kullanmamış kişiler için"
+        - "Kod yazmadan dosyalarını Claude'a düzenletmek isteyenler için"
+        - "Henüz bir coding agent kullanmamış geliştiriciler için"
+        - "Claude Code'u zaten tek prompt'lar için kullanan geliştiriciler için"
+      explain: "Claude Code'u tek prompt'lar için kullananları, daha az gözetimle çalışan uzun oturumlara taşıyor; Git ve komut satırını bildiğini varsayıyor."
+    fa:
+      question: "Claude Code in Action برای کی نوشته شده؟"
+      options:
+        - "کسایی که تا حالا با هیچ دستیار هوش مصنوعی‌ای کار نکردن"
+        - "کسایی که می‌خوان بدون کدنویسی، Claude فایل‌هاشون رو مرتب کنه"
+        - "developer‌هایی که هنوز با یه coding agent کار نکردن"
+        - "developer‌هایی که الان از Claude Code برای prompt‌های تکی استفاده می‌کنن"
+      explain: "این دوره کسایی رو که از Claude Code برای prompt‌های تکی استفاده می‌کنن، می‌بره سمت اجراهای طولانی‌تر با نظارت کمتر، و فرض می‌کنه Git و command line رو بلدی."
+  - answer: 0
+    en:
+      question: "What is the main difference between Claude Cowork and Claude Duet?"
+      options:
+        - "With Cowork you start the work, and with Duet Claude starts it"
+        - "Cowork works with files, and Duet only answers questions"
+        - "Cowork needs code, and Duet is for people who do not code"
+        - "Cowork runs in the cloud, and Duet runs only on your computer"
+      explain: "With Cowork, you give Claude a goal and it works on it. Duet runs on its own computer in the cloud, watches the apps you connect, and comes to you first."
+    tr:
+      question: "Claude Cowork ile Claude Duet arasındaki temel fark nedir?"
+      options:
+        - "Cowork'te işi sen başlatırsın, Duet'te ise Claude başlatır"
+        - "Cowork dosyalarla çalışır, Duet ise yalnızca soruları cevaplar"
+        - "Cowork kod gerektirir, Duet ise kod yazmayanlar içindir"
+        - "Cowork bulutta çalışır, Duet ise yalnızca senin bilgisayarında"
+      explain: "Cowork'te Claude'a bir hedef verirsin ve o da bunun üzerinde çalışır. Duet ise bulutta kendi bilgisayarında çalışır, bağladığın uygulamaları takip eder ve sana ilk o gelir."
+    fa:
+      question: "فرق اصلی Claude Cowork و Claude Duet چیه؟"
+      options:
+        - "توی Cowork کار رو تو شروع می‌کنی، توی Duet خود Claude"
+        - "Cowork با فایل‌ها کار می‌کنه، Duet فقط به سؤال‌ها جواب می‌ده"
+        - "Cowork کدنویسی لازم داره، Duet برای کساییه که کد نمی‌نویسن"
+        - "Cowork توی cloud اجرا می‌شه، Duet فقط روی کامپیوتر خودت"
+      explain: "توی Cowork یه هدف به Claude می‌دی و اون روش کار می‌کنه. ولی Duet روی کامپیوتر خودش توی cloud کار می‌کنه، حواسش به اپ‌هایی که وصل کردی هست و خودش اول میاد سراغت."
+  - answer: 2
+    en:
+      question: "Why does the module say you should practise with a real agent?"
+      options:
+        - "Because the courses are the only place the features are described"
+        - "Because reading about agents is not allowed without a badge"
+        - "Because only practice teaches you to notice and steer an agent that goes wrong"
+        - "Because Claude works only for people who have taken a course"
+      explain: "When you read, everything goes right. When you work, the agent misreads or drifts, and you learn to notice that and steer it back only by doing it."
+    tr:
+      question: "Modül, neden gerçek bir agent'la pratik yapman gerektiğini söylüyor?"
+      options:
+        - "Çünkü özellikler yalnızca bu kurslarda anlatılıyor"
+        - "Çünkü rozet olmadan agent'lar hakkında okumak mümkün değil"
+        - "Çünkü yanlış giden bir agent'ı fark edip yönlendirmeyi yalnızca pratik öğretir"
+        - "Çünkü Claude yalnızca kurs almış kişiler için çalışıyor"
+      explain: "Okurken her şey yolunda gider. Çalışırken agent bir şeyi yanlış okur ya da yoldan sapar; bunu fark edip onu geri getirmeyi ancak yaparak öğrenirsin."
+    fa:
+      question: "چرا این درس می‌گه باید با یه agent واقعی تمرین کنی؟"
+      options:
+        - "چون امکانات فقط توی همین دوره‌ها توضیح داده شدن"
+        - "چون بدون badge نمی‌شه درباره‌ی agent‌ها خوند"
+        - "چون فقط تمرین یادت می‌ده agent‌ی رو که راه رو کج رفته ببینی و برش گردونی"
+        - "چون Claude فقط برای کسایی کار می‌کنه که دوره رو گذرونده‌ن"
+      explain: "وقتی می‌خونی همه‌چی درست پیش می‌ره. ولی وقتی کار می‌کنی، agent یه چیزی رو اشتباه می‌خونه یا راه رو کج می‌ره، و فهمیدن و برگردوندنش رو فقط با انجام دادن یاد می‌گیری."

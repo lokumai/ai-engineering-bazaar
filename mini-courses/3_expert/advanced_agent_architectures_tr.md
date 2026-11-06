@@ -9,4 +9,3 @@ AI Agent'lar modülündeki temel Observe-Decide-Act loop'unun ötesine geçen mi
 - ReAct
 - CodeAct
 - RLM
-- Dynamic Workflows

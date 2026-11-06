@@ -50,7 +50,11 @@ describe('moduleRows — one row per module in the set (§4.8)', () => {
   it('prints an em dash for the extent of a module that is planned', () => {
     // Its words are the schedule of parts and its duration is undeclared; a
     // reading time for a drawing that does not exist would be an estimate.
-    expect(rows[16].extent).toBe('—')
+    // Found by format, not by position: a module added before it moves it.
+    const modules = loadAllModules()
+    const planned = modules.findIndex((module) => module.sheetFormat === 'A4')
+    expect(planned).toBeGreaterThan(-1)
+    expect(rows[planned].extent).toBe('—')
   })
 
   it('prints the language coverage the corpus actually has', () => {

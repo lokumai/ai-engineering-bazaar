@@ -156,6 +156,8 @@ graph TD
 | **MRR** (mean reciprocal rank) | *اولین* chunk مرتبط چقدر بالاست؟ |
 | **nDCG@k** (normalized discounted cumulative gain) | chunk‌های مرتبط بالای فهرستن، اونم به بهترین ترتیب؟ |
 
+### یه مثال واقعی
+
 یه سؤال از همون مثال بالا رو بگیر: «تابع add چطوری کار می‌کنه؟». دو تا chunk مرتبطن: `def add` و تستِ `add`. retrieval پنج تا chunk برمی‌گردونه و مرتبط‌ها جای دوم و چهارم میان:
 
 | جایگاه | 1 | 2 | 3 | 4 | 5 |

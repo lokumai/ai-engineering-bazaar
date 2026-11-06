@@ -195,6 +195,8 @@ where k is the number of chunks you keep (for example, 5). Four measures are com
 | **MRR** (mean reciprocal rank) | How high is the *first* relevant chunk? |
 | **nDCG@k** (normalized discounted cumulative gain) | Are the relevant chunks near the top, in the best order? |
 
+### A Worked Example
+
 Here is one question from the example above: "how does the add function work?". Two chunks are
 relevant: `def add` and the test for `add`. Retrieval returns five chunks, and the relevant ones
 come second and fourth:

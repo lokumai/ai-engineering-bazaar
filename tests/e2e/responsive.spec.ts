@@ -557,6 +557,14 @@ test('the draft module keeps its band and schedule at every width', async ({ pag
   await expect(page.locator('table.bz-schedule')).toBeVisible()
   await expect(page.locator('.bz-aside')).toHaveCount(0)
 
+  // Below the rail's breakpoint the sheet takes the whole column. A shell with
+  // no aside once kept an empty rail track here and drew a 214px column in a
+  // 375px window (M67).
+  if (width < 880) {
+    const sheet = await page.locator('.bz-sheet').boundingBox()
+    expect(sheet!.width).toBeGreaterThan(width * 0.8)
+  }
+
   const curriculum = page.locator('.bz-rail')
   const drawer = page.getByRole('button', { name: 'Contents', exact: true })
 

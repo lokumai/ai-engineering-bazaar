@@ -795,27 +795,71 @@ link is relative to `3_expert/`); the same two edits in Turkish. The planned pag
 sections under its schedule (D102): two sections, FIG. 26.1, two tables, the references. Two unit
 tests needed the D102 rule: "no figures on a draft" now reads "no figures on a draft with no
 written sections" (with a length guard), and the Turkish coverage test passed once the Turkish
-moved too. The Expert README's one line now names every Expert topic. The quiz asked nothing about
-the moved sections. **Gate:** typecheck, 1,158 unit tests, the build and the link check (191
+moved too. The Expert README's one line now names every Expert topic. **Gate:** typecheck, 1,158 unit tests, the build and the link check (191
 pages, 12,452 internal links).
 
-## 🏁 Milestone M68: Agents in Practice, Claude Duet, and the Claude logo — PLANNED
+**Reviews (two Haiku, xhigh).** *Content:* the quiz's fourth question asked how a dynamic workflow
+differs from an agent team, which this module no longer teaches (my grep had looked only at the
+options); removed in three languages, three questions remain. Advanced Agent Architectures no
+longer lists dynamic workflows, which Advanced Loop Engineering now owns. The car analogy is
+restated in one clause where the advanced module calls it back. The Persian draft got the same two
+edits and a Modules group. Two wording fixes; the new heading is "Agents That Design the Loop".
+Left: a pre-existing Videos reference the body never links. *Rendered page, measured at 1440 and
+390:* (1) at 390px every page with no in-page index kept an empty rail track, so a planned page's
+column was 214px in a 375px window; `bazaar.css` collapses the shell to one column below 880px, but
+the no-aside rule in `shell.css` out-ranked it. Fixed there, and `responsive.spec.ts` now asserts the
+sheet takes over 80% of a narrow window. (2) The band read "PlannedSchedule of parts only", with no
+separator, and "only" is false on a planned page that has written sections; it now reads
+"Planned · Partly written" there (`StatusBand written`, unit-tested). (3) RAG's two tables shared
+the caption "Measuring Retrieval" (a table takes its nearest heading), so the worked example has its
+own heading in three languages. Left, pre-existing: a planned page has no contents rail (the
+anatomy spec requires none), a light PNG on the dark ground, and "Reading time 0 m" in a planned
+page's footer.
+
+## 🏁 Milestone M68: Agents in Practice, Claude Duet, and the Claude logo — DONE
 
 ### Deliverables
 
-- [ ] **Agents in Practice**, after Code Agents: why take these courses and why Claude, then one
+- [x] **Agents in Practice**, after Code Agents: why take these courses and why Claude, then one
       section per Claude Academy course with what it is and who it is for. The engineer page:
       Claude 101, Claude Code 101, Claude Code in Action, Introduction to Claude Cowork. The For
       Everyone page (`everyone/agents_in_practice.md`, the first one): Claude 101, Claude Code 101
       as optional, Introduction to Claude Cowork. Cowork is explained against Duet, with a note in
       parentheses not to confuse them. English, Turkish, Persian, and a quiz.
-- [ ] **Claude Duet** in Personal Agents, with the three languages.
-- [ ] **An inline logo**: the Claude logo, at text height, in both themes.
+- [x] **Claude Duet** in Personal Agents, with the three languages.
+- [x] **An inline logo**: the Claude logo, at text height, in both themes.
 
 ### Acceptance criteria
 
-- [ ] Every course link fetched and described from its page; the For Everyone page renders on the
+- [x] Every course link fetched and described from its page; the For Everyone page renders on the
       For Everyone track; the gate green.
+
+**Report, 2026-11-06.** **Agents in Practice** is module 12, after Code Agents, `ready`, 10
+minutes, needing Code Agents. The engineer page opens by connecting to Code Agents, argues why
+practice teaches what reading cannot, gives the author's three reasons for Claude as our view at the
+time of writing, then a mermaid map of the order, then one section per course with what it covers,
+who it is for, what it needs and how long it takes, each tied back to the module it puts to work;
+the Cowork section explains Cowork (you start the work) and ends with the parenthesis not to confuse
+it with Duet (Claude starts the work). Every course fact is from its own page, fetched today:
+Claude 101 (13 lessons, about 2.5 hours, any plan), Claude Code 101 (12 lessons, about 1.5 hours,
+developers, paid plan or API key), Claude Code in action (9 lessons, about 1 hour), Introduction to
+Claude Cowork (14 lessons, about 2.5 hours, paid plan, no coding). The pages do not say a course is
+free; that is the author's statement. Claude Code 101's page does not say non-programmers can use
+Claude Code; the For Everyone page says it as our view. **The first For Everyone module**
+(`everyone/agents_in_practice.md`, with Turkish and Persian, settling M52's first module): written
+from scratch in plain words, three courses, Claude Code 101 marked optional. Quiz: four questions in
+three languages. **Claude Duet** joins "More Personal Agents" in three languages, from Anthropic's
+own page ("Claude Duet | A proactive AI agent to assist you"): Opus 5.5, its own computer in the
+cloud, a morning brief, asks before sensitive actions, a US research preview for Pro, Max and Ultra.
+**The inline logo:** a mark under `images/logos/` gets the class `bz-logo` from the renderer and is
+drawn inline at 1.1em (measured 17.6px on 16px text), with an empty alt because the name beside it
+says it; a paragraph holding only a logo would still become a figure, so a logo always sits beside
+text. Claude's mark is Simple Icons 16.36.0's, with its brand colour `#D97757` and a 20px size set on
+the root so GitHub draws it small; screenshots read in light and dark. The render test was seen
+failing with the class line removed. The series map in the 21 Intermediate files (seven modules,
+three languages) gained the new module, and Code Agents' last line now points to it. The browser
+suite's drawing set is 43 sheets. **Gate:** typecheck, 1,160 unit tests, the build and the link
+check.
 
 ## 🏁 Milestone M69: Vendor logos where modules name them — PLANNED
 

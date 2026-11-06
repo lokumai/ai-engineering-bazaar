@@ -107,6 +107,7 @@ OpenClaw ve Hermes açık kaynak projeler ve topluluktan çıktılar. 2026'da b�
 - **[Muse](https://ai.meta.com/muse/)**, Meta'nın personal agent'ı; web'de gezinir, satın alma yapar ve doküman oluşturur. Connector'lar üzerinden e-postanı ve takvimini de yönetir, arka planda çalışmaya devam eder. Mobilde ya da Mac'te Muse uygulamasından, ya da doğrudan WhatsApp'tan ulaşırsın. Bir mesaj göndermeden, bir şey satın almadan ya da bir bilgiyi paylaşmadan önce sana sorar.
 - **[Grok Bot](https://x.ai/bot)**, Grok'un yapımcılarından geliyor ve araçlarına giriş yapıp onları senin gibi kullanan yapay zekâ takım arkadaşları veriyor. Sen çalışırken izlemesine izin vererek ona bir iş akışını öğretebilirsin. Bütün bot'lar tek bir kalıcı bulut bilgisayarını paylaşır, bu yüzden dizüstü bilgisayarın kapalıyken de çalışmaya devam ederler.
 - **[Gemini Spark](https://gemini.google/overview/agent/spark/)**, Google'ın personal agent'ı; telefonun ve dizüstü bilgisayarın kapalıyken bile arka planda çalışır. Gmail, Calendar, Drive ve diğer Google uygulamalarına bağlanır (hepsi varsayılan olarak kapalıdır) ve büyük bir eylem yapmadan önce sana danışır.
+- **[Claude Duet](https://claude.com/product/claude-duet)**, Anthropic'in Claude Opus 5.5 ile çalışan kişisel agent'ı. Burada işi sen değil, Claude başlatıyor: bulutta kendine ait bir bilgisayarda, bağladığın Gmail, Slack, Shopify ya da QuickBooks gibi uygulamalarla çalışıyor. Her sabah sana bir özet sunuyor, sonraki adımların taslağını hazırlıyor ve senin bir şeye ihtiyaç duyacağın ana kadar sessiz kalıyor. Mesaj göndermek ya da ödeme yapmak gibi hassas işlerden önce sana soruyor. Ekim 2026'da araştırma önizlemesi (research preview) olarak, ABD'deki Pro, Max ve Ultra kullanıcılarına bekleme listesiyle açıldı. Onu, [Agent'lar Pratikte](agents_in_practice_tr.md) modülündeki Cowork ile karıştırma: Cowork sen başlattığında çalışır.
 
 OpenClaw ve Hermes'ten asıl fark, nerede çalıştıklarında yatıyor. Bu agent'lar senin makinende değil, şirketin makinelerinde çalıştığı için kurulacak ya da bakımı yapılacak bir şey yoktur. Takas ise yukarıdaki barındırılan seçeneklerdekiyle aynı: bakımını sen yapmayı bırakırsın ve agent yalnızca senin olmaktan çıkar.
 
@@ -139,11 +140,12 @@ Bu modülün Security'den sonra gelmesinin bir nedeni var ve bu neden müfredatt
 graph LR
     A[Prompt Engineering] --> B[Context Engineering]
     B --> C[Code Agents]
-    C --> D[Harness Engineering]
-    D --> E[Loop Engineering]
-    E --> F[Generative UI]
-    F --> G[Security]
-    G --> H[Personal Agents]
+    C --> D[Agents in Practice]
+    D --> E[Harness Engineering]
+    E --> F[Loop Engineering]
+    F --> G[Generative UI]
+    G --> H[Security]
+    H --> I[Personal Agents]
     style A fill:#90EE90
     style B fill:#90EE90
     style C fill:#90EE90
@@ -151,7 +153,8 @@ graph LR
     style E fill:#90EE90
     style F fill:#90EE90
     style G fill:#90EE90
-    style H fill:#FFFF00
+    style H fill:#90EE90
+    style I fill:#FFFF00
 ```
 
 ## Özet
@@ -184,7 +187,7 @@ Ve hepsinin altında aynı takas yatıyor: personal agent'ı faydalı kılan eri
 ### 🛠️ Araçlar
 
 - [Kimi Claw](https://www.kimi.com/en/help/kimi-claw) ve [myclaw.ai](https://myclaw.ai/): kendin çalıştıramadığında kullanabileceğin barındırılan sürümler
-- [Introducing dots](https://openai.com/index/introducing-dots/), [Muse](https://ai.meta.com/muse/), [Grok Bot](https://x.ai/bot) ve [Gemini Spark](https://gemini.google/overview/agent/spark/): büyük yapay zekâ şirketlerinin senin için barındırdığı personal agent'lar
+- [Introducing dots](https://openai.com/index/introducing-dots/), [Muse](https://ai.meta.com/muse/), [Grok Bot](https://x.ai/bot), [Gemini Spark](https://gemini.google/overview/agent/spark/) ve [Claude Duet](https://claude.com/product/claude-duet): büyük yapay zekâ şirketlerinin senin için barındırdığı personal agent'lar
 
 ### 🗃️ Repolar
 

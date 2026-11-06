@@ -409,7 +409,10 @@ function rehypeRewriteImages(imageBase?: string) {
       // so drop the source's own leading `images/` segment as well as any
       // relative prefix. `./images/a.png` -> `<imageBase>/a.png`.
       const relative = src.replace(/^(\.{1,2}\/)+/, '').replace(/^\//, '')
-      node.properties.src = `${imageBase}/${relative.replace(/^images\//, '')}`
+      const served = relative.replace(/^images\//, '')
+      node.properties.src = `${imageBase}/${served}`
+      // A vendor's mark (M68) is drawn inline at text height, not as a picture.
+      if (served.startsWith('logos/')) node.properties.className = ['bz-logo']
     })
   }
 }

@@ -75,7 +75,7 @@ describe('the index (D95)', () => {
         checked += 1
       }
     }
-    expect(checked, 'no section was searched for').toBeGreaterThan(50)
+    expect(checked, 'no section was searched for').toBeGreaterThan(SEARCH_LANGS.length)
   })
 
   it('holds no module a reader could not open: an unwritten For Everyone module is absent', () => {
@@ -151,7 +151,7 @@ describe('every section points at a heading the page renders', () => {
         }
       }
     }
-    expect(checked, 'no section was compared with its page').toBeGreaterThan(100)
+    expect(checked, 'no section was compared with its page').toBeGreaterThan(SEARCH_LANGS.length)
   }, 120_000)
 })
 

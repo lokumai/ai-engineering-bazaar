@@ -208,10 +208,9 @@ export function SearchDialog() {
     if (event.key === 'ArrowDown') {
       event.preventDefault()
       list.current?.querySelector<HTMLAnchorElement>('a')?.focus()
-    } else if (event.key === 'Enter' && hits.length > 0) {
+    } else if (event.key === 'Enter' && hits.length > 0 && !event.nativeEvent.isComposing) {
       event.preventDefault()
-      close()
-      router.push(hits[0].url)
+      go(hits[0].url)
     } else if (event.key === 'Escape') {
       /* a search field's own Escape empties it; here Escape closes the window, as everywhere */
       event.preventDefault()
@@ -219,6 +218,19 @@ export function SearchDialog() {
     }
   }
   /* Tab and Shift+Tab go round the window rather than out of it into the browser */
+  /* A section of the page already open, with its address already in the bar, gives the
+     router nothing to do; scroll to it directly (PR #69 review). */
+  const go = (url: string, event?: React.MouseEvent) => {
+    close()
+    const [path, id] = url.split('#')
+    if (id && path === window.location.pathname) {
+      event?.preventDefault()
+      document.getElementById(decodeURIComponent(id))?.scrollIntoView()
+      history.replaceState(null, '', url)
+      return
+    }
+    if (!event) router.push(url)
+  }
   const onDialogKey = (event: React.KeyboardEvent<HTMLDialogElement>) => {
     if (event.key !== 'Tab') return
     const stops = [...(dialog.current?.querySelectorAll<HTMLElement>('input, button, a[href]') ?? [])]
@@ -313,7 +325,7 @@ export function SearchDialog() {
                 <li key={hit.id}>
                   <Link
                     href={hit.url}
-                    onClick={close}
+                    onClick={(event) => go(hit.url, event)}
                     lang={hit.lang === 'en' ? undefined : hit.lang}
                     dir={hit.lang === 'fa' ? 'rtl' : undefined}
                     aria-describedby={`bz-search-hit-${n}`}

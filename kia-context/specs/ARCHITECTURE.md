@@ -27,7 +27,7 @@ last_updated: "2026-11-06"
 
 ## What this is
 
-A course site built **from** markdown rather than **around** it. The 33 modules in `mini-courses/`
+A course site built **from** markdown rather than **around** it. The 38 modules in `mini-courses/`
 are the corpus, and everything a page shows — the progress marks, the figure numbers, the source
 counts, the revision hashes, the dependency graph — is derived from those files at build time. The
 output is a static export: HTML, CSS and JS on GitHub Pages, no server.
@@ -120,7 +120,7 @@ rules are cited by number.
 
 **Two projects meet in one repository, and they meet at exactly one file.**
 
-One is an authored corpus of markdown: 33 course modules written by hand in English, each with a
+One is an authored corpus of markdown: 38 course modules in English (19 of them written, the rest planned), each with a
 Turkish translation, and the written ones also in Persian (M28). The other is a Next.js
 application that renders it into a static site. They share no code. They share
 `mini-courses/curriculum.yaml`, which the corpus side authors and the application side reads. That
@@ -583,7 +583,7 @@ uses the left.**
 
 | In the code | What it means | What the reader sees |
 |---|---|---|
-| drawing set | the whole 33-module curriculum | **Curriculum** |
+| drawing set | the whole curriculum | **Curriculum** |
 | sheet | one module's page | **Module** |
 | subsystem | a category | **Level** |
 | sign off | the reader asserting they have read a module | **Complete** / **Completed** |
@@ -673,9 +673,10 @@ misleading; use `gh api repos/.../rulesets`.
 
 ## 11. The test suite, and the one rule it lives by
 
-**65** test files (`find tests -name '*.test.ts*' | wc -l`; vitest runs 64 of them) holding
-**1,144** unit and corpus tests, plus **33** Playwright spec files holding **461** browser cases
-(measured 2026-11-05; M40 cut them from 2,107 and 1,234, **D88**), in three suites that each answer
+**68** test files (`find tests -name '*.test.ts*' | wc -l`; vitest runs 67 of them) holding
+**1,153** unit and corpus tests, plus **36** Playwright spec files holding **504** browser cases
+(`npx playwright test --list`; measured 2026-11-06, after M59; M40 had cut them from 2,107 and
+1,234, **D88**), in three suites that each answer
 something the others cannot.
 
 | Suite | Runs | Answers |
@@ -707,7 +708,7 @@ red and teaches nobody anything. The suite was cut from 1,948 tests that pinned 
 few hundred rule-checking ones in September 2026, and four more pinned assertions were replaced on
 2026-09-08.
 
-The one deliberate exception is `tests/e2e/sheets.ts`, which types out all 33 modules, their routes,
+The one deliberate exception is `tests/e2e/sheets.ts`, which types out all 38 modules, their routes,
 titles and formats **by hand**, precisely so that a renumber, a slug change or a stub being written
 fails a test and someone has to look. `tests/e2e/index-sheet.spec.ts` reconciles that list against the
 manifest the site actually renders, which is what keeps the duplication honest.

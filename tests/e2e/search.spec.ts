@@ -1,6 +1,7 @@
 import { type Page, expect, test } from '@playwright/test'
 import { loadAllModules, loadModuleIn } from '@/lib/content/loader'
 import { moduleRoute } from '@/lib/tracks'
+import { searchDocs } from '@/lib/search/documents'
 import { A0 } from './sheets'
 
 /**
@@ -117,4 +118,29 @@ test('Tab and Shift+Tab go round the window and never leave it', async ({ page }
   await field(page).focus()
   await page.keyboard.press('Shift+Tab')
   expect(await page.evaluate(() => document.querySelector('dialog.bz-search')?.contains(document.activeElement)), 'Shift+Tab left the window').toBe(true)
+})
+
+test('a section result lands with its heading below the bar, also on the page already open', async ({ page }) => {
+  // a section well down a written module, found by its own heading
+  const sections = searchDocs('en').filter((d) => d.kind === 'section' && d.track === 'engineers' && d.url.startsWith(moduleRoute(WRITTEN.slug, 'engineers')))
+  const doc = sections[Math.floor(sections.length / 2)]
+  const target = doc.url
+  await page.goto('/')
+  await page.keyboard.press('Control+k')
+  await field(page).fill(doc.section)
+  await dialog(page).locator(`.bz-search-results a[href="${target}"]`).first().click()
+  await expect(page).toHaveURL(new RegExp(`${target}$`))
+  const id = decodeURIComponent(target.split('#')[1])
+  const below = async () => page.evaluate((id) => {
+    const bar = document.querySelector('.bz-bar')!.getBoundingClientRect().bottom
+    return document.getElementById(id)!.getBoundingClientRect().top - bar
+  }, id)
+  await expect.poll(below).toBeGreaterThanOrEqual(0)
+  // the same section again, from the page it is on, with its address already in the bar
+  await page.evaluate(() => window.scrollTo(0, 0))
+  await page.keyboard.press('Control+k')
+  await field(page).fill(doc.section)
+  await dialog(page).locator(`.bz-search-results a[href="${target}"]`).first().click()
+  await expect.poll(() => page.evaluate(() => window.scrollY)).toBeGreaterThan(0)
+  await expect.poll(below).toBeGreaterThanOrEqual(0)
 })

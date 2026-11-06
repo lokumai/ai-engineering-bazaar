@@ -553,6 +553,12 @@
 
   .bz-menu-item .bz-flag { outline-color: var(--color-line-strong); }
 
+  /* A heading reached by its address (a search result, the page's own index) stops below the
+     sticky bar rather than under it, the same inset the j and k keys scroll to. */
+  main :is(h2, h3)[id] {
+    scroll-margin-top: calc(var(--layout-bar) + var(--layout-band) + 4px);
+  }
+
   /* -- M59 (D95): the search window ----------------------------------------
      Derived (D30): no mockup draws it. The erase dialog's answer (progress.css): a
      hairline edge and no shadow over a backdrop of the slab's ground at reduced opacity,
@@ -697,7 +703,8 @@
     line-height: 1.5;
   }
 
-  .bz-search-snippet mark {
+  .bz-search-snippet mark,
+  .bz-search-section mark {
     background: transparent;
     color: var(--color-on-surface-title);
     font-weight: 700;
@@ -708,6 +715,11 @@
 
   /* the muted ink, not the faint one: the faint measured 3.30:1 light and 2.49:1 dark at
      this size (M59 review), and the level and track are what a reader reads here */
+  /* a Persian row reads right to left; its English line still sits under the title's end */
+  .bz-search-results a[dir="rtl"] .bz-search-meta {
+    align-self: flex-end;
+  }
+
   .bz-search-meta {
     color: var(--color-on-surface-muted);
     font-size: var(--text-meta);

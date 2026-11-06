@@ -176,7 +176,7 @@ fails all three attempts.
 **Before calling anything else a flake, check whether it is a race you can
 close.** Five failures were read as regressions in M10 and every one of them was
 a check that counted frames, waited on `networkidle`, or sampled once a value
-that arrives asynchronously — see `kia-context/logs/BRAINSTORM.md` **D20**. The
+that arrives asynchronously — see `kia-context/logs/BRAINSTORM_1.md` **D20**. The
 signature is the same every time: **passes run alone, fails under parallel
 load.** That is not a flake to retry around, it is a wait that was never
 written. Three specific traps, each of which cost a red run:

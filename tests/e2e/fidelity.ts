@@ -10,7 +10,7 @@ import type { Page } from '@playwright/test'
  * written down: **not one acceptance criterion compared a rendered page to the
  * mockup.** 2,149 unit tests and 467 browser tests were green the whole way.
  * They measured contrast, keyboard paths, containment and first paint — all
- * real, none of them the thing that was wrong (`logs/BRAINSTORM.md` D26).
+ * real, none of them the thing that was wrong (`logs/BRAINSTORM_2.md` D26).
  *
  * So this reads the design-carrying facts out of a live page and lets two
  * pages be compared. In M15 both pages are the mockup, which is how the

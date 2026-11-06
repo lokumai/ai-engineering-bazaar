@@ -9,7 +9,7 @@ import { seedRecord, signedSheet, waitForHydratedReadout } from './record'
  * thing about how they are checked: **not by reading the CSS.** The first
  * version of the restore tab was fixed at `top: 88px` under a `z-index: 40`
  * sticky header and could not be clicked at all, and only a browser found it
- * (`kia-context/logs/BRAINSTORM.md` D15). The first version of the navbar's
+ * (`kia-context/logs/BRAINSTORM_1.md` D15). The first version of the navbar's
  * dropdown was keyboard-inaccessible and a check that called `.focus()` passed
  * it (D17). So: the fold is driven, the keyboard path is a Tab press, and a
  * disclosure is asserted in BOTH states, because either alone passes for the

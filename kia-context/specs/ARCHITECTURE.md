@@ -19,7 +19,7 @@ last_updated: "2026-11-06"
 
 > **This is the only architecture document.** The repository root used to hold a second one, written
 > by the colleague who owns the application. It was folded into this file and deleted on 2026-09-08
-> (`logs/BRAINSTORM.md` D11), because a third of it overlapped and two documents describing one system
+> (`logs/BRAINSTORM_1.md` D11), because a third of it overlapped and two documents describing one system
 > is two documents that disagree. Its six rules survive below, unchanged in substance; its stale
 > counts were corrected against the repository on the way in.
 
@@ -432,7 +432,7 @@ reported it as "channel A did not stamp". It waits now. A related assertion — 
 hydrated before the first paint", used as a proxy for pre-React — was measured to be false under CPU
 contention with a warm cache, and was replaced with a structural check that the boot script is inline
 and blocking in `<head>`, which is what makes the claim true by construction rather than by timing.
-Both are `logs/BRAINSTORM.md` **D20**.
+Both are `logs/BRAINSTORM_1.md` **D20**.
 
 ---
 
@@ -508,7 +508,7 @@ The module's task-list checkboxes are untouched and still write `checklist`.
 **In the browser**, mermaid renders client-side from that `data-mermaid` source. This is the cause of
 the diagram overflow measured on 2026-09-08: the injected SVG arrives at its natural content width —
 1,423px against a 656px column — and escapes the scroll container meant to hold it, painting over both
-rails. See `logs/BRAINSTORM.md` D10.
+rails. See `logs/BRAINSTORM_1.md` D10.
 
 Because the loader reaches `node:fs`, **nothing under `src/lib/content/` may be imported by a client
 component.** `layout.tsx` measures `curriculumFacts()` itself and passes the result down as props.
@@ -558,7 +558,7 @@ were removed in M40), and D94 forwards a renamed level and a moved module from f
 renders `MovedTo` instead — an inline script (the only one of the three mechanisms that can carry the
 fragment), a `<meta http-equiv="refresh">` for a reader with scripting off, and a visible link. The
 target goes through `lib/url.ts`'s `href()`, because `basePath` rewrites only what the router touches
-and a hardcoded path would work locally and 404 on GitHub Pages. `logs/BRAINSTORM.md` **D24**.
+and a hardcoded path would work locally and 404 on GitHub Pages. `logs/BRAINSTORM_1.md` **D24**.
 
 ---
 
@@ -573,7 +573,7 @@ export and asked for every trace to go. The section number is kept.
 
 ## 9. Words that mean something specific here
 
-**The reader-facing rename landed on 2026-09-08** (`logs/PROGRESS.md` M9, vocabulary set C). The right
+**The reader-facing rename landed on 2026-09-08** (`logs/PROGRESS_1.md` M9, vocabulary set C). The right
 column is what a reader now sees. **The left column is still what the code says**, everywhere:
 `sheetStamps`, `data-drawn`, `kind: 'sign-off'`, `sheet_slug`. That is deliberate and it is
 not laziness — a storage key or a DB column carries a reader's saved history, and renaming one to match
@@ -599,7 +599,7 @@ uses the left.**
 | submittal register | the repositories a reader has linked to a module | ~~**What you built**~~ — shown nowhere since M38; the record still carries `submittals` |
 | unsigned | a module the reader has not completed | **Not completed** |
 | A0 / A4 | the two page anatomies, chosen by `status` | — internal |
-| mark, class, XP | badge, rank, points | ~~**Rank** / **XP**~~ — **nothing.** M13 took all three off every instrument: nobody could name the question they answered, and `Reading time` took XP's cell (`logs/BRAINSTORM.md` **D22**). `xp()` and `classOf()` are still in `derive.ts`, rendered by nothing |
+| mark, class, XP | badge, rank, points | ~~**Rank** / **XP**~~ — **nothing.** M13 took all three off every instrument: nobody could name the question they answered, and `Reading time` took XP's cell (`logs/BRAINSTORM_1.md` **D22**). `xp()` and `classOf()` are still in `derive.ts`, rendered by nothing |
 | LKM-01 | the mark printed in the module info panel | — internal |
 | §n.n | a section of the original design spec, cited in code comments | — internal |
 
@@ -632,7 +632,7 @@ be found inside it.
 The hole itself is not closed: the ban is a lexer, so a retired word inside a longer token, inside a
 template literal, or inside a JSX run containing braces still passes it. Closing that properly means a
 parser rather than a lexer, and the export grep is what covers it today
-(`logs/BRAINSTORM.md` D19's last paragraph).
+(`logs/BRAINSTORM_1.md` D19's last paragraph).
 
 **M13 found two more that no lexer could have caught, and both were on the page a stranger meets
 first.** `indexStatement()` printed *"Fourteen are dashed — the geometry exists in the model, the

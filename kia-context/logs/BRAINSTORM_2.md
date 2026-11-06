@@ -1,24 +1,24 @@
 ---
 description: >
-  Part 2 of the decision log, CLOSED on 2026-11-06: a new decision goes in BRAINSTORM_3.md. D26 to D96
+  Part 2 of the decision log, CLOSED on 2026-11-06: a new decision goes in BRAINSTORM.md. D26 to D96
   — the interface rebuilt on a portable design language, which is what D26 itself decided, through the
   round-4 playground picks — plus open questions O1 to O5, all closed.
   The entry test and the house style for writing one of these are in part 1 and are not repeated.
-  NOT here: what was built (PROGRESS.md / PROGRESS_2.md), or a rule that outlives the decision
+  NOT here: what was built (the PROGRESS parts), or a rule that outlives the decision
   (MANIFESTO.md / ARCHITECTURE.md).
 authority: reasoning
 writes: agent, when a decision is taken
 status: closed
-covers: "D26 to D88, D90 to D96, plus open questions O1 to O5 — 2026-09-09 to 2026-11-06 (D89 is on PR #57). D97 onward is in BRAINSTORM_3.md"
+covers: "D26 to D88, D90 to D96, plus open questions O1 to O5 — 2026-09-09 to 2026-11-06 (D89 is on PR #57). D97 onward is in BRAINSTORM.md"
 last_updated: 2026-11-06
 ---
 
 # 🧠 BRAINSTORM, part 2 — the rebuild, D26 onward
 
-> **→ Part 3: [`BRAINSTORM_3.md`](BRAINSTORM_3.md)** — **D97 onward**, and the ACTIVE part: a new
+> **→ Part 3: [`BRAINSTORM.md`](BRAINSTORM.md)** — **D97 onward**, and the ACTIVE part: a new
 > decision goes there, not here.
 >
-> **← Part 1: [`BRAINSTORM.md`](BRAINSTORM.md)** — **D1 to D25**: the application, and the two
+> **← Part 1: [`BRAINSTORM_1.md`](BRAINSTORM_1.md)** — **D1 to D25**: the application, and the two
 > attempts at its interface that D26 replaced. **It also carries the entry test and the house style
 > for writing one of these, which are not repeated here** — one file states them.
 
@@ -72,7 +72,7 @@ Git holds the history; the working tree holds one answer.
 migrated.** An edit preserves the thing being edited — see the 378 of 398 above. Anything from them
 that turns out to be needed must be re-derived from a mockup to earn its place back.
 
-**Rule that follows:** `specs/DESIGN.md`'s own Overview, and M15/M16 in `logs/PROGRESS.md`.
+**Rule that follows:** `specs/DESIGN.md`'s own Overview, and M15 in `logs/PROGRESS_1.md` and M16 in `logs/PROGRESS_2.md`.
 
 ### D27 · The dark theme is the slab promoted, not a second palette — 2026-09-09
 
@@ -227,7 +227,7 @@ heavier interface everywhere, to fix a problem that only exists on controls. Rej
 for the extra fill separation because the author chose G3 having seen all four.
 
 **One defect this exposes in what shipped:** `button-quiet` used `line-strong`, which is 2.07:1 on
-white and fails. Fixing it is a deliverable of `logs/PROGRESS.md` M9, not a note for later.
+white and fails. Fixing it is a deliverable of `logs/PROGRESS_1.md` M9, not a note for later.
 
 > **CORRECTED 2026-09-09 — the number above is wrong, and the decision is still right.**
 > `line-strong` does not measure 2.07:1 on white. Recomputed from the shipped token
@@ -307,7 +307,7 @@ the mirror image of the mistake M16 exists to correct.
 
 **Chosen:** **geometry, structure and class semantics come from the component mockup; colour, type
 and every token come from the shell.** Two consequences were checked rather than assumed.
-`04-module-layout.html` and `09-sidebar.html` contain no T4 variant at all, so PROGRESS.md's "T4's
+`04-module-layout.html` and `09-sidebar.html` contain no T4 variant at all, so PROGRESS_2.md's "T4's
 own" resolves to the shell file itself — `01`'s `main > .col` *is* the ratified reading page and its
 `details.arch` *is* the ratified rail. And `06-code-diagrams.html` proposes a slab
 (`#0f131a/#cdd6e0/#262d38`) that is **not** the one the shell ships (`#1d1f27/#e7e3d8/#33363f`); the
@@ -2337,7 +2337,7 @@ should pay."*
 
 ### ~~O1 · Which direction the interface takes~~ — opened and closed 2026-09-08
 
-**Closed by the author's choices**, all ten of them, recorded in `logs/PROGRESS.md` M8 and in
+**Closed by the author's choices**, all ten of them, recorded in `logs/PROGRESS_1.md` M8 and in
 `playground/index.html`: vocabulary set **C**, theme **T4** at lower volume (D12), navbar **A**,
 catalog **all three behind a toggle** (D13), the module layout and sidebar already in T4, completion
 **A** at a module's end and **C** on the overviews (D14), **dark slab** for code and diagrams,
@@ -2419,6 +2419,6 @@ then never become mergeable, so a sharded version needs one final job carrying t
 
 ---
 
-> **→ Part 3: [`BRAINSTORM_3.md`](BRAINSTORM_3.md)** — D97 onward, the ACTIVE part.
+> **→ Part 3: [`BRAINSTORM.md`](BRAINSTORM.md)** — D97 onward, the ACTIVE part.
 >
-> **← Part 1: [`BRAINSTORM.md`](BRAINSTORM.md)** — D1 to D25, the entry test, and the house style.
+> **← Part 1: [`BRAINSTORM_1.md`](BRAINSTORM_1.md)** — D1 to D25, the entry test, and the house style.

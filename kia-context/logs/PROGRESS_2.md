@@ -1,6 +1,6 @@
 ---
 description: >
-  Part 2 of the execution log, CLOSED on 2026-11-06: a new milestone goes in PROGRESS_3.md. It opens with
+  Part 2 of the execution log, CLOSED on 2026-11-06: a new milestone goes in PROGRESS.md. It opens with
   M16, the interface rebuilt on the design language in ten stages — the stage table, every stage's
   brief, and the seven reports the stages wrote back, including what each one found that its own
   brief had wrong, and then the review pass over the finished milestone and the thirteen defects it confirmed
@@ -21,20 +21,20 @@ description: >
 authority: state
 writes: agent, every session
 status: closed
-covers: "M16 to M40 and M42 to M49 (M41 on PR #57), 2026-09-09 to 2026-11-06; M50 onward, and the plan of what was left after M49, is in PROGRESS_3.md — M16 the ten stages and the review pass, M17 the curriculum fold, M18 the front door, M20 the catalog's descriptions, M21 the module page, M22 the progress redesign and M19's pipeline, all six done; M23 — the interface's own strings — is written and not started; M24 — the author's requests of 2026-10-11 — shipped and merged as PR #23, with a same-day follow-up (the level chip `All`, a filter bar that no longer sticks, the current level marked); M25 — the end of a module rebuilt, and a quick quiz — shipped and merged as PR #25; M26 — headings, the requested additions and ASD-STE-like English across the corpus — merged as PR #26. M27 — the Bazaar Street front door — merged as PR #27. Released as v1.0.0 on 2026-10-12. M28 — Persian, the third language — merged as PR #30 the same day. M29 — both translations rewritten in their own language (D81) — merged as PR #31 the same day. M30 — the Persian rewritten by meaning and a clarity hunt in all three languages (D82, D83) — merged as PR #32 the same day. M31 — two promo videos, one made with HyperFrames and one with /brag (D84) — removed at the author's request before merging. M32 — the README rewritten for readers — squash-merged as PR #33 on 2026-10-13. M33 — a tray of lokum offered at each door on hover — merged as PR #34 on 2026-10-14. M34 — the star count refreshed by the deploy (D85) — merged as PR #36 on 2026-10-15. M35 — Harness Engineering names its parts in plain words — merged as PR #38 on 2026-10-15. M36 — three references for Observability and Context Engineering — merged as PR #42 on 2026-10-18. M37 — ten stale mockups removed from playground/ — merged as PR #54 on 2026-11-05. M38 — the progress page slimmed to its circles, the continue card and the data row — merged as PR #55 on 2026-11-05. M43 to M45 — the round-2 picks (D91) — merged as PR #59 on 2026-11-05. M46 — the home page tidied and Iran's flag for Persian — merged as PR #60 the same day. Checkbox format repaired across the part on 2026-09-13."
+covers: "M16 to M40 and M42 to M49 (M41 on PR #57), 2026-09-09 to 2026-11-06; M50 onward, and the plan of what was left after M49, is in PROGRESS.md — M16 the ten stages and the review pass, M17 the curriculum fold, M18 the front door, M20 the catalog's descriptions, M21 the module page, M22 the progress redesign and M19's pipeline, all six done; M23 — the interface's own strings — is written and not started; M24 — the author's requests of 2026-10-11 — shipped and merged as PR #23, with a same-day follow-up (the level chip `All`, a filter bar that no longer sticks, the current level marked); M25 — the end of a module rebuilt, and a quick quiz — shipped and merged as PR #25; M26 — headings, the requested additions and ASD-STE-like English across the corpus — merged as PR #26. M27 — the Bazaar Street front door — merged as PR #27. Released as v1.0.0 on 2026-10-12. M28 — Persian, the third language — merged as PR #30 the same day. M29 — both translations rewritten in their own language (D81) — merged as PR #31 the same day. M30 — the Persian rewritten by meaning and a clarity hunt in all three languages (D82, D83) — merged as PR #32 the same day. M31 — two promo videos, one made with HyperFrames and one with /brag (D84) — removed at the author's request before merging. M32 — the README rewritten for readers — squash-merged as PR #33 on 2026-10-13. M33 — a tray of lokum offered at each door on hover — merged as PR #34 on 2026-10-14. M34 — the star count refreshed by the deploy (D85) — merged as PR #36 on 2026-10-15. M35 — Harness Engineering names its parts in plain words — merged as PR #38 on 2026-10-15. M36 — three references for Observability and Context Engineering — merged as PR #42 on 2026-10-18. M37 — ten stale mockups removed from playground/ — merged as PR #54 on 2026-11-05. M38 — the progress page slimmed to its circles, the continue card and the data row — merged as PR #55 on 2026-11-05. M43 to M45 — the round-2 picks (D91) — merged as PR #59 on 2026-11-05. M46 — the home page tidied and Iran's flag for Persian — merged as PR #60 the same day. Checkbox format repaired across the part on 2026-09-13."
 last_updated: 2026-11-06
 ---
 
 # 📈 PROGRESS, part 2 — M16 to M49
 
-> **→ Part 3: [`PROGRESS_3.md`](PROGRESS_3.md)** — M50 onward, and the ACTIVE part: a new milestone
-> goes there. **← Part 1: [`PROGRESS.md`](PROGRESS.md)** — M1 to M15, and the review pass over M10 to M14.
+> **→ Part 3: [`PROGRESS.md`](PROGRESS.md)** — M50 onward, and the ACTIVE part: a new milestone
+> goes there. **← Part 1: [`PROGRESS_1.md`](PROGRESS_1.md)** — M1 to M15, and the review pass over M10 to M14.
 > This part holds **M16 to M49**, in the order they were worked.
 
 ## How to work this file
 
 **The loop and the circuit breakers are written once, in part 1 —
-[`PROGRESS.md` § The loop](PROGRESS.md#the-loop).** Read them there; they are not restated here and
+[`PROGRESS_1.md` § The loop](PROGRESS_1.md#the-loop).** Read them there; they are not restated here and
 they govern this part exactly as written. In one line: *take the first unchecked deliverable, build
 it, verify it against its acceptance criteria, then mark `[x]` and write the report.*
 
@@ -881,7 +881,7 @@ exemption would hide the next difference.
   `containment.spec.ts` 3 expanding to **63**.
 - The progress meter **undercounts by 71**: it reads `.tsx` only, and the
   renderer's whole class vocabulary lives in `.ts`.
-- `PROGRESS.md` said the diagram semantics are "emitted as literal values
+- `PROGRESS_2.md` said the diagram semantics are "emitted as literal values
   resolved at build time". They are `var()` in `themeCSS`, and
   `mermaid-config.test.ts` actively forbids a literal.
 - `03` has **no view toggle at all** — A, B and C are three separate frames —
@@ -961,7 +961,7 @@ rule is to split on a phase boundary first and on length second, and M16's plan,
 its ten stage briefs and its six reports are one argument: separating the brief
 for stage 7 from the reports that corrected the brief for stages 4 to 6 would
 make both halves harder to use. It splits when the milestone closes, as
-`PROGRESS.md` and `PROGRESS_2.md`, continuing the numbering.
+`PROGRESS_1.md` and `PROGRESS_2.md`, continuing the numbering.
 
 ### Report — stages 7 to 10, the milestone closed, 2026-09-10
 
@@ -4253,7 +4253,7 @@ of every file in `playground/` by what references it: *"delete the ones in Safe 
 ### Acceptance criteria
 
 - [x] 2,194 unit and corpus tests pass after the deletion.
-- [x] `playground/index.html`, the record of the author's ten choices (PROGRESS.md M8), linked the
+- [x] `playground/index.html`, the record of the author's ten choices (PROGRESS_1.md M8), linked the
       nine deleted pages; at the author's word they now point at each file on GitHub at `a941364`,
       the last commit that had them, and no local link in it is dead.
 
@@ -4629,6 +4629,6 @@ part 3 with the milestones it orders.
 
 ---
 
-> **→ Part 3: [`PROGRESS_3.md`](PROGRESS_3.md)** — M50 onward, the ACTIVE part.
+> **→ Part 3: [`PROGRESS.md`](PROGRESS.md)** — M50 onward, the ACTIVE part.
 
-> **← Part 1: [`PROGRESS.md`](PROGRESS.md)** — M1 to M15, and the review pass over M10 to M14.
+> **← Part 1: [`PROGRESS_1.md`](PROGRESS_1.md)** — M1 to M15, and the review pass over M10 to M14.

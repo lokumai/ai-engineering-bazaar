@@ -11,7 +11,7 @@ import { useReadingTrack } from '@/lib/use-reading-track'
  * M10 — the navbar. One row, on every route, with a dropdown per level.
  *
  * This is the answer to the first of the thirteen flaws
- * (`kia-context/logs/BRAINSTORM.md` D10): *"no active, unified navbar."* Before
+ * (`kia-context/logs/BRAINSTORM_1.md` D10): *"no active, unified navbar."* Before
  * this the header carried a breadcrumb and four icon buttons, so a reader could
  * see where they were and could not see where else they could go — every
  * destination was reachable only from the page they happened to be on.

@@ -100,7 +100,7 @@ export const FACES: readonly Face[] = [
  * `İ`, and a name cased at render time is cased in whatever locale the
  * renderer happened to be handed. Stored this way the question never arises.
  * **M9 renamed all five.** They are proper nouns for the colours themselves,
- * so when the palette was re-hued to Bazaar (`logs/BRAINSTORM.md` D12) every
+ * so when the palette was re-hued to Bazaar (`logs/BRAINSTORM_1.md` D12) every
  * one of them became false: Fundamentals was GÜL, rose, and is now teal. A
  * colour name that no longer names its colour is worse than no name, because
  * §13.9 prints it to a reader as the thing the hue is called.

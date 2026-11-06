@@ -35,7 +35,7 @@ import { update } from '@/lib/record/store'
  * folded rail's 33 links must not be tabbable. But it means focus would be
  * dropped on the floor, so each control hands focus to its counterpart. That
  * hand-off is asserted by pressing the key rather than by calling `.focus()`,
- * which is the correction recorded in `kia-context/logs/BRAINSTORM.md` D17.
+ * which is the correction recorded in `kia-context/logs/BRAINSTORM_1.md` D17.
  *
  * ## M21 — ONE control, and how it keeps its label on channel A
  *

@@ -84,7 +84,7 @@ describe('a surface stylesheet arranges the language, it does not extend it', ()
    * M16's SECOND CLOSING CONDITION, restated — because as written it was the
    * opposite of the architecture.
    *
-   * `logs/PROGRESS.md` says the milestone is done when there is "no stylesheet
+   * `logs/PROGRESS_2.md` says the milestone is done when there is "no stylesheet
    * in `src/app/` but the entry point and the generated sheet". Read literally
    * that is five over today and would have been ten over when the milestone
    * finished, because M16's own method is one surface stylesheet per rebuilt

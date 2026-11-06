@@ -135,7 +135,7 @@ export function worst(samples: readonly ContrastSample[]): ContrastSample {
  * was still light-theme paper. Both halves were correct; the sample was taken
  * 32ms into a 90ms cross-fade. It passed when run alone and failed under
  * parallel load, which is the signature of a race being read as a palette
- * defect. See `kia-context/logs/BRAINSTORM.md` D20.
+ * defect. See `kia-context/logs/BRAINSTORM_1.md` D20.
  *
  * So this waits for the transitions themselves to finish rather than counting
  * frames. Only CSS transitions are awaited: §9.3's one page-load animation and

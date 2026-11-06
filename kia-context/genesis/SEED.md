@@ -8,7 +8,7 @@ authority: background
 writes: agent, at t=0 — effectively never again
 status: frozen
 covers: "the first session, 2026-07-07 — not recovered"
-last_updated: "2026-09-08"
+last_updated: "2026-11-06"
 ---
 
 # 🌰 SEED — The first prompts
@@ -38,5 +38,5 @@ started.
 | | |
 |---|---|
 | Why the project exists | `genesis/GENESIS.md` §2, quoted from the author's own public document |
-| What the first weeks produced | `logs/PROGRESS.md` M1, reconstructed from git |
+| What the first weeks produced | `logs/PROGRESS_1.md` M1, reconstructed from git |
 | The rules it started with | `specs/MANIFESTO.md` rules 1 to 7, which are the author's |

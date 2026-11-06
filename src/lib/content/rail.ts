@@ -17,7 +17,7 @@ import { loadAllModules } from './loader'
  * takes nothing from here.
  *
  * A module's number is its position in the config and is computed there
- * (`kia-context/logs/BRAINSTORM.md` D5), so this file reads
+ * (`kia-context/logs/BRAINSTORM_1.md` D5), so this file reads
  * `frontmatter.module` rather than counting.
  */
 

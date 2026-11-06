@@ -236,7 +236,7 @@ test('a seeded record stamps <html> inside the first frame (§12.2 channel A)', 
   // §12.2: what §12.2 claims is that the stamps are on `<html>` before any
   // paint and without React's help, and the three assertions above are what
   // measure it. The proxy was measuring scheduler load. See
-  // `kia-context/logs/BRAINSTORM.md` D20.
+  // `kia-context/logs/BRAINSTORM_1.md` D20.
   //
   // What replaces it cannot be raced at all, because it is structural rather
   // than temporal: the reason channel A is pre-paint is that the script is

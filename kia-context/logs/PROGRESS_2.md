@@ -21,7 +21,7 @@ description: >
 authority: state
 writes: agent, every session
 status: active
-covers: "M16 to M40 and M42 to M54 (M41 on PR #57), 2026-09-09 onward — M16 the ten stages and the review pass, M17 the curriculum fold, M18 the front door, M20 the catalog's descriptions, M21 the module page, M22 the progress redesign and M19's pipeline, all six done; M23 — the interface's own strings — is written and not started; M24 — the author's requests of 2026-10-11 — shipped and merged as PR #23, with a same-day follow-up (the level chip `All`, a filter bar that no longer sticks, the current level marked); M25 — the end of a module rebuilt, and a quick quiz — shipped and merged as PR #25; M26 — headings, the requested additions and ASD-STE-like English across the corpus — merged as PR #26. M27 — the Bazaar Street front door — merged as PR #27. Released as v1.0.0 on 2026-10-12. M28 — Persian, the third language — merged as PR #30 the same day. M29 — both translations rewritten in their own language (D81) — merged as PR #31 the same day. M30 — the Persian rewritten by meaning and a clarity hunt in all three languages (D82, D83) — merged as PR #32 the same day. M31 — two promo videos, one made with HyperFrames and one with /brag (D84) — removed at the author's request before merging. M32 — the README rewritten for readers — squash-merged as PR #33 on 2026-10-13. M33 — a tray of lokum offered at each door on hover — merged as PR #34 on 2026-10-14. M34 — the star count refreshed by the deploy (D85) — merged as PR #36 on 2026-10-15. M35 — Harness Engineering names its parts in plain words — merged as PR #38 on 2026-10-15. M36 — three references for Observability and Context Engineering — merged as PR #42 on 2026-10-18. M37 — ten stale mockups removed from playground/ — merged as PR #54 on 2026-11-05. M38 — the progress page slimmed to its circles, the continue card and the data row — merged as PR #55 on 2026-11-05. M43 to M45 — the round-2 picks (D91) — merged as PR #59 on 2026-11-05. M46 — the home page tidied and Iran's flag for Persian — merged as PR #60 the same day. Checkbox format repaired across the part on 2026-09-13."
+covers: "M16 to M40 and M42 to M57 (M41 on PR #57), 2026-09-09 onward — M16 the ten stages and the review pass, M17 the curriculum fold, M18 the front door, M20 the catalog's descriptions, M21 the module page, M22 the progress redesign and M19's pipeline, all six done; M23 — the interface's own strings — is written and not started; M24 — the author's requests of 2026-10-11 — shipped and merged as PR #23, with a same-day follow-up (the level chip `All`, a filter bar that no longer sticks, the current level marked); M25 — the end of a module rebuilt, and a quick quiz — shipped and merged as PR #25; M26 — headings, the requested additions and ASD-STE-like English across the corpus — merged as PR #26. M27 — the Bazaar Street front door — merged as PR #27. Released as v1.0.0 on 2026-10-12. M28 — Persian, the third language — merged as PR #30 the same day. M29 — both translations rewritten in their own language (D81) — merged as PR #31 the same day. M30 — the Persian rewritten by meaning and a clarity hunt in all three languages (D82, D83) — merged as PR #32 the same day. M31 — two promo videos, one made with HyperFrames and one with /brag (D84) — removed at the author's request before merging. M32 — the README rewritten for readers — squash-merged as PR #33 on 2026-10-13. M33 — a tray of lokum offered at each door on hover — merged as PR #34 on 2026-10-14. M34 — the star count refreshed by the deploy (D85) — merged as PR #36 on 2026-10-15. M35 — Harness Engineering names its parts in plain words — merged as PR #38 on 2026-10-15. M36 — three references for Observability and Context Engineering — merged as PR #42 on 2026-10-18. M37 — ten stale mockups removed from playground/ — merged as PR #54 on 2026-11-05. M38 — the progress page slimmed to its circles, the continue card and the data row — merged as PR #55 on 2026-11-05. M43 to M45 — the round-2 picks (D91) — merged as PR #59 on 2026-11-05. M46 — the home page tidied and Iran's flag for Persian — merged as PR #60 the same day. Checkbox format repaired across the part on 2026-09-13."
 last_updated: 2026-11-05
 ---
 
@@ -4708,6 +4708,64 @@ track, the Advanced level excluded. Nothing is built before a playground round s
 (where the exam lives, what passing means with no server, what the certificate proves).
 
 - [ ] A playground round of options; the author picks.
+
+## 🏁 Milestone M55: The catalog without its Sources count — PLANNED
+
+The author, 2026-11-06: *"In the catalog page, we have a metadata or column named 'Sources: 15'.
+REMOVE THE SOURCE. No need for such metadata."* Built on `feat/round-3`, ships with M51.
+
+- [ ] The Sources column leaves the catalog's table view (`SheetIndex.tsx`) and the Sources line
+      leaves its cards (`CatalogCards.tsx`), and so does every reader of the count that only they
+      used (the `sources` fact, its derivation and its tests), end to end, not hidden (D88). The
+      signpost stall's "Sources" arrow on the home page is art, not metadata, and stays.
+- [ ] The catalog's views measured at 1440 and 390 after the column goes (no gap, no sideways
+      scroll); the full gate green.
+
+## 🏁 Milestone M56: Search (issue #43) — PLAYGROUND FIRST, THEN BUILD
+
+Issue #43: search not only module and level names but their content, by keyword or even
+semantically. The author, 2026-11-06: show options for where it goes (his own idea: a wide,
+centred, white search bar in the navbar that opens a dropdown of advanced search when clicked) and
+**at least five designs**, similar or entirely different; and let him decide the search algorithm
+and tech stack knowing the trade-offs.
+
+- [ ] **Playground round 4, page N (placement):** at least five designs, each working on real
+      module titles at 1440 and 390: the author's centred bar with an advanced dropdown, and others
+      (for example a command palette on a key, a search page of its own, a search field in the
+      catalog's filter bar, an icon that expands in the bar).
+- [ ] **Playground round 4, page O (engine):** the options for a static site with no server, each
+      with what it finds, what it costs the reader to download, how it builds, and how it handles
+      Turkish and Persian: a build-time index with a small client library (for example MiniSearch,
+      FlexSearch, Lunr), Pagefind (an index built from the export, loaded in chunks), and a
+      semantic search with embeddings computed at build time and a small model in the browser.
+      Each tried on the real corpus, its index size and query time measured, not quoted.
+- [ ] The author picks both; then the build, with tests that hold for any content (a title is
+      found, a word in a body is found, the three languages each find their own pages, the bar
+      and its dropdown work by keyboard).
+
+## 🏁 Milestone M57: Download (issue #61) — PLAYGROUND FIRST, THEN BUILD
+
+Issue #61: download as PDF and Markdown. The author, 2026-11-06: a download button in the catalog
+page and in each module (not in the navbar), opening a feature-rich modal like Canva's where the
+reader picks modules or whole levels and the format (PDF or Markdown) and downloads them.
+
+- [ ] **Playground round 4, page P (the modal):** three or more designs of the modal and of where
+      its button sits on the catalog and on a module page, at 1440 and 390, including a selection
+      of levels and modules, the format choice, the track and language of what is downloaded, and
+      what the reader sees while a large download is prepared.
+- [ ] **Playground round 4, page Q (how the files are made):** the options with their trade-offs,
+      for a site with no server: Markdown straight from the corpus at build time, zipped in the
+      browser or prebuilt per level; PDF prebuilt at build time with a headless browser from the
+      site's own print styles, generated in the browser, or the browser's own print to PDF. What
+      each costs in build time, file size, fidelity of figures and code, and in Turkish and
+      Persian (right to left) text.
+- [ ] The author picks; then the build, with tests that a downloaded file holds exactly the
+      modules chosen, in the chosen track and language.
+
+**The order of what is left**, in the author's order of 2026-11-05 (design, then the site, then the
+content): **M55** and **M50** on `feat/round-3`, then **M51** ships them; then the playground round
+for **M56** and **M57** together, and their builds; then the content phase, **M52** and **M53**.
+**M54** waits for its own playground round whenever the author wants it.
 
 Not milestones, but open: four old branches with commits found nowhere else (`backup/pre-scrub-2026-09-04`,
 `merge/main-into-revision`, `origin/backup/before-local-user`, `origin/feat/mkdocs`) wait for the

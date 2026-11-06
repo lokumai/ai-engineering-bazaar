@@ -26,10 +26,11 @@ export interface RecordStorage {
 }
 
 /**
- * §12.1.4 — a soft cap well under the 5 MiB the whole origin gets, which is
- * SHARED with every sibling site on `lokumai.github.io` and from which an
- * exceeded write is rejected rather than evicted. The cap exists to stop an
- * imported file from consuming the shared quota, not to constrain real use: a
+ * §12.1.4 — a soft cap well under the 5 MiB the whole origin gets, from which
+ * an exceeded write is rejected rather than evicted. The site has its own
+ * origin since D92 (ai-bazaar.lokum.dev); until then it shared
+ * `lokumai.github.io` with every sibling project site. The cap exists to stop
+ * an imported file from consuming the quota, not to constrain real use: a
  * record of the whole set with three submittals each is a few kilobytes.
  */
 export const SOFT_CAP_BYTES = 512 * 1024

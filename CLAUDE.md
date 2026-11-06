@@ -46,11 +46,11 @@ npm run build          # static export into out/
 npm run typecheck      # tsc --noEmit, strict
 npm test               # vitest: tests/unit/** + tests/corpus/**
 npm run test:e2e       # playwright: builds, serves out/ on :3111, real Chrome
-SITE_BASE_PATH=/ai-engineering-bazaar npm run build   # the build GitHub Pages serves
+npm run build && node scripts/check-links-out.mjs out   # the build Pages serves, and its link gate
 node scripts/check-mermaid.mjs <file>.md              # parses and renders every diagram
 ```
 
-CI runs typecheck, test, the base-path build with its link check, then e2e. A green `npm test`
+CI runs typecheck, test, the build with its link check, then e2e. A green `npm test`
 means little alone: the link gate and the export only fail in `build`. `responsive` and
 `containment` also run at 390px; the rest of the browser suite runs at 1440. First run on a machine:
 `npx playwright install --with-deps chrome`.

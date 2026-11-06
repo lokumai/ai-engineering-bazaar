@@ -15,9 +15,9 @@ describe('the storage keys', () => {
     expect(RECORD_QUARANTINE_KEY).toBe('hl-record-quarantine')
   })
 
-  it('both carry the hl- prefix, which is the only isolation the origin gives', () => {
-    // §12.1.1: lokumai.github.io is shared with every other project site the
-    // owner publishes, and an origin excludes the path.
+  it('both carry the hl- prefix, which keeps them apart on a shared origin', () => {
+    // §12.1.1: on a shared host such as lokumai.github.io, where the site lived
+    // until D92, every project site shares one origin and an origin excludes the path.
     for (const key of [RECORD_STORAGE_KEY, RECORD_QUARANTINE_KEY]) {
       expect(key.startsWith('hl-')).toBe(true)
     }

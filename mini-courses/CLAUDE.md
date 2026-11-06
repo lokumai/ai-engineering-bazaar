@@ -228,8 +228,9 @@ line.
 
 **Starting a new module:** copy `_module_template.md` to `<category>/<name>.md` (lowercase,
 underscores, no number); create `<name>_tr.md` beside it, even as a stub; add its line to
-`curriculum.yaml`; once written, give it a quick quiz. A `status` change regenerates
-`src/app/lokum-modules.css`, which goes in the same commit.
+`curriculum.yaml`; once written, give it a quick quiz. A `status` change, and a module added,
+moved or removed, regenerates `src/app/lokum-modules.css`, which goes in the same commit. Renaming
+a level or moving a module also adds its old address to `src/lib/content/moved.ts`, so it forwards.
 
 **Writing a module For Everyone (D86, D91):** the plain-words version of `<name>.md` is
 `<category>/everyone/<name>.md`, with `_tr.md` and `_fa.md` beside it under the translation rules

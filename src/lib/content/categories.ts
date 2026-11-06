@@ -15,7 +15,7 @@
 
 export type CategorySlug =
   | 'fundamentals' | 'intermediate' | 'expert'
-  | 'ecosystem' | 'protocols'
+  | 'ecosystem' | 'trends'
 
 /**
  * The five slugs, in the union's own order, as a value.
@@ -26,7 +26,7 @@ export type CategorySlug =
  * keeps the first honest.
  */
 export const CATEGORY_SLUGS: readonly CategorySlug[] = [
-  'fundamentals', 'intermediate', 'expert', 'ecosystem', 'protocols',
+  'fundamentals', 'intermediate', 'expert', 'ecosystem', 'trends',
 ]
 
 /**
@@ -40,5 +40,5 @@ export const CATEGORY_DIRS: Readonly<Record<CategorySlug, string>> = {
   intermediate: '2_intermediate',
   expert: '3_expert',
   ecosystem: '4_ecosystem',
-  protocols: '5_protocols_specs',
+  trends: '5_trends',
 }

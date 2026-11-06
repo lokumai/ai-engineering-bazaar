@@ -71,7 +71,7 @@ const SOURCE = path.join(ROOT, 'mini-courses', 'curriculum.yaml')
 export const OUTPUT = path.join(ROOT, 'src', 'app', 'lokum-modules.css')
 
 /**
- * A level's folder: `<n>_<slug…>`, e.g. `5_protocols_specs` for `protocols`.
+ * A level's folder: `<n>_<slug…>`, e.g. `5_trends` for `trends`.
  * `curriculum-file.ts` owns the exact map; this script cannot import
  * TypeScript, so it finds the one folder whose name after the number starts
  * with the slug.

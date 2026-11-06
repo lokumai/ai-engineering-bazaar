@@ -83,7 +83,11 @@ export const SHEETS: readonly Sheet[] = [
   sheet(30, '/courses/ecosystem/inference-engines/', 'Inference Engines', 'A0'),
   sheet(31, '/courses/ecosystem/ui-design/', 'UI Design', 'A0'),
   sheet(32, '/courses/ecosystem/choosing-tech-stack/', 'Choosing a Tech Stack', 'A4'),
-  sheet(33, '/courses/protocols/protocols-reference/', 'Protocols Reference', 'A4'),
+  sheet(33, '/courses/ecosystem/protocols-reference/', 'Protocols Reference', 'A4'),
+  sheet(34, '/courses/trends/llms-cant-jump/', "LLMs Can't Jump", 'A4'),
+  sheet(35, '/courses/trends/video-rendering/', 'Video Rendering', 'A4'),
+  sheet(36, '/courses/trends/recursive-self-improvement/', 'Recursive Self-Improvement', 'A4'),
+  sheet(37, '/courses/trends/decision-models/', 'Decision Models', 'A4'),
 ]
 
 /**
@@ -117,7 +121,7 @@ export const CATEGORY_PATHS = [
   '/sheets/intermediate/',
   '/sheets/expert/',
   '/sheets/ecosystem/',
-  '/sheets/protocols/',
+  '/sheets/trends/',
 ] as const
 
 /**
@@ -131,7 +135,7 @@ export const LEVEL_STUB_PATHS = [
   '/courses/intermediate/',
   '/courses/expert/',
   '/courses/ecosystem/',
-  '/courses/protocols/',
+  '/courses/trends/',
 ] as const
 
 /**

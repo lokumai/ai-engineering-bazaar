@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
-import { numberWord } from '@/lib/text'
-import { categoryBySlug } from '@/lib/content/curriculum-file'
+import { numberWord, plural } from '@/lib/text'
+import { CATEGORIES, categoryBySlug } from '@/lib/content/curriculum-file'
 import { LANG_DISPLAY } from '@/lib/content/derive'
 import { loadAllModules } from '@/lib/content/loader'
 import {
@@ -201,11 +201,15 @@ describe('the counts each page states about itself', () => {
       .toMatch(/^\d+ modules · ~\d+ h( \d+ min)?$/)
   })
 
-  it('counts a level of one in the singular', () => {
-    // No duration either: nothing in this level is written, so nothing
-    // declares one and `durationLabel` drops the part rather than saying `~0`.
-    expect(categoryCoverage(categoryBySlug('protocols')!))
-      .toBe('1 module')
+  it('counts every level in its own number, in the singular for a level of one', () => {
+    // A rule over whatever levels the curriculum has, not a fact about one of
+    // them: the coverage line opens with the level's own module count.
+    expect(plural(1, 'module')).toBe('1 module')
+    expect(plural(2, 'module')).toBe('2 modules')
+    for (const category of CATEGORIES) {
+      const n = category.modules.length
+      expect(categoryCoverage(category).startsWith(plural(n, 'module'))).toBe(true)
+    }
   })
 
 })

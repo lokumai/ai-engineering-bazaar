@@ -4,13 +4,15 @@ import { MovedTo } from '@/components/shell/MovedTo'
 import { PageShell } from '@/components/shell/PageShell'
 import { CATEGORIES, categoryBySlug } from '@/lib/content/curriculum-file'
 import { levelRoute } from '@/lib/route-labels'
+import { MOVED_LEVELS } from '@/lib/content/moved'
 
 interface RouteParams {
   category: string
 }
 
 export function generateStaticParams(): RouteParams[] {
-  return CATEGORIES.map((category) => ({ category: category.slug }))
+  // D94 — and every level the curriculum renamed, at its old slug.
+  return [...CATEGORIES.map((category) => ({ category: category.slug })), ...Object.keys(MOVED_LEVELS).map((category) => ({ category }))]
 }
 
 export async function generateMetadata({
@@ -18,7 +20,8 @@ export async function generateMetadata({
 }: {
   params: Promise<RouteParams>
 }): Promise<Metadata> {
-  const category = categoryBySlug((await params).category)
+  const asked = (await params).category
+  const category = categoryBySlug(MOVED_LEVELS[asked] ?? asked)
   if (!category) return {}
 
   return {
@@ -53,7 +56,8 @@ export default async function CategoryMoved({
 }: {
   params: Promise<RouteParams>
 }) {
-  const category = categoryBySlug((await params).category)
+  const asked = (await params).category
+  const category = categoryBySlug(MOVED_LEVELS[asked] ?? asked)
   if (!category) notFound()
 
   return (

@@ -6,7 +6,7 @@ describe('curriculum', () => {
 
   it('returns all five categories in spec order', () => {
     expect(tracks.map((t) => t.category.slug)).toEqual([
-      'fundamentals', 'intermediate', 'expert', 'ecosystem', 'protocols',
+      'fundamentals', 'intermediate', 'expert', 'ecosystem', 'trends',
     ])
   })
 

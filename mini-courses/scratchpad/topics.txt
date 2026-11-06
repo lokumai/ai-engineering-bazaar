@@ -44,9 +44,15 @@ https://www.langchain.com/blog/traces-start-agent-improvement-loop
 30) inference_engines (Ollama, LMStudio, OpenWebUI as UI, llama.cpp, TensorRT, SGLang and others mentioned in llm inferecen in fundamental modules, llm-d for distirbuted serving)
 31) ui_design (Google Stitch with DESIGN.md, Claude Design Design Systems)
 32) chosing_tech_stack
+33) protocols_reference (all mentioned and also NLWeb, UCP, AP2) (moved here from the old Protocols & Specs level, 2026-11-06)
 
 
-=== Protocols & Specs ===
-33) protocols_reference (all mentioned and also NLWeb, UCP, AP2) 
+=== Emerging Trends ===
+(hot in industry or research but not settled yet; from issue #40. The trends timeline is a separate page, Caravan, not a module.)
+34) llms_cant_jump (LLM's can't jump: why models move in small steps and struggle with leaps)
+35) video_rendering (Hyperframes, Brag, motion: agents writing video as code)
+36) recursive_self_improvement (RSI, such as AutoHarness)
+37) decision_models (System 1 decision models)
+candidates for later modules here: Claude Cowork and Duet (Personal Agents is module 16)
 
 

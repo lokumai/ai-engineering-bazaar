@@ -10,7 +10,7 @@ description: >
 authority: reasoning
 writes: agent, when a decision is taken
 status: active
-covers: "D26 to D88, D90 to D93, plus open questions O1 to O5 — 2026-09-09 to 2026-11-05 (D89 is on PR #57)"
+covers: "D26 to D88, D90 to D94, plus open questions O1 to O5 — 2026-09-09 to 2026-11-05 (D89 is on PR #57)"
 last_updated: 2026-11-05
 ---
 
@@ -2271,6 +2271,27 @@ rejected all three: *"too diverse and unrealistic"*.
 - **Rejected:** a cast chosen to tick categories (two women, two men, a child, six skin tones),
   modern professions (an ML engineer, a developer) beside the costume figures, and a mixed street
   of old and new dress.
+
+### D94 · The fifth level becomes Emerging Trends; the protocols reference moves into Ecosystem — 2026-11-06
+
+The author called "Protocols & Specs" *"a very bad level"* and wanted it renamed so it can hold
+what is new (issue #40). Of the names offered he chose **Emerging Trends**, and because the
+protocols reference (MCP, A2A and the rest) is established, not emerging, it moved into Ecosystem,
+beside the frameworks, providers and engines it belongs with.
+
+- **The level:** slug `trends` (`/sheets/trends/`), folder `mini-courses/5_trends`, title
+  Emerging Trends, four draft modules to start: LLMs Can't Jump, Video Rendering, Recursive
+  Self-Improvement and Decision Models, each in English and Turkish. Its hue stays category 5.
+- **Old addresses forward**, so no bookmark breaks: `/sheets/protocols/`, `/courses/protocols/`
+  and the reference's old module page, in both tracks, are built as forwards from
+  `src/lib/content/moved.ts`.
+- **Rejected:** a sixth level for trends beside a renamed fifth (two small levels outside the main
+  path, competing for one reader); keeping the reference under a broader name (Emerging Trends was
+  the author's pick, and a standard is not a trend).
+- **The trends timeline is not a level.** It is a separate page kept up over time, named
+  **Caravan** by the author (M62), and its decision is posted on issue #40.
+- **A reader's completion of the reference does not carry over:** progress is keyed by
+  `level/module`, and the reference was a draft with no completion control, so nobody had any.
 
 ## Open questions
 

@@ -841,8 +841,8 @@
   html.hl-cat-expert-complete .bz-face[data-cat="expert"],
   html.hl-cat-ecosystem-started .bz-face[data-cat="ecosystem"],
   html.hl-cat-ecosystem-complete .bz-face[data-cat="ecosystem"],
-  html.hl-cat-protocols-started .bz-face[data-cat="protocols"],
-  html.hl-cat-protocols-complete .bz-face[data-cat="protocols"] {
+  html.hl-cat-trends-started .bz-face[data-cat="trends"],
+  html.hl-cat-trends-complete .bz-face[data-cat="trends"] {
     stroke-width: 1.5px;
   }
 
@@ -850,7 +850,7 @@
   html.hl-cat-intermediate-complete .bz-face-hatch[data-cat="intermediate"],
   html.hl-cat-expert-complete .bz-face-hatch[data-cat="expert"],
   html.hl-cat-ecosystem-complete .bz-face-hatch[data-cat="ecosystem"],
-  html.hl-cat-protocols-complete .bz-face-hatch[data-cat="protocols"] {
+  html.hl-cat-trends-complete .bz-face-hatch[data-cat="trends"] {
     display: block;
   }
 

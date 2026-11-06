@@ -4629,9 +4629,9 @@ content):
 
 | Phase | Milestones, in order |
 |---|---|
-| **Design and site, now** | M50 (round-3 art, approved) → M55 (no Sources count) → M58 (round 3 built) → M51 (ship) |
+| **Design and site, now** | M61 (Emerging Trends, done) · M50 (round-3 art, approved) → M55 (no Sources count) → M58 (round 3 built) → M51 (ship) |
 | **Playground round 4**, alongside M50 (playground files only) | M56 (search), M57 (download), M54 (certificate: should it exist at all) |
-| **Site, after M51 merges** | M59 (search built), M60 (download built), M61 (fifth level renamed) |
+| **Site, after M51 merges** | M59 (search built), M60 (download built) |
 | **Content, last** | M52 (For Everyone modules), M53 (readers' feedback and issues) |
 | **Later, a component kept over time** | M62 (Caravan, the trends timeline page) |
 
@@ -4726,7 +4726,7 @@ windows, and no script).
 ## 🏁 Milestone M51: Ship round 3 — PLANNED
 
 One PR from `feat/round-3` to `main`, carrying **M47** (the capital E and the menu's switch),
-**M48 and M49** (the round-3 playground), **M50** (the approved art), **M55** (no Sources count)
+**M48 and M49** (the round-3 playground), **M50** (the approved art), **M61** (Emerging Trends), **M55** (no Sources count)
 and **M58** (round 3 built). The gate above, then:
 
 - [ ] The live site checked after the deploy: the chase on the home page, the catalog with no
@@ -4857,25 +4857,32 @@ Branches from `main` after M51. Builds the M57 picks; `ARCHITECTURE.md` gains th
       resolves; the modal's focus trap, Escape and labels work; the button is not in the navbar.
 - [ ] A Persian and a Turkish PDF read by eye before merging.
 
-## 🏁 Milestone M61: The fifth level renamed — WAITING ON THE AUTHOR'S NAME
+## 🏁 Milestone M61: The fifth level becomes Emerging Trends — BUILT ON `feat/round-3`, SHIPS WITH M51
 
-Issue #40 and the author, 2026-11-06: "Protocols & Specs" is *"a very bad level"*; rename it so it
-can hold useful tools, free resources and modules on trending topics (#40's examples: RSI such as
-AutoHarness, System 1 decision models, personal agents and others). The trend modules go in this
-level rather than a sixth one; the trends timeline is its own page (M62). The author likes
-**Emerging Trends**; the open question is whether the Protocols & Specs reference, which is not a
-trend, moves into Ecosystem (then the level holds trends only) or stays under a broader name.
+Issue #40 and the author, 2026-11-06 (D94): "Protocols & Specs" renamed **Emerging Trends**, the
+protocols reference moved into Ecosystem, and four draft modules scaffolded for later writing.
 
-- [ ] The author picks the name and where the reference lives. Then: the level's title and slug in
-      `curriculum.yaml`, its folder, its address with the old `/sheets/protocols/` and
-      `/courses/protocols/…` forwarding to the new ones, the regenerated `lokum-modules.css`, and
-      the catalog, menu and tests that name it, derived, never restated.
+- [x] `curriculum.yaml`: the reference listed last in Ecosystem; the level `trends`, Emerging
+      Trends, with LLMs Can't Jump, Video Rendering, Recursive Self-Improvement and Decision Models
+      (drafts, in English and Turkish, each saying what it will cover). Folder
+      `mini-courses/5_trends`; `lokum-modules.css` regenerated.
+- [x] The slug renamed in the app (`categories.ts`, the two stylesheets that key on it, the
+      mascot's face, the image-copy script) and in the tests that name the real level; a manifest
+      test that pinned "the fifth level has one module" rewritten as a rule over every level.
+- [x] Old addresses forward (`src/lib/content/moved.ts`): `/sheets/protocols/`,
+      `/courses/protocols/`, and the reference's old page in both tracks; the build's link gate
+      passes over 179 pages.
+- [x] `README.md`, `mini-courses/index.md`, `ROADMAP.md` and `scratchpad/topics.txt` (the four
+      modules as 34 to 37, and #40's other ideas as candidates) updated; `ARCHITECTURE.md` counts
+      re-measured (37 modules, 19 ready).
+- [ ] The full gate and the browser suite on the branch (with M51).
 
-## 🏁 Milestone M62: Caravan, the trends timeline — LATER, PLAYGROUND FIRST
+## 🏁 Milestone M62: Caravan, the trends timeline — PLACEHOLDER, LATER
 
 Issue #40's comment: a timeline of what was trending each month or season since ChatGPT (late
 2022), with expandable nodes, high-level only, on a page of its own and not in the modules'
-markdown, kept up over time. The author named it **Caravan** (2026-11-06).
+markdown, kept up over time. Named **Caravan** by the author (2026-11-06); the decision is posted
+on issue #40 so it is not lost. Nothing is built until the author takes it up.
 
 - [ ] A playground round when the author wants it: the timeline's design at desktop and phone
       width; the pipeline that collects each trend's seed (which paper, article, feature or news,

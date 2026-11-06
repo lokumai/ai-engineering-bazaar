@@ -9,7 +9,7 @@
    there has to be. What the generator removes is writing them out by hand,
    keyed on a number the curriculum computes.
 
-   33 modules, 19 of them drawn. */
+   37 modules, 19 of them drawn. */
 
 @layer components {
   /* A. Every module. The segment fills with its own category's hue.
@@ -48,7 +48,11 @@
   html.hl-signed-30 [data-track="engineers"] .bz-seg[data-module="30"],
   html.hl-signed-31 [data-track="engineers"] .bz-seg[data-module="31"],
   html.hl-signed-32 [data-track="engineers"] .bz-seg[data-module="32"],
-  html.hl-signed-33 [data-track="engineers"] .bz-seg[data-module="33"] {
+  html.hl-signed-33 [data-track="engineers"] .bz-seg[data-module="33"],
+  html.hl-signed-34 [data-track="engineers"] .bz-seg[data-module="34"],
+  html.hl-signed-35 [data-track="engineers"] .bz-seg[data-module="35"],
+  html.hl-signed-36 [data-track="engineers"] .bz-seg[data-module="36"],
+  html.hl-signed-37 [data-track="engineers"] .bz-seg[data-module="37"] {
     background: var(--bz-cat);
     border-color: var(--bz-cat);
   }

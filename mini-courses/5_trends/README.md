@@ -1,5 +1,5 @@
-# Protocols & Specs
+# Emerging Trends
 
-A single reference collecting every protocol and spec mentioned across the series.
+Ideas that are hot in industry and research but not settled yet, for readers who want to follow the latest work.
 
 [← Back to overview](../index.md)

@@ -8,7 +8,8 @@
  * - English: lower-case.
  * - Turkish: lower-case with the Turkish rules (I to ı, İ to i), then fold ı ğ ş ç ö ü â î
  *   û to plain letters, so a reader on an English keyboard finds "görev" by typing "gorev".
- * - Persian: the Arabic yeh, kaf and teh marbuta become the Persian forms, the zero-width non-joiner, the
+ * - Persian: the Arabic yeh, kaf and teh marbuta become the Persian forms, alef with madda or
+ *   hamza becomes a plain alef, the zero-width non-joiner, the
  *   short-vowel marks and the stretching mark go, and Persian and Arabic digits become
  *   ASCII ones; a Latin word inside the text is lower-cased.
  */
@@ -28,16 +29,16 @@ const TURKISH_FOLD: Readonly<Record<string, string>> = {
 }
 
 /* Arabic yeh and alef maksura to Persian yeh; Arabic kaf to Persian keheh. */
-const PERSIAN_LETTERS: Readonly<Record<string, string>> = { 'ي': 'ی', 'ى': 'ی', 'ك': 'ک', 'ة': 'ه' }
+const PERSIAN_LETTERS: Readonly<Record<string, string>> = { 'ي': 'ی', 'ى': 'ی', 'ك': 'ک', 'ة': 'ه', 'آ': 'ا', 'أ': 'ا', 'إ': 'ا' }
 /* The zero-width non-joiner, the tatweel, and the harakat with the superscript alef. */
-const PERSIAN_DROP = /[‌ـً-ْٰ]/g
+const PERSIAN_DROP = /[\u200c\u0640\u064b-\u0652\u0670]/g
 const PERSIAN_DIGIT = /[۰-۹٠-٩]/g
 
 export function normalise(term: string, lang: SearchLang): string {
   if (lang === 'tr') return term.toLocaleLowerCase('tr').replace(/[ığşçöüâîû]/g, (c) => TURKISH_FOLD[c])
   if (lang === 'fa') {
     return term
-      .replace(/[يىكة]/g, (c) => PERSIAN_LETTERS[c])
+      .replace(/[يىكةآأإ]/g, (c) => PERSIAN_LETTERS[c])
       .replace(PERSIAN_DROP, '')
       .replace(PERSIAN_DIGIT, (d) => String((d.charCodeAt(0) - (d >= '۰' ? 0x06f0 : 0x0660))))
       .toLowerCase()
@@ -71,6 +72,30 @@ export function tokenize(text: string): string[] {
     .flatMap((w) => (w.includes('\u200c') ? [...w.split('\u200c').filter(Boolean), w] : [w]))
 }
 
+/**
+ * The words of a QUERY. A word typed with a non-joiner is searched as the whole word only:
+ * the index holds every non-joined word whole as well as in parts, and a text that wrote it
+ * joined holds only the whole, so the whole is the form both kinds of text share (M59 review).
+ */
+export function queryTokenize(text: string): string[] {
+  return text.replace(SCRIPT_SEAM, ' ').split(SPACE_OR_PUNCTUATION).flatMap((w) => w.split(' ')).filter(Boolean)
+}
+
+/* A Persian prefix or suffix a reader may type apart from its word with a space. */
+const SPACED_PREFIX = /(^|\s)(ن?می)\s+(?=[\u0600-\u06ff])/g
+const SPACED_SUFFIX = /(?<=[\u0600-\u06ff])\s+(ها|های|هایی|تر|ترین)(?=\s|$)/g
+
+/**
+ * The query again with a spaced Persian prefix or suffix joined to its word ("می خواهم" as
+ * "میخواهم"), or null when there is none: searched as well, so a reader's space finds a
+ * text that wrote the word joined.
+ */
+export function joinedVariant(query: string, lang: SearchLang): string | null {
+  if (lang !== 'fa') return null
+  const joined = query.replace(SPACED_PREFIX, '$1$2').replace(SPACED_SUFFIX, '$1')
+  return joined === query ? null : joined
+}
+
 /* The sections a reader does not search for: a list of links, and a module's own recap. */
 const LISTS = new Set(['references', 'summary', 'kaynaklar', 'özet', 'منابع', 'خلاصه'])
 
@@ -99,7 +124,8 @@ export function searchOptions(lang: SearchLang) {
     },
     searchOptions: {
       boost: { title: 4, section: 3 },
-      prefix: true,
+      /* prefix matching from three letters: at two, "go" matched 97 sections */
+      prefix: (term: string) => term.length >= 3,
       fuzzy: 0.15,
       combineWith: 'AND' as const,
       boostDocument: (_id: string, _term: string, stored?: Record<string, unknown>) => rank(stored),

@@ -6,7 +6,8 @@ import type MiniSearch from 'minisearch'
 import type { SearchResult } from 'minisearch'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { SEARCH_OPEN_EVENT } from '@/lib/search/events'
-import { SEARCH_LANGS, normalise, searchOptions, type SearchLang } from '@/lib/search/normalise'
+import { SEARCH_LANGS, joinedVariant, normalise, queryTokenize, searchOptions, type SearchLang } from '@/lib/search/normalise'
+import { DIALOG_SELECTOR } from '@/lib/record/keys'
 import { readingTrackOf, trackLabel, type Track } from '@/lib/tracks'
 import { href } from '@/lib/url'
 
@@ -102,6 +103,7 @@ export function SearchDialog() {
   const dialog = useRef<HTMLDialogElement>(null)
   const field = useRef<HTMLInputElement>(null)
   const list = useRef<HTMLUListElement>(null)
+  const downOnBackdrop = useRef(false)
   const indexes = useRef<Partial<Record<SearchLang, MiniSearch<Doc>>>>({})
   const [query, setQuery] = useState('')
   const [everything, setEverything] = useState(false)
@@ -112,6 +114,8 @@ export function SearchDialog() {
 
   useEffect(() => setTrack(readingTrackOf(pathname, true)), [pathname])
 
+  /* one fetch per language: a second opening, or the switch ticked during a load, waits for it */
+  const inFlight = useRef<Partial<Record<SearchLang, Promise<void>>>>({})
   const load = useCallback(async (langs: readonly SearchLang[]) => {
     const missing = langs.filter((l) => indexes.current[l] === undefined)
     if (missing.length === 0) return
@@ -119,11 +123,17 @@ export function SearchDialog() {
     try {
       const { default: MiniSearchClass } = await import('minisearch')
       await Promise.all(
-        missing.map(async (l) => {
-          const response = await fetch(href(`/search/${l}.json`))
-          if (!response.ok) throw new Error(`search index ${l}: ${response.status}`)
-          indexes.current[l] = MiniSearchClass.loadJSON<Doc>(await response.text(), searchOptions(l))
-          setReady((r) => ({ ...r, [l]: true }))
+        missing.map((l) => {
+          inFlight.current[l] ??= (async () => {
+            const response = await fetch(href(`/search/${l}.json`))
+            if (!response.ok) throw new Error(`search index ${l}: ${response.status}`)
+            indexes.current[l] = MiniSearchClass.loadJSON<Doc>(await response.text(), searchOptions(l))
+            setReady((r) => ({ ...r, [l]: true }))
+          })().catch((error: unknown) => {
+            delete inFlight.current[l]
+            throw error
+          })
+          return inFlight.current[l]
         }),
       )
     } catch {
@@ -134,6 +144,8 @@ export function SearchDialog() {
   const open = useCallback(() => {
     const d = dialog.current
     if (d === null || d.open) return
+    /* the track is read now: on a page in neither track the bar's switch does not navigate */
+    setTrack(readingTrackOf(window.location.pathname, true))
     d.showModal()
     field.current?.select()
     void load(everything ? SEARCH_LANGS : [lang])
@@ -143,7 +155,9 @@ export function SearchDialog() {
 
   useEffect(() => {
     const onKey = (event: KeyboardEvent) => {
-      if ((event.ctrlKey || event.metaKey) && !event.altKey && event.key.toLowerCase() === 'k') {
+      /* by the key's place, so a Persian or Turkish layout works; not over another dialog */
+      const other = event.target instanceof Element && event.target.closest(DIALOG_SELECTOR) !== null && !dialog.current?.contains(event.target)
+      if ((event.ctrlKey || event.metaKey) && !event.altKey && event.code === 'KeyK' && !other) {
         event.preventDefault()
         if (dialog.current?.open) close()
         else open()
@@ -175,11 +189,15 @@ export function SearchDialog() {
       const filter = everything ? undefined : (r: SearchResult) => r.track === track
       /* with every language searched, the page's own wins a tie */
       const own = l === lang ? 1.2 : 1
-      found.push(...(index.search(q, { filter }) as Hit[]).map((h) => ({ ...h, score: h.score * own })))
+      const variant = joinedVariant(q, l)
+      const asked = variant === null ? q : { combineWith: 'OR' as const, queries: [q, variant] }
+      found.push(...(index.search(asked, { filter, tokenize: queryTokenize }) as Hit[]).map((h) => ({ ...h, score: h.score * own })))
     }
-    return found.sort((a, b) => b.score - a.score).slice(0, LIMIT)
-    // `ready` is the signal that an index arrived; the indexes live in a ref
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    /* a level is in every language's index: one row per address */
+    const best = new Map<string, Hit>()
+    for (const hit of found) if ((best.get(hit.url)?.score ?? -1) < hit.score) best.set(hit.url, hit)
+    return [...best.values()].sort((a, b) => b.score - a.score).slice(0, LIMIT)
+    // `ready` changes when an index arrives; the indexes themselves live in a ref
   }, [query, everything, lang, track, ready])
 
   /* What the reader typed, for marking in the excerpt: the index's own terms are normalised. */
@@ -254,8 +272,12 @@ export function SearchDialog() {
         className="bz-search"
         aria-label="Search"
         onKeyDown={onDialogKey}
+        /* the backdrop closes it, but not a drag that began in the field and ended there */
+        onMouseDown={(event) => {
+          downOnBackdrop.current = event.target === dialog.current
+        }}
         onClick={(event) => {
-          if (event.target === dialog.current) close()
+          if (event.target === dialog.current && downOnBackdrop.current) close()
         }}
       >
         <div className="bz-search-panel">

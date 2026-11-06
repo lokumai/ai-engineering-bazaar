@@ -2,7 +2,8 @@ import MiniSearch from 'minisearch'
 import { describe, expect, it } from 'vitest'
 import { loadAllModules, loadModuleIn } from '@/lib/content/loader'
 import { searchDocs, type SearchDoc } from '@/lib/search/documents'
-import { SEARCH_LANGS, normalise, searchOptions, type SearchLang } from '@/lib/search/normalise'
+import { SEARCH_LANGS, joinedVariant, normalise, queryTokenize, searchOptions, type SearchLang } from '@/lib/search/normalise'
+import { renderMarkdown } from '@/lib/content/render'
 import { TRACK_IDS, moduleRoute } from '@/lib/tracks'
 
 /**
@@ -108,5 +109,49 @@ describe('ranking (D99)', () => {
       expect(boost('x', 'y', { ready: true, section: list }), list).toBeLessThan(boost('x', 'y', { ready: false, section: '' }))
     }
   })
+})
+
+describe('a Persian word typed three ways (D99)', () => {
+  it('is found with the non-joiner, without it, or with a space, whichever way the text wrote it', () => {
+    const index = new MiniSearch(searchOptions('fa'))
+    index.addAll([
+      { id: 'joined', title: '', section: '', text: 'من میخواهم بدانم', url: 'a', kind: 'section' },
+      { id: 'nonjoined', title: '', section: '', text: 'من می\u200cخواهم بدانم', url: 'b', kind: 'section' },
+    ])
+    for (const typed of ['می\u200cخواهم', 'میخواهم', 'می خواهم']) {
+      const variant = joinedVariant(typed, 'fa')
+      const query = variant === null ? typed : { combineWith: 'OR' as const, queries: [typed, variant] }
+      const found = index.search(query, { tokenize: queryTokenize, prefix: false, fuzzy: false }).map((r) => r.id).sort()
+      expect(found, typed).toEqual(['joined', 'nonjoined'])
+    }
+  })
+})
+
+describe('every section points at a heading the page renders', () => {
+  it('matches the ids render.ts gives the headings, for every module, language and track', async () => {
+    let checked = 0
+    for (const lang of SEARCH_LANGS) {
+      const sections = indexOf(lang).docs.filter((d) => d.kind === 'section')
+      const byPage = new Map<string, string[]>()
+      for (const d of sections) {
+        const [page, id] = d.url.split('#')
+        byPage.set(page, [...(byPage.get(page) ?? []), id])
+      }
+      for (const english of loadAllModules()) {
+        for (const track of TRACK_IDS) {
+          const m = loadModuleIn(english.slug, lang, track)
+          const ids = byPage.get(moduleRoute(english.slug, track, lang))
+          if (!m || !ids) continue
+          const { toc } = await renderMarkdown(m.body, { sheet: m.frontmatter.module })
+          const rendered = new Set(toc.map((t) => t.id))
+          for (const id of ids) {
+            expect(rendered.has(id), `${lang} ${track} ${english.slug}: #${id} is not on the page`).toBe(true)
+            checked += 1
+          }
+        }
+      }
+    }
+    expect(checked, 'no section was compared with its page').toBeGreaterThan(100)
+  }, 120_000)
 })
 

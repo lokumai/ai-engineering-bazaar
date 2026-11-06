@@ -117,7 +117,7 @@ export function searchDocs(lang: SearchLang): SearchDoc[] {
     for (const category of CATEGORIES) {
       const blurb = category.blurb ?? ''
       docs.push({
-        id: `${track}:level:${category.slug}`,
+        id: `${track}:${lang}:level:${category.slug}`,
         kind: 'level',
         title: category.title,
         module: category.title,
@@ -127,7 +127,8 @@ export function searchDocs(lang: SearchLang): SearchDoc[] {
         url: catalogRoute(track, category.slug),
         level: category.title,
         track,
-        lang,
+        // a level's name is English on every page (D80), so it is marked English
+        lang: 'en',
         ready: true,
       })
     }

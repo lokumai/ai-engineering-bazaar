@@ -21,7 +21,7 @@ description: >
 authority: state
 writes: agent, every session
 status: active
-covers: "M16 to M40 and M42 to M57 (M41 on PR #57), 2026-09-09 onward — M16 the ten stages and the review pass, M17 the curriculum fold, M18 the front door, M20 the catalog's descriptions, M21 the module page, M22 the progress redesign and M19's pipeline, all six done; M23 — the interface's own strings — is written and not started; M24 — the author's requests of 2026-10-11 — shipped and merged as PR #23, with a same-day follow-up (the level chip `All`, a filter bar that no longer sticks, the current level marked); M25 — the end of a module rebuilt, and a quick quiz — shipped and merged as PR #25; M26 — headings, the requested additions and ASD-STE-like English across the corpus — merged as PR #26. M27 — the Bazaar Street front door — merged as PR #27. Released as v1.0.0 on 2026-10-12. M28 — Persian, the third language — merged as PR #30 the same day. M29 — both translations rewritten in their own language (D81) — merged as PR #31 the same day. M30 — the Persian rewritten by meaning and a clarity hunt in all three languages (D82, D83) — merged as PR #32 the same day. M31 — two promo videos, one made with HyperFrames and one with /brag (D84) — removed at the author's request before merging. M32 — the README rewritten for readers — squash-merged as PR #33 on 2026-10-13. M33 — a tray of lokum offered at each door on hover — merged as PR #34 on 2026-10-14. M34 — the star count refreshed by the deploy (D85) — merged as PR #36 on 2026-10-15. M35 — Harness Engineering names its parts in plain words — merged as PR #38 on 2026-10-15. M36 — three references for Observability and Context Engineering — merged as PR #42 on 2026-10-18. M37 — ten stale mockups removed from playground/ — merged as PR #54 on 2026-11-05. M38 — the progress page slimmed to its circles, the continue card and the data row — merged as PR #55 on 2026-11-05. M43 to M45 — the round-2 picks (D91) — merged as PR #59 on 2026-11-05. M46 — the home page tidied and Iran's flag for Persian — merged as PR #60 the same day. Checkbox format repaired across the part on 2026-09-13."
+covers: "M16 to M40 and M42 to M62 (M41 on PR #57), 2026-09-09 onward — M16 the ten stages and the review pass, M17 the curriculum fold, M18 the front door, M20 the catalog's descriptions, M21 the module page, M22 the progress redesign and M19's pipeline, all six done; M23 — the interface's own strings — is written and not started; M24 — the author's requests of 2026-10-11 — shipped and merged as PR #23, with a same-day follow-up (the level chip `All`, a filter bar that no longer sticks, the current level marked); M25 — the end of a module rebuilt, and a quick quiz — shipped and merged as PR #25; M26 — headings, the requested additions and ASD-STE-like English across the corpus — merged as PR #26. M27 — the Bazaar Street front door — merged as PR #27. Released as v1.0.0 on 2026-10-12. M28 — Persian, the third language — merged as PR #30 the same day. M29 — both translations rewritten in their own language (D81) — merged as PR #31 the same day. M30 — the Persian rewritten by meaning and a clarity hunt in all three languages (D82, D83) — merged as PR #32 the same day. M31 — two promo videos, one made with HyperFrames and one with /brag (D84) — removed at the author's request before merging. M32 — the README rewritten for readers — squash-merged as PR #33 on 2026-10-13. M33 — a tray of lokum offered at each door on hover — merged as PR #34 on 2026-10-14. M34 — the star count refreshed by the deploy (D85) — merged as PR #36 on 2026-10-15. M35 — Harness Engineering names its parts in plain words — merged as PR #38 on 2026-10-15. M36 — three references for Observability and Context Engineering — merged as PR #42 on 2026-10-18. M37 — ten stale mockups removed from playground/ — merged as PR #54 on 2026-11-05. M38 — the progress page slimmed to its circles, the continue card and the data row — merged as PR #55 on 2026-11-05. M43 to M45 — the round-2 picks (D91) — merged as PR #59 on 2026-11-05. M46 — the home page tidied and Iran's flag for Persian — merged as PR #60 the same day. Checkbox format repaired across the part on 2026-09-13."
 last_updated: 2026-11-05
 ---
 
@@ -4623,73 +4623,122 @@ inspected by a Haiku reviewer at xhigh effort, as the author asked.
       map-maker), and asked for one more figure: *"a jannisary of your choice with its weapon and
       famous clothes visible"*. Built in M50.
 
-## 🏁 Milestone M50: Round 3 on the home page — the hand, the cast at the gate, the robot's escape — PLANNED
+**The order of what is left** (revised 2026-11-06 after two plan reviews, a Gemini 3.8 Flash High
+run and a Sonnet High subagent; the author's standing order is design, then the site, then the
+content):
 
-Branch `feat/round-3`. Builds the picks of M48 and M49: **K2** (as redrawn in M49), **L1b**, **L3a**,
-and the cast **Bit, Mei, Deniz, Leyla, Dariush (N2), Piri (W2)** plus a **Janissary**. The art is
-drawn by the main session, not a subagent (the author, 2026-11-06), and every drawn figure is
-inspected by a Haiku reviewer at xhigh effort before the author sees it, as the hand was.
+| Phase | Milestones, in order |
+|---|---|
+| **Design and site, now** | M50 (round-3 art, approved) → M55 (no Sources count) → M58 (round 3 built) → M51 (ship) |
+| **Playground round 4**, alongside M50 (playground files only) | M56 (search), M57 (download), M54 (certificate: should it exist at all) |
+| **Site, after M51 merges** | M59 (search built), M60 (download built), M61 (fifth level renamed) |
+| **Content, last** | M52 (For Everyone modules), M53 (readers' feedback and issues) |
+| **Later, a component kept over time** | M62 (Caravan, the trends timeline page) |
+
+Builds that touch the bar or the catalog (M59, M60, M61) branch from `main` after M51 merges, so
+they start from the bar and catalog that M47 and M55 change.
+
+**The gate every build ends on** (stated once here, not repeated): `npm run typecheck`, `npm test`,
+`npm run build` and `node scripts/check-links-out.mjs out` (the site has no base path since D92),
+port 3111 checked free, then `npm run test:e2e`; every guard that matters seen failing under a
+mutation; the PR number recorded here before merging; no AI attribution in a commit or PR body; the
+live site at `https://ai-bazaar.lokum.dev/` checked after the deploy.
+
+## 🏁 Milestone M50: Round-3 art, finished in the playground and approved — PLANNED
+
+Branch `feat/round-3`. The art the build (M58) needs, finished in `playground/2026-11-round-3/`
+and **approved by the author before any file under `src/` changes**: the author has rejected a
+cast once already, and redrawn pieces have not been seen. Drawn by the main session, each figure
+Haiku-reviewed at xhigh before the author sees it (the author, 2026-11-06).
 
 ### Deliverables
 
-- [ ] **The Janissary**, drawn in the M49 generator first and shown in `M-characters.html`: the
-      *börk* (the tall white felt cap with its long cloth falling down the back and the brass
-      spoon-holder at the front), a long kaftan over a sash, and his weapon visible but held at
-      rest, never pointed: a *yatağan* at the sash and a long musket shouldered. Haiku-reviewed.
-- [ ] **Two props redrawn, at the author's request (2026-11-06):** Deniz's simit larger and
-      plainly visible in his hand; Dariush's carpet not rolled but held open as a rectangle, with
-      Persian patterns (a centre medallion, corner pieces, a patterned border and fringed ends) so
-      it reads at once as a carpet. Both in `M-characters.html` first, Haiku-reviewed.
-- [ ] **K2 in the stall:** the redrawn tripod grip, plum sleeve, bangles and henna replace the hand
-      in `src/components/home/street/art/stall-draft.html`; the G1b timeline still drives it (the
-      pen tip stays at 0,0). The playground source the capture script reads
-      (`scripts/capture-stall-scenes.mjs`, G1b) takes the same hand, so a regeneration keeps it.
-- [ ] **The cast at the foot of the gate (L1b)** on the home page's opening: Bit in the doorway;
-      Leyla, Dariush and Deniz to its left; Mei and Piri to its right; the Janissary at the gate's
-      jamb as its guard. Each has their idle motion and, at their starting place
-      before the escape, a minimal caption under them: the name, and the trade in a few words
-      (*"Dariush · carpet merchant"*), small and quiet like the Sipahi's and the Bezirgân's; the
-      captions fade out as the chase begins, and stay in the reduced-motion still and on a phone
-      (the author, 2026-11-06). The pavement strip under the arch, which the page crops today, is shown so they have
-      somewhere to stand.
-- [ ] **A story cloud over each person** (the author, 2026-11-06): pointing at a figure at the
-      gate opens a small speech cloud above them with their story in one or two sentences (Bit's
-      says why a robot is loose in a bazaar). A hover may never be the only way in, so the cloud
-      also opens on keyboard focus (each figure is a focusable button) and on a tap, closes on
-      Escape or a tap elsewhere, and its text is the button's description for a screen reader. Not
-      during the chase. The stories are drafted in `M-characters.html` for the author to edit
-      before they go into the site, and they follow the copy register (no exclamation marks).
-- [ ] **The robot's escape (L3a)** on the walk's scroll: Bit turns his face, runs straight into the
-      gate, the crowd throws up its arms and runs in after him, then the walk's own zoom through the
-      gate plays as today. Reduced motion shows a still with everyone in place; the stacked layout
-      (a phone, no script) shows the cast as a row under the headline with no chase.
-- [ ] Tests that hold for any content: every figure has a caption; the cast does not push the page
-      sideways at any width; the escape leaves the doors and the mottos reachable; nothing is
-      written to storage. Each guard seen failing under a mutation.
+- [ ] **The Janissary** in `M-characters.html`: the *börk* (the tall white felt cap with its long
+      cloth down the back and the brass spoon-holder at the front), a long kaftan over a sash, a
+      *yatağan* at the sash and a long musket shouldered, at rest, never pointed.
+- [ ] **Two props redrawn** (the author, 2026-11-06): Deniz's simit larger and plainly visible;
+      Dariush's carpet held open as a rectangle with Persian patterns (a centre medallion, corner
+      pieces, a patterned border, fringed ends).
+- [ ] **Every figure in all three poses the chase needs** (a review found only the front view
+      drawn for the new cast): front, back (`v-b`), and a running pose, plus a decision per prop on
+      how it is carried while running (Dariush's open carpet, the Janissary's musket and sword,
+      Deniz's simit, Leyla's bowl, Piri's chart, Mei's silk), shown in a test frame on the page.
+- [ ] **The captions and the stories**: under each figure, the name and the trade in a few words
+      (*"Dariush · carpet merchant"*); and each figure's story in one or two sentences, drafted for
+      the author to edit. English only: the home page and the site's own interface are English
+      (D80, and M23 untouched), so neither is translated.
+- [ ] **The cast as a phone row**: how seven figures and their captions fit at 390px (two rows,
+      or a row that scrolls inside itself with snap), each target at least 44px.
 
 ### Acceptance criteria
 
-- [ ] The opening, the chase at four scroll points and the stall are read in screenshots at
-      1024x768, 1440x900, 1920x1080 and 390x844, and in reduced motion, and compared with the
-      playground options they come from.
-- [ ] A browser review (the walk, the chase, the captions, the phone layout) finds nothing open.
-- [ ] The full gate is green.
+- [ ] Every new or redrawn figure read in a screenshot, large and at page size, and reviewed by
+      Haiku with its findings fixed.
+- [ ] **The author approves** the Janissary, the simit, the carpet, the running poses and the
+      stories, and picks the phone row. Only then does M58 start.
+
+## 🏁 Milestone M58: Round 3 built on the home page — PLANNED, AFTER M50 IS APPROVED
+
+Branch `feat/round-3`. Builds K2, L1b, L3a and the M50 art. The page has three modes, and every
+deliverable says what it does in each: **walk** (a wide window with motion allowed: at least
+900x560, aspect 6/5 or wider, per `motion.ts`), **still** (reduced motion), and **stack** (narrower
+windows, and no script).
+
+### Deliverables
+
+- [ ] **K2 in the stall:** the redrawn grip, sleeve, bangles and henna replace the hand in
+      `src/components/home/street/art/stall-draft.html`, and the same hand goes into the G1b source
+      that `scripts/capture-stall-scenes.mjs` reads, so a regeneration keeps it. The pen tip stays
+      at 0,0, so the G1b timeline still drives it.
+- [ ] **The cast at the foot of the gate (L1b):** Bit in the doorway; Leyla, Dariush and Deniz to
+      its left; Mei and Piri to its right; the Janissary at the gate's jamb as its guard. The
+      pavement strip under the arch, cropped today, is shown. Walk and still: as placed; stack: the
+      phone row M50 picked.
+- [ ] **The captions**, small and quiet like the Sipahi's and the Bezirgân's: visible before the
+      chase, faded out once it begins, kept in still and stack.
+- [ ] **The story cloud:** each figure is a button; pointing, focus or a tap opens one cloud above
+      it (only one open at a time), and Escape, a tap elsewhere or a scroll closes it. A cloud
+      flips sideways or below rather than leave the window, and is never clipped by the gate. Its
+      text is the button's description for a screen reader. It does not open during the chase;
+      once the chase starts, the figures leave the tab order (`tabindex=-1`, `aria-hidden`) and
+      come back when the reader scrolls back up.
+- [ ] **The escape (L3a)** on the walk only: Bit turns his face, runs straight into the gate, the
+      crowd throws up its arms and runs in after him, then the walk's own zoom through the gate
+      plays as today. Still: everyone in place, no chase. Stack: no chase.
+- [ ] **Weight and smoothness, measured:** the home page's transfer size before and after
+      (`art.ts` already carries about 390 KB of art), and the chase's frame time and long tasks in
+      Chrome's performance trace. If it drops frames, the idle animations pause during the scrub
+      and only the cast's layers are promoted.
+
+### Acceptance criteria
+
+- [ ] Checkable facts, each with a test that a named mutation turns red: captions are visible
+      before the chase, gone when it begins, and present in still and stack (mutation: caption
+      removed); a cloud opens by focus and by tap, not only by hover (mutation: hover-only); the
+      chase does not run in still (mutation: chase in still); no caption is covered by a figure;
+      the doors and the mottos stay reachable at every scroll stop; the cast pushes no page sideways
+      at 390, 1024, 1440 and 1920, in all three modes; nothing is written to storage.
+- [ ] Screenshots read at 1024x768, 1440x900, 1920x1080 (walk, the chase at four scroll points),
+      390x844 (stack) and in reduced motion (still), and compared with the M50 art the author
+      approved.
+- [ ] A browser review (the walk, the chase, the clouds, the phone row) finds nothing open.
 
 ## 🏁 Milestone M51: Ship round 3 — PLANNED
 
-One PR from `feat/round-3` to `main`, carrying M47 (the capital E and the menu's switch), the
-round-3 playground pages (M48, M49) and M50. CI, merge, and the live site at
-`https://ai-bazaar.lokum.dev/` checked after the deploy.
+One PR from `feat/round-3` to `main`, carrying **M47** (the capital E and the menu's switch),
+**M48 and M49** (the round-3 playground), **M50** (the approved art), **M55** (no Sources count)
+and **M58** (round 3 built). The gate above, then:
 
-- [ ] PR opened, its number recorded here before merging; CI green; merged; deploy checked live.
+- [ ] The live site checked after the deploy: the chase on the home page, the catalog with no
+      Sources count, a Persian module page.
 
 ## 🏁 Milestone M52: The For Everyone modules — PLANNED, CONTENT PHASE
 
 D86: every module gets a For Everyone version, written from scratch for readers with no technical
 background (not a simplified copy), English first, then Turkish, then Persian, each language
 rewritten for its readers. The site already serves an unwritten page for each (D91); a module goes
-live For Everyone the day its file lands in `mini-courses/<level>/everyone/<name>.md`. The order of
-modules, and who writes what, are the author's to set when this starts.
+live For Everyone the day its file lands in `mini-courses/<level>/everyone/<name>.md`. Search and
+download, built before this, must already treat unwritten modules as absent.
 
 - [ ] The author sets the order and the first module; then one module at a time, each reviewed
       for meaning before the next.
@@ -4697,75 +4746,141 @@ modules, and who writes what, are the author's to set when this starts.
 ## 🏁 Milestone M53: The readers' feedback and the GitHub issues — PLANNED, CONTENT PHASE
 
 The six readers' notes of 2026-11-05 and the open GitHub issues, applied to the For Engineers
-modules, last of all as the author ordered (*design first, then the site, then the content*).
+modules, last of all, as the author ordered. Issues #43 (search, M56 and M59), #61 (download, M57
+and M60) and #40 (trends, M61 and M62) are not part of this.
 
 - [ ] The notes and issues listed against the modules they touch, for the author to rank.
 
-## 🏁 Milestone M54: A certificate and an exam per track — TO DECIDE IN THE PLAYGROUND
+## 🏁 Milestone M54: A certificate and an exam per track — TO DECIDE, PLAYGROUND ROUND 4
 
-Raised by the author on 2026-11-05 as an idea, not decided: a certificate and an exam for each
-track, the Advanced level excluded. Nothing is built before a playground round shows the options
-(where the exam lives, what passing means with no server, what the certificate proves).
+Raised by the author on 2026-11-05 as an idea, not decided. **It contradicts the MANIFESTO as it
+stands:** §6 says *"Not a textbook or a certification. No exams, no credentials, no completion
+certificates"*, and rule 11 says *"There is no test, no grade and no assessment"*. So the first
+question for the author is whether it should exist at all, and building it needs a numbered
+decision that amends §6 and rule 11, reconciled with the quick quiz (whose answers are never
+stored). With no server, a certificate proves nothing: anyone can edit their own `localStorage`.
 
-- [ ] A playground round of options; the author picks.
+- [ ] In playground round 4: the question first, then, only if the author wants it, the options
+      (where the exam lives, what passing means without a server, what the certificate says).
 
 ## 🏁 Milestone M55: The catalog without its Sources count — PLANNED
 
 The author, 2026-11-06: *"In the catalog page, we have a metadata or column named 'Sources: 15'.
 REMOVE THE SOURCE. No need for such metadata."* Built on `feat/round-3`, ships with M51.
 
-- [ ] The Sources column leaves the catalog's table view (`SheetIndex.tsx`) and the Sources line
-      leaves its cards (`CatalogCards.tsx`), and so does every reader of the count that only they
-      used (the `sources` fact, its derivation and its tests), end to end, not hidden (D88). The
-      signpost stall's "Sources" arrow on the home page is art, not metadata, and stays.
+- [ ] **Removed from the catalog:** the Sources column in the table view (`SheetIndex.tsx`, its
+      88px column, and the cell in `ModuleRow.tsx`) and the Sources line on the cards
+      (`CatalogCards.tsx`).
+- [ ] **Every other reader of the count found first and listed here before anything is deleted**:
+      the module page and `title-block.ts`, and the record's stamp slots (`sheetStamps` in
+      `src/lib/record/derive.ts` gives a module a SOURCES slot when it has five or more sources,
+      and `SignOffMarks.tsx` reads them). The count (`facts.sources`, `countSources`) is removed
+      end to end only where nothing the author keeps still reads it (D88); `ARCHITECTURE.md` is
+      updated to match.
+- [ ] **Decision for the author:** does the module page keep its Sources count? He asked only
+      about the catalog.
+- [ ] The signpost stall's "Sources" arrow on the home page is art, not metadata, and stays.
 - [ ] The catalog's views measured at 1440 and 390 after the column goes (no gap, no sideways
-      scroll); the full gate green.
+      scroll).
 
-## 🏁 Milestone M56: Search (issue #43) — PLAYGROUND FIRST, THEN BUILD
+## 🏁 Milestone M56: Search — PLAYGROUND ROUND 4
 
 Issue #43: search not only module and level names but their content, by keyword or even
-semantically. The author, 2026-11-06: show options for where it goes (his own idea: a wide,
-centred, white search bar in the navbar that opens a dropdown of advanced search when clicked) and
-**at least five designs**, similar or entirely different; and let him decide the search algorithm
-and tech stack knowing the trade-offs.
+semantically. The author, 2026-11-06: options for where it goes (his own idea: a wide, centred,
+white search bar in the navbar that opens a dropdown of advanced search when clicked), **at least
+five designs**, and the algorithm and tech stack to decide, knowing the trade-offs. Recorded as a
+numbered decision when picked; built in M59.
 
-- [ ] **Playground round 4, page N (placement):** at least five designs, each working on real
-      module titles at 1440 and 390: the author's centred bar with an advanced dropdown, and others
-      (for example a command palette on a key, a search page of its own, a search field in the
-      catalog's filter bar, an icon that expands in the bar).
-- [ ] **Playground round 4, page O (engine):** the options for a static site with no server, each
-      with what it finds, what it costs the reader to download, how it builds, and how it handles
-      Turkish and Persian: a build-time index with a small client library (for example MiniSearch,
-      FlexSearch, Lunr), Pagefind (an index built from the export, loaded in chunks), and a
-      semantic search with embeddings computed at build time and a small model in the browser.
-      Each tried on the real corpus, its index size and query time measured, not quoted.
-- [ ] The author picks both; then the build, with tests that hold for any content (a title is
-      found, a word in a body is found, the three languages each find their own pages, the bar
-      and its dropdown work by keyboard).
+- [ ] **Page N, placement and results:** at least five designs, working on real module titles, at
+      every width the bar changes at (1440, 1180, 1024, 880, 767 and 390), showing how each fits
+      beside the switch, the flag and the menu: the author's centred bar with its dropdown, and
+      others (a command palette on a key, a search page of its own, a field in the catalog's filter
+      bar, an icon that expands in the bar). Each shows the **advanced dropdown** (track, level,
+      language, and whether to search titles, prose or code) and **how a result reads** (title, a
+      snippet, its level and track).
+- [ ] **Page O, the engine:** for a site with no server, each option tried on the real corpus with
+      its index size per language (gzipped), its query time, and when it loads (on first focus,
+      never on page load): a build-time index with a small library (MiniSearch, FlexSearch, Lunr),
+      Pagefind (an index built from the export, loaded in chunks), a semantic search with
+      embeddings computed at build time and a model in the browser (its download size and its
+      first-query time on a mid-range phone stated plainly), and a hybrid (keyword first, the
+      semantic layer loaded on demand). How each handles Turkish (dotted and dotless i, ğ, ş) and
+      Persian (the zero-width non-joiner, Arabic and Persian letter forms).
+- [ ] **Decisions for the author:** the placement; the engine; the default scope (the reader's
+      own track and language, or everything); whether unwritten For Everyone modules are left out
+      of the index (recommended).
 
-## 🏁 Milestone M57: Download (issue #61) — PLAYGROUND FIRST, THEN BUILD
+## 🏁 Milestone M57: Download — PLAYGROUND ROUND 4
 
 Issue #61: download as PDF and Markdown. The author, 2026-11-06: a download button in the catalog
 page and in each module (not in the navbar), opening a feature-rich modal like Canva's where the
-reader picks modules or whole levels and the format (PDF or Markdown) and downloads them.
+reader picks modules or whole levels and the format (PDF or Markdown). Recorded as a numbered
+decision when picked; built in M60.
 
-- [ ] **Playground round 4, page P (the modal):** three or more designs of the modal and of where
-      its button sits on the catalog and on a module page, at 1440 and 390, including a selection
-      of levels and modules, the format choice, the track and language of what is downloaded, and
-      what the reader sees while a large download is prepared.
-- [ ] **Playground round 4, page Q (how the files are made):** the options with their trade-offs,
-      for a site with no server: Markdown straight from the corpus at build time, zipped in the
-      browser or prebuilt per level; PDF prebuilt at build time with a headless browser from the
-      site's own print styles, generated in the browser, or the browser's own print to PDF. What
-      each costs in build time, file size, fidelity of figures and code, and in Turkish and
-      Persian (right to left) text.
-- [ ] The author picks; then the build, with tests that a downloaded file holds exactly the
-      modules chosen, in the chosen track and language.
+- [ ] **Page P, the modal and its buttons:** three or more designs at 1440 and 390, with where the
+      button sits on the catalog and on the (already full) module page; the selection of levels
+      and modules, the format, the track and language of what is downloaded, unwritten For
+      Everyone modules shown as unavailable, and what the reader sees while a large download is
+      prepared. Each design keyboard-usable: a focus trap, Escape, labelled controls, a live region
+      for "preparing", reduced motion, and right-to-left for Persian.
+- [ ] **Page Q, how the files are made**, for a site with no server, each option with a real sample
+      file in English, Turkish and Persian read by the main session: Markdown from the corpus at
+      build time, zipped in the browser or prebuilt per level, with the images packed beside it so
+      every relative image link resolves (D87: a module reads in a plain markdown viewer); PDF
+      prebuilt at build time with a headless browser from the site's own print styles, made in the
+      browser, or the browser's own print. For each: build time added to CI, the file size of a
+      whole level, figures (SVG and Mermaid) and code highlighting, Persian shaping and direction,
+      and how many files it adds to the site (3 languages x 2 tracks x modules, levels and the
+      whole course x 2 formats; GitHub Pages allows 1 GB).
+- [ ] **Decisions for the author:** the modal; where the buttons go; PDF prebuilt or made in the
+      browser; Markdown zipped in the browser or prebuilt; how a file that mixes the two tracks is
+      named.
 
-**The order of what is left**, in the author's order of 2026-11-05 (design, then the site, then the
-content): **M55** and **M50** on `feat/round-3`, then **M51** ships them; then the playground round
-for **M56** and **M57** together, and their builds; then the content phase, **M52** and **M53**.
-**M54** waits for its own playground round whenever the author wants it.
+## 🏁 Milestone M59: Search built — PLANNED, AFTER M51 AND M56
+
+Branches from `main` after M51. Builds the M56 picks; `ARCHITECTURE.md` gains the index and how it
+is built.
+
+- [ ] Tests that hold for any content: terms are taken at test time from the corpus itself (a
+      module's title, a word drawn from its body), never typed into the test; each language finds
+      its own pages; unwritten For Everyone modules are not found; the bar and its dropdown work by
+      keyboard; the index loads on first focus, not on page load.
+- [ ] The index size and the query time measured and recorded against the targets the author picks
+      in M56.
+
+## 🏁 Milestone M60: Download built — PLANNED, AFTER M51 AND M57
+
+Branches from `main` after M51. Builds the M57 picks; `ARCHITECTURE.md` gains the download build.
+
+- [ ] Tests: a downloaded file holds exactly the modules chosen, in the chosen track and language,
+      with no "not written yet" placeholder in it; every relative image link in a Markdown download
+      resolves; the modal's focus trap, Escape and labels work; the button is not in the navbar.
+- [ ] A Persian and a Turkish PDF read by eye before merging.
+
+## 🏁 Milestone M61: The fifth level renamed — WAITING ON THE AUTHOR'S NAME
+
+Issue #40 and the author, 2026-11-06: "Protocols & Specs" is *"a very bad level"*; rename it so it
+can hold useful tools, free resources and modules on trending topics (#40's examples: RSI such as
+AutoHarness, System 1 decision models, personal agents and others). The trend modules go in this
+level rather than a sixth one; the trends timeline is its own page (M62). The author likes
+**Emerging Trends**; the open question is whether the Protocols & Specs reference, which is not a
+trend, moves into Ecosystem (then the level holds trends only) or stays under a broader name.
+
+- [ ] The author picks the name and where the reference lives. Then: the level's title and slug in
+      `curriculum.yaml`, its folder, its address with the old `/sheets/protocols/` and
+      `/courses/protocols/…` forwarding to the new ones, the regenerated `lokum-modules.css`, and
+      the catalog, menu and tests that name it, derived, never restated.
+
+## 🏁 Milestone M62: Caravan, the trends timeline — LATER, PLAYGROUND FIRST
+
+Issue #40's comment: a timeline of what was trending each month or season since ChatGPT (late
+2022), with expandable nodes, high-level only, on a page of its own and not in the modules'
+markdown, kept up over time. The author named it **Caravan** (2026-11-06).
+
+- [ ] A playground round when the author wants it: the timeline's design at desktop and phone
+      width; the pipeline that collects each trend's seed (which paper, article, feature or news,
+      from sources such as Google, YouTube, Medium and LinkedIn, and existing trackers on GitHub);
+      what one node holds (a word limit and a source link); and how often it is updated.
 
 Not milestones, but open: four old branches with commits found nowhere else (`backup/pre-scrub-2026-09-04`,
 `merge/main-into-revision`, `origin/backup/before-local-user`, `origin/feat/mkdocs`) wait for the

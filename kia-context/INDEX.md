@@ -10,11 +10,12 @@ writes: agent, when files move
 status: active
 covers: the whole harness
 last_updated: 2026-11-06
+harness: kiacontext v0.3
 ---
 
 # 🗺️ INDEX — What each file is, and when to open it
 
-Twelve files. **Read this one, then `specs/ARCHITECTURE.md`, then `logs/PROGRESS_3.md`.** That is enough
+Twelve files. **Read this one, then `specs/ARCHITECTURE.md`, then `logs/PROGRESS.md`.** That is enough
 to start work.
 
 ---
@@ -40,7 +41,7 @@ and the same explanation given in person for the third time. See `genesis/GENESI
 
 | Era | What was happening | Where it is recorded |
 |---|---|---|
-| 2026-07 | The corpus starts as markdown, published with a doc generator | `logs/PROGRESS.md` M1 |
+| 2026-07 | The corpus starts as markdown, published with a doc generator | `logs/PROGRESS_1.md` M1 |
 | 2026-08 | The site becomes an application, themed as a drawing set | M2 |
 | 2026-09 (early) | Accounts, a rebuilt test suite, one central curriculum config | M3, M4, M5 |
 | 2026-09 (mid) | Intermediate and Ecosystem written and translated | M6 |
@@ -95,12 +96,12 @@ reconstructed from git and is labelled as inferred inside each file.
 
 | File | What it holds | State |
 |---|---|---|
-| `PROGRESS.md` | **Part 1, closed.** M1 to M15, their deliverables and acceptance criteria, the order they go in, and the review pass over M10 to M14 | M1–M6 inferred; **M7 to M15 live and done.** The milestone table at the top still lists every milestone including M16, and points at part 2 for it. |
+| `PROGRESS_1.md` | **Part 1, closed.** M1 to M15, their deliverables and acceptance criteria, the order they go in, and the review pass over M10 to M14 | M1–M6 inferred; **M7 to M15 live and done.** The milestone table at the top still lists every milestone including M16, and points at part 2 for it. |
 | `PROGRESS_2.md` | **Part 2, closed 2026-11-06.** M16: the interface rebuilt on the design language, in ten stages; M17: three listings folded into one; M18: the home page, the bar and the two ends of a module | **All ten stages shipped.** The stage table, every stage's brief, and seven reports — each of which records what its own brief had wrong, so **read a stage's report before trusting its brief**. It closes with the capability ledger — one row per capability, where it lives, and the behavioural test that proves it survived — then with the review pass: 37 findings, **13 confirmed defects inside a green gate**, and eight more left deliberately as the author's call — read that before quoting any figure from this file — then **M17, the curriculum fold — SHIPPED**, whose report names five things its own brief had wrong, including a breadcrumb that pointed every module page at a retired route with nothing able to fail; then **M18, the front door and the chrome — SHIPPED**, whose report names three defects a screenshot found and no test could. **Every milestone here states its deliverables and acceptance criteria as `- [ ]` checkboxes, ticked as the work lands, and closes with a dated report** — the loop that governs that lives in part 1 and is linked from the top of part 2. Then **M20, the catalog's descriptions — SHIPPED**, whose report names five things measured rather than assumed, four of them found by screenshot and one by probing a browser, and none of them visible to 1,138 green tests. Then **M21, the module page and the rail — SHIPPED**, whose report records a one-pixel overflow that a fold latched and a restore could not undo, and a review that caught a regression inside the fix itself. Then **M22, the progress page redesigned — SHIPPED**, whose report records that eight of the ten routes drawing a trail named their page differently from its own heading, and a review that pointed the project's own rule 16 back at the milestone. Then **M19, the second language — SHIPPED less its chrome**: 19 Turkish module pages at `/tr/`, whose report records two capabilities that were being dropped on every one of them in silence because a matcher was written in one language. Then **M23, written and not started** — the interface's own strings, which are authored content in the author's language rather than code. It closes with **M24, the author's requests of 2026-10-11 — SHIPPED and merged as PR #23**, with a same-day follow-up: the logo, the catalog's `View:` row and spacing, a quieter rail, the language menu in the bar, the series map off the site, and three palettes for diagrams and code — whose report records six defects the requests uncovered, among them code highlighting that had been inert since stage 0 — and a follow-up that found the current level chip had carried no visible mark since M17. Then **M25, the end of a module rebuilt — SHIPPED and merged as PR #25**: one completion checkbox, Previous / Next that stand out, and a quick quiz for every written module written by nineteen parallel agents, with the old self-check, submittal, stamps and name prompt gone from the page and their record fields kept. Then **M26, headings and ASD-STE-like English across the corpus — SHIPPED as PR #26**: the author's heading list in both languages, the content additions they asked for, and a wording-only rewrite of all nineteen written modules by nineteen parallel agents under a guard that proved no heading, code block, link or number moved. Then **M27, the front door is Bazaar Street — SHIPPED as PR #27**: an illustrated bazaar the reader walks through on scroll, the four mottos on hanging signs and one door per level, chosen by the author out of three concepts (D79). Then **release v1.0.0**, cut on 2026-10-12 as `release/v1.0.0` and tag `v1.0.0`. Then **M28, Persian — SHIPPED as PR #30**: 19 Persian module pages at `/fa/`, right to left, with the chrome left English (D80). **Then **M29**: both translations rewritten from the English in their own language, natural Turkish and everyday spoken Persian, after the author rejected the literal Persian (D81). It closes with **M30**: the Persian rewritten by meaning by three Opus agents (D82), and a hunt in all three languages for the few short, dense sentences per module (D83). Then **M31**: two 30-second promo videos, one made with HyperFrames and one with /brag (D84), removed at the author's request before they reached `main`; and **M32**: the README rewritten for readers; then **M33**: a tray of lokum offered at each door on hover; then **M34**: the star count refreshed by the deploy (D85); then **M35**: Harness Engineering names its parts in plain words; then **M36**: three references for Observability and Context Engineering; then **M37**: ten stale mockups removed from `playground/`; then **M38**: the progress page slimmed to the level circles, the continue card and the data row; then **M39**: ten playground pages for the two tracks and the front door, and the author's picks; then **M40**: the account layer, the role paths and the record of work removed from the code, and the tests cut to what guards a reader (D88); then **M42**: the author's website comes first (D90), and the instruction files trimmed. Then **M43 to M45**, built from those picks (D91): the two tracks with the bar's switch, the catalog menu's tabs, the flag and the progress page's tabs; the home page's four scenes, its track choice and its two characters; and every References list grouped by kind, merged as PR #59. Then **M46**: the home page's choice, two stalls and the doors tidied at the author's request, and Iran's flag for Persian, merged as PR #60. Then **M47 to M49**: the capital E and the catalog menu's switch, and the round-3 playground (a woman's hand, the people at the gate), picked; **The plan for what was left after M49, and M50 onward, moved to part 3** when the log was split on 2026-11-06. **4,634 lines.** |
-| `PROGRESS_3.md` | **Part 3, and the ACTIVE part** — a new milestone is appended here. The plan of what was left after the round-3 playground and the gate every build ends on, then M50 to M62 | **M50, M55, M58 and M59 done** (the cast finished and built at the gate with its chase, the catalog without its Sources count, and search), shipped together as one pull request (M51); **M53's list** of the readers' notes and the open issues by module, waiting for the author's ranking; **M52 and M54 waiting for the author** (the order of the For Everyone modules; whether a certificate should exist at all); M57 and M60 cancelled (D96); M61 shipped; M62 a placeholder. 577 lines. |
-| `BRAINSTORM.md` | **Part 1, closed.** D1 to D25 — the application, and the two attempts at its interface that D26 replaced. It also carries the entry test and the house style for writing an entry | D1–D6 inferred; **D7–D25 recorded live.** Split at **D26** because that is where the subject changes, not merely where the line count did. |
+| `PROGRESS.md` | **Part 3, and the ACTIVE part, which keeps the bare name** — a new milestone is appended here. The plan of what was left after the round-3 playground and the gate every build ends on, then M50 to M62 | **M50, M55, M58 and M59 done** (the cast finished and built at the gate with its chase, the catalog without its Sources count, and search), shipped together as one pull request (M51); **M53's list** of the readers' notes and the open issues by module, waiting for the author's ranking; **M52 and M54 waiting for the author** (the order of the For Everyone modules; whether a certificate should exist at all); M57 and M60 cancelled (D96); M61 shipped; M62 a placeholder. 632 lines. |
+| `BRAINSTORM_1.md` | **Part 1, closed.** D1 to D25 — the application, and the two attempts at its interface that D26 replaced. It also carries the entry test and the house style for writing an entry | D1–D6 inferred; **D7–D25 recorded live.** Split at **D26** because that is where the subject changes, not merely where the line count did. |
 | `BRAINSTORM_2.md` | **Part 2, closed 2026-11-06.** D26 to D88 and D90 to D96, the rebuild that D26 itself decided, plus open questions O1 to O5 | O1 to O5 are all closed: **D88** answered O5, why CI took 16 to 20 minutes. O1 to O4 are closed: D22 answered O2's progress vocabulary, and M21 answered its second half by cutting the module's info strip to minutes and words. The open questions live in this part because a closed file may not be appended to. One M16 question is still open in the milestone rather than here: whether a wide figure may bleed past the measure (**D43**). The pager's direction label (**D45**) was settled on 2026-10-12. |
-| `BRAINSTORM_3.md` | **Part 3, and the ACTIVE part** — a new decision is appended here. D97 onward: building the round-3 and round-4 picks, and after | Split from part 2 on 2026-11-06 at the author's request, on the phase boundary between the playground picks (D95, D96) and building them. Its own open-questions section starts empty. |
+| `BRAINSTORM.md` | **Part 3, and the ACTIVE part, which keeps the bare name** — a new decision is appended here. D97 onward: building the round-3 and round-4 picks, and after | Split from part 2 on 2026-11-06 at the author's request, on the phase boundary between the playground picks (D95, D96) and building them. Its own open-questions section starts empty. |
 
 ---
 
@@ -126,15 +127,15 @@ maintained by an agent, and do not need reading to do the work. The root `CLAUDE
 | Why is that word so strange? | `specs/ARCHITECTURE.md` §9 — and note it has TWO columns now: what the code says, and what a reader sees |
 | What colour is a level, exactly? | `specs/DESIGN.md`, Colors — the language names a five-hue **categorical series**; which level takes which hue is the product's binding, not the language's |
 | Why is the tick a disc and not a check mark? | `specs/DESIGN.md`, Colors |
-| Why is code dark in the light theme? | `specs/DESIGN.md`, Colors, and `logs/BRAINSTORM.md` **D21** |
-| Why does a wide diagram scroll instead of spilling over the rails? | `logs/BRAINSTORM.md` **D10**, and `specs/DESIGN.md`'s Layout |
-| A browser test passes alone and fails under load. Where do I start? | `logs/BRAINSTORM.md` **D20** |
+| Why is code dark in the light theme? | `specs/DESIGN.md`, Colors, and `logs/BRAINSTORM_1.md` **D21** |
+| Why does a wide diagram scroll instead of spilling over the rails? | `logs/BRAINSTORM_1.md` **D10**, and `specs/DESIGN.md`'s Layout |
+| A browser test passes alone and fails under load. Where do I start? | `logs/BRAINSTORM_1.md` **D20** |
 | Which ground did we pick, and what did it break? | `logs/BRAINSTORM_2.md` **O4** |
 | Which border token do I use? | `specs/DESIGN.md`, Colors — it depends on whether the border groups or identifies |
-| Why does the catalog have three views, and how is one of them chosen? | `logs/BRAINSTORM.md` **D13**, and `logs/PROGRESS.md` M12 |
-| Where did XP and Rank go? | `logs/BRAINSTORM.md` **D22**, and `specs/ARCHITECTURE.md` §9 |
-| Why is completion control C a meter and not the ring the mock drew? | `logs/BRAINSTORM.md` **D23** |
-| An old bookmark to `/dashboard/`. What happens? | `logs/BRAINSTORM.md` **D24**, and `specs/ARCHITECTURE.md` §7 |
+| Why does the catalog have three views, and how is one of them chosen? | `logs/BRAINSTORM_1.md` **D13**, and `logs/PROGRESS_1.md` M12 |
+| Where did XP and Rank go? | `logs/BRAINSTORM_1.md` **D22**, and `specs/ARCHITECTURE.md` §9 |
+| Why is completion control C a meter and not the ring the mock drew? | `logs/BRAINSTORM_1.md` **D23** |
+| An old bookmark to `/dashboard/`. What happens? | `logs/BRAINSTORM_1.md` **D24**, and `specs/ARCHITECTURE.md` §7 |
 | Why was the interface rebuilt rather than re-themed? | `logs/BRAINSTORM_2.md` **D26**, and `logs/PROGRESS_2.md`'s opening |
 | Which mockup specifies this surface, and which part of it? | `logs/PROGRESS_2.md`'s stage table — **geometry from the component mockup, colour from the shell** (**D31**), enforced by `tests/e2e/fidelity.ts` (**D39**) across five reference documents |
 | A mockup does not draw the thing I need. What now? | `logs/BRAINSTORM_2.md` **D30**, and `WITHOUT_REFERENCE` in `tests/e2e/fidelity.ts`, which makes every derivation state what it was derived from |
@@ -150,14 +151,14 @@ maintained by an agent, and do not need reading to do the work. The root `CLAUDE
 | The suite is green and the page still looks wrong. | `logs/BRAINSTORM_2.md` **D59** — a fact about one element cannot see a relationship between two, and `tests/e2e/layout.spec.ts` is what checks the relationships |
 | Every test is green. Does that mean the design is right? | `logs/PROGRESS_2.md`'s review pass, and `logs/BRAINSTORM_2.md` **D54** — a floor checked on one ground is not checked, and the suite measures what somebody thought to measure |
 | The retired design document says one thing and the language says another. | `logs/BRAINSTORM_2.md` **D45** — the language wins, and a measured floor outranks even the mockup exactly once (**D34**) |
-| What am I building next? | `logs/PROGRESS_3.md` — the active part of the log |
+| What am I building next? | `logs/PROGRESS.md` — the active part of the log |
 | Did the rebuild lose a capability? | `logs/PROGRESS_2.md`'s **capability ledger** — one row per capability, where it lives now, and the behavioural test that proves it |
 | Why is there a number in the cascade before first paint? | `logs/BRAINSTORM_2.md` **D46** — CSS cannot count, the pre-paint script can, and that is what lets a dial exist at all |
 | Why is this text not in capitals any more? | `logs/BRAINSTORM_2.md` **D48** — an enumerated record state keeps its spelling; a label, a caption, a sentence or a count does not |
 | When does a class move out of a surface stylesheet into the language? | `logs/BRAINSTORM_2.md` **D51** — when a second surface needs it |
 | Where did the `hl-` prefix go, and what still uses it? | `CLAUDE.md`'s M16 section — 0 classes; the `data-hl-*` attributes, the three `<html>` stamps and the storage keys stay, and a guard checks all three |
 | Which primitives did M16 add that no mockup transcribes directly? | `specs/DESIGN.md`'s Components — the rail, the dial, the panel, the field, the table and the destructive button, each with what it was derived from |
-| Was my idea already rejected? | `logs/BRAINSTORM_3.md` first — the active part — then `logs/BRAINSTORM_2.md`, the rebuild, then `logs/BRAINSTORM.md` |
+| Was my idea already rejected? | `logs/BRAINSTORM.md` first — the active part — then `logs/BRAINSTORM_2.md`, the rebuild, then `logs/BRAINSTORM_1.md` |
 | How is a module written? | **`mini-courses/CLAUDE.md`**, outside this harness. It governs the corpus. |
 | Why must a test not pin a word count? | `specs/ARCHITECTURE.md` §11 and `tests/README.md` |
 
@@ -169,8 +170,8 @@ maintained by an agent, and do not need reading to do the work. The root `CLAUDE
 
 ## 6. The numbering, and why it never restarts
 
-`M1…M15` are milestones in `logs/PROGRESS.md`, `M16…M49` are in `logs/PROGRESS_2.md` (M41 on PR #57), and `M50` onward is in `logs/PROGRESS_3.md`. `D1…D25` are decisions in `logs/BRAINSTORM.md` and `D26…D96` are in `logs/BRAINSTORM_2.md` (D89 on PR #57), where `O1…O5` are the open questions,
-all five closed; `D97` onward is in `logs/BRAINSTORM_3.md`. Rules `1…18` are in
+`M1…M15` are milestones in `logs/PROGRESS_1.md`, `M16…M49` are in `logs/PROGRESS_2.md` (M41 on PR #57), and `M50` onward is in `logs/PROGRESS.md`. `D1…D25` are decisions in `logs/BRAINSTORM_1.md` and `D26…D96` are in `logs/BRAINSTORM_2.md` (D89 on PR #57), where `O1…O5` are the open questions,
+all five closed; `D97` onward is in `logs/BRAINSTORM.md`. Rules `1…18` are in
 `specs/MANIFESTO.md`.
 
 **M8 did not become M9.** It stayed open as the umbrella for the whole interface revision and M9 to
@@ -188,7 +189,8 @@ and cannot be followed. `specs/ARCHITECTURE.md` §9 says so.
 
 ## 7. What references what
 
-Measured on 2026-09-08, and again after M9–M14 were written, by counting each filename's mentions in
+Measured on 2026-09-08, after M9–M14 were written, and again on 2026-11-06 after the log
+parts were renamed to the bare-name layout, by counting each filename's mentions in
 every other file.
 
 ```
@@ -198,18 +200,20 @@ every other file.
         ┌───────────────────────┼───────────────────────┐
         ▼                       ▼                       ▼
    genesis/               specs/                    logs/
-   SEED ──► GENESIS       MANIFESTO ──┐        PROGRESS ─► PROGRESS_2 ─► PROGRESS_3
+   SEED ──► GENESIS       MANIFESTO ──┐        PROGRESS_1 ─► PROGRESS_2 ─► PROGRESS
               │               │       │             │          │
               └──────────────►│       └─────────────►│          │
                               ▼                     ▼          ▼
-                        ARCHITECTURE ◄────── BRAINSTORM ─► BRAINSTORM_2 ─► BRAINSTORM_3
+                        ARCHITECTURE ◄────── BRAINSTORM_1 ─► BRAINSTORM_2 ─► BRAINSTORM
                               ▲                     ▲          │
                         DESIGN┘                     └──────────┘
 ```
 
 **Each log is three files now, and the arrows between them run forward.** Parts 1
-and 2 are `closed` and point forward; part 3 is where the next entry goes. The
-numbering runs straight through — `M1…M62`, `D1…D100` — so a citation never has
+and 2 are `closed` (`PROGRESS_1.md`, `PROGRESS_2.md`, `BRAINSTORM_1.md`, `BRAINSTORM_2.md`) and point
+forward; part 3 is where the next entry goes, and it keeps the bare name (`PROGRESS.md`,
+`BRAINSTORM.md`). The
+numbering runs straight through — `M1…M63`, `D1…D100` — so a citation never has
 to say which part it means, only the number.
 
 The heaviest edges, measured with `grep` on 2026-11-06 rather than estimated:
@@ -218,16 +222,18 @@ The heaviest edges, measured with `grep` on 2026-11-06 rather than estimated:
 |---|---|---|
 | `logs/BRAINSTORM_2.md` | `specs/DESIGN.md` | 29 |
 | `logs/PROGRESS_2.md` | `specs/DESIGN.md` | 22 |
-| `logs/PROGRESS.md` | `specs/ARCHITECTURE.md` | 17 |
-| `logs/BRAINSTORM.md` | `specs/ARCHITECTURE.md` | 17 |
-| `logs/PROGRESS.md` | `specs/DESIGN.md` | 14 |
-| `logs/PROGRESS_2.md` | `logs/PROGRESS.md` | 9 |
+| `logs/PROGRESS_1.md` | `specs/ARCHITECTURE.md` | 17 |
+| `logs/BRAINSTORM_1.md` | `specs/ARCHITECTURE.md` | 17 |
+| `logs/PROGRESS_1.md` | `specs/DESIGN.md` | 14 |
 | `logs/PROGRESS_2.md` | `specs/MANIFESTO.md` | 9 |
+| `logs/PROGRESS_2.md` | `logs/PROGRESS_1.md` | 8 |
+| `logs/PROGRESS_1.md` | `logs/PROGRESS_2.md` | 7 |
 | `logs/BRAINSTORM_2.md` | `specs/ARCHITECTURE.md` | 7 |
 | `logs/BRAINSTORM_2.md` | `specs/MANIFESTO.md` | 7 |
-| `logs/PROGRESS.md` | `logs/BRAINSTORM.md` | 7 |
-| `logs/PROGRESS_2.md` | `logs/PROGRESS_3.md` | 6 |
-| `logs/BRAINSTORM_2.md` | `logs/BRAINSTORM_3.md` | 6 |
+| `specs/ARCHITECTURE.md` | `logs/BRAINSTORM_1.md` | 6 |
+| `logs/PROGRESS_2.md` | `logs/PROGRESS.md` | 6 |
+| `logs/PROGRESS_1.md` | `logs/BRAINSTORM_1.md` | 6 |
+| `logs/BRAINSTORM_2.md` | `logs/BRAINSTORM.md` | 6 |
 
 **Measuring this is what confirmed D26 was the right place to cut the decision
 log**, and the number is more convincing than the argument was. Part 1 cites

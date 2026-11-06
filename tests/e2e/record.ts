@@ -390,7 +390,7 @@ export async function probeFirstPaint(page: Page): Promise<void> {
  * failed under parallel load, which is the signature of a race rather than of a
  * defect, and it is the same mistake `contrast.ts`'s `useTheme` was making one
  * frame over: **a frame count, or a single sample, is not a wait**
- * (`kia-context/logs/BRAINSTORM.md` D20).
+ * (`kia-context/logs/BRAINSTORM_1.md` D20).
  *
  * The claim is unchanged and it is still the strong one: the reading is taken
  * in a `requestAnimationFrame` scheduled from an init script, which runs before

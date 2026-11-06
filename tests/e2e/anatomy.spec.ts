@@ -16,7 +16,7 @@ import { A0, SHORT, A4 } from './sheets'
  * The three tracks used to be 208 + 24 + 656 + 24 + 240 = 1152, centred in a
  * 1200px shell, and this file asserted those numbers. They are gone: the rails
  * are anchored to the WINDOW edges and the column is centred between them at a
- * cap of 80ch (`kia-context/logs/BRAINSTORM.md` D15). So the assertions are the
+ * cap of 80ch (`kia-context/logs/BRAINSTORM_1.md` D15). So the assertions are the
  * RULES rather than the arithmetic — the rail widths are read back from the
  * tokens that declare them, and the measure is compared against an 80ch box
  * measured in the reading face itself. A webfont that loads at a different
@@ -212,7 +212,7 @@ test.describe('A0 — the assembly module', () => {
    * turned it red for doing nothing wrong. And it raced the client-side
    * mermaid render, waiting on `networkidle` rather than on the island's own
    * `data-hl-ready`, which is why it passed alone and failed under load
-   * (`kia-context/logs/BRAINSTORM.md` D20).
+   * (`kia-context/logs/BRAINSTORM_1.md` D20).
    *
    * What replaced it is `containment.spec.ts`, which asserts the rule instead
    * of the instance, at all three viewports, after the injection.

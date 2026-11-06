@@ -17,7 +17,7 @@ import { type Page, expect, test } from '@playwright/test'
  * transparent border. **The T4 language has no such system** — it separates a
  * hairline from a strong edge by colour, and every line it draws is one whole
  * pixel — so those two were assertions about a design that no longer exists.
- * `logs/BRAINSTORM.md` D32 records the retirement; the unit half carries the
+ * `logs/BRAINSTORM_2.md` D32 records the retirement; the unit half carries the
  * rule that survived it.
  */
 

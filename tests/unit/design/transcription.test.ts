@@ -11,7 +11,7 @@ import { describe, expect, it } from 'vitest'
  * came from — a substituted type family, a re-hued category series and a light
  * top bar all shipped from that drift, and 2,149 unit tests plus 467 browser
  * tests certified it four times over, because not one of them compared
- * anything to the mockup (`logs/BRAINSTORM.md` D26).
+ * anything to the mockup (`logs/BRAINSTORM_2.md` D26).
  *
  * ## Why this is not the pinned table `tests/README.md` forbids
  *
@@ -30,7 +30,7 @@ import { describe, expect, it } from 'vitest'
 const ROOT = path.resolve(import.meta.dirname, '../../..')
 /**
  * The specification is TWO files now. The light mockup is the design; the dark
- * one is its approved derivation (`logs/BRAINSTORM.md` D27), and it is a mockup
+ * one is its approved derivation (`logs/BRAINSTORM_2.md` D27), and it is a mockup
  * rather than a note precisely so it can be checked the same way. Colours are
  * compared against the union: a value in the dark theme is legitimate if the
  * dark mockup contains it, and invented otherwise.

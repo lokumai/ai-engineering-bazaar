@@ -32,7 +32,7 @@ import { describe, expect, it } from 'vitest'
  * border and no outline may declare a fractional pixel width.** That catches
  * the same defect the old rule caught, catches it in a system with no stroke
  * scale at all, and would catch a 1.5px border reintroduced tomorrow.
- * `logs/BRAINSTORM.md` D32 records the retirement.
+ * `logs/BRAINSTORM_2.md` D32 records the retirement.
  */
 
 const APP_DIR = join(import.meta.dirname, '../../src/app')

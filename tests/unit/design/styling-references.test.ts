@@ -542,7 +542,7 @@ describe('every bz- class in the markup has a rule somewhere', () => {
 /**
  * M16's FIRST CLOSING CONDITION, and it had no test.
  *
- * `logs/PROGRESS.md` says the milestone is done when "no `hl-` class [is] in
+ * `logs/PROGRESS_2.md` says the milestone is done when "no `hl-` class [is] in
  * any `className`", and nothing under `tests/` asserted it. The meter everyone
  * quoted did not measure it either: `grep -rho '\bhl-[a-z0-9-]*'` counted 1,045
  * in markup, of which 158 were `data-hl-*` attribute names and the rest

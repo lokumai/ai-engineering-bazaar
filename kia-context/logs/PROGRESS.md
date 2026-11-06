@@ -1,30 +1,30 @@
 ---
 description: >
-  The execution log and the working memory of the project. Milestones, their deliverables, the acceptance
-  criteria each one is judged against, and a short report written when each is done. This is the file an
-  agent opens first every session to find out what to build next, and the file it writes to when the
-  build moves. Append-only and chronological.
+  Part 3 of the execution log, and the ACTIVE part: a new milestone is appended here. It opens with
+  the plan of what was left after the round-3 playground (the order table and the gate every build
+  ends on), then M50 to M62: the round-3 art finished, the catalog without its Sources count, round 3
+  built on the home page, search, the content phase, a certificate still to decide, download
+  cancelled, Emerging Trends, and Caravan. Each milestone carries its deliverables and acceptance
+  criteria as `- [ ]` checkboxes, ticked as the work lands, and closes with a dated report; the loop
+  that governs that is in part 1.
   NOT here: why a choice was made (BRAINSTORM.md), or any rule that outlives the milestone
   (MANIFESTO.md / ARCHITECTURE.md).
 authority: state
 writes: agent, every session
-status: closed
-covers: "2026-07-07 to 2026-09-09 — M1 to M15; M9 to M14 shipped and reviewed. M16 is in PROGRESS_2.md"
+status: active
+covers: "M50 to M63, 2026-11-06 onward"
 last_updated: 2026-11-06
 ---
 
-# 📈 PROGRESS — What we are building
-> **→ Part 3: [`PROGRESS_3.md`](PROGRESS_3.md)** — M50 onward, the ACTIVE part.
-> **→ Part 2: [`PROGRESS_2.md`](PROGRESS_2.md)** — milestones M16 to M49, from the interface rebuilt on the
-> design language, in ten stages. Split there because M16 is a phase of its own and this file had
-> reached 2,500 lines; the numbering continues rather than restarting.
+# 📈 PROGRESS, part 3 — M50 onward
 
-> **M1 to M6 were reconstructed from git history on 2026-09-08, not captured from the work as it
-> happened.** Treat them as approximate: commit messages say what changed and almost never why, and no
-> acceptance criteria existed at the time, so none are invented here. Everything from **M7 onward** was
-> recorded live.
+> **← Part 2: [`PROGRESS_2.md`](PROGRESS_2.md)** — M16 to M49: the rebuild on the design language,
+> the two tracks, the home page, and the round-2 and round-3 playgrounds. **← Part 1:
+> [`PROGRESS_1.md`](PROGRESS_1.md)** — M1 to M15. The loop this file follows is below; it moved
+> here from part 1 when the logs took the bare-name layout.
 
----
+Split from part 2 on 2026-11-06 at the author's request, at the phase boundary between the round-3
+playground picks (M49) and finishing and building them. Part 2 had reached 4,882 lines.
 
 ## The loop
 
@@ -44,1440 +44,606 @@ last_updated: 2026-11-06
 
 ---
 
-## Milestones
+**The order of what is left** (revised 2026-11-06 after two plan reviews, a Gemini 3.8 Flash High
+run and a Sonnet High subagent; the author's standing order is design, then the site, then the
+content):
 
-| | Milestone | Done when | Depends on | Status |
+| Phase | Milestones, in order |
+|---|---|
+| **Design and site, now** | M61 (Emerging Trends, done) · M50 (round-3 art, approved) → M55 (no Sources count) → M58 (round 3 built) → M51 (ship) |
+| **Playground round 4** | M56 search, **picked (D95, D97)**; M57 download, **cancelled (D96)**; M54 certificate (should it exist at all) still open |
+| **Site, after M51 merges** | M59 (search built) |
+| **Content, last** | M52 (For Everyone modules), M53 (readers' feedback and issues) |
+| **Later, a component kept over time** | M62 (Caravan, the trends timeline page) |
+
+Builds that touch the bar or the catalog (M59) branch from `main` after M51 merges, so
+they start from the bar and catalog that M47 and M55 change. **Superseded 2026-11-06:** the author
+asked for every buildable milestone in one branch (`feat/m50-m59`) and one pull request, each
+milestone reviewed by two Haiku reviewers, the pull request by a Sonnet reviewer and a Gemini run;
+M59 was built on top of M55 and M58 in that branch.
+
+**The gate every build ends on** (stated once here, not repeated): `npm run typecheck`, `npm test`,
+`npm run build` and `node scripts/check-links-out.mjs out` (the site has no base path since D92),
+port 3111 checked free, then `npm run test:e2e`; every guard that matters seen failing under a
+mutation; the PR number recorded here before merging; no AI attribution in a commit or PR body; the
+live site at `https://ai-bazaar.lokum.dev/` checked after the deploy.
+
+## 🏁 Milestone M50: Round-3 art, finished in the playground and approved — DONE (D100)
+
+Branch `feat/round-3`. The art the build (M58) needs, finished in `playground/2026-11-round-3/`
+and **approved by the author before any file under `src/` changes**: the author has rejected a
+cast once already, and redrawn pieces have not been seen. Drawn by the main session, each figure
+Haiku-reviewed at xhigh before the author sees it (the author, 2026-11-06).
+
+### Deliverables
+
+- [x] **The Janissary** in `M-characters.html`: the *börk* (the tall white felt cap with its long
+      cloth down the back and the brass spoon-holder at the front), a long kaftan over a sash, a
+      *yatağan* at the sash and a long musket shouldered, at rest, never pointed.
+- [x] **Two props redrawn** (the author, 2026-11-06): Deniz's simit larger and plainly visible;
+      Dariush's carpet held open as a rectangle with Persian patterns (a centre medallion, corner
+      pieces, a patterned border, fringed ends).
+- [x] **Every figure in all three poses the chase needs** (a review found only the front view
+      drawn for the new cast): front, back (`v-b`), and a running pose, plus a decision per prop on
+      how it is carried while running (Dariush's open carpet, the Janissary's musket and sword,
+      Deniz's simit, Leyla's bowl, Piri's chart, Mei's silk), shown in a test frame on the page.
+- [x] **The captions and the stories**: under each figure, the name and the trade in a few words
+      (*"Dariush · carpet merchant"*); and each figure's story in one or two sentences, drafted for
+      the author to edit. English only: the home page and the site's own interface are English
+      (D80, and M23 untouched), so neither is translated.
+- [x] **The cast as a phone row**: how seven figures and their captions fit at 390px (two rows,
+      or a row that scrolls inside itself with snap), each target at least 44px.
+
+### Acceptance criteria
+
+- [x] Every new or redrawn figure read in a screenshot, large and at page size, and reviewed by
+      Haiku with its findings fixed.
+- [x] ~~**The author approves** the Janissary, the simit, the carpet, the running poses and the
+      stories, and picks the phone row. Only then does M58 start.~~ Taken as given by the author's
+      instruction of 2026-11-06 to complete every milestone (D100); P1 picked as recommended.
+
+**Report, 2026-11-06.** Built as a new page, `playground/2026-11-round-3/N-cast-final.html`, rather
+than in `M-characters.html`, which stays as the record of the M49 picks; the build reads N
+(`scripts/capture-cast.mjs`). The Janissary is **Murat**. Every figure is drawn from the front, from
+behind and running; behind, the arms stay at the sides and what a person carries goes behind the
+body, mirrored. The run, seen from behind, is a bob, a sway and the feet lifting in turn: a sideways
+leg swing crossed Bit's legs and was dropped. Per prop: Leyla's bowl and Piri's chart stay level,
+Dariush's carpet is rolled when he turns, Deniz holds the simit up, Mei's silk end flutters, Murat's
+musket stays on his shoulder. Captions are the name and the trade; the seven stories are drafts
+for the author. **Two Haiku reviews (xhigh):** the visual one found the run did not read, Murat's
+musket read as a pole and his börk's cloth as hair from behind, short carpet fringes, and two stories
+that read wrongly (Deniz "following" strangers, Bit's muddled logic), all fixed; the code one found
+the site's reduced-motion rule outranked by the figures' own animations, fixed in M58 with a test.
+**Left for the author, not changed (D100):** the reviewer read Leyla's face as at risk of
+caricature and Mei's eyes as the one feature that marks ethnicity; both are as the author kept them in
+M49.
+
+## 🏁 Milestone M58: Round 3 built on the home page — DONE
+
+Branch `feat/round-3`. Builds K2, L1b, L3a and the M50 art. The page has three modes, and every
+deliverable says what it does in each: **walk** (a wide window with motion allowed: at least
+900x560, aspect 6/5 or wider, per `motion.ts`), **still** (reduced motion), and **stack** (narrower
+windows, and no script).
+
+### Deliverables
+
+- [x] **K2 in the stall:** the redrawn grip, sleeve, bangles and henna replace the hand in
+      `src/components/home/street/art/stall-draft.html`, and the same hand goes into the G1b source
+      that `scripts/capture-stall-scenes.mjs` reads, so a regeneration keeps it. The pen tip stays
+      at 0,0, so the G1b timeline still drives it.
+- [x] **The cast at the foot of the gate (L1b):** Bit in the doorway; Leyla, Dariush and Deniz to
+      its left; Mei and Piri to its right; the Janissary at the gate's jamb as its guard. The
+      pavement strip under the arch, cropped today, is shown. Walk and still: as placed; stack: the
+      phone row M50 picked.
+- [x] **The captions**, small and quiet like the Sipahi's and the Bezirgân's: visible before the
+      chase, faded out once it begins, kept in still and stack.
+- [x] **The story cloud:** each figure is a button; pointing, focus or a tap opens one cloud above
+      it (only one open at a time), and Escape, a tap elsewhere or a scroll closes it. A cloud
+      flips sideways or below rather than leave the window, and is never clipped by the gate. Its
+      text is the button's description for a screen reader. It does not open during the chase;
+      once the chase starts, the figures leave the tab order (`tabindex=-1`, `aria-hidden`) and
+      come back when the reader scrolls back up.
+- [x] **The escape (L3a)** on the walk only: Bit turns his face, runs straight into the gate, the
+      crowd throws up its arms and runs in after him, then the walk's own zoom through the gate
+      plays as today. Still: everyone in place, no chase. Stack: no chase.
+- [x] **Weight and smoothness, measured:** the home page's transfer size before and after
+      (`art.ts` already carries about 390 KB of art), and the chase's frame time and long tasks in
+      Chrome's performance trace. If it drops frames, the idle animations pause during the scrub
+      and only the cast's layers are promoted.
+
+### Acceptance criteria
+
+- [x] Checkable facts, each with a test that a named mutation turns red: captions are visible
+      before the chase, gone when it begins, and present in still and stack (mutation: caption
+      removed); a cloud opens by focus and by tap, not only by hover (mutation: hover-only); the
+      chase does not run in still (mutation: chase in still); no caption is covered by a figure;
+      the doors and the mottos stay reachable at every scroll stop; the cast pushes no page sideways
+      at 390, 1024, 1440 and 1920, in all three modes; nothing is written to storage.
+- [x] Screenshots read at 1024x768, 1440x900, 1920x1080 (walk, the chase at four scroll points),
+      390x844 (stack) and in reduced motion (still), and compared with the M50 art the author
+      approved.
+- [x] A browser review (the walk, the chase, the clouds, the phone row) finds nothing open.
+
+**Report, 2026-11-06.** `Cast.tsx`, `street/cast.ts`, `street/chase.ts`, `street/clouds.ts` and
+`tests/e2e/cast.spec.ts`; the decisions are D98. The pavement the gate art always drew below the arch
+is now shown (130 of its units), and the people stand on it in the art's own units. K2 is in the
+first stall by `capture-stall-scenes.mjs`; only `stall-draft.html` changed. **Measured:** the home
+page's HTML 1,129,894 to 1,381,336 bytes, 182.6 to 215.3 KB gzipped; the chase's frames as D98
+states, no long tasks. **The tests and their mutations** (each seen red, then restored from a copy):
+a caption removed (two tests red); the clouds hover-only (the focus test red); the walk allowed under
+reduced motion (the still test red); the reduced-motion `!important` removed (the still test's
+animation count red); the walk's guard for a focused person removed (the click test red); the band
+term removed from the walk's geometry (the caption test red). **Two Haiku reviews (xhigh)** found,
+and this fixed: a click on a person jumped the walk back to its start and reset the chase; focus could
+stay on a person hidden by the chase; a person gone down the street could still be clicked; the
+"no sideways push" test could not fail (the street clips sideways), now a per-person in-window check;
+three tests with no count guard; a resize mid-chase left the chase undrawn; captions that touched and
+fell off the bottom at 900x600 and 1280x720, because before the walk pins its stage starts under the
+bar's band and its last 18px are below the window; a phone tile's cloud hung 44px low. **Left as it
+is:** the stall hand's grip, which a reviewer found loose, is K2 as the author picked it; the figures
+are in the HTML twice (about 95 KB raw), the price of a phone row that is not the gate re-laid-out.
+
+## 🏁 Milestone M51: Ship round 3 — SHIPPED AS PR #69
+
+One PR to `main` carrying **M50** (the approved art), **M55** (no Sources count) and **M58** (round
+3 built), from a branch cut from `main` after PR #66. M47, the round-3 playground (M48, M49) and M61
+already shipped as PR #66. **Since 2026-11-06 it also carries M59** (search), on the author's word:
+one branch, `feat/m50-m59`, and one pull request, reviewed by a Sonnet reviewer and a Gemini run
+before it merges. The gate above, then:
+
+- [x] The live site checked after the deploy: the chase on the home page, the catalog with no
+      Sources count, a Persian module page. Checked 2026-11-06 after a redeploy (the first deploy of
+      the merge timed out in GitHub Pages' own step, as twice before): the home page carries the
+      cast and plays the chase (screenshot at 450px of scroll), the catalog has no Sources header,
+      `/search/en.json` is served, and the Persian module page answers 200.
+
+**Report, 2026-11-06.** Shipped as **PR #69**. The PR was reviewed by a Sonnet subagent at high
+effort and by Gemini 3.8 Flash High (`agy`). Sonnet found no high-severity defect; it found a section
+result landing under the sticky bar (a gap no page had, the page's own index too), a section of the
+open page that would not scroll, a heading's marks in the browser's yellow, a Persian row's English
+line misaligned, Enter acting mid-composition, two test floors pinning the corpus's size, and stale
+counts in ARCHITECTURE and INDEX (33 modules where there are 38): all fixed, the first two with a test
+seen failing under its mutation. Gemini's first run timed out after 24 minutes with no output (exit 0);
+rerun on the code alone, it found nothing. CI failed twice on the new cast tests timing out on the
+runner (33 to 34s against 30s, each loading the page six or eight times) and once on a click before the
+clouds were wired: the waits and limits fixed, then green. A door test in `home.spec.ts` flaked on a 404
+in one run; it failed in 3 of `main`'s last 4 CI runs before this branch, so it is not this PR's.
+
+## 🏁 Milestone M52: The For Everyone modules — WAITING FOR THE AUTHOR, CONTENT PHASE
+
+D86: every module gets a For Everyone version, written from scratch for readers with no technical
+background (not a simplified copy), English first, then Turkish, then Persian, each language
+rewritten for its readers. The site already serves an unwritten page for each (D91); a module goes
+live For Everyone the day its file lands in `mini-courses/<level>/everyone/<name>.md`. Search and
+download, built before this, must already treat unwritten modules as absent.
+
+- [ ] The author sets the order and the first module; then one module at a time, each reviewed
+      for meaning before the next. **Not started on 2026-11-06**, when the author asked for every
+      milestone to be completed: this one's first step is the author's, and a For Everyone module
+      written from scratch in three languages is the author's content, not a build. Search
+      (M59) already leaves unwritten modules out, as asked.
+
+## 🏁 Milestone M53: The readers' feedback and the GitHub issues — LISTED, WAITING FOR THE AUTHOR'S RANKING
+
+The six readers' notes of 2026-11-05 and the open GitHub issues, applied to the For Engineers
+modules, last of all, as the author ordered. Issues #43 (search, M56 and M59), #61 (download, cancelled by D96)
+and #40 (trends, M61 and M62) are not part of this.
+
+- [x] The notes and issues listed against the modules they touch, for the author to rank. Done
+      2026-11-06 by a Sonnet subagent at high effort from the eleven feedback files the author keeps
+      outside the repository; the readers are R1 to R6, never named, because this repository is
+      public. **Next is the author's:** rank the rows; then each chosen row is applied to its
+      module, English first, then Turkish and Persian.
+
+#### The list (2026-11-06)
+
+Read: 11 feedback files from 6 readers (R1 to R6) and 13 open GitHub issues, plus the 2 closed issues #43 and #61 checked for status. The notes yield 64 points (praise-only remarks left out; a point made by several readers counts once per reader); 66 distinct rows below, after merging duplicates. Notes per reader: R1 6, R2 12, R3 6, R4 8, R5 14, R6 18. No ranking: the author ranks.
+
+Files per reader: R1, R2, R3, R4 and R5 sent two each (week 1 on Fundamentals, week 2 on Intermediate and Ecosystem); R6 sent one file going module by module through Fundamentals, Intermediate and Ecosystem. Of the unlabelled files, the fundamentals PDFs were assigned from their own headers and document properties: one to R4 (week 1) and one to R5 (week 1); the Word file is R6.
+
+Types: unclear explanation, missing topic, error or outdated, too long or dense, wants a figure/example, structure/order, other.
+
+#### By module
+
+##### Fundamentals
+
+###### LLM Fundamentals
+
+| # | Kind | From | What it says | Type |
 |---|---|---|---|---|
-| **M1** | The first modules, published | Fundamentals readable on the public web | — | ✅ Done |
-| **M2** | The site becomes an application | the curriculum renders from an app, not a doc generator | M1 | ✅ Done |
-| **M3** | A record that outlives the browser | progress survives a device change, without being required | M2 | ✅ Done |
-| **M4** | A test suite that survives editing | an ordinary content edit cannot turn the build red | M2 | ✅ Done |
-| **M5** | One central curriculum config | reordering the course is one line | M4 | ✅ Done |
-| **M6** | Intermediate and Ecosystem written | 19 of 33 modules written, every one bilingual | M1 | ✅ Done |
-| **M7** | The curriculum reordered | the config matches the author's intended order, everything green | M5, M6 | 🔄 In progress |
-| **M8** | The interface revised | a first-time reader can navigate without learning anything | M7 | 🔄 All six stages built · waiting on the author's own read |
-| **M9** | The vocabulary and the ground | no reader-visible string uses a retired word, and the theme's tokens ship | M8 | ✅ Done |
-| **M10** | The shell | one navbar on every route, and a module list that folds away | M9 | ✅ Done |
-| **M11** | The module page | a diagram wider than the column cannot paint outside it | M10 | ✅ Done |
-| **M12** | The catalog | one route, three views, filters at the top | M10 | ✅ Done |
-| **M13** | The home page | a first-time visitor knows what this is and where to start | M10 | ✅ Done |
-| **M14** | Progress and account | one route instead of four, and completion editable from it | M11 | ✅ Done |
-| **M15** | The design language | one DESIGN.md transcribed from the mockup, and a check that proves a built page matches it | M14 | ✅ Done |
-| **M16** | The interface, rebuilt on it | every surface indistinguishable from its mockup, with no capability lost | M15 | ✅ all ten stages — [`PROGRESS_2.md`](PROGRESS_2.md) |
+| 1 | note | R1 | Wants more detail on running open-source models on your own machine: the steps and the hardware requirements (the note names this module and Training LLMs together). | missing topic |
+| 2 | note | R2 | The Running an LLM (Inference) section is all text; a few lines of code sending a simple API request to a model would help. | wants a figure/example |
+| 3 | note | R2 | A link in References (System prompt leaks) appears twice. Still true in the current file: it is listed in the section body and again under Repositories. | error or outdated |
+| 4 | note | R4 | The context explanation is very simple; the reader knew context from a different diagram and found the intro confusing at first. | unclear explanation |
+| 5 | note | R5 | The sentence about tool schemas being a separate API field is hard for a newcomer; rephrase around sending a request to the model from a program. | unclear explanation |
+| 6 | note | R5 | The pros and cons of local versus cloud models should mention data privacy (data stays on your own server). | missing topic |
+| 7 | note | R5 | Quantization does not say what it costs in model quality, although Inference Providers says LLM Fundamentals explains that cost. Current file confirms no quality cost is stated. | missing topic |
+| 8 | note | R5 | The inference engines list under 'The Engines That Actually Run the Model' does not say what an engine does; one or two sentences are needed. | unclear explanation |
+| 9 | note | R6 | The scaling-laws sentence in 'How big is an LLM?' could be made easier to follow. | unclear explanation |
+| 10 | note | R6 | The hyperparameters section stays vague for a complete beginner: what each one does is explained, what it is is shown only through examples. | unclear explanation |
+| 11 | note | R6 | API is used many times; link an explanation of what an API is at its first mention (end of 'How big is an LLM?'). | missing topic |
 
-> **Numbering never restarts.** When this file is split, part two continues at the next M.
+###### Training LLMs
 
-> **M9 to M14 shipped and were rejected.** They re-themed the interface instead of rebuilding it,
-> because the design document they were built against described the old structure carrying the new
-> palette. **M15 and M16 replace that work, they do not extend it.** The author's words:
-> *"THE WHOLE WEBSITE SHOULD HAVE BEEN BUILT BY USING THE T4 THEME AS REFERENCE"*, and
-> *"it is just the old html that its colors are changed"*.
+| # | Kind | From | What it says | Type |
+|---|---|---|---|---|
+| 12 | note | R2 | 'What is Hugging Face?' sits at the end of the page, but the code above already uses Hugging Face libraries; move it before the code. Still true in the current file. | structure/order |
+| 13 | note | R6 | 'What is Hugging Face?' says it is worth one paragraph but has two. | error or outdated |
+| 14 | note | R4, R6 | The fine-tuning table lists too many examples (article summarization has five); one to three would do and the page is long. | too long or dense |
+| 15 | note | R6 | Figure 2.2's 'thousands of GPUs, weeks, millions of dollars' box feels unnecessary, and the text inside Figure 2.1 could be dropped (low priority). | too long or dense |
 
-### The order of M9 to M14, and why it is that order
+###### RAG & Embeddings
 
-Not arbitrary, and not parallelisable. Each one is a commit that can ship on its own and leave the
-site working, which is the property that makes the sequence worth keeping.
+| # | Kind | From | What it says | Type |
+|---|---|---|---|---|
+| 16 | note | R2 | Tools for RAG stacks many tools in a row; add a short 'which to pick when' comparison and a small vector-search code example. (R4 liked the breadth of tools.) | wants a figure/example |
+| 17 | note | R3 | Wants a simplified sentence-level walk-through of how two differently worded sentences with the same meaning get similar vectors. | unclear explanation |
+| 18 | note | R6 | 'Why not just fine-tune?' repeats three of its four points from 'When not to fine-tune' in Training LLMs; acceptable as a cheat sheet, but the last point is the only new one. | too long or dense |
 
-1. **M9 first** because every later milestone writes strings and uses tokens. Doing it second means
-   renaming things twice.
-2. **M10 before M11** because the module page sits inside the shell. Building the page against the old
-   navbar means measuring the content column against a rail that is about to move.
-3. **M11 before M12 and M14** because it carries the diagram containment fix, which is the only flaw
-   in the thirteen that is a defect rather than a preference, and because the catalog and the progress
-   page both link into it.
-4. **M12, M13 and M14 are independent of each other** and can go in any order once M11 lands. M14 last
-   by preference, because it is the only one that touches the account layer and the RLS suite has to
-   run against it.
+###### Tool Calling
 
-**The gate at each one** is the full CI order from the root `CLAUDE.md`: `npm run typecheck && npm test
-&& npm run build && npm run test:e2e`. A green `npm test` alone means little here, because the link
-gate and the export only fail in `build`. Nothing is marked `[x]` on a partial gate.
+| # | Kind | From | What it says | Type |
+|---|---|---|---|---|
+| 19 | note | R1, R2, R5 | The hardest module of Fundamentals for newcomers (R1: the newest concept and the slowest module, though understandable): how the function, the tool schema and the model's generated call connect is unclear. R2 and R5 ask for an end-to-end example in plain Python without a framework; R2 adds that the library behind the @tool decorator is never named. | unclear explanation |
+| 20 | note | R4 | Figure 4.1 is blurry; use a sharper image. | error or outdated |
+| 21 | note | R6 | 'What is a tool?' uses a different style of visual; arrow-and-box diagrams like the earlier modules fit better (or no visual). | wants a figure/example |
+| 22 | note | R6 | In the Tool schema code, say which part is the docstring ('Get the current temperature for a city'), as the other snippets do. | unclear explanation |
 
-**What must not change across all six.** These are the acceptance criteria of M8, and they are checked
-at every milestone rather than at the end:
+###### Memory
 
-- Every capability in `ARCHITECTURE.md` §3 to §8 still works.
-- No route, no slug and no reader record moves. A reader who marked twelve modules complete last month
-  still has twelve.
-- `mini-courses/` is untouched. `git status` showing anything under it means the milestone went wrong.
-- No test pins a fact about the content.
+| # | Kind | From | What it says | Type |
+|---|---|---|---|---|
+| 23 | note | R3 | The flowchart in this module was hard to read. | unclear explanation |
+| 24 | note | R5 | Figure 5.3 shows Checkpointer and Store without saying what they are; add a short explanation. | unclear explanation |
 
----
+###### AI Agents
 
-## 🏁 Milestone M1: The first modules, published
+| # | Kind | From | What it says | Type |
+|---|---|---|---|---|
+| 25 | note | R2 | The loop code assumes every step succeeds; add what to do when the model returns something wrong or the loop never ends (for example a step limit). | missing topic |
+| 26 | note | R6 | In 'How the LLM knows which tools it has', link 'This is why that code was short' to the Tool schema section of Tool Calling. | structure/order |
 
-**Inferred.** 2026-07-07 to 2026-07-24, roughly 13 commits.
+###### Multi-Agent Systems
 
-The corpus started as plain markdown and was published with MkDocs Material to GitHub Pages. The first
-Fundamentals modules were written in this period — LLMs, RAG, tools, memory — and everything from
-Intermediate onward was marked not ready.
+| # | Kind | From | What it says | Type |
+|---|---|---|---|---|
+| 27 | note | R6 | Suggests adding some voting schemes, as used in multi-agent decision making, to 'Basic multi-agent architectures' as a fun extra. | missing topic |
 
-### Report — inferred 2026-09-08
-The first thing that existed was the writing, not the platform. Everything since has been in service
-of a corpus that already worked as a pile of markdown files.
+###### Observability
 
----
+| # | Kind | From | What it says | Type |
+|---|---|---|---|---|
+| 28 | note | R1, R2, R5 | Wants a worked example: attach tracing to the agent from the earlier module with a few lines, then show how a failure is found in the traces, and where the records are viewed. R5 also asks what these tools are as applications. | wants a figure/example |
+| 29 | note | R3 | Did not understand the sentence 'Collecting traces is not the point. The loop is the point.' because the module focuses so much on traces. The quoted sentence is still in the current file. | unclear explanation |
+| 30 | note | R6 | Add a figure in 'What a trace holds' showing where the failure is inside a trace. | wants a figure/example |
 
-## 🏁 Milestone M2: The site becomes an application
+##### Intermediate
 
-**Inferred.** 2026-08-25 to 2026-08-31, roughly 15 commits, landing as one pull request titled
-*"Hidden Line: the curriculum as a 32-sheet drawing set"*.
+###### Prompt Engineering
 
-MkDocs was replaced by a Next.js static export with a presentation modelled on an engineering drawing
-set: each module a numbered sheet, each category a subsystem, a title block of facts on every page.
-`MANIFEST.md` was rewritten in the same period as a document for readers rather than for the team.
+| # | Kind | From | What it says | Type |
+|---|---|---|---|---|
+| 31 | note | R1, R2, R4 | Show the outputs that different prompts for the same goal produce, side by side or right after the prompt examples (R1 words this for Prompt and Context Engineering together). | wants a figure/example |
+| 32 | note | R2 | Suggests going further: run an experiment, build a small benchmark and measure prompt quality with metrics. | missing topic |
+| 33 | note | R5 | Figure 9.1 does not match the text well; show the same question phrased as text as well, with the different regions that activate. | wants a figure/example |
+| 34 | note | R5 | Explain why the same prompt can give different answers, since the module only explains different wordings changing the answer. | missing topic |
+| 35 | note | R6 | The heading 'Prompt Engineering is Dead in 2026' will age badly; something like 'Is prompt engineering dead?' lasts longer. Heading is unchanged in the current file. | error or outdated |
+| 36 | issue | #39 | Add Structured Output: prompting versus constrained decoding (filtering next-token choices by a grammar), with libraries such as Outlines and xgrammar. | missing topic |
 
-### Report — inferred 2026-09-08
-This is where the vocabulary in `ARCHITECTURE.md` §9 comes from, and where the interface problems that
-M8 exists to fix were introduced. The engineering-drawing metaphor is internally consistent and was
-carried through thoroughly; it is also the thing a first-time reader cannot decode.
+###### Context Engineering
 
----
+| # | Kind | From | What it says | Type |
+|---|---|---|---|---|
+| 37 | note | R5 | The sentence that more context worked so people kept adding material reads as true at first and is then contradicted; say plainly that people believed this and it was wrong. | unclear explanation |
+| 38 | note | R6 | Add the sliding-window figures for clarity. | wants a figure/example |
+| 39 | note | R6 | In Context offloading, the three kinds of long-term memory appear only in a figure; a short text explanation of each would be better. | unclear explanation |
 
-## 🏁 Milestone M3: A record that outlives the browser
+###### Code Agents
 
-**Inferred.** 2026-09-01, landing as *"Accounts, organisations, and a record that outlives the browser
-(§14)"* and *"the front matter, a home screen, an alias, and three doors (§15)"*.
+| # | Kind | From | What it says | Type |
+|---|---|---|---|---|
+| 40 | note | R2 | The module is full; consider splitting it into two parts so it does not tire the reader. | too long or dense |
+| 41 | note | R3, R5 | Skills (R3), and Skills, MCP and Hooks together (R5), were hard to follow; R5 says the hardest module so far and needs concrete real-project examples of where each is defined and how it works behind the scenes. | unclear explanation |
+| 42 | note | R5 | MCP: show what MCP Server and Client are as software and how they connect to the agent, ideally with a small app (build a server, connect it to Claude Code or a framework agent). | wants a figure/example |
+| 43 | note | R5 | Hooks: show where hooks are defined and how the coding agent triggers them; PreToolUse and PostToolUse are explained but not placed. | wants a figure/example |
+| 44 | note | R6 | Plan mode: say how to enter it (a command or only by prompting). | missing topic |
 
-Optional Supabase accounts, organisations and assignments, an append-only event log with
-client-minted ids, and a home screen that replaced `index.md` as the published front page.
+###### Harness Engineering
 
-### Report — inferred 2026-09-08
-The important property is that it gates nothing, which is `MANIFESTO.md` rule 9. The seam that joins
-the local and remote halves is a single component, and its absence was the largest defect in this
-work: both halves existed and signing in did nothing.
+| # | Kind | From | What it says | Type |
+|---|---|---|---|---|
+| 45 | note | R5 | The Computational versus Inferential split is hard to connect to Guide and Sensor; give a concrete example, especially a Guide that is Computational. | wants a figure/example |
 
----
+###### Security
 
-## 🏁 Milestone M4: A test suite that survives editing
+| # | Kind | From | What it says | Type |
+|---|---|---|---|---|
+| 46 | note | R6 | Guardrails: a firewall analogy would fit well. | wants a figure/example |
+| 47 | note | R6 | Red teaming: add the attacker's-dilemma idea (the attacker needs one success, the defender needs one detection) and perhaps a section on intrusion detection systems. | missing topic |
 
-**Inferred.** 2026-09-03, landing as *"rebuild the suite around rules, a stored output, and four
-feature checks"*.
+##### Expert
 
-A suite of 1,948 tests that pinned word counts, module numbers, checklist totals and quoted prose was
-cut down to a few hundred that check rules instead. `tests/README.md` records the rule and the four
-layers that replaced the old suite.
+###### Advanced Tools
 
-### Report — inferred 2026-09-08
-The rule is in `ARCHITECTURE.md` §11 and it is still being enforced: four more pinned assertions were
-found and replaced on 2026-09-08, five weeks after this milestone supposedly finished.
+| # | Kind | From | What it says | Type |
+|---|---|---|---|---|
+| 48 | issue | #35 | Compare CLI tools versus MCP tools at the advanced level (issue has no body beyond the title). The curriculum note for this draft already lists 'JSON vs CLI tools'. | missing topic |
 
----
+###### Advanced Agent Architectures
 
-## 🏁 Milestone M5: One central curriculum config
+| # | Kind | From | What it says | Type |
+|---|---|---|---|---|
+| 49 | issue | #6 | A source list for agent architectures: an awesome-agent-architecture repository and an article on the smallest useful agent loop. | other |
 
-**Inferred.** 2026-09-03, four commits in sequence: add the config alongside the frontmatter, make the
-app read it, move the corpus in one atomic commit, then generate the CSS from it.
+###### Advanced Deployment
 
-A module's number stopped being its identity in seven places at once and became its position in
-`mini-courses/curriculum.yaml`.
+| # | Kind | From | What it says | Type |
+|---|---|---|---|---|
+| 50 | issue | #2 | A long planning scratchpad: ready-made harnesses and agent SDKs now exist, so what is left is an agent server, a simple API in front of it, event streaming to the UI (provider events versus AG-UI), Kubernetes, and tracing with Langfuse; many links. Overlaps #64. | missing topic |
 
-### Report — inferred 2026-09-08
-Verified by the strongest gate available at the time: the corpus was untouched through the first
-commits, so the built site had to be byte-identical, and was. M7 is the first real test of the claim
-that reordering is now one line — see its report.
+##### Ecosystem
 
----
+###### Agent Frameworks
 
-## 🏁 Milestone M6: Intermediate and Ecosystem written
+| # | Kind | From | What it says | Type |
+|---|---|---|---|---|
+| 51 | note | R4 | Add code examples for some of the frameworks. | wants a figure/example |
 
-**Inferred.** 2026-09-03 to 2026-09-04, roughly 50 commits, landing as pull request #14.
+###### Inference Providers
 
-Ten modules written from the author's drafts — Coding Agents, Harness Engineering, Loop Engineering,
-Security, Personal Agents, and the five Ecosystem modules — then all of them translated. Bilingual
-coverage reached 19 of 19 written modules.
+| # | Kind | From | What it says | Type |
+|---|---|---|---|---|
+| 52 | note | R4 | Add example screenshots from OpenRouter or other providers. | wants a figure/example |
 
-### Report — inferred 2026-09-08
-Also in this period: 60 commit messages were rewritten to remove AI attribution after the rule
-arrived, and the browser suite went from 29 failures to one known environment flake.
+##### Emerging Trends
 
----
+###### Decision Models
 
-## 🏁 Milestone M7: The curriculum reordered
+| # | Kind | From | What it says | Type |
+|---|---|---|---|---|
+| 53 | issue | #53 | Add a Decision Models module to the trends or intermediate level. A draft module with this title already exists in Emerging Trends; the issue is open. | missing topic |
 
-**Live.** Started 2026-09-08.
+##### Proposed modules not in the curriculum yet
 
-The author rewrote `mini-courses/scratchpad/topics.txt` with a new order and new content notes. The
-curriculum went from 7/7/10/6/1/2 across six categories to **8/8/11/5/1 across five**.
+| # | Kind | From | What it says | Type |
+|---|---|---|---|---|
+| 54 | issue | #64 | Add an 'Advanced Agent Server' module to Expert: what an agent server is and how to choose (Redis Streams, Aegra, SkeinJS, LangGraph CLI/Platform, Vercel AI SDK, LangChain Agent Protocol). Not in the curriculum yet. | missing topic |
+| 55 | issue | #51 | Advanced RAG module: chunking (fixed-size, semantic), agentic and vectorless RAG, embedding size, overlap, hybrid retrieval, RAG architectures. Not in the curriculum yet. | missing topic |
+| 56 | issue | #46 | LLM Evaluation module at Fundamentals level: static metrics (BLEU, ROUGE, METEOR, accuracy/precision, BERTScore-style cosine similarity) and subjective ones (faithfulness, LLM-as-judge, human preference). An 'Advanced LLM Evaluation' draft exists in Expert; there is no Fundamentals one. | missing topic |
+
+#### Across the course
+
+| # | Kind | From | What it says | Type |
+|---|---|---|---|---|
+| 57 | note | R1 | The current level of detail feels right; more would make it boring. | other |
+| 58 | note | R1 | In modules with many concepts, add a quick-look summary table at the end for later recall. (Most ready modules already end with a Summary section; R3 liked the summaries and questions.) | structure/order |
+| 59 | note | R2 | Instead of independent examples per module, grow one example project through Fundamentals: a simple Q&A bot that gains RAG, tools, memory and observability in turn. | structure/order |
+| 60 | note | R2 | Fundamentals is unbalanced: some modules are code-heavy and others are text only. | structure/order |
+| 61 | note | R3 | Week 2 modules were denser than week 1 and harder to digest; the cumulative order helped. | too long or dense |
+| 62 | note, issue | R3, R4, #41 | Humour images (memes) appear only in AI Agents (four of them); R3 enjoyed them and wants other modules enriched, R4 suggests spreading them or cutting some. #41 asks for more screenshots, visuals and memes because text is not enjoyable. | wants a figure/example |
+| 63 | note, issue | R4, #41 | Harness Engineering has a high number of visuals and the reader wants the same level in other modules (R4); #41 names Stitch and LangSmith screenshots in particular. | wants a figure/example |
+| 64 | issue | #44 | Open each module with a problem and then the solution, or with a scenario ('assume you do X, then Y happens, you need Z'). | structure/order |
+| 65 | issue | #63 | Show that many modules have fundamental, intermediate and advanced versions (a macro and micro view): on the home page, README, inside modules, or as a separate page with 3D elements. | structure/order |
+| 66 | issue | #52 | Add personal takes and stories from the authors to make reading more interesting. | other |
+
+#### Already handled
+
+- #43 Search page (closed). The site has search on Ctrl/Cmd+K over a keyword index (commit 4085b02, D95).
+- #61 Add download capability (closed).
+- #40 Add a Trends level for hot topics (open). The level exists in curriculum.yaml as Emerging Trends with four draft modules (LLMs Can't Jump, Video Rendering, Recursive Self-Improvement, Decision Models); #53 is listed above, not here.
+- No reader note is treated as already handled. Search, the For Everyone track and the Turkish and Persian translations answer none of the 11 files' points, and spot checks of the current modules (duplicate link, Hugging Face placement, quantization, heading text) show those notes still apply.
+
+
+## 🏁 Milestone M54: A certificate and an exam per track — WAITING FOR THE AUTHOR'S YES OR NO
+
+Raised by the author on 2026-11-05 as an idea, not decided. **It contradicts the MANIFESTO as it
+stands:** §6 says *"Not a textbook or a certification. No exams, no credentials, no completion
+certificates"*, and rule 11 says *"There is no test, no grade and no assessment"*. So the first
+question for the author is whether it should exist at all, and building it needs a numbered
+decision that amends §6 and rule 11, reconciled with the quick quiz (whose answers are never
+stored). With no server, a certificate proves nothing: anyone can edit their own `localStorage`.
+
+- [ ] In playground round 4: the question first, then, only if the author wants it, the options
+      (where the exam lives, what passing means without a server, what the certificate says).
+      **Not started on 2026-11-06:** building it would amend a MANIFESTO promise (§6, rule 11), and a
+      promise is the author's to change, so the first step is still the author's yes or no.
+
+## 🏁 Milestone M55: The catalog without its Sources count — DONE
+
+The author, 2026-11-06: *"In the catalog page, we have a metadata or column named 'Sources: 15'.
+REMOVE THE SOURCE. No need for such metadata."* Built on `feat/round-3`, ships with M51.
+
+- [x] **Removed from the catalog:** the Sources column in the table view (`SheetIndex.tsx`, its
+      88px column, and the cell in `ModuleRow.tsx`) and the Sources line on the cards
+      (`CatalogCards.tsx`).
+- [x] **Every other reader of the count found first and listed here before anything is deleted**:
+      the module page and `title-block.ts`, and the record's stamp slots (`sheetStamps` in
+      `src/lib/record/derive.ts` gives a module a SOURCES slot when it has five or more sources,
+      and `SignOffMarks.tsx` reads them). The count (`facts.sources`, `countSources`) is removed
+      end to end only where nothing the author keeps still reads it (D88); `ARCHITECTURE.md` is
+      updated to match.
+- [x] **Decision for the author:** does the module page keep its Sources count? He asked only
+      about the catalog.
+- [x] The signpost stall's "Sources" arrow on the home page is art, not metadata, and stays.
+- [x] The catalog's views measured at 1440 and 390 after the column goes (no gap, no sideways
+      scroll).
+
+**Report, 2026-11-06.** The readers, found before deleting: the table column and the card fact, the
+manifest row's field, `facts.sources`, the loader's `sources` and `countSources`, the record's facts
+type, and a dead `corpusTotals`. The module page's own question answered itself: since M21 it prints
+only minutes and words, so it had no count to keep. The SOURCES stamp slot was already gone. All of it
+removed end to end (D88), and the review then found the last readers: `externalLinks` and
+`distinctExternalLinks` had nothing left but their own tests, a dead `DRAFT_STRIP`, stale comments,
+and an e2e spec still counting eight table headers, all removed or corrected. The freed 88px let
+`Length` grow to 176 so `2,498 W · 25 MIN` fits one line at 1440 (measured on the live site, it
+wrapped before). **Two Haiku reviews (xhigh):** the browser one found no Sources anywhere, no clipped
+header, 38 of 38 lengths on one line and no sideways scroll on either track or in dark mode.
+
+## 🏁 Milestone M56: Search — DECIDED (D95, D97): N2 ON O1
+
+Issue #43: search not only module and level names but their content, by keyword or even
+semantically. The author, 2026-11-06: options for where it goes (his own idea: a wide, centred,
+white search bar in the navbar that opens a dropdown of advanced search when clicked), **at least
+five designs**, and the algorithm and tech stack to decide, knowing the trade-offs. Recorded as a
+numbered decision when picked; built in M59.
+
+- [x] **Page N, placement and results:** at least five designs, working on real module titles, at
+      every width the bar changes at (1440, 1180, 1024, 880, 767 and 390), showing how each fits
+      beside the switch, the flag and the menu: the author's centred bar with its dropdown, and
+      others (a command palette on a key, a search page of its own, a field in the catalog's filter
+      bar, an icon that expands in the bar). Each shows the **advanced dropdown** (track, level,
+      language, and whether to search titles, prose or code) and **how a result reads** (title, a
+      snippet, its level and track).
+- [x] **Page O, the engine:** for a site with no server, each option tried on the real corpus with
+      its index size per language (gzipped), its query time, and when it loads (on first focus,
+      never on page load): a build-time index with a small library (MiniSearch, FlexSearch, Lunr),
+      Pagefind (an index built from the export, loaded in chunks), a semantic search with
+      embeddings computed at build time and a model in the browser (its download size and its
+      first-query time on a mid-range phone stated plainly), and a hybrid (keyword first, the
+      semantic layer loaded on demand). How each handles Turkish (dotted and dotless i, ğ, ş) and
+      Persian (the zero-width non-joiner, Arabic and Persian letter forms).
+- [x] Pages N and O built in `playground/2026-11-round-4/` (six placements; four engines measured
+      on the corpus). **The author picked N2** (a search window on Ctrl/Cmd+K or `/`, from an icon in
+      the bar) **and O1** (a keyword index built with the site), 2026-11-06, recorded as D95.
+- [x] ~~**Still open:** the default scope (the reader's own track and language, or everything), and
+      that unwritten For Everyone modules stay out of the index (recommended).~~ Chosen in the build,
+      for the author to overturn: the reader's own track and language with one switch to everything,
+      and unwritten modules absent (D97).
+
+## ~~🏁 Milestone M57: Download (issue #61)~~ — CANCELLED (D96)
+
+The author, 2026-11-06, after seeing the round-4 designs: no download. *"anyone who wanna read
+them, must visit the website live. That's the currency they should pay."* The download pages (P, Q)
+were removed from the playground and issue #61 was closed with the reason. M60, its build, is
+cancelled with it.
+
+## 🏁 Milestone M59: Search built (N2 on O1) — DONE (D95, D97, D99)
+
+Branches from `main` after M51. Builds D95: a search window on Ctrl/Cmd+K or `/`, opened from an
+icon in the bar, over a MiniSearch index built at build time per language with a normaliser for
+Turkish and Persian, loaded on the first opening; `ARCHITECTURE.md` gains the index and how it is
+built. The icon must not push Catalog or Progress out of view at 390px (D91's measurement).
+
+- [x] Tests that hold for any content: terms are taken at test time from the corpus itself (a
+      module's title, a word drawn from its body), never typed into the test; each language finds
+      its own pages; unwritten For Everyone modules are not found; the bar and its dropdown work by
+      keyboard; the index loads on first focus, not on page load.
+- [x] The index size and the query time measured and recorded against the targets the author picks
+      in M56.
+
+**Report, 2026-11-06.** As ARCHITECTURE §7 describes. **Measured** gzipped indexes: English 76.9 KB,
+Turkish 100.3 KB, Persian 101.2 KB, against O1's estimate of 64 to 88 KB for the index alone; loaded
+on the first opening only. The default scope is D97's. The bar on a phone was full to the pixel at 390
+with the flag beside the switch (390 of 390); the icon's 37px came from the bar's own spacing at the
+language's 767px breakpoint (a 480px query was refused by the breakpoint guard, and shrinking the
+switch's segments was refused by the touch-bound test), and `tracks.spec.ts` and `search.spec.ts` hold
+Catalog and Progress inside the navigation at 390. Two indexing rules the corpus forced are D99.
+**Mutations:** the index fetched on mount (the load test red); `/` unbound (the keys test red); an
+unwritten For Everyone module indexed (the unit test red). The first attempt at the first mutation did
+not compile, so its test ran against the old build and passed; it was redone, and a mutation is now
+only counted after its build succeeds.
+
+**Two Haiku reviews (xhigh) and what they changed.** The browser one: the meta, status and placeholder
+text failed AA in the faint ink (3.30:1 light, 2.49:1 dark), now the muted one; a load failure never
+cleared; marks ignored the normaliser and the excerpt was the section's first 200 characters, so most
+rows showed no reason they matched (now a window around the first match, headings marked too, excerpts
+stored to 400 characters); planned modules and References sections outranked written explanations;
+Escape only emptied the field; Tab left the window; Enter in the field did nothing; each link's name
+was 300 characters. The code one: a Persian word typed with a non-joiner or a space missed text that
+wrote it joined; each level was in all three indexes and marked Persian on a Persian page; the track
+went stale on pages in neither track; Ctrl+K opened under the shortcut sheet; prefix matching at two
+letters ("go" matched 97 sections); a double fetch; a drag closing the window; alef forms not folded.
+All fixed, and it compared every section's id with the page's own headings: no mismatch in the
+corpus, now a test. The full browser suite then failed four record tests that counted any
+`<dialog>` as a raised one; they now count an open one. **Indexes after the fixes:** 89.3, 113.5
+and 116.4 KB gzipped. Left as it is: the magnifier is 33px like the bar's other icons (bounded in
+`responsive.spec.ts`), and For Everyone finds no module until one is written (D97).
+
+## ~~🏁 Milestone M60: Download built~~ — CANCELLED (D96)
+
+## 🏁 Milestone M61: The fifth level becomes Emerging Trends — SHIPPED AS PR #66
+
+Issue #40 and the author, 2026-11-06 (D94): "Protocols & Specs" renamed **Emerging Trends**, the
+protocols reference moved into Ecosystem, and four draft modules scaffolded for later writing.
+
+- [x] `curriculum.yaml`: the reference listed last in Ecosystem; the level `trends`, Emerging
+      Trends, with LLMs Can't Jump, Video Rendering, Recursive Self-Improvement and Decision Models
+      (drafts, in English and Turkish, each saying what it will cover). Folder
+      `mini-courses/5_trends`; `lokum-modules.css` regenerated.
+- [x] The slug renamed in the app (`categories.ts`, the two stylesheets that key on it, the
+      mascot's face, the image-copy script) and in the tests that name the real level; a manifest
+      test that pinned "the fifth level has one module" rewritten as a rule over every level.
+- [x] Old addresses forward (`src/lib/content/moved.ts`): `/sheets/protocols/`,
+      `/courses/protocols/`, and the reference's old page in both tracks; the build's link gate
+      passes over 179 pages.
+- [x] `README.md`, `mini-courses/index.md`, `ROADMAP.md` and `scratchpad/topics.txt` (the four
+      modules as 34 to 37, and #40's other ideas as candidates) updated; `ARCHITECTURE.md` counts
+      re-measured (37 modules, 19 ready).
+- [x] Also, at the author's request the same day: **Advanced LLM Evaluation** (issue #46) added to
+      Expert before Advanced Training, as a draft in English and Turkish listing #46's metrics:
+      BLEU, ROUGE, METEOR, accuracy and precision, BERTScore; faithfulness, LLM-as-judge, human
+      preference. Expert now has 12 modules, the course 38 (19 ready).
+- [x] The full gate and the browser suite on the branch, shipped with M47 and the round-3 playground
+      as PR #66 (2026-11-06), ahead of M51.
+
+## 🏁 Milestone M62: Caravan, the trends timeline — PLACEHOLDER, LATER
+
+Issue #40's comment: a timeline of what was trending each month or season since ChatGPT (late
+2022), with expandable nodes, high-level only, on a page of its own and not in the modules'
+markdown, kept up over time. Named **Caravan** by the author (2026-11-06); the decision is posted
+on issue #40 so it is not lost. Nothing is built until the author takes it up.
+
+- [ ] A playground round when the author wants it: the timeline's design at desktop and phone
+      width; the pipeline that collects each trend's seed (which paper, article, feature or news,
+      from sources such as Google, YouTube, Medium and LinkedIn, and existing trackers on GitHub);
+      what one node holds (a word limit and a source link); and how often it is updated.
+
+Not milestones, but open: four old branches with commits found nowhere else (`backup/pre-scrub-2026-09-04`,
+`merge/main-into-revision`, `origin/backup/before-local-user`, `origin/feat/mkdocs`) wait for the
+author's word to delete; M23 (the interface's own strings) stays written and not started; PR #57 is
+the colleague's and stays unmerged without the author's word (D90).
+
+## 🏁 Milestone M63: The gate revised — larger people, a clear way in, plainer stories — DONE
+
+The author, 2026-11-06, after seeing M58 live: *"the characters in the homepage in the very
+beginning are very small and should become about 75% larger, while the 'Open the curriculum' is
+moved a bit upper since currently it sits right at the edge of the second row … the story of piri
+reis is difficult to understand … dariush should come from Iran not Tabriz … bezirgan and sepahi
+should get a story as well in the next stall."* Branch `feat/m63-gate-revision`, one PR.
 
 ### Deliverables
 
-- [x] `curriculum.yaml` rewritten to the new shape
-- [x] Observability moved from Ecosystem to Fundamentals, keeping its written text
-- [x] New stubs for Generative UI and Advanced Coding Agents, both bilingual
-- [x] `advanced_architectures` renamed `advanced_agent_architectures`
-- [x] The Optional category removed, its two modules folded into Advanced Deployment
-- [x] All 66 series rails regenerated from the config
-- [x] The Optional category removed from the application, the mascot, the CSS and the learning paths
-- [x] Every test that enumerated six categories or pinned a module number updated or derived
-- [ ] Committed and pushed
+- [x] **The people 75% larger on the walk's opening frame**, still standing on the pavement, with
+      their captions clear of each other and of the window at every walk size.
+- [x] **"Open the curriculum" moved up**, clear of the wall's top edge on the walk.
+- [x] **Piri's story rewritten plainly; Dariush comes from Iran**, in the site and the playground.
+- [x] **The Sipahi and the Bezirgân tell a story too**, opened the same way as the people at the
+      gate (pointing, focus, tap), at the choice between the tracks.
 
 ### Acceptance criteria
 
-- `npm run typecheck`, `npm test`, `npm run build` and both link gates pass. **Met:** typecheck clean,
-  2,033 tests, 56 pages, every internal link in the export resolves.
-- Playwright shows no regression against a clean build of the parent commit. **Met:** the only
-  reproducible failures are four `site-footer` cases whose cause is proven to be that the new and
-  renamed files are not yet committed, so `git log -- <path>` returns nothing and the page prints no
-  revision.
-- Zero EN/TR structural mismatches across the corpus. **Met:** 33 modules, 0 mismatches.
+- [x] The cast spec still passes at every walk size (no caption touches another or leaves the
+      window), and a new test opens each track character's story; each new guard seen failing
+      under a mutation.
+- [x] Screenshots read at 1920x800, 1440x900 and 1024x768 on the walk, and the full gate green.
 
-### Report — 2026-09-08
-M5's claim held up: the order itself was one line per module. The cost was everywhere *else* — a
-category removal reached the type union, the mascot's hidden sixth face, four CSS blocks, the record
-report's hue table, the learning paths, an image script and eight test files. Two defects were caused
-by the move and caught by looking at the built output rather than at the tests: the moved
-Observability module's sibling links broke, and three of its sentences addressed the reader as having
-already read modules that now come after it.
-
----
-
-## 🏁 Milestone M8: The interface revised
-
-**Live.** Started 2026-09-08. **Active milestone.**
-
-The author's judgement: *"It is far from a best-practice, professional and easy-to-use UI."* Thirteen
-specific flaws were named, from unfamiliar vocabulary to a diagram that paints over the sidebars. The
-functionality stays; the presentation is replaced.
-
-### Deliverables
-
-- [x] A playground of standalone alternatives to choose from, at `playground/`
-- [x] Three complete vocabulary sets, so the naming can be settled before any screen is built
-- [x] Four themes, each from a different UI language, one of them built from the project's own banner
-- [x] Three alternatives each for navbar, catalog, module layout, sidebar, completion, code and
-      diagram colour, progress page, and home
-- [x] The diagram overflow bug reproduced and diagnosed rather than guessed at
-- [x] Four palettes of the chosen theme, at a quarter of its volume, generated from one template
-- [x] The author chooses: ten answers, recorded below and in `playground/index.html`
-- [ ] ~~Naming and design tokens applied~~ → **M9**
-- [ ] ~~The shell: one navbar on every page, and the collapsible module list~~ → **M10**
-- [ ] ~~The module page, including the diagram containment fix~~ → **M11**
-- [ ] ~~The catalog, with filters at the top and levels separated by colour~~ → **M12**
-- [ ] ~~The home page~~ → **M13**
-- [ ] ~~Progress and account, folding the four routes that currently compete~~ → **M14**
-
-**The build was broken out into M9 to M14** at the author's request, once the choices were made. M8
-stays open as the umbrella: it is done when all six are done and its acceptance criteria below hold
-across the whole site, not one screen at a time.
-
-### What was chosen — 2026-09-08
-
-| Question | Chosen | Recorded in |
-|---|---|---|
-| Vocabulary | **C, Engineering curriculum** — Catalog, Level, Module, Complete, Requires | O1 |
-| Theme | **T4 Bazaar**, colours unchanged, ground **G3 `#FDFBF7`** | D12, O4 |
-| Navbar | **A** — one row, a dropdown per level | — |
-| Catalog | **all three views behind a toggle**: Overview, Cards, Table | D13 |
-| Module layout | the layout already in T4, with a centred full-width column | D15 |
-| Completion | **A** at the end of a module, **C** on home and progress | D14 |
-| Code and diagrams | **dark slab** | — |
-| Progress and account | **A** | — |
-| Home | **A** | — |
-| Module list | the one already in T4, foldable, current level enlarged | D15 |
-
-### Acceptance criteria
-
-- Every capability in `ARCHITECTURE.md` §3 to §8 still works: completion, undo, checklist, quick
-  check, sources, submittals, streak, role paths, export, import, erase, optional sign-in, both
-  languages.
-- A reader who has never seen the site can find a module, read it and mark it done without being
-  taught anything.
-- No page states a word from the left column of `ARCHITECTURE.md` §9.
-- A diagram wider than the text column scrolls inside its own box, verified in a browser at 1440px:
-  **no element of a diagram may have a right edge beyond its column, without a clipping ancestor.**
-- The full gate stays green, and no test pins a fact about the content.
-
-### Report — 2026-09-09
-
-**All six stages are built.** M9 (the vocabulary and the ground), M10 (the shell), M11 (the module
-page), M12 (the catalog), M13 (the home page) and M14 (progress and account) are each done, each
-shipped on its own and left the site working, and the gate is green at every one of them.
-
-Five of M8's own acceptance criteria are met and measured, and they are measured in the six reports
-rather than restated here: every capability in §3 to §8 still works, no route or reader record moved,
-`mini-courses/` is untouched, no test pins a fact about the content, and the diagram containment is
-asserted at three viewports on every written module.
-
-**One criterion is not ours to close.** *"A reader who has never seen the site can find a module, read
-it and mark it done without being taught anything."* That is a judgement about a first-time reader and
-the author is the only person who can make it, on the built site. Until then this milestone stays
-open — the work is done, the claim is not made.
-
-**Two things the six stages left behind, both recorded rather than tidied:**
-
-- **O2's second half.** The module info panel's four unnamed rows, and its type: it is now the last
-  surface on the site still in 11px tracked-out uppercase mono, because M13 converted
-  `.hl-panel-title` off it. M14 was named as the natural place for that decision and was the wrong
-  guess — it rebuilt the progress surfaces and never touched the module page.
-- **`TitleBlock` variant A** is still rendered by no page, and **keeping it is now a decision rather
-  than an omission.** M11 kept it against M12 and M14 needing it and said to delete it there if they
-  did not. Neither did. But O2's open half is a question about exactly those rows — which of the
-  twelve a module page should claim, and what the survivors look like now that `.hl-panel-title` has
-  moved off 11px tracked-out mono and this block is the last surface on the site still in it. A panel
-  is a shape that question may answer to, so deleting the component would cost five unit cases and a
-  stylesheet block to remove the thing the next decision might restore. Its docblock says so, and
-  says that whoever closes O2 decides it.
-
+**Report, 2026-11-06.** The walk draws the people `WALK_GROW` (1.75) times their scale, set by
+`motion.ts` beside `--spread` (`chase.layout`), and capped at 1.25 times the spread where the facade
+is too narrow to stand them that far apart; a page that does not walk keeps them at 1, since at
+900px the art box leaves no room between them. The feet stay on the pavement and the chase converts
+by the same factor. The way in sits 4px under the lede on the walk and the arch starts 40 to 80px
+below it (the art's facade paints above its box, so its wall had reached the button). Piri: "Piri
+draws maps for sailors. Where he is not sure of a coast, he writes so on the map, because a wrong
+map is worse than no map." Dariush's carpets come from Iran. The Sipahi's and the Bezirgân's
+captions are buttons with a story cloud, worked by `street/clouds.ts` like the cast; on the walk a
+focused caption brings the walk to the choice, not back to its start. **Tests and mutations:** a
+test that each track's character tells a story (red when the clouds ignore the new captions) and one
+that the walk draws the people larger than the still picture at the same window (red with
+`WALK_GROW` at 1); the caption test in `home.spec.ts` reads the accessible name, since a caption now
+holds its hidden story. **Gate:** typecheck, 1,153 unit tests, the link check, 496 browser tests
+passed and 10 skipped.
 
 ---
 
-## 🏁 Milestone M9: The vocabulary and the ground
-
-**Done, 2026-09-08.** Four commits: the vocabulary, the palette, the type and
-radius scale, and the colour names.
-
-Set C, *Engineering curriculum*, replaces the drawing-set vocabulary everywhere a reader can see it,
-and T4's tokens replace the Hidden Line tokens. Nothing about behaviour changes in this milestone;
-if a page does something different afterwards, that is a defect.
-
-**This milestone is where the whole revision can go quietly wrong**, because it is the one that
-touches every file and changes nothing you can click. Do the vocabulary and the tokens as two
-commits, not one, so a contrast regression and a rename regression cannot arrive together.
-
-### Deliverables
-
-- [x] The five renames applied to every reader-visible string: subsystem → **Level**, sheet →
-      **Module**, index sheet → **Catalog**, sign-off → **Complete**, feeds/drawing → **Requires**,
-      the register → **My progress**, the drafter → **you**
-- [x] `ARCHITECTURE.md` §9's table updated: each retired term struck through with its replacement
-- [x] `tests/unit/copy-register.test.ts` extended so a retired word in a reader-visible string fails
-- [x] The T4 token set written into `src/app/lokum.css`, ground **`#FDFBF7`**, raised surfaces white
-- [x] **The two line tokens split by job**: `line` / `line-strong` for grouping, `on-surface-faint`
-      `#948D7D` for the boundary that identifies an interactive control. On this ground no line colour
-      in the palette reaches 3:1, so a control bordered with `line-strong` is unperceivable at 2.07:1
-      (O4)
-- [x] `button-quiet`, the inputs, the search field and the catalog's view toggle moved onto the
-      interactive line token — this is a fix, not a restyle
-- [x] Every card, panel and dropdown keeps its border: on a ground at 96.6% luminance, white sits
-      1.035 above it and the fill separates nothing
-- [x] `src/app/lokum-modules.css` regenerated in the same commit, per the root `CLAUDE.md`
-- [x] The five level colours mapped to T4's, and `src/components/mascot/geometry.ts` checked, since it
-      names faces after categories
-- [x] Turkish checked alongside English: the vocabulary change is bilingual or it is half done
-
-### Acceptance criteria
-
-- **No page states a word from the left column of `ARCHITECTURE.md` §9**, in either language. A grep
-  over the export, not over the source.
-- The copy-register test fails when a retired word is put back, verified by putting one back.
-- Every contrast and palette test recomputes from the shipped stylesheet and passes; **the tick is a
-  filled disc and clears 3:1 against the ground**, because it cannot clear 4.5:1 as text (D12).
-- **Every interactive control's boundary clears 3:1** against the surface behind it, measured from the
-  shipped stylesheet. A test that passes when `button-quiet` is put back on `line-strong` protects
-  nothing, so put it back once and watch it fail.
-- **`on-surface-faint` carries no sentence anywhere.** It is 3.19:1 on this ground, which is under the
-  4.5:1 text floor; it is for a count, a unit or a status word repeated elsewhere on the page.
-- The forced-colors e2e spec still passes: colour is never the only signal.
-- No behaviour changed. The record, the routes, the slugs and the reader's saved progress are
-  untouched, and `git status` shows nothing under `mini-courses/`.
-
-### Report — 2026-09-08
-
-**Done, in four commits.** The headline number is measured rather than asserted:
-stripping the tags from every file in `out/` and grepping the visible text found
-**1,660 occurrences of the retired vocabulary across 56 pages before, and 0
-after.**
-
-**What the work actually turned out to be.** Not a find-and-replace. Four
-hazards were caught by dry-running the rename before writing anything, and each
-one would have shipped a defect:
-
-1. **Identifiers inside `${...}`.** A template literal's interpolation is code.
-   The first pass rewrote `${thousands(sheet.extent)}` to
-   `${thousands(module.length)}`.
-2. **Type members and discriminants.** `XpSource = 'SIGN-OFF'`,
-   `EdgeKind = 'requires'`, `kind: 'sheet'`. Renaming an object key without its
-   union is a type error, which typecheck would have caught; renaming both
-   silently changes a discriminant, which it would not.
-3. **Word boundaries.** Without them `WITHDRAWN` became `WITHREADY` and
-   `stylesheet` became `stylemodule`.
-4. **A blanket JSX pass is impossible in `.tsx`.** An arrow function makes every
-   `=>` look like the opening of a text node, so the pass was rewriting
-   `sheet.drawn` to `module.ready`. It was written, dry-run, and thrown away;
-   the residue was done by hand instead.
-
-**What was NOT renamed, deliberately.** Storage keys, DB columns, CSS classes,
-React props and type members keep the left column of `ARCHITECTURE.md` §9. A
-reader's saved history is keyed on them, so renaming one for a label would
-invalidate every record. §9 now states that line explicitly.
-
-**The guard found what the export grep could not.** The new whole-of-`src/` scan
-in `copy-register.test.ts` caught two strings that never appear in `out/`,
-because they only exist in the record document the browser generates at run
-time: "What signing off required" and the account page's lead. Mutation-tested —
-putting "Sheets you sign off" back turns it red.
-
-**The palette, and the three things measuring changed.** Ground `#FDFBF7`,
-raised surfaces white, cobalt as the accent, in both themes, every ratio
-computed from the shipped stylesheet:
-
-- Muted text on the old sand was **4.21:1**. The sand was lightened rather than
-  the text darkened.
-- `ink-faint` and `line-strong` cannot be one value: one must stay *under* 3:1
-  or it becomes usable as a meaningful mark, and the other must clear it. They
-  were briefly both `#948D7D`.
-- **T4's Intermediate blue is the accent hue.** A level hue within 20° of the
-  accent is one a reader can mistake for a link, so Intermediate moved to 240.
-  And lightening the sand made the mid-tone level hues *worse* against it —
-  3.00:1 against a 3.10 floor — so their shared lightness dropped to 0.575.
-
-**Four tests changed because they recorded the retired system rather than a
-rule**, which is the distinction `tests/README.md` draws: twenty pinned contrast
-ratios became floors carried by each pair's *job*; T2 ("the accent cannot carry
-text") is asserted in reverse, so re-creating it names itself; the shared
-lightness asserts *one* lightness rather than `0.605`; and the token-reader test
-asserts a shape instead of `--color-ink`'s literal value.
-
-**One thing could not be verified here.** This environment has no network, so
-Manrope cannot be fetched and the local build falls back. Everything measured
-locally was measured against the fallback metric; the face itself is confirmed
-on the first build with network.
-
-**Left for the milestone that applies them:** the radius tokens and the two
-shape tokens are set but nothing uses them yet, and the zero-radius assertions
-in `sheet.test.tsx` and `record-index.spec.ts` still pass because the
-stylesheets have no `border-radius` yet. Both move in M10 and M11, with the
-components that apply them.
-
----
-
-## 🏁 Milestone M10: The shell
-
-One navbar on every route, and a module list that gets out of the way. This is the milestone that
-answers "no active, unified navbar" and "the left and right components should anchor to the edges".
-
-### Deliverables
-
-- [x] Navbar option **A**: one row, on every route, with a dropdown per level
-- [x] The current route marked in it, and the current level marked in the dropdown
-- [x] The module list as an accordion, one section per level, the current level **enlarged with a
-      coloured edge** and its count in the reader's own ink rather than grey
-- [x] It folds away in 200ms, with a tab pinned to the left edge to bring it back, and the fold
-      remembered per reader
-- [x] `prefers-reduced-motion` respected: the fold is instant, not animated
-- [x] Both rails anchored to the window edges, with the content column centred between them (D15)
-- [x] The completion tick as a filled disc, large enough to read at a glance
-
-### Acceptance criteria
-
-- Every route carries the same navbar, verified by loading all 17 in a browser and comparing.
-- The fold moves the column and restores it, verified by driving it: the list's measured width goes
-  to zero and back. **Not by reading the CSS** — the first version of that tab was unclickable under a
-  sticky header and only a browser found it.
-- Keyboard reaches the dropdown, the fold and the restore tab, with a visible focus ring on each.
-- At 390px the list is a sheet rather than a column, and no page scrolls sideways
-  (`responsive.spec.ts` runs at 1440, 1024 and 390).
-- The reader's fold preference is written through `src/lib/record/store.ts` or not stored at all.
-  **Not a second writer** (`ARCHITECTURE.md` §5).
-
-### Report — 2026-09-08 (the navbar) and 2026-09-09 (the rest)
-
-**The navbar landed first**, on 2026-09-08. Four destinations, the current one
-marked twice (a fill and a rule, so forced colours keeps one), a dropdown per
-level with each level's own hue and its number beside it, and the trail moved to
-its own row under it rather than competing for the same 56px.
-
-**No JavaScript in the dropdown**, and that is a correctness point rather than a
-saving: the export is static and a reader can click a link in the first frame, so
-a menu that needs `useState` to open does nothing until the bundle lands. It is a
-native `<details>` disclosure.
-
-**The first version of it was keyboard-inaccessible and my own check passed it.**
-It hid the panel with `visibility: hidden` and revealed it on `:focus-within`,
-which is circular — `visibility: hidden` removes an element from the tab order,
-so focus can never get inside to fire the rule that would show it. The check
-called `.focus()` programmatically, which *does* fire `:focus-within`. Pressing
-Tab forty times in Chrome and printing what had focus showed the five level links
-were not in the order at all. See `logs/BRAINSTORM.md` **D17**, which carries the
-correction and the rule: to check a keyboard path, press the key, and assert both
-halves of a disclosure, because either alone passes for the wrong reason.
-
----
-
-**The remaining four deliverables landed on 2026-09-09, together with M11**, for
-the reason the previous report gave: the left rail held the contents rather than
-the curriculum, so building the list meant the rail swap M11 needed anyway.
-
-**The accordion.** `src/components/curriculum/CurriculumRail.tsx`, a server
-component: five native `<details>`, one per level, with the current level's
-`open` set at build time. No JavaScript, for the same reason the navbar has
-none. The current level is told apart **four ways at once** rather than one,
-because colour is never the only carrier — a 4px edge in its own hue, the sand
-fill, a step up in size, and its count moved from grey to the reader's own ink.
-The author asked for exactly that: *"when we are in a specific level, its tab in
-the left sidebar must imply it."*
-
-**The tick is a 17px teal disc with a white check**, revealed by channel A: a
-fourth generated selector list in `scripts/curriculum-css.mjs` reveals the mark
-for a module the boot script stamped, so a reader's completed modules are ticked
-**before the first paint** with no React at all. It carries the word `Complete`
-inside it for a screen reader, revealed by the same rule so the two cannot
-disagree, and the 17px box is reserved whether or not a tick ever appears, so a
-completion does not shift the row it lands on. The author's words: *"the green
-tick … should be bolder and larger. currently it is too small."*
-
-**The fold, and the thing that made it work.** 200ms on DESIGN.md's own curve,
-with a restore tab pinned to the window's left edge and vertically centred. The
-part that is not obvious: **the first grid track is `auto`, not `262px`.**
-MEASURED — with a fixed track the rail's width animated to zero and the column
-came back **974px, exactly what it had been**, so the prose did not move and the
-fold looked broken. With an `auto` track the column goes 974 → 1236 in the same
-200ms. The folded rail is `visibility: hidden`, which is what takes its 33 links
-out of the tab order, and each of the two controls hands focus to the other so a
-keyboard reader is never stranded.
-
-**Everything above was driven in a browser, and here is what it measured.**
-
-| | measured |
-|---|---|
-| rail, open | x 0 → 262 |
-| contents rail | x 1236 → 1440 |
-| column track | 974px, gutter 48.96px each side |
-| the measure | **781px**, centred, clearing each rail by **97px** |
-| folded | rail 0px, column 1236px, gutters 228px |
-| fold, `prefers-reduced-motion` | `transition-duration: 1e-05s`, 262 → 0 in 40ms |
-| fold, motion on | `0.2s`, 106px at 40ms, 0px at 440ms |
-| restore tab | 57 × 120 at x=0, y=390 — `elementFromPoint` returns the tab itself |
-| tab order, open | … trail · **hide** · level · level · module ×8 … |
-| tab order, folded | … trail · **restore** · (no level, no module, no hide) |
-| the fold, stored | `prefs.railFolded: true`, and no second `localStorage` key |
-
-**781px and not 814px**, which is the number D15 recorded. `ch` is the advance
-width of `0` in whatever face resolved, and 814 was measured before the webfont
-was being fetched; `document.fonts` reports Manrope loaded on this build. The
-pixel count is not the rule and no test asserts it — `anatomy.spec.ts` measures
-an 80ch box inside the prose itself and compares against that.
-
-**The fold is written through `store.ts` and nowhere else**, as
-`ARCHITECTURE.md` §5 requires. `prefs.railFolded` is the third widening of
-`prefs`, it needs no migration rung, and the boot script stamps it **before**
-the `carriesNothing` gate — a reader whose only stored state is a folded rail
-carries nothing by §15.11's rule, and stamping after the gate would have sprung
-the rail open on every load for exactly the readers who asked for it to be shut.
-
-**One thing removed rather than restyled.** §4.2's four corner registration
-marks framed a 1152px content box. A bleed page has no such box, so they floated
-at an edge nothing else used — and they are a second decorative motif on a
-system that spends its ornament once. They are gone from the module page and
-still on every route that keeps the shell.
-
-### The gate, and what the four red ones turned out to be
-
-**The full CI order, on a machine with nothing else running:**
-
-| | |
-|---|---|
-| `npm run typecheck` | clean |
-| `npm test` | **2,107 passed**, 77 files (2,042 at the start of the milestone) |
-| `npm run build` | clean, **56 HTML files** in `out/` (Next reports 57 generated pages; one is the not-found boundary, which the export writes as `404.html` rather than as a directory) |
-| `npx playwright test` | **435 passed, 0 failed, 19 skipped** (355 / 4 / 19 at the start) |
-
-**Run the four with nothing else running, and that is not a style note.** Two
-red results in this session were produced by me running `npm test` while a
-Playwright suite held eight Chrome workers: a corpus-wide vitest case over-ran
-its 5s timeout, and a channel-B hydration test in `record-pages.spec.ts` lost its
-race. Both pass alone, three times each. The root `CLAUDE.md`'s trap list already
-says not to start a server during a Playwright run; the same applies to the unit
-suite, for the same reason.
-
-**The starting point was 355 passed and 4 failed**, and the diagnosis PROGRESS.md
-carried for two of the four was wrong in the same way both times: **they were
-races in the harness, not palette defects.**
-`logs/BRAINSTORM.md` **D20** has the measurements. In short:
-
-1. **`accessibility.spec.ts:330`** — the manifest's `#` column at `1.84:1` in
-   dark. The ink was already the dark theme's and the ground was still the light
-   theme's: the sample landed 32ms into a 90ms `background-color` cross-fade.
-   The theme helper counted two frames after lifting its transition freeze;
-   Chrome starts the transition **on** the thaw frame. It waits for the
-   transitions now. All 31 accessibility tests pass, including the code-comment
-   contrast check on the new slab ground.
-2. **`anatomy.spec.ts:92`** — "module 13 still has a figure that breaks the
-   measure". Two defects in one test: it waited on `networkidle` while mermaid
-   injects after a dynamic import, and it pinned a fact about the content, which
-   `tests/README.md` forbids. **It is deleted, with the behaviour it described**
-   — nothing breaks out of the measure any more — and `containment.spec.ts`
-   asserts the rule in its place.
-3. **`home.spec.ts:271` and `record-sheet.spec.ts:307`** — both the same
-   `firstPaint` sampling race, and both green now: the helper waits for its probe
-   instead of reading it once. Two MORE in that family surfaced and were cleared
-   the same way, and a third assertion in it was a proxy rather than a property
-   (D20 again).
-
-**One test remains intermittent and it is not in this family.**
-`theme.spec.ts:99` ("a stored light preference beats a dark system setting,
-before first paint") went flaky once in one full run and passed on retry. It is
-the theme boot script's own channel-A probe, the same shape as the record's,
-and it was not touched by this work.
-
-**And two acceptance criteria had nothing checking them.** Both are now
-measured, and writing the second one turned up something worth keeping:
-
-- **"Every route carries the same navbar, verified by loading all 17 in a
-  browser and comparing"** — `navigation.spec.ts` loads sixteen routes plus a
-  module page and compares the destinations, the level list, and how many
-  destinations are marked current, which must never exceed one.
-- **"Mermaid text stays legible on the dark slab, and the diagram palette clears
-  3:1 for graphics"** — `mermaid.spec.ts` composites each label's colour up its
-  ancestor chain and recomputes: **16 labels at worst 12.82:1 and 28 strokes at
-  worst 5.21:1, identical in both themes**, which is the claim, because a slab
-  that quietly inherited the page's palette would pass in one theme and fail in
-  the other. Mutation-tested: putting `--color-line-strong` back on `slab-line`
-  inside the slab reports **1.36:1** and fails. And mermaid 11 lays a node's
-  label out as HTML inside a `foreignObject`, keeping `<text>` for the edge
-  labels only — 13 `<text>` elements carrying 2 labels between them against 14
-  `.nodeLabel` elements on one module — so a selector of either alone measures a
-  third of the drawing and calls it the whole.
-
----
-
-## 🏁 Milestone M11: The module page
-
-The screen the reader spends their time on, and the one carrying the only flaw in the thirteen that
-was not a matter of taste.
-
-### Deliverables
-
-- [x] T4's layout, with the content column centred and spanning its container, capped so it stays
-      readable (D15: 80ch, measured at 814px on a 1440px window)
-- [x] Code blocks and diagrams as a **dark slab**
-- [x] **The diagram containment fix**: a diagram wider than the column scrolls inside its own box
-- [x] The right rail cut back to what a reader uses, and what leaves it recorded in O2 if it has no
-      home
-- [x] Completion control **A** at the end of the module: one button where the reader already is
-- [x] Prev and next kept, in the vocabulary of set C
-
-### Acceptance criteria
-
-- **In Chrome at 1440px, on the widest diagram in the corpus: no element of a diagram may have a
-  right edge beyond its column without a clipping ancestor.** The current failure is 90 to 145
-  elements per page outside the column, from a 1,423px SVG injected into a 656px column (D10). The
-  check has to run after mermaid has injected, because the overflow does not exist before that.
-- The same at 390px and 1024px.
-- Every capability of the module page still works: completion, undo, checklist, quick check, sources,
-  submittals, both languages.
-- Mermaid text stays legible on the dark slab, and the diagram palette clears 3:1 for graphics.
-- No test pins a word count, a table count or a module number.
-
-### Report — 2026-09-09
-
-**Done, with M10's remainder, in one piece of work.** The rail swap is why: the
-left rail held the contents and the right held twelve rows of metadata, and T4
-wants the opposite, so neither milestone could be finished without the other.
-
-**THE CONTAINMENT FIX, which is the item that mattered.** The measured before
-and after, on the widest module in the corpus at 1440px:
-
-| | before | after |
-|---|---|---|
-| the column | 656px, x 376 → 1032 | 974px track, 781px measure |
-| the figure's box | **1152px, x 144 → 1296** — over both rails | 781px, inside the column |
-| the widest SVG | 1524px, reported x 360 → **1884** | 1524px, clipped to 781px |
-| elements outside the column | **96** on one module, 45 and 34 on two others | **0** |
-| at 1024px / 390px | not measured | **0** and **0** |
-
-**What the defect actually was, and it is not what the acceptance criterion
-says.** The criterion reads "no element of a diagram may have a right edge
-beyond its column without a clipping ancestor", and measured literally the OLD
-build already passed it: `.hl-diagram-body` has had `overflow-x: auto` all
-along, so the 1524px drawing was clipped and the document never scrolled
-sideways. The real defect was one level up — **the figure broke OUT of the
-column** by 232px left and 264px right, on purpose, because that is how the
-retired system gave a wide table its width. So the scroll container was doing
-its job inside a box that was itself in the wrong place, and 96 elements of one
-figure sat outside the measure with a rail underneath them.
-
-So the fix was to stop the break-out: no layout sets `--hl-break-left` or
-`--hl-break-right` any more, which collapses the `min()` in the width classes to
-100% on its own, and the two rules that made a broken-out figure *readable* —
-the `--color-paper` ground and the hairline down each broken side — went with
-it. `containment.spec.ts` asserts the stronger form: the **painted** rectangle
-of every element, its own box intersected with every clipping ancestor above it,
-must lie inside the column. 138 elements measured per page, at three viewports,
-on every written module, after waiting on the island's own `data-hl-ready`.
-
-**Mutation-tested**, which is the only reason to believe any of it: forcing
-`overflow-x: visible` back on and restoring the 1152px width put **57 elements
-up to 275px outside the column and pushed the document's scroll width to
-1511px** on a 1440px window. Every assertion fires on that.
-
-**The slab is a local theme override, not a second palette** (`BRAINSTORM.md`
-D21). `mermaid-config.ts` already binds every fill, stroke and label to a
-`var(--color-…)` reference so a theme switch costs 0ms; custom properties
-cascade into inline SVG, so redeclaring the palette on the figure re-themes all
-fifty-three diagrams onto a dark ground with no change to the mermaid config, no
-re-parse and no JavaScript. Two things measurement changed: the light theme's
-`fault` is 2.90:1 and `info` 1.67:1 on `#1d1f27`, so the slab duplicates the
-dark theme's semantic values; and `slab-line` is 1.36:1, correct for the slab's
-own boundary and wrong for a diagram's geometry, so `--color-line-strong`
-resolves to `slab-comment` at 5.21:1 inside it.
-
-**One published value moved.** DESIGN.md's `slab-comment` `#767c88` measures
-**3.92:1** on the slab, under the 4.5:1 a comment needs because a comment in a
-teaching corpus is content. `#8b91a0`, 5.21:1. Measured for the record against
-`--color-slab`: ink 12.82, string 9.05, function 7.77, number 7.54, keyword
-6.40, comment 5.21. And **§11.20's four-colour cap is reversed rather than
-broken**: four was right when the code ground was the page's own sand, and the
-slab is its own closed five-value palette with its own ground.
-
-**The right rail is cut to two things**: the sections of this module, and what
-sits either side of it in the dependency graph. The twelve metadata rows moved
-into the column, into `TitleStrip` — which already rendered exactly that set as
-the narrow-window variant, so nothing was dropped and nothing had to be built.
-**Nothing lost its home, so nothing went to O2 — but a question did**: four of
-the twelve are rows nobody has named a use for, and moving them into the column
-made them louder rather than quieter. That is written into **O2** rather than
-answered on the way past, because `title-block.ts` has unit tests stating the row
-set and deleting a row is a decision about what the page claims.
-
-**Completion control A** is at the end of the module now, before prev/next,
-where §12.4.1 had put it at the top. D14 is the reason and the author chose it
-for both surfaces at once. It is DESIGN.md's canonical `button-primary` — cobalt,
-filled, `md`, with a check glyph, in sentence case — and its text is
-`--color-paper` rather than white, because cobalt is dark in light mode and the
-accent is *lifted* in dark mode: 12.88:1 and 6.81:1, both clear. Its completed
-state is deliberately not filled.
-
-**Two strings slipped M9's rename and this caught them**, both because the copy
-register matches on word boundaries and neither carried one: `UNSIGN` is now
-**Un-complete** (which is what the keyboard sheet had been printing beside `s`
-all along) and `— END OF SET` is now **End of the course**. The arrows glued to
-`Previous module →` are gone too — DESIGN.md names that as a tell.
-
-**`--color-line-control` is applied.** M9 declared it and left every control on
-`line-strong`; eight controls moved onto it, and
-`tests/unit/color/slab-and-controls.test.ts` asserts each one in **both**
-directions — mutation-tested by putting `.hl-btn` back, which turns two cases
-red. The `md` radius arrived with them, which retires T7's zero-radius rule; the
-test that recorded it now asserts the rule that replaced it, that a radius is a
-token and never a literal.
-
-**What was NOT done, and it is a real gap.** The module list is on the module
-page only. M12's catalog, M13's home and M14's progress pages still use the
-1200px shell with no rail, which is the right seam — those three milestones are
-where those pages get rebuilt — but a reader who folds the rail on a module and
-then visits the catalog sees no rail to restore. The fold preference travels
-with them and is honoured the moment they come back.
-
----
-
-## 🏁 Milestone M12: The catalog
-
-One route, three views (D13). Filters at the top, levels told apart by colour.
-
-### Deliverables
-
-- [x] A view toggle with an icon and a name each: **Overview**, **Cards**, **Table**
-- [x] All three render from one data source, with no view-specific data and no view-specific route
-- [x] Filters at the top of the page, not down a side
-- [x] Levels separated by colour in every view, and by something other than colour as well
-- [x] The reader's chosen view remembered
-- [x] Both languages
-
-### Acceptance criteria
-
-- The three views show **the same set of modules** for the same filter state, asserted by comparing
-  the rendered module names between views rather than against a written list.
-- A curriculum change reaches all three views, verified by reordering one line in
-  `curriculum.yaml` and checking all three follow.
-- Filters work by keyboard and are announced; an empty result says what to do next, not "no results".
-- Levels are distinguishable under `forced-colors: active`.
-- One route. Adding a view must not add a URL.
-
-### Report — 2026-09-09
-
-**Done.** `/sheets/` is a thin server shell that measures the corpus once and
-hands ONE array to one island; the island renders the two filter groups, the
-toggle and all three views over that array. `src/components/catalog/` is the
-whole of it: `Catalog.tsx`, `CatalogOverview.tsx`, `CatalogCards.tsx`,
-`ViewIcon.tsx`, plus the table view, which is `SheetIndex` unchanged.
-
-**Which view is showing is channel A**, and that is the decision the rest
-follows from. `prefs.catalogView` is the fourth widening of `prefs`; the boot
-script stamps `data-hl-view` on `<html>` before first paint; **one carrier rule
-in `manifest.css` turns that into four custom properties and every rule after it
-reads them** — the arrangement `lokum.css` uses for the five level hues, for the
-same reason: the selector list relating a root attribute to a descendant's
-attribute is the thing that goes stale, so it is written once and a fourth view
-costs one line. MEASURED with every `.js` request refused: a reader whose stored
-view is Cards gets Cards, `data-hl-view="cards"`, and the other two views not
-laid out at all.
-
-**The toggle carries no `aria-pressed`, and that is the same argument as D17.**
-The state lives on `<html>`, so an ARIA attribute React renders would be a
-second author of one state and the two would disagree for every frame before
-hydration — the reader shown the table and told "Overview, pressed". Each button
-carries the word `Showing`, hidden from sight and revealed by the same rule that
-reveals the view, so the picture and the sentence cannot come apart. The rail's
-tick already worked that way.
-
-**Two filter axes rather than eleven chips**, because level and state compose:
-"the Expert modules" and "the ones I have not completed" are independent
-questions and one row cannot express the pair. Both open at `all` and have to
-(§12.2): two of the six selections read the record, and a reader-state filter
-active on load would change the row count between the prerender and the first
-client render.
-
-**The level blocks under the table are gone.** They were a second, shorter
-rendering of the grouping the Overview view now IS, which is the cost D13 spends
-a paragraph bounding.
-
-### What measuring changed, twice
-
-1. **The "same set of modules" comparison was wrong in a way that passed.** The
-   first version read each view's whole text and asked which of the set's titles
-   appeared in it — which counts a title that is a SUBSTRING of another. With the
-   Planned filter showing **14** modules it found **17**, because `Memory` is
-   inside `Advanced Memory` and two more like it. It reads the element that
-   holds a title now, per view, so each name is exact and the comparison is
-   still between the views rather than against a list.
-2. **The overview and the cards refused to link a planned module, and the table
-   linked it.** A planned module HAS a page — the A4 anatomy with its schedule
-   of parts — so two views had different reach, which is the drift D13's
-   "no view-specific data" rule exists to stop. Every view links every module
-   now, and the word `Planned` is what says it is not written.
-
-### The gate
-
-| | |
-|---|---|
-| `npm run typecheck` | clean |
-| `npm test` | **2,130 passed** (2,107 at the start of the milestone) |
-| `npm run build` | clean, **56 HTML files** in `out/` (Next reports 57 generated pages; one is the not-found boundary, which the export writes as `404.html` rather than as a directory) |
-| `npx playwright test` | the catalog specs and every spec that reads the table: **58 passed**. The whole suite is reported once, under M14 |
-
-`tests/e2e/catalog.spec.ts` is eleven new browser tests, and two of them are the
-ones that could not be written any other way: the three views' rendered module
-names compared **with each other** for four filter states, and the tab order
-walked by pressing Tab until a link inside the showing view has focus, with the
-hidden views' links proved unreachable. Either half of that second one alone
-passes for the wrong reason (D17).
-
-`tests/unit/catalog/views.test.ts` checks the reveal list against `VIEW_IDS` in
-both places it appears — the carrier and the forced-colours twin — and pairs each
-selector's two view ids, which is the mismatch that would show one view for
-another's stored preference: plausible, and wrong.
-
----
-
-## 🏁 Milestone M13: The home page
-
-Option **A**. The first thing a stranger sees, and today it shows XP, Class and Uptime.
-
-### Deliverables
-
-- [x] Home page A, in the chosen ground and vocabulary
-- [x] Completion shown with control **C** (D14): state visible and adjustable across the course
-- [x] The retired progress vocabulary resolved: XP and Uptime relabelled to what they measure, Class
-      and "I at 8" removed unless somebody says what question they answered (O2)
-- [x] Every count on it derived at build time, never restated
-
-### Acceptance criteria
-
-- A reader who has never seen the site can say what this is and where to start, from the first screen
-  at 1440px and at 390px.
-- No number on the page is written in `src/`. Break one derivation and the page must change
-  (`ARCHITECTURE.md` rule: content is derived, never restated).
-- Channel A still stamps `<html>` before first paint, so progress marks are correct in frame one and
-  there is no flash of an empty record (`ARCHITECTURE.md` §12.2).
-- Signed out is the default and complete; nothing on the page requires an account.
-
-### Report — 2026-09-09
-
-**Done.** Home **A**: the headline, the measured statement, two actions, four
-counted facts, the five levels, four reasons to read this rather than the next
-thing a search returns, and the identity strip. **One document for every
-reader** — the first-visit half and the returning-reader half are gone, and what
-is left of that machinery is one line: `.hl-home-continue`, the only thing on
-the page keyed off `data-hl-record`, so a reader with a record gets the shortest
-path back to work and a reader without one is not shown a control for a state
-they are not in.
-
-**The level grid IS completion control C** (D14), which is the property home A
-was chosen for: the levels double as the table of contents, so the same
-component shows a stranger the shape of the course and everybody else their own
-way through it. `CourseCompletion` is rendered here and on the progress page,
-from the same measurement.
-
-**D14's constraint is kept by `lib/record/complete.ts`.** The first completion
-on a record is three writes and not one — the sign-off, the mark seed minted
-once and never again (§12.3.5), and the single permitted
-`navigator.storage.persist()` (§12.1.6) — so control A and control C call one
-function rather than implementing it twice. Without that, a reader completing
-their first module from a list would have been left with **no mark on their
-exported record and no persistence request ever made, and nothing would have
-failed.** `home.spec.ts` asserts the minted seed after a click on control C for
-exactly that reason.
-
-### The one place this departs from the mock, and it is measured
-
-The playground's option C drew a **conic-gradient ring per level**. This draws
-the **segmented meter** instead. A ring's fill is a computed fraction, a computed
-fraction cannot reach CSS on channel A, and §12.2's rule is that a mark a reader
-sees in frame one may not travel on channel B — so a ring would be empty in the
-first frame of every load for exactly the readers who have progress, which is
-the flash of an empty record this milestone's own criteria forbid by name. The
-meter carries the same reading with no arithmetic at all and says which modules
-besides how many. `logs/BRAINSTORM.md` **D23**.
-
-**Frame one, measured with every `.js` request refused:** two seeded completions
-ticked, the other thirty-one not, in the frame the probe took, with the footer's
-strip still publishing the prerendered `false`. That last value is what makes
-the first two statements about frame one rather than about a page that had
-settled.
-
-### O2's other half, answered
-
-`XP`, `Rank` and `II at 16` are gone from every instrument on the site — the
-footer's strip on all 57 pages included — and `Reading time` took XP's place:
-the modules' own declared minutes over the modules the reader has completed. It
-is the modules' estimate rather than a measurement of the reader because
-**nothing on this site writes `dwellSeconds`** (no observer was ever shipped,
-which `attention.ts` records), so a reader-measured figure would read `0 m` for
-everybody. The three numbers on control C are modules completed, reading time
-and days in a row. `logs/BRAINSTORM.md` **D22** carries the decision and O2 is
-closed.
-
-Two smaller things went with it. The quick check's `+60 XP` chip reads
-`Self-marked`, because an award beside a question is a currency nothing spends
-any more. And `indexStatement()`'s second line — *"Fourteen are dashed — the
-geometry exists in the model, the lines do not"* — was the drawing-set metaphor
-in substance on the page a stranger meets first; the copy register's word
-boundaries could not catch it and neither could the export grep.
-
-**`.hl-panel-title` stopped being 11px tracked-out mono**, which DESIGN.md names
-as the clearest tell of a generated interface. It heads every panel on eight
-routes, so leaving it while rebuilding two of them would have shipped a
-half-converted interface.
-
-### The gate
-
-| | |
-|---|---|
-| `npm run typecheck` | clean |
-| `npm test` | **2,134 passed** |
-| `npm run build` | clean, **56 HTML files** in `out/` (Next reports 57 generated pages; one is the not-found boundary, which the export writes as `404.html` rather than as a directory) |
-| `npx playwright test home.spec.ts` | **18 passed**. The whole suite is reported once, under M14 |
-
-`home.spec.ts` was rewritten around the page that exists: the frame-one tick
-test above, control C's write (four things read that one write and all four have
-to move), the keyboard path walked by pressing Tab, the three
-"carries nothing" seeds — one of which is M12's new `catalogView`, because
-pressing a view toggle is not reading the course — and the numbers test, which
-compares the facts strip against the level cards rather than against a written
-list. That last one is how "no number is written in `src/`" is checked from a
-browser: the strip summarises the cards, so summing the cards has to reproduce
-it.
-
----
-
-## 🏁 Milestone M14: Progress and account
-
-Option **A**, and the milestone that answers "profile and dashboard are unusable". Four routes
-currently compete to tell the reader the same thing.
-
-### Deliverables
-
-- [x] One progress-and-account route, replacing the four, with the others redirecting rather than
-      404ing
-- [x] Completion control **C** on it (D14), writing through `store.ts`
-- [x] Export, import and erase kept and findable
-- [x] Optional sign-in kept, gating nothing, with `AccountSync` still the single seam
-      (`ARCHITECTURE.md` §6)
-- [x] Role paths kept, with the denominator honest about drafts
-
-### Acceptance criteria
-
-- Every capability in `ARCHITECTURE.md` §5 to §8 still works: export, import, erase, streak, role
-  paths, claim-and-merge, sign-in, sign-out.
-- **With no `.env.local` the page is complete and makes zero Supabase requests**, which the default
-  e2e run asserts.
-- With accounts on, `E2E_ACCOUNTS=1 npx playwright test accounts.spec.ts` passes and
-  `node scripts/test-rls.mjs` is unchanged: this milestone touches no policy.
-- An old bookmark to any of the four retired routes lands somewhere useful.
-- The reader can see their state without signing in, on a second device, and understand why it
-  differs.
-
-### Report — 2026-09-09
-
-**Done.** `/profile/` is the one progress-and-account route; `/dashboard/`,
-`/report/` and `/path/` are forwards.
-
-**`/profile/` is the survivor, and the choice was not arbitrary.** Only one of
-the four could keep its address, and this one owns every deep link on the site —
-`#data`, `#claim`, `#raw`, `#storage`, `#hl-account-head` — pointed at from
-`SignOff`'s NOT SAVED state, `EmptyState` classes 2 and 4, the claim receipt and
-the header's identity affordance. **A fragment cannot survive a `<meta
-refresh>`**, so redirecting this route would have broken five in-tree
-affordances to save renaming a URL no reader reads. `logs/BRAINSTORM.md`
-**D24**.
-
-**The shape.** Open: the account block, what is waiting on you and why, and
-completion control C. Folded, one line each and each stating its own reading
-(§16.4.1): the readout and the face legend, the streak, the stamps, what you
-built, the role **and its ordered steps**, the curriculum diagram, the record of
-work, the organisation, the last claim, storage, the stored bytes,
-export/import/erase, the keyboard switch. Thirteen rows, and the two that
-arrived with the fold obey the same rule as the eleven that were there.
-
-**What the fold made honest, and it needed measuring.** The diagram row's
-reading started as the corpus's own two counts — and read **identically for an
-empty record and a fully completed one**, which `record-pages.spec.ts`'s own
-rule for a counted reading catches. It is `TRACES` now: the edges with BOTH
-endpoints completed (§5.8), from the same `useTraces` the strip inside the row
-uses, which is the one number only the surface holding the graph can count.
-
-**Two rows left `RolePanel`'s list.** `Completed on this path` and `To go` were
-there because `/path/` was a different page; the standing is stated once now,
-beside the steps it describes, by the island that also marks the one step to
-take next. Two renderings of one derivation inside one row is the drift §16.4.2
-exists to stop. And there is exactly ONE `RolePicker` on the document — two
-would be two radio groups sharing the name `hl-role`, which is one group as far
-as the browser is concerned.
-
-### How a redirect ships in a static export
-
-There is no server: `output: 'export'` means `next.config`'s `redirects` are
-never applied and a page's own `redirect()` throws at build time. So the
-document itself moves the reader, three ways in decreasing order of speed —
-an inline script first (**the only one that can carry the fragment**, because
-`location.hash` is knowable only in the browser), a `<meta http-equiv="refresh">`
-for a reader with scripting off, and a visible sentence with a link for anyone
-the first two did not move. `MovedTo` carries the reasoning.
-
-**Verified in `out/`, not reasoned about:** all three stubs carry all three, the
-script and the meta and the link agree on one target, and the target goes
-through `lib/url.ts`'s `href()` so the base-path build does not 404 — the
-failure that works locally and breaks in production. `/report/#data` lands on
-`/profile/#data` with that row open, which is the two halves meeting:
-`FoldFragment` opens the row a fragment names.
-
-### Three chords went with their routes
-
-`g d`, `g r` and `g l` are **unbound**, not repointed. Four keystrokes reaching
-one page is a shortcut sheet that reads as a mistake, and `g r` printing
-`Record` while opening a page headed something else is a promise kept in the
-letter only. `g p` has meant the reader's own record since §12.16 and still
-does. The navbar's fourth item reads **Your progress**: it read `My progress`,
-and the copy register bans the first person outright — a ban it had escaped
-because `components/shell` is not in the register's roots.
-
-### Measured
-
-| | |
-|---|---|
-| `/profile/` | **472 KB, 56 KB gzipped**, with all four routes in it |
-| the four it replaces | 114 + 191 + 88 + 375 KB |
-| register rows | 13, all closed on arrival |
-| control C's rows on it | 33, one per module |
-| path bodies | 9, one visible |
-| RLS | `scripts/test-rls.mjs` unchanged; no policy touched |
-
-The fold **reduced** the bytes the site ships for these surfaces rather than
-concentrating them, which was the open question when it started: the nine path
-bodies were already 375 KB on a route of their own.
-
-### The gate — the whole of it, for M12, M13 and M14 together
-
-Run in the CI order on a quiet machine, after the last commit of the three:
-
-| | |
-|---|---|
-| `npm run typecheck` | clean |
-| `npm test` | **2,149 passed**, 78 files (2,107 at the start of M12) |
-| `npm run build` | clean, **56 HTML files** in `out/` (Next reports 57 generated pages; one is the not-found boundary, which the export writes as `404.html` rather than as a directory) |
-| `npx playwright test` | **462 passed, 2 failed, 19 skipped** (435 / 0 / 19 after M11) |
-
-**The two red ones are the contention family the previous milestone documented,
-and both pass alone — three times each.** They are `navigation.spec.ts`'s two
-chain walks, which click through all 33 modules with a 5s per-assertion timeout
-while eight Chrome workers compete; one of them took 41s in the full run and
-21s for the whole file on its own. `rail.spec.ts`'s two fold cases failed the
-same way in an earlier full run and passed 12/12 alone. **Run the four steps
-with nothing else running**, which the root `CLAUDE.md` and M10's report both
-already say.
-
-**One red result in that earlier run was real and is fixed.**
-`stroke-weights.spec.ts` asserted the painted 1.5px rule on `/`, and home A
-does not have one — its four measured facts are separated by hairlines. The
-rule did not move; the pages that draw it are the listings and the progress
-page, so the measurement followed it to `/courses/`.
-
-### The two checks that are new, and what they are for
-
-`tests/e2e/redirects.spec.ts` is the acceptance criterion about an old
-bookmark: each of the three retired routes lands on `/profile/`, keeps its
-fragment, says where it went with every module refused, asks not to be indexed,
-and forwards to the same URL its own visible link carries — that last one read
-out of `out/`, because the base-path failure exists only in the other build.
-**Verified against both builds:** `SITE_BASE_PATH=/ai-engineering-bazaar npm run
-build` writes `/ai-engineering-bazaar/profile/` into all three mechanisms of all
-three stubs.
-
-`path.spec.ts` kept every claim it made and moved them into the register row,
-including the frame-one one — a `<details>` opens with no JavaScript, which is
-why that test can still refuse every module and then open the row.
-
-### The honest check on the vocabulary, re-run
-
-M9's own measurement was 1,660 occurrences of the retired vocabulary across 56
-pages before the rename and 0 after. Re-run on this export, over the eleven
-retired words **plus `XP` and `CLASS n`**: **56 pages, 0 occurrences of twelve
-of the thirteen forms.** The thirteenth is bare `drawn`, which the export still
-carries four times — `legend/`'s *"It has drawn every figure in this
-curriculum"*, and three sentences in `intermediate/personal-agents` about a
-figure being drawn. All four are the ordinary English verb and not the retired
-status word, `copy-register.test.ts:365` exempts bare `drawn` for exactly that
-reason and names the legend sentence as the reason, and three of the four are in
-the read-only corpus. Stated this way because "0 occurrences" over all thirteen
-is not what the export contains, and a review checked. It found
-three on the way, and all three were things no lexer could have caught — the
-home page's own new copy saying *"That is the register here"* in the sense of a
-linguistic register, the legend's *"the sheets carry no endorsement"*, and the
-curriculum diagram's caption counting *"5 subsystems"*. The first was mine and
-one hour old; the other two had been shipping since M9.
-
----
-
-## 🔍 The review pass over M10 to M14, and what it cost
-
-Three agents built M10's remainder through M14; a fourth reviewed the combined
-diff without being told any of their reasoning, and the orchestrator checked the
-review rather than taking it. **Nine findings, one of them a blocker, and every
-one of the ten claims spot-checked reproduced exactly.** What follows is what
-was wrong, because a review that only records its verdict teaches nobody.
-
-### The blocker: a 28px box holding a 39px word
-
-`.hl-cmod-planned` was given `width: 28px` so the planned rows would line up
-with the completion toggle beside them, and then given the word `Planned`, which
-measures 39px at 11px mono with 0.06em tracking. With `overflow: visible` the
-last glyph painted **on top of the module number**, and it read `PLANNED14
-Generative UI`.
-
-**MEASURED, independently, before the fix:** text box 444→494 inside a box of
-455→483, with the link starting at x=491. **14 of 14 planned rows collided, on
-`/` and on `/profile/`, at 1440, 1024 and 390.** Those are the two surfaces this
-phase built and one of them is the front door. M13's report ticked the
-deliverable and did not mention it, and no test in the diff caught it.
-
-**Fixed** by widening the reserved track to 48px for the toggle and the label
-both — the toggle keeps its 28px target for SC 2.5.8 inside a 10px margin — so
-the rows still line up and the word fits. Measured after: **0 of 14 collide at
-all three widths, and the rows keep one left edge per column.** `Planned` also
-moved from `ink-faint` (2.86:1) to `ink-muted`, because it is the only thing on
-the row that says the module is not written, which makes it text a reader must
-read; `.hl-ov-planned` and `.hl-quiz-award` moved for the same reason.
-
-**A test now holds the rule**, in `responsive.spec.ts`, and it is a rule about
-any label at any width rather than a fact about this page: no element whose text
-overflows its own box may have that text reach a sibling's text. It reads the
-**text** box with a `Range` and not the element box, because an overflowing
-element reports the box it was given and not the ink it painted — reading the
-element box is what let this ship. **Mutation-tested in both directions:** put
-`width: 28px` back and it fails; the fix and it passes.
-
-### The one that would have been invisible: `aria-pressed` on channel B
-
-Recorded as **D25**. Control C's toggle reported `aria-pressed="false"` for ever
-about a module whose disc was painted and whose own word said `Complete`.
-Measured with every `.js` request refused. The fix moved the statement onto
-channel A and turned up two things worth more than itself: `aria-label` on a
-button means **nothing inside that button is ever announced**, so the `sr-only`
-word the tick already carried was dead weight; and the word needs its own class,
-because sharing the disc's made one selector match two elements per row, which
-is a strict-mode violation in seven tests.
-
-### The rest, in one line each
-
-- **`page.tsx` typed `The five levels`** while everything around it was derived,
-  breaking M13's own acceptance criterion and falsifying the file's own docblock
-  claim that "not one count in this file is typed". Now `numberWord(levels.length)`,
-  the same construction `AliasSheet.tsx` already used.
-- **`containment.spec.ts` said "asserted by PRESSING the key" and called
-  `.focus()`** — D17's anti-pattern re-committed in the file carrying M11's
-  headline fix. It now walks the tab order with real Tab presses.
-- **The copy register did not scan `components/shell`, `components/catalog`,
-  `components/curriculum` or `lib/catalog`** — the four directories holding the
-  largest blocks of new copy in the whole revision. Added; **19 tests pass**, so
-  the hole was latent and not an active violation. `ARCHITECTURE.md` records that
-  this same omission is how a first-person `My progress` shipped once already.
-- **`catalog.spec.ts` typed a level title** into a locator. Taken by position in
-  its named group instead.
-- **Three ratios in DESIGN.md were wrong**, one of them contradicting a figure
-  fifteen lines above it, and **D19's own premise quoted a ratio that was never
-  true of either value the token has held**. All recomputed from the shipped
-  stylesheet; D19 corrected in place with its number kept and struck.
-- **`INDEX.md` described a 607-line ARCHITECTURE.md that is 706 lines**, M10's
-  gate table said 58 exported pages where the other three say 56 (measured: 56),
-  `curriculum-file.ts` still said "six categories" above the export the whole
-  content layer walks, and the BRAINSTORM template's placeholder answered to
-  `### D7`, so that number resolved to two places.
-
-### M12's acceptance criterion that nobody had run
-
-> "A curriculum change reaches all three views, verified by reordering one line
-> in `curriculum.yaml` and checking all three follow."
-
-It was satisfied by construction and **never actually run**, and the box was
-ticked. Run now: `loop_engineering` and `security` swapped — the legal pair, each
-needing only `harness_engineering`, with `personal_agents` needing both and
-sitting after — then the ordered hrefs of all three views read out of the export.
-**All three followed the one line, identically, and all three agreed with each
-other before and after.** The corpus was restored and the restore proved: the
-export's per-view order is byte-identical to before, and `git status` on
-`curriculum.yaml` is empty.
-
-### The gate, after the fixes
-
-| Gate | Result |
-| --- | --- |
-| `npm run typecheck` | clean |
-| `npm test` | **2,149 passed**, 78 files |
-| `npm run build` | clean, **56 HTML files**, `lokum-modules.css` in sync with its generator |
-| `npx playwright test` | **467 passed, 0 failed, 19 skipped** (3.4m, 8 workers) |
-
-**That is the first fully green full run on this branch**, and it is worth saying
-why the earlier ones were not. Three consecutive full runs each produced a
-different red, all passing alone: Agent A reported 0, Agent B two in
-`navigation.spec.ts`, the reviewer one in `rail.spec.ts`. The cause was found:
-**`waitForHydratedReadout` had been applied to one of the three fold tests and
-not the other two.** The hide control is a React island, so a click sent before
-the document hydrates lands on nothing and the poll then times out on a rail
-nobody asked to fold. All three wait now.
-
-**Not claimed as fixed:** the family is load-sensitivity, not one bug. Under
-`--repeat-each=3` over the whole of `rail.spec.ts` a restore assertion still
-fails intermittently, and raising its poll from 2s to 8s did **not** help — the
-width never arrives, so it is a click that does not land rather than a slow one.
-At one worker and at three it passes 6/6. It is recorded here rather than closed.
-
-### The second, independent review — GLM 5.3 Flash
-
-Run through the hermes-agent CLI over six of the rebuild's files, given the
-channel-A/channel-B contract in the prompt and told to report only:
-`hermes chat -q … --yolo -Q --model glm-5.3-flash --toolsets file`, wrapped in
-`timeout`. A file list and not a patch, which is what made the earlier GLM pass
-produce findings rather than a summary.
-
-**Four of five findings were real, and the first two were hits on the fix from
-the pass above** — which is the argument for a second reviewer that has not read
-the first one's reasoning:
-
-1. **The state was on the row, not on the control.** Moving control C's
-   completion onto channel A put the word in the row, but a reader who focused
-   the button still heard only the action. GLM: *"same harm class as the removed
-   `aria-pressed`, relocated rather than resolved."* Fair. The button now points
-   at the word with `aria-describedby`, which works because a hidden element
-   contributes no accessible description — so the description is present exactly
-   when channel A has revealed the word, with no React involved.
-2. **The docblock still taught the defect** after the attribute was removed.
-3. **The empty state dropped focus:** `Show the whole catalog` unmounts itself,
-   so focus fell to `<body>` at the moment the reader was told to act.
-4. **`/profile/` typed the `G P` chord** that `SHORTCUTS` defines.
-
-**One finding did not reproduce, and that is worth recording too.** GLM reported
-that `#claim` and `#data` are fragment targets inside closed `<details>` that
-only a JS island opens, so deep links would land on hidden content with scripts
-refused. **Measured in Chrome with JavaScript disabled:** `id="claim"` is on the
-`<h2>` inside the `<summary>`, which is visible whether the disclosure is open or
-closed — `detailsOpen: false, targetVisible: true`. The link works.
-
-**Both reviews together: fourteen findings, thirteen real, one blocker.** The two
-that matter most were each invisible to the run that produced them — a 39px word
-in a 28px box that no test looked for, and an ARIA attribute that only lies when
-scripts never arrive.
-
----
-
-## 🏁 Milestone M15: The design language
-
-**The mockup is the specification.** `playground/01-theme-T4-ground-G3-powder.html` — theme T4 on
-ground G3 — is what the interface must look like. This milestone turns it into something an agent
-can build from without seeing it, and into something that can be *checked* rather than asserted.
-
-Its whole reason for existing is the failure of M9 to M14: a design document that described the old
-structure with new colour values, and not one acceptance criterion that compared a built page to the
-mockup. **7,158 lines of stylesheet across eleven files, against a mockup whose entire design
-language is 257 lines of CSS.** That 28× ratio is accumulated structure from a system already
-rejected, not design.
-
-### Deliverables
-
-- [x] **One `DESIGN.md`, written from the mockup, with the old one deleted rather than edited.** A
-      design *language* and not a project specification: generic component names, a five-hue
-      categorical series rather than the product's own taxonomy, and no framework class, route,
-      feature or content vocabulary anywhere in it. It carries a `source:` field naming the mockup,
-      and the rule that where the two disagree **the mockup is right and the document is the bug**.
-- [ ] **The language as one stylesheet**, in the shape the mockup uses: a token layer plus the
-      primitives the language names (bar, menu, rail, group, item, mark, tag, card, slab, figure
-      frame, buttons, pager, aside, band). Roughly the mockup's own size. It replaces the old token
-      layer outright; it does not sit beside it.
-- [ ] **A fidelity check**, which is the deliverable that makes "exact" mean something. It reads the
-      values that carry the design out of the mockup **and** out of the built page and asserts they
-      agree: bar fill and height, the on-bar sub-palette, brand type stack and weight, rail and
-      aside widths, the sticky offset, the measure, every radius including the two asymmetric
-      shapes, the focus ring, the five categorical hues, and the slab palette. It fails loudly when
-      a value is substituted, which is exactly what nothing caught last time.
-- [ ] The retired vocabulary of the old design deleted from the token layer: no radius scale of my
-      invention, no substituted type family, no re-hued categorical series.
-
-### Acceptance criteria
-
-- **`DESIGN.md` contains no product vocabulary.** Measured by grep: zero occurrences of framework
-  class prefixes, route names, content nouns, or architecture terms. Another product could adopt the
-  file unchanged.
-- **Every value in the mockup's token block appears in `DESIGN.md`, and nothing appears that is not
-  in the mockup.** Both directions, measured. A value I invented is a defect even if it looks
-  better — that is how a substituted type family and a re-hued series shipped once already.
-- The fidelity check **fails** when a token is deliberately changed, and passes against the mockup.
-  A check never seen failing is decoration.
-- Nothing in `src/` changes behaviour in this milestone. `npm test`, `npm run build` and the e2e
-  suite stay green on the work as it stands.
-
-### Report — the language, the checks, and a palette awaiting sign-off, 2026-09-09
-
-**Three of four deliverables are in; the fourth is a proposal waiting on the
-author.** Nothing under `src/app/` changed and no route was touched, which was
-the point of the scope: the suite is green on the work as it stands.
-
-**`src/design/bazaar.css`, 1,022 lines.** The language as CSS — a token block
-plus every primitive `DESIGN.md` names. It is a transcription: values are read
-out of the mockup, not designed. **It is deliberately not imported by
-`globals.css`**, and it lives outside `src/app/` for a measured reason —
-`lokum.test.ts`, `slab-and-controls.test.ts` and `stroke-weights.test.ts` glob
-every `.css` in that directory, and the second keeps any rule declaring five or
-more `--color-*` tokens and then requires its values to equal the *old* dark
-palette. A second token layer in `src/app/` fails the moment it is written.
-
-**`tests/unit/design/transcription.test.ts`, 87 assertions.** Colours compared
-as SETS in both directions, which is name-agnostic — rename every token and it
-still passes, substitute or invent one colour and it fails naming it. Every
-dimension the language declares must appear in the mockup, one direction only
-because the reverse is noise. And 33 primitive pairs resolved through each
-file's own token map and compared to each other, so no value is ever written
-down in the test.
-
-**Mutation-tested, and it found a hole in itself.** A substituted colour, a
-2px-wider rail and an altered mono stack are all caught. **Swapping the type
-stack to Manrope — the exact substitution that got the last interface rejected
-— passed**, because the declared-token sweep did not include `--font-`. Fixed,
-and now caught. That is the second time in this project that writing the
-mutation test was worth more than writing the check.
-
-**`tests/e2e/fidelity.ts` + `fidelity.spec.ts`: 128 passed, 19 skipped, 0
-failed** across all three viewports. The extractor is keyed by ROLE with a
-selector map per document, because the mockup calls the bar `.top` and the
-application must be free to call it something else — that freedom is what makes
-the language portable. It carries **no colour maths at all**: two documents
-rendered by the same engine serialise one colour to one string, so painting is
-`contrast.ts`'s job. The 19 skips are the roles the language says are absent
-below its breakpoints, and that absence is asserted rather than skipped past.
-
-**One mutation case per fact, 46 of them**, each painting over one property and
-requiring the comparator to name that fact. A fact cannot be added to the table
-without a mutation value, so a fact cannot be added without being proven to be
-checked.
-
-**Writing it turned up a live bug of the D20 family.** The first mutation run
-reported that overriding a group's background changed nothing, on a page where
-it plainly had: `.arch > summary` carries a 120ms transition, and the value was
-read in the protocol round trip before it had moved. The harness now freezes
-transitions before every read, which is why `contrast.ts` does the same.
-
-**Two findings that need the author, not a decision of mine:**
-
-1. **The mockup's current-destination chip never paints.** Its CSS styles
-   `.mainnav a[aria-current]` while its markup puts `aria-current="page"` on the
-   `button.lv` that opens the dropdown, which that selector does not match. The
-   intent is unambiguous — the language says the current destination is a solid
-   powder chip on cobalt — but whether a dropdown TRIGGER is itself "current" is
-   a real question, and M10 answered it the opposite way.
-2. **On the dark ground the slab and the page are the same colour.** The dark
-   surfaces were derived from the slab, so `#1d1f27` is now both. A code block
-   would be told apart by its hairline only.
-
-### The dark palette, derived and awaiting approval
-
-`playground/01-theme-T4-G3-DARK.html`. No mockup defines a dark theme, so this
-is a **transformation with every step stated** rather than a palette anyone
-chose. Structural identity is provable: outside the token block the only
-differences are the header comment, the annotation strip's text, and one `.btn`
-rule that the numbers forced.
-
-**The surfaces are the slab palette promoted from a component to the page.**
-That is the derivation's whole trick and it is why so little is new: the mockup
-already contains a complete dark surface with ink proven on it.
-
-**Every chromatic was lifted in OKLCH lightness with hue and chroma held**,
-until it cleared its floor **on all three grounds** (D19). Hues moved by at most
-0.3°. Five of the ten did not need to move at all. Three consequences worth
-reading before approving:
-
-- `faint` has a **ceiling**, not a floor — it is for something ignorable — so it
-  was lowered until it sits under 3:1 on every ground, at 2.49 to 2.98.
-- **White on the lifted accent measures 3.19:1 and fails a text floor**, so a
-  primary button's label becomes the ground at 5.15:1. The light theme needs no
-  such token, because white on cobalt is 12.88:1. This is the one genuine
-  addition to the palette.
-- **The bar does not move.** Cobalt, its five on-bar values, the band and the
-  completion disc are identical in both themes, which is what keeps the two
-  looking like siblings.
-
-**APPROVED 2026-09-09 and now in `DESIGN.md`**, as a `dark:` token map — an
-explicit extension to the format, which has no dark field, kept as tokens rather
-than prose so it can be checked mechanically. It is, by
-`tests/unit/design/transcription.test.ts`: no dark token may be a colour the
-dark mockup does not contain, and the anchors — the bar, its chip, the band and
-the completion disc — must be identical across the two themes. Both halves
-mutation-tested.
-
-The author also took the slab question: **the slab keeps its hairline**, and the
-alternative of lifting the page grounds off it was declined, because that costs a
-value which is not the mockup's own and the hairline rule is the one the light
-theme already lives by. Recorded as **D27**.
-
-**And the navigation-chip discrepancy is answered (D28):** the trigger for the
-section the reader is in DOES carry the powder chip, marked with a data attribute
-rather than `aria-current`, so the picture is right without telling an assistive
-technology that a trigger is a page. That reverses M10's choice on the visual
-half while keeping its ARIA reasoning intact.
-
-### The four deliverables, closed
-
-| Deliverable | State |
-| --- | --- |
-| One `DESIGN.md`, written from the mockup, old one deleted | ✅ 582 lines, `source:` names both mockups |
-| The language as one stylesheet | ✅ `src/design/bazaar.css`, 1,126 lines, not yet imported |
-| A fidelity check | ✅ 90 unit assertions + 128 browser checks, both mutation-proven |
-| The retired vocabulary of the old design deleted from the token layer | ✅ nothing of it survives: no invented radius scale, no substituted family, no re-hued series |
-
-### Report — DESIGN.md written, 2026-09-09
-
-**The old file was deleted, not evolved**, on the author's instruction, and one file stands. Written
-against the mockup with its stylesheet open: 528 lines, sections in the format's own order
-(Overview, Colors, Typography, Layout, Elevation & Depth, Shapes, Components, Do's and Don'ts).
-
-**Verified rather than claimed.** All **30** hex values in the mockup's stylesheet appear in the
-token block and **none** appears that the mockup does not contain. All sixteen load-bearing
-dimensions and timings are present: the 58px bar, the 18px band, the 76px sticky offset, the 262px
-rail, the 204px aside, the 80ch measure, both breakpoints, the easing curve, the three translucent
-on-bar values, both asymmetric shapes, the 17px mark and the 200ms fold. Product-vocabulary grep:
-**0**.
-
-One genuine gap in the language was found while checking and closed: the mockup sets text on a gold
-fill to a near-black warm ink, and the document had `caution` with no `on-caution`. It is the only
-place in the language where type on a chromatic fill is not white.
-
-**What is deliberately not in it.** Page layouts. Which panels a screen carries, and in what order,
-is not a design language — it belongs to M16, against the mockup for that surface. Keeping layout
-out of this file is the structural correction: it is what stops the document from quietly becoming a
-description of whatever already exists.
-
----
-
-> **→ Part 3: [`PROGRESS_3.md`](PROGRESS_3.md)** — M50 onward, the ACTIVE part.
-> **→ Part 2: [`PROGRESS_2.md`](PROGRESS_2.md)** — milestones M16 to M49, from the interface rebuilt on the
-> design language, in ten stages. Split there because M16 is a phase of its own and this file had
-> reached 2,500 lines; the numbering continues rather than restarting.
+> **← Part 2: [`PROGRESS_2.md`](PROGRESS_2.md)** — M16 to M49. **← Part 1: [`PROGRESS_1.md`](PROGRESS_1.md)**
+> — M1 to M15, and the loop.

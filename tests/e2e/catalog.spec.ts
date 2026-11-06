@@ -26,7 +26,7 @@ import { watchPage } from './watch'
  * 3. **The hidden views are out of the tab order.** Both halves are asserted —
  *    the showing view's links are reachable by Tab, the hidden views' are not —
  *    because either half alone passes for the wrong reason. That correction is
- *    `logs/BRAINSTORM.md` D17, and it is written by PRESSING THE KEY rather
+ *    `logs/BRAINSTORM_1.md` D17, and it is written by PRESSING THE KEY rather
  *    than by calling `.focus()`.
  * 4. **One route.** Adding a view must not add a URL, so the URL is read before
  *    and after every switch.

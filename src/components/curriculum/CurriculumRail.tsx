@@ -5,7 +5,7 @@ import type { RailLevel } from '@/lib/content/rail'
  * M10 — the curriculum as an accordion, and the left rail of a module page.
  *
  * This is the answer to two of the thirteen flaws
- * (`kia-context/logs/BRAINSTORM.md` D10). The author's words for the first:
+ * (`kia-context/logs/BRAINSTORM_1.md` D10). The author's words for the first:
  * *"when we are in a specific level, its tab in the left sidebar must imply it
  * by maybe becoming a bit larger and distinguishing or by changing its color or
  * border or anything similar."* And for the second: *"the green tick on each
@@ -20,7 +20,7 @@ import type { RailLevel } from '@/lib/content/rail'
  * and it belongs on the side a reader's eye starts from. The contents of the
  * page you are already on is a within-page aid, so it goes right. The swap is
  * the reason M10's remainder and M11 are one piece of work — see
- * `kia-context/logs/PROGRESS.md`.
+ * `kia-context/logs/PROGRESS_1.md`.
  *
  * ## No JavaScript, and that is a correctness point
  *

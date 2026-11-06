@@ -27,7 +27,7 @@ import { readDesignToken } from '@/lib/content/code-theme'
  * the ground — under SC 1.4.11's 3:1 for anything required to identify a
  * component. That question is stage 1's, answered with the shell's real
  * buttons, fields and toggles in front of us rather than invented now
- * (`logs/PROGRESS.md`, M16). What stands in the meantime is the existence-guarded
+ * (`logs/PROGRESS_2.md`, M16). What stands in the meantime is the existence-guarded
  * rule at the bottom of this file, and the ordering rule in
  * `tests/unit/color/contrast.test.ts`.
  */

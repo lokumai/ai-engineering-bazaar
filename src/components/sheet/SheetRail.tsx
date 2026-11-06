@@ -10,7 +10,7 @@ import { type ReadingLang, langAttr } from '@/lib/content/languages'
  * holds the curriculum (`CurriculumRail`), because the thing a reader reaches
  * for most on a course page is another page of the course. What is on the page
  * you are already reading is a within-page aid, and it goes on the side you
- * scan back to. See `kia-context/logs/PROGRESS.md` M10/M11.
+ * scan back to. See `kia-context/logs/PROGRESS_1.md` M10/M11.
  *
  * ## What was cut, and where it went
  *
@@ -22,7 +22,7 @@ import { type ReadingLang, langAttr } from '@/lib/content/languages'
  * new had to be built and nothing was dropped. What changed is that the strip
  * is now the only place it lives, at every width, instead of the fallback for
  * one. Nothing lost its home, so nothing went to
- * `kia-context/logs/BRAINSTORM.md` O2.
+ * `kia-context/logs/BRAINSTORM_2.md` O2.
  *
  * What is left is the two things a reader uses while reading: the sections of
  * this module, and the modules either side of it in the dependency graph.

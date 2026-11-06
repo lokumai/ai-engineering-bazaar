@@ -29,7 +29,7 @@ import type { Track } from '@/lib/tracks'
  * the flash of an empty record M13's acceptance criteria forbid by name. The
  * meter carries the same reading with no arithmetic at all (one segment per
  * module, filled by the class the boot script stamped) and says more than a
- * ring can: WHICH modules, not just how many. `logs/BRAINSTORM.md` D23 has the
+ * ring can: WHICH modules, not just how many. `logs/BRAINSTORM_1.md` D23 has the
  * decision. Everything else about C is here — the per-level picture, the three
  * numbers that mean something, and the jargon gone.
  *

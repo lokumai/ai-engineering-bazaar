@@ -5,7 +5,7 @@ import { SHEETS } from './sheets'
  * M11 — **a diagram wider than its column cannot paint outside it.**
  *
  * This is the only one of the thirteen flaws
- * (`kia-context/logs/BRAINSTORM.md` D10) that was a defect rather than a matter
+ * (`kia-context/logs/BRAINSTORM_1.md` D10) that was a defect rather than a matter
  * of taste, so it gets a spec of its own and it runs at all three viewport
  * projects rather than at 1440 alone.
  *
@@ -21,7 +21,7 @@ import { SHEETS } from './sheets'
  * network instead is a check that races the thing it is checking, and this
  * suite has already been bitten by that: `anatomy.spec.ts`'s figure test passed
  * alone and failed under parallel load for exactly this reason
- * (`kia-context/logs/BRAINSTORM.md` D20).
+ * (`kia-context/logs/BRAINSTORM_1.md` D20).
  *
  * ## What "cannot paint outside it" is measured as
  *

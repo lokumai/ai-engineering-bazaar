@@ -364,7 +364,7 @@ describe('§12.14.1 — the copy register', () => {
  * speak: a module was a *sheet*, a level a *subsystem*, finishing one a
  * *sign-off*, and a written one *drawn*. The whole set was a *drawing set* and
  * the reader was a *drafter*. It was consistent and it was undecodable to a
- * first-time reader, so `logs/BRAINSTORM.md` D10 replaced it with vocabulary set
+ * first-time reader, so `logs/BRAINSTORM_1.md` D10 replaced it with vocabulary set
  * C. **The code keeps the old names** — `sheetStamps`, `data-drawn`, `hl-sheet`,
  * `kind: 'sign-off'` — because renaming a storage key would invalidate every
  * reader's saved history for a cosmetic gain. Only what a reader can see moved.

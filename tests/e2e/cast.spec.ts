@@ -11,7 +11,7 @@ import { CAST } from '@/components/home/street/cast'
  * names come from `cast.ts`, never typed in, and nothing pins a position or a word.
  *
  * Each claim was seen failing under a named mutation before it was trusted (M58's report
- * in `kia-context/logs/PROGRESS_3.md` lists them).
+ * in `kia-context/logs/PROGRESS.md` lists them).
  */
 
 const WALK = { width: 1440, height: 900 }

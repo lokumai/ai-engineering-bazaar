@@ -724,6 +724,8 @@ test('no module route scrolls the document sideways, at any width', async ({ pag
  * of the tile saying where the reader is going.
  */
 test('the pager always says where it goes', async ({ page }) => {
+  // It visits every module; with 43 of them the CI runner needs more than 30s.
+  test.setTimeout(90_000)
   const narrowest: { path: string; width: number }[] = []
 
   for (const sheet of SHEETS) {

@@ -275,6 +275,8 @@ test.describe('the Persian tree', () => {
   })
 
   test('serves every Persian module at its own address, and no other', async ({ page }) => {
+    // It visits every module; with 43 of them the CI runner needs more than 30s.
+    test.setTimeout(90_000)
     const wrong: string[] = []
     for (const sheet of PERSIAN) {
       const response = await page.goto(fa(sheet.slug))

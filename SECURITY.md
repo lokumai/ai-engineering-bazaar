@@ -11,8 +11,8 @@ looks exploitable.
 
 ## Current posture
 
-The site is a static export published at
-`https://lokumai.github.io/ai-engineering-bazaar/`. There is no server, no
+The site is a static export published at `https://ai-bazaar.lokum.dev/`, its own
+origin (`lokumai.github.io/ai-engineering-bazaar/` redirects to it). There is no server, no
 account and no database: the optional account layer (Supabase, sign-in, teams,
 organisations) was removed on 2026-11-05 (M40). A reader's progress is one
 `localStorage` key, `hl-record`, in their own browser, and the export is a file
@@ -20,9 +20,8 @@ the browser writes to their own disk.
 
 ## Accepted risks
 
-| Risk | Why it is accepted | What ends it |
-|---|---|---|
-| `hl-record` is readable by any page on `lokumai.github.io` | An origin is scheme, host and port, so every Pages site under the account shares one. The record holds only which modules are completed, which checklist items are ticked, and reading preferences: no name, no address, nothing typed | A custom domain |
+None open. The one this file listed, `hl-record` readable by every page on the shared
+`lokumai.github.io` origin, ended when the site moved to its own domain on 2026-11-06.
 
 ## Operational rules
 

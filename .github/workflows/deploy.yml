@@ -1,6 +1,6 @@
 # Build the site and publish it to GitHub Pages.
 #
-#   /ai-engineering-bazaar/   the Next.js static export, served from the root
+#   https://ai-bazaar.lokum.dev/   the Next.js static export, served from the root
 #
 # The pages are generated from the markdown in mini-courses/, so the build has to
 # see the repository at one commit and with its full history.
@@ -26,9 +26,12 @@ concurrency:
   cancel-in-progress: false
 
 env:
-  # The GitHub Pages project path. The site is served from it directly, which is
-  # why it is also the app's basePath; anything else and every asset 404s.
-  BASE_PATH: /ai-engineering-bazaar
+  # The app's basePath. Empty since 2026-11-06 (D92): the site is served from
+  # the root of its own domain, ai-bazaar.lokum.dev (set in the repository's
+  # Pages settings), not from the /ai-engineering-bazaar project path of
+  # lokumai.github.io, which now redirects to it. A non-empty value here 404s
+  # every asset on the custom domain.
+  BASE_PATH: ""
 
 jobs:
   build:
@@ -56,7 +59,7 @@ jobs:
         run: node scripts/github-stars.mjs
         env:
           GITHUB_TOKEN: ${{ github.token }}
-      - name: Build the site for its base path
+      - name: Build the site
         run: npm run build
         env:
           SITE_BASE_PATH: ${{ env.BASE_PATH }}
@@ -80,7 +83,7 @@ jobs:
           test -f _site/.nojekyll
           # A basePath that did not reach assetPrefix builds cleanly and 404s
           # every stylesheet, so check the emitted URLs, not just the files.
-          grep -q "$BASE_PATH/_next/" _site/index.html
+          grep -q "\"$BASE_PATH/_next/" _site/index.html
 
       # `include-hidden-files` is LOAD-BEARING, and it is why this is v5 rather
       # than v4. v4.0.0's release note: "hidden files (specifically dotfiles)
@@ -116,6 +119,7 @@ jobs:
         run: |
           set -euo pipefail
           base="${PAGE_URL%/}"
+          origin=$(printf '%s' "$base" | sed -E 's#^(https?://[^/]+).*#\1#')
           # Pages serves the new commit within seconds, but not instantly.
           for attempt in 1 2 3 4 5 6 7 8 9 10; do
             if curl -fsS -o index.html "$base/"; then break; fi
@@ -129,4 +133,4 @@ jobs:
           href=$(grep -oE 'href="[^"]*/_next/static/[^"]+\.css"' index.html | head -1 | sed 's/^href="//; s/"$//')
           test -n "$href"
           echo "stylesheet: $href"
-          curl -fsS -o /dev/null "${base%/ai-engineering-bazaar}${href}"
+          curl -fsS -o /dev/null "${origin}${href}"

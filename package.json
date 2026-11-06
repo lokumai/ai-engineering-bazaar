@@ -1,7 +1,7 @@
 {
   "name": "ai-engineering-bazaar",
   "version": "1.0.0",
-  "description": "Static site for the AI engineering mini-courses in mini-courses/, published at https://lokumai.github.io/ai-engineering-bazaar/.",
+  "description": "Static site for the AI engineering mini-courses in mini-courses/, published at https://ai-bazaar.lokum.dev/.",
   "scripts": {
     "predev": "node scripts/curriculum-css.mjs && node scripts/copy-course-images.mjs",
     "dev": "next dev",

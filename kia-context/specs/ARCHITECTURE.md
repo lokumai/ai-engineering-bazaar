@@ -696,7 +696,11 @@ moved every one of them onto different content with the whole suite still green.
 
 ## 12. Deployment
 
-`main` → GitHub Actions → GitHub Pages, at `https://lokumai.github.io/ai-engineering-bazaar/`.
+`main` → GitHub Actions → GitHub Pages, at `https://ai-bazaar.lokum.dev/` since 2026-11-06 (D92),
+served from the domain's root, so the build has no base path. The domain is a CNAME to
+`lokumai.github.io` in Cloudflare, **DNS only**: proxied, GitHub's domain check sees Cloudflare's
+addresses and never issues the certificate. `lokumai.github.io/ai-engineering-bazaar/` redirects to
+it (301).
 
 The workflow guards the two failures that would otherwise publish **green** and serve a broken site:
 

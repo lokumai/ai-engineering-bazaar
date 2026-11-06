@@ -10,7 +10,7 @@ description: >
 authority: reasoning
 writes: agent, when a decision is taken
 status: active
-covers: "D26 to D88, D90 and D91, plus open questions O1 to O5 — 2026-09-09 to 2026-11-05 (D89 is on PR #57)"
+covers: "D26 to D88, D90 to D92, plus open questions O1 to O5 — 2026-09-09 to 2026-11-05 (D89 is on PR #57)"
 last_updated: 2026-11-05
 ---
 
@@ -2234,6 +2234,26 @@ build, and the measurement that moved each is the reason.
 F2 also took out the progress page's continue card and statistics row: the tabs and the data line
 are the whole page. The language menu keeps the track (a For Everyone page's menu offers the For
 Everyone page in each language).
+
+### D92 · The site moves to its own domain, ai-bazaar.lokum.dev — 2026-11-06 (PR #62)
+
+The author pointed `ai-bazaar.lokum.dev` at GitHub Pages (a CNAME to `lokumai.github.io` in
+Cloudflare) and asked for the site to be rebuilt for it.
+
+- **Served from the root.** The deploy's `BASE_PATH` and CI's build drop `/ai-engineering-bazaar`;
+  with it, every asset 404s on the custom domain. The live-site check in the deploy now fetches the
+  stylesheet from the page's origin instead of stripping the project path.
+- **DNS only, not proxied.** Proxied through Cloudflare, GitHub's domain check saw Cloudflare's
+  addresses, never issued the certificate, and the first attempt failed. Rejected: keeping the proxy
+  from the start; it can be turned back on (SSL mode Full, strict) once the certificate is issued.
+- **A cached redirect is not the site.** While the domain was set, GitHub answered the old address
+  with a permanent 301, which a browser keeps; removing the domain stops the 301 at GitHub, not in
+  the browser that already saw it.
+- **A reader's progress does not move.** `localStorage` belongs to an origin, and the new domain is
+  a new origin, so a reader starts empty there; the old address now redirects, so their old record
+  is reachable only by backing it up there first. Accepted: there is no server to carry it across,
+  and the site has run for a short time with few readers. The new origin also ends the one risk
+  `SECURITY.md` listed, the record being readable by every site on `lokumai.github.io`.
 
 ## Open questions
 

@@ -28,21 +28,9 @@ last_updated: 2026-11-06
 
 ## The loop
 
-1. Take the first unchecked deliverable (`- [ ]`) under the active milestone.
-2. Build it. Verify it against its **acceptance criteria**.
-3. **Pass:** mark `[x]`, write a one or two sentence **Report**, move on.
-4. **Fail:** apply the circuit breakers. Do **not** mark `[x]`.
-
-## Circuit breakers
-
-- **Three attempts.** Three consecutive failed verification passes on one deliverable and you stop.
-- **Then:** revert the uncommitted work, mark the deliverable `[BLOCKED]`, write one paragraph on what
-  was tried and what it did, and halt for a human.
-- **No tampering, ever.** Never modify a test, a verifier or an acceptance criterion to force a pass.
-  If a criterion is genuinely wrong, say so in the report and leave it failing until a human changes it.
-- **Never fake progress.** A blocked deliverable that is honest is worth more than a ticked one that lies.
-
----
+**Moved to the active part on 2026-11-06**, with the circuit breakers, when the logs took the
+bare-name layout: [`PROGRESS.md` § The loop](PROGRESS.md#the-loop). A closed file is not where a
+procedure every session follows can live.
 
 ## Milestones
 

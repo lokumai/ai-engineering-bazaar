@@ -34,7 +34,7 @@ last_updated: 2026-11-06
 ## How to work this file
 
 **The loop and the circuit breakers are written once, in part 1 —
-[`PROGRESS_1.md` § The loop](PROGRESS_1.md#the-loop).** Read them there; they are not restated here and
+[`PROGRESS.md` § The loop](PROGRESS.md#the-loop).** Read them there; they are not restated here and
 they govern this part exactly as written. In one line: *take the first unchecked deliverable, build
 it, verify it against its acceptance criteria, then mark `[x]` and write the report.*
 

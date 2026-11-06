@@ -20,12 +20,29 @@ last_updated: 2026-11-06
 
 > **← Part 2: [`PROGRESS_2.md`](PROGRESS_2.md)** — M16 to M49: the rebuild on the design language,
 > the two tracks, the home page, and the round-2 and round-3 playgrounds. **← Part 1:
-> [`PROGRESS_1.md`](PROGRESS_1.md)** — M1 to M15, and the loop this file follows
-> ([§ The loop](PROGRESS_1.md#the-loop)): take the first unchecked deliverable, build it, verify it
-> against its acceptance criteria, then mark `[x]` and write the report.
+> [`PROGRESS_1.md`](PROGRESS_1.md)** — M1 to M15. The loop this file follows is below; it moved
+> here from part 1 when the logs took the bare-name layout.
 
 Split from part 2 on 2026-11-06 at the author's request, at the phase boundary between the round-3
 playground picks (M49) and finishing and building them. Part 2 had reached 4,882 lines.
+
+## The loop
+
+1. Take the first unchecked deliverable (`- [ ]`) under the active milestone.
+2. Build it. Verify it against its **acceptance criteria**.
+3. **Pass:** mark `[x]`, write a one or two sentence **Report**, move on.
+4. **Fail:** apply the circuit breakers. Do **not** mark `[x]`.
+
+## Circuit breakers
+
+- **Three attempts.** Three consecutive failed verification passes on one deliverable and you stop.
+- **Then:** revert the uncommitted work, mark the deliverable `[BLOCKED]`, write one paragraph on what
+  was tried and what it did, and halt for a human.
+- **No tampering, ever.** Never modify a test, a verifier or an acceptance criterion to force a pass.
+  If a criterion is genuinely wrong, say so in the report and leave it failing until a human changes it.
+- **Never fake progress.** A blocked deliverable that is honest is worth more than a ticked one that lies.
+
+---
 
 **The order of what is left** (revised 2026-11-06 after two plan reviews, a Gemini 3.8 Flash High
 run and a Sonnet High subagent; the author's standing order is design, then the site, then the

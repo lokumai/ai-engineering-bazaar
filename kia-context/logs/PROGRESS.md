@@ -13,7 +13,7 @@ description: >
 authority: state
 writes: agent, every session
 status: active
-covers: "M50 to M72, 2026-11-06 onward"
+covers: "M50 to M73, 2026-11-06 onward"
 last_updated: 2026-11-07
 ---
 
@@ -1042,6 +1042,33 @@ along its top edge at 1280 by 720, where the two overlap); the chase point moved
 layer lift removed (its first test sampled only the centre and passed, so it was rewritten); the
 walk's allowance at 40px; the focus exemption removed; the chase closing every cloud; the
 re-placing removed.
+
+## 🏁 Milestone M73: Expert reordered, context forking, and Advanced Agent Servers drafted — DONE
+
+The author, 2026-11-07: a new module "Advanced Agent Servers" noted in the scratchpad with four
+topics (Aegra, SkeinJS, the Vercel AI SDK with durable orchestration, Redis Streams); "context
+forking for subagents" in Advanced Multi-Agent; and Advanced Fine-tuning and Advanced Post-training
+before Advanced RAG & Embeddings.
+
+- [x] **Advanced Agent Servers**, a planned module after Advanced Deployment (English and Turkish),
+      with the author's four options drafted as written sections (how it works, what it costs, when
+      to choose it) and a comparison table, which D102 renders; the author's raw notes stay in
+      `topics.txt`. First noted only in the scratchpad; the author: *"did you draft and include it
+      in advanced agent server module? those text can be revised and initialized while the module
+      is being planned"*.
+- [x] Advanced Multi-Agent lists context forking for subagents (English, Turkish, notes, topics).
+- [x] Expert runs Advanced LLM, Advanced Fine-tuning, Advanced Post-training, Advanced RAG &
+      Embeddings, then the rest; the README, `index.md`, the Expert README, the level blurb and the
+      ROADMAP line follow; `lokum-modules.css` and the browser suite's drawing set regenerated.
+
+**Report, 2026-11-07.** Addresses are by slug, so nothing forwards; the Expert module numbers after
+Advanced LLM shift by up to two, and the course now has 44 modules (Expert 17). A search for numeric
+module references found only synthetic test fixtures and history comments, none pointing at a live
+module; prose names modules by title. The README, `index.md`, the Expert README, the blurb and the
+counts in INDEX and ARCHITECTURE follow. SkeinJS has no repository under that name, so its link is
+a `NEED` marker in the file rather than a guess; Aegra (`aegra/aegra`) and the five documentation
+links were checked. The Advanced Multi-Agent placeholder's dash
+became a colon, the house rule.
 
 ---
 

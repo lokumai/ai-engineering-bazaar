@@ -27,7 +27,7 @@ last_updated: 2026-11-07
 
 ## What this is
 
-A course site built **from** markdown rather than **around** it. The 43 modules in `mini-courses/`
+A course site built **from** markdown rather than **around** it. The 44 modules in `mini-courses/`
 are the corpus, and everything a page shows — the progress marks, the figure numbers, the source
 counts, the revision hashes, the dependency graph — is derived from those files at build time. The
 output is a static export: HTML, CSS and JS on GitHub Pages, no server.
@@ -119,7 +119,7 @@ rules are cited by number.
 
 **Two projects meet in one repository, and they meet at exactly one file.**
 
-One is an authored corpus of markdown: 43 course modules in English (20 of them written, the rest planned), each with a
+One is an authored corpus of markdown: 44 course modules in English (20 of them written, the rest planned), each with a
 Turkish translation, and the written ones also in Persian (M28). The other is a Next.js
 application that renders it into a static site. They share no code. They share
 `mini-courses/curriculum.yaml`, which the corpus side authors and the application side reads. That
@@ -166,9 +166,9 @@ order of the `CategorySlug` union in `src/lib/content/categories.ts`.
 
 **A module** has a `name` (the file stem, and the source of its URL slug), a required `title`, a
 `status` of `ready` or `draft`, a duration in `minutes`, a list of `needs` naming prerequisites **by
-name**, and free-text `notes` that nothing reads. There are **43**, of which **20** are `ready`
+name**, and free-text `notes` that nothing reads. There are **44**, of which **20** are `ready`
 (measured 2026-11-07, after M64 to M69 added Agents in Practice and five planned Expert modules and
-retired Advanced Training, D101).
+retired Advanced Training, D101, and M73 added Advanced Agent Servers).
 
 **A module has no number of its own.** Its number is its position in the config, computed in exactly
 one place — `src/lib/content/loader.ts` — and written nowhere else. Filenames carry no number, prose
@@ -695,8 +695,8 @@ fail in `build`.
 ## 11. The test suite, and the one rule it lives by
 
 **68** test files (`find tests -name '*.test.ts*' | wc -l`; vitest runs 67 of them) holding
-**1,163** unit and corpus tests, plus **36** Playwright spec files holding **533** browser cases
-(`npx playwright test --list`; measured 2026-11-07, after M72; M40 had cut them from 2,107 and
+**1,163** unit and corpus tests, plus **36** Playwright spec files holding **534** browser cases
+(`npx playwright test --list`; measured 2026-11-07, after M73; M40 had cut them from 2,107 and
 1,234, **D88**), in three suites that each answer
 something the others cannot.
 
@@ -729,7 +729,7 @@ red and teaches nobody anything. The suite was cut from 1,948 tests that pinned 
 few hundred rule-checking ones in September 2026, and four more pinned assertions were replaced on
 2026-09-08.
 
-The one deliberate exception is `tests/e2e/sheets.ts`, which types out all 43 modules, their routes,
+The one deliberate exception is `tests/e2e/sheets.ts`, which types out all 44 modules, their routes,
 titles and formats **by hand**, precisely so that a renumber, a slug change or a stub being written
 fails a test and someone has to look. `tests/e2e/index-sheet.spec.ts` reconciles that list against the
 manifest the site actually renders, which is what keeps the duplication honest.

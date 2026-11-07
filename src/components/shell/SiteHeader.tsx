@@ -160,7 +160,7 @@ export function SiteHeader({
           {/* Left of the theme toggle, where the author asked for it, and only
               on a module that has a second language (`LanguageMenu`). */}
           {/* M59 (D95): search, before the switch, a window over the page. */}
-          <SearchDialog />
+          <SearchDialog levels={categoryLabels().map(({ slug, title }) => ({ slug, title }))} />
           <TrackSwitch translated={translated} />
           <LanguageMenu translated={translated} />
           <ThemeToggle />

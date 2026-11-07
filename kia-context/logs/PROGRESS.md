@@ -5,7 +5,7 @@ description: >
   ends on), then M50 to M69: the round-3 art finished, the catalog without its Sources count, round 3
   built on the home page, search, the content phase, a certificate still to decide, download
   cancelled, Emerging Trends, Caravan, the gate revised (M63), and content revision 4
-  (M64 to M69). Each milestone carries its deliverables and acceptance
+  (M64 to M69), and the search filters (M70). Each milestone carries its deliverables and acceptance
   criteria as `- [ ]` checkboxes, ticked as the work lands, and closes with a dated report; the loop
   that governs that is below, in this file.
   NOT here: why a choice was made (BRAINSTORM.md), or any rule that outlives the milestone
@@ -13,7 +13,7 @@ description: >
 authority: state
 writes: agent, every session
 status: active
-covers: "M50 to M69, 2026-11-06 onward"
+covers: "M50 to M70, 2026-11-06 onward"
 last_updated: 2026-11-07
 ---
 
@@ -944,6 +944,40 @@ planned row, not the first; the dark-theme rule for mono marks sat in a surface 
 `html.dark`, so it is now a token (`--bz-logo-mono-filter`, `none` and `invert(1)` in
 `bazaar.css`) read by `prose.css` on `-mono.svg` only; a fence now closes only on a run at least as
 long as the one that opened it, so a ```` block may hold a ``` example.
+
+---
+
+## 🏁 Milestone M70: Search filters and the level bar on each result (D103) — DONE
+
+### Deliverables
+
+- [x] Filters under the search field: Track, Level and Language as toggle chips (the catalog's), each a
+      `<button aria-pressed>`; no scope row for titles, prose or code.
+- [x] The Language chip loads the other language's index on demand; the Track chip restricts to the
+      For Everyone addresses; the Level chip filters by the document's level.
+- [x] A bar in the level's hue on the start edge of each result, with the level named in its meta line.
+
+### Acceptance criteria
+
+- [x] A reader who touches no chip gets what D97 gave: the page's track and language, every level.
+- [x] The index is unchanged; the dialog's shape, keys and focus return are unchanged.
+- [x] Behavioural tests for each filter, the bar's colour and edge, the keyboard and 390px, each seen
+      failing against a broken build.
+
+**Report, 2026-11-07.** `SearchDialog.tsx` keeps what the reader pressed in `chosen`; a group left
+untouched is the page's own, and a group with nothing pressed does not narrow. The level list comes
+from `SiteHeader` as props (the dialog may not import the loader), and the result's level slug is
+found from the stored level title, so no field was added to the index: **gzipped with `gzip -9`,
+94,918, 119,978 and 123,651 bytes for en, tr and fa, before and after.** The "All tracks and
+languages" checkbox is gone (D103), which changed one existing e2e test. The full e2e run found one
+failure of mine: the catalog's fidelity test read the first `.bz-chip` in the document, which was now
+a hidden chip in the search window, so `fidelity.ts` reads its chip roles inside `.bz-filters`.
+**Mutations, each seen failing a named test:** level filter ignored; track filter ignored; the
+chip's click not loading its index; the result row losing its `data-cat` (bar grey); a Persian row
+losing its direction (bar on the wrong edge); the level name removed from the meta line; the chips
+out of the tab order; every language pressed by default; the focus outline removed from a chip.
+**Gate:** 1,163 unit tests in 67 files, the build and its link check (197 pages, 13,167 links), and
+512 end-to-end cases passing with 10 skipped.
 
 ---
 

@@ -11,7 +11,7 @@ description: >
 authority: blueprint
 writes: agent, when explicitly refactoring
 status: active
-covers: the whole system as built on 2026-09-10, with M16 shipped — every route on the design language; the record, channel A and the render step corrected for M24 on 2026-10-11, and the quiz and the end of a module for M25 on 2026-10-12, the Bazaar Street front door for M27 and the Persian pages for M28 the same day, and the progress page slimmed to its circles and its data row for M38 on 2026-11-05, and the account layer, role paths, record of work and two thirds of the test suite removed for M40 the same day, and the two tracks (For Engineers, For Everyone) and their per-track record for M43 the same day; the custom domain (D92), Emerging Trends and moved addresses (D94) on 2026-11-06, and the people at the gate (M58), search (M59) and the catalog without its Sources count (M55) the same day; and for M64 to M69 the same night, a planned module that renders the sections it already has (D102), inline vendor logos, and the first For Everyone module
+covers: the whole system as built on 2026-09-10, with M16 shipped — every route on the design language; the record, channel A and the render step corrected for M24 on 2026-10-11, and the quiz and the end of a module for M25 on 2026-10-12, the Bazaar Street front door for M27 and the Persian pages for M28 the same day, and the progress page slimmed to its circles and its data row for M38 on 2026-11-05, and the account layer, role paths, record of work and two thirds of the test suite removed for M40 the same day, and the two tracks (For Engineers, For Everyone) and their per-track record for M43 the same day; the custom domain (D92), Emerging Trends and moved addresses (D94) on 2026-11-06, and the people at the gate (M58), search (M59) and the catalog without its Sources count (M55) the same day; and for M64 to M69 the same night, a planned module that renders the sections it already has (D102), inline vendor logos, and the first For Everyone module; and the search filters and the level bar on a result (M70, D103) on 2026-11-07
 last_updated: 2026-11-07
 ---
 
@@ -551,9 +551,20 @@ the same Roman-numeral split, and the series map is skipped as the page drops it
 holds the normaliser and tokenizer both sides use (Turkish folding, Persian letter forms and the
 non-joiner). The window is `SearchDialog.tsx`, a native modal `<dialog>` in the bar that imports
 `minisearch` and fetches the page's language's index the first time it opens, never with the page;
-`/` reaches it through the site's key map and Ctrl/Cmd+K through its own listener. MEASURED gzipped:
-89.3, 113.5 and 116.4 KB for English, Turkish and Persian, each excerpt stored to 400 characters so the
-window shows the text around a match.
+`/` reaches it through the site's key map and Ctrl/Cmd+K through its own listener. MEASURED with
+`gzip -9` on 2026-11-07: 92.7, 117.2 and 120.8 KiB for English, Turkish and Persian, each excerpt
+stored to 400 characters so the window shows the text around a match.
+
+**The filters (D103).** Under the field are three rows of toggle chips, the catalog's own `.bz-chip`
+with its level key: Track, Level, Language. State is `chosen`, a group left `undefined` meaning the
+page's own track and language (and no level), reset when the page changes; a pressed chip narrows and
+a group with nothing pressed does not. Every language's index already holds both tracks and every
+level, so filtering is a MiniSearch `filter` on the stored `track` and `level`, and a Language chip
+only decides which indexes are searched and, the first time, fetched. The level list is the
+curriculum's, passed down from `SiteHeader` as props because the dialog may not import the loader.
+Each result is an `<li data-cat>` carrying the level's slug, found by its stored title, so
+`category.css` binds `--bz-cat` and `.bz-search-key`, a 4px bar on the row's start edge, only reports it;
+the level is written in the row's meta line too.
 
 **Some routes render forwards, and a static export has no other way to redirect.** M17
 folded `/courses/` and `/courses/[category]/` into the catalog (M14's three forwards to `/profile/`

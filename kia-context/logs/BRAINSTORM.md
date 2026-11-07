@@ -9,8 +9,8 @@ description: >
 authority: reasoning
 writes: agent, when a decision is taken
 status: active
-covers: "D97 to D102 so far — 2026-11-06 onward"
-last_updated: 2026-11-06
+covers: "D97 to D103 so far — 2026-11-06 onward"
+last_updated: 2026-11-07
 ---
 
 # 🧠 BRAINSTORM, part 3 — D97 onward
@@ -39,6 +39,9 @@ module. The switch, "All tracks and languages", loads the other two indexes only
 **Also chosen, as D95 recommended:** an unwritten For Everyone module and a module with no
 translation are absent from the index, not found and then sent to a "not written" page. Both follow
 from building the documents through `loadModuleIn`, which already returns nothing for them.
+
+**Update, 2026-11-07 (D103):** the one switch is replaced by filter chips; the default scope above is
+unchanged.
 
 ### D98 · The escape at the gate is drawn from the scroll's own clock, not tweened — 2026-11-06
 
@@ -135,6 +138,30 @@ sections is no longer on the site**: a planned module has no `_fa.md`, so Persia
 Agent Teams, Dynamic Workflows and RLMs, which they could read in Loop Engineering before; the
 text is kept in `mini-courses/scratchpad/drafts/advanced_loop_engineering_fa.md`. Allowing a
 `_fa.md` for a planned module with written sections would bring it back; that is the author's call.
+
+### D103 · The search window filters by track, level and language with chips, and each result carries its level's bar — 2026-11-07
+
+**Asked by the author:** "it does not search or show filter for searching on level, module or
+etc; it is basic search only", with the filters of the round-4 playground (N2) but "no need to search
+in prose or code or titles", and the coloured bar on the left of each result as in the playground.
+
+**Considered:** (a) keep the "All tracks and languages" switch and add a Level row / (b) chips for
+all three, a pressed chip narrowing and a group with nothing pressed not, the switch removed / (c) as
+the playground has it, a group that can never be emptied, with a Reset link.
+
+**Chose (b), with the playground's Reset link.** The track and language chips start on the page's own,
+so a reader who touches none gets exactly D97's default, and the switch is two clicks (the other track,
+the other languages). (c)'s rule that the last pressed chip cannot be unpressed does nothing when
+clicked, which reads as a broken button; with (b) every chip always responds. **Rejected:** the
+playground's "Search in" row (titles, prose, code) at the author's word, and the chip counts, which
+need a search per chip.
+
+**Also chosen:** the chips are the catalog's `.bz-chip`, not a second kind, so the two filters on the
+site look and behave alike; the index is unchanged, because every index already holds both tracks and
+all five levels, so the filter runs on stored fields. The level bar follows the row's own direction,
+so a Persian row has it on the right. At 390px the chips keep the catalog's touch size, with the labels
+above them, so the filters take a large share of a phone's window and the results scroll under them;
+a smaller chip was not drawn so as not to deviate from §10.4 inside one dialog.
 
 ## Open questions
 

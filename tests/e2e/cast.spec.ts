@@ -15,8 +15,12 @@ import { CAST } from '@/components/home/street/cast'
  */
 
 const WALK = { width: 1440, height: 900 }
-/** Far enough into the walk that the chase has begun, and not so far the zoom is over. */
-const INTO_CHASE = 420
+/** Far enough into the walk that the chase has begun, and not so far the zoom is over. The
+ * people stand until the last of them has turned to the gate (M72), measured at about 540px
+ * at this window. */
+const INTO_CHASE = 700
+/** A small first scroll: the people still stand and can be read (M72). */
+const FIRST_STEP = 120
 
 const gate = (page: Page) => page.locator('.bz-street .cast-box .who-btn')
 const row = (page: Page) => page.locator('.bz-street .cast-row .who-btn')
@@ -265,6 +269,75 @@ test('the character beside each track tells a story too, opened like the people 
     await page.keyboard.press('Escape')
     await expect(teller.locator('.who-cloud')).toBeHidden()
   }
+})
+
+test('after a small first scroll the people still stand captioned, and a story still opens (M72)', async ({ page }) => {
+  await walk(page)
+  await cloudsReady(page)
+  await page.evaluate((y) => window.scrollTo(0, y), FIRST_STEP)
+  await settle(page)
+  await expect(page.locator('.bz-street')).not.toHaveAttribute('data-chasing', 'true')
+  const faded = await page.locator('.bz-street .cast-box .who-cap').evaluateAll((caps) =>
+    caps.filter((c) => Number(getComputedStyle(c).opacity) < 0.95).length,
+  )
+  expect(faded, 'a caption faded on the first small scroll').toBe(0)
+  const first = gate(page).first()
+  await first.click()
+  await expect(first.locator('.who-cloud')).toBeVisible()
+  // and it stays open through another small step of the wheel
+  await page.evaluate((y) => window.scrollTo(0, y), FIRST_STEP * 2)
+  await settle(page)
+  await expect(first.locator('.who-cloud')).toBeVisible()
+})
+
+test('on the walk the Sipahi and the Bezirgân tell their stories at the choice, after the chase (M72)', async ({ page }) => {
+  await walk(page)
+  await cloudsReady(page)
+  const tellers = page.locator('.bz-street .who-story')
+  expect(await tellers.count()).toBeGreaterThan(0)
+  for (const teller of await tellers.all()) {
+    // focusing a teller brings the walk to the choice (motion.ts), long after the people ran;
+    // a key press first makes it a keyboard focus, which is what opens a story
+    await page.keyboard.press('Shift')
+    await teller.focus()
+    await settle(page)
+    await expect(page.locator('.bz-street')).toHaveAttribute('data-chasing', 'true')
+    // focus alone opened it, and the walk's jump to the choice did not close it
+    await expect(teller).toHaveAttribute('data-open', '')
+    // still open once the walk has settled: it scrubs with a lag after the focus moved it
+    await settle(page)
+    const cloud = teller.locator('.who-cloud')
+    await expect(cloud).toBeVisible()
+    // placed for where the teller stands now, not where they stood when it opened
+    const box = (await cloud.boundingBox())!
+    expect(box.x, 'the story starts off the left edge').toBeGreaterThanOrEqual(0)
+    expect(box.x + box.width, 'the story runs off the right edge').toBeLessThanOrEqual(WALK.width)
+    await page.keyboard.press('Escape')
+  }
+})
+
+test('Bit\'s story is drawn over the way in, not under it (M72)', async ({ page }) => {
+  // At this window Bit's cloud reaches up into the button's box, which is what was hidden.
+  await page.setViewportSize({ width: 1280, height: 720 })
+  await page.emulateMedia({ reducedMotion: 'no-preference' })
+  await page.goto('/')
+  await expect(page.locator('html')).toHaveClass(/is-walk/)
+  await cloudsReady(page)
+  const bit = page.locator('.bz-street .cast-box .who-btn[data-who="bit"]')
+  await bit.click()
+  const cloud = bit.locator('.who-cloud')
+  await expect(cloud).toBeVisible()
+  const covered = await cloud.evaluate((el) => {
+    const r = el.getBoundingClientRect()
+    const misses: number[] = []
+    for (let i = 1; i < 10; i += 1) {
+      const x = r.left + (r.width * i) / 10
+      const hit = document.elementFromPoint(x, r.top + 4)
+      if (hit === null || !el.contains(hit)) misses.push(Math.round(x))
+    }
+    return misses
+  })
+  expect(covered, 'something is drawn over the top of Bit\'s story').toEqual([])
 })
 
 test('the walk draws the people larger than the still picture does, at the same window (M63)', async ({ page }) => {

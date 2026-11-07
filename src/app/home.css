@@ -209,6 +209,14 @@
 
   /* The story, in a cloud above the head. Shown by pointing or focus with no script, and
      by street/clouds.ts otherwise (one at a time, by tap too, kept inside the window). */
+  /* An open story rises above the gate's copy: Bit stands under "Open the curriculum", and
+     the cast sits a layer below the copy, so his cloud opened behind the button (M72). Only
+     while a story is open, so the button stays the thing on top the rest of the time. */
+  .bz-street .cast-box:has(.who-btn[data-open]),
+  .bz-street:not([data-clouds]) .cast-box:has(.who-btn:is(:hover, :focus-visible)) {
+    z-index: 4;
+  }
+
   .bz-street .who-cloud {
     position: absolute;
     bottom: calc(100% + 10px);

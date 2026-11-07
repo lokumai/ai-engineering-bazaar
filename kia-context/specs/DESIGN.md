@@ -791,7 +791,9 @@ be unreadable inside it.
 **A vendor's mark is not a figure.** An image under a level's `images/logos/` is drawn inline at
 the text's height (`.bz-logo`, 1.1em, a 0.3em gap before the name), with no frame and an empty alt,
 because the name beside it says it. It keeps its brand colour; a one-colour mark ships black and the
-theme decides (`--bz-logo-mono-filter`: `none`, and `invert(1)` under `.dark`). M68, M69.
+theme decides (`--bz-logo-mono-filter`: `none`, and `invert(1)` under `.dark`). A mark and the name
+after it never part at a line break (`.bz-logo-pair`, nowrap). Every company a module introduces
+carries one where a real, legible mark exists (D105). M68, M69, M74.
 
 **Each carries its tools as icons, in its top-right corner.** A `tool` is a 32px square that is
 TRANSPARENT at rest — the glyph alone, in the ground's muted ink — and takes an edge and a raised fill

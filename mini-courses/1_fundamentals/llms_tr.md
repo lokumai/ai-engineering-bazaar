@@ -134,24 +134,24 @@ Rakamlar bunu açıkça gösteriyor. Örnek olarak 32B'lik bir modele bakalım:
 
 Model de ağırlıkları da aynı kalır, ama artık belleğin yalnızca dörtte birine ihtiyaç duyar. Fark, "bunu hiç çalıştıramam" ile "bu masaüstümde çalışıyor" arasındaki farktır.
 
-**Modelleri kendin quantize etmen gerekir mi?** Hayır, ve neredeyse hiç etmemelisin. [Ollama](https://ollama.com/) ve [Unsloth](https://unsloth.ai/), Qwen, Llama, Mistral, Gemma ve daha fazlası gibi popüler modellerin hazır quantize edilmiş sürümlerini zaten yayımlıyor. Bunlardan birini çekip çalıştırman yeterli.
+**Modelleri kendin quantize etmen gerekir mi?** Hayır, ve neredeyse hiç etmemelisin. ![](./images/logos/ollama-mono.svg)[Ollama](https://ollama.com/) ve [Unsloth](https://unsloth.ai/), Qwen, Llama, Mistral, Gemma ve daha fazlası gibi popüler modellerin hazır quantize edilmiş sürümlerini zaten yayımlıyor. Bunlardan birini çekip çalıştırman yeterli.
 
 ### Modeli Gerçekte Çalıştıran Motorlar
 
 Her şeyin altında, asıl işi yapan bir **inference engine** var:
 
-- **llama.cpp**
-- **vLLM** (NVIDIA, AMD, TPU'lar)
+- ![](./images/logos/llamacpp.svg)**llama.cpp**
+- ![](./images/logos/vllm.svg)**vLLM** (NVIDIA, AMD, TPU'lar)
 - **SGLang** (yalnızca NVIDIA)
-- **TensorRT-LLM** (NVIDIA, AMD)
+- ![](./images/logos/nvidia.svg)**TensorRT-LLM** (NVIDIA, AMD)
 - **MLX** (yalnızca Apple)
 
 Bu motorlar yeni başlayanlar için kolay değildir ve çalışmaya başlamadan önce ciddi bir kurulum işi gerektirir. Neyse ki çoğu zaman onlara doğrudan dokunmazsın. Başka araçlar bunları arka planda kullanır ve arayüzlerini gizler. Bu araçlarla sıfırdan çalışan bir modele birkaç satır kodla ya da doğrudan terminalden ulaşabilirsin.
 
 ### Kolay Araçlar
 
-- **[LMStudio](https://lmstudio.ai/)**: modelleri indirip onlarla sohbet etmeye yarayan basit bir GUI. Başlamak için harika bir seçenek.
-- **[Ollama](https://ollama.com/)**: modelleri hızla çekip sunmak için bir komut satırı aracı. Terminalde rahat etmeye başladığında daha iyi bir seçim olur.
+- ![](./images/logos/lmstudio-mono.svg)**[LMStudio](https://lmstudio.ai/)**: modelleri indirip onlarla sohbet etmeye yarayan basit bir GUI. Başlamak için harika bir seçenek.
+- ![](./images/logos/ollama-mono.svg)**[Ollama](https://ollama.com/)**: modelleri hızla çekip sunmak için bir komut satırı aracı. Terminalde rahat etmeye başladığında daha iyi bir seçim olur.
 
 **Şimdi dene:** Ollama CLI ile çok küçük bir 0.6B modeli çek ve onunla terminalde sohbet et. Birkaç dakikanı alır. Yukarıda anlattığımız her şeyi pratikte görmene de yardımcı olur.
 
@@ -163,11 +163,11 @@ Aşağıdaki iki sağlayıcının da günlük limitli bir ücretsiz katmanı (fr
 
 ### Google AI Studio
 
-Buradan başla: [aistudio.google.com](https://aistudio.google.com/). Kaydol ve kişisel API anahtarını al. Ücretsiz katman, günlük limitlerle birlikte temel modelleri kapsar.
+Buradan başla: ![](./images/logos/google.svg)[aistudio.google.com](https://aistudio.google.com/). Kaydol ve kişisel API anahtarını al. Ücretsiz katman, günlük limitlerle birlikte temel modelleri kapsar.
 
 ### OpenRouter
 
-[OpenRouter](https://openrouter.ai/) bir **gateway** (geçit) gibi çalışır. İsteğini birçok farklı sağlayıcıya iletir. Bir yönlendirici (router) olduğu için tek bir API anahtarı hemen hemen her modele ulaşmanı sağlar. Google, OpenAI, Qwen ve diğerleri için ayrı anahtarlar yönetmen gerekmez.
+![](./images/logos/openrouter-mono.svg)[OpenRouter](https://openrouter.ai/) bir **gateway** (geçit) gibi çalışır. İsteğini birçok farklı sağlayıcıya iletir. Bir yönlendirici (router) olduğu için tek bir API anahtarı hemen hemen her modele ulaşmanı sağlar. Google, OpenAI, Qwen ve diğerleri için ayrı anahtarlar yönetmen gerekmez.
 
 ```mermaid
 graph LR

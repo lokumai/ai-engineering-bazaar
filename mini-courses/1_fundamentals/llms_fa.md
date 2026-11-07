@@ -134,24 +134,24 @@ system prompt‌های واقعی خیلی از محصولات لو رفته و 
 
 مدل همونه و weight‌ها همون، فقط حافظه یک‌چهارم شده؛ و فرق «اصلاً نمی‌تونم اجراش کنم» با «روی کامپیوتر خودم اجرا می‌شه» دقیقاً همین‌جاست.
 
-**یعنی باید خودت مدل‌ها رو quantize کنی؟** نه، و بهتره تقریباً هیچ‌وقت سراغش نری. [Ollama](https://ollama.com/) و [Unsloth](https://unsloth.ai/) نسخه‌های quantize‌شده‌ی آماده‌ی مدل‌های معروف رو منتشر کردن، مثل Qwen، Llama، Mistral، Gemma و کلی مدل دیگه. کافیه یکی‌شون رو pull کنی و اجراش کنی.
+**یعنی باید خودت مدل‌ها رو quantize کنی؟** نه، و بهتره تقریباً هیچ‌وقت سراغش نری. ![](./images/logos/ollama-mono.svg)[Ollama](https://ollama.com/) و [Unsloth](https://unsloth.ai/) نسخه‌های quantize‌شده‌ی آماده‌ی مدل‌های معروف رو منتشر کردن، مثل Qwen، Llama، Mistral، Gemma و کلی مدل دیگه. کافیه یکی‌شون رو pull کنی و اجراش کنی.
 
 ### موتورهایی که واقعاً مدل رو اجرا می‌کنن
 
 توی پایین‌ترین لایه، یه **inference engine** هست که کار اصلی رو انجام می‌ده:
 
-- **llama.cpp**
-- **vLLM** (NVIDIA، AMD، TPUs)
+- ![](./images/logos/llamacpp.svg)**llama.cpp**
+- ![](./images/logos/vllm.svg)**vLLM** (روی NVIDIA، AMD و TPUs)
 - **SGLang** (فقط NVIDIA)
-- **TensorRT-LLM** (NVIDIA، AMD)
+- ![](./images/logos/nvidia.svg)**TensorRT-LLM** (روی NVIDIA و AMD)
 - **MLX** (فقط Apple)
 
 کار کردن با این موتورها برای تازه‌کارها راحت نیست و تا راه بیفتن، کلی باید تنظیمشون کنی. خوشبختانه کمتر پیش میاد که مستقیم بهشون دست بزنی، چون ابزارهای دیگه پشت صحنه ازشون استفاده می‌کنن و رابطشون رو از تو پنهان می‌کنن. با این ابزارها از صفر شروع می‌کنی و با چند خط کد، یا حتی مستقیم از ترمینال، یه مدل رو بالا میاری.
 
 ### ابزارهای ساده
 
-- **[LMStudio](https://lmstudio.ai/)**: یه GUI ساده برای دانلود مدل‌ها و چت کردن باهاشون؛ برای شروع عالیه.
-- **[Ollama](https://ollama.com/)**: یه ابزار command-line که باهاش سریع مدل‌ها رو pull و serve می‌کنی. وقتی دستت با ترمینال راه افتاد، این انتخاب بهتریه.
+- ![](./images/logos/lmstudio-mono.svg)**[LMStudio](https://lmstudio.ai/)**: یه GUI ساده برای دانلود مدل‌ها و چت کردن باهاشون؛ برای شروع عالیه.
+- ![](./images/logos/ollama-mono.svg)**[Ollama](https://ollama.com/)**: یه ابزار command-line که باهاش سریع مدل‌ها رو pull و serve می‌کنی. وقتی دستت با ترمینال راه افتاد، این انتخاب بهتریه.
 
 **همین الان امتحانش کن:** با Ollama CLI یه مدل خیلی کوچیک 0.6B رو pull کن و توی ترمینال باهاش چت کن. دو سه دقیقه بیشتر وقت نمی‌گیره و هر چیزی که تا این‌جا گفتیم رو با چشم خودت می‌بینی.
 
@@ -163,11 +163,11 @@ system prompt‌های واقعی خیلی از محصولات لو رفته و 
 
 ### Google AI Studio
 
-از این‌جا شروع کن: [aistudio.google.com](https://aistudio.google.com/). ثبت‌نام کن و API key شخصی خودت رو بگیر. پلن رایگانش مدل‌های پایه رو با سقف روزانه در اختیارت می‌ذاره.
+از این‌جا شروع کن: ![](./images/logos/google.svg)[aistudio.google.com](https://aistudio.google.com/). ثبت‌نام کن و API key شخصی خودت رو بگیر. پلن رایگانش مدل‌های پایه رو با سقف روزانه در اختیارت می‌ذاره.
 
 ### OpenRouter
 
-[OpenRouter](https://openrouter.ai/) یه gateway‌ه که درخواستت رو به provider‌های مختلف می‌رسونه. چون کارش router بودنه، با یه API key تقریباً به همه‌ی مدل‌ها دسترسی داری و لازم نیست برای Google و OpenAI و Qwen و بقیه، key‌های جدا نگه داری.
+![](./images/logos/openrouter-mono.svg)[OpenRouter](https://openrouter.ai/) یه gateway‌ه که درخواستت رو به provider‌های مختلف می‌رسونه. چون کارش router بودنه، با یه API key تقریباً به همه‌ی مدل‌ها دسترسی داری و لازم نیست برای Google و OpenAI و Qwen و بقیه، key‌های جدا نگه داری.
 
 ```mermaid
 graph LR

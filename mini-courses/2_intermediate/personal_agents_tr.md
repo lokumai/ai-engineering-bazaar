@@ -97,7 +97,7 @@ Nerede durduğu konusunda dürüst olmalıyız. Eleştirmenler, saklanan kimlik 
 
 Hafif bir seçenek arıyorsan **[nanoclaw](https://github.com/nanocoai/nanoclaw)** tam bunun için: riske farklı bir yaklaşımla bakıyor ve her agent bir container içinde çalışıyor. WhatsApp, Telegram, Slack, Discord ve Gmail'e bağlanıyor, hafızayı ve zamanlanmış işleri tutuyor ve doğrudan Anthropic'in Agents SDK'sı üzerinde çalışıyor. Tam sürüm dizüstü bilgisayarına fazla geliyorsa, buradan başla.
 
-Hiçbirini kendin çalıştırmak istemiyorsan, bir başkasının senin için barındırdığı bir sürümü kullanabilirsin. **[Kimi Claw](https://www.kimi.com/en/help/kimi-claw)**, Moonshot'ın ürünü; masaüstü ve Android için yapılmış ve WeChat, Feishu, WeCom ve DingTalk entegrasyonları var. İşin bu uygulamalar üzerinden yürüyorsa pratik bir seçimdir. **[myclaw.ai](https://myclaw.ai/)** ise bunu bir hizmet olarak senin için barındırıyor. Takas ise belli: bakımını yapmayı bırakırsın ve agent artık yalnızca senin olmaz.
+Hiçbirini kendin çalıştırmak istemiyorsan, bir başkasının senin için barındırdığı bir sürümü kullanabilirsin. ![](./images/logos/kimi-mono.svg)**[Kimi Claw](https://www.kimi.com/en/help/kimi-claw)**, Moonshot'ın ürünü; masaüstü ve Android için yapılmış ve WeChat, Feishu, WeCom ve DingTalk entegrasyonları var. İşin bu uygulamalar üzerinden yürüyorsa pratik bir seçimdir. **[myclaw.ai](https://myclaw.ai/)** ise bunu bir hizmet olarak senin için barındırıyor. Takas ise belli: bakımını yapmayı bırakırsın ve agent artık yalnızca senin olmaz.
 
 ## Daha Fazla Personal Agent
 

@@ -76,7 +76,7 @@ agent بودن صفر و یکی نیست؛ سوال اصلی اینه که چق�
 - ساختن دوباره‌ی prompt
 - تصمیم گرفتن درباره‌ی این‌که کی باید تموم کرد
 
-[smolagents](https://github.com/huggingface/smolagents) و [LangChain](https://github.com/langchain-ai/langchain) اومدن که این کد رو یه بار برای همیشه بنویسن.
+![](./images/logos/huggingface.svg)[smolagents](https://github.com/huggingface/smolagents) و ![](./images/logos/langchain-mono.svg)[LangChain](https://github.com/langchain-ai/langchain) اومدن که این کد رو یه بار برای همیشه بنویسن.
 
 **حالا برگرد به [مبانی LLM](llms_fa.md).** اون‌جا یه LLM رو مستقیم از terminal و بدون هیچ framework‌ای اجرا کردیم. چرا اون‌جا framework لازم نداشتیم؟ چون فقط یه call بود: یه ورودی فرستادی، یه خروجی گرفتی و کار همون‌جا تموم شد. نه loop‌ی بود، نه tool call‌ی که parse بشه، نه message stack‌ای که نگهش داریم. یه LLM single-turn به هیچ scaffolding‌ای، یعنی کد اضافه‌ای که دور مدل نوشته می‌شه، احتیاج نداره، ولی agent تقریباً سر تا پاش همین scaffolding‌ه.
 
@@ -138,7 +138,7 @@ result = agent.run("Read main.py and summarise it")
 
 همه‌ی این کارها رو `CodeAgent` انجام می‌ده و loop همون `agent.run` هست.
 
-framework‌های دیگه هم همین مشکل رو هر کدوم به یه روش حل می‌کنن: [LangChain](https://github.com/langchain-ai/langchain)، [crewAI](https://github.com/crewAIInc/crewAI) و [AutoGen](https://github.com/microsoft/autogen). توی [Agent Framework‌ها](../4_ecosystem/agent_frameworks_fa.md) این‌ها رو کنار هم مقایسه کردیم.
+framework‌های دیگه هم همین مشکل رو هر کدوم به یه روش حل می‌کنن: ![](./images/logos/langchain-mono.svg)[LangChain](https://github.com/langchain-ai/langchain) و ![](./images/logos/crewai.svg)[crewAI](https://github.com/crewAIInc/crewAI) و ![](./images/logos/autogen.svg)[AutoGen](https://github.com/microsoft/autogen). توی [Agent Framework‌ها](../4_ecosystem/agent_frameworks_fa.md) این‌ها رو کنار هم مقایسه کردیم.
 
 ![LLM مغزه، agent بدن](./images/agent-analogy.png)  
 *LLM مغزه، agent بدنیه که دورش ساخته شده، و tool‌ها دست‌هاش.*

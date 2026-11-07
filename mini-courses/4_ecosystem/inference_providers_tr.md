@@ -42,7 +42,7 @@ AgentRouter cüzdanını o tutar ve ona gönderdiğin her çağrıyı görür. �
 
 ## LLM Üreticilerinden Doğrudan Inference
 
-Diğer yol, modeli yapan şirkete doğrudan gitmek: OpenAI, Anthropic ya da Google.
+Diğer yol, modeli yapan şirkete doğrudan gitmek: ![](./images/logos/openai-mono.svg)OpenAI, ![](./images/logos/anthropic-mono.svg)Anthropic ya da ![](./images/logos/google.svg)Google.
 
 Bu yolu, yalnızca üreticinin sunduğu şeyleri istediğinde seçersin. Yeni modeller genellikle önce orada çıkar, üstelik provider'a özgü özellikler de orada bulunur ve bunlar hiç de küçük değildir:
 
@@ -70,7 +70,7 @@ Herkesin verdiği sayı milyon token başına fiyattır, ama aynı zamanda tek b
 
 Aşağıdaki iki yolun da günlük sınırları olan bir ücretsiz katmanı var ve gerçek bir şey inşa etmek için bu yeterli.
 
-![](./images/logos/googlegemini.svg)**[Google AI Studio](https://aistudio.google.com/)**, büyük üreticiler arasında en cömert olanıdır. Kayıt olup bir key aldıktan sonra ücretsiz katman, sıradan modelleri günlük bir üst sınırla kapsar. **OpenRouter** de günlük limitli ücretsiz modeller sunar ve ayrı hesaplar açmadan aynı prompt üzerinde birkaç modeli denemenin en hızlı yolu da budur.
+![](./images/logos/google.svg)**[Google AI Studio](https://aistudio.google.com/)**, büyük üreticiler arasında en cömert olanıdır. Kayıt olup bir key aldıktan sonra ücretsiz katman, sıradan modelleri günlük bir üst sınırla kapsar. **OpenRouter** de günlük limitli ücretsiz modeller sunar ve ayrı hesaplar açmadan aynı prompt üzerinde birkaç modeli denemenin en hızlı yolu da budur.
 
 Ücretsiz katmanlarla ilgili bir uyarım var, çünkü bu sorun insanları tam da en kötü anda yakalar. Ücretsiz katman, modelin görevini yapıp yapamayacağını söyler, ama ürününün nasıl hissettireceği hakkında neredeyse hiçbir şey söylemez. Ücretsiz kapasite daha yavaştır, daha sıkı rate limit'lere sahiptir ve provider meşgul olduğunda ilk kesilen kapasite de ücretsiz olandır. Bu yüzden gecikmeyi, parasını ödeyeceğin katmanda ölçmelisin.
 

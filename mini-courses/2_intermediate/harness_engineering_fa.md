@@ -141,11 +141,11 @@ guide‌ها قبل از کار میان و sensor‌ها بعدش. هر چی se
 - Pi Agent
 - Prime Agent
 - OMP
-- Claude Code
-- Codex
+- ![](./images/logos/claude.svg)Claude Code
+- ![](./images/logos/openai-mono.svg)Codex
 - DeepAgents
 - Hermes Agent
-- OpenCode
+- ![](./images/logos/opencode-mono.svg)OpenCode
 
 Pi Agent با 66.7%، یعنی بیست workflow از سی تا، اول شد. Claude Code با 122.7 ثانیه برای هر کار از همه سریع‌تر بود، ولی به ازای هر موفقیت از همه گرون‌تر هم تموم شد.
 
@@ -157,7 +157,7 @@ Pi Agent با 66.7%، یعنی بیست workflow از سی تا، اول شد. C
 
 تغییر دیگه‌ای که تا 2026 پیش اومد اینه که خیلی از این harness‌ها متن‌بازن، حتی تجاری‌هاشون.
 
-harness Claude Code بازه، harness [DeepSeek](https://github.com/deepseek-ai/deepseek-harness) هم همین‌طور، که DeepSeek درست کنار همون مدلی منتشرش کرد که براش تنظیم شده بود، و این خودش نشون می‌ده این دو تا با هم طراحی شدن. OpenCode، Pi و [deepagents](https://github.com/langchain-ai/deepagents) از LangChain هم بازن، و همین‌طور harness‌های personal agent یعنی Hermes و OpenClaw، که یه درس جدا دارن: [Personal Agent‌ها](personal_agents_fa.md).
+harness Claude Code بازه، harness ![](./images/logos/deepseek.svg)[DeepSeek](https://github.com/deepseek-ai/deepseek-harness) هم همین‌طور، که DeepSeek درست کنار همون مدلی منتشرش کرد که براش تنظیم شده بود، و این خودش نشون می‌ده این دو تا با هم طراحی شدن. OpenCode، Pi و [deepagents](https://github.com/langchain-ai/deepagents) از LangChain هم بازن، و همین‌طور harness‌های personal agent یعنی Hermes و OpenClaw، که یه درس جدا دارن: [Personal Agent‌ها](personal_agents_fa.md).
 
 این خیلی به کار میاد، و فقط هم به خاطر این نیست که می‌تونی کدش رو بخونی. می‌تونی یه harness که خوب کار می‌کنه رو برداری و قسمت‌هایی رو که به کارت نمی‌خوره عوض کنی؛ مثلاً می‌تونی:
 

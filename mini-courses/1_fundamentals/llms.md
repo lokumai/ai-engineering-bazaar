@@ -206,7 +206,7 @@ The model and its weights stay the same, but they now need only one quarter of t
 is the difference between "I cannot run this at all" and "this runs on my desktop".
 
 **Do you have to quantize models yourself?** No, and you almost never should.
-[Ollama](https://ollama.com/) and [Unsloth](https://unsloth.ai/) already publish
+![](./images/logos/ollama-mono.svg)[Ollama](https://ollama.com/) and [Unsloth](https://unsloth.ai/) already publish
 ready-made quantized versions of the popular models: Qwen, Llama, Mistral, Gemma and
 more. Just pull one and run it.
 
@@ -214,10 +214,10 @@ more. Just pull one and run it.
 
 Under everything, there is an **inference engine** that does the real work:
 
-- **llama.cpp**
-- **vLLM** (NVIDIA, AMD, TPUs)
+- ![](./images/logos/llamacpp.svg)**llama.cpp**
+- ![](./images/logos/vllm.svg)**vLLM** (NVIDIA, AMD, TPUs)
 - **SGLang** (NVIDIA only)
-- **TensorRT-LLM** (NVIDIA, AMD)
+- ![](./images/logos/nvidia.svg)**TensorRT-LLM** (NVIDIA, AMD)
 - **MLX** (Apple only)
 
 These engines are not easy for beginners, and they need a lot of setup work before they run.
@@ -227,9 +227,9 @@ or directly from the terminal.
 
 ### The Easy Tools
 
-- **[LMStudio](https://lmstudio.ai/)**: a simple GUI to download models and chat with them.
+- ![](./images/logos/lmstudio-mono.svg)**[LMStudio](https://lmstudio.ai/)**: a simple GUI to download models and chat with them.
   It is great for getting started.
-- **[Ollama](https://ollama.com/)**: a command-line tool to pull and serve models fast. It
+- ![](./images/logos/ollama-mono.svg)**[Ollama](https://ollama.com/)**: a command-line tool to pull and serve models fast. It
   is the better choice once you are comfortable in a terminal.
 
 **Try it now:** pull a very small 0.6B model with the Ollama CLI, and chat with it in your
@@ -245,12 +245,12 @@ Both of the providers below have a free tier with daily limits. That is enough t
 
 ### Google AI Studio
 
-Start here: [aistudio.google.com](https://aistudio.google.com/). Sign up and get your
+Start here: ![](./images/logos/google.svg)[aistudio.google.com](https://aistudio.google.com/). Sign up and get your
 personal API key. The free tier covers the basic models with daily limits.
 
 ### OpenRouter
 
-[OpenRouter](https://openrouter.ai/) is a gateway. It forwards your request to many different
+![](./images/logos/openrouter-mono.svg)[OpenRouter](https://openrouter.ai/) is a gateway. It forwards your request to many different
 providers. Because it is a router, one API key reaches almost every model. You do not have to
 manage separate keys for Google, OpenAI, Qwen and the rest.
 

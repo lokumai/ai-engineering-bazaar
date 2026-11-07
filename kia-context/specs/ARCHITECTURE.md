@@ -695,8 +695,8 @@ fail in `build`.
 ## 11. The test suite, and the one rule it lives by
 
 **68** test files (`find tests -name '*.test.ts*' | wc -l`; vitest runs 67 of them) holding
-**1,163** unit and corpus tests, plus **36** Playwright spec files holding **534** browser cases
-(`npx playwright test --list`; measured 2026-11-07, after M73; M40 had cut them from 2,107 and
+**1,164** unit and corpus tests, plus **36** Playwright spec files holding **534** browser cases
+(`npx playwright test --list`; measured 2026-11-07, after M74; M40 had cut them from 2,107 and
 1,234, **D88**), in three suites that each answer
 something the others cannot.
 

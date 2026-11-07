@@ -135,11 +135,11 @@ Bu grafik, Composio'nun [Finding the Best Harness for DeepSeek V4 Flash](https:/
 - Pi Agent
 - Prime Agent
 - OMP
-- Claude Code
-- Codex
+- ![](./images/logos/claude.svg)Claude Code
+- ![](./images/logos/openai-mono.svg)Codex
 - DeepAgents
 - Hermes Agent
-- OpenCode
+- ![](./images/logos/opencode-mono.svg)OpenCode
 
 Pi Agent, 66.7%'yle birinci oldu. Bu da otuz iş akışından yirmisinin başarılı olması demek. Claude Code ise görev başına 122.7 saniyeyle en hızlısıydı, ama başarı başına en pahalı olan da oydu.
 
@@ -151,7 +151,7 @@ Bu yüzden bir modelin "state of the art" olduğunu okuduğunda dürüst bir sor
 
 2026'da bir diğer değişiklik de bu harness'lerin çoğunun açık kaynak olması. Bu listeye ticari olanlar da giriyor.
 
-Claude Code'un harness'i açık, [DeepSeek'in](https://github.com/deepseek-ai/deepseek-harness) harness'i de öyle. DeepSeek bunu, ayarlandığı modelin hemen yanında yayımladı. Bu da ikisinin birlikte tasarlandığını gösteriyor. OpenCode, Pi ve LangChain'in [deepagents](https://github.com/langchain-ai/deepagents) projesi de açık. Kişisel agent harness'leri olan Hermes ve OpenClaw da öyle. Bunların kendi modülü var: [Personal Agent'lar](personal_agents_tr.md).
+Claude Code'un harness'i açık, ![](./images/logos/deepseek.svg)[DeepSeek'in](https://github.com/deepseek-ai/deepseek-harness) harness'i de öyle. DeepSeek bunu, ayarlandığı modelin hemen yanında yayımladı. Bu da ikisinin birlikte tasarlandığını gösteriyor. OpenCode, Pi ve LangChain'in [deepagents](https://github.com/langchain-ai/deepagents) projesi de açık. Kişisel agent harness'leri olan Hermes ve OpenClaw da öyle. Bunların kendi modülü var: [Personal Agent'lar](personal_agents_tr.md).
 
 Bu gerçekten işe yarıyor, yalnızca kodu okuyabildiğin için değil. Çalışan bir harness alıp işine uymayan kısımları değiştirebilirsin. Şunları yapabilirsin:
 

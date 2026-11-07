@@ -107,7 +107,7 @@ We should be honest about where it still stands. Reviewers have pointed out that
 
 **[nanoclaw](https://github.com/nanocoai/nanoclaw)** is the lightweight option. It made a different choice about the risk: every agent runs in a container. It connects to WhatsApp, Telegram, Slack, Discord and Gmail. It keeps memory and scheduled jobs, and it runs directly on Anthropic's Agents SDK. If the full version feels like too much to put on your laptop, start here.
 
-And if you do not want to run any of it, you can use one that someone else hosts for you. **[Kimi Claw](https://www.kimi.com/en/help/kimi-claw)** is Moonshot's. It is made for desktop and Android, and it has integrations for WeChat, Feishu, WeCom and DingTalk. That makes it the practical choice if your work happens in those apps. **[myclaw.ai](https://myclaw.ai/)** hosts one for you as a service. The trade-off is the obvious one: you stop maintaining it, and it stops being only yours.
+And if you do not want to run any of it, you can use one that someone else hosts for you. ![](./images/logos/kimi-mono.svg)**[Kimi Claw](https://www.kimi.com/en/help/kimi-claw)** is Moonshot's. It is made for desktop and Android, and it has integrations for WeChat, Feishu, WeCom and DingTalk. That makes it the practical choice if your work happens in those apps. **[myclaw.ai](https://myclaw.ai/)** hosts one for you as a service. The trade-off is the obvious one: you stop maintaining it, and it stops being only yours.
 
 ## More Personal Agents
 

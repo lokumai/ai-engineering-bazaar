@@ -13,7 +13,7 @@ description: >
 authority: state
 writes: agent, every session
 status: active
-covers: "M50 to M73, 2026-11-06 onward"
+covers: "M50 to M74, 2026-11-06 onward"
 last_updated: 2026-11-07
 ---
 
@@ -1069,6 +1069,33 @@ counts in INDEX and ARCHITECTURE follow. SkeinJS has no repository under that na
 a `NEED` marker in the file rather than a guess; Aegra (`aegra/aegra`) and the five documentation
 links were checked. The Advanced Multi-Agent placeholder's dash
 became a colon, the house rule.
+
+## 🏁 Milestone M74: A logo for every company a module introduces (D105) — DONE
+
+The author, 2026-11-07: logos for every vendor and company, not only a few per page; built by a
+Sonnet High subagent, reviewed by a Haiku reviewer at xhigh.
+
+- [x] Marks wherever a company, framework, library or tool is introduced, in English, Turkish and
+      Persian, across Fundamentals, Intermediate and Ecosystem.
+- [x] Every mark real, legible at text height, theme-safe, and bound to its name at line breaks.
+
+**Report, 2026-11-07.** The subagent placed 79 new marks per language from 62 new files, reused the
+existing ones, left 18 products plain because no real mark exists (Unsloth, MLX, llm-d, deepagents,
+VoltAgent, Portkey, AgentRouter, DeepWiki, Moltbook and others), and rephrased 11 Persian lines so a
+Persian word follows the name. **The review** found three marks that followed the operating system's
+colour scheme rather than the site's (PentAGI, DocsGPT, Antigravity: the rule removed, DocsGPT made a
+black `-mono` mark), five raster-or-unconfirmed files of 29 to 182 KB (LlamaIndex, NanoClaw, SGLang,
+Open WebUI, and a traced portrait for Hermes), a drawn tile (DeepTeam), an unreadable wordmark (IBM)
+and a pale yellow mark (LightRAG), all eight dropped; black tiles not named `-mono` (Bolt, Mastra,
+renamed); Microsoft's mark on a grey plate (removed) and repeated on three items in a row (kept on
+the first); the Gemini mark on Google AI Studio (now Google's); a mark on a passing mention in
+Inference Engines (removed); and **five marks that wrapped onto a different line from their name**,
+so the renderer now binds a mark to the word or name after it (`rehypeKeepLogoWithName`, a
+`white-space: nowrap` pair; a unit test seen failing without it). Holding the whole name with its mark pushed the Security page 14px past a 390px window (the long bold names), so only the mark and the name's first word are held, the mark moving inside the name's link or bold. **Gate:** 1,164 unit tests, the build and link check, 524 browser tests passed and 10 skipped. **Now: 78 English placements, 66
+files** (measured with `grep` over the modules and `ls` over `images/logos/`).
+
+The `## Open questions` heading of `BRAINSTORM.md` had been deleted by the scripted insert that added
+D104 (its text survived without the heading); restored.
 
 ---
 

@@ -97,7 +97,7 @@ OpenClaw اون‌قدر سریع بزرگ شد که مهندسیش ازش جا 
 
 **[nanoclaw](https://github.com/nanocoai/nanoclaw)** گزینه‌ی سبک‌وزنه، و سر مسئله‌ی ریسک یه تصمیم دیگه گرفته: هر agent توی یه container اجرا می‌شه. به WhatsApp، Telegram، Slack، Discord و Gmail وصل می‌شه، memory و job‌های زمان‌بندی‌شده داره، و مستقیم روی Agents SDK شرکت Anthropic اجرا می‌شه. اگه حس می‌کنی نصب نسخه‌ی کامل روی لپ‌تاپت زیادیه، از این شروع کن.
 
-اگه هم اصلاً نمی‌خوای هیچ‌کدومش رو خودت اجرا کنی، می‌تونی از نسخه‌ای استفاده کنی که یکی دیگه برات host می‌کنه. **[Kimi Claw](https://www.kimi.com/en/help/kimi-claw)** مال Moonshot‌ه؛ برای desktop و Android ساخته شده و با WeChat، Feishu، WeCom و DingTalk یکپارچه‌ست، پس اگه کارت توی همین اپ‌ها می‌گذره، انتخاب منطقی همینه. **[myclaw.ai](https://myclaw.ai/)** هم به شکل یه سرویس برات یکی راه می‌ندازه. بده‌بستونش هم معلومه: دیگه زحمت نگهداریش با تو نیست، ولی دیگه فقط مال تو هم نیست.
+اگه هم اصلاً نمی‌خوای هیچ‌کدومش رو خودت اجرا کنی، می‌تونی از نسخه‌ای استفاده کنی که یکی دیگه برات host می‌کنه. ![](./images/logos/kimi-mono.svg)**[Kimi Claw](https://www.kimi.com/en/help/kimi-claw)** مال Moonshot‌ه؛ برای desktop و Android ساخته شده و با WeChat، Feishu، WeCom و DingTalk یکپارچه‌ست، پس اگه کارت توی همین اپ‌ها می‌گذره، انتخاب منطقی همینه. **[myclaw.ai](https://myclaw.ai/)** هم به شکل یه سرویس برات یکی راه می‌ندازه. بده‌بستونش هم معلومه: دیگه زحمت نگهداریش با تو نیست، ولی دیگه فقط مال تو هم نیست.
 
 ## Personal Agent‌های دیگه
 

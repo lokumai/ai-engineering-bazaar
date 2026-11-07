@@ -9,7 +9,7 @@ description: >
 authority: reasoning
 writes: agent, when a decision is taken
 status: active
-covers: "D97 to D104 so far — 2026-11-06 onward"
+covers: "D97 to D105 so far — 2026-11-06 onward"
 last_updated: 2026-11-07
 ---
 
@@ -183,6 +183,23 @@ a phone's window: shut, the results have the room.
 **Rejected:** `<details>`, because Chrome does not close one on Escape and Escape inside the dialog
 must keep closing the dialog; keeping hidden filtering with a count on the closed toggle, which asks a
 reader to notice a number to understand their results.
+
+### D105 · Every company a module introduces carries its logo, which reverses M69's rule on uneven lists — 2026-11-07
+
+**Asked by the author:** "do the same for all the vendors or companies, not necessarily LLMs but
+every company, such as LangChain or inference servers or agent frameworks or smolagents or crewAI or
+everything in UI design". M69 had removed four marks (Replit, vLLM, NVIDIA, LangSmith) because their
+lists had others without one; that rule is **superseded**: a company, framework, library or tool gets
+its mark where a module introduces it, and an item with no real mark simply has none.
+
+**Kept from M69:** a real mark only (Simple Icons 16.36.0, the vendor's own SVG, or Wikimedia's copy
+of the official one), never drawn; beside its name, never alone, never in a heading, table or
+references list; one-colour marks ship black as `*-mono.svg` for the theme to invert. **Added after
+the review:** no mark that carries a raster image or depends on the reader's operating-system colour
+scheme, and none unreadable at text height (a wide wordmark, a pale yellow); a mark and its name never
+part at a line break (`.bz-logo-pair`, `src/lib/content/render.ts`).
+
+## Open questions
 
 None open in this part yet. New ones go here, numbered after O5.
 

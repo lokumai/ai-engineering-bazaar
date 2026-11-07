@@ -15,7 +15,7 @@ Bu kısmı bir an durup düşün: bu agent'lar yalnızca var olanı *kullanmakla
 
 Yani kodlama, birçok beceriden yalnızca biri değildir; diğer becerilerin yerini alabilen temel beceri odur. Bu yüzden bir code agent, yazılımla ilgisi olmayan işlerde de işe yarar. Yukarıdaki örneklerin hepsi, kod yazmakla ilgisi olmayan işlerdi.
 
-Bu modülün geri kalanı, standart donanımı anlatıyor. Güncel code agent'ların neredeyse hepsinde bu özellikler bulunur: Claude Code, Codex, Antigravity, Copilot ve OpenCode. Adlar ve dosya yolları her birinde biraz farklı olsa da buradaki somut örnekler Claude Code'dan geliyor. [Claude Code features](https://code.claude.com/docs/en/agent-sdk/claude-code-features) sayfası, bu özelliklerin hepsini tek bir yerde topluyor.
+Bu modülün geri kalanı, standart donanımı anlatıyor. Güncel code agent'ların neredeyse hepsinde bu özellikler bulunur: ![](./images/logos/claude.svg)Claude Code, ![](./images/logos/openai-mono.svg)Codex, ![](./images/logos/antigravity.svg)Antigravity, ![](./images/logos/githubcopilot-mono.svg)Copilot ve ![](./images/logos/opencode-mono.svg)OpenCode. Adlar ve dosya yolları her birinde biraz farklı olsa da buradaki somut örnekler Claude Code'dan geliyor. [Claude Code features](https://code.claude.com/docs/en/agent-sdk/claude-code-features) sayfası, bu özelliklerin hepsini tek bir yerde topluyor.
 
 ## AGENTS.md
 
@@ -58,7 +58,7 @@ MCP'nin çözdüğü problemi bir örnekle görelim.
 
 Diyelim ki LangChain agent'ının Jira ile çalışabilmesi için ona tool'lar yazdın. Bu tool'lar Jira API'sini sarmalıyor: biri issue oluşturuyor, biri arama yapıyor, biri de yoruma ekliyor. Şimdi aynısını Claude Code'da, Codex'te ya da bir smolagents script'inde istediğinde, her birinin tool tanımlarını kendi biçiminde beklediğini görürsün. Yani Jira tool'larını baştan yazmak zorunda kalırsın, sonra bir kez daha ve bir kez daha.
 
-**Model Context Protocol**, bu işi dört ayrı iş olmaktan çıkarıp tek bir işe indirir: tool'ları tek bir standart yolla tanımlarsın ve protokolü konuşan her agent bu tool'ları kullanabilir.
+![](./images/logos/modelcontextprotocol-mono.svg)**Model Context Protocol**, bu işi dört ayrı iş olmaktan çıkarıp tek bir işe indirir: tool'ları tek bir standart yolla tanımlarsın ve protokolü konuşan her agent bu tool'ları kullanabilir.
 
 ![MCP öncesi ve sonrası](./images/mcp-unified-before-after.png)  
 *Solda her servisin, onunla konuşan modele göre yazılmış ayrı bir entegrasyona ihtiyacı var. Bu yüzden iş, model sayısıyla birlikte çoğalır. Sağda ise her servisin API'si hiç değişmiyor. Değişen, modelin onlara nasıl ulaştığı: modelin zaten konuştuğu tek bir arayüz üzerinden. Bu yüzden her servisi her agent için değil, yalnızca bir kez entegre edersin.*

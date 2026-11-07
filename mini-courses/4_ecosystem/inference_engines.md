@@ -46,13 +46,13 @@ graph TD
     B --> C["Many machines<br/>llm-d on Kubernetes"]
 ```
 
-**On your own machine**, use the wrappers. [LLM Fundamentals](../1_fundamentals/llms.md) covered [Ollama](https://ollama.com/) and [LM Studio](https://lmstudio.ai/), and they are the right answer here. They hide the engine, and they get you running in minutes. Underneath, both of them are built on **[llama.cpp](https://github.com/ggml-org/llama.cpp)**. It is LLM inference written in C and C++. It is also the reason that a quantized model can run on a laptop at all. Use llama.cpp directly in two cases: when you want a build flag that the wrapper does not expose, or when you are putting a model on hardware that nobody else supports.
+**On your own machine**, use the wrappers. [LLM Fundamentals](../1_fundamentals/llms.md) covered [Ollama](https://ollama.com/) and [LM Studio](https://lmstudio.ai/), and they are the right answer here. They hide the engine, and they get you running in minutes. Underneath, both of them are built on ![](./images/logos/llamacpp.svg)**[llama.cpp](https://github.com/ggml-org/llama.cpp)**. It is LLM inference written in C and C++. It is also the reason that a quantized model can run on a laptop at all. Use llama.cpp directly in two cases: when you want a build flag that the wrapper does not expose, or when you are putting a model on hardware that nobody else supports.
 
 **On a GPU server with real users**, the wrappers are no longer enough. Here you want a serving engine.
 
-- **vLLM** is the usual default. It supports a broad range of hardware. Its continuous batching is what gives it good throughput.
+- ![](./images/logos/vllm.svg)**vLLM** is the usual default. It supports a broad range of hardware. Its continuous batching is what gives it good throughput.
 - **[SGLang](https://github.com/sgl-project/sglang)** is a high-performance serving framework for language and multimodal models. It is strong when requests share a long common prefix. If every request starts with the same big system prompt, that is exactly your case.
-- **[TensorRT-LLM](https://github.com/NVIDIA/TensorRT-LLM)** comes from NVIDIA. It gets the most out of NVIDIA hardware specifically. You compile the model into an optimised engine ahead of time. That costs you a build step, and it gives you lower latency.
+- ![](./images/logos/nvidia.svg)**[TensorRT-LLM](https://github.com/NVIDIA/TensorRT-LLM)** comes from NVIDIA. It gets the most out of NVIDIA hardware specifically. You compile the model into an optimised engine ahead of time. That costs you a build step, and it gives you lower latency.
 
 **Across many machines**, the problem is no longer how to run one server program well. The problem becomes how to coordinate a whole cluster of machines. That is what **[llm-d](https://github.com/llm-d/llm-d)** is for. It runs inference on Kubernetes with modern accelerators. The platform then handles scheduling and routing for you, which means that it decides which machine runs each request. It also does cache-aware placement: it prefers a machine that already holds the needed data in its cache.
 

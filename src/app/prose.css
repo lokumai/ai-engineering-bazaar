@@ -161,6 +161,11 @@
      for any image under `images/logos/`; it carries no frame because it is
      not a picture of anything, and its alt is empty because the name it sits
      beside already says it. */
+  /* The mark and its name never part at a line break (M74). */
+  .bz-logo-pair {
+    white-space: nowrap;
+  }
+
   .bz-logo {
     display: inline-block;
     width: auto;

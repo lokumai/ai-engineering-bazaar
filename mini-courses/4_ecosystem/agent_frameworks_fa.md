@@ -25,9 +25,9 @@ graph TD
     C --> D["مدل، و tool‌های خودت"]
 ```
 
-**[LangGraph](https://github.com/langchain-ai/langgraph)** همون runtime‌ه و پایین‌ترین سطح از این سه تا. agent‌ت رو به شکل یه graph تعریف می‌کنی: node‌ها مرحله‌ها هستن، edge‌ها می‌گن بعد از هر مرحله چی می‌تونه بیاد، و state بینشون دست‌به‌دست می‌شه. چون state صریح و مشخصه، runtime می‌تونه ذخیره‌ش کنه و بعداً از همون‌جا ادامه بده، و حتی اجازه بده یه آدم وسط اجرا وارد بشه و agent رو نگه داره. هر وقت سخت‌ترین قسمت کار کنترل جریان (control flow) بود و خواستی خودت کنترلش کنی، برو سراغ LangGraph.
+![](./images/logos/langgraph-mono.svg)**[LangGraph](https://github.com/langchain-ai/langgraph)** همون runtime‌ه و پایین‌ترین سطح از این سه تا. agent‌ت رو به شکل یه graph تعریف می‌کنی: node‌ها مرحله‌ها هستن، edge‌ها می‌گن بعد از هر مرحله چی می‌تونه بیاد، و state بینشون دست‌به‌دست می‌شه. چون state صریح و مشخصه، runtime می‌تونه ذخیره‌ش کنه و بعداً از همون‌جا ادامه بده، و حتی اجازه بده یه آدم وسط اجرا وارد بشه و agent رو نگه داره. هر وقت سخت‌ترین قسمت کار کنترل جریان (control flow) بود و خواستی خودت کنترلش کنی، برو سراغ LangGraph.
 
-**[LangChain](https://github.com/langchain-ai/langchain)** رابط اصلیه و نقطه‌ی شروع تو. روی LangGraph ساخته شده و agent معمولی رو با چند خط کد بهت می‌ده: یه مدل، چند تا tool و یه سری middleware. کارهای [Harness Engineering](../2_intermediate/harness_engineering_fa.md) توی همین middleware انجام می‌شه، و guardrail‌های [Security](../2_intermediate/security_fa.md) هم همین‌جا می‌شینن.
+![](./images/logos/langchain-mono.svg)**[LangChain](https://github.com/langchain-ai/langchain)** رابط اصلیه و نقطه‌ی شروع تو. روی LangGraph ساخته شده و agent معمولی رو با چند خط کد بهت می‌ده: یه مدل، چند تا tool و یه سری middleware. کارهای [Harness Engineering](../2_intermediate/harness_engineering_fa.md) توی همین middleware انجام می‌شه، و guardrail‌های [Security](../2_intermediate/security_fa.md) هم همین‌جا می‌شینن.
 
 **[deepagents](https://github.com/langchain-ai/deepagents)** بالاترین سطحه و روی دو تای دیگه ساخته شده. به خودش می‌گه یه agent harness «batteries-included»، یعنی هر چی لازم داری از قبل توشه. این امکانات آماده دقیقاً همون لیستیه که توی [Context Engineering](../2_intermediate/context_engineering_fa.md) دیدیم:
 
@@ -44,16 +44,16 @@ graph TD
 
 هیچ‌کدوم از این‌ها انتخاب غلطی نیست؛ فقط هر کدوم یه چیزی داده و یه چیزی گرفته، و معمولاً فرق اصلیشون اینه که چقدر به‌جای تو تصمیم می‌گیرن.
 
-- **[Agno](https://github.com/agno-agi/agno)** از یه agent تنها فراتر می‌ره و کل پلتفرم رو در نظر می‌گیره. کمکت می‌کنه agent‌ها رو مثل یه سیستم بسازی، اجرا کنی و مدیریت کنی، نه مثل یه script.
-- **[CrewAI](https://github.com/crewAIInc/crewAI)** همه‌چیز رو حول نقش‌ها می‌چینه. یه crew از agent‌ها تعریف می‌کنی که هر کدوم یه کاری دارن، و می‌ذاری با هم کار کنن. این با الگوهای multi-agent توی [Multi-Agent Systems](../1_fundamentals/multi_agent_fa.md) خیلی خوب جور درمیاد.
-- **[smolagents](https://github.com/huggingface/smolagents)** از Hugging Face کوچیکه‌ی این جمعه، و عمداً هم کوچیک نگهش داشتن: یه کتابخونه‌ی ساده و بی‌زرق‌وبرق برای agent‌هایی که به‌جای فرستادن tool call‌های JSON، کد می‌نویسن و اجراش می‌کنن تا کارشون رو انجام بدن. در واقع همون ایده‌ی CodeAct‌ه که توی [Loop Engineering](../2_intermediate/loop_engineering_fa.md) دیدیم، فقط به شکل یه کتابخونه. اگه می‌خوای بفهمی یه loop چطوری کار می‌کنه، نه اینکه فقط ازش استفاده کنی، این بهترین کدیه که می‌تونی بخونی.
-- **[Pydantic AI](https://github.com/pydantic/pydantic-ai)** همون چیزی رو میاره که Pydantic توش استاده: type. همه‌ی مدل‌ها و interface‌ها از سر تا ته type دارن، پس یه tool call خراب به‌جای اینکه یه معمای حل‌نشدنی بشه، یه validation error روشن می‌ده.
+- ![](./images/logos/agno.svg)**[Agno](https://github.com/agno-agi/agno)** از یه agent تنها فراتر می‌ره و کل پلتفرم رو در نظر می‌گیره. کمکت می‌کنه agent‌ها رو مثل یه سیستم بسازی، اجرا کنی و مدیریت کنی، نه مثل یه script.
+- ![](./images/logos/crewai.svg)**[CrewAI](https://github.com/crewAIInc/crewAI)** همه‌چیز رو حول نقش‌ها می‌چینه. یه crew از agent‌ها تعریف می‌کنی که هر کدوم یه کاری دارن، و می‌ذاری با هم کار کنن. این با الگوهای multi-agent توی [Multi-Agent Systems](../1_fundamentals/multi_agent_fa.md) خیلی خوب جور درمیاد.
+- ![](./images/logos/huggingface.svg)**[smolagents](https://github.com/huggingface/smolagents)** از Hugging Face کوچیکه‌ی این جمعه، و عمداً هم کوچیک نگهش داشتن: یه کتابخونه‌ی ساده و بی‌زرق‌وبرق برای agent‌هایی که به‌جای فرستادن tool call‌های JSON، کد می‌نویسن و اجراش می‌کنن تا کارشون رو انجام بدن. در واقع همون ایده‌ی CodeAct‌ه که توی [Loop Engineering](../2_intermediate/loop_engineering_fa.md) دیدیم، فقط به شکل یه کتابخونه. اگه می‌خوای بفهمی یه loop چطوری کار می‌کنه، نه اینکه فقط ازش استفاده کنی، این بهترین کدیه که می‌تونی بخونی.
+- ![](./images/logos/pydantic.svg)**[Pydantic AI](https://github.com/pydantic/pydantic-ai)** همون چیزی رو میاره که Pydantic توش استاده: type. همه‌ی مدل‌ها و interface‌ها از سر تا ته type دارن، پس یه tool call خراب به‌جای اینکه یه معمای حل‌نشدنی بشه، یه validation error روشن می‌ده.
 
 ## اگه پروژه‌ت TypeScript‌ه
 
 اینجا دو تا framework ارزش شناختن دارن، چون کل استک بالا اول برای Python ساخته شده، در حالی که بیشتر کدهای محصول با Python نوشته نمی‌شن.
 
-- **[Mastra](https://github.com/mastra-ai/mastra)** framework مدرن TypeScript برای ساختن agent و اپلیکیشن‌های AI‌ه، و توی این زبون نزدیک‌ترین چیز به LangChain همینه.
+- ![](./images/logos/mastra-mono.svg)**[Mastra](https://github.com/mastra-ai/mastra)** یه framework مدرن TypeScript برای ساختن agent و اپلیکیشن‌های AI‌ه، و توی این زبون نزدیک‌ترین چیز به LangChain همینه.
 - **[VoltAgent](https://github.com/VoltAgent/voltagent)** یه پلتفرم agent engineering‌ه که روی یه framework متن‌باز TypeScript ساخته شده، برای همین بیشتر روی بخش عملیاتی (operations) تمرکز داره، یعنی کارهایی که بعد از ساختن agent‌ها پیش میاد: اجرا کردنشون، زیر نظر گرفتنشون و مدیریتشون.
 
 ## AI Workflow‌ها
@@ -84,7 +84,7 @@ graph TD
 
 ## گزینه‌های No-code
 
-این رو باید رک گفت، چون مهندس‌ها معمولاً از کنارش رد می‌شن: برای خیلی از کارها، جواب درست یه پلتفرم no-code‌ه. **[Lovable](https://lovable.dev/)**، **[Bolt](https://bolt.new/)** و **[Replit](https://replit.com/)** از روی یه توضیح، یه اپلیکیشن سالم و کارکن تحویلت می‌دن و خودشون deploy‌ش می‌کنن، و تو هم با نوشتن prompt‌های بعدی، هر بار عوضش می‌کنی. برای یه prototype، یه ابزار داخلی، یا یه landing page که یه فرم پشتشه، این کار به‌جای چند هفته چند ساعت طول می‌کشه.
+این رو باید رک گفت، چون مهندس‌ها معمولاً از کنارش رد می‌شن: برای خیلی از کارها، جواب درست یه پلتفرم no-code‌ه. ![](./images/logos/lovable.svg)**[Lovable](https://lovable.dev/)** و ![](./images/logos/bolt-mono.svg)**[Bolt](https://bolt.new/)** و ![](./images/logos/replit.svg)**[Replit](https://replit.com/)** از روی یه توضیح، یه اپلیکیشن سالم و کارکن تحویلت می‌دن و خودشون deploy‌ش می‌کنن، و تو هم با نوشتن prompt‌های بعدی، هر بار عوضش می‌کنی. برای یه prototype، یه ابزار داخلی، یا یه landing page که یه فرم پشتشه، این کار به‌جای چند هفته چند ساعت طول می‌کشه.
 
 بده‌بستونش هم همون همیشگیه: الان سرعت می‌گیری و بعداً کنترلت کمتره، و اگه بخوای از پلتفرم بری بیرون، باید اپلیکیشن رو از نو بسازی. پس حواست باشه داری چی رو با چی معامله می‌کنی.
 

@@ -138,7 +138,7 @@ Bu grafik, Composio'nun [Finding the Best Harness for DeepSeek V4 Flash](https:/
 - ![](./images/logos/claude.svg)Claude Code
 - ![](./images/logos/openai-mono.svg)Codex
 - DeepAgents
-- ![](./images/logos/hermes.svg)Hermes Agent
+- Hermes Agent
 - ![](./images/logos/opencode-mono.svg)OpenCode
 
 Pi Agent, 66.7%'yle birinci oldu. Bu da otuz iş akışından yirmisinin başarılı olması demek. Claude Code ise görev başına 122.7 saniyeyle en hızlısıydı, ama başarı başına en pahalı olan da oydu.

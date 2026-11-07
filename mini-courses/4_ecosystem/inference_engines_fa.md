@@ -36,14 +36,14 @@ graph TD
     B --> C["چند تا سرور<br/>llm-d روی Kubernetes"]
 ```
 
-**روی سیستم خودت**، سراغ wrapper‌ها برو. [مبانی LLM](../1_fundamentals/llms_fa.md) درباره‌ی ![](./images/logos/ollama-mono.svg)[Ollama](https://ollama.com/) و ![](./images/logos/lmstudio-mono.svg)[LM Studio](https://lmstudio.ai/) گفت، و اینجا هم جواب درست همین‌هان: engine رو پشت خودشون قایم می‌کنن و ظرف چند دقیقه کارت رو راه می‌ندازن.
+**روی سیستم خودت**، سراغ wrapper‌ها برو. [مبانی LLM](../1_fundamentals/llms_fa.md) درباره‌ی [Ollama](https://ollama.com/) و [LM Studio](https://lmstudio.ai/) گفت، و اینجا هم جواب درست همین‌هان: engine رو پشت خودشون قایم می‌کنن و ظرف چند دقیقه کارت رو راه می‌ندازن.
 
 زیر هر دوشون ![](./images/logos/llamacpp.svg)**[llama.cpp](https://github.com/ggml-org/llama.cpp)** خوابیده، یعنی inference مدل‌های زبانی که با C و C++ نوشته شده، و اصلاً به لطف همینه که یه مدل quantize‌شده می‌تونه روی لپ‌تاپ اجرا بشه. llama.cpp رو فقط توی دو حالت مستقیم استفاده کن: وقتی یه build flag می‌خوای که wrapper دستت نمی‌ده، یا وقتی داری مدل رو روی سخت‌افزاری می‌بری که هیچ‌کس دیگه پشتیبانیش نمی‌کنه.
 
 **روی یه سرور GPU با کاربرهای واقعی**، wrapper‌ها دیگه جواب نمی‌دن و یه serving engine لازم داری.
 
 - ![](./images/logos/vllm.svg)**vLLM** انتخاب پیش‌فرض بیشتر آدم‌هاست. سخت‌افزارهای خیلی متنوعی رو پشتیبانی می‌کنه، و throughput خوبش رو مدیون continuous batching‌ه.
-- ![](./images/logos/sglang.svg)**[SGLang](https://github.com/sgl-project/sglang)** یه framework پرسرعت برای serve کردن مدل‌های زبانی و multimodal‌ه، و وقتی درخواست‌ها یه prefix طولانی مشترک دارن، خیلی خوب جواب می‌ده. اگه همه‌ی درخواست‌هات با یه system prompt بزرگ و یکسان شروع می‌شن، دقیقاً حالت تو همینه.
+- **[SGLang](https://github.com/sgl-project/sglang)** یه framework پرسرعت برای serve کردن مدل‌های زبانی و multimodal‌ه، و وقتی درخواست‌ها یه prefix طولانی مشترک دارن، خیلی خوب جواب می‌ده. اگه همه‌ی درخواست‌هات با یه system prompt بزرگ و یکسان شروع می‌شن، دقیقاً حالت تو همینه.
 - ![](./images/logos/nvidia.svg)**[TensorRT-LLM](https://github.com/NVIDIA/TensorRT-LLM)** مال NVIDIA‌ه و حداکثر استفاده رو از سخت‌افزار خود NVIDIA می‌کنه. مدل رو از قبل به یه engine بهینه‌شده کامپایل می‌کنی؛ این یه مرحله‌ی build اضافه برات خرج داره، ولی در عوض latency پایین‌تری می‌گیری.
 
 **وقتی کار به چند تا سرور می‌کشه**، دیگه مسئله این نیست که یه برنامه رو روی یه سرور خوب اجرا کنی؛ مسئله اینه که کل یه cluster از سرورها رو با هم هماهنگ کنی. **[llm-d](https://github.com/llm-d/llm-d)** برای همین ساخته شده: inference رو روی Kubernetes و با accelerator‌های جدید اجرا می‌کنه، و scheduling و routing رو هم خود پلتفرم انجام می‌ده تا تو درگیرش نشی؛ یعنی خودش تصمیم می‌گیره هر درخواست روی کدوم سرور اجرا بشه. یه کار دیگه‌ش هم جاگذاری با در نظر گرفتن cache‌ه (cache-aware placement): سروری رو ترجیح می‌ده که داده‌ی لازم از قبل توی cache‌ش باشه.
@@ -60,7 +60,7 @@ batching از اون طرف هم به [Context Engineering](../2_intermediate/co
 
 ## یه رابط جلوی Engine
 
-engine فقط یه API بهت می‌ده و هیچ صفحه‌ای برای دیدن نداره. ![](./images/logos/openwebui.svg)**[Open WebUI](https://github.com/open-webui/open-webui)** همون رابطیه که معمولاً جلوی engine می‌ذارن: یه UI چت که با Ollama، یا با هر چیزی که API‌ش هم‌شکل API شرکت OpenAI باشه، حرف می‌زنه، و حساب کاربری، تاریخچه‌ی گفت‌وگو و عوض کردن مدل هم داره. بعضی تیم‌ها یه ChatGPT خصوصی روی سخت‌افزار خودشون می‌خوان، و برای اون‌ها کل stack همین دو تیکه‌ست: engine و Open WebUI.
+engine فقط یه API بهت می‌ده و هیچ صفحه‌ای برای دیدن نداره. **[Open WebUI](https://github.com/open-webui/open-webui)** همون رابطیه که معمولاً جلوی engine می‌ذارن: یه UI چت که با Ollama، یا با هر چیزی که API‌ش هم‌شکل API شرکت OpenAI باشه، حرف می‌زنه، و حساب کاربری، تاریخچه‌ی گفت‌وگو و عوض کردن مدل هم داره. بعضی تیم‌ها یه ChatGPT خصوصی روی سخت‌افزار خودشون می‌خوان، و برای اون‌ها کل stack همین دو تیکه‌ست: engine و Open WebUI.
 
 ## کجای این مجموعه هستیم
 

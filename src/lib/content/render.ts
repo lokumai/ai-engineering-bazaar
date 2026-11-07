@@ -417,6 +417,71 @@ function rehypeRewriteImages(imageBase?: string) {
   }
 }
 
+/**
+ * M74 — a vendor's mark stays on the same line as its name. Without this a line
+ * could break between the two, leaving the mark at the end of one line and the
+ * name at the start of the next. The mark and what follows it (the bold or
+ * linked name, or the first word of plain text) go into one `.bz-logo-pair`,
+ * which does not wrap; the rest of the sentence wraps as before.
+ */
+function rehypeKeepLogoWithName() {
+  const isLogo = (node: ElementContent | undefined): node is Element =>
+    isElement(node) && node.tagName === 'img'
+    && Array.isArray(node.properties?.className) && node.properties.className.includes('bz-logo')
+  /** The first text node under `node`, with its parent, depth first. */
+  const firstText = (node: Element): { parent: Element; index: number } | null => {
+    for (let i = 0; i < node.children.length; i += 1) {
+      const child = node.children[i]
+      if (child.type === 'text' && /\S/.test(child.value)) return { parent: node, index: i }
+      if (isElement(child)) {
+        const found = firstText(child)
+        if (found) return found
+      }
+    }
+    return null
+  }
+  /* Only the mark and the first word are held together: a whole long name held on one line
+     pushed a 390px page sideways. The rest of the name wraps as usual. */
+  const bind = (logo: Element, host: Element, index: number) => {
+    const text = host.children[index] as Text
+    const word = /^(\s*)(\S+)/.exec(text.value)
+    if (!word) return false
+    const pair: Element = {
+      type: 'element',
+      tagName: 'span',
+      properties: { className: ['bz-logo-pair'] },
+      children: [logo, { type: 'text', value: word[2] }],
+    }
+    const tail = text.value.slice(word[0].length)
+    const parts: ElementContent[] = []
+    if (word[1]) parts.push({ type: 'text', value: word[1] })
+    parts.push(pair)
+    if (tail) parts.push({ type: 'text', value: tail })
+    host.children.splice(index, 1, ...parts)
+    return true
+  }
+  return (tree: Root) => {
+    const work: Array<{ parent: Element; logo: Element }> = []
+    visit(tree, 'element', (parent: Element) => {
+      for (const child of parent.children) if (isLogo(child)) work.push({ parent, logo: child })
+    })
+    for (const { parent, logo } of work) {
+      const at = parent.children.indexOf(logo)
+      const next = parent.children[at + 1]
+      if (next === undefined) continue
+      if (next.type === 'text') {
+        parent.children.splice(at, 1)
+        bind(logo, parent, at)
+      } else if (isElement(next)) {
+        const target = firstText(next)
+        if (target === null) continue
+        parent.children.splice(at, 1)
+        bind(logo, target.parent, target.index)
+      }
+    }
+  }
+}
+
 // ---------------------------------------------------------------------------
 // B5 — figures and tables, captioned, numbered and width-classed
 // ---------------------------------------------------------------------------
@@ -1066,6 +1131,7 @@ export async function renderMarkdown(
     .use(rehypeSectionMarks)
     .use(rehypeRewriteImages, options.imageBase)
     .use(rehypeFigures, options)
+    .use(rehypeKeepLogoWithName)
     .use(rehypeBlockquotes)
     .use(rehypeSlug)
     .use(rehypeCollectToc, toc)

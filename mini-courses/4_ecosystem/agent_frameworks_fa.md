@@ -53,7 +53,7 @@ graph TD
 
 اینجا دو تا framework ارزش شناختن دارن، چون کل استک بالا اول برای Python ساخته شده، در حالی که بیشتر کدهای محصول با Python نوشته نمی‌شن.
 
-- ![](./images/logos/mastra.svg)**[Mastra](https://github.com/mastra-ai/mastra)** یه framework مدرن TypeScript برای ساختن agent و اپلیکیشن‌های AI‌ه، و توی این زبون نزدیک‌ترین چیز به LangChain همینه.
+- ![](./images/logos/mastra-mono.svg)**[Mastra](https://github.com/mastra-ai/mastra)** یه framework مدرن TypeScript برای ساختن agent و اپلیکیشن‌های AI‌ه، و توی این زبون نزدیک‌ترین چیز به LangChain همینه.
 - **[VoltAgent](https://github.com/VoltAgent/voltagent)** یه پلتفرم agent engineering‌ه که روی یه framework متن‌باز TypeScript ساخته شده، برای همین بیشتر روی بخش عملیاتی (operations) تمرکز داره، یعنی کارهایی که بعد از ساختن agent‌ها پیش میاد: اجرا کردنشون، زیر نظر گرفتنشون و مدیریتشون.
 
 ## AI Workflow‌ها
@@ -84,7 +84,7 @@ graph TD
 
 ## گزینه‌های No-code
 
-این رو باید رک گفت، چون مهندس‌ها معمولاً از کنارش رد می‌شن: برای خیلی از کارها، جواب درست یه پلتفرم no-code‌ه. ![](./images/logos/lovable.svg)**[Lovable](https://lovable.dev/)** و ![](./images/logos/bolt.svg)**[Bolt](https://bolt.new/)** و ![](./images/logos/replit.svg)**[Replit](https://replit.com/)** از روی یه توضیح، یه اپلیکیشن سالم و کارکن تحویلت می‌دن و خودشون deploy‌ش می‌کنن، و تو هم با نوشتن prompt‌های بعدی، هر بار عوضش می‌کنی. برای یه prototype، یه ابزار داخلی، یا یه landing page که یه فرم پشتشه، این کار به‌جای چند هفته چند ساعت طول می‌کشه.
+این رو باید رک گفت، چون مهندس‌ها معمولاً از کنارش رد می‌شن: برای خیلی از کارها، جواب درست یه پلتفرم no-code‌ه. ![](./images/logos/lovable.svg)**[Lovable](https://lovable.dev/)** و ![](./images/logos/bolt-mono.svg)**[Bolt](https://bolt.new/)** و ![](./images/logos/replit.svg)**[Replit](https://replit.com/)** از روی یه توضیح، یه اپلیکیشن سالم و کارکن تحویلت می‌دن و خودشون deploy‌ش می‌کنن، و تو هم با نوشتن prompt‌های بعدی، هر بار عوضش می‌کنی. برای یه prototype، یه ابزار داخلی، یا یه landing page که یه فرم پشتشه، این کار به‌جای چند هفته چند ساعت طول می‌کشه.
 
 بده‌بستونش هم همون همیشگیه: الان سرعت می‌گیری و بعداً کنترلت کمتره، و اگه بخوای از پلتفرم بری بیرون، باید اپلیکیشن رو از نو بسازی. پس حواست باشه داری چی رو با چی معامله می‌کنی.
 

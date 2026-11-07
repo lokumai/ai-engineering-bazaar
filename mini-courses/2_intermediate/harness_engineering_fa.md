@@ -144,7 +144,7 @@ guide‌ها قبل از کار میان و sensor‌ها بعدش. هر چی se
 - ![](./images/logos/claude.svg)Claude Code
 - ![](./images/logos/openai-mono.svg)Codex
 - DeepAgents
-- ![](./images/logos/hermes.svg)Hermes Agent
+- Hermes Agent
 - ![](./images/logos/opencode-mono.svg)OpenCode
 
 Pi Agent با 66.7%، یعنی بیست workflow از سی تا، اول شد. Claude Code با 122.7 ثانیه برای هر کار از همه سریع‌تر بود، ولی به ازای هر موفقیت از همه گرون‌تر هم تموم شد.

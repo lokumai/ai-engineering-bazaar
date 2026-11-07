@@ -80,7 +80,7 @@ The price per million tokens is the number that everyone quotes. It is also the 
 
 Both of the routes below have free tiers with daily limits. That is enough to build something real.
 
-![](./images/logos/googlegemini.svg)**[Google AI Studio](https://aistudio.google.com/)** is the most generous of the big vendors. You sign up and get a key. The free tier then covers the ordinary models, with a daily cap. **OpenRouter** also offers free models with daily limits. It is the fastest way to try several models on one prompt without opening accounts.
+![](./images/logos/google.svg)**[Google AI Studio](https://aistudio.google.com/)** is the most generous of the big vendors. You sign up and get a key. The free tier then covers the ordinary models, with a daily cap. **OpenRouter** also offers free models with daily limits. It is the fastest way to try several models on one prompt without opening accounts.
 
 Here is one warning about free tiers, because this problem catches people at exactly the wrong moment. A free tier tells you whether the model can do your task. It tells you almost nothing about how your product will feel. Free capacity is slower, and it has stricter rate limits. It is also the first capacity that the provider cuts when it is busy. Measure latency on the tier that you plan to pay for.
 

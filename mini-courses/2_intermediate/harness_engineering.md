@@ -154,7 +154,7 @@ That chart is from Composio's [Finding the Best Harness for DeepSeek V4 Flash](h
 - ![](./images/logos/claude.svg)Claude Code
 - ![](./images/logos/openai-mono.svg)Codex
 - DeepAgents
-- ![](./images/logos/hermes.svg)Hermes Agent
+- Hermes Agent
 - ![](./images/logos/opencode-mono.svg)OpenCode
 
 Pi Agent came first at 66.7%, which is twenty of thirty workflows. Claude Code was the fastest, at 122.7 seconds per task, but it cost the most per success.

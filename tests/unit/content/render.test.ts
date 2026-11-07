@@ -39,6 +39,25 @@ describe('renderMarkdown', () => {
     expect(html).not.toMatch(/<img src="[^"]*a\.png"[^>]*bz-logo/)
   })
 
+  it('binds a logo to its name so a line cannot break between them (M74)', async () => {
+    const bold = await renderMarkdown(
+      '![](./images/logos/acme.svg)**[Acme](https://a.example)** makes things.',
+      { imageBase: '/course-images/intermediate' },
+    )
+    // only the mark and the first word are held together; a long name still wraps
+    expect(bold.html).toMatch(/<strong><a [^>]*><span class="bz-logo-pair"><img [^>]*class="bz-logo">Acme<\/span>/)
+    const long = await renderMarkdown(
+      '![](./images/logos/acme.svg)**[Acme Red Team Agent](https://a.example)** tests.',
+      { imageBase: '/course-images/intermediate' },
+    )
+    expect(long.html).toMatch(/<span class="bz-logo-pair"><img [^>]*class="bz-logo">Acme<\/span> Red Team Agent/)
+    const plain = await renderMarkdown(
+      'A tool from ![](./images/logos/acme.svg)Acme, which helps.',
+      { imageBase: '/course-images/intermediate' },
+    )
+    expect(plain.html).toMatch(/<span class="bz-logo-pair"><img [^>]*class="bz-logo">Acme,<\/span> which helps\./)
+  })
+
   it('keeps a logo inline even when it stands alone in its paragraph', async () => {
     const { html } = await renderMarkdown(
       '![](./images/logos/acme.svg)',

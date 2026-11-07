@@ -142,7 +142,7 @@ system prompt‌های واقعی خیلی از محصولات لو رفته و 
 
 - ![](./images/logos/llamacpp.svg)**llama.cpp**
 - ![](./images/logos/vllm.svg)**vLLM** (روی NVIDIA، AMD و TPUs)
-- ![](./images/logos/sglang.svg)**SGLang** (فقط NVIDIA)
+- **SGLang** (فقط NVIDIA)
 - ![](./images/logos/nvidia.svg)**TensorRT-LLM** (روی NVIDIA و AMD)
 - **MLX** (فقط Apple)
 
@@ -163,7 +163,7 @@ system prompt‌های واقعی خیلی از محصولات لو رفته و 
 
 ### Google AI Studio
 
-از این‌جا شروع کن: ![](./images/logos/googlegemini.svg)[aistudio.google.com](https://aistudio.google.com/). ثبت‌نام کن و API key شخصی خودت رو بگیر. پلن رایگانش مدل‌های پایه رو با سقف روزانه در اختیارت می‌ذاره.
+از این‌جا شروع کن: ![](./images/logos/google.svg)[aistudio.google.com](https://aistudio.google.com/). ثبت‌نام کن و API key شخصی خودت رو بگیر. پلن رایگانش مدل‌های پایه رو با سقف روزانه در اختیارت می‌ذاره.
 
 ### OpenRouter
 

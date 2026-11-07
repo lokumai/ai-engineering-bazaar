@@ -60,7 +60,7 @@ Dosya ayrıca yazılabilir; yani o dosyaya yazabilen her şey, agent'ının kim 
 
 OpenClaw o kadar hızlı büyüdü ki mühendislik buna yetişemedi. İlk kurulum bir gigabayttan büyüktü, üç yüzden fazla bağımlılığı vardı ve hafıza da yavaşlamıştı. Bir karşılaştırmada bir recall sorgusu 19.6 saniye sürdü; alternatifte aynı iş 113 milisaniye aldı. Sorunlu birkaç sürümün ardından insanlar ayrılmaya başladı.
 
-İnsanların bir kısmı Nous Research'ün ![](./images/logos/hermes.svg)**[Hermes Agent](https://github.com/NousResearch/hermes-agent)** projesine geçti. Projenin lisansı MIT ve aynı fikri alıp daha dikkatli bir biçimde hayata geçirmiş. Sloganı "the agent that grows with you" ("seninle birlikte büyüyen agent" anlamına geliyor) ve yaptığı şeyler şöyle:
+İnsanların bir kısmı Nous Research'ün **[Hermes Agent](https://github.com/NousResearch/hermes-agent)** projesine geçti. Projenin lisansı MIT ve aynı fikri alıp daha dikkatli bir biçimde hayata geçirmiş. Sloganı "the agent that grows with you" ("seninle birlikte büyüyen agent" anlamına geliyor) ve yaptığı şeyler şöyle:
 
 - **Büyük olmaktan çok aranabilir bir hafıza.** Hafıza diskte SQLite üzerinde tutulur ve agent onu katman katman geri çağırır; milisaniye rakamı da tam bu yapıdan geliyor.
 - **Kendi ürettiği skill'ler.** Sürekli istediğin bir şeyde örüntü fark ettiğinde skill'i kendisi üretir. OpenClaw'ın skill'leri elle seçilir ve insanlar bunları ClawHub adlı bir marketplace üzerinden paylaşırdı; Hermes ise kendi skill'lerini kendisi yazar.
@@ -95,7 +95,7 @@ Nerede durduğu konusunda dürüst olmalıyız. Eleştirmenler, saklanan kimlik 
 
 ## Alternatifler ve Kendin Barındırmamak
 
-Hafif bir seçenek arıyorsan ![](./images/logos/nanoclaw.svg)**[nanoclaw](https://github.com/nanocoai/nanoclaw)** tam bunun için: riske farklı bir yaklaşımla bakıyor ve her agent bir container içinde çalışıyor. WhatsApp, Telegram, Slack, Discord ve Gmail'e bağlanıyor, hafızayı ve zamanlanmış işleri tutuyor ve doğrudan Anthropic'in Agents SDK'sı üzerinde çalışıyor. Tam sürüm dizüstü bilgisayarına fazla geliyorsa, buradan başla.
+Hafif bir seçenek arıyorsan **[nanoclaw](https://github.com/nanocoai/nanoclaw)** tam bunun için: riske farklı bir yaklaşımla bakıyor ve her agent bir container içinde çalışıyor. WhatsApp, Telegram, Slack, Discord ve Gmail'e bağlanıyor, hafızayı ve zamanlanmış işleri tutuyor ve doğrudan Anthropic'in Agents SDK'sı üzerinde çalışıyor. Tam sürüm dizüstü bilgisayarına fazla geliyorsa, buradan başla.
 
 Hiçbirini kendin çalıştırmak istemiyorsan, bir başkasının senin için barındırdığı bir sürümü kullanabilirsin. ![](./images/logos/kimi-mono.svg)**[Kimi Claw](https://www.kimi.com/en/help/kimi-claw)**, Moonshot'ın ürünü; masaüstü ve Android için yapılmış ve WeChat, Feishu, WeCom ve DingTalk entegrasyonları var. İşin bu uygulamalar üzerinden yürüyorsa pratik bir seçimdir. **[myclaw.ai](https://myclaw.ai/)** ise bunu bir hizmet olarak senin için barındırıyor. Takas ise belli: bakımını yapmayı bırakırsın ve agent artık yalnızca senin olmaz.
 

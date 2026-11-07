@@ -53,7 +53,7 @@ Bunların hiçbiri yanlış değil; hepsi farklı takaslar (trade-off) yapıyor 
 
 Burada bilmeye değer iki framework var, çünkü yukarıdaki stack'in tamamı Python öncelikli ve ürün kodunun çoğu Python ile yazılmıyor.
 
-- ![](./images/logos/mastra.svg)**[Mastra](https://github.com/mastra-ai/mastra)** agent'lar ve AI uygulamaları için modern bir TypeScript framework'ü. Bu dilde LangChain'e en çok benzeyen seçenek.
+- ![](./images/logos/mastra-mono.svg)**[Mastra](https://github.com/mastra-ai/mastra)** agent'lar ve AI uygulamaları için modern bir TypeScript framework'ü. Bu dilde LangChain'e en çok benzeyen seçenek.
 - **[VoltAgent](https://github.com/VoltAgent/voltagent)** ise açık kaynaklı bir TypeScript framework'ü üzerine kurulu bir agent engineering platformu. Bu yüzden daha çok agent'larını kurduktan sonraki kısma odaklanıyor: onları çalıştırmaya, izlemeye ve yönetmeye.
 
 ## AI Workflow'ları
@@ -84,7 +84,7 @@ MCP üzerinden workflow kurmak v2.13 sürümüyle geldi. Böylece agent ile work
 
 ## No-code Seçenekleri
 
-Bunu açıkça söylemek gerekiyor, çünkü mühendisler genelde bunu atlar. Pek çok iş için doğru cevap bir no-code platform. ![](./images/logos/lovable.svg)**[Lovable](https://lovable.dev/)**, ![](./images/logos/bolt.svg)**[Bolt](https://bolt.new/)** ve ![](./images/logos/replit.svg)**[Replit](https://replit.com/)** bir açıklamayı çalışan bir uygulamaya çeviriyor. Uygulamayı yayınlıyorlar ve değiştirmek için prompt yazmaya devam edebilirsin. Bir prototip, dahili bir araç ya da arkasında formu olan bir landing page için bu, haftalar yerine saatler sürer.
+Bunu açıkça söylemek gerekiyor, çünkü mühendisler genelde bunu atlar. Pek çok iş için doğru cevap bir no-code platform. ![](./images/logos/lovable.svg)**[Lovable](https://lovable.dev/)**, ![](./images/logos/bolt-mono.svg)**[Bolt](https://bolt.new/)** ve ![](./images/logos/replit.svg)**[Replit](https://replit.com/)** bir açıklamayı çalışan bir uygulamaya çeviriyor. Uygulamayı yayınlıyorlar ve değiştirmek için prompt yazmaya devam edebilirsin. Bir prototip, dahili bir araç ya da arkasında formu olan bir landing page için bu, haftalar yerine saatler sürer.
 
 Takas da bildiğin türden: şimdi hız kazanırsın, sonra daha az kontrol elde edersin. Platformdan ayrılırsan uygulamayı baştan yazman gerekir. Bu takasın hangi tarafını satın aldığını bilerek karar ver.
 

@@ -216,7 +216,7 @@ Under everything, there is an **inference engine** that does the real work:
 
 - ![](./images/logos/llamacpp.svg)**llama.cpp**
 - ![](./images/logos/vllm.svg)**vLLM** (NVIDIA, AMD, TPUs)
-- ![](./images/logos/sglang.svg)**SGLang** (NVIDIA only)
+- **SGLang** (NVIDIA only)
 - ![](./images/logos/nvidia.svg)**TensorRT-LLM** (NVIDIA, AMD)
 - **MLX** (Apple only)
 
@@ -245,7 +245,7 @@ Both of the providers below have a free tier with daily limits. That is enough t
 
 ### Google AI Studio
 
-Start here: ![](./images/logos/googlegemini.svg)[aistudio.google.com](https://aistudio.google.com/). Sign up and get your
+Start here: ![](./images/logos/google.svg)[aistudio.google.com](https://aistudio.google.com/). Sign up and get your
 personal API key. The free tier covers the basic models with daily limits.
 
 ### OpenRouter

@@ -36,12 +36,12 @@ graph TD
     B --> C["Çok makine<br/>Kubernetes üzerinde llm-d"]
 ```
 
-**Kendi makinende** sarmalayıcıları (wrapper) kullanmak en doğrusudur. [LLM Temelleri](../1_fundamentals/llms_tr.md) modülünde anlatılan ![](./images/logos/ollama-mono.svg)[Ollama](https://ollama.com/) ve ![](./images/logos/lmstudio-mono.svg)[LM Studio](https://lmstudio.ai/) bu durumda doğru seçimdir. İkisi de engine'i gizler ve birkaç dakika içinde çalıştırmanı sağlar; altlarında ise ![](./images/logos/llamacpp.svg)**[llama.cpp](https://github.com/ggml-org/llama.cpp)** bulunur. llama.cpp, C ve C++ ile yazılmış bir LLM inference projesidir ve quantize edilmiş bir modelin dizüstü bilgisayarda bile çalışabilmesinin nedeni de budur. llama.cpp'yi doğrudan kullanmak iki durumda mantıklıdır: sarmalayıcının açmadığı bir build flag'ine ihtiyacın olduğunda ya da kimsenin desteklemediği bir donanıma model koyacağın zaman.
+**Kendi makinende** sarmalayıcıları (wrapper) kullanmak en doğrusudur. [LLM Temelleri](../1_fundamentals/llms_tr.md) modülünde anlatılan [Ollama](https://ollama.com/) ve [LM Studio](https://lmstudio.ai/) bu durumda doğru seçimdir. İkisi de engine'i gizler ve birkaç dakika içinde çalıştırmanı sağlar; altlarında ise ![](./images/logos/llamacpp.svg)**[llama.cpp](https://github.com/ggml-org/llama.cpp)** bulunur. llama.cpp, C ve C++ ile yazılmış bir LLM inference projesidir ve quantize edilmiş bir modelin dizüstü bilgisayarda bile çalışabilmesinin nedeni de budur. llama.cpp'yi doğrudan kullanmak iki durumda mantıklıdır: sarmalayıcının açmadığı bir build flag'ine ihtiyacın olduğunda ya da kimsenin desteklemediği bir donanıma model koyacağın zaman.
 
 **Gerçek kullanıcılara hizmet veren bir GPU sunucusunda** sarmalayıcılar artık yetmez ve burada bir serving engine'e ihtiyacın olur.
 
 - ![](./images/logos/vllm.svg)**vLLM** genellikle varsayılan seçimdir. Geniş bir donanım yelpazesini destekler ve iyi bir verimi büyük ölçüde sürekli batching'e borçludur.
-- ![](./images/logos/sglang.svg)**[SGLang](https://github.com/sgl-project/sglang)**, dil ve multimodal modeller için yüksek performanslı bir serving framework'üdür. Özellikle isteklerin uzun ve ortak bir önek (prefix) paylaştığı durumlarda güçlüdür. Her isteğin aynı büyük system prompt'la başladığı bir durumdaysan, tam olarak senin durumun budur.
+- **[SGLang](https://github.com/sgl-project/sglang)**, dil ve multimodal modeller için yüksek performanslı bir serving framework'üdür. Özellikle isteklerin uzun ve ortak bir önek (prefix) paylaştığı durumlarda güçlüdür. Her isteğin aynı büyük system prompt'la başladığı bir durumdaysan, tam olarak senin durumun budur.
 - ![](./images/logos/nvidia.svg)**[TensorRT-LLM](https://github.com/NVIDIA/TensorRT-LLM)**, NVIDIA'dan gelir ve özellikle o donanımdan en fazla verimi çıkarmak için tasarlanmıştır. Modeli önceden optimize edilmiş bir engine'e derlersin. Bunun bir build adımı maliyeti vardır, ama karşılığında daha düşük gecikme (latency) elde edersin.
 
 **Birden fazla makineye yayıldığında** sorun artık tek bir sunucu programını iyi çalıştırmak değildir. Sorun, bütün bir makine cluster'ını birlikte yönetmeye dönüşür. [llm-d](https://github.com/llm-d/llm-d) tam bu iş için tasarlanmıştır ve modern hızlandırıcılarla Kubernetes üzerinde inference çalıştırır. Zamanlamayı ve yönlendirmeyi platform üstlenir, yani her isteği hangi makinenin çalıştıracağına o karar verir. Ayrıca önbellek farkındalıklı yerleştirme (cache-aware placement) yapar: gereken veriyi zaten önbelleğinde tutan bir makineyi tercih eder. Böylece sen bunlarla uğraşmak zorunda kalmazsın.
@@ -60,7 +60,7 @@ Batching'in bir de [Context Engineering](../2_intermediate/context_engineering_t
 
 ## Engine'in Önüne Konan Arayüz
 
-Bir engine sana bir API verir, ama bakabileceğin bir şey vermez. ![](./images/logos/openwebui.svg)**[Open WebUI](https://github.com/open-webui/open-webui)**, insanların bir engine'in önüne koyduğu arayüzdür. Ollama'ya ya da OpenAI'ın API biçimini kullanan herhangi bir şeye bağlanan bir chat UI'dır. Hesapları, konuşma geçmişi ve model değiştirme özellikleri vardır. Bazı ekipler kendi donanımlarında çalışan özel bir ChatGPT ister. Onlar için tüm yığın iki parçadan ibarettir: engine ve Open WebUI.
+Bir engine sana bir API verir, ama bakabileceğin bir şey vermez. **[Open WebUI](https://github.com/open-webui/open-webui)**, insanların bir engine'in önüne koyduğu arayüzdür. Ollama'ya ya da OpenAI'ın API biçimini kullanan herhangi bir şeye bağlanan bir chat UI'dır. Hesapları, konuşma geçmişi ve model değiştirme özellikleri vardır. Bazı ekipler kendi donanımlarında çalışan özel bir ChatGPT ister. Onlar için tüm yığın iki parçadan ibarettir: engine ve Open WebUI.
 
 ## Bu serinin neresindeyiz
 

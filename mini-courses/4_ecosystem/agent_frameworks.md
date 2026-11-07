@@ -63,7 +63,7 @@ None of these is wrong. They make different trade-offs. Usually the trade-off is
 
 Two frameworks are worth knowing here. The reason is that the whole stack above is Python-first, and most product code is not written in Python.
 
-- ![](./images/logos/mastra.svg)**[Mastra](https://github.com/mastra-ai/mastra)** is the modern TypeScript framework for agents and AI applications. It is the closest thing to LangChain in that language.
+- ![](./images/logos/mastra-mono.svg)**[Mastra](https://github.com/mastra-ai/mastra)** is the modern TypeScript framework for agents and AI applications. It is the closest thing to LangChain in that language.
 - **[VoltAgent](https://github.com/VoltAgent/voltagent)** is an agent engineering platform built on top of an open-source TypeScript framework. So it focuses more on running, watching and managing your agents after you have built them.
 
 ## AI Workflows
@@ -94,7 +94,7 @@ Building workflows through MCP arrived in v2.13. So the agent and the workflow s
 
 ## No-code Options
 
-This is worth saying plainly, because engineers tend to skip it. For a lot of jobs, the right answer is a no-code platform. ![](./images/logos/lovable.svg)**[Lovable](https://lovable.dev/)**, ![](./images/logos/bolt.svg)**[Bolt](https://bolt.new/)** and ![](./images/logos/replit.svg)**[Replit](https://replit.com/)** turn a description into a working application. They deploy it, and you can keep writing prompts to change it. For a prototype, an internal tool, or a landing page with a form behind it, that takes hours instead of weeks.
+This is worth saying plainly, because engineers tend to skip it. For a lot of jobs, the right answer is a no-code platform. ![](./images/logos/lovable.svg)**[Lovable](https://lovable.dev/)**, ![](./images/logos/bolt-mono.svg)**[Bolt](https://bolt.new/)** and ![](./images/logos/replit.svg)**[Replit](https://replit.com/)** turn a description into a working application. They deploy it, and you can keep writing prompts to change it. For a prototype, an internal tool, or a landing page with a form behind it, that takes hours instead of weeks.
 
 The trade-off is the usual one. You get speed now and less control later. If you move off the platform, you must build the application again. Know which of those you are buying.
 

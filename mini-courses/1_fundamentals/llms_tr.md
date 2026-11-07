@@ -142,7 +142,7 @@ Her şeyin altında, asıl işi yapan bir **inference engine** var:
 
 - ![](./images/logos/llamacpp.svg)**llama.cpp**
 - ![](./images/logos/vllm.svg)**vLLM** (NVIDIA, AMD, TPU'lar)
-- ![](./images/logos/sglang.svg)**SGLang** (yalnızca NVIDIA)
+- **SGLang** (yalnızca NVIDIA)
 - ![](./images/logos/nvidia.svg)**TensorRT-LLM** (NVIDIA, AMD)
 - **MLX** (yalnızca Apple)
 
@@ -163,7 +163,7 @@ Aşağıdaki iki sağlayıcının da günlük limitli bir ücretsiz katmanı (fr
 
 ### Google AI Studio
 
-Buradan başla: ![](./images/logos/googlegemini.svg)[aistudio.google.com](https://aistudio.google.com/). Kaydol ve kişisel API anahtarını al. Ücretsiz katman, günlük limitlerle birlikte temel modelleri kapsar.
+Buradan başla: ![](./images/logos/google.svg)[aistudio.google.com](https://aistudio.google.com/). Kaydol ve kişisel API anahtarını al. Ücretsiz katman, günlük limitlerle birlikte temel modelleri kapsar.
 
 ### OpenRouter
 

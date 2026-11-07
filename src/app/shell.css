@@ -647,6 +647,47 @@
   /* D103: the filters, between the field and the results, as the playground's N2 panel
      draws them. The chips are the catalog's (`.bz-chip`, its key and its `Level:` label),
      not a second kind; this arranges them. A hairline under the block, as under the field. */
+  .bz-search-filter {
+    border-bottom: 1px solid var(--color-line);
+  }
+
+  /* D104: the disclosure that holds the chips, shut by default. A full-width row so the
+     whole line is the target, 44px tall as the field and Close are; the chevron follows the
+     label on its end side (it sits on the left of a right-to-left row) and turns instantly
+     when open, since the language refuses a transition on a transform. The ring is drawn
+     inside the row because the window clips what leaves it. */
+  .bz-search-toggle {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    inline-size: 100%;
+    min-block-size: 44px;
+    padding: 0 16px;
+    border: 0;
+    background: transparent;
+    color: var(--color-on-surface-muted);
+    font: 600 var(--text-meta) / 1.2 var(--font-sans);
+    text-align: start;
+    cursor: pointer;
+  }
+
+  .bz-search-toggle:hover {
+    background: var(--color-surface-sunken);
+    color: var(--color-on-surface);
+  }
+
+  .bz-search-toggle:focus-visible {
+    outline-offset: -2px;
+  }
+
+  .bz-search-chevron {
+    flex: none;
+  }
+
+  .bz-search-toggle[aria-expanded="true"] .bz-search-chevron {
+    rotate: 180deg;
+  }
+
   .bz-search-filters {
     /* `.bz-chip` reads the catalog's control height, which that surface declares on its own
        root; the window is outside it */
@@ -654,8 +695,7 @@
     display: flex;
     flex-direction: column;
     gap: 8px;
-    padding: 10px 16px 12px;
-    border-bottom: 1px solid var(--color-line);
+    padding: 2px 16px 12px;
   }
 
   /* The label holds a fixed column, so the three rows' chips start together and a row that

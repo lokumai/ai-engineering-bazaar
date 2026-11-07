@@ -23,13 +23,21 @@ import { href } from '@/lib/url'
  * `/search/<lang>.json`, written by the build from the corpus (`app/search/[file]`). A page
  * that is never searched pays nothing.
  *
- * **What it searches by default** is the reader's own track and language, the pages they
- * are reading in (D97). **Filters** under the field widen or narrow that (D103): a chip per
- * track, per level and per language, where a pressed chip narrows and a group with nothing
- * pressed does not, so the reader who never touches one gets the default and the checkbox that
- * widened it to everything is two clicks on the chips. Each result carries a bar in its
- * level's hue, on its start edge; the level is also written in its meta line. Results are
- * links: ↓ from the field moves into them, ↑ and ↓ move between them, Enter follows one.
+ * **What it searches by default is everything** (D104, which replaces D97's own-track,
+ * own-language default): every track, level and language. The reader's own language's index
+ * loads when the window opens and the other two on the first search, never with the page.
+ * **Filters** are a disclosure under the field, closed by default (D104): a chip per track,
+ * per level and per language, where a pressed chip narrows and a group with nothing pressed
+ * does not. **The chips apply only while the panel is open**, so opening it changes nothing
+ * (nothing is pressed) and closing it stops the filtering: a reader cannot be narrowed by
+ * something they cannot see. Their pressed state is kept while it is shut, and reopening shows
+ * it and applies it again. The reader's own track and language still decide order, as a
+ * tie-break. Each result carries a bar in its level's hue, on its start edge; the level is
+ * also written in its meta line. Results are links: ↓ from the field moves into them, ↑ and ↓
+ * move between them, Enter follows one.
+ *
+ * The toggle is a `<button aria-expanded>`, not a `<details>`: Chrome does not close a
+ * `<details>` on Escape, and here Escape must keep closing the window.
  */
 
 type Doc = {
@@ -50,7 +58,7 @@ export interface SearchLevel {
   title: string
 }
 
-/** What the reader has pressed. A group left `undefined` is the page's own (the default). */
+/** What the reader has pressed. A group with nothing pressed does not narrow. */
 interface Chosen {
   tracks?: Track[]
   levels?: string[]
@@ -70,6 +78,14 @@ const toggled = <T,>(list: readonly T[], one: T): T[] => (list.includes(one) ? l
 function langOf(pathname: string): SearchLang {
   const first = pathname.split('/').filter(Boolean)[0]
   return first === 'tr' || first === 'fa' ? first : 'en'
+}
+
+function Chevron() {
+  return (
+    <svg className="bz-search-chevron" viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" focusable="false">
+      <path d="M4 6.5 8 10.5 12 6.5" />
+    </svg>
+  )
 }
 
 function MagnifierIcon() {
@@ -131,19 +147,29 @@ export function SearchDialog({ levels }: { levels: readonly SearchLevel[] }) {
   const [ready, setReady] = useState<Partial<Record<SearchLang, true>>>({})
   const [failed, setFailed] = useState(false)
   const [track, setTrack] = useState<Track>('engineers')
+  const [filtersOpen, setFiltersOpen] = useState(false)
   const lang = langOf(pathname)
-  const tracks = chosen.tracks ?? [track]
-  const langs = chosen.langs ?? [lang]
+  /* what the chips show */
+  const tracks = chosen.tracks ?? []
+  const langs = chosen.langs ?? []
   const chosenLevels = chosen.levels ?? []
-  const trackKey = tracks.join()
-  const langKey = langs.join()
-  const levelKey = chosenLevels.join()
+  const narrowed = tracks.length + langs.length + chosenLevels.length > 0
+  /* what the search uses: the chips only while the panel is open */
+  const useTracks: readonly Track[] = filtersOpen ? tracks : []
+  const useLangs: readonly SearchLang[] = filtersOpen ? langs : []
+  const useLevels: readonly string[] = filtersOpen ? chosenLevels : []
+  const trackKey = useTracks.join()
+  const langKey = useLangs.join()
+  const levelKey = useLevels.join()
+  const searchedLangs = searched(useLangs)
+  const searching = query.trim().length >= 2
   const levelOf = useMemo(() => new Map(levels.map((l) => [l.title, l.slug])), [levels])
 
-  /* a new page starts from its own track and language again */
+  /* a new page starts again: nothing pressed, the panel shut */
   useEffect(() => {
     setTrack(readingTrackOf(pathname, true))
     setChosen({})
+    setFiltersOpen(false)
   }, [pathname])
 
   /* one fetch per language: a second opening, or the switch ticked during a load, waits for it */
@@ -180,9 +206,15 @@ export function SearchDialog({ levels }: { levels: readonly SearchLevel[] }) {
     setTrack(readingTrackOf(window.location.pathname, true))
     d.showModal()
     field.current?.select()
-    void load(searched(langs))
-    // `langs` is rebuilt each render; its content is what the callback depends on
-  }, [langKey, load])
+    /* the page's own language now; the others with the first search (below) */
+    void load([lang])
+  }, [lang, load])
+
+  /* an index the search needs is fetched when there is something to search for, never earlier */
+  useEffect(() => {
+    if (searching) void load(searchedLangs)
+    // `searchedLangs` is rebuilt each render; its content is what the effect depends on
+  }, [searching, langKey, load])
 
   const close = useCallback(() => dialog.current?.close(), [])
 
@@ -210,37 +242,37 @@ export function SearchDialog({ levels }: { levels: readonly SearchLevel[] }) {
   const hits: Hit[] = useMemo(() => {
     const q = query.trim()
     if (q.length < 2) return []
-    /* a group with nothing pressed does not narrow */
-    const wantedTracks = tracks.length > 0 ? tracks : TRACK_CHOICES
-    const wantedLangs = searched(langs)
-    const wantedLevels = chosenLevels.flatMap((slug) => levels.filter((l) => l.slug === slug).map((l) => l.title))
+    /* a group with nothing pressed does not narrow, and a shut panel presses nothing */
+    const wantedTracks = useTracks.length > 0 ? useTracks : TRACK_CHOICES
+    const wantedLangs = searched(useLangs)
+    const wantedLevels = useLevels.flatMap((slug) => levels.filter((l) => l.slug === slug).map((l) => l.title))
     const found: Hit[] = []
     for (const l of wantedLangs) {
       const index = indexes.current[l]
       if (!index) continue
       const filter = (r: SearchResult) =>
         wantedTracks.includes(r.track) && (wantedLevels.length === 0 || wantedLevels.includes(r.level))
-      /* with every language searched, the page's own wins a tie */
+      /* the page's own language and track win a tie (D97's order, no longer its scope) */
       const own = l === lang ? 1.2 : 1
       const variant = joinedVariant(q, l)
       const asked = variant === null ? q : { combineWith: 'OR' as const, queries: [q, variant] }
-      found.push(...(index.search(asked, { filter, tokenize: queryTokenize }) as Hit[]).map((h) => ({ ...h, score: h.score * own })))
+      found.push(...(index.search(asked, { filter, tokenize: queryTokenize }) as Hit[]).map((h) => ({ ...h, score: h.score * own * (h.track === track ? 1.1 : 1) })))
     }
     /* a level is in every language's index: one row per address */
     const best = new Map<string, Hit>()
     for (const hit of found) if ((best.get(hit.url)?.score ?? -1) < hit.score) best.set(hit.url, hit)
     return [...best.values()].sort((a, b) => b.score - a.score).slice(0, LIMIT)
     // `ready` changes when an index arrives; the indexes themselves live in a ref
-  }, [query, trackKey, langKey, levelKey, lang, levels, ready])
+  }, [query, trackKey, langKey, levelKey, lang, track, levels, ready])
 
   /* What the reader typed, for marking in the excerpt: the index's own terms are normalised. */
   const typed = useMemo(() => query.trim().split(/\s+/), [query])
-  const loading = !failed && !searched(langs).every((l) => ready[l])
+  const loading = !failed && !searchedLangs.every((l) => ready[l])
 
   /* a pressed chip narrows; an index a pressed language needs is fetched now, never earlier */
   const choose = (next: Chosen) => {
     setChosen(next)
-    void load(searched(next.langs ?? [lang]))
+    void load(searched(next.langs ?? []))
   }
 
   const onFieldKey = (event: React.KeyboardEvent<HTMLInputElement>) => {
@@ -272,7 +304,8 @@ export function SearchDialog({ levels }: { levels: readonly SearchLevel[] }) {
   }
   const onDialogKey = (event: React.KeyboardEvent<HTMLDialogElement>) => {
     if (event.key !== 'Tab') return
-    const stops = [...(dialog.current?.querySelectorAll<HTMLElement>('input, button, a[href]') ?? [])]
+    /* a shut panel's chips are in the document but not reachable */
+    const stops = [...(dialog.current?.querySelectorAll<HTMLElement>('input, button, a[href]') ?? [])].filter((el) => el.closest('[hidden]') === null)
     if (stops.length === 0) return
     const first = stops[0]
     const last = stops[stops.length - 1]
@@ -351,70 +384,81 @@ export function SearchDialog({ levels }: { levels: readonly SearchLevel[] }) {
               Close
             </button>
           </div>
-          {/* D103: a pressed chip narrows, a group with nothing pressed does not. The track and
-              language chips start on the page's own, so a reader who touches none searches
-              what they are reading in. */}
-          <div className="bz-search-filters" role="group" aria-label="Filters">
-            <div className="bz-chip-row" role="group" aria-labelledby="bz-search-f-track">
-              <span className="bz-chip-label" id="bz-search-f-track">
-                Track:
-              </span>
-              <div className="bz-search-chips">
-                {TRACK_CHOICES.map((id) => (
-                  <button
-                    key={id}
-                    type="button"
-                    className="bz-chip"
-                    aria-pressed={tracks.includes(id)}
-                    onClick={() => choose({ ...chosen, tracks: toggled(tracks, id) })}
-                  >
-                    {trackLabel(id)}
-                  </button>
-                ))}
+          {/* D103/D104: a pressed chip narrows, a group with nothing pressed does not, and the
+              chips count only while this panel is open. Shut, the search is everything. */}
+          <div className="bz-search-filter">
+            <button
+              type="button"
+              className="bz-search-toggle"
+              aria-expanded={filtersOpen}
+              aria-controls="bz-search-filters"
+              onClick={() => setFiltersOpen((o) => !o)}
+            >
+              Filters
+              <Chevron />
+            </button>
+            <div className="bz-search-filters" id="bz-search-filters" role="group" aria-label="Narrow the results" hidden={!filtersOpen}>
+              <div className="bz-chip-row" role="group" aria-labelledby="bz-search-f-track">
+                <span className="bz-chip-label" id="bz-search-f-track">
+                  Track:
+                </span>
+                <div className="bz-search-chips">
+                  {TRACK_CHOICES.map((id) => (
+                    <button
+                      key={id}
+                      type="button"
+                      className="bz-chip"
+                      aria-pressed={tracks.includes(id)}
+                      onClick={() => choose({ ...chosen, tracks: toggled(tracks, id) })}
+                    >
+                      {trackLabel(id)}
+                    </button>
+                  ))}
+                </div>
               </div>
-            </div>
-            <div className="bz-chip-row" role="group" aria-labelledby="bz-search-f-level">
-              <span className="bz-chip-label" id="bz-search-f-level">
-                Level:
-              </span>
-              <div className="bz-search-chips">
-                {levels.map((one) => (
-                  <button
-                    key={one.slug}
-                    type="button"
-                    className="bz-chip"
-                    data-cat={one.slug}
-                    aria-pressed={chosenLevels.includes(one.slug)}
-                    onClick={() => choose({ ...chosen, levels: toggled(chosenLevels, one.slug) })}
-                  >
-                    <span aria-hidden="true" className="bz-chip-key" />
-                    {one.title}
-                  </button>
-                ))}
+              <div className="bz-chip-row" role="group" aria-labelledby="bz-search-f-level">
+                <span className="bz-chip-label" id="bz-search-f-level">
+                  Level:
+                </span>
+                <div className="bz-search-chips">
+                  {levels.map((one) => (
+                    <button
+                      key={one.slug}
+                      type="button"
+                      className="bz-chip"
+                      data-cat={one.slug}
+                      aria-pressed={chosenLevels.includes(one.slug)}
+                      onClick={() => choose({ ...chosen, levels: toggled(chosenLevels, one.slug) })}
+                    >
+                      <span aria-hidden="true" className="bz-chip-key" />
+                      {one.title}
+                    </button>
+                  ))}
+                </div>
               </div>
-            </div>
-            <div className="bz-chip-row" role="group" aria-labelledby="bz-search-f-lang">
-              <span className="bz-chip-label" id="bz-search-f-lang">
-                Language:
-              </span>
-              <div className="bz-search-chips">
-                {SEARCH_LANGS.map((id) => (
-                  <button
-                    key={id}
-                    type="button"
-                    className="bz-chip"
-                    aria-pressed={langs.includes(id)}
-                    lang={id === 'en' ? undefined : id}
-                    onClick={() => choose({ ...chosen, langs: toggled(langs, id) })}
-                  >
-                    {LANG_NAME[id]}
-                  </button>
-                ))}
-                {Object.keys(chosen).length > 0 ? (
-                  <button type="button" className="bz-btn-quiet bz-search-reset" onClick={() => choose({})}>
-                    Reset filters
-                  </button>
-                ) : null}
+              <div className="bz-chip-row" role="group" aria-labelledby="bz-search-f-lang">
+                <span className="bz-chip-label" id="bz-search-f-lang">
+                  Language:
+                </span>
+                <div className="bz-search-chips">
+                  {SEARCH_LANGS.map((id) => (
+                    <button
+                      key={id}
+                      type="button"
+                      className="bz-chip"
+                      aria-pressed={langs.includes(id)}
+                      lang={id === 'en' ? undefined : id}
+                      onClick={() => choose({ ...chosen, langs: toggled(langs, id) })}
+                    >
+                      {LANG_NAME[id]}
+                    </button>
+                  ))}
+                  {narrowed ? (
+                    <button type="button" className="bz-btn-quiet bz-search-reset" onClick={() => choose({})}>
+                      Reset filters
+                    </button>
+                  ) : null}
+                </div>
               </div>
             </div>
           </div>
@@ -454,7 +498,7 @@ export function SearchDialog({ levels }: { levels: readonly SearchLevel[] }) {
                         ) : null}
                         <span className="bz-search-meta" lang="en" dir="ltr">
                           {hit.kind === 'level' ? 'Level' : hit.level} · {trackLabel(hit.track)}
-                          {langs.length === 1 ? '' : ` · ${LANG_NAME[hit.lang]}`}
+                          {searchedLangs.length === 1 ? '' : ` · ${LANG_NAME[hit.lang]}`}
                           {hit.ready ? '' : ' · Planned'}
                         </span>
                       </span>

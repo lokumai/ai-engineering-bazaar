@@ -34,8 +34,6 @@ import { closeClouds } from './clouds'
 export const CHASE_END = 7.6
 /** When, in the chase's own time, the walk's zoom through the gate starts. */
 export const ZOOM_AT = 6.4
-/** Before this the people stand and can be read; after it they are on the move. */
-const BUSY = 0.4
 
 const clamp = (t: number) => (t < 0 ? 0 : t > 1 ? 1 : t)
 const span = (T: number, at: number, dur: number) => clamp((T - at) / dur)
@@ -117,6 +115,14 @@ function plans(): Record<CastId, Plan> {
   })
   return out
 }
+
+/**
+ * Before this the people stand and can be read; after it they are on the move (M72). It is the
+ * moment the last of them has turned to face the gate, read off the plans, so the stories and
+ * the captions stay through the first steps of the scroll and leave only when everyone has
+ * turned. It was 0.4, which hid them on the first scroll step, long before anyone moved.
+ */
+const BUSY = Math.max(...Object.values(plans()).map((p) => p.turnAt + p.turnDur))
 
 interface Actor {
   id: CastId
@@ -277,7 +283,7 @@ export function makeChase(street: HTMLElement, gate: HTMLElement): Chase | null 
     if (nowBusy !== busy) {
       busy = nowBusy
       if (busy) {
-        closeClouds(street)
+        closeClouds(street, true)
         street.dataset.chasing = 'true'
         /* focus must not stay on a person about to leave the accessibility tree */
         const focused = document.activeElement

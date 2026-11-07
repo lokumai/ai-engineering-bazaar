@@ -11,7 +11,7 @@ description: >
 authority: blueprint
 writes: agent, when explicitly refactoring
 status: active
-covers: the whole system as built on 2026-09-10, with M16 shipped — every route on the design language; the record, channel A and the render step corrected for M24 on 2026-10-11, and the quiz and the end of a module for M25 on 2026-10-12, the Bazaar Street front door for M27 and the Persian pages for M28 the same day, and the progress page slimmed to its circles and its data row for M38 on 2026-11-05, and the account layer, role paths, record of work and two thirds of the test suite removed for M40 the same day, and the two tracks (For Engineers, For Everyone) and their per-track record for M43 the same day; the custom domain (D92), Emerging Trends and moved addresses (D94) on 2026-11-06, and the people at the gate (M58), search (M59) and the catalog without its Sources count (M55) the same day; and for M64 to M69 the same night, a planned module that renders the sections it already has (D102), inline vendor logos, and the first For Everyone module; and the search filters and the level bar on a result (M70, D103), folded behind a Filters disclosure (M71, D104), on 2026-11-07
+covers: the whole system as built on 2026-09-10, with M16 shipped — every route on the design language; the record, channel A and the render step corrected for M24 on 2026-10-11, and the quiz and the end of a module for M25 on 2026-10-12, the Bazaar Street front door for M27 and the Persian pages for M28 the same day, and the progress page slimmed to its circles and its data row for M38 on 2026-11-05, and the account layer, role paths, record of work and two thirds of the test suite removed for M40 the same day, and the two tracks (For Engineers, For Everyone) and their per-track record for M43 the same day; the custom domain (D92), Emerging Trends and moved addresses (D94) on 2026-11-06, and the people at the gate (M58), search (M59) and the catalog without its Sources count (M55) the same day; and for M64 to M69 the same night, a planned module that renders the sections it already has (D102), inline vendor logos, and the first For Everyone module; and the search filters and the level bar on a result (M70, D103), folded behind a Filters disclosure (M71, D104), and the stories at the gate kept until everyone has turned (M72), on 2026-11-07
 last_updated: 2026-11-07
 ---
 
@@ -535,12 +535,18 @@ its arch, each a `<button>` named by its caption and described by its story (`Ca
 the walk they spread across the facade and play the escape first: `street/chase.ts` draws every pose
 as a pure function of the chase's time T, writing SVG `transform` attributes so it never touches the
 figures' idle CSS animations, and `motion.ts` puts it at the head of the walk's timeline, before the
-zoom through the gate. While they run they leave the tab order and the accessibility tree. Below
+zoom through the gate. They stand, captioned and telling their stories, until the last of them has
+turned to face the gate (`BUSY` in `chase.ts`, read off the turn plans, M72); while they run they
+leave the tab order and the accessibility tree. Below
 900px a second rendering, a row of tiles under the gate, replaces them, and CSS shows one of the two.
 The figures come from the playground (`playground/2026-11-round-3/N-cast-final.html`) by
 `scripts/capture-cast.mjs`, the same way `capture-stall-scenes.mjs` brings the stalls. The story
 clouds are `street/clouds.ts`, loaded with the page like the track choice; with no script, CSS opens a
-cloud on pointing and focus.
+cloud on pointing and focus. A cloud closes on Escape, a tap elsewhere, or a scroll of 40px on the
+still picture and 400px on the walk (where a teller with keyboard focus keeps theirs, since focus
+jumps the walk to the choice); it is placed again while its person moves; the chase closes only the
+gate's clouds, so the Sipahi's and the Bezirgân's open at the choice after it; and an open cloud
+lifts the cast above the gate's copy, so Bit's is not drawn under "Open the curriculum" (M72).
 
 **Search (M59, D95, D97, D99).** `app/search/[file]/route.ts` is a static route handler that writes
 `/search/en.json`, `tr.json` and `fa.json` at build time: a MiniSearch index over documents built from
@@ -689,8 +695,8 @@ fail in `build`.
 ## 11. The test suite, and the one rule it lives by
 
 **68** test files (`find tests -name '*.test.ts*' | wc -l`; vitest runs 67 of them) holding
-**1,163** unit and corpus tests, plus **36** Playwright spec files holding **530** browser cases
-(`npx playwright test --list`; measured 2026-11-07, after M71; M40 had cut them from 2,107 and
+**1,163** unit and corpus tests, plus **36** Playwright spec files holding **533** browser cases
+(`npx playwright test --list`; measured 2026-11-07, after M72; M40 had cut them from 2,107 and
 1,234, **D88**), in three suites that each answer
 something the others cannot.
 

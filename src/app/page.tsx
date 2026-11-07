@@ -145,7 +145,7 @@ const TRACKS: ReadonlyArray<{
     who: {
       name: 'Sipahi',
       english: 'Horseman',
-      story: 'The Sipahi learns a road by riding it himself. He wants to know how each part works before he trusts it.',
+      story: 'Before a long ride, the Sipahi checks every strap and buckle with his own hands. He trusts what he has seen work, so this road shows each part, with its code and its numbers.',
       x: TRACK_START + 190,
       left: 24.4,
     },
@@ -160,7 +160,7 @@ const TRACKS: ReadonlyArray<{
     who: {
       name: 'Bezirgân',
       english: 'Merchant',
-      story: 'The Bezirgân sells in many cities, so he explains his goods in plain words. If a buyer cannot follow him, he says, the explanation is wrong.',
+      story: 'The Bezirgân sells to buyers from many lands, so he explains every good in plain words. If a buyer cannot follow him, he says, the fault is in the explanation, never in the buyer.',
       x: TRACK_START + 760 + 645,
       left: 81.4,
     },

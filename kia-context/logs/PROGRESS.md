@@ -13,7 +13,7 @@ description: >
 authority: state
 writes: agent, every session
 status: active
-covers: "M50 to M71, 2026-11-06 onward"
+covers: "M50 to M72, 2026-11-06 onward"
 last_updated: 2026-11-07
 ---
 
@@ -1004,6 +1004,44 @@ toggle; the Reset link never shown; the panel starting open; the panel's `hidden
 survivor showed a redundant rule (`.bz-search-filters[hidden]`, already hidden by the global
 `[hidden]`), which was deleted. **Gate:** 1,163 unit tests, the build and link check, 520 browser
 tests passed and 10 skipped.
+
+## 🏁 Milestone M72: The stories at the gate stay through the first scroll; the choice's tellers speak — DONE
+
+The author, 2026-11-07: *"the story of each character and their caption appear only if we are at
+the absolute top of the website and with a single scroll step they disappear. Please make them
+appear even after a single small scroll step and disappear only after everyone turned their face
+towards the gate"*; then *"bezirgan and sipahi have no caption or cloud over them as a brief story.
+add interesting one for them"*; then *"the cloud story of bit ai is layered under the open
+curriculum button and is not visible. bring it forwards"*.
+
+- [x] Captions and stories last until the last person has turned to the gate, not the first step.
+- [x] The Sipahi's and the Bezirgân's stories open on the walk, with new wording for their tracks.
+- [x] Bit's cloud is drawn over "Open the curriculum".
+
+**Report, 2026-11-07.** **The first scroll.** `BUSY`, the chase time after which the people count as
+on the move, was 0.4; Bit's head turns at 1.0 and the last follower finishes turning at 3.8. It is
+now read off the plans (the latest `turnAt + turnDur`), so it moves with them. Measured at 1440 by
+900: captions at full strength through 500px of scroll, gone by 600px (they faded on the first step
+before). A cloud closed on any 40px scroll; on the walk the people stand while the page scrolls, so
+the walk's allowance is 400px, measured on the page's scroll rather than the person's place on
+screen (the walk scrubs with a lag, and a check on the screen closed a cloud a moment after it
+opened). **The tellers.** Their captions were there, but their clouds never opened on the walk:
+the street is `data-chasing` long before the choice, and `show` refused every cloud while chasing.
+Only the gate's people are refused now, and the chase closes only their clouds (it had been closing
+a teller's that focus had just opened). A keyboard focus on a teller jumps the walk about 7,000px to
+the choice, so a teller whose caption holds focus keeps its cloud through scrolling, and an open
+cloud is placed again on every frame for 1.5s after each scroll: placed once, at the moment of
+opening, it sat 6,658px off the screen. The M63 test had passed because it ran on the still picture
+only. New stories: the Sipahi checks every strap and buckle himself and trusts what he has seen
+work; the Bezirgân explains every good in plain words, and if a buyer cannot follow, the fault is in
+the explanation. **Bit's cloud.** The cast sits a layer below the gate's copy, so an open cloud now
+lifts the cast above it (`.cast-box:has(.who-btn[data-open])`), only while open. **Tests:** three
+new cast tests (the first scroll, the tellers at the choice, Bit's cloud over the button, sampled
+along its top edge at 1280 by 720, where the two overlap); the chase point moved from 420 to 700px.
+**Mutations, each seen failing:** `BUSY` back to 0.4; the chasing refusal for every cloud; the
+layer lift removed (its first test sampled only the centre and passed, so it was rewritten); the
+walk's allowance at 40px; the focus exemption removed; the chase closing every cloud; the
+re-placing removed.
 
 ---
 

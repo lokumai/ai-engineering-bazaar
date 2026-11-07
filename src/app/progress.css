@@ -6,9 +6,9 @@
    The continue card, the statistics row and the settings register that the
    earlier `07`-A page carried are gone (M38, M43), removed rather than hidden.
 
-   `/dashboard/`, `/path/` and `/report/` are `MovedTo` stubs forwarding here
-   and must keep forwarding. This sheet also holds the footer readout and the
-   erase dialog, which other pages use.
+   This sheet also holds the footer readout and the erase dialog, which other
+   pages use. (`/dashboard/`, `/path/` and `/report/` forwarded here until M40
+   removed them.)
 
    D31: colour from `01`, geometry from `07`.
    =========================================================================== */

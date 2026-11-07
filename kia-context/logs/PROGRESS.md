@@ -2,19 +2,19 @@
 description: >
   Part 3 of the execution log, and the ACTIVE part: a new milestone is appended here. It opens with
   the plan of what was left after the round-3 playground (the order table and the gate every build
-  ends on), then M50 to M62: the round-3 art finished, the catalog without its Sources count, round 3
+  ends on), then M50 to M69: the round-3 art finished, the catalog without its Sources count, round 3
   built on the home page, search, the content phase, a certificate still to decide, download
   cancelled, Emerging Trends, Caravan, the gate revised (M63), and content revision 4
   (M64 to M69). Each milestone carries its deliverables and acceptance
   criteria as `- [ ]` checkboxes, ticked as the work lands, and closes with a dated report; the loop
-  that governs that is in part 1.
+  that governs that is below, in this file.
   NOT here: why a choice was made (BRAINSTORM.md), or any rule that outlives the milestone
   (MANIFESTO.md / ARCHITECTURE.md).
 authority: state
 writes: agent, every session
 status: active
 covers: "M50 to M69, 2026-11-06 onward"
-last_updated: 2026-11-06
+last_updated: 2026-11-07
 ---
 
 # 📈 PROGRESS, part 3 — M50 onward
@@ -51,10 +51,10 @@ content):
 
 | Phase | Milestones, in order |
 |---|---|
-| **Design and site, now** | M61 (Emerging Trends, done) · M50 (round-3 art, approved) → M55 (no Sources count) → M58 (round 3 built) → M51 (ship) |
+| **Design and site** | M61 (Emerging Trends) · M50 (round-3 art) → M55 (no Sources count) → M58 (round 3 built) → M51 (shipped as PR #69); M63 (the gate revised): **all done** |
 | **Playground round 4** | M56 search, **picked (D95, D97)**; M57 download, **cancelled (D96)**; M54 certificate (should it exist at all) still open |
-| **Site, after M51 merges** | M59 (search built) |
-| **Content, last** | M52 (For Everyone modules), M53 (readers' feedback and issues) |
+| **Site** | M59 (search built, done) |
+| **Content, last** | M52 (For Everyone modules: the first written in M68, the order of the rest open), M53 (readers' feedback and issues), content revision 4 (M64 to M69, done) |
 | **Later, a component kept over time** | M62 (Caravan, the trends timeline page) |
 
 Builds that touch the bar or the catalog (M59) branch from `main` after M51 merges, so
@@ -210,7 +210,7 @@ runner (33 to 34s against 30s, each loading the page six or eight times) and onc
 clouds were wired: the waits and limits fixed, then green. A door test in `home.spec.ts` flaked on a 404
 in one run; it failed in 3 of `main`'s last 4 CI runs before this branch, so it is not this PR's.
 
-## 🏁 Milestone M52: The For Everyone modules — WAITING FOR THE AUTHOR, CONTENT PHASE
+## 🏁 Milestone M52: The For Everyone modules — FIRST MODULE WRITTEN (M68), THE REST WAITING FOR THE AUTHOR
 
 D86: every module gets a For Everyone version, written from scratch for readers with no technical
 background (not a simplified copy), English first, then Turkish, then Persian, each language
@@ -222,7 +222,9 @@ download, built before this, must already treat unwritten modules as absent.
       for meaning before the next. **Not started on 2026-11-06**, when the author asked for every
       milestone to be completed: this one's first step is the author's, and a For Everyone module
       written from scratch in three languages is the author's content, not a build. Search
-      (M59) already leaves unwritten modules out, as asked.
+      (M59) already leaves unwritten modules out, as asked. **2026-11-06:** the author chose the
+      first, Agents in Practice, written with M68 in three languages
+      (`2_intermediate/everyone/agents_in_practice.md`); the order of the rest is still the author's.
 
 ## 🏁 Milestone M53: The readers' feedback and the GitHub issues — LISTED, WAITING FOR THE AUTHOR'S RANKING
 

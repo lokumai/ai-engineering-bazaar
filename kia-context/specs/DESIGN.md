@@ -12,7 +12,7 @@ authority: blueprint
 writes: agent, as the language evolves
 status: active
 covers: "the Bazaar language, transcribed from T4 on ground G3, with its derived dark sibling, plus the six primitives M16 derived from the component mockups — 2026-09-13, with ten recorded deviations (the sixth and seventh, the logo and the rail group, 2026-10-11; the eighth, the pager, the ninth, the Bazaar Street front door, and the tenth, a right-to-left script, 2026-10-12), the three reader palettes, and the end of a reading page"
-last_updated: 2026-10-12
+last_updated: 2026-11-07
 ---
 
 ---
@@ -787,6 +787,11 @@ reader can skip.
 the same dark palette, and **its contents scroll inside the frame** — a diagram wider than the
 column never widens the page. **The caption is outside the frame**, because it is page ink and would
 be unreadable inside it.
+
+**A vendor's mark is not a figure.** An image under a level's `images/logos/` is drawn inline at
+the text's height (`.bz-logo`, 1.1em, a 0.3em gap before the name), with no frame and an empty alt,
+because the name beside it says it. It keeps its brand colour; a one-colour mark ships black and the
+theme decides (`--bz-logo-mono-filter`: `none`, and `invert(1)` under `.dark`). M68, M69.
 
 **Each carries its tools as icons, in its top-right corner.** A `tool` is a 32px square that is
 TRANSPARENT at rest — the glyph alone, in the ground's muted ink — and takes an edge and a raised fill

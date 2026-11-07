@@ -9,8 +9,8 @@ description: >
 authority: reasoning
 writes: agent, when a decision is taken
 status: active
-covers: "D97 to D102 so far — 2026-11-06 onward"
-last_updated: 2026-11-06
+covers: "D97 to D104 so far — 2026-11-06 onward"
+last_updated: 2026-11-07
 ---
 
 # 🧠 BRAINSTORM, part 3 — D97 onward
@@ -39,6 +39,9 @@ module. The switch, "All tracks and languages", loads the other two indexes only
 **Also chosen, as D95 recommended:** an unwritten For Everyone module and a module with no
 translation are absent from the index, not found and then sent to a "not written" page. Both follow
 from building the documents through `loadModuleIn`, which already returns nothing for them.
+
+**Update, 2026-11-07 (D103):** the one switch is replaced by filter chips; the default scope above is
+unchanged.
 
 ### D98 · The escape at the gate is drawn from the scroll's own clock, not tweened — 2026-11-06
 
@@ -136,7 +139,50 @@ Agent Teams, Dynamic Workflows and RLMs, which they could read in Loop Engineeri
 text is kept in `mini-courses/scratchpad/drafts/advanced_loop_engineering_fa.md`. Allowing a
 `_fa.md` for a planned module with written sections would bring it back; that is the author's call.
 
-## Open questions
+### D103 · The search window filters by track, level and language with chips, and each result carries its level's bar — 2026-11-07
+
+**Asked by the author:** "it does not search or show filter for searching on level, module or
+etc; it is basic search only", with the filters of the round-4 playground (N2) but "no need to search
+in prose or code or titles", and the coloured bar on the left of each result as in the playground.
+
+**Considered:** (a) keep the "All tracks and languages" switch and add a Level row / (b) chips for
+all three, a pressed chip narrowing and a group with nothing pressed not, the switch removed / (c) as
+the playground has it, a group that can never be emptied, with a Reset link.
+
+**Chose (b), with the playground's Reset link.** The track and language chips start on the page's own,
+so a reader who touches none gets exactly D97's default, and the switch is two clicks (the other track,
+the other languages). (c)'s rule that the last pressed chip cannot be unpressed does nothing when
+clicked, which reads as a broken button; with (b) every chip always responds. **Rejected:** the
+playground's "Search in" row (titles, prose, code) at the author's word, and the chip counts, which
+need a search per chip.
+
+**Also chosen:** the chips are the catalog's `.bz-chip`, not a second kind, so the two filters on the
+site look and behave alike; the index is unchanged, because every index already holds both tracks and
+all five levels, so the filter runs on stored fields. The level bar follows the row's own direction,
+so a Persian row has it on the right. At 390px the chips keep the catalog's touch size, with the labels
+above them, so the filters take a large share of a phone's window and the results scroll under them;
+a smaller chip was not drawn so as not to deviate from §10.4 inside one dialog. **The defaults
+above are superseded by D104** (the filters behind a closed disclosure; shut, everything is searched).
+
+### D104 · The search filters sit behind a closed Filters disclosure, and a shut panel searches everything — 2026-11-07
+
+**Asked by the author:** "make the filter an accordion-like dropdown, meaning that when we search
+normally it searches all, but if I click on the accordion, I can open filters and use them."
+
+**Chose:** a "Filters" `<button aria-expanded aria-controls>` with a chevron between the field and
+the results, the panel hidden by default. **Closed, the search covers every track, level and
+language**, and the chips are ignored; the other languages' indexes load on the first search of two
+or more characters, the page's own on opening. **Opening presses nothing**, which means all, so
+opening alone changes no result; the page's own track and language now only break ties in the
+ranking, by a small boost. **Closing the panel stops the filtering**: the pressed chips are kept and
+apply again when it reopens, so a reader can never be filtered by chips they cannot see, and the
+closed toggle needs no count badge. A new page resets both. This supersedes D103's default (the
+page's own track and language pressed) and answers M70's open question about the filters' share of
+a phone's window: shut, the results have the room.
+
+**Rejected:** `<details>`, because Chrome does not close one on Escape and Escape inside the dialog
+must keep closing the dialog; keeping hidden filtering with a count on the closed toggle, which asks a
+reader to notice a number to understand their results.
 
 None open in this part yet. New ones go here, numbered after O5.
 

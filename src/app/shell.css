@@ -644,20 +644,88 @@
     min-height: 44px;
   }
 
-  .bz-search-scope {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    min-height: 44px;
-    padding: 0 16px;
-    color: var(--color-on-surface-muted);
-    font-size: var(--text-meta);
+  /* D103: the filters, between the field and the results, as the playground's N2 panel
+     draws them. The chips are the catalog's (`.bz-chip`, its key and its `Level:` label),
+     not a second kind; this arranges them. A hairline under the block, as under the field. */
+  .bz-search-filter {
+    border-bottom: 1px solid var(--color-line);
   }
 
-  .bz-search-scope input {
-    width: 18px;
-    height: 18px;
-    accent-color: var(--color-primary);
+  /* D104: the disclosure that holds the chips, shut by default. A full-width row so the
+     whole line is the target, 44px tall as the field and Close are; the chevron follows the
+     label on its end side (it sits on the left of a right-to-left row) and turns instantly
+     when open, since the language refuses a transition on a transform. The ring is drawn
+     inside the row because the window clips what leaves it. */
+  .bz-search-toggle {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    inline-size: 100%;
+    min-block-size: 44px;
+    padding: 0 16px;
+    border: 0;
+    background: transparent;
+    color: var(--color-on-surface-muted);
+    font: 600 var(--text-meta) / 1.2 var(--font-sans);
+    text-align: start;
+    cursor: pointer;
+  }
+
+  .bz-search-toggle:hover {
+    background: var(--color-surface-sunken);
+    color: var(--color-on-surface);
+  }
+
+  .bz-search-toggle:focus-visible {
+    outline-offset: -2px;
+  }
+
+  .bz-search-chevron {
+    flex: none;
+  }
+
+  .bz-search-toggle[aria-expanded="true"] .bz-search-chevron {
+    rotate: 180deg;
+  }
+
+  .bz-search-filters {
+    /* `.bz-chip` reads the catalog's control height, which that surface declares on its own
+       root; the window is outside it */
+    --bz-control: 33px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 2px 16px 12px;
+  }
+
+  /* The label holds a fixed column, so the three rows' chips start together and a row that
+     wraps goes on under its own chips, not under its label. */
+  .bz-search-filters .bz-chip-row {
+    flex-wrap: nowrap;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .bz-search-filters .bz-chip-label {
+    display: flex;
+    align-items: center;
+    align-self: flex-start;
+    inline-size: 5rem;
+    min-block-size: var(--bz-control);
+  }
+
+  .bz-search-chips {
+    display: flex;
+    flex: 1;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px 8px;
+    min-width: 0;
+  }
+
+  .bz-search-reset {
+    min-height: 33px;
+    font-size: var(--text-meta);
   }
 
   .bz-search-status {
@@ -680,8 +748,7 @@
 
   .bz-search-results a {
     display: flex;
-    flex-direction: column;
-    gap: 3px;
+    gap: 10px;
     padding: 10px 10px;
     border-radius: var(--radius-lg);
     color: var(--color-on-surface);
@@ -696,6 +763,25 @@
     outline: 2px solid var(--color-focus);
     outline-offset: -2px;
     background: var(--color-surface-sunken);
+  }
+
+  /* The level's hue as a bar on the row's start edge, 4px by the row's height, as the
+     playground's `.res .lk`. The carrier is the row's `data-cat` (category.css); the bar
+     only reports it, and the level is written under the title as well. */
+  .bz-search-key {
+    flex: none;
+    align-self: stretch;
+    inline-size: 4px;
+    border-radius: var(--radius-hair);
+    background: var(--bz-cat);
+  }
+
+  .bz-search-main {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    gap: 3px;
+    min-width: 0;
   }
 
   .bz-search-title {
@@ -737,6 +823,19 @@
   }
 
   @media (max-width: 767.98px) {
+    /* a phone has no room for a label column beside the chips: the name goes above them */
+    .bz-search-filters .bz-chip-row {
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .bz-search-filters .bz-chip-label {
+      inline-size: auto;
+      min-block-size: 0;
+    }
+
+    .bz-search-chips { inline-size: 100%; }
+
     .bz-search {
       margin-top: 64px;
       max-height: calc(100dvh - 80px);

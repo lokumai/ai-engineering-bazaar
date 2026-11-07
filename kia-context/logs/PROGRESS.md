@@ -2,19 +2,19 @@
 description: >
   Part 3 of the execution log, and the ACTIVE part: a new milestone is appended here. It opens with
   the plan of what was left after the round-3 playground (the order table and the gate every build
-  ends on), then M50 to M62: the round-3 art finished, the catalog without its Sources count, round 3
+  ends on), then M50 to M69: the round-3 art finished, the catalog without its Sources count, round 3
   built on the home page, search, the content phase, a certificate still to decide, download
   cancelled, Emerging Trends, Caravan, the gate revised (M63), and content revision 4
-  (M64 to M69). Each milestone carries its deliverables and acceptance
+  (M64 to M69), the search filters (M70) and their Filters disclosure (M71). Each milestone carries its deliverables and acceptance
   criteria as `- [ ]` checkboxes, ticked as the work lands, and closes with a dated report; the loop
-  that governs that is in part 1.
+  that governs that is below, in this file.
   NOT here: why a choice was made (BRAINSTORM.md), or any rule that outlives the milestone
   (MANIFESTO.md / ARCHITECTURE.md).
 authority: state
 writes: agent, every session
 status: active
-covers: "M50 to M69, 2026-11-06 onward"
-last_updated: 2026-11-06
+covers: "M50 to M71, 2026-11-06 onward"
+last_updated: 2026-11-07
 ---
 
 # 📈 PROGRESS, part 3 — M50 onward
@@ -51,10 +51,10 @@ content):
 
 | Phase | Milestones, in order |
 |---|---|
-| **Design and site, now** | M61 (Emerging Trends, done) · M50 (round-3 art, approved) → M55 (no Sources count) → M58 (round 3 built) → M51 (ship) |
+| **Design and site** | M61 (Emerging Trends) · M50 (round-3 art) → M55 (no Sources count) → M58 (round 3 built) → M51 (shipped as PR #69); M63 (the gate revised): **all done** |
 | **Playground round 4** | M56 search, **picked (D95, D97)**; M57 download, **cancelled (D96)**; M54 certificate (should it exist at all) still open |
-| **Site, after M51 merges** | M59 (search built) |
-| **Content, last** | M52 (For Everyone modules), M53 (readers' feedback and issues) |
+| **Site** | M59 (search built, done) |
+| **Content, last** | M52 (For Everyone modules: the first written in M68, the order of the rest open), M53 (readers' feedback and issues), content revision 4 (M64 to M69, done) |
 | **Later, a component kept over time** | M62 (Caravan, the trends timeline page) |
 
 Builds that touch the bar or the catalog (M59) branch from `main` after M51 merges, so
@@ -210,7 +210,7 @@ runner (33 to 34s against 30s, each loading the page six or eight times) and onc
 clouds were wired: the waits and limits fixed, then green. A door test in `home.spec.ts` flaked on a 404
 in one run; it failed in 3 of `main`'s last 4 CI runs before this branch, so it is not this PR's.
 
-## 🏁 Milestone M52: The For Everyone modules — WAITING FOR THE AUTHOR, CONTENT PHASE
+## 🏁 Milestone M52: The For Everyone modules — FIRST MODULE WRITTEN (M68), THE REST WAITING FOR THE AUTHOR
 
 D86: every module gets a For Everyone version, written from scratch for readers with no technical
 background (not a simplified copy), English first, then Turkish, then Persian, each language
@@ -222,7 +222,9 @@ download, built before this, must already treat unwritten modules as absent.
       for meaning before the next. **Not started on 2026-11-06**, when the author asked for every
       milestone to be completed: this one's first step is the author's, and a For Everyone module
       written from scratch in three languages is the author's content, not a build. Search
-      (M59) already leaves unwritten modules out, as asked.
+      (M59) already leaves unwritten modules out, as asked. **2026-11-06:** the author chose the
+      first, Agents in Practice, written with M68 in three languages
+      (`2_intermediate/everyone/agents_in_practice.md`); the order of the rest is still the author's.
 
 ## 🏁 Milestone M53: The readers' feedback and the GitHub issues — LISTED, WAITING FOR THE AUTHOR'S RANKING
 
@@ -945,5 +947,65 @@ long as the one that opened it, so a ```` block may hold a ``` example.
 
 ---
 
+## 🏁 Milestone M70: Search filters and the level bar on each result (D103) — DONE
+
+### Deliverables
+
+- [x] Filters under the search field: Track, Level and Language as toggle chips (the catalog's), each a
+      `<button aria-pressed>`; no scope row for titles, prose or code.
+- [x] The Language chip loads the other language's index on demand; the Track chip restricts to the
+      For Everyone addresses; the Level chip filters by the document's level.
+- [x] A bar in the level's hue on the start edge of each result, with the level named in its meta line.
+
+### Acceptance criteria
+
+- [x] A reader who touches no chip gets what D97 gave: the page's track and language, every level.
+- [x] The index is unchanged; the dialog's shape, keys and focus return are unchanged.
+- [x] Behavioural tests for each filter, the bar's colour and edge, the keyboard and 390px, each seen
+      failing against a broken build.
+
+**Report, 2026-11-07.** `SearchDialog.tsx` keeps what the reader pressed in `chosen`; a group left
+untouched is the page's own, and a group with nothing pressed does not narrow. The level list comes
+from `SiteHeader` as props (the dialog may not import the loader), and the result's level slug is
+found from the stored level title, so no field was added to the index: **gzipped with `gzip -9`,
+94,918, 119,978 and 123,651 bytes for en, tr and fa, before and after.** The "All tracks and
+languages" checkbox is gone (D103), which changed one existing e2e test. The full e2e run found one
+failure of mine: the catalog's fidelity test read the first `.bz-chip` in the document, which was now
+a hidden chip in the search window, so `fidelity.ts` reads its chip roles inside `.bz-filters`.
+**Mutations, each seen failing a named test:** level filter ignored; track filter ignored; the
+chip's click not loading its index; the result row losing its `data-cat` (bar grey); a Persian row
+losing its direction (bar on the wrong edge); the level name removed from the meta line; the chips
+out of the tab order; every language pressed by default; the focus outline removed from a chip.
+**Gate:** 1,163 unit tests in 67 files, the build and its link check (197 pages, 13,167 links), and
+512 end-to-end cases passing with 10 skipped.
+
+---
+
+## 🏁 Milestone M71: The search filters fold away behind a Filters disclosure (D104) — DONE
+
+The author, 2026-11-07: *"make the filter an accordion-like dropdown, meaning that when we search
+normally it searches all, but if I click on the accordion, I can open filters and use them."* Built by
+a Sonnet High subagent on top of M70, on the same pull request.
+
+- [x] A closed-by-default "Filters" disclosure (`<button aria-expanded aria-controls>`, chevron)
+      holding M70's chips and Reset link unchanged.
+- [x] Shut, the search covers every track, level and language; open, the chips apply; closing stops
+      the filtering.
+- [x] Keyboard: field, Close, Filters, then the chips only when open, then the results; Escape still
+      closes the dialog; the Tab trap ignores hidden chips.
+
+**Report, 2026-11-07.** As D104 records: nothing is pressed on opening, so opening changes no result,
+and closing stops the filtering rather than hiding it. `search.spec.ts` holds 24 tests, 10 new or
+rewritten for the disclosure (the older chip tests open the panel first). **Mutations, each seen
+failing:** chips applied while shut; `aria-expanded` stuck false; `aria-controls` at a wrong id; the
+Tab trap counting hidden chips; other languages never loaded; opening pressing the page's own track
+and language; the chevron not turning; the toggle's focus ring removed; Escape swallowed on the
+toggle; the Reset link never shown; the panel starting open; the panel's `hidden` dropped. One
+survivor showed a redundant rule (`.bz-search-filters[hidden]`, already hidden by the global
+`[hidden]`), which was deleted. **Gate:** 1,163 unit tests, the build and link check, 520 browser
+tests passed and 10 skipped.
+
+---
+
 > **← Part 2: [`PROGRESS_2.md`](PROGRESS_2.md)** — M16 to M49. **← Part 1: [`PROGRESS_1.md`](PROGRESS_1.md)**
-> — M1 to M15, and the loop.
+> — M1 to M15. The loop is at the top of this file.

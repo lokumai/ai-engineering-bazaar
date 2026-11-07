@@ -885,11 +885,15 @@ export const APP_SELECTORS: SelectorMap = {
      `tableCell` reads the fourth cell rather than the first for the same
      reason the mockup map does: the first is the mono number column and
      carries its own smaller step. `nth-child` and not `nth-of-type`, because
-     the title cell is a `th[scope="row"]` and the count has to include it. */
+     the title cell is a `th[scope="row"]` and the count has to include it.
+
+     The three chip roles are read inside `.bz-filters`, the catalog's bar: the
+     search window (D103) holds the same chips, earlier in the document and
+     hidden, and a bare `.bz-chip` found them first. */
   filterBar: '.bz-filters',
-  chip: '.bz-chip:not([aria-pressed="true"])',
-  chipCurrent: '.bz-chip[aria-pressed="true"]',
-  chipKey: '.bz-chip-key',
+  chip: '.bz-filters .bz-chip:not([aria-pressed="true"])',
+  chipCurrent: '.bz-filters .bz-chip[aria-pressed="true"]',
+  chipKey: '.bz-filters .bz-chip-key',
   levelHead: '.bz-levelhead',
   levelKey: '.bz-levelhead-key',
   catalogCard: '.bz-catcard[data-drawn="true"]',

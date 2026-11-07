@@ -24,9 +24,12 @@ import { href } from '@/lib/url'
  * that is never searched pays nothing.
  *
  * **What it searches by default** is the reader's own track and language, the pages they
- * are reading in; one switch widens it to every track and language (D97, the open question
- * D95 left). Results are links: ↓ from the field moves into them, ↑ and ↓ move between them,
- * Enter follows one.
+ * are reading in (D97). **Filters** under the field widen or narrow that (D103): a chip per
+ * track, per level and per language, where a pressed chip narrows and a group with nothing
+ * pressed does not, so the reader who never touches one gets the default and the checkbox that
+ * widened it to everything is two clicks on the chips. Each result carries a bar in its
+ * level's hue, on its start edge; the level is also written in its meta line. Results are
+ * links: ↓ from the field moves into them, ↑ and ↓ move between them, Enter follows one.
  */
 
 type Doc = {
@@ -42,8 +45,26 @@ type Doc = {
 }
 type Hit = SearchResult & Doc
 
+export interface SearchLevel {
+  slug: string
+  title: string
+}
+
+/** What the reader has pressed. A group left `undefined` is the page's own (the default). */
+interface Chosen {
+  tracks?: Track[]
+  levels?: string[]
+  langs?: SearchLang[]
+}
+
 const LIMIT = 20
 const LANG_NAME: Readonly<Record<SearchLang, string>> = { en: 'English', tr: 'Türkçe', fa: 'فارسی' }
+const TRACK_CHOICES: readonly Track[] = ['engineers', 'everyone']
+
+/** The languages a choice searches: none pressed is all of them. */
+const searched = (langs: readonly SearchLang[]): readonly SearchLang[] => (langs.length > 0 ? langs : SEARCH_LANGS)
+
+const toggled = <T,>(list: readonly T[], one: T): T[] => (list.includes(one) ? list.filter((x) => x !== one) : [...list, one])
 
 /** The language of the page being read: its address says so (`/tr/…`, `/fa/…`). */
 function langOf(pathname: string): SearchLang {
@@ -97,7 +118,7 @@ function Snippet({ text, terms, lang }: { text: string; terms: string[]; lang: S
   )
 }
 
-export function SearchDialog() {
+export function SearchDialog({ levels }: { levels: readonly SearchLevel[] }) {
   const pathname = usePathname() ?? '/'
   const router = useRouter()
   const dialog = useRef<HTMLDialogElement>(null)
@@ -106,13 +127,24 @@ export function SearchDialog() {
   const downOnBackdrop = useRef(false)
   const indexes = useRef<Partial<Record<SearchLang, MiniSearch<Doc>>>>({})
   const [query, setQuery] = useState('')
-  const [everything, setEverything] = useState(false)
+  const [chosen, setChosen] = useState<Chosen>({})
   const [ready, setReady] = useState<Partial<Record<SearchLang, true>>>({})
   const [failed, setFailed] = useState(false)
   const [track, setTrack] = useState<Track>('engineers')
   const lang = langOf(pathname)
+  const tracks = chosen.tracks ?? [track]
+  const langs = chosen.langs ?? [lang]
+  const chosenLevels = chosen.levels ?? []
+  const trackKey = tracks.join()
+  const langKey = langs.join()
+  const levelKey = chosenLevels.join()
+  const levelOf = useMemo(() => new Map(levels.map((l) => [l.title, l.slug])), [levels])
 
-  useEffect(() => setTrack(readingTrackOf(pathname, true)), [pathname])
+  /* a new page starts from its own track and language again */
+  useEffect(() => {
+    setTrack(readingTrackOf(pathname, true))
+    setChosen({})
+  }, [pathname])
 
   /* one fetch per language: a second opening, or the switch ticked during a load, waits for it */
   const inFlight = useRef<Partial<Record<SearchLang, Promise<void>>>>({})
@@ -148,8 +180,9 @@ export function SearchDialog() {
     setTrack(readingTrackOf(window.location.pathname, true))
     d.showModal()
     field.current?.select()
-    void load(everything ? SEARCH_LANGS : [lang])
-  }, [everything, lang, load])
+    void load(searched(langs))
+    // `langs` is rebuilt each render; its content is what the callback depends on
+  }, [langKey, load])
 
   const close = useCallback(() => dialog.current?.close(), [])
 
@@ -174,19 +207,19 @@ export function SearchDialog() {
   /* a new page closes the window */
   useEffect(() => close(), [pathname, close])
 
-  useEffect(() => {
-    if (everything) void load(SEARCH_LANGS)
-  }, [everything, load])
-
   const hits: Hit[] = useMemo(() => {
     const q = query.trim()
     if (q.length < 2) return []
-    const langs = everything ? SEARCH_LANGS : [lang]
+    /* a group with nothing pressed does not narrow */
+    const wantedTracks = tracks.length > 0 ? tracks : TRACK_CHOICES
+    const wantedLangs = searched(langs)
+    const wantedLevels = chosenLevels.flatMap((slug) => levels.filter((l) => l.slug === slug).map((l) => l.title))
     const found: Hit[] = []
-    for (const l of langs) {
+    for (const l of wantedLangs) {
       const index = indexes.current[l]
       if (!index) continue
-      const filter = everything ? undefined : (r: SearchResult) => r.track === track
+      const filter = (r: SearchResult) =>
+        wantedTracks.includes(r.track) && (wantedLevels.length === 0 || wantedLevels.includes(r.level))
       /* with every language searched, the page's own wins a tie */
       const own = l === lang ? 1.2 : 1
       const variant = joinedVariant(q, l)
@@ -198,11 +231,17 @@ export function SearchDialog() {
     for (const hit of found) if ((best.get(hit.url)?.score ?? -1) < hit.score) best.set(hit.url, hit)
     return [...best.values()].sort((a, b) => b.score - a.score).slice(0, LIMIT)
     // `ready` changes when an index arrives; the indexes themselves live in a ref
-  }, [query, everything, lang, track, ready])
+  }, [query, trackKey, langKey, levelKey, lang, levels, ready])
 
   /* What the reader typed, for marking in the excerpt: the index's own terms are normalised. */
   const typed = useMemo(() => query.trim().split(/\s+/), [query])
-  const loading = !failed && !(everything ? SEARCH_LANGS.every((l) => ready[l]) : ready[lang])
+  const loading = !failed && !searched(langs).every((l) => ready[l])
+
+  /* a pressed chip narrows; an index a pressed language needs is fetched now, never earlier */
+  const choose = (next: Chosen) => {
+    setChosen(next)
+    void load(searched(next.langs ?? [lang]))
+  }
 
   const onFieldKey = (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.key === 'ArrowDown') {
@@ -312,17 +351,80 @@ export function SearchDialog() {
               Close
             </button>
           </div>
-          <label className="bz-search-scope">
-            <input type="checkbox" checked={everything} onChange={(event) => setEverything(event.target.checked)} />
-            All tracks and languages
-          </label>
+          {/* D103: a pressed chip narrows, a group with nothing pressed does not. The track and
+              language chips start on the page's own, so a reader who touches none searches
+              what they are reading in. */}
+          <div className="bz-search-filters" role="group" aria-label="Filters">
+            <div className="bz-chip-row" role="group" aria-labelledby="bz-search-f-track">
+              <span className="bz-chip-label" id="bz-search-f-track">
+                Track:
+              </span>
+              <div className="bz-search-chips">
+                {TRACK_CHOICES.map((id) => (
+                  <button
+                    key={id}
+                    type="button"
+                    className="bz-chip"
+                    aria-pressed={tracks.includes(id)}
+                    onClick={() => choose({ ...chosen, tracks: toggled(tracks, id) })}
+                  >
+                    {trackLabel(id)}
+                  </button>
+                ))}
+              </div>
+            </div>
+            <div className="bz-chip-row" role="group" aria-labelledby="bz-search-f-level">
+              <span className="bz-chip-label" id="bz-search-f-level">
+                Level:
+              </span>
+              <div className="bz-search-chips">
+                {levels.map((one) => (
+                  <button
+                    key={one.slug}
+                    type="button"
+                    className="bz-chip"
+                    data-cat={one.slug}
+                    aria-pressed={chosenLevels.includes(one.slug)}
+                    onClick={() => choose({ ...chosen, levels: toggled(chosenLevels, one.slug) })}
+                  >
+                    <span aria-hidden="true" className="bz-chip-key" />
+                    {one.title}
+                  </button>
+                ))}
+              </div>
+            </div>
+            <div className="bz-chip-row" role="group" aria-labelledby="bz-search-f-lang">
+              <span className="bz-chip-label" id="bz-search-f-lang">
+                Language:
+              </span>
+              <div className="bz-search-chips">
+                {SEARCH_LANGS.map((id) => (
+                  <button
+                    key={id}
+                    type="button"
+                    className="bz-chip"
+                    aria-pressed={langs.includes(id)}
+                    lang={id === 'en' ? undefined : id}
+                    onClick={() => choose({ ...chosen, langs: toggled(langs, id) })}
+                  >
+                    {LANG_NAME[id]}
+                  </button>
+                ))}
+                {Object.keys(chosen).length > 0 ? (
+                  <button type="button" className="bz-btn-quiet bz-search-reset" onClick={() => choose({})}>
+                    Reset filters
+                  </button>
+                ) : null}
+              </div>
+            </div>
+          </div>
           <p className="bz-search-status" role="status" aria-live="polite">
             {status}
           </p>
           {hits.length > 0 && (
             <ul ref={list} className="bz-search-results" onKeyDown={onListKey}>
               {hits.map((hit, n) => (
-                <li key={hit.id}>
+                <li key={hit.id} data-cat={levelOf.get(hit.level)}>
                   <Link
                     href={hit.url}
                     onClick={(event) => go(hit.url, event)}
@@ -330,26 +432,31 @@ export function SearchDialog() {
                     dir={hit.lang === 'fa' ? 'rtl' : undefined}
                     aria-describedby={`bz-search-hit-${n}`}
                   >
-                    <span className="bz-search-title">
-                      {hit.module}
-                      {hit.section ? (
-                        <span className="bz-search-section">
-                          {' · '}
-                          <Snippet text={hit.section} terms={typed} lang={hit.lang} />
+                    {/* the level's hue on the row's start edge (the right of a Persian row);
+                        the level's name is in the line under the title */}
+                    <span className="bz-search-key" aria-hidden="true" />
+                    <span className="bz-search-main">
+                      <span className="bz-search-title">
+                        {hit.module}
+                        {hit.section ? (
+                          <span className="bz-search-section">
+                            {' · '}
+                            <Snippet text={hit.section} terms={typed} lang={hit.lang} />
+                          </span>
+                        ) : null}
+                      </span>
+                      {/* named by its title; the excerpt and the line under it describe it */}
+                      <span id={`bz-search-hit-${n}`} aria-hidden="true" className="bz-search-more">
+                        {hit.excerpt ? (
+                          <span className="bz-search-snippet">
+                            <Snippet text={hit.excerpt} terms={typed} lang={hit.lang} />
+                          </span>
+                        ) : null}
+                        <span className="bz-search-meta" lang="en" dir="ltr">
+                          {hit.kind === 'level' ? 'Level' : hit.level} · {trackLabel(hit.track)}
+                          {langs.length === 1 ? '' : ` · ${LANG_NAME[hit.lang]}`}
+                          {hit.ready ? '' : ' · Planned'}
                         </span>
-                      ) : null}
-                    </span>
-                    {/* named by its title; the excerpt and the line under it describe it */}
-                    <span id={`bz-search-hit-${n}`} aria-hidden="true" className="bz-search-more">
-                      {hit.excerpt ? (
-                        <span className="bz-search-snippet">
-                          <Snippet text={hit.excerpt} terms={typed} lang={hit.lang} />
-                        </span>
-                      ) : null}
-                      <span className="bz-search-meta" lang="en" dir="ltr">
-                      {hit.kind === 'level' ? 'Level' : hit.level} · {trackLabel(hit.track)}
-                      {everything ? ` · ${LANG_NAME[hit.lang]}` : ''}
-                      {hit.ready ? '' : ' · Planned'}
                       </span>
                     </span>
                   </Link>

@@ -25,7 +25,7 @@ Stop and think about this part for a moment. These agents do not only *use* what
 
 So coding is not only one skill among many. It is the skill that can replace the others. That is why a coding agent helps with work that has nothing to do with software. Look back at the examples above: every one of them was a non-coding task.
 
-The rest of this module is the standard equipment. Almost every modern coding agent has these features: Claude Code, Codex, Antigravity, Copilot and OpenCode. The names and file paths are a little different in each one. The concrete examples here come from Claude Code, and [Claude Code features](https://code.claude.com/docs/en/agent-sdk/claude-code-features) lists them together on one page.
+The rest of this module is the standard equipment. Almost every modern coding agent has these features: ![](./images/logos/claude.svg)Claude Code, ![](./images/logos/openai-mono.svg)Codex, ![](./images/logos/antigravity.svg)Antigravity, ![](./images/logos/githubcopilot-mono.svg)Copilot and ![](./images/logos/opencode-mono.svg)OpenCode. The names and file paths are a little different in each one. The concrete examples here come from Claude Code, and [Claude Code features](https://code.claude.com/docs/en/agent-sdk/claude-code-features) lists them together on one page.
 
 ## AGENTS.md
 
@@ -68,7 +68,7 @@ Here is the problem that MCP solves.
 
 Say you write tools for your LangChain agent, so that it can work with your Jira. These tools wrap the Jira API: one creates an issue, one searches, and one adds a comment. Now you want the same thing in Claude Code, or in Codex, or in a smolagents script. Each of them expects tool definitions in its own shape. So you write the Jira tools again. And again.
 
-The **Model Context Protocol** makes this one job instead of four. You describe tools in one standard way. Then any agent that speaks the protocol can use them.
+The ![](./images/logos/modelcontextprotocol-mono.svg)**Model Context Protocol** makes this one job instead of four. You describe tools in one standard way. Then any agent that speaks the protocol can use them.
 
 ![Before and after MCP](./images/mcp-unified-before-after.png)  
 *On the left, every service needs its own integration, written for the model that it talks to. So the work multiplies with the number of models. On the right, the API of each service has not changed at all. What changed is how the model reaches them: through one interface that the model already speaks. So you integrate each service once, not once for each agent.*

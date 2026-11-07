@@ -42,9 +42,9 @@ This is why LangChain said it so plainly in [The Agent Improvement Loop Starts w
 
 ## Observability Tools
 
-- **LangSmith** is LangChain's own tool. If you already use anything from [Agent Frameworks](../4_ecosystem/agent_frameworks.md), it is the most integrated choice. It gives you tracing, datasets, evaluators and annotation in one place.
-- **[Langfuse](https://github.com/langfuse/langfuse)** is the open-source one. It is the usual choice when the traces must stay on your own infrastructure. It supports OpenTelemetry as well as the framework SDKs, so it can collect traces from almost anything. Next to the traces, it also has evals, prompt management and datasets.
-- **[Latitude](https://github.com/latitude-dev/latitude-llm)** is also open source. It focuses clearly on monitoring in production.
+- ![](./images/logos/langchain-mono.svg)**LangSmith** is LangChain's own tool. If you already use anything from [Agent Frameworks](../4_ecosystem/agent_frameworks.md), it is the most integrated choice. It gives you tracing, datasets, evaluators and annotation in one place.
+- ![](./images/logos/langfuse.svg)**[Langfuse](https://github.com/langfuse/langfuse)** is the open-source one. It is the usual choice when the traces must stay on your own infrastructure. It supports OpenTelemetry as well as the framework SDKs, so it can collect traces from almost anything. Next to the traces, it also has evals, prompt management and datasets.
+- ![](./images/logos/latitude.svg)**[Latitude](https://github.com/latitude-dev/latitude-llm)** is also open source. It focuses clearly on monitoring in production.
 
 Before you pick one, the thing to check is not the feature list. The first check is whether it can collect traces from what you already run. The second check is whether it can keep the traces where your data policy says they must stay. Prompts and tool results are full of customer text. So this choice is part of the same discussion as the data policy from [Inference Providers](../4_ecosystem/inference_providers.md).
 

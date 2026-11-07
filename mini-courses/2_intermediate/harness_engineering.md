@@ -151,11 +151,11 @@ That chart is from Composio's [Finding the Best Harness for DeepSeek V4 Flash](h
 - Pi Agent
 - Prime Agent
 - OMP
-- Claude Code
-- Codex
+- ![](./images/logos/claude.svg)Claude Code
+- ![](./images/logos/openai-mono.svg)Codex
 - DeepAgents
-- Hermes Agent
-- OpenCode
+- ![](./images/logos/hermes.svg)Hermes Agent
+- ![](./images/logos/opencode-mono.svg)OpenCode
 
 Pi Agent came first at 66.7%, which is twenty of thirty workflows. Claude Code was the fastest, at 122.7 seconds per task, but it cost the most per success.
 
@@ -167,7 +167,7 @@ So when you read that a model is state of the art, ask the honest question: whic
 
 The other change by 2026 is that many of these harnesses are open source, and that includes the commercial ones.
 
-Claude Code's harness is open. So is [DeepSeek's](https://github.com/deepseek-ai/deepseek-harness). DeepSeek published it right next to the model that it was tuned for. That tells you the two were designed together. OpenCode, Pi and LangChain's [deepagents](https://github.com/langchain-ai/deepagents) are open. So are the personal agent harnesses, Hermes and OpenClaw. They get their own module, [Personal Agents](personal_agents.md).
+Claude Code's harness is open. So is ![](./images/logos/deepseek.svg)[DeepSeek's](https://github.com/deepseek-ai/deepseek-harness). DeepSeek published it right next to the model that it was tuned for. That tells you the two were designed together. OpenCode, Pi and LangChain's [deepagents](https://github.com/langchain-ai/deepagents) are open. So are the personal agent harnesses, Hermes and OpenClaw. They get their own module, [Personal Agents](personal_agents.md).
 
 This is really useful, and not only because you can read the code. You can take a harness that works and change the parts that do not suit your job. You can:
 

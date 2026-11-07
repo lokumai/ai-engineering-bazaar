@@ -73,7 +73,7 @@ Yukarıdaki liste, agent'ların neden bir **framework** kullandığını açıkl
 - prompt'u yeniden oluşturmak
 - ne zaman duracağına karar vermek
 
-[smolagents](https://github.com/huggingface/smolagents) ve [LangChain](https://github.com/langchain-ai/langchain), bu kodu bir kez yazıp herkesin kullanabilmesi için var.
+![](./images/logos/huggingface.svg)[smolagents](https://github.com/huggingface/smolagents) ve ![](./images/logos/langchain-mono.svg)[LangChain](https://github.com/langchain-ai/langchain), bu kodu bir kez yazıp herkesin kullanabilmesi için var.
 
 **Şimdi de [LLM Temelleri](llms_tr.md) modülüne dön.** Orada bir LLM'i hiçbir framework olmadan doğrudan terminalden çalıştırmıştık. Neden bir framework'e ihtiyacımız olmadı? Çünkü ortada tek bir çağrı vardı: bir girdi gönderdin, bir çıktı aldın ve iş orada bitti. Döngü yoktu, tool ayrıştırması yoktu ve tutulacak bir mesaj yığını da yoktu. Tek turlu bir LLM, modelin etrafına yazılan bu ek koda, yani iskele koda (scaffolding) ihtiyaç duymaz. Bir agent ise neredeyse tamamen bu iskele koddan oluşur.
 
@@ -135,7 +135,7 @@ result = agent.run("Read main.py and summarise it")
 
 Bunların hepsini `CodeAgent` yapıyor, döngünün kendisi ise `agent.run`.
 
-Aynı sorunu farklı yollarla çözen başka framework'ler de var: [LangChain](https://github.com/langchain-ai/langchain), [crewAI](https://github.com/crewAIInc/crewAI) ve [AutoGen](https://github.com/microsoft/autogen). [Agent Framework'leri](../4_ecosystem/agent_frameworks_tr.md) bunları karşılaştırıyor.
+Aynı sorunu farklı yollarla çözen başka framework'ler de var: ![](./images/logos/langchain-mono.svg)[LangChain](https://github.com/langchain-ai/langchain), ![](./images/logos/crewai.svg)[crewAI](https://github.com/crewAIInc/crewAI) ve ![](./images/logos/autogen.svg)[AutoGen](https://github.com/microsoft/autogen). [Agent Framework'leri](../4_ecosystem/agent_frameworks_tr.md) bunları karşılaştırıyor.
 
 ![LLM beyin, agent gövde](./images/agent-analogy.png)  
 *LLM beyin, agent onu çevreleyen gövde, tool'lar ise ellerdir.*

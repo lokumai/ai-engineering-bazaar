@@ -35,9 +35,9 @@ graph TD
     C --> D["The model, and your tools"]
 ```
 
-**[LangGraph](https://github.com/langchain-ai/langgraph)** is the runtime. It is the lowest level of the three. You describe your agent as a graph. The nodes are steps, the edges are what can happen next, and the state moves between them. The state is explicit, so the runtime can save it and resume from it. The runtime can also let a human interrupt the agent in the middle of a run. Use LangGraph when the control flow is the hard part and you want to control it yourself.
+![](./images/logos/langgraph-mono.svg)**[LangGraph](https://github.com/langchain-ai/langgraph)** is the runtime. It is the lowest level of the three. You describe your agent as a graph. The nodes are steps, the edges are what can happen next, and the state moves between them. The state is explicit, so the runtime can save it and resume from it. The runtime can also let a human interrupt the agent in the middle of a run. Use LangGraph when the control flow is the hard part and you want to control it yourself.
 
-**[LangChain](https://github.com/langchain-ai/langchain)** is the main interface, and it is where you should start. It sits on top of LangGraph. It gives you the ordinary agent in a few lines of code: a model, some tools and some middleware. The middleware is where the [Harness Engineering](../2_intermediate/harness_engineering.md) work happens. It is also where the guardrails from [Security](../2_intermediate/security.md) live.
+![](./images/logos/langchain-mono.svg)**[LangChain](https://github.com/langchain-ai/langchain)** is the main interface, and it is where you should start. It sits on top of LangGraph. It gives you the ordinary agent in a few lines of code: a model, some tools and some middleware. The middleware is where the [Harness Engineering](../2_intermediate/harness_engineering.md) work happens. It is also where the guardrails from [Security](../2_intermediate/security.md) live.
 
 **[deepagents](https://github.com/langchain-ai/deepagents)** is the highest level. It is built on the other two. It calls itself a "batteries-included" agent harness. The batteries are exactly the list from [Context Engineering](../2_intermediate/context_engineering.md):
 
@@ -54,16 +54,16 @@ So the practical rule is simple. Start with LangChain. Go down to LangGraph when
 
 None of these is wrong. They make different trade-offs. Usually the trade-off is how much they decide for you.
 
-- **[Agno](https://github.com/agno-agi/agno)** looks past the single agent to the whole platform. It helps you build, run and manage agents as a system rather than as a script.
-- **[CrewAI](https://github.com/crewAIInc/crewAI)** organises everything around roles. You describe a crew of agents, each with a job, and let them work together. This fits well with the multi-agent shapes from [Multi-Agent Systems](../1_fundamentals/multi_agent.md).
-- **[smolagents](https://github.com/huggingface/smolagents)** from Hugging Face is the small one, and it is small on purpose. It is a barebones library for agents that act by writing and running code, instead of by sending JSON tool calls. It is the CodeAct idea from [Loop Engineering](../2_intermediate/loop_engineering.md), packaged as a library. It is also the best one to read if you want to understand a loop rather than use one.
-- **[Pydantic AI](https://github.com/pydantic/pydantic-ai)** brings the thing Pydantic is good at: types. Every model and every interface is typed from end to end. So a malformed tool call becomes a validation error, not a mystery.
+- ![](./images/logos/agno.svg)**[Agno](https://github.com/agno-agi/agno)** looks past the single agent to the whole platform. It helps you build, run and manage agents as a system rather than as a script.
+- ![](./images/logos/crewai.svg)**[CrewAI](https://github.com/crewAIInc/crewAI)** organises everything around roles. You describe a crew of agents, each with a job, and let them work together. This fits well with the multi-agent shapes from [Multi-Agent Systems](../1_fundamentals/multi_agent.md).
+- ![](./images/logos/huggingface.svg)**[smolagents](https://github.com/huggingface/smolagents)** from Hugging Face is the small one, and it is small on purpose. It is a barebones library for agents that act by writing and running code, instead of by sending JSON tool calls. It is the CodeAct idea from [Loop Engineering](../2_intermediate/loop_engineering.md), packaged as a library. It is also the best one to read if you want to understand a loop rather than use one.
+- ![](./images/logos/pydantic.svg)**[Pydantic AI](https://github.com/pydantic/pydantic-ai)** brings the thing Pydantic is good at: types. Every model and every interface is typed from end to end. So a malformed tool call becomes a validation error, not a mystery.
 
 ## If Your Project is TypeScript
 
 Two frameworks are worth knowing here. The reason is that the whole stack above is Python-first, and most product code is not written in Python.
 
-- **[Mastra](https://github.com/mastra-ai/mastra)** is the modern TypeScript framework for agents and AI applications. It is the closest thing to LangChain in that language.
+- ![](./images/logos/mastra.svg)**[Mastra](https://github.com/mastra-ai/mastra)** is the modern TypeScript framework for agents and AI applications. It is the closest thing to LangChain in that language.
 - **[VoltAgent](https://github.com/VoltAgent/voltagent)** is an agent engineering platform built on top of an open-source TypeScript framework. So it focuses more on running, watching and managing your agents after you have built them.
 
 ## AI Workflows
@@ -94,7 +94,7 @@ Building workflows through MCP arrived in v2.13. So the agent and the workflow s
 
 ## No-code Options
 
-This is worth saying plainly, because engineers tend to skip it. For a lot of jobs, the right answer is a no-code platform. **[Lovable](https://lovable.dev/)**, **[Bolt](https://bolt.new/)** and **[Replit](https://replit.com/)** turn a description into a working application. They deploy it, and you can keep writing prompts to change it. For a prototype, an internal tool, or a landing page with a form behind it, that takes hours instead of weeks.
+This is worth saying plainly, because engineers tend to skip it. For a lot of jobs, the right answer is a no-code platform. ![](./images/logos/lovable.svg)**[Lovable](https://lovable.dev/)**, ![](./images/logos/bolt.svg)**[Bolt](https://bolt.new/)** and ![](./images/logos/replit.svg)**[Replit](https://replit.com/)** turn a description into a working application. They deploy it, and you can keep writing prompts to change it. For a prototype, an internal tool, or a landing page with a form behind it, that takes hours instead of weeks.
 
 The trade-off is the usual one. You get speed now and less control later. If you move off the platform, you must build the application again. Know which of those you are buying.
 

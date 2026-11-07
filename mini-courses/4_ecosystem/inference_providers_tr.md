@@ -42,7 +42,7 @@ AgentRouter cüzdanını o tutar ve ona gönderdiğin her çağrıyı görür. �
 
 ## LLM Üreticilerinden Doğrudan Inference
 
-Diğer yol, modeli yapan şirkete doğrudan gitmek: OpenAI, Anthropic ya da Google.
+Diğer yol, modeli yapan şirkete doğrudan gitmek: ![](./images/logos/openai-mono.svg)OpenAI, ![](./images/logos/anthropic-mono.svg)Anthropic ya da ![](./images/logos/google.svg)Google.
 
 Bu yolu, yalnızca üreticinin sunduğu şeyleri istediğinde seçersin. Yeni modeller genellikle önce orada çıkar, üstelik provider'a özgü özellikler de orada bulunur ve bunlar hiç de küçük değildir:
 

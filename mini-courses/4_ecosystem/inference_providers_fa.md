@@ -42,7 +42,7 @@ AgentRouter کیف پولت دستشه و هر call‌ی که ازش رد می�
 
 ## Inference مستقیم از سازنده‌های LLM
 
-راه دوم اینه که مستقیم بری سراغ شرکتی که مدل رو ساخته: OpenAI، Anthropic یا Google.
+راه دوم اینه که مستقیم بری سراغ شرکتی که مدل رو ساخته: ![](./images/logos/openai-mono.svg)OpenAI یا ![](./images/logos/anthropic-mono.svg)Anthropic یا ![](./images/logos/google.svg)Google.
 
 این کار رو وقتی می‌کنی که چیزهایی رو می‌خوای که فقط خود سازنده ارائه می‌ده. مدل‌های جدید معمولاً اول همون‌جا میان، و قابلیت‌های مخصوص هر provider هم همون‌جاست، که کم هم نیستن:
 

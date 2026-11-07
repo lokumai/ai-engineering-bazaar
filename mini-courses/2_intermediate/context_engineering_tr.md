@@ -148,7 +148,7 @@ Bu fikir, Jeremy Howard'ın Eylül 2024'te yaptığı bir öneri olan [The /llms
 
 **Sonra MCP.** Model Context Protocol çıktı ve birçok proje dokümantasyonunu agent'ın çağırabileceği tool'lar olarak sunmaya başladı. MCP'yi [Code Agent'lar](coding_agents_tr.md) modülünde ayrıntılı anlatıyoruz. Şimdilik bir MCP server'ı, agent'ına eklediğin ya da kurduğun bir tool seti olarak düşünebilirsin; bu tool'lardan biri de "dokümanlarda ara" olabilir.
 
-**Sonra hepsi için tek bir yer.** Kısa sürede bu dosyalar ve server'lar tek tek kurulamayacak kadar çoğaldı. Bunun üzerine Upstash'in bir projesi olan [Context7](https://context7.com/), birçok kütüphanenin dokümantasyonunu tek bir yerde topladı. Agent'ına tek bir MCP server'ı verir ve bu server üzerinden birçok kütüphanenin güncel dokümanlarına ve kod örneklerine ulaşırsın.
+**Sonra hepsi için tek bir yer.** Kısa sürede bu dosyalar ve server'lar tek tek kurulamayacak kadar çoğaldı. Bunun üzerine Upstash'in bir projesi olan ![](./images/logos/context7.svg)[Context7](https://context7.com/), birçok kütüphanenin dokümantasyonunu tek bir yerde topladı. Agent'ına tek bir MCP server'ı verir ve bu server üzerinden birçok kütüphanenin güncel dokümanlarına ve kod örneklerine ulaşırsın.
 
 [DeepWiki](https://deepwiki.org/) de benzer bir şekilde çalışır, ama kod için: bir GitHub deposu için wiki üretir. Diyelim ki agent'ın bir kütüphanenin iç yapısı, mimarisi ya da API'si hakkında bir sorusu var. Depoyu kendisi tarayıp context'ini kaynak dosyalarla doldurmak yerine, DeepWiki'nin yazdığı metni okuyabilir.
 

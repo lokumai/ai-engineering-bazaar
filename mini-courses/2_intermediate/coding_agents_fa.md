@@ -15,7 +15,7 @@
 
 پس کدنویسی فقط یکی از مهارت‌ها نیست؛ مهارتیه که می‌تونه جای بقیه رو بگیره. برای همینه که coding agent توی کارهایی هم کمک می‌کنه که هیچ ربطی به نرم‌افزار ندارن. یه نگاه دیگه به مثال‌های بالا بنداز؛ هیچ‌کدومشون کار برنامه‌نویسی نبود.
 
-بقیه‌ی این درس درباره‌ی امکاناتیه که تقریباً همه‌ی coding agent‌های امروزی دارن، مثل Claude Code، Codex، Antigravity، Copilot و OpenCode. اسم‌ها و مسیر فایل‌ها توی هر کدوم یه کم فرق می‌کنه. مثال‌های این‌جا از Claude Code هستن، و صفحه‌ی [Claude Code features](https://code.claude.com/docs/en/agent-sdk/claude-code-features) همه‌شون رو یه‌جا آورده.
+بقیه‌ی این درس درباره‌ی امکاناتیه که تقریباً همه‌ی coding agent‌های امروزی دارن، مثل ![](./images/logos/claude.svg)Claude Code و ![](./images/logos/openai-mono.svg)Codex و ![](./images/logos/antigravity.svg)Antigravity و ![](./images/logos/githubcopilot-mono.svg)Copilot و ![](./images/logos/opencode-mono.svg)OpenCode. اسم‌ها و مسیر فایل‌ها توی هر کدوم یه کم فرق می‌کنه. مثال‌های این‌جا از Claude Code هستن، و صفحه‌ی [Claude Code features](https://code.claude.com/docs/en/agent-sdk/claude-code-features) همه‌شون رو یه‌جا آورده.
 
 ## AGENTS.md
 
@@ -58,7 +58,7 @@ slash command یه prompt‌ه که یه بار می‌نویسیش و هر با
 
 فرض کن برای agent‌ای که با LangChain ساختی چند تا tool نوشتی که بتونه با Jira‌ت کار کنه. این tool‌ها API خود Jira رو صدا می‌زنن: یکی issue می‌سازه، یکی جست‌وجو می‌کنه، یکی هم comment می‌ذاره. حالا همین رو توی Claude Code هم می‌خوای، یا توی Codex، یا توی یه اسکریپت smolagents، و هر کدوم تعریف tool رو به شکل خودش می‌خواد. پس باید tool‌های Jira رو دوباره بنویسی، و باز دوباره.
 
-**Model Context Protocol** کاری می‌کنه که این کار به‌جای چهار بار، یه بار انجام بشه. tool‌ها رو با یه روش استاندارد تعریف می‌کنی و هر agent‌ی که این پروتکل رو بلده، می‌تونه ازشون استفاده کنه.
+![](./images/logos/modelcontextprotocol-mono.svg)**Model Context Protocol** کاری می‌کنه که این کار به‌جای چهار بار، یه بار انجام بشه. tool‌ها رو با یه روش استاندارد تعریف می‌کنی و هر agent‌ی که این پروتکل رو بلده، می‌تونه ازشون استفاده کنه.
 
 ![قبل و بعد از MCP](./images/mcp-unified-before-after.png)  
 *سمت چپ، هر سرویس یه integration جدا لازم داره که برای همون مدلی نوشته شده که باهاش حرف می‌زنه، پس کار به تعداد مدل‌ها چند برابر می‌شه. سمت راست، API هیچ سرویسی ذره‌ای عوض نشده؛ فقط راه رسیدن مدل بهشون عوض شده و حالا از یه رابط واحد می‌گذره که مدل از قبل بلده. پس هر سرویس رو یه بار integrate می‌کنی، نه یه بار برای هر agent.*

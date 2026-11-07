@@ -102,8 +102,8 @@ of it by hand means a lot of boilerplate code:
 - rebuilding the prompt
 - deciding when to stop
 
-[smolagents](https://github.com/huggingface/smolagents) and
-[LangChain](https://github.com/langchain-ai/langchain) exist to write that code once.
+![](./images/logos/huggingface.svg)[smolagents](https://github.com/huggingface/smolagents) and
+![](./images/logos/langchain-mono.svg)[LangChain](https://github.com/langchain-ai/langchain) exist to write that code once.
 
 **And now think back to [LLM Fundamentals](llms.md)**. There, we ran an LLM straight from the
 terminal with no framework at all. Why did we not need a framework there? Because that was one
@@ -182,8 +182,8 @@ That is a complete agent. Notice what is *not* there:
 `CodeAgent` does all of it, and `agent.run` is the loop.
 
 Other frameworks solve the same problem in different ways:
-[LangChain](https://github.com/langchain-ai/langchain),
-[crewAI](https://github.com/crewAIInc/crewAI) and [AutoGen](https://github.com/microsoft/autogen).
+![](./images/logos/langchain-mono.svg)[LangChain](https://github.com/langchain-ai/langchain),
+![](./images/logos/crewai.svg)[crewAI](https://github.com/crewAIInc/crewAI) and ![](./images/logos/autogen.svg)[AutoGen](https://github.com/microsoft/autogen).
 [Agent Frameworks](../4_ecosystem/agent_frameworks.md) compares them.
 
 ![LLM as brain, agent as body](./images/agent-analogy.png)  

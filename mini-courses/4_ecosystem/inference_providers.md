@@ -52,7 +52,7 @@ AgentRouter holds your wallet and sees every call you send through it. Its site 
 
 ## Inference from LLM Vendors
 
-The other way is to go straight to the company that made the model: OpenAI, Anthropic or Google.
+The other way is to go straight to the company that made the model: ![](./images/logos/openai-mono.svg)OpenAI, ![](./images/logos/anthropic-mono.svg)Anthropic or ![](./images/logos/google.svg)Google.
 
 You do this when you want the things that only the maker ships. New models usually appear there first. The provider-specific features are there too, and they are not small:
 

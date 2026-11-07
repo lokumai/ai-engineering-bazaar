@@ -264,7 +264,7 @@ documentation as tools that an agent can call. We cover MCP properly in
 install, into your agent. One of those tools might be "search the docs".
 
 **Then, one place for all of them.** There were soon too many of these files and servers to set up
-one by one. So [Context7](https://context7.com/), a project by Upstash, gathered the documentation of many libraries into a
+one by one. So ![](./images/logos/context7.svg)[Context7](https://context7.com/), a project by Upstash, gathered the documentation of many libraries into a
 single place. It gives your agent one MCP server, and through it, the current docs and code examples
 of many libraries.
 

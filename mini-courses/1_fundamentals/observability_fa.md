@@ -32,9 +32,9 @@ trace یعنی کل درخت یه request، از اول تا آخر. توش ای
 
 ## ابزارهای Observability
 
-- **LangSmith** ابزار خود LangChain‌ه. اگه همین الان با یکی از ابزارهای درس [Agent Framework‌ها](../4_ecosystem/agent_frameworks_fa.md) کار می‌کنی، این یکی از همه بهتر با کارت جفت می‌شه، و tracing و dataset و evaluator و annotation رو یه‌جا بهت می‌ده.
-- **[Langfuse](https://github.com/langfuse/langfuse)** گزینه‌ی متن‌بازه. وقتی trace‌ها نباید از زیرساخت خودت بیرون برن، معمولاً همین رو انتخاب می‌کنن. هم OpenTelemetry رو پشتیبانی می‌کنه هم SDK‌های framework‌ها رو، برای همین تقریباً از هر چیزی می‌تونه trace جمع کنه. کنار trace‌ها، eval و مدیریت prompt و dataset هم داره.
-- **[Latitude](https://github.com/latitude-dev/latitude-llm)** هم متن‌بازه، ولی تمرکزش مشخصاً روی monitoring توی production‌ه.
+- ![](./images/logos/langchain-mono.svg)**LangSmith** ابزار خود LangChain‌ه. اگه همین الان با یکی از ابزارهای درس [Agent Framework‌ها](../4_ecosystem/agent_frameworks_fa.md) کار می‌کنی، این یکی از همه بهتر با کارت جفت می‌شه، و tracing و dataset و evaluator و annotation رو یه‌جا بهت می‌ده.
+- ![](./images/logos/langfuse.svg)**[Langfuse](https://github.com/langfuse/langfuse)** گزینه‌ی متن‌بازه. وقتی trace‌ها نباید از زیرساخت خودت بیرون برن، معمولاً همین رو انتخاب می‌کنن. هم OpenTelemetry رو پشتیبانی می‌کنه هم SDK‌های framework‌ها رو، برای همین تقریباً از هر چیزی می‌تونه trace جمع کنه. کنار trace‌ها، eval و مدیریت prompt و dataset هم داره.
+- ![](./images/logos/latitude.svg)**[Latitude](https://github.com/latitude-dev/latitude-llm)** هم متن‌بازه، ولی تمرکزش مشخصاً روی monitoring توی production‌ه.
 
 موقع انتخاب، ملاک اصلی لیست feature‌ها نیست. اول ببین می‌تونه از چیزهایی که همین الان داری اجرا می‌کنی trace جمع کنه یا نه. بعد ببین می‌تونه trace‌ها رو همون‌جایی نگه داره که data policy‌ت می‌گه یا نه. prompt‌ها و نتیجه‌ی tool‌ها پر از متن مشتری‌هاست، پس این انتخاب در واقع ادامه‌ی همون بحث data policy‌ه که توی [Inference Provider‌ها](../4_ecosystem/inference_providers_fa.md) پیش میاد.
 

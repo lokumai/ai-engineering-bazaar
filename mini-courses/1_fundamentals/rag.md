@@ -229,13 +229,13 @@ gives the formula for each of the four, and code for most of them.
 You will almost never write the retrieval loop yourself. Pick a level, and let something else do
 the rest:
 
-- **[LlamaIndex](https://www.llamaindex.ai/)**: the highest level. Point it at a folder, ask a
+- ![](./images/logos/llamaindex.svg)**[LlamaIndex](https://www.llamaindex.ai/)**: the highest level. Point it at a folder, ask a
   question, and get an answer. It handles chunking, embedding, storing and retrieving.
-- **[Haystack](https://haystack.deepset.ai/)**: build the pipeline from ready-made parts. Use it
+- ![](./images/logos/haystack.svg)**[Haystack](https://haystack.deepset.ai/)**: build the pipeline from ready-made parts. Use it
   when you want to see and change each step.
-- **[ChromaDB](https://github.com/chroma-core/chroma)**: a vector database that stores your text
+- ![](./images/logos/chroma.svg)**[ChromaDB](https://github.com/chroma-core/chroma)**: a vector database that stores your text
   next to its embeddings. So a search gives you back the original chunk.
-- **[FAISS](https://github.com/facebookresearch/faiss)**: the search layer and nothing else. It is
+- ![](./images/logos/meta.svg)**[FAISS](https://github.com/facebookresearch/faiss)**: the search layer and nothing else. It is
   very fast, and it knows only about numbers.
 
 Here is FAISS. It is the smallest thing worth showing, because it is the raw mechanism that every
@@ -259,21 +259,21 @@ that bookkeeping. They store the text with the vector, and they give you the chu
 If you prefer to start from a complete RAG system instead of building one yourself, these
 open-source projects are ready to use:
 
-- **[RAGFlow](https://github.com/infiniflow/ragflow)** is a full RAG platform with a web interface.
+- ![](./images/logos/ragflow.svg)**[RAGFlow](https://github.com/infiniflow/ragflow)** is a full RAG platform with a web interface.
   You run it with Docker. It is good at reading messy documents, including layouts, tables and
   scanned pages. Its answers carry citations back to the source.
-- **[LightRAG](https://github.com/HKUDS/LightRAG)** builds a knowledge graph of the people, things
+- ![](./images/logos/lightrag.svg)**[LightRAG](https://github.com/HKUDS/LightRAG)** builds a knowledge graph of the people, things
   and relations in your documents. It keeps embeddings beside that graph. So a search can follow
   connections, not only similarity. It is a Python library with a server and a web UI. It is also a
   lighter alternative to Microsoft's GraphRAG.
-- **[PageIndex](https://github.com/VectifyAI/PageIndex)** uses no vector database and no chunking.
+- ![](./images/logos/pageindex.svg)**[PageIndex](https://github.com/VectifyAI/PageIndex)** uses no vector database and no chunking.
   It builds a tree of each document, like a table of contents. Then an LLM reasons its way down the
   tree to the right section. Its argument is that a passage that is similar to the question is not
   always the passage that answers it.
 - **[RAG-Anything](https://github.com/HKUDS/RAG-Anything)** is built on LightRAG. It handles
   documents that mix text with images, tables and equations. Since 2026, LightRAG itself includes
   this ability too.
-- **[DocsGPT](https://github.com/arc53/DocsGPT)** is a self-hosted app. It turns your documents,
+- ![](./images/logos/docsgpt.svg)**[DocsGPT](https://github.com/arc53/DocsGPT)** is a self-hosted app. It turns your documents,
   websites and connected apps into assistants, and those assistants answer with cited sources.
 - **[MiniRAG](https://github.com/HKUDS/MiniRAG)** is a research project. It makes RAG work with
   small language models, so it can run on a single device.

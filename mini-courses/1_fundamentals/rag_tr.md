@@ -168,10 +168,10 @@ Recall ve precision yalnızca ilk k sonucun içinde ne olduğunu sayar; MRR ve n
 
 Retrieval döngüsünü neredeyse hiçbir zaman kendin yazmayacaksın. Bu yüzden bir seviye seç ve geri kalanını başka bir şeye bırak:
 
-- **[LlamaIndex](https://www.llamaindex.ai/)**: en üst seviye. Ona bir klasörü gösterirsin, bir soru sorarsın ve cevabı alırsın. Chunk'lara ayırma, embedding üretme, saklama ve getirme işlerinin hepsini o yapar.
-- **[Haystack](https://haystack.deepset.ai/)**: pipeline'ı hazır parçalardan kurarsın. Her adımı görmek ve değiştirmek istediğinde bunu kullan.
-- **[ChromaDB](https://github.com/chroma-core/chroma)**: metnini embedding'leriyle yan yana saklayan bir vektör veritabanı. Bu yüzden bir arama sana özgün chunk'ı geri verir.
-- **[FAISS](https://github.com/facebookresearch/faiss)**: yalnızca arama katmanı, başka bir şey değil. Çok hızlıdır, ama yalnızca sayılardan anlar.
+- ![](./images/logos/llamaindex.svg)**[LlamaIndex](https://www.llamaindex.ai/)**: en üst seviye. Ona bir klasörü gösterirsin, bir soru sorarsın ve cevabı alırsın. Chunk'lara ayırma, embedding üretme, saklama ve getirme işlerinin hepsini o yapar.
+- ![](./images/logos/haystack.svg)**[Haystack](https://haystack.deepset.ai/)**: pipeline'ı hazır parçalardan kurarsın. Her adımı görmek ve değiştirmek istediğinde bunu kullan.
+- ![](./images/logos/chroma.svg)**[ChromaDB](https://github.com/chroma-core/chroma)**: metnini embedding'leriyle yan yana saklayan bir vektör veritabanı. Bu yüzden bir arama sana özgün chunk'ı geri verir.
+- ![](./images/logos/meta.svg)**[FAISS](https://github.com/facebookresearch/faiss)**: yalnızca arama katmanı, başka bir şey değil. Çok hızlıdır, ama yalnızca sayılardan anlar.
 
 Şimdi FAISS'e bakalım, çünkü gösterilmeye değecek en küçük örnek budur: yukarıdaki her seçeneğin sarmaladığı ham mekanizma tam olarak bu.
 
@@ -190,11 +190,11 @@ Bu kod yalnızca arama adımını gösterir, başka bir şeyi değil. FAISS sana
 
 Kendin kurmak yerine hazır bir RAG sisteminden başlamayı tercih edersen, şu açık kaynak projeler kullanıma hazır:
 
-- **[RAGFlow](https://github.com/infiniflow/ragflow)**, web arayüzü olan eksiksiz bir RAG platformudur. Docker ile çalıştırırsın. Düzensiz belgeleri okumakta iyidir: sayfa düzenini, tabloları ve taranmış sayfaları da işler. Cevaplarında kaynağa giden atıflar (citation) bulunur.
-- **[LightRAG](https://github.com/HKUDS/LightRAG)**, belgelerindeki kişilerin, nesnelerin ve ilişkilerin bir bilgi grafiğini (knowledge graph) kurar. Embedding'leri bu grafiğin yanında tutar, böylece bir arama yalnızca benzerliğe bakmaz, bağlantıları da takip edebilir. Bir Python kütüphanesidir, sunucusu ve web arayüzü de vardır. Ayrıca Microsoft'un GraphRAG'ine daha hafif bir alternatiftir.
-- **[PageIndex](https://github.com/VectifyAI/PageIndex)** vektör veritabanı da chunk'lama da kullanmaz. Her belgenin, bir içindekiler tablosu gibi, ağaç yapılı bir yapısını kurar. Sonra bir LLM bu ağacın içinde aşağı doğru ilerleyerek doğru bölüme ulaşır. Projenin temel iddiası şu: soruya benzeyen bir bölüm, her zaman soruyu cevaplayan bölüm değildir.
+- ![](./images/logos/ragflow.svg)**[RAGFlow](https://github.com/infiniflow/ragflow)**, web arayüzü olan eksiksiz bir RAG platformudur. Docker ile çalıştırırsın. Düzensiz belgeleri okumakta iyidir: sayfa düzenini, tabloları ve taranmış sayfaları da işler. Cevaplarında kaynağa giden atıflar (citation) bulunur.
+- ![](./images/logos/lightrag.svg)**[LightRAG](https://github.com/HKUDS/LightRAG)**, belgelerindeki kişilerin, nesnelerin ve ilişkilerin bir bilgi grafiğini (knowledge graph) kurar. Embedding'leri bu grafiğin yanında tutar, böylece bir arama yalnızca benzerliğe bakmaz, bağlantıları da takip edebilir. Bir Python kütüphanesidir, sunucusu ve web arayüzü de vardır. Ayrıca Microsoft'un GraphRAG'ine daha hafif bir alternatiftir.
+- ![](./images/logos/pageindex.svg)**[PageIndex](https://github.com/VectifyAI/PageIndex)** vektör veritabanı da chunk'lama da kullanmaz. Her belgenin, bir içindekiler tablosu gibi, ağaç yapılı bir yapısını kurar. Sonra bir LLM bu ağacın içinde aşağı doğru ilerleyerek doğru bölüme ulaşır. Projenin temel iddiası şu: soruya benzeyen bir bölüm, her zaman soruyu cevaplayan bölüm değildir.
 - **[RAG-Anything](https://github.com/HKUDS/RAG-Anything)**, LightRAG üzerine kuruludur. Metinle birlikte resim, tablo ve denklem içeren belgeleri işler. 2026'dan beri LightRAG'in kendisi de bu yeteneği içeriyor.
-- **[DocsGPT](https://github.com/arc53/DocsGPT)**, kendi sunucunda çalıştırabileceğin bir uygulamadır. Belgelerini, web sitelerini ve bağladığın uygulamaları asistanlara dönüştürür. Bu asistanlar cevaplarını kaynak göstererek verir.
+- ![](./images/logos/docsgpt.svg)**[DocsGPT](https://github.com/arc53/DocsGPT)**, kendi sunucunda çalıştırabileceğin bir uygulamadır. Belgelerini, web sitelerini ve bağladığın uygulamaları asistanlara dönüştürür. Bu asistanlar cevaplarını kaynak göstererek verir.
 - **[MiniRAG](https://github.com/HKUDS/MiniRAG)** bir araştırma projesidir. RAG'i küçük dil modelleriyle çalışır hale getirir, bu sayede tek bir cihazda da çalışabilir.
 - **[PixelRAG](https://github.com/StarTrail-org/PixelRAG)**, metni çıkarıp onda aramak yerine sayfaların ekran görüntülerinde arama yapar. Böylece tablolar, grafikler ve düzen kaybolmaz. 2026'da yayımlanmış bir araştırma makalesinden çıkmıştır ve çok yenidir.
 

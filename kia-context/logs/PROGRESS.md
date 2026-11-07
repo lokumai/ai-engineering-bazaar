@@ -5,7 +5,7 @@ description: >
   ends on), then M50 to M69: the round-3 art finished, the catalog without its Sources count, round 3
   built on the home page, search, the content phase, a certificate still to decide, download
   cancelled, Emerging Trends, Caravan, the gate revised (M63), and content revision 4
-  (M64 to M69), and the search filters (M70). Each milestone carries its deliverables and acceptance
+  (M64 to M69), the search filters (M70) and their Filters disclosure (M71). Each milestone carries its deliverables and acceptance
   criteria as `- [ ]` checkboxes, ticked as the work lands, and closes with a dated report; the loop
   that governs that is below, in this file.
   NOT here: why a choice was made (BRAINSTORM.md), or any rule that outlives the milestone
@@ -13,7 +13,7 @@ description: >
 authority: state
 writes: agent, every session
 status: active
-covers: "M50 to M70, 2026-11-06 onward"
+covers: "M50 to M71, 2026-11-06 onward"
 last_updated: 2026-11-07
 ---
 
@@ -981,5 +981,31 @@ out of the tab order; every language pressed by default; the focus outline remov
 
 ---
 
+## 🏁 Milestone M71: The search filters fold away behind a Filters disclosure (D104) — DONE
+
+The author, 2026-11-07: *"make the filter an accordion-like dropdown, meaning that when we search
+normally it searches all, but if I click on the accordion, I can open filters and use them."* Built by
+a Sonnet High subagent on top of M70, on the same pull request.
+
+- [x] A closed-by-default "Filters" disclosure (`<button aria-expanded aria-controls>`, chevron)
+      holding M70's chips and Reset link unchanged.
+- [x] Shut, the search covers every track, level and language; open, the chips apply; closing stops
+      the filtering.
+- [x] Keyboard: field, Close, Filters, then the chips only when open, then the results; Escape still
+      closes the dialog; the Tab trap ignores hidden chips.
+
+**Report, 2026-11-07.** As D104 records: nothing is pressed on opening, so opening changes no result,
+and closing stops the filtering rather than hiding it. `search.spec.ts` holds 24 tests, 10 new or
+rewritten for the disclosure (the older chip tests open the panel first). **Mutations, each seen
+failing:** chips applied while shut; `aria-expanded` stuck false; `aria-controls` at a wrong id; the
+Tab trap counting hidden chips; other languages never loaded; opening pressing the page's own track
+and language; the chevron not turning; the toggle's focus ring removed; Escape swallowed on the
+toggle; the Reset link never shown; the panel starting open; the panel's `hidden` dropped. One
+survivor showed a redundant rule (`.bz-search-filters[hidden]`, already hidden by the global
+`[hidden]`), which was deleted. **Gate:** 1,163 unit tests, the build and link check, 520 browser
+tests passed and 10 skipped.
+
+---
+
 > **← Part 2: [`PROGRESS_2.md`](PROGRESS_2.md)** — M16 to M49. **← Part 1: [`PROGRESS_1.md`](PROGRESS_1.md)**
-> — M1 to M15, and the loop.
+> — M1 to M15. The loop is at the top of this file.

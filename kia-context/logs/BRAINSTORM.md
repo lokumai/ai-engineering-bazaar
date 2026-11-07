@@ -9,7 +9,7 @@ description: >
 authority: reasoning
 writes: agent, when a decision is taken
 status: active
-covers: "D97 to D103 so far — 2026-11-06 onward"
+covers: "D97 to D104 so far — 2026-11-06 onward"
 last_updated: 2026-11-07
 ---
 
@@ -161,9 +161,28 @@ site look and behave alike; the index is unchanged, because every index already 
 all five levels, so the filter runs on stored fields. The level bar follows the row's own direction,
 so a Persian row has it on the right. At 390px the chips keep the catalog's touch size, with the labels
 above them, so the filters take a large share of a phone's window and the results scroll under them;
-a smaller chip was not drawn so as not to deviate from §10.4 inside one dialog.
+a smaller chip was not drawn so as not to deviate from §10.4 inside one dialog. **The defaults
+above are superseded by D104** (the filters behind a closed disclosure; shut, everything is searched).
 
-## Open questions
+### D104 · The search filters sit behind a closed Filters disclosure, and a shut panel searches everything — 2026-11-07
+
+**Asked by the author:** "make the filter an accordion-like dropdown, meaning that when we search
+normally it searches all, but if I click on the accordion, I can open filters and use them."
+
+**Chose:** a "Filters" `<button aria-expanded aria-controls>` with a chevron between the field and
+the results, the panel hidden by default. **Closed, the search covers every track, level and
+language**, and the chips are ignored; the other languages' indexes load on the first search of two
+or more characters, the page's own on opening. **Opening presses nothing**, which means all, so
+opening alone changes no result; the page's own track and language now only break ties in the
+ranking, by a small boost. **Closing the panel stops the filtering**: the pressed chips are kept and
+apply again when it reopens, so a reader can never be filtered by chips they cannot see, and the
+closed toggle needs no count badge. A new page resets both. This supersedes D103's default (the
+page's own track and language pressed) and answers M70's open question about the filters' share of
+a phone's window: shut, the results have the room.
+
+**Rejected:** `<details>`, because Chrome does not close one on Escape and Escape inside the dialog
+must keep closing the dialog; keeping hidden filtering with a count on the closed toggle, which asks a
+reader to notice a number to understand their results.
 
 None open in this part yet. New ones go here, numbered after O5.
 

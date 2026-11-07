@@ -154,7 +154,7 @@ categories:
   - slug: expert
     title: Expert
     status: draft
-    blurb: Inside the LLM, advanced RAG, tools, memory, multi-agent, prompting, context, coding agents, harnesses, loops, architectures, UI, deployment, evaluation, fine-tuning and post-training.
+    blurb: Inside the LLM, fine-tuning and post-training, advanced RAG, tools, memory, multi-agent, prompting, context, coding agents, harnesses, loops, architectures, UI, deployment, agent servers and evaluation.
     modules:
       - name: advanced_llm
         title: Advanced LLM
@@ -167,6 +167,23 @@ categories:
           model-norm-position-attention-KV-FFN-sparse table or selection;
           static vs. continuous batching; serving metrics (TTFT, generation
           speed); speculative decoding
+      - name: advanced_fine_tuning
+        title: Advanced Fine-tuning
+        status: draft
+        notes: >-
+          Full Fine-Tuning: What Actually Changes?, Why Full Fine-Tuning Is
+          Expensive, Why Parameter-Efficient Fine-Tuning (PEFT)?, LoRA, One
+          Frozen Model: Save and Swap LoRA Adapters
+      - name: advanced_post_training
+        title: Advanced Post-training
+        status: draft
+        notes: >-
+          Model Alignment & Post-Training, Why Preference Tuning, Preference
+          Data Formats, RLHF, Prompt Policy and Reward, Reward Model: Learning
+          From a Preferred Pair, What Exactly Is a Policy Model?, PPO, SFT vs.
+          DPO: One Training Example, DPO, GRPO, PPO vs. GRPO: Which Models Are
+          Needed?, RLAIF; knowledge distillation (from the retired Advanced
+          Training)
       - name: advanced_rag
         title: Advanced RAG & Embeddings
         status: draft
@@ -196,7 +213,8 @@ categories:
         notes: >-
           more architectures like proposer-verifierte, , A2A, Multi-agent
           coordination context delegation (handoff) vs subagent context
-          delegation vs messaging pool, background agents and monitoring
+          delegation vs messaging pool, background agents and monitoring,
+          context forking for subagents
       - name: advanced_prompting
         title: Advanced Prompting
         status: draft
@@ -252,6 +270,14 @@ categories:
           agent server, langchain agent protocol, the tech stack for UI REDIS
           WORKER etc, Human-in-the-Lopp (Interrupt, Steering), Runtime
           (Checkpoints, Fault Tolerance, Time Travel)
+      - name: advanced_agent_servers
+        title: Advanced Agent Servers
+        status: draft
+        notes: >-
+          Four ways to keep long agent runs alive, drafted in the module from the
+          author's notes: Aegra (Redis worker queue, lease locks, heartbeat),
+          SkeinJS (BullMQ on Redis), the Vercel AI SDK with serverless durable
+          orchestration (Inngest/Temporal), Redis Streams (PEL, append-only log)
       - name: advanced_llm_evaluation
         title: Advanced LLM Evaluation
         status: draft
@@ -260,23 +286,6 @@ categories:
           ROUGE (overlap or recall), METEOR (penalizing order), accuracy and
           precision, cosine similarity (BERTScore). Dynamic and subjective
           metrics: faithfulness, LLM-as-judge, human preference
-      - name: advanced_fine_tuning
-        title: Advanced Fine-tuning
-        status: draft
-        notes: >-
-          Full Fine-Tuning: What Actually Changes?, Why Full Fine-Tuning Is
-          Expensive, Why Parameter-Efficient Fine-Tuning (PEFT)?, LoRA, One
-          Frozen Model: Save and Swap LoRA Adapters
-      - name: advanced_post_training
-        title: Advanced Post-training
-        status: draft
-        notes: >-
-          Model Alignment & Post-Training, Why Preference Tuning, Preference
-          Data Formats, RLHF, Prompt Policy and Reward, Reward Model: Learning
-          From a Preferred Pair, What Exactly Is a Policy Model?, PPO, SFT vs.
-          DPO: One Training Example, DPO, GRPO, PPO vs. GRPO: Which Models Are
-          Needed?, RLAIF; knowledge distillation (from the retired Advanced
-          Training)
 
   - slug: ecosystem
     title: Ecosystem

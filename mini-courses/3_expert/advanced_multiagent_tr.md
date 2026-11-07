@@ -1,6 +1,6 @@
 # İleri Seviye Multi-Agent
 
-*(Bu bir placeholder modül — şimdilik kısa bir özet; tam ders içeriği yakında geliyor.)*
+*(Bu bir placeholder modül: şimdilik kısa bir özet, tam ders içeriği yakında geliyor.)*
 
 Multi-Agent Sistemler modülündeki Manager-Worker kurulumunun ötesinde Agent-to-Agent
 protokolleri ve koordinasyon desenleri.
@@ -10,6 +10,7 @@ protokolleri ve koordinasyon desenleri.
 - Context delegation vs subagent context delegation vs messaging pool
 - Paylaşılan context'e karşı izole context, ve her birinin maliyeti
 - Koordinasyon hataları, ve nasıl tespit edildikleri
+- Subagent'lar için context forking: boş bir context yerine üst agent'ın context'inin bir kopyasıyla başlayan bir subagent
 
 **Başlangıç için kaynaklar**:
 - [Multi-agent sistemler](https://docs.langchain.com/oss/python/langchain/multi-agent): desenler ve ödünleşmeler, onlara adını veren framework'ten

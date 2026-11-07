@@ -1,6 +1,6 @@
 # Advanced Multi-Agent
 
-*(Placeholder module — a short overview for now; full lesson content is coming soon.)*
+*(Placeholder module: a short overview for now, full lesson content is coming soon.)*
 
 Agent-to-Agent protocols and coordination patterns beyond the Manager-Worker setup from
 Multi-Agent Systems.
@@ -10,6 +10,7 @@ Multi-Agent Systems.
 - Context delegation vs. subagent context delegation vs. messaging pool
 - Shared context against isolated context, and what each costs
 - Coordination failures, and how they are detected
+- Context forking for subagents: a subagent that starts from a copy of its parent's context, not from an empty one
 
 **References to start from**:
 - [Multi-agent systems](https://docs.langchain.com/oss/python/langchain/multi-agent): the patterns and the trade-offs, from the framework that names them

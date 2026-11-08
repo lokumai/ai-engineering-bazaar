@@ -1170,11 +1170,22 @@ lowest, Memory highest); Intermediate and Ecosystem run 40 to 70% (`wc -w` on ea
 typecheck, 1,229 unit tests (one reference-group order fixed in LLM Fundamentals), the build and link
 check, `check-mermaid.mjs` on every file, and the rendered LLM Fundamentals page looked at.
 
-## 🏁 Milestone M78: Turkish and Persian For Everyone versions
+## 🏁 Milestone M78: Turkish and Persian For Everyone versions — DONE
 
-- [ ] A `_tr.md` and an `_fa.md` beside each of the nineteen, written by Sonnet High subagents from the
+- [x] A `_tr.md` and an `_fa.md` beside each of the nineteen, written by Sonnet High subagents from the
       final English under the translation rules (native Turkish, colloquial Persian, the four Persian
       strings, structure kept).
+
+**Report, 2026-11-08.** Four Sonnet High subagents, one per language and level group, wrote 38 files in
+the main checkout without building or committing. Each checked heading, figure, code-fence and table
+counts against the English, kept code blocks byte-identical, and ran `check-mermaid.mjs` and the corpus
+tests. Corrections in review: the teaching examples in Training LLMs (the summary pairs and the
+before-and-after answers) translated rather than kept as English data, because this reader needs them
+in their language; the two new headings made the same in every file of a language (Turkish "Bu Senin
+İçin Neden Önemli" and "Artık Bildiğin Terimler", Persian «چرا این برای تو مهمه» and «کلمه‌هایی که الان
+بلدی»); Turkish "tarif" replaced by "açıklama" where it meant a description; two Persian links pointed
+at the English module where a `_fa.md` exists. Gate: typecheck, 1,229 unit tests, the build and link
+check, and every diagram parsed.
 
 ## 🏁 Milestone M79: Reviewed, merged, and nothing left stale
 

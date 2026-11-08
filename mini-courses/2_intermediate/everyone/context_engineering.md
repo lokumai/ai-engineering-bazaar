@@ -20,7 +20,7 @@ follows your instructions well, and after a long time it starts to forget them, 
 things. This module explains why, and what the best AI tools do about it. It is also one reason
 AI can now build a whole website from one request.
 
-## When the Chat Gets Too Long
+## Rise of Context Engineering
 
 Go back to the WhatsApp chat from [LLM Fundamentals](../1_fundamentals/llms.md). At first,
 people wanted bigger and bigger chats, because more information really did give better answers.
@@ -32,7 +32,7 @@ the oldest messages are usually where you explained what you were trying to do. 
 the AI forgets is the goal. People ended up pasting their first instructions back in by hand, to
 remind the AI what the job was.
 
-## Context Rot
+## Context Rot (Pollution)
 
 Then a research team at Chroma published a surprising result: **as the chat grows, the AI gets
 worse at the task**, even when nothing has been deleted. They tested 18 models from different
@@ -81,7 +81,7 @@ is the most complete guide.
 
 Here are the techniques worth knowing.
 
-## Summarising the Chat (Compaction)
+## Context Summarization (Compaction)
 
 When the chat gets long, replace it with a summary of itself. A huge conversation becomes a short
 note: "here is what we decided, here is what is still broken, here is where we were." It is like
@@ -96,7 +96,7 @@ can also start it yourself by typing `/compact`.
 The cost is real. Minutes can leave out something you needed, either by accident or because
 whoever wrote the summary thought it was unimportant.
 
-## Writing Notes (Offloading)
+## Context Offloading
 
 Instead of keeping everything in the chat, the agent writes important facts into a notebook, a
 file on the computer, and reads them back when it needs them. The facts leave the chat but are not
@@ -111,7 +111,7 @@ Many AI products call this **long-term memory**, the same idea as in
 The same warning applies: someone has to decide what is worth writing down, and that decision is
 sometimes wrong.
 
-## Sending a Helper (Subagents)
+## Context Isolation
 
 Say you ask an agent what a huge project is about, and to answer it must read 300 files. All that
 reading fills the chat, and the answer is one sentence. Now the chat is full of reading notes that
@@ -131,7 +131,7 @@ to hold the plan.
 ![Subagents running in parallel](../images/subagents-in-parallel.webp)  
 *Three helpers work at the same time, each with a clean chat of its own. All the long reading and the dead ends stay with them; the main agent receives one short result from each.*
 
-## Keeping a To-do List (Planning)
+## Explicit Planning (TODOs)
 
 Say you ask an agent to build you a portfolio website. That is many steps: decide what goes on
 it, choose the technology, build the pages, write the text, and put it online. If the agent starts
@@ -154,7 +154,7 @@ the goal appears again near the bottom of the chat, where attention is strongest
 **recitation**. It is the direct answer to the book that drifted out of its academic tone: the
 instruction faded because nothing repeated it, and a to-do list repeats it.
 
-## A Knowledge Base to Look Things Up
+## Using a Knowledge Base as Explorable Context
 
 Some information is valuable and rarely changes, such as how your company's internal systems work.
 Do not paste it into every chat. Put it in a folder of documents the agent can search, and let it
@@ -186,7 +186,7 @@ There is a real measurement of this. A research group called METR measures how l
 seven months since 2019. Their [current numbers](https://metr.org/time-horizons/) for each model
 are public. This is useful when a vendor says its agent "worked for six hours".
 
-## Thinking Out Loud Helps Here Too
+## Chain of Thought as a Context Engineering Tool
 
 Chain of thought from [Prompt Engineering](prompt_engineering.md) also keeps a long session on
 track. When the AI writes its reasoning, it often repeats the goal to itself:

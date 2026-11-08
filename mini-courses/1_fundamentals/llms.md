@@ -206,7 +206,7 @@ The model and its weights stay the same, but they now need only one quarter of t
 is the difference between "I cannot run this at all" and "this runs on my desktop".
 
 **Do you have to quantize models yourself?** No, and you almost never should.
-![](./images/logos/ollama-mono.svg)[Ollama](https://ollama.com/) and [Unsloth](https://unsloth.ai/) already publish
+![](./images/logos/ollama-mono.svg)[Ollama](https://ollama.com/) and ![](./images/logos/unsloth.svg)[Unsloth](https://unsloth.ai/) already publish
 ready-made quantized versions of the popular models: Qwen, Llama, Mistral, Gemma and
 more. Just pull one and run it.
 
@@ -216,7 +216,7 @@ Under everything, there is an **inference engine** that does the real work:
 
 - ![](./images/logos/llamacpp.svg)**llama.cpp**
 - ![](./images/logos/vllm.svg)**vLLM** (NVIDIA, AMD, TPUs)
-- **SGLang** (NVIDIA only)
+- ![](./images/logos/sglang.svg)**SGLang** (NVIDIA only)
 - ![](./images/logos/nvidia.svg)**TensorRT-LLM** (NVIDIA, AMD)
 - **MLX** (Apple only)
 

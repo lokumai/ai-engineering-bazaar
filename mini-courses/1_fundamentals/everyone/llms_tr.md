@@ -40,7 +40,7 @@ Bir WhatsApp sohbetini düşün. Mesajlar yukarıdan aşağı dizilir: biri send
 
 Yapay zekânın o an görebildiği bu sohbetin tamamına **context** denir. Bunun da ulaşabileceği bir en büyük boyut vardır; buna **context window** diyoruz. Senin mesajların ve yapay zekânın cevapları birlikte sayılır. Bir sohbet bu boyutu aştığında istek başarısız olur. Daha sonraki bir modül olan [Context Engineering](../2_intermediate/context_engineering_tr.md), uzun bir sohbetin henüz dolmadan da neden kötüleşebildiğini anlatıyor.
 
-Aynı sohbet için başka isimler de duyacaksın: **context**, **working memory** (çalışma belleği), **message history** (mesaj geçmişi) ve **short-term memory** (kısa süreli bellek). Hepsi, yapay zekânın okuduğu mesaj yığını demek. [Memory](memory_tr.md) modülü buraya geri dönecek.
+Aynı sohbet için başka isimler de duyacaksın: **context**, **working memory**, **message history** (mesaj geçmişi) ve **short-term memory**. Hepsi, yapay zekânın okuduğu mesaj yığını demek. [Memory](memory_tr.md) modülü buraya geri dönecek.
 
 ### Context'e Ne Girer?
 
@@ -64,7 +64,7 @@ Merak edersen, insanlar birçok yapay zekâ ürününün gerçek ve sızdırılm
 
 Bir fikir daha var ve ona [Tool Calling](tools_tr.md) modülünde döneceğiz. Yapay zekâ tek başına hava durumuna bakamaz, çünkü internete bağlı değildir ve elleri yoktur; yalnızca metin yazabilir. Bu yüzden "lütfen İstanbul'un hava durumuna bak" diyen bir mesaj yazar. Normal bir bilgisayar programı bu mesajı okur, hava durumuna bakar ve cevabı sohbete ekler. Sonra yapay zekâ cevabı okur ve sana yanıt verir. **Yapay zekâ ister; işi başka bir şey yapar.** Her AI agent'ının temeli bu ayrımdır.
 
-## Temperature ve Uzunluk
+## LLM Hyperparameter'ları
 
 Yapay zekânın nasıl cevap vereceğini birkaç ayarla değiştirebilirsin:
 
@@ -73,7 +73,7 @@ Yapay zekânın nasıl cevap vereceğini birkaç ayarla değiştirebilirsin:
 
 Bu ayarlara **hiperparametre (hyperparameter)** denir. Yukarıda anlattığımız parametrelerden farklıdırlar: parametreler modelin içindeki sayılardır, hiperparametreler ise modeli kullanırken senin ayarladığın düğmelerdir.
 
-## Bir LLM'i Çalıştırmak
+## Bir LLM'i Çalıştırmak (Inference)
 
 Bir modeli cevap alacak şekilde çalıştırmaya **inference** denir. Bunu yapmanın iki yolu var.
 
@@ -93,7 +93,7 @@ Bir modeli normal bir bilgisayara sığdırmak için insanlar onu küçültür. 
 
 Bulut tarafında şirketler modelleri bir **inference provider** (çıkarım sağlayıcısı) üzerinden kiralar. ![](../images/logos/openrouter-mono.svg)[OpenRouter](https://openrouter.ai/) gibi bazı servisler, tek bir hesapla birçok şirketin birçok modeline açılan tek bir kapıdır.
 
-## İyi Bir Prompt Yazmak
+## LLM'lere Prompt Yazmak
 
 **Prompt engineering**, istediğin çıktıyı alabilmek için girdini iyi yazmaktır. Öğrencilere talimat vermeye benzer. Net talimatlar ödevin düzgün yapılmasını sağlar. Belirsiz talimatlarda ise her öğrenci canı ne istediyse onu yapar.
 

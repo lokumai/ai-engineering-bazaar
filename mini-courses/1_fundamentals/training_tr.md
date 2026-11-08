@@ -144,7 +144,7 @@ graph LR
     C --> D["Özetleme konusunda uzman LLM"]
 ```
 
-## Parametre Açısından Verimli Fine-tuning (PEFT)
+## Parameter-efficient Fine-tuning (PEFT)
 
 Full fine-tuning her parametreyi günceller ve büyük bir model için bu hâlâ büyük GPU'lar demektir.
 Oysa çoğumuzun bu tür GPU'ları yok.
@@ -181,7 +181,7 @@ eğitmekle ilgilidir. Kuantizasyon ise ucuza çalıştırmakla.** İkisi sık s�
 ## Unsloth
 
 Training döngüsünü kendin yazarsan, pek çok parçayı elle birbirine bağlaman gerekir. Elindeki
-bellekte bir modeli sığdırmak da ayrı bir beceri. [Unsloth](https://unsloth.ai/docs), bu iki işi de
+bellekte bir modeli sığdırmak da ayrı bir beceri. ![](./images/logos/unsloth.svg)[Unsloth](https://unsloth.ai/docs), bu iki işi de
 yapan açık kaynaklı bir kütüphane.
 
 Kütüphanenin sana verdikleri şunlar:

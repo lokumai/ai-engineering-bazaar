@@ -27,9 +27,9 @@ graph TD
 
 ![](./images/logos/langgraph-mono.svg)**[LangGraph](https://github.com/langchain-ai/langgraph)** çalışma zamanıdır (runtime) ve üç katmanın en alt seviyesinde durur. Agent'ını bir graf olarak tarif edersin; node'lar adımlar, edge'ler bundan sonra neyin olabileceğini gösterir ve state bunlar arasında hareket eder. State açıkça tanımlı olduğu için runtime onu kaydedebilir ve kaldığı yerden devam ettirebilir. Runtime, bir insanın çalıştırma sırasında araya girip agent'ı durdurmasına da izin verebilir. Kontrol akışı asıl zor kısım olduğunda ve akışı kendin yönetmek istediğinde LangGraph'i kullan.
 
-![](./images/logos/langchain-mono.svg)**[LangChain](https://github.com/langchain-ai/langchain)** ana arayüzdür ve başlamak için doğru yer de burası. LangGraph'in üzerinde oturur ve birkaç satır kodla olağan bir agent verir: bir model, birkaç tool ve birkaç middleware. Middleware'ler, [Harness Engineering](../2_intermediate/harness_engineering_tr.md) modülünün anlattığı işin büyük kısmının yapıldığı yerdir. Aynı zamanda [Security](../2_intermediate/security_tr.md) modülündeki guardrail'ler de tam burada yaşar.
+![](./images/logos/langchain.svg)**[LangChain](https://github.com/langchain-ai/langchain)** ana arayüzdür ve başlamak için doğru yer de burası. LangGraph'in üzerinde oturur ve birkaç satır kodla olağan bir agent verir: bir model, birkaç tool ve birkaç middleware. Middleware'ler, [Harness Engineering](../2_intermediate/harness_engineering_tr.md) modülünün anlattığı işin büyük kısmının yapıldığı yerdir. Aynı zamanda [Security](../2_intermediate/security_tr.md) modülündeki guardrail'ler de tam burada yaşar.
 
-**[deepagents](https://github.com/langchain-ai/deepagents)** ise en üst seviyedir. Diğer ikisinin üzerine kurulu ve kendini "batteries-included" (her şeyi hazır içeren) bir agent harness'i olarak tanımlıyor. Bu hazır parçalar tam olarak [Context Engineering](../2_intermediate/context_engineering_tr.md) modülündeki listedir:
+![](./images/logos/deepagents.svg)**[deepagents](https://github.com/langchain-ai/deepagents)** ise en üst seviyedir. Diğer ikisinin üzerine kurulu ve kendini "batteries-included" (her şeyi hazır içeren) bir agent harness'i olarak tanımlıyor. Bu hazır parçalar tam olarak [Context Engineering](../2_intermediate/context_engineering_tr.md) modülündeki listedir:
 
 - planlama
 - bir dosya sistemi (filesystem)
@@ -54,7 +54,7 @@ Bunların hiçbiri yanlış değil; hepsi farklı takaslar (trade-off) yapıyor 
 Burada bilmeye değer iki framework var, çünkü yukarıdaki stack'in tamamı Python öncelikli ve ürün kodunun çoğu Python ile yazılmıyor.
 
 - ![](./images/logos/mastra-mono.svg)**[Mastra](https://github.com/mastra-ai/mastra)** agent'lar ve AI uygulamaları için modern bir TypeScript framework'ü. Bu dilde LangChain'e en çok benzeyen seçenek.
-- **[VoltAgent](https://github.com/VoltAgent/voltagent)** ise açık kaynaklı bir TypeScript framework'ü üzerine kurulu bir agent engineering platformu. Bu yüzden daha çok agent'larını kurduktan sonraki kısma odaklanıyor: onları çalıştırmaya, izlemeye ve yönetmeye.
+- ![](./images/logos/voltagent.svg)**[VoltAgent](https://github.com/VoltAgent/voltagent)** ise açık kaynaklı bir TypeScript framework'ü üzerine kurulu bir agent engineering platformu. Bu yüzden daha çok agent'larını kurduktan sonraki kısma odaklanıyor: onları çalıştırmaya, izlemeye ve yönetmeye.
 
 ## AI Workflow'ları
 

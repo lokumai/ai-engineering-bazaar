@@ -127,13 +127,13 @@ the output, and it answers "safe" or "unsafe", nothing else.
 For most companies, one small guard model in front and one behind does more than a long list of
 hand-written rules.
 
-## Attacking Your Own System First
+## Red Teaming on AI Agents
 
 You cannot defend against attacks you have never tried. **Red teaming** means attacking your own
 system on purpose, before someone else does. There are tools that do the attacking for you, such as
 promptfoo and Microsoft's PyRIT.
 
-## Agents That Do Security Work
+## Red Teaming Systems with Agents
 
 The same ability can point outward. Testing a company's security is mostly reading, reasoning and
 running commands, which is what a coding agent already does. So there are now agents that find

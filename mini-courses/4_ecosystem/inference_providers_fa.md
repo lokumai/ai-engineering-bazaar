@@ -17,7 +17,7 @@
 
 هزینه‌ش یه hop اضافه‌ست: درخواستت از زیرساخت یه شرکت دیگه رد می‌شه. این هم یه کم latency اضافه می‌کنه، هم یه شرکت دیگه رو بین تو و مدل قرار می‌ده.
 
-OpenRouter تنها gateway موجود نیست. **[Portkey](https://portkey.ai/)** هم همین کار routing رو می‌کنه، ولی مدل کارش فرق داره. توی OpenRouter اعتبار (credit) می‌خری، با یه key از خود OpenRouter کار می‌کنی و یه صورت‌حساب می‌گیری، و OpenRouter پول provider‌ها رو از طرف تو می‌ده. توی Portkey معمولاً key‌های provider‌ها رو خودت میاری. خود [gateway](https://github.com/Portkey-AI/gateway) هم open source‌ه، پس می‌تونی روی زیرساخت خودت اجراش کنی.
+OpenRouter تنها gateway موجود نیست. ![](./images/logos/portkey.svg)**[Portkey](https://portkey.ai/)** هم همین کار routing رو می‌کنه، ولی مدل کارش فرق داره. توی OpenRouter اعتبار (credit) می‌خری، با یه key از خود OpenRouter کار می‌کنی و یه صورت‌حساب می‌گیری، و OpenRouter پول provider‌ها رو از طرف تو می‌ده. توی Portkey معمولاً key‌های provider‌ها رو خودت میاری. خود [gateway](https://github.com/Portkey-AI/gateway) هم open source‌ه، پس می‌تونی روی زیرساخت خودت اجراش کنی.
 
 Portkey کار routing و retry و fallback رو انجام می‌ده، و علاوه بر این‌ها چیزهایی رو هم اضافه می‌کنه که یه تیم توی production لازم داره:
 
@@ -28,7 +28,7 @@ Portkey کار routing و retry و fallback رو انجام می‌ده، و ع�
 
 Palo Alto Networks توی 2026 شرکت Portkey رو خرید، برای همین ممکنه Portkey رو با اسم Palo Alto Networks هم ببینی.
 
-یه جور router دیگه هم هست که راحت با این دو تا قاطی می‌شه. **[AgentRouter](https://www.agentrouter.to/quick-start)** یه LLM router نیست؛ یه API router برای AI agent‌هاست. به agent یه key و یه کیف پول پیش‌پرداخت می‌ده، و agent با همین‌ها می‌تونه کلی API مختلف رو پیدا کنه، پولشون رو بده و صداشون بزنه، مثلاً:
+یه جور router دیگه هم هست که راحت با این دو تا قاطی می‌شه. ![](./images/logos/agentrouter.svg)**[AgentRouter](https://www.agentrouter.to/quick-start)** یه LLM router نیست؛ یه API router برای AI agent‌هاست. به agent یه key و یه کیف پول پیش‌پرداخت می‌ده، و agent با همین‌ها می‌تونه کلی API مختلف رو پیدا کنه، پولشون رو بده و صداشون بزنه، مثلاً:
 
 - ایمیل
 - تلفن و پیامک

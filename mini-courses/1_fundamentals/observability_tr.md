@@ -32,7 +32,7 @@ Bu ağaç yapısı önemlidir, çünkü agent'ların hataları tek tek adımlar�
 
 ## Observability Araçları
 
-- ![](./images/logos/langchain-mono.svg)**LangSmith**, LangChain'in kendi aracıdır. Zaten [Agent Framework'leri](../4_ecosystem/agent_frameworks_tr.md) modülündeki araçlardan birini kullanıyorsan, en iyi entegre seçenek budur. Tracing, dataset, evaluator ve annotation özelliklerini tek bir yerde sunar.
+- ![](./images/logos/langsmith-mono.svg)**LangSmith**, LangChain'in kendi aracıdır. Zaten [Agent Framework'leri](../4_ecosystem/agent_frameworks_tr.md) modülündeki araçlardan birini kullanıyorsan, en iyi entegre seçenek budur. Tracing, dataset, evaluator ve annotation özelliklerini tek bir yerde sunar.
 - ![](./images/logos/langfuse.svg)**[Langfuse](https://github.com/langfuse/langfuse)** açık kaynaklı olandır. Trace'lerin kendi altyapında kalması gerektiğinde genellikle ilk tercih edilen seçenektir. Hem OpenTelemetry'yi hem de framework SDK'larını desteklediği için neredeyse her şeyden trace toplayabilir. Trace'lerin yanında eval'ler, prompt yönetimi ve dataset'ler de sunar.
 - ![](./images/logos/latitude.svg)**[Latitude](https://github.com/latitude-dev/latitude-llm)** de açık kaynaklıdır ve üretim ortamını izlemeye (monitoring) özellikle odaklanır.
 

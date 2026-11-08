@@ -21,7 +21,7 @@ Yani kod, birçok beceriden biri değil. **Diğerlerinin yerini alabilen beceri 
 
 Neredeyse her modern code agent'ın aynı standart parçaları var: ![](../images/logos/claude.svg)Claude Code, ![](../images/logos/openai-mono.svg)Codex, Copilot, OpenCode ve diğerleri. İşte o parçalar.
 
-## AGENTS.md: İşe Başlama Notu
+## AGENTS.md
 
 Yeni bir çalışan işe başladığında ona bir işe başlama notu verirsin: ekip nasıl çalışıyor, şeyler nerede, hangi kurallara uyulacak. **AGENTS.md** o notun agent için yazılmış hâli. Proje klasöründeki sade bir metin dosyası ve agent onu her oturumun başında okuyor.
 
@@ -29,11 +29,11 @@ Yeni bir çalışan işe başladığında ona bir işe başlama notu verirsin: e
 
 Onu sıfırdan yazman gerekmiyor. `/init` yazarsan agent projeyi okuyor ve senin düzeltmen için bir ilk taslak yazıyor. (Claude Code bunun yerine `CLAUDE.md` adlı bir dosyayı okuyor; fikir aynı.)
 
-## Slash Command'lar: Kayıtlı Prompt'lar
+## Slash Command'lar
 
 **Slash command**, bir kez yazıp `/name` yazarak tekrar çalıştırdığın bir prompt; bir e-posta şablonu gibi. Örneğin `/review`, ekibinin kontrol listesini bir işe karşı çalıştırabilir; böylece aynı uzun prompt'u her hafta yeniden yazmazsın.
 
-## MCP: Her Araç İçin Tek Bir Fiş
+## Model Context Protocol (MCP)
 
 Yapay zekâyı şirketinin Jira'sına bağlayan bir araç yaptığını düşün. Sonra aynısını başka bir yapay zekâ ürününde, sonra bir başkasında istiyorsun. Bir standart yoksa her biri için yeniden yapman gerekir.
 
@@ -49,11 +49,11 @@ Bundan elde ettiklerin:
 
 Bilmen gereken bir bedel: bağlı her MCP server, kullanılmasa bile sohbette biraz yer kaplıyor. Bu yüzden yalnızca ihtiyacın olanları bağla.
 
-## Subagent'lar: Kendi Uzmanların
+## Subagent'lar
 
 [Context Engineering](context_engineering_tr.md) modülü, temiz sohbetli yardımcıların neden işe yaradığını anlatmıştı. Bir code agent'ta kendi yardımcılarını da tanımlayabilirsin: bir güvenlik gözden geçiricisi, bir test yazarı, bir çevirmen. Her birinin kendi sabit talimatları var ve her seferinde temiz bir masayla başlıyor.
 
-## Skill'ler: Rafta Duran Tarif Dosyaları
+## Skill'ler
 
 **Skill**, tek bir iş türü için talimatlardan oluşan bir klasör; örneğin "şirketimizin stilinde PDF raporu nasıl hazırlanır". Mutfaktaki rafta duran tarif dosyalarını düşün.
 
@@ -64,7 +64,7 @@ Başlangıçta agent her dosyanın yalnızca üzerindeki başlığı, yani birer
 
 Neden tek bir kocaman talimat seti yerine skill'ler? Çünkü context engineering: agent'ın ihtiyaç duyabileceği her şey elinin altında, ama sohbette yalnızca şu an ihtiyaç duyduğu şey var.
 
-## Hook'lar: Tabela Değil, Kilitli Kapı
+## Hook'lar
 
 Yukarıdaki her şey bir tavsiye. Yapay zekâ çoğu zaman onlara uyuyor. **Hook** farklı: sabit bir anda çalışan küçük bir program; örneğin agent bir dosyayı değiştirmeden hemen önce, yapay zekâ istesin istemesin.
 
@@ -75,11 +75,11 @@ Yukarıdaki her şey bir tavsiye. Yapay zekâ çoğu zaman onlara uyuyor. **Hook
 
 Bir istek ile bir kural arasındaki bu fark, bir sonraki modül olan [Harness Engineering](harness_engineering_tr.md)'in başladığı yer.
 
-## Plugin'ler: Paket
+## Plugin'ler
 
 **Plugin**, yukarıdakilerin hepsinden oluşan bir paket: command'lar, skill'ler, yardımcılar, hook'lar ve MCP server'lar; tek adımda kuruluyor. Yeni bir ekip arkadaşı bütün ekip düzenini bir anda alıyor.
 
-## Memory: Senin Yazdığın ve Agent'ın Yazdığı
+## MEMORY.md
 
 Her oturum boş bir sohbetle başlıyor. Bilgiyi bir oturumdan diğerine taşıyan iki şey var:
 
@@ -91,11 +91,11 @@ Her oturum boş bir sohbetle başlıyor. Bilgiyi bir oturumdan diğerine taşıy
 
 Agent, memory'sini senin verdiğin düzeltmelerden yazıyor. Yani bu hafta iki kez anlatmak zorunda kaldığın şey, gelecek pazartesi de orada duruyor. "Şunu hatırla..." da diyebilirsin ve bir not yazıyor.
 
-## Plan Mode: Önce Planı Çiz
+## Plan Mode
 
 Büyük bir işte hemen inşa etmeye başlamak yanlış ilk adım. **Plan mode**'da agent her şeye bakabiliyor ama hiçbir şeyi değiştiremiyor. Projeyi inceliyor, sana sorular soruyor ve bir plan yazıyor. Planı sen onaylıyorsun ya da düzeltiyorsun ve ancak ondan sonra başlıyor. Bu, kimse inşa etmeye başlamadan önce planları çizen ve soru soran bir mimara benziyor.
 
-## Reasoning Effort: Yine Düşünme Kadranı
+## Reasoning Effort
 
 `/effort`, agent'ın ne kadar düşüneceğini ayarlıyor; [Prompt Engineering](prompt_engineering_tr.md) modülündeki kadranın aynısı. Orta seviye küçük düzenlemelere ve sorulara uygun. Yüksek seviye normal işlere uygun. En yüksek ayarlar gerçekten zor problemlere uygun. Daha fazla düşünmek daha çok zamana ve paraya mal oluyor, bu yüzden ayarı göreve göre seç.
 

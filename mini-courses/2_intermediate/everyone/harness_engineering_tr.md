@@ -6,7 +6,7 @@
 
 Bir şirket yapay zekânın gerçek verilerle, gerçek parayla ya da gerçek müşterilerle çalışmasına izin verdiğinde, bazı kurallar için "genelde doğru davranıyor" yetmez. Bu modül, o kuralların nasıl güvenli hâle getirildiğini ve aynı yapay zekâ modelinin bir üründe neden çok iyi, başka bir üründe neden kötü çalışabildiğini anlatıyor.
 
-## Talimatların Çözemediği Sorun
+## Promptların Çözemediği Sorun
 
 Bir yapay zekâ her seferinde tam olarak aynı şeyi yapmaz. Ona aynı girdiyi iki kez verirsen iki farklı cevap alabilirsin. Teknik dilde buna **non-deterministic** (deterministik olmayan) deniyor. İki saat boyunca çalışan bir agent ise binlerce küçük karar veriyor.
 
@@ -19,7 +19,7 @@ Bu ortamı tasarlamaya **harness engineering** deniyor.
 
 Sonraki iki modül bu araba resmini yeniden kullanıyor, o yüzden aklında dursun.
 
-## Agent Harness Nedir?
+## Agent Harness Nedir
 
 Harness engineering'in sonucuna **agent harness** deniyor: yapay zekâ modeli, onun etrafına kurulan her şey ve çalıştığı yer.
 
@@ -34,7 +34,7 @@ Harness **en dış** katman. Prompt ve context çalışmasının yerini almıyor
 ![Prompt, context ve harness üç katman olarak](../images/onion-model.png)  
 *Her halka, içindekini kapsıyor. Bu yüzden bunlar hiçbir zaman birbirinin alternatifi değil. System prompt'u harness yazıyor, sohbeti harness özetliyor ve yardımcıları harness gönderiyor; yani senin context çalışman, seçtiğin harness'ın içinde gerçekleşiyor.*
 
-## Dört Soru
+## Dört Disiplin, Dört Soru
 
 2026'ya gelindiğinde bu iş dört işe ayrıldı ve her biri tek bir sade soru soruyor.
 
@@ -100,7 +100,7 @@ Bu sonuncusu rakamlarla geldi. LangChain, kendi code agent'ının ortamında be�
 
 Bu rakamı aklında tut. Bu modülün var olma sebebi o: neredeyse on dört puan yalnızca ortamı değiştirmekten geldi.
 
-## Her Model İçin En İyi Olan Tek Bir Harness Yok
+## Her Model İçin En İyi Harness Yok
 
 Tek bir model al, ona tek bir görev seti ver ve yalnızca harness'ı değiştir. Puanlar epey oynuyor.
 
@@ -109,7 +109,7 @@ Tek bir model al, ona tek bir görev seti ver ve yalnızca harness'ı değiştir
 
 Composio tek bir modeli, aralarında Claude Code, Codex, OpenCode ve Hermes Agent'ın da bulunduğu sekiz harness'ta çalıştırdı. Dersi "kazananı kullan" değil. Asıl ders **eşleşmenin önemli olduğu**; bir tişört gibi: herkese uyan tek bir beden yok. Claude Code, Claude modelleri için ayarlanmış; Codex ise OpenAI'ınkiler için. Bu yüzden bir modelin "en iyi" olduğunu okuduğunda sor: hangi harness'ta?
 
-## Harness'lar Artık Açık
+## Harness'ler Artık Açık Kaynak
 
 Birçok harness artık açık kaynak; Claude Code'unki de dahil. Bu yüzden bir şirket işe yarayan birini alıp işine uymayan kısımları değiştirebiliyor: talimatları, bir tool açıklamasını ya da içindeki modeli.
 

@@ -229,7 +229,7 @@ gives the formula for each of the four, and code for most of them.
 You will almost never write the retrieval loop yourself. Pick a level, and let something else do
 the rest:
 
-- **[LlamaIndex](https://www.llamaindex.ai/)**: the highest level. Point it at a folder, ask a
+- ![](./images/logos/llamaindex.svg)**[LlamaIndex](https://www.llamaindex.ai/)**: the highest level. Point it at a folder, ask a
   question, and get an answer. It handles chunking, embedding, storing and retrieving.
 - ![](./images/logos/haystack.svg)**[Haystack](https://haystack.deepset.ai/)**: build the pipeline from ready-made parts. Use it
   when you want to see and change each step.
@@ -262,7 +262,7 @@ open-source projects are ready to use:
 - ![](./images/logos/ragflow.svg)**[RAGFlow](https://github.com/infiniflow/ragflow)** is a full RAG platform with a web interface.
   You run it with Docker. It is good at reading messy documents, including layouts, tables and
   scanned pages. Its answers carry citations back to the source.
-- **[LightRAG](https://github.com/HKUDS/LightRAG)** builds a knowledge graph of the people, things
+- ![](./images/logos/lightrag.svg)**[LightRAG](https://github.com/HKUDS/LightRAG)** builds a knowledge graph of the people, things
   and relations in your documents. It keeps embeddings beside that graph. So a search can follow
   connections, not only similarity. It is a Python library with a server and a web UI. It is also a
   lighter alternative to Microsoft's GraphRAG.

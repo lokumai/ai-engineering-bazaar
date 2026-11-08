@@ -78,7 +78,7 @@ graph LR
 
 - ![](./images/logos/guardrailsai.svg)**[Guardrails AI](https://github.com/guardrails-ai/guardrails)** دور call مدل رو می‌گیره و جوابی که برمی‌گرده رو با یه سری validator که خودت کنار هم می‌چینی چک می‌کنه. اگه یکی از بررسی‌ها رد بشه، یا دوباره امتحان می‌کنه یا خروجی رو اصلاح می‌کنه.
 - ![](./images/logos/nvidia.svg)**[NeMo Guardrails](https://github.com/NVIDIA-NeMo/Guardrails)** از NVIDIA، برای سیستم‌های گفت‌وگومحور rail‌های قابل برنامه‌نویسی می‌ده. تو مسیرهای مجاز گفت‌وگو رو تعریف می‌کنی و اون نمی‌ذاره مدل از این مسیرها بیرون بزنه.
-- ![](./images/logos/langchain-mono.svg)**[LangChain's guardrails](https://docs.langchain.com/oss/python/langchain/guardrails)** در واقع middleware هستن با hook‌های before-agent و after-agent، که دقیقاً همون دو تا جعبه‌ی بالان. LangChain خودش تشخیص PII و تأیید human-in-the-loop رو آماده داره، و تو هم guardrail‌های خودت رو روشون اضافه می‌کنی.
+- ![](./images/logos/langchain.svg)**[LangChain's guardrails](https://docs.langchain.com/oss/python/langchain/guardrails)** در واقع middleware هستن با hook‌های before-agent و after-agent، که دقیقاً همون دو تا جعبه‌ی بالان. LangChain خودش تشخیص PII و تأیید human-in-the-loop رو آماده داره، و تو هم guardrail‌های خودت رو روشون اضافه می‌کنی.
 
 یه فرق مهم رو هم یادت باشه: guardrail می‌تونه یه قانون ساده باشه یا یه مدل. قانون‌ها سریع و ارزونن، ولی راحت می‌شه گولشون زد. مدل موارد ظریف‌تر رو هم می‌گیره، ولی هر بار یه call خرج داره.
 

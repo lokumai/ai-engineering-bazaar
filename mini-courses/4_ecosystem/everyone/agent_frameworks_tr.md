@@ -18,7 +18,7 @@ Bir framework'e kesin olarak ihtiyacın yok. [AI Agent'lar](../1_fundamentals/ag
 
 Her dolabı kendin yapmak yerine hazır bir mutfak satın almaya benziyor. Çoğu ekibin ikinci projesinden sonra kendi döngüsünü yazmayı bırakmasının sebebi bu.
 
-## LangChain Ailesi
+## LangChain Stack'i
 
 En sık duyacağın isim bu. En eksiksiz olanı ve çevrende kullanılma ihtimali en yüksek olanı. "LangChain" aslında üç katman:
 
@@ -30,10 +30,10 @@ graph TD
 ```
 
 - ![](../images/logos/langgraph-mono.svg)**LangGraph** en alt katman; her adım üzerinde tam kontrol isteyen ekipler için.
-- ![](../images/logos/langchain-mono.svg)**LangChain** ana katman ve çoğu ekibin başladığı yer.
-- **deepagents** en üst katman: [Context Engineering](../2_intermediate/context_engineering_tr.md) modülündeki deep agent; planlama, yardımcılar, notlar ve özetleme zaten içinde hazır.
+- ![](../images/logos/langchain.svg)**LangChain** ana katman ve çoğu ekibin başladığı yer.
+- ![](../images/logos/deepagents.svg)**deepagents** en üst katman: [Context Engineering](../2_intermediate/context_engineering_tr.md) modülündeki deep agent; planlama, yardımcılar, notlar ve özetleme zaten içinde hazır.
 
-## Duyacağın Diğer İsimler
+## Diğer Python Seçenekleri
 
 Aynı işi farklı artı ve eksilerle yapıyorlar:
 
@@ -41,9 +41,9 @@ Aynı işi farklı artı ve eksilerle yapıyorlar:
 - Hugging Face'in ![](../images/logos/huggingface.svg)**smolagents**'ı bilerek küçük tutulmuş ve okuması kolay.
 - ![](../images/logos/agno.svg)**Agno**, birçok agent'ı tek bir sistem olarak çalıştırmaya ve yönetmeye odaklanıyor.
 - ![](../images/logos/pydantic.svg)**Pydantic AI**, sıkı kontrole odaklanıyor; böylece hatalar net birer hata olarak ortaya çıkıyor.
-- ![](../images/logos/mastra-mono.svg)**Mastra** ve **VoltAgent**, ürünü Python yerine TypeScript ile yazılmış şirketler için.
+- ![](../images/logos/mastra-mono.svg)**Mastra** ve ![](../images/logos/voltagent.svg)**VoltAgent**, ürünü Python yerine TypeScript ile yazılmış şirketler için.
 
-## Workflow'lar: Sabit Adımlar
+## AI Workflow'ları
 
 Bu modülün en işe yarar ayrımı bu ve yanlış seçmek aylara mal olabilir.
 
@@ -55,7 +55,7 @@ Hata, agent'ı daha iyi, daha olgun sürüm sanmak. Öyle değil. Adımları bil
 
 Ve ikisi artık birlikte çalışıyor. n8n, MCP ile ([Code Agent'lar](../2_intermediate/coding_agents_tr.md) modülünden) bir code agent'a bağlanabiliyor. Workflow'u sade kelimelerle anlatıyorsun, agent onu n8n'de kuruyor, test ediyor ve bozulan yeri düzeltiyor. Agent, workflow'u yazan şey oluyor.
 
-## No-code Platformlar
+## No-code Seçenekleri
 
 Birçok iş için doğru cevap bir no-code platform. ![](../images/logos/lovable.svg)**[Lovable](https://lovable.dev/)**, ![](../images/logos/bolt-mono.svg)**[Bolt](https://bolt.new/)** ve ![](../images/logos/replit.svg)**[Replit](https://replit.com/)**, bir açıklamayı çalışan bir uygulamaya çeviriyor, internette yayına alıyor ve daha fazla istekle onu değiştirmeye devam etmene izin veriyor. Bir prototip, bir iç araç ya da formu olan basit bir sayfa için bu, haftalar yerine saatler alıyor.
 

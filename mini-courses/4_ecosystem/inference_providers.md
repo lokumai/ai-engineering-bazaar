@@ -27,7 +27,7 @@ There are two ways to buy that access, and it helps to keep them clearly apart.
 
 The cost is one extra hop: your request goes through somebody else's infrastructure. That adds a little latency. It also puts one more company between you and the model.
 
-OpenRouter is not the only gateway. **[Portkey](https://portkey.ai/)** does the same routing job, but the arrangement is different. With OpenRouter, you buy credits, use one OpenRouter key and get one bill. OpenRouter then pays the providers for you. With Portkey, you usually bring your own provider keys. Its [gateway](https://github.com/Portkey-AI/gateway) is open source, so you can run it on your own infrastructure.
+OpenRouter is not the only gateway. ![](./images/logos/portkey.svg)**[Portkey](https://portkey.ai/)** does the same routing job, but the arrangement is different. With OpenRouter, you buy credits, use one OpenRouter key and get one bill. OpenRouter then pays the providers for you. With Portkey, you usually bring your own provider keys. Its [gateway](https://github.com/Portkey-AI/gateway) is open source, so you can run it on your own infrastructure.
 
 Portkey does routing, retries and fallbacks. On top of those, it adds the things that a team in production asks for:
 
@@ -38,7 +38,7 @@ Portkey does routing, retries and fallbacks. On top of those, it adds the things
 
 Palo Alto Networks acquired Portkey in 2026. So you will also see Portkey sold under the Palo Alto Networks name.
 
-There is a different kind of router, and it is easy to confuse with these two. **[AgentRouter](https://www.agentrouter.to/quick-start)** is not an LLM router. It is an API router for AI agents. It gives an agent one key and one prepaid wallet. With them, the agent can find, pay for and call many kinds of API, such as:
+There is a different kind of router, and it is easy to confuse with these two. ![](./images/logos/agentrouter.svg)**[AgentRouter](https://www.agentrouter.to/quick-start)** is not an LLM router. It is an API router for AI agents. It gives an agent one key and one prepaid wallet. With them, the agent can find, pay for and call many kinds of API, such as:
 
 - email
 - phone and SMS

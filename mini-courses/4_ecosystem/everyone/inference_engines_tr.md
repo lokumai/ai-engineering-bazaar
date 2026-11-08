@@ -8,7 +8,7 @@
 
 Er ya da geç şirketindeki biri şunu soracak: "Yapay zekâyı kendi sunucularımızda, kendimiz çalıştırsak mı?" Bu modül sana üç iyi sebebi ve başlıca vazgeçme sebebini veriyor.
 
-## Neden Kendin Çalıştırasın
+## Neden Kendin Çalıştırırsın
 
 Üç sebep var ve yalnızca bu üçü zahmete değer.
 
@@ -20,7 +20,7 @@ Er ya da geç şirketindeki biri şunu soracak: "Yapay zekâyı kendi sunucular�
 
 Bunların hiçbiri doğru değilse bir provider kullan. Modelleri kendin çalıştırmak, bir ekip için gerçek ve süregelen bir iş ve ilk ay çoğunlukla bütçelemeyi unuttuğun şeyleri öğreniyorsun.
 
-## Engine'ler, İşin Büyüklüğüne Göre
+## Problemin Büyüklüğüne Göre Engine'ler
 
 ```mermaid
 graph TD
@@ -30,17 +30,17 @@ graph TD
 
 - **Tek bir bilgisayarda**, [LLM Temelleri](../1_fundamentals/llms_tr.md) modülündeki basit uygulamaları kullan: LM Studio ya da Ollama.
 - **Birçok kullanıcısı olan bir şirket sunucusunda**, düzgün bir serving engine: ![](../images/logos/vllm.svg)**vLLM** olağan varsayılan. SGLang ve NVIDIA'nın TensorRT-LLM'i duyacağın diğer isimler.
-- **Birçok makine üzerinde**, **llm-d** gibi bir sistem onları koordine ediyor.
+- **Birçok makine üzerinde**, ![](../images/logos/llm-d.svg)**llm-d** gibi bir sistem onları koordine ediyor.
 
-## Rakamların Arkasındaki Tek Fikir: Batching
+## Sayıları Açıklayan Tek Fikir
 
 Aynı anda tek bir isteğe cevap veren bir bilgisayar çoğu zaman bekliyor. Bu yüzden engine'ler birçok isteği birlikte karşılıyor ve buna **batching** deniyor. Her kişi için ayrı bir taksi yerine bir otobüs düşün: yolculuğun maliyeti aşağı yukarı aynı, ama çok daha fazla insan taşıyor.
 
 En iyi engine'ler otobüsün dolmasını bile beklemiyor: yeni istekler, eskileri biter bitmez katılıyor; böylece bilgisayar hiç boş kalmıyor. Büyük provider'ların token'ları ucuza satabilmesinin sebeplerinden biri bu: her yolculuğu dolduruyorlar.
 
-## Önünde Bir Ekran
+## Engine'in Önüne Konan Arayüz
 
-Bir engine, programların onunla konuşması için bir yol veriyor, ama bir insanın bakabileceği hiçbir şey vermiyor. **Open WebUI**, şirketlerin kendi modellerinin önüne sıkça koyduğu sohbet ekranı; böylece çalışanlar, şirketin kendi bilgisayarlarında çalışan ve ChatGPT gibi görünen ve çalışan bir şey elde ediyor.
+Bir engine, programların onunla konuşması için bir yol veriyor, ama bir insanın bakabileceği hiçbir şey vermiyor. ![](../images/logos/open-webui-mono.svg)**Open WebUI**, şirketlerin kendi modellerinin önüne sıkça koyduğu sohbet ekranı; böylece çalışanlar, şirketin kendi bilgisayarlarında çalışan ve ChatGPT gibi görünen ve çalışan bir şey elde ediyor.
 
 ## Artık Bildiğin Terimler
 

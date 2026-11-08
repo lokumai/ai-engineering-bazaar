@@ -176,7 +176,7 @@ recall و precision فقط می‌شمرن چی توی k تای اوله؛ ول�
 
 تقریباً هیچ‌وقت لازم نیست کد retrieval رو از صفر خودت بنویسی. یه سطح انتخاب کن و بقیه‌ش رو بسپار به ابزار:
 
-- **[LlamaIndex](https://www.llamaindex.ai/)**: بالاترین سطح. یه پوشه نشونش می‌دی، سوالت رو می‌پرسی و جواب می‌گیری؛ chunk کردن، embedding، ذخیره و retrieval همه با خودشه.
+- ![](./images/logos/llamaindex.svg)**[LlamaIndex](https://www.llamaindex.ai/)**: بالاترین سطح. یه پوشه نشونش می‌دی، سوالت رو می‌پرسی و جواب می‌گیری؛ chunk کردن، embedding، ذخیره و retrieval همه با خودشه.
 - ![](./images/logos/haystack.svg)**[Haystack](https://haystack.deepset.ai/)**: یه pipeline رو با قطعه‌های آماده سر هم می‌کنی. وقتی می‌خوای تک‌تک مرحله‌ها رو ببینی و دستشون ببری، سراغ این برو.
 - ![](./images/logos/chroma.svg)**[ChromaDB](https://github.com/chroma-core/chroma)**: یه vector database که متن رو کنار embedding‌ش ذخیره می‌کنه، واسه همین نتیجه‌ی جستجو خود chunk اصلیه.
 - ![](./images/logos/meta.svg)**[FAISS](https://github.com/facebookresearch/faiss)**: فقط لایه‌ی جستجو، نه هیچ چیز دیگه. خیلی سریعه و از هیچی جز عدد سر درنمیاره.
@@ -199,7 +199,7 @@ distances, indices = index.search(query, 5)                 # the five nearest c
 اگه ترجیح می‌دی به‌جای این‌که خودت بسازی، از یه سیستم RAG کامل شروع کنی، این پروژه‌های open-source آماده‌ی استفاده‌ان:
 
 - ![](./images/logos/ragflow.svg)**[RAGFlow](https://github.com/infiniflow/ragflow)** یه پلتفرم کامل RAG با رابط وبه که با Docker بالا میاریش. توی خوندن سندهای شلوغ و درهم، با layout و جدول و صفحه‌های اسکن‌شده، دستش قویه، و جواب‌هاش با ارجاع به منبع میاد.
-- **[LightRAG](https://github.com/HKUDS/LightRAG)** از آدم‌ها، چیزها و رابطه‌هایی که توی سندهات هست یه knowledge graph می‌سازه و embedding‌ها رو هم کنارش نگه می‌داره؛ این‌جوری جستجو می‌تونه رد ارتباط‌ها رو بگیره، نه فقط شباهت رو. یه کتابخونه‌ی Python‌ه که server و web UI هم داره، و یه جایگزین سبک‌تر برای GraphRAG شرکت Microsoft حساب می‌شه.
+- ![](./images/logos/lightrag.svg)**[LightRAG](https://github.com/HKUDS/LightRAG)** از آدم‌ها، چیزها و رابطه‌هایی که توی سندهات هست یه knowledge graph می‌سازه و embedding‌ها رو هم کنارش نگه می‌داره؛ این‌جوری جستجو می‌تونه رد ارتباط‌ها رو بگیره، نه فقط شباهت رو. یه کتابخونه‌ی Python‌ه که server و web UI هم داره، و یه جایگزین سبک‌تر برای GraphRAG شرکت Microsoft حساب می‌شه.
 - ![](./images/logos/pageindex.svg)**[PageIndex](https://github.com/VectifyAI/PageIndex)** نه vector database داره، نه chunking. از هر سند یه درخت می‌سازه، شبیه فهرست مطالب، و بعد یه LLM با استدلال از این درخت پایین می‌ره تا به بخش درست برسه. حرف حسابش اینه که تیکه‌ای که شبیه سواله، همیشه همون تیکه‌ای نیست که جواب سوال توشه.
 - **[RAG-Anything](https://github.com/HKUDS/RAG-Anything)** روی LightRAG ساخته شده و از پس سندهایی برمیاد که متن رو با عکس و جدول و معادله قاطی کردن. از 2026 به این طرف، خود LightRAG هم این قابلیت رو داره.
 - ![](./images/logos/docsgpt-mono.svg)**[DocsGPT](https://github.com/arc53/DocsGPT)** یه اپ self-hosted‌ه که از سندها، سایت‌ها و اپ‌هایی که بهش وصل می‌کنی، دستیار می‌سازه؛ دستیارهایی که جوابشون با ذکر منبع همراهه.

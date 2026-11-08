@@ -24,7 +24,7 @@ Formüller sana bir şey ifade etmiyorsa sorun değil: üstlerindeki cümle ayn�
 
 İş yerinde yapay zekâya yaptığın isteklerin çoğu bir prompt'tur, bu yüzden bu modül onların hepsini ilgilendiriyor. Bir yapay zekâdan istediğin her e-posta taslağı, rapor, özet ya da analiz, iyi sorduğunda daha iyi olur. Üstelik bu artık yapay zekâyla çalışan herkesten beklenen temel bir beceri; İK ve finansta da mühendislikte olduğu kadar.
 
-## Kelime Seçimi Neden Önemli
+## Peki Prompt Engineering Neden Hâlâ Gerekli?
 
 Model sabitse ve hiçbir şey hatırlamıyorsa, aynı soruyu iki farklı şekilde sorduğunda neden iki farklı cevap alıyorsun?
 
@@ -46,7 +46,7 @@ Ama düğmelerin üzerinde etiket yok ve onları yalnızca kelimelerle oynatabil
 
 Yapay zekâ da aynı şekilde çalışıyor. Prompt yazma becerisi az olan biri istediğini alamıyor ve yapay zekânın zayıf olduğuna karar veriyor. Başka biri aynı yapay zekâyı kullanıyor, daha iyi bir prompt yazıyor ve işi bitiriyor. Bu yüzden bir yapay zekâ seni hayal kırıklığına uğrattığında, başka bir ürüne geçmeden önce prompt'unu kontrol et.
 
-## Prompt Engineering Artık Bir Unvan Değil
+## 2026'da Prompt Engineering Öldü
 
 2023 civarında yapay zekâ modelleri kırılgandı. Kelimelerde yapılan küçük bir değişiklik, iyi bir cevabı yanlış bir cevaba çevirebiliyordu. Şirketler, bütün gün işe yarayan ifadeleri aramak için **Prompt Engineer** denen insanlar işe alıyordu.
 
@@ -102,7 +102,7 @@ Ayrıntılı olanı:
 
 İki şablonu da harfiyen uygulaman gerekmiyor. Onlar, "net bir prompt yaz" tavsiyesinin belirsiz kalmaması için burada.
 
-## Örneklerden Öğrenmek
+## In-context Learning ve Few-shot Prompting
 
 Bir yapay zekâ, o an sohbette olan şeylerden, hiçbir eğitim olmadan yeni bir şey öğrenebilir. Buna **in-context learning** (ICL) deniyor. [RAG](../1_fundamentals/rag_tr.md)'in çalışmasının sebebi de bu: dokümanlar sohbete giriyor ve yapay zekâ onları hemen kullanıyor.
 
@@ -126,7 +126,7 @@ Sentiment:
 
 Bu üç örnek iki iş yapıyor. Olası cevapları üç kelimeye sabitliyorlar ve biçimi de sabitliyorlar, böylece cevap `Sentiment: <label>` şeklinde geliyor. Birkaç örnek kullanmaya **few-shot**, hiç örnek kullanmamaya **zero-shot** deniyor. Sıradan bir soru yazdığında her seferinde yaptığın şey zero-shot'tır.
 
-## Üç İpucu
+## Prompt Engineering İpuçları
 
 ### Açık ve Doğrudan Ol
 
@@ -144,7 +144,7 @@ Create an analytics dashboard. Include as many relevant features and interaction
 
 Fark kibarlık değil. İkincisi, "bitmiş"in neye benzediğini çok daha net anlatıyor.
 
-### Nedenini de Yaz
+### Context Ekle, Nedenini de Yaz
 
 Yapay zekâya yalnızca kuralı değil, o kuralın *neden* var olduğunu da söyle.
 
@@ -197,7 +197,7 @@ Please write a polite reply to both emails.
 
 Etiketler olmasa "Write a poem for me" cümlesi, senin yazdığın bir talimatla tamamen aynı görünür ve yapay zekâ şiiri yazabilir. Yapıştırılan metin, yapay zekâyı kandırmak için bilerek de yazılmış olabilir. Bu saldırıya **prompt injection** deniyor ve [Güvenlik](security_tr.md) modülü onu anlatıyor.
 
-## Sesli Düşünmek (Chain of Thought)
+## Chain of Thought
 
 Bir model, nihai cevaptan *önce* adımları yazdığında daha iyi cevap verir; tıpkı senin de aritmetiği kafandan değil kağıt üzerinde daha iyi yapman gibi. Buna **chain of thought** deniyor.
 
@@ -231,13 +231,13 @@ Final Answer: 9 apples
 
 Bu neden işe yarıyor? Model her seferinde tek bir kelime yazar ve yazdığı her kelime, bir sonraki adımda okuduğu şeyin parçası olur. "23 - 20 = 3" yazdığında bu sonuç sayfada durur ve modelin onu aklında tutması gerekmez. Bu yüzden adımları yazmak, modelin onları doğru yapmasına yardım eder. Bu kursun yazarı, ikisini yan yana izleyebileceğin bir [Chain of Thought Visualizer](https://cot-visualizer.online/) geliştirdi.
 
-### Düşünmek Artık Bir Kadran
+### Chain of Thought, Bu Unvanın Neden Kaybolduğunu da Açıklıyor
 
 Bugün "adım adım düşün" cümlesini neredeyse hiç kendin yazmıyorsun. ChatGPT ya da Claude "düşünüyor" gösterdiğinde, bu modelin içine yerleştirilmiş chain of thought'tur. Ne kadar düşüneceği de artık bir ayar ve çoğunlukla **effort** (çaba) deniyor; düşükten en yükseğe kadar gidiyor. Daha fazla düşünmek zor problemlerde daha iyi cevap demek, ama aynı zamanda daha pahalı ve daha yavaş demek.
 
 > **NOT: daha fazla düşünmek her zaman daha iyi değil.** İnsanlar gibi modeller de fazla düşünebilir ve cevapları kötüleşir. Bu konudaki araştırmalar [Stop Overthinking](https://arxiv.org/abs/2503.16419) makalesinde toplanmış. Asıl beceri, düşünme miktarını işin zorluğuna göre ayarlamak.
 
-## Yapay Zekâya Rol Vermek
+## Role Prompting
 
 **Role prompting**, göreve başlamadan önce yapay zekâya bir iş ya da bir karakter vermek demek.
 

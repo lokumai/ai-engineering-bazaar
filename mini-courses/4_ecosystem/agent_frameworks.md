@@ -37,9 +37,9 @@ graph TD
 
 ![](./images/logos/langgraph-mono.svg)**[LangGraph](https://github.com/langchain-ai/langgraph)** is the runtime. It is the lowest level of the three. You describe your agent as a graph. The nodes are steps, the edges are what can happen next, and the state moves between them. The state is explicit, so the runtime can save it and resume from it. The runtime can also let a human interrupt the agent in the middle of a run. Use LangGraph when the control flow is the hard part and you want to control it yourself.
 
-![](./images/logos/langchain-mono.svg)**[LangChain](https://github.com/langchain-ai/langchain)** is the main interface, and it is where you should start. It sits on top of LangGraph. It gives you the ordinary agent in a few lines of code: a model, some tools and some middleware. The middleware is where the [Harness Engineering](../2_intermediate/harness_engineering.md) work happens. It is also where the guardrails from [Security](../2_intermediate/security.md) live.
+![](./images/logos/langchain.svg)**[LangChain](https://github.com/langchain-ai/langchain)** is the main interface, and it is where you should start. It sits on top of LangGraph. It gives you the ordinary agent in a few lines of code: a model, some tools and some middleware. The middleware is where the [Harness Engineering](../2_intermediate/harness_engineering.md) work happens. It is also where the guardrails from [Security](../2_intermediate/security.md) live.
 
-**[deepagents](https://github.com/langchain-ai/deepagents)** is the highest level. It is built on the other two. It calls itself a "batteries-included" agent harness. The batteries are exactly the list from [Context Engineering](../2_intermediate/context_engineering.md):
+![](./images/logos/deepagents.svg)**[deepagents](https://github.com/langchain-ai/deepagents)** is the highest level. It is built on the other two. It calls itself a "batteries-included" agent harness. The batteries are exactly the list from [Context Engineering](../2_intermediate/context_engineering.md):
 
 - planning
 - a filesystem
@@ -64,7 +64,7 @@ None of these is wrong. They make different trade-offs. Usually the trade-off is
 Two frameworks are worth knowing here. The reason is that the whole stack above is Python-first, and most product code is not written in Python.
 
 - ![](./images/logos/mastra-mono.svg)**[Mastra](https://github.com/mastra-ai/mastra)** is the modern TypeScript framework for agents and AI applications. It is the closest thing to LangChain in that language.
-- **[VoltAgent](https://github.com/VoltAgent/voltagent)** is an agent engineering platform built on top of an open-source TypeScript framework. So it focuses more on running, watching and managing your agents after you have built them.
+- ![](./images/logos/voltagent.svg)**[VoltAgent](https://github.com/VoltAgent/voltagent)** is an agent engineering platform built on top of an open-source TypeScript framework. So it focuses more on running, watching and managing your agents after you have built them.
 
 ## AI Workflows
 

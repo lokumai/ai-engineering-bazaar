@@ -17,11 +17,20 @@ Bu modül, arayüzü düzgün biçimde üreten iki araçtan ve bu sorunun çöz�
 
 ![](./images/logos/google.svg)**[Google Stitch](https://stitch.withgoogle.com/)**, bir prompt'u, bir görseli, kaba bir çizimi ya da sözlü bir açıklamayı girdi olarak alır. Bunlardan neredeyse son haline yakın bir arayüz (high-fidelity) üretir ve arkasındaki HTML ile CSS kodunu da verir. Araç, I/O 2025 etkinliğinde Google Labs'ten çıktı ve Gemini üzerinde çalışıyor. Tasarımcıların asıl ilgilendiği şey ise dışa aktarma özelliği. Tek tıkla tüm tasarımı ![](./images/logos/figma.svg)Figma'ya gönderebilirsin; yerleşim, bileşenler ve yapı hiç değişmeden oraya geçer. Bu yüzden Stitch, tasarımdan geliştirmeye geçişin iki tarafında da işe yarar. Üzerinde tartışacağın bir görsel de istesen, üzerine inşa edeceğin bir işaretleme de istesen, Stitch ikisini de sunar.
 
+![Google Stitch](./images/google-stitch-ui.webp)  
+*Stitch'in kendi tanıtım görseli. Bir tasarımı yazıyla, sesle ("Listening...") ya da bir görsel veya bağlantıyla anlatıyorsun, sonra önizleyip düzenliyorsun. Design system panelindeki "Design.md" sekmesine dikkat et: aşağıdaki DESIGN.md bölümünün anlattığı dosya bu.*
+
 ![](./images/logos/claude.svg)**[Claude Design](https://claude.ai/design)**, Anthropic Labs'ten geliyor, Nisan 2026'da yayına girdi ve aynı işi bu kez diğer yönden yapıyor. Prototipleri, sunumları, tek sayfalık özetleri ve etkileşimli parçaları gerçek HTML, CSS ve JavaScript olarak üretiyor. Onu ilginç kılan iki özellik var. Birincisi, mevcut bir **codebase**'i girdi olarak alabiliyor, kodun içindeki design system'i bulup sonraki her isteğinde o design system'i uyguluyor. İkincisi ise işi doğrudan Claude Code'a aktarıyor, böylece prototip ile gerçek repository arasındaki boşluk kapanıyor.
+
+![Claude Design şablonları](./images/claude-design-types.png)  
+*Claude Design tek bir istek ve bir şablonla başlıyor: mobil uygulama, slaytlar, doküman, wireframe ve daha fazlası. "Design system" menüsü, daha hiçbir şey çizilmeden bir dizi tasarım kararını seçiyor.*
+
+![Claude Design'da bir prototipi ayarlamak](./images/claude-design-ui.webp)  
+*Claude Design'da ayarlanan bir prototip. Tweaks paneli, yeni bir prompt yazmadan cihazı, karanlık modu, renk temasını ve yazı boyutlarını değiştiriyor.*
 
 İki aracı birlikte düşününce örüntü oldukça net: bir ekranı tarif etmek artık onu çizmekten daha hızlı ve ortaya çıkan şey bir kodun resmi değil, kodun kendisi.
 
-## Tasarım Sistemi ve Neden Bir Dosyada Olması Gerektiği
+## Design System ve Neden Bir Dosyada Olması Gerektiği
 
 Bir **tasarım sistemi (design system)**, bir kez verdiğin ve bir daha vermek zorunda kalmayacağın kararların toplamıdır. Şunları kapsar:
 
@@ -36,6 +45,9 @@ Tasarım ekipleri bu kararları yıllardır tutuyor. Asıl değişen şey, bu ka
 Bir ekran üreten agent, ekranı kurarken bu kararların hepsini kendisi vermek zorunda kalır. Senin kararlarını bilmesinin hiçbir yolu olmadığı için makul görünen kararları uydurur ve bugünkü cevapla yarınki cevap birbirinden farklı çıkar. Kararlarını prompt'a yazıp ona anlatabilirsin, ama bu yöntem tek bir ekranda işe yarar ve ikinci ekranda işe yaramaz.
 
 Çözüm, talimatlar için zaten işe yarayan yöntemin aynısı: kararları repository içindeki bir dosyaya yaz, sonra agent'ın o dosyayı okumasını sağla.
+
+![Bir design system ve ondan yapılmış bir ekran](./images/example-design-system.png)  
+*Google Stitch'te bir design system (solda): kesin kodlarıyla renkleri, üç yazı stili, butonlar ve ikonlar. Sağda ondan üretilmiş bir fitness dashboard'u var. İstediğin her yeni ekran, örneğin altta önerilen "workout details screen", aynı kararları yeniden kullanıyor.*
 
 ## DESIGN.md
 

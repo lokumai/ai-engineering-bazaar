@@ -156,7 +156,7 @@ Create an analytics dashboard. Include as many relevant features and interaction
 
 İkinci prompt daha kibar ya da daha iyi yazılmış değil. Aradaki fark, "bitmiş" halin nasıl görünmesi gerektiğini çok daha fazla anlatması. İki örnek de Anthropic'in [prompting best practices](https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices) dokümanından alındı.
 
-### Bağlam Ekle, Nedenini de Yaz
+### Context Ekle, Nedenini de Yaz
 
 Model context'ten öğrendiği için ona bir kuralın yalnızca ne olduğunu değil, neden var olduğunu da anlat.
 

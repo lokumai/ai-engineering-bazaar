@@ -19,7 +19,7 @@ each one works on their own part. Colleagues hand work to each other, and someti
 lost on the way. A team of AI agents behaves the same way. So you already understand most of this
 module. It only needs new names.
 
-## Why Use Several Agents?
+## Why We Might Need Multi-agents
 
 Imagine asking one person to be both the company's accountant and its graphic designer. They can
 do both. But their head is full of two jobs, and they make more mistakes in each.
@@ -39,7 +39,7 @@ specialists:
 Each one is an ordinary agent from [AI Agents](agents.md). Nothing new was invented. You went
 from one loop to several.
 
-## Two Ways to Organise the Team
+## Basic Multi-agent Architectures
 
 ![Single agent, network and supervisor architectures](../images/multiagents.png)  
 *Left: one agent with its tools. Middle: a network, where every agent can talk to every other agent. Right: a supervisor, who receives the request and hands work to the others. The others talk only to the supervisor.*
@@ -71,7 +71,7 @@ organises itself. But it is much harder to follow, because no one place shows wh
 **Start with a supervisor.** It is easier to check, because every decision passes through one
 place, the same way a manager knows the status of every task.
 
-## The Problems of a Team
+## Multi-agent Drawbacks
 
 Both problems come *from* splitting the work. A single agent has neither. And both will sound
 familiar from any office.
@@ -90,7 +90,7 @@ confusion you split the work to avoid.
 Getting the handover wrong is the usual reason a team of agents does *worse* than the one agent
 it replaced.
 
-### Shared Desk, or Separate Desks
+### Shared Context, or Isolated Context
 
 This leads to one choice under every team of agents:
 
@@ -99,7 +99,7 @@ This leads to one choice under every team of agents:
 - **Isolated context:** each agent has its own desk and sees only what it was handed. This is
   cheap and focused, but whatever nobody passed along is gone.
 
-## Other Team Shapes
+## Advanced Multi-agent Architectures
 
 These names will come up later in the course:
 
@@ -108,7 +108,7 @@ These names will come up later in the course:
 - **Subagents:** an agent sends short-lived helpers to do one task each, like sending an intern to
   find something out. The helper comes back with only the result.
 
-## When One Agent is Better
+## When a Single Agent Might be Better
 
 More agents is not an upgrade. It is a trade. You get shorter instructions and clearer jobs. You
 pay with coordination and handover. Stay with one agent while one set of instructions still fits

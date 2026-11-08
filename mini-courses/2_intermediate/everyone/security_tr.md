@@ -8,7 +8,7 @@ Bu ad iki farklı konu için kullanılıyor. Birincisi, yapay zekâ sistemlerini
 
 Sana ulaşma ihtimali en yüksek saldırı, bir chatbot'a bir şeyler yazan bir hacker'dan gelmiyor. Yapay zekânın senin için okuduğu bir dokümanın içine gizlenmiş olarak geliyor: bir özgeçmiş, bir e-posta, bir web sayfası. Şirketin adayları elemek, e-postaları ayırmak ya da dokümanları özetlemek için yapay zekâ kullanıyorsa, bu modül riski sade kelimelerle anlatıyor.
 
-## Jailbreaking Nedir?
+## Jailbreaking Nedir
 
 **Jailbreaking**, bir yapay zekâyı, reddetmek üzere eğitildiği bir şeyi üretmeye ikna etmek demek.
 
@@ -31,7 +31,7 @@ Saldırılar, saldırganın neyi görebildiğine göre iki türe ayrılıyor:
 
 White box saldırılar daha güçlü. Ama şirketinin asistanına yapılan saldırı neredeyse her zaman black box, çünkü asistanın internette duran bir sohbet kutusu.
 
-## Üç Tür Saldırı
+## Üç Saldırı Türü
 
 İnsanlar bu üç adı sanki aynı şeyi ifade ediyorlarmış gibi kullanıyor. Etmiyorlar.
 
@@ -90,11 +90,11 @@ Bazı görevliler, yalnızca güvenliği değerlendirmek için yapılmış küç
 
 Çoğu şirket için, önde bir ve arkada bir küçük guard model, uzun bir elle yazılmış kural listesinden daha fazlasını yapıyor.
 
-## Önce Kendi Sistemine Saldırmak
+## AI Agent'lar Üzerinde Red Teaming
 
 Hiç denemediğin saldırılara karşı savunma yapamazsın. **Red teaming**, başkası yapmadan önce kendi sistemine bilerek saldırmak demek. Saldırıyı senin yerine yapan araçlar var; örneğin promptfoo ve Microsoft'un PyRIT'i.
 
-## Güvenlik İşi Yapan Agent'lar
+## Agent'larla Sistemlere Red Teaming
 
 Aynı yetenek dışarıya da çevrilebilir. Bir şirketin güvenliğini test etmek çoğunlukla okumak, akıl yürütmek ve komut çalıştırmaktır; bir code agent'ın zaten yaptığı şey bu. Bu yüzden artık zayıflıkları kendi başına bulan agent'lar var; Strix ve PentAGI gibi. Bunlardan biri olan Shannon ise gerçek saldırılar çalıştırarak bir zayıflığın gerçek olduğunu kanıtlıyor. Bir güvenlik skill'i, elindeki bir agent için tek bir metin dosyası bile olabilir; [Code Agent'lar](coding_agents_tr.md) modülündeki skill fikri.
 

@@ -70,7 +70,7 @@ It is also writable. This means that anything that can write to that file can ch
 
 OpenClaw grew so fast that the engineering did not keep up. A first install was more than a gigabyte, with more than three hundred dependencies. Memory also got slow. One comparison measured a recall query at 19.6 seconds, against 113 milliseconds for the alternative. After a few releases with problems, people started to leave.
 
-They went to **[Hermes Agent](https://github.com/NousResearch/hermes-agent)** from Nous Research. It is MIT licensed, and it took the same idea and built it more carefully. Its tagline is "the agent that grows with you". This is what it does:
+They went to ![](./images/logos/hermes-agent-mono.svg)**[Hermes Agent](https://github.com/NousResearch/hermes-agent)** from Nous Research. It is MIT licensed, and it took the same idea and built it more carefully. Its tagline is "the agent that grows with you". This is what it does:
 
 - **Memory that is searchable rather than large.** The memory is SQLite on disk, and the agent retrieves it in tiers. That is where the millisecond figure comes from.
 - **Skills it generates itself**, when it notices a pattern in what you keep asking for. OpenClaw's skills were picked by hand, and people shared them through a marketplace called ClawHub. Hermes writes its own.
@@ -105,7 +105,7 @@ We should be honest about where it still stands. Reviewers have pointed out that
 
 ## Alternatives, and Not Hosting it Yourself
 
-**[nanoclaw](https://github.com/nanocoai/nanoclaw)** is the lightweight option. It made a different choice about the risk: every agent runs in a container. It connects to WhatsApp, Telegram, Slack, Discord and Gmail. It keeps memory and scheduled jobs, and it runs directly on Anthropic's Agents SDK. If the full version feels like too much to put on your laptop, start here.
+![](./images/logos/nanoclaw.svg)**[nanoclaw](https://github.com/nanocoai/nanoclaw)** is the lightweight option. It made a different choice about the risk: every agent runs in a container. It connects to WhatsApp, Telegram, Slack, Discord and Gmail. It keeps memory and scheduled jobs, and it runs directly on Anthropic's Agents SDK. If the full version feels like too much to put on your laptop, start here.
 
 And if you do not want to run any of it, you can use one that someone else hosts for you. ![](./images/logos/kimi-mono.svg)**[Kimi Claw](https://www.kimi.com/en/help/kimi-claw)** is Moonshot's. It is made for desktop and Android, and it has integrations for WeChat, Feishu, WeCom and DingTalk. That makes it the practical choice if your work happens in those apps. **[myclaw.ai](https://myclaw.ai/)** hosts one for you as a service. The trade-off is the obvious one: you stop maintaining it, and it stops being only yours.
 

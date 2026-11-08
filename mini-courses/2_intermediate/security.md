@@ -88,7 +88,7 @@ Here are three frameworks that you can actually build them with:
 
 - ![](./images/logos/guardrailsai.svg)**[Guardrails AI](https://github.com/guardrails-ai/guardrails)** wraps the model call. It validates what comes back against a set of validators that you combine. When a check fails, it retries or fixes the output.
 - ![](./images/logos/nvidia.svg)**[NeMo Guardrails](https://github.com/NVIDIA-NeMo/Guardrails)** from NVIDIA gives you programmable rails for conversational systems. You describe the allowed conversation flows, and it keeps the model inside them.
-- ![](./images/logos/langchain-mono.svg)**[LangChain's guardrails](https://docs.langchain.com/oss/python/langchain/guardrails)** are middleware with before-agent and after-agent hooks. Those hooks are exactly the two boxes above. LangChain comes with PII detection and human-in-the-loop approval, and you add your own guardrails on top.
+- ![](./images/logos/langchain.svg)**[LangChain's guardrails](https://docs.langchain.com/oss/python/langchain/guardrails)** are middleware with before-agent and after-agent hooks. Those hooks are exactly the two boxes above. LangChain comes with PII detection and human-in-the-loop approval, and you add your own guardrails on top.
 
 One distinction here is important to remember. A guardrail can be a rule, or it can be a model. Rules are fast, cheap and easy to fool. A model catches the subtle cases, but it costs you a call.
 

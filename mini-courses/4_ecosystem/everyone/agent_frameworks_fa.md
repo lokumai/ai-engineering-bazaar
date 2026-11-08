@@ -18,7 +18,7 @@
 
 مثل اینه که به جای ساختن تک‌تک کابینت‌ها، یه آشپزخونه‌ی آماده بخری. برای همینه که بیشتر تیم‌ها بعد از پروژه‌ی دومشون دیگه loop خودشون رو نمی‌نویسن.
 
-## خانواده‌ی LangChain
+## استک LangChain
 
 این اسمیه که از همه بیشتر می‌شنوی. کامل‌ترینه، و احتمال این‌که دور و برت استفاده بشه از همه بیشتره. «LangChain» در واقع سه لایه‌ست:
 
@@ -30,11 +30,11 @@ graph TD
 ```
 
 - ![](../images/logos/langgraph-mono.svg)**LangGraph** پایین‌ترین لایه‌ست، برای تیم‌هایی که کنترل کامل روی هر قدم می‌خوان.
-- ![](../images/logos/langchain-mono.svg)**LangChain** لایه‌ی اصلیه، و جاییه که بیشتر تیم‌ها از اون‌جا شروع می‌کنن.
-- **deepagents** لایه‌ی بالاییه: همون deep agent از
+- ![](../images/logos/langchain.svg)**LangChain** لایه‌ی اصلیه، و جاییه که بیشتر تیم‌ها از اون‌جا شروع می‌کنن.
+- ![](../images/logos/deepagents.svg)**deepagents** لایه‌ی بالاییه: همون deep agent از
   [Context Engineering](../2_intermediate/context_engineering_fa.md)، که برنامه‌ریزی، کمک‌کارها، یادداشت‌برداری و خلاصه کردن از قبل توش ساخته شده.
 
-## اسم‌های دیگه‌ای که می‌شنوی
+## بقیه‌ی گزینه‌های Python
 
 همین کار رو می‌کنن، با معامله‌های متفاوت:
 
@@ -42,9 +42,9 @@ graph TD
 - ![](../images/logos/huggingface.svg)**smolagents** از Hugging Face عمداً کوچیکه و خوندنش آسونه.
 - ![](../images/logos/agno.svg)**Agno** روی اجرا و مدیریت کلی agent به شکل یه سیستم تمرکز داره.
 - ![](../images/logos/pydantic.svg)**Pydantic AI** روی بررسی سخت‌گیرانه تمرکز داره، که اشتباه‌ها به شکل خطای روشن ظاهر بشن.
-- ![](../images/logos/mastra-mono.svg)**Mastra** و **VoltAgent** برای شرکت‌هایی‌ان که محصولشون به جای Python با TypeScript نوشته شده.
+- ![](../images/logos/mastra-mono.svg)**Mastra** و ![](../images/logos/voltagent.svg)**VoltAgent** برای شرکت‌هایی‌ان که محصولشون به جای Python با TypeScript نوشته شده.
 
-## Workflow‌ها: قدم‌های ثابت
+## AI Workflow‌ها
 
 این مفیدترین تفکیک این درسه، و انتخاب اشتباهش می‌تونه ماه‌ها خرج داشته باشه.
 
@@ -56,7 +56,7 @@ graph TD
 
 و حالا این دو تا با هم کار می‌کنن. n8n رو می‌شه از طریق MCP (از [Code Agent‌ها](../2_intermediate/coding_agents_fa.md)) به یه coding agent وصل کرد. workflow رو به زبان ساده توضیح می‌دی، و agent توی n8n می‌سازدش، تستش می‌کنه و چیزی رو که خراب شده درست می‌کنه. agent می‌شه چیزی که workflow رو می‌نویسه.
 
-## پلتفرم‌های no-code
+## گزینه‌های No-code
 
 برای خیلی از کارها، جواب درست یه پلتفرم no-code‌ه. ![](../images/logos/lovable.svg)**[Lovable](https://lovable.dev/)**، ![](../images/logos/bolt-mono.svg)**[Bolt](https://bolt.new/)**
 و ![](../images/logos/replit.svg)**[Replit](https://replit.com/)** یه توضیح رو به یه اپ کارا تبدیل می‌کنن، می‌ذارنش روی اینترنت، و می‌ذارن با درخواست‌های بیشتر مدام عوضش کنی. برای یه نمونه‌ی اولیه، یه ابزار داخلی یا یه صفحه‌ی ساده با یه فرم، این کار ساعت‌ها طول می‌کشه به جای هفته‌ها.

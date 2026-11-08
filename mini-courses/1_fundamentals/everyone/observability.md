@@ -48,9 +48,9 @@ paragraph that hides all of this. The trace shows it.
 LangChain says it plainly: in normal software, the code describes the behaviour. With agents, the
 traces do.
 
-## Tools for Traces
+## Observability Tools
 
-- ![](../images/logos/langchain-mono.svg)**LangSmith** is LangChain's own tool, the easy choice for teams that already use LangChain.
+- ![](../images/logos/langsmith-mono.svg)**LangSmith** is LangChain's own tool, the easy choice for teams that already use LangChain.
 - ![](../images/logos/langfuse.svg)**[Langfuse](https://github.com/langfuse/langfuse)** is open source, the usual choice when traces must stay on the company's own computers.
 - ![](../images/logos/latitude.svg)**[Latitude](https://github.com/latitude-dev/latitude-llm)** is also open source, and it focuses on watching live systems.
 
@@ -59,7 +59,7 @@ And can it keep the traces where our data policy says they must stay? Traces are
 text, so this is the same discussion as the data policy in
 [Inference Providers](../4_ecosystem/inference_providers.md).
 
-## The Improvement Loop
+## The Loop
 
 Collecting traces is not the goal. The goal is the cycle they make possible:
 
@@ -76,7 +76,7 @@ In plain words: collect the traces, mark the good and the bad ones, find the mos
 change something to fix it, test the change on real past examples, and start again. Each round
 gives better data, so the next fix is better aimed than the last.
 
-## Agents That Read the Traces
+## Using Agents to Observe Other Agents
 
 Teams that collect traces well soon have a new problem: too many of them. One developer described
 recording more than 100,000 traces every day, and reading none of them. Nobody can read a hundred

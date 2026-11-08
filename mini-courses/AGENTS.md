@@ -270,6 +270,10 @@ function or a terminal is.
 
 - Frontmatter `summary` and `objectives`, the H1 the module's title, an opening that connects to the
   previous module, then `## Why This Matters to You`: why this reader is learning it.
+- **A section both tracks share keeps the technical heading word for word**, and in `_tr`/`_fa` the
+  technical translation's heading (D109). Only a section one track alone has gets its own heading.
+- **Technical terms stay English in Turkish and Persian** (long-term memory, subagent, compaction), with
+  a local gloss in brackets at most, never the other way round.
 - The concepts as a story with everyday examples, one analogy per hard idea, called back later (the
   context is a chat read from the top every time; a team of agents is a manager and a team). Move an
   example into the reader's world when the technical one is about code.

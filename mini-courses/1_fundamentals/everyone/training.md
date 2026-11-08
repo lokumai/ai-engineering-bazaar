@@ -20,7 +20,7 @@ you know what these two words mean, you know what a vendor can really do for you
 cannot. You will also know why "let's train the AI on our company documents" is usually the
 wrong request, and what to ask for instead.
 
-## What Training Means
+## What Training Means?
 
 Think of a new model as an empty brain. At the start it knows nothing. Every parameter is a
 random number, so every answer is random too.
@@ -57,7 +57,7 @@ graph LR
 The result is a **general-purpose** model. It is like a person who finished school: they know a
 little about many things, but they are not an expert in anything yet.
 
-## You Don't Have to Pre-train
+## Why We don't Have to Pre-train?
 
 You never need to pre-train your own model. Someone else already spent the millions. You can
 take their finished model and teach it one more thing. This is called **fine-tuning**.
@@ -79,7 +79,7 @@ The clearest difference is in the data that each step uses:
 That difference is why pre-training costs millions and fine-tuning costs far less. LoRA, below, is
 the version that fits on one computer.
 
-## Fine-tuning, with an Example
+## Fine-tuning
 
 Say you want a model that writes very good short summaries of articles.
 
@@ -101,7 +101,7 @@ Here are a few of those training pairs:
 The model does not memorise these answers. It learns the *pattern*: take the key facts out of a
 long text, and put them into one short, plain sentence.
 
-### Does it Work?
+### Does it Actually Work?
 
 Here is a new article that the model has never seen:
 
@@ -124,7 +124,7 @@ Here is a new article that the model has never seen:
 The first answer is long and repeats the article almost sentence by sentence. The second one
 followed the pattern it learned, on an article it had never seen.
 
-## A Cheaper Way: LoRA
+## Parameter-efficient Fine-tuning (PEFT)
 
 Normal fine-tuning changes every number in the model, so a big model still needs big
 computers. There is a cheaper way, called **PEFT** (parameter-efficient fine-tuning). It keeps
@@ -132,7 +132,7 @@ almost the whole model frozen and trains only a tiny extra part, often less than
 numbers. The most common version has a name you will hear often: **LoRA**. It runs on a single
 computer, it is fast, and it is what most real projects use.
 
-## Side by Side
+## Comparing Side-by-side
 
 | | Pre-training | Fine-tuning |
 |---|---|---|
@@ -161,7 +161,7 @@ hundred pages get mixed into billions of numbers that hold everything else the m
 time you finish, a new model may come out that does your task better with no fine-tuning at
 all. Fine-tuning still wins when your task is truly narrow and truly your own.
 
-## Hugging Face
+## What is Hugging Face?
 
 You will hear this name a lot. ![](../images/logos/huggingface.svg)[Hugging Face](https://huggingface.co/) is a large public library where companies and
 researchers share AI models, most of them free to download. When a team releases an open model,

@@ -42,7 +42,7 @@ This is why LangChain said it so plainly in [The Agent Improvement Loop Starts w
 
 ## Observability Tools
 
-- ![](./images/logos/langchain-mono.svg)**LangSmith** is LangChain's own tool. If you already use anything from [Agent Frameworks](../4_ecosystem/agent_frameworks.md), it is the most integrated choice. It gives you tracing, datasets, evaluators and annotation in one place.
+- ![](./images/logos/langsmith-mono.svg)**LangSmith** is LangChain's own tool. If you already use anything from [Agent Frameworks](../4_ecosystem/agent_frameworks.md), it is the most integrated choice. It gives you tracing, datasets, evaluators and annotation in one place.
 - ![](./images/logos/langfuse.svg)**[Langfuse](https://github.com/langfuse/langfuse)** is the open-source one. It is the usual choice when the traces must stay on your own infrastructure. It supports OpenTelemetry as well as the framework SDKs, so it can collect traces from almost anything. Next to the traces, it also has evals, prompt management and datasets.
 - ![](./images/logos/latitude.svg)**[Latitude](https://github.com/latitude-dev/latitude-llm)** is also open source. It focuses clearly on monitoring in production.
 

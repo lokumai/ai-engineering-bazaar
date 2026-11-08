@@ -138,13 +138,13 @@ guide‌ها قبل از کار میان و sensor‌ها بعدش. هر چی se
 
 این نمودار مال مقاله‌ی [Finding the Best Harness for DeepSeek V4 Flash](https://composio.dev/content/best-agent-harness-deepseek-v4-flash) از Composio‌ه که مدل رو توی این هشت harness اجرا کرده:
 
-- Pi Agent
+- ![](./images/logos/pi-mono.svg)Pi Agent
 - Prime Agent
 - OMP
 - ![](./images/logos/claude.svg)Claude Code
 - ![](./images/logos/openai-mono.svg)Codex
-- DeepAgents
-- Hermes Agent
+- ![](./images/logos/deepagents.svg)DeepAgents
+- ![](./images/logos/hermes-agent-mono.svg)Hermes Agent
 - ![](./images/logos/opencode-mono.svg)OpenCode
 
 Pi Agent با 66.7%، یعنی بیست workflow از سی تا، اول شد. Claude Code با 122.7 ثانیه برای هر کار از همه سریع‌تر بود، ولی به ازای هر موفقیت از همه گرون‌تر هم تموم شد.

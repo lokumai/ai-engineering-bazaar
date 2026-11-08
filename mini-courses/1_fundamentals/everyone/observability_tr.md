@@ -18,7 +18,7 @@ Bu bilgi yalnızca o çalıştırmanın kaydında bulunur. Bu kayda **trace** de
 
 Şirketin bir yapay zekâ asistanı kullanıyorsa ve asistan yanlış bir cevap verirse, biri "bunu neden yaptı?" diye soracak. Bu sorunun cevabını trace'te bulursun. Trace'ler ayrıca kullanıcıların yazdığı her şeyi ve tool'ların döndürdüğü her şeyi de içerir; bu yüzden nerede saklandıkları, veri ve gizlilik kurallarınla ilgili bir sorudur.
 
-## Bir Trace'te Neler Var?
+## Bir Trace'te Neler Var
 
 Bir trace'i, **tek bir agent çalıştırmasının banka hesap özeti** gibi düşün. Her adım, zamanı ve maliyetiyle bir satırdır. İçinde şunlar bulunur:
 
@@ -30,9 +30,9 @@ Hatalar genellikle adımların *arasında* olur, bir adımın içinde değil. Ö
 
 LangChain bunu açıkça söylüyor: normal yazılımda davranışı kod anlatır. Agent'larda ise trace'ler anlatır.
 
-## Trace Araçları
+## Observability Araçları
 
-- ![](../images/logos/langchain-mono.svg)**LangSmith**, LangChain'in kendi aracı; zaten LangChain kullanan ekipler için kolay seçim.
+- ![](../images/logos/langsmith-mono.svg)**LangSmith**, LangChain'in kendi aracı; zaten LangChain kullanan ekipler için kolay seçim.
 - ![](../images/logos/langfuse.svg)**[Langfuse](https://github.com/langfuse/langfuse)** açık kaynak; trace'lerin şirketin kendi bilgisayarlarında kalması gerektiğinde olağan seçim.
 - ![](../images/logos/latitude.svg)**[Latitude](https://github.com/latitude-dev/latitude-llm)** de açık kaynak ve canlı sistemleri izlemeye odaklanıyor.
 
@@ -53,7 +53,7 @@ graph LR
 
 Sade bir dille: trace'leri topla, iyi ve kötü olanları işaretle, en yaygın hatayı bul, onu düzeltmek için bir şeyi değiştir, değişikliği geçmişteki gerçek örnekler üzerinde test et ve baştan başla. Her tur daha iyi veri verir, bu yüzden sonraki düzeltme bir öncekinden daha iyi hedeflenir.
 
-## Trace'leri Okuyan Agent'lar
+## Agent'ları Başka Agent'larla İzlemek
 
 Trace'leri iyi toplayan ekiplerin kısa sürede yeni bir sorunu olur: çok fazla trace. Bir geliştirici, her gün 100.000'den fazla trace kaydettiğini ve hiçbirini okumadığını anlattı. Kimse yüz bin şeyin hiçbirini okuyamaz.
 

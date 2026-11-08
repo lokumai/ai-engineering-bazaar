@@ -55,7 +55,7 @@ graph TD
 An Austrian developer, Peter Steinberger, had a personal assistant project called **Clawd**, named
 after Claude, the model it ran on. He released it in November 2025, and it grew very fast. Then
 Anthropic's lawyers wrote to him, because "Clawd" was too close to "Claude". He agreed at once and
-renamed it **Moltbot**, and three days later **OpenClaw**.
+renamed it **Moltbot**, and three days later ![](../images/logos/openclaw.svg)**OpenClaw**.
 
 Two things went wrong during the renaming. He gave up the old account names before claiming the new
 ones, and in about ten seconds someone else took them. And a fake cryptocurrency appeared, using the
@@ -74,7 +74,7 @@ instructions trying to make other agents do something.** That is the indirect pr
 [Security](security.md), happening in the wild. The study also found something encouraging: the
 agents challenged the risky posts more often than the harmless ones, without anyone telling them to.
 
-## SOUL.md: the Personality File
+## SOUL.md
 
 Every OpenClaw agent has a file called `SOUL.md`. It says who the agent is: how it behaves, what it
 cares about, how it talks. Every time the agent wakes up, it reads this file first. It is a system
@@ -86,7 +86,7 @@ and the agent will not notice: it wakes up, reads the file, and becomes whatever
 ## Hermes Agent
 
 OpenClaw grew so fast that its engineering did not keep up: a heavy install, and slow memory. Many
-people moved to **Hermes Agent** from Nous Research, which takes the same idea and builds it more
+people moved to ![](../images/logos/hermes-agent-mono.svg)**Hermes Agent** from Nous Research, which takes the same idea and builds it more
 carefully: fast, searchable memory, skills it writes itself, scheduling in plain language ("every
 Monday morning, remind me..."), and helpers that work in their own safe space.
 
@@ -109,7 +109,7 @@ passwords that are not encrypted by default. Better is not the same as safe.
 There are also lighter options (nanoclaw, which runs every agent in its own sealed container) and
 hosted ones (such as Kimi Claw), where someone else runs the agent for you.
 
-## The Big Companies' Personal Agents
+## More Personal Agents
 
 OpenClaw and Hermes come from the community. In 2026 the large AI companies shipped their own. They
 share one idea: an agent that keeps working in the background after you close the app.

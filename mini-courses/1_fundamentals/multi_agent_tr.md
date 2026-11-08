@@ -55,7 +55,7 @@ Bu bölümü ciddiye almakta fayda var, çünkü iki problemin de kaynağı işi
 
 Bu konuda yanlış karar vermek, multi-agent bir sistemin yerini aldığı tek agent'tan *daha kötü* çalışmasının en sık görülen nedenidir.
 
-### Ortak Bağlam mı, İzole Bağlam mı
+### Shared Context mi, Isolated Context mi
 
 Bu, her multi-agent tasarımın altında yatan bir seçime götürüyor. Agent'lar **ortak** bir bağlamı mı paylaşır, yoksa her agent kendi **izole** bağlamında mı çalışır?
 

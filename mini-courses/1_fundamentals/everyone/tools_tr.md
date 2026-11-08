@@ -19,7 +19,7 @@ Bu adım, bir sohbet botunu senin için çalışan bir asistana çeviren adımd�
 
 Şimdi [LLM Temelleri](llms_tr.md) modülündeki sohbet resmine dön. "İstanbul'da hava nasıl?" diye soruyorsun. Yapay zekâ bunu bilemez. Bu yüzden cevap vermek yerine özel bir mesaj yazar: "*hava durumuna bak* tool'unu, şehir = İstanbul ile çalıştırmak istiyorum". Bir bilgisayardaki normal bir program bu mesajı okur, hava durumu tool'unu çalıştırır ve sonucu sohbete ekler: "34°C". Sonra yapay zekâ sonucu okur ve sana cevap verir. **Yapay zekâ ister; bilgisayar işi yapar.**
 
-## Tool Çağrıları Sohbeti Büyütür
+## Tool Call'lar Context'i Büyütür
 
 Bir tool çağrısı sohbete iki yeni tür mesaj ekler. Bu resim bütün akışı gösteriyor:
 
@@ -45,7 +45,7 @@ Bir model, belli bir tarihte biten verilerden öğrendi. Bu yüzden tek başına
 
 Tool olmadan bir yapay zekâ sohbet botudur. Tool'larla bir agent'tır.
 
-## Tool'un Menü Kartı
+## Tool Schema
 
 Yapay zekâ bir tool seçebilmeden önce üç şeyi bilmek zorunda: tool'un var olduğunu, ne yaptığını ve hangi bilgilere ihtiyaç duyduğunu. Bu tanıma **tool schema** denir. Bunu tool'un menü kartı gibi düşün. System prompt'un içinde, sohbetin en üstünde durur.
 
@@ -62,7 +62,7 @@ Kod okumuyorsan sorun değil. Yalnızca üç parça önemli: ad (`get_weather`),
 
 **İşte asıl ders: yapay zekâ tool'ları yalnızca menü kartlarına bakarak seçer.** Gördüğü tek şey ad ve açıklamadır. "get data" adında ve "gets data" açıklamasında bir tool düşün. Yapay zekâ onu yanlış zamanlarda seçer, doğru zamanlarda atlar. Net bir ad ve net bir açıklama süs değildir. Asistanın iyi çalışıp çalışmayacağını onlar belirler.
 
-## Adım Adım Tek Bir Tool Çağrısı
+## Bir Örnekte Tool Call
 
 Hava durumu örneği, gerçekte olduğu gibi şöyle:
 

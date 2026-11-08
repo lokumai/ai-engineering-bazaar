@@ -7,7 +7,8 @@ description: >
   cancelled, the fifth level (now Emerging), Caravan, the gate revised (M63), and content revision 4
   (M64 to M69), the search filters (M70) and their Filters disclosure (M71), the gate stories (M72),
   Advanced Agent Servers (M73), vendor logos (M74), course call-out cards, Mermaid themes and Mihrî
-  (M75), and the For Everyone versions (M76 to M79). Each milestone carries its deliverables and acceptance
+  (M75), the For Everyone versions (M76 to M79), shared headings and logos (M80), and diagram
+  backgrounds and copy (M81). Each milestone carries its deliverables and acceptance
   criteria as `- [ ]` checkboxes, ticked as the work lands, and closes with a dated report; the loop
   that governs that is below, in this file.
   NOT here: why a choice was made (BRAINSTORM.md), or any rule that outlives the milestone
@@ -15,7 +16,7 @@ description: >
 authority: state
 writes: agent, every session
 status: active
-covers: "M50 to M79, 2026-11-06 onward"
+covers: "M50 to M81, 2026-11-06 onward"
 last_updated: 2026-11-08
 ---
 
@@ -1214,6 +1215,39 @@ checks presence and language instead. **Gate:** typecheck, 1,229 unit tests, 545
 10 skipped, the link check (16,831 links), and every diagram. **Left for the author:** the same Harness
 Engineering summary sentence in the technical module, and the English objectives card on Turkish and
 Persian pages (an M19 decision).
+
+## 🏁 Milestone M80: One heading per shared section, English terms in translations, UI Design figures, more logos (D109) — DONE
+
+The author, 2026-11-08, after reading the For Everyone pages: headings had been simplified and differed
+from the technical track; technical concepts such as long-term memory had been translated into Turkish;
+UI Design should show four screenshots he supplied; Portkey and VoltAgent needed logos, LangChain's should
+be its parrot, and missing marks should be searched for online.
+
+- [x] Every section both tracks share uses the technical heading, in English, Turkish and Persian (158
+      headings aligned by position against the technical `_tr`/`_fa` files; two For Everyone-only
+      sections keep their own).
+- [x] Technical concepts kept English in Turkish and Persian, in both tracks where the technical
+      translation had translated them (the memory types, Vector Database'ler, Tool Schema, the Context
+      Engineering techniques, the loop levels and others).
+- [x] Four figures in UI Design, both tracks and three languages: Google Stitch, Claude Design's
+      templates and its Tweaks panel, and a Stitch design system next to a screen built from it.
+- [x] Logos (D105 revised): LangChain's parrot, LangSmith's own mark, Portkey, VoltAgent, Unsloth, SGLang,
+      llm-d, deepagents, AgentRouter, LlamaIndex, Open WebUI, nanoclaw, Hermes Agent, LightRAG, Pi Agent.
+
+**Report, 2026-11-08.** Headings by a script that maps each For Everyone heading to its technical
+counterpart and copies the technical translation at the same position; Turkish terms by hand from a
+grep of every inflected form. A Haiku review of terms was started; the fixes here were chosen from my own
+sweep. Logos by a Sonnet subagent from vendor repositories, sites and icon sets, checked on both themes in
+204 screenshots. Gate below, with M81.
+
+## 🏁 Milestone M81: Diagrams on each theme's own Mermaid background, and a copy button (D107 revised)
+
+- [x] Each of the ten themes shows Mermaid's own `themeVariables.background` (white or #333), read from
+      the installed Mermaid and guarded by a unit test against it.
+- [x] Every diagram has the same copy control as a code block, copying its Mermaid source.
+- [x] "Redux dark and redux dark color are duplicate": measured, not a site bug. Mermaid's `-color`
+      themes colour groups, so the twins match on the 92 plain flowcharts and differ on the 6 mind maps
+      and 6 subgraph flowcharts; both kept (PR #83).
 
 ---
 

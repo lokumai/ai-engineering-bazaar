@@ -132,13 +132,13 @@ Sadece okumakla kalmayıp kendi harness'ini kurmak istiyorsan, [How to Build a C
 
 Bu grafik, Composio'nun [Finding the Best Harness for DeepSeek V4 Flash](https://composio.dev/content/best-agent-harness-deepseek-v4-flash) yazısından alındı. Yazarda model şu sekiz harness'te denenmiş:
 
-- Pi Agent
+- ![](./images/logos/pi-mono.svg)Pi Agent
 - Prime Agent
 - OMP
 - ![](./images/logos/claude.svg)Claude Code
 - ![](./images/logos/openai-mono.svg)Codex
-- DeepAgents
-- Hermes Agent
+- ![](./images/logos/deepagents.svg)DeepAgents
+- ![](./images/logos/hermes-agent-mono.svg)Hermes Agent
 - ![](./images/logos/opencode-mono.svg)OpenCode
 
 Pi Agent, 66.7%'yle birinci oldu. Bu da otuz iş akışından yirmisinin başarılı olması demek. Claude Code ise görev başına 122.7 saniyeyle en hızlısıydı, ama başarı başına en pahalı olan da oydu.

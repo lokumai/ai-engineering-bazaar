@@ -9,7 +9,7 @@ description: >
 authority: reasoning
 writes: agent, when a decision is taken
 status: active
-covers: "D97 to D108 so far — 2026-11-06 onward"
+covers: "D97 to D109 so far — 2026-11-06 onward"
 last_updated: 2026-11-08
 ---
 
@@ -199,6 +199,11 @@ the review:** no mark that carries a raster image or depends on the reader's ope
 scheme, and none unreadable at text height (a wide wordmark, a pale yellow); a mark and its name never
 part at a line break (`.bz-logo-pair`, `src/lib/content/render.ts`).
 
+**Revised 2026-11-08 (M80):** the author asked for marks wherever one exists online, and allowed a faithful
+drawing only when none can be found. LangChain's mark is its parrot-and-chain logo; fourteen marks were
+added from vendor repositories, sites and icon sets. Still without one, for want of anything but a wordmark
+or a raster: MLX, IBM/Granite, DeepWiki, Moltbook.
+
 ### D106 · A course to take is a GitHub alert call-out, not raw HTML or a custom fence — 2026-11-08
 
 **Asked by the author:** the courses in Agents in Practice "should force people and warn them to STOP
@@ -295,6 +300,21 @@ jargon and drops the explanation); a tone change alone; and, from D86, a separat
 **Language:** the author's standing rule, restated for both tracks: middle-school plain, "no room for
 language play, vague or dense sentences"; his example of what not to write is a teaser such as "this
 problem catches people at exactly the wrong moment".
+
+### D109 · A section both tracks share has one heading, the technical one, in every language — 2026-11-08
+
+**Asked by the author:** the For Everyone headings had been "simplified for everyone, which is wrong.
+They should all share the same section headers in all languages and tracks (for those that are shared
+among tracks)." So a For Everyone section that covers the same ground as a technical section uses that
+section's heading word for word, and its Turkish and Persian files use the technical `_tr.md` and
+`_fa.md` heading for it (158 headings aligned by position, M80). Only sections that exist in one track
+keep their own heading ("Why This Matters to You", "Words You Now Know", and two For Everyone-only
+sections). **Rejected:** friendlier headings for the non-technical reader, such as "AGENTS.md: the
+Onboarding Note" or "Fingerprints of Meaning (Embeddings)"; the explanation belongs in the section, and
+one heading lets a reader, a search result and the mobile reader name the same section in both tracks.
+**With it, the same day:** technical concepts stay English in Turkish and Persian, as the translation
+rules already said, and the headings that had translated them were corrected in the technical track too
+(Parametric Memory, Vector Database'ler, Tool Schema, Context Isolation and others).
 
 ## Open questions
 

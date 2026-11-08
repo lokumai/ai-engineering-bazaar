@@ -27,7 +27,16 @@ This module is about the two tools that generate interfaces properly. It is also
 
 ![](./images/logos/google.svg)**[Google Stitch](https://stitch.withgoogle.com/)** takes a prompt, an image, a rough sketch or a spoken description. From that, it produces a high-fidelity interface, plus the HTML and CSS behind it. It came out of Google Labs at I/O 2025, and it runs on Gemini. The part that designers care about is the export. One click sends the whole design into ![](./images/logos/figma.svg)Figma, and the layout, the components and the structure arrive unchanged. So it is useful on both sides of the handoff, which is the moment when designers pass their work on to developers. It works whether you want a picture to argue about or markup to build on.
 
+![Google Stitch](./images/google-stitch-ui.webp)  
+*Stitch's own overview. You describe a design in words, by voice ("Listening...") or with an image or a link, then preview and edit it. Notice the "Design.md" tab in its design system panel: it is the file the DESIGN.md section below is about.*
+
 ![](./images/logos/claude.svg)**[Claude Design](https://claude.ai/design)** comes from Anthropic Labs and launched in April 2026. It does the same job from the other direction. It produces prototypes, slides, one-pagers and interactive pieces as real HTML, CSS and JavaScript. Two things make it interesting. First, it can take an existing **codebase** as the input. It finds the design system that is already in that code, and it applies that design system to whatever you ask for next. Second, it passes the work directly to Claude Code. That closes the gap between a prototype and the actual repository.
+
+![Claude Design's templates](./images/claude-design-types.png)  
+*Claude Design starts from one request and a template: a mobile app, slides, a document, a wireframe and more. The "Design system" menu picks a set of design decisions before anything is drawn.*
+
+![Tweaking a prototype in Claude Design](./images/claude-design-ui.webp)  
+*A prototype being adjusted in Claude Design. The Tweaks panel changes the device, dark mode, the colour theme and the text sizes without a new prompt.*
 
 Between the two tools, the pattern is clear enough. Describing a screen is now faster than drawing one. And the output is code, not a picture of code.
 
@@ -46,6 +55,9 @@ Design teams have kept these for years. What changed is who else needs to read t
 An agent that generates a screen has to make every one of those decisions while it builds the screen. It has no way to know your decisions. So it invents decisions that look plausible, and on Tuesday the answer is different. You can tell it your decisions in the prompt. That works for one screen, and it stops working at the second one.
 
 The fix is the same one that worked for instructions. Write the decisions down in a file in the repository, and let the agent read it.
+
+![A design system next to a screen built from it](./images/example-design-system.png)  
+*A design system in Google Stitch (left): its colours with their exact codes, three text styles, buttons and icons. On the right is a fitness dashboard generated from it. Every next screen you ask for, such as the suggested "workout details screen" below it, reuses the same decisions.*
 
 ## DESIGN.md
 

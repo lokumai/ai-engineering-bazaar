@@ -6,7 +6,7 @@
 
 "Dokümanlarınla sohbet et" diyen birçok ürün ve şirket içi politikalarla ilgili soruları cevaplayan birçok şirket asistanı bu şekilde çalışır. Biri şirketine "tüm dokümanlarını bilen bir yapay zekâ" sunduğunda, bu modül içeride neyin olduğunu ve neyi sorman gerektiğini anlatıyor.
 
-## RAG Neden Var?
+## RAG Neden Gerekli?
 
 Şirketinin işe yarar dokümanları var:
 
@@ -32,7 +32,7 @@ Dev bir kütüphaneden tam bir cümleyi hatırlamak zor ve güvenilmezdir. Masan
 ![Basit RAG akışı](../images/rag.png)  
 *Temel RAG akışı. Soru aynı anda iki yöne gider. Bir yol, dokümanlarında yapılan aramaya gider (resimdeki "embedding model" ve "vector store index" kutuları). Diğeri doğrudan yapay zekâya gider ve yanında aramanın bulduğu sayfalar vardır.*
 
-## Anlamın Parmak İzi (Embedding'ler)
+## Vector Embedding'ler
 
 Arama doğru maddeyi nasıl buluyor? Eşleşen kelimeleri aramıyor. Eşleşen *anlamı* arıyor.
 
@@ -50,9 +50,9 @@ Asıl işe yarayan kısım, kelimeleri değil anlamı bulması. Şu iki sözleş
 
 Neredeyse hiç ortak kelimeleri yok. Ama anlamları neredeyse aynı, bu yüzden parmak izleri birbirine yakın. Normal bir anahtar kelime araması ikinci maddeyi kaçırırdı. RAG araması onu bulur.
 
-Bu parmak izleri, **vektör veritabanı (vector database)** denen özel bir veritabanında tutulur. Milyonlarcasını saklar, her birini asıl metnine bağlar ve en yakın olanları çok hızlı bulabilir.
+Bu parmak izleri, **vector database** denen özel bir veritabanında tutulur. Milyonlarcasını saklar, her birini asıl metnine bağlar ve en yakın olanları çok hızlı bulabilir.
 
-## İki Aşama
+## RAG Süreci
 
 RAG iki parçadan oluşur.
 
@@ -61,7 +61,7 @@ RAG iki parçadan oluşur.
 1. Dokümanları topla: sözleşmeler, politikalar, PDF'ler, herhangi bir metin.
 2. Onları küçük parçalara (**chunk** denir) böl; örneğin bir paragraf ya da bir madde.
 3. Her parça için bir parmak izi üret.
-4. Parmak izlerini vektör veritabanında sakla.
+4. Parmak izlerini vector database'de sakla.
 
 **Her soru için (cevaplama):**
 
@@ -73,7 +73,7 @@ RAG iki parçadan oluşur.
 ![RAG'in offline ve online aşamaları](../images/rag-offline-online.png)  
 *Üst yarı bir kez, bir de dokümanlar değiştiğinde çalışır. Alt yarı her soruda çalışır. Resim bir adım daha ekliyor: ikinci bir kontrol ("reranker") en yakın 20 parçayı okuyup en iyi 3'ünü tutar; böylece sohbette yalnızca soruyu cevaplayan parçalar kalır.*
 
-## Aramayı Test Etmek
+## Retrieval'ı Ölçmek
 
 Cevap, ancak masaya ulaşan sayfalar kadar iyi olabilir. Arama yanlış sayfaları getirirse yapay zekâ doğru sayfaları hiç görmez ve cevap yanlış çıkar. Bu yüzden iyi bir ekip, cevapları değerlendirmeden önce aramayı kendi başına test eder. İki basit ölçü var:
 
@@ -82,7 +82,7 @@ Cevap, ancak masaya ulaşan sayfalar kadar iyi olabilir. Arama yanlış sayfalar
 
 Yanlış sayfalar zararsız değil. Onlar da masaya konur, orada yer kaplar ve yapay zekâyı şaşırtabilir.
 
-## Modeli Neden Dokümanların Üzerinde Eğitmiyoruz?
+## Neden Modeli Sadece Belgelerin Üzerinde Fine-tune Etmeyelim?
 
 [Training LLMs](training_tr.md) modülünde fine-tuning'i gördün, o yüzden bu adil bir soru.
 
@@ -101,14 +101,14 @@ Tek cümleyle: **fine-tuning modelin neyi *bildiğini* değiştirir; RAG modelin
 - **RAG**: dokümanlarının ilgili parçalarını bul, sohbete ekle, sonra cevapla.
 - **Retrieval**: "bul" adımı.
 - **Embedding**: anlamın sayılardan oluşan parmak izi.
-- **Vektör veritabanı**: parmak izlerini saklayan ve en yakın olanları hızlıca bulan veritabanı.
+- **Vector database**: parmak izlerini saklayan ve en yakın olanları hızlıca bulan veritabanı.
 - **Chunk**: bir dokümanın küçük bir parçası.
 - **Recall** ve **precision**: arama doğru sayfaların hepsini buldu mu ve bulunan sayfaların kaçı doğruydu.
 - **Citation**: kaynak sayfayı cevabın yanında göstermek.
 
 ## Özet
 
-RAG, dokümanlarını yapay zekânın dışında tutar ve her soru için masaya yalnızca ilgili parçaları koyar. Onları anlamla bulur; bunun için embedding denen parmak izlerini kullanır ve bu parmak izleri bir vektör veritabanında durur. Bu resmi aklında tut: eğitim kütüphaneyi doldurur, RAG ise masaya neyin konacağını seçer.
+RAG, dokümanlarını yapay zekânın dışında tutar ve her soru için masaya yalnızca ilgili parçaları koyar. Onları anlamla bulur; bunun için embedding denen parmak izlerini kullanır ve bu parmak izleri bir vector database'de durur. Bu resmi aklında tut: eğitim kütüphaneyi doldurur, RAG ise masaya neyin konacağını seçer.
 
 Sırada tool'lar var: bir yapay zekâ yalnızca okumayı bırakıp nasıl bir şeyler yapmaya başlıyor.
 

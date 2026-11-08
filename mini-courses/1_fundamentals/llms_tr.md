@@ -91,7 +91,7 @@ Bir agent turn'ünün içi daha kalabalıktır. HumanMessage'ından sonra model,
 
 Agent'ların nasıl işlediğinin temeli tam olarak bu ayrımdır. Bunu [LLM Tool Calling](tools_tr.md) ve [AI Agents](agents_tr.md) modüllerinde yeniden ele alacağız.
 
-## LLM Hiperparametreleri
+## LLM Hyperparameter'ları
 
 Modelin nasıl yanıt verdiğini **hiperparametre (hyperparameter)** ayarlarıyla değiştirebilirsin. Bu kelimedeki "hyper" kısmına dikkat et, çünkü bu kısım bunların yukarıdaki parametrelerle aynı şey olmadığını gösteriyor. Hiperparametreler üretimi etkiler. Yukarıda andığımız parametreler ise başka bir şeydir: onlar ağın içindeki sayılardır ve bu sayıların adedi modelin boyutunu belirler.
 
@@ -134,7 +134,7 @@ Rakamlar bunu açıkça gösteriyor. Örnek olarak 32B'lik bir modele bakalım:
 
 Model de ağırlıkları da aynı kalır, ama artık belleğin yalnızca dörtte birine ihtiyaç duyar. Fark, "bunu hiç çalıştıramam" ile "bu masaüstümde çalışıyor" arasındaki farktır.
 
-**Modelleri kendin quantize etmen gerekir mi?** Hayır, ve neredeyse hiç etmemelisin. ![](./images/logos/ollama-mono.svg)[Ollama](https://ollama.com/) ve [Unsloth](https://unsloth.ai/), Qwen, Llama, Mistral, Gemma ve daha fazlası gibi popüler modellerin hazır quantize edilmiş sürümlerini zaten yayımlıyor. Bunlardan birini çekip çalıştırman yeterli.
+**Modelleri kendin quantize etmen gerekir mi?** Hayır, ve neredeyse hiç etmemelisin. ![](./images/logos/ollama-mono.svg)[Ollama](https://ollama.com/) ve ![](./images/logos/unsloth.svg)[Unsloth](https://unsloth.ai/), Qwen, Llama, Mistral, Gemma ve daha fazlası gibi popüler modellerin hazır quantize edilmiş sürümlerini zaten yayımlıyor. Bunlardan birini çekip çalıştırman yeterli.
 
 ### Modeli Gerçekte Çalıştıran Motorlar
 
@@ -142,7 +142,7 @@ Her şeyin altında, asıl işi yapan bir **inference engine** var:
 
 - ![](./images/logos/llamacpp.svg)**llama.cpp**
 - ![](./images/logos/vllm.svg)**vLLM** (NVIDIA, AMD, TPU'lar)
-- **SGLang** (yalnızca NVIDIA)
+- ![](./images/logos/sglang.svg)**SGLang** (yalnızca NVIDIA)
 - ![](./images/logos/nvidia.svg)**TensorRT-LLM** (NVIDIA, AMD)
 - **MLX** (yalnızca Apple)
 

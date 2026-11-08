@@ -266,7 +266,7 @@ function mouthSVG(c){
   if(c.beard) return `<path d="M103,133 Q110,138 117,133" stroke="#E7A79A" stroke-width="2.4" fill="none" stroke-linecap="round"/>`;
   return `<path d="M104,132 Q110,136.5 116,132" stroke="${c.lip}" stroke-width="2.2" fill="none" stroke-linecap="round"/>`;
 }
-function hatSVG(h){
+function hatSVGBase(h){
   if(!h) return '';
   const k=h.k;
   // M49 — an Ottoman scholar's kavuk: a tall rounded cap wound in white
@@ -294,7 +294,7 @@ function borkCloth(view){
   if(view==='b') return `<path d="M102,40 Q110,32 118,40 L122,196 Q110,204 98,196Z" fill="#F4EFE6"/><path d="M106,52 L104,192 M110,46 V198 M114,52 L116,192" stroke="#DCD3C3" stroke-width="1.6"/><path d="M98,196 Q110,204 122,196 L122,190 Q110,198 98,190Z" fill="#E4DCCD"/>`;
   return `<path d="M124,38 Q144,34 147,54 L150,170 Q146,180 139,172 L137,70 Q134,48 124,46Z" fill="#E9E2D5"/><path d="M142,58 L145,168" stroke="#D2C8B7" stroke-width="2"/>`;
 }
-function hairSVG(c){
+function hairSVGBase(c){
   const hc=c.hair; let back='', front='';
   switch(c.hs){
     case 'puff':
@@ -342,9 +342,10 @@ function headSVG(c, o, view){
     const bald = c.hs==='tufts';
     s+=`<ellipse cx="110" cy="110" rx="${rx+.5}" ry="${ry+1}" fill="${(c.hs==='none'||bald)?c.skin:c.hair}"/>`;
     if(bald) s+=`<ellipse cx="87" cy="110" rx="6" ry="13" fill="${c.hair}"/><ellipse cx="133" cy="110" rx="6" ry="13" fill="${c.hair}"/><path d="M92,126 Q110,150 128,126 L128,140 Q110,158 92,140Z" fill="${c.beardC}"/>`;
-    if(c.hs==='bob'||c.hs==='tousled'||c.hs==='curls') s+=`<ellipse cx="110" cy="108" rx="${rx+1}" ry="${ry+2}" fill="${c.hair}"/>`;
+    if(c.hs==='bob'||c.hs==='tousled'||c.hs==='curls'||c.hs==='lowbun'||c.hs==='loose'||c.hs==='plait'||c.hs==='updo') s+=`<ellipse cx="110" cy="108" rx="${rx+1}" ry="${ry+2}" fill="${c.hair}"/>`;
     if(c.hs==='puff') s+=`<ellipse cx="110" cy="108" rx="${rx+3}" ry="${ry}" fill="${c.hair}"/>`;
     s+=H.front;
+    s+=(H.bv||'');
     s+=hatSVG(o.hat);
     if(o.hat && o.hat.k==='bork') s+=borkCloth('b');
     return s;
@@ -535,26 +536,26 @@ function robotSVG(acc, opt={}){
 /* Same generator, same 220 x 400 grid, same hand: only the people, their headcloths and what they carry are new.
    Skin, face, hair, robe and prop are parameters, as for the seven. */
 Object.assign(CAST, {
-  nuriye:{ name:'Nuriye', skin:'#D9A47A', sh:'#BC8660', blush:'#CF7C66', lip:'#A5504C', hair:'#2A1C18', hs:'none',
+  nuriye:{ name:'Nuriye', skin:'#D9A47A', sh:'#BC8660', blush:'#CF7C66', lip:'#A5504C', hair:'#2A1C18', hs:'braids', tie:'#2F8C86',
     brow:'normal', bw:2.4, eyes:'wide', nose:'long', face:[23,26], lashes:true,
     ott:{ body:'robe', c1:'#A0503C', c2:'#F6EEDF', c3:'#2F8C86', hem:54, shoe:'#5C4A32',
-      hat:{k:'scarf', c1:'#2F8C86', c2:'#F6EEDF', dots:true}, prop:'bohca', run:'level', role:'a cloth peddler' } },
-  emine:{ name:'Emine', skin:'#E3B58E', sh:'#C58F6A', blush:'#D98B74', lip:'#A5504C', hair:'#BDB8C4', hs:'none',
+      prop:'bohca', run:'level', role:'a cloth peddler' } },
+  emine:{ name:'Emine', skin:'#E3B58E', sh:'#C58F6A', blush:'#D98B74', lip:'#A5504C', hair:'#B9B4BE', hs:'lowbun',
     brow:'normal', bw:2.2, eyes:'round', nose:'small', face:[23,26], lashes:true, lines:true,
     ott:{ body:'robe', c1:'#7A4A86', c2:'#C99A4B', c3:'#B8873B', hem:55, shoe:'#5C4A32',
-      hat:{k:'scarf', c1:'#E6C27A', c2:'#7A4A86', dots:true}, prop:'hoop', run:'level', role:'an embroiderer' } },
-  zeynep:{ name:'Zeynep', skin:'#D49A6A', sh:'#B87D52', blush:'#E08E78', lip:'#B5524F', hair:'#2A1C18', hs:'none',
+      prop:'hoop', run:'level', role:'an embroiderer' } },
+  zeynep:{ name:'Zeynep', skin:'#D49A6A', sh:'#B87D52', blush:'#E08E78', lip:'#B5524F', hair:'#6B3A22', hs:'loose',
     brow:'thick', bw:2.8, eyes:'wide', nose:'button', face:[23,25], lashes:true,
     ott:{ body:'robe', c1:'#3D6B9A', c2:'#F6EEDF', c3:'#C8552E', hem:54, vest:'#F6EEDF', shoe:'#5C4A32',
-      hat:{k:'scarf', c1:'#F6EEDF', c2:'#C8552E', dots:true}, prop:'tray', run:'level', role:'a lokum maker' } },
-  mihri:{ name:'Mihrî', skin:'#E0B088', sh:'#C28E66', blush:'#D98A74', lip:'#9E4A44', hair:'#2A1C18', hs:'none',
+      hat:{k:'ribbon', c1:'#C8552E'}, prop:'tray', run:'level', role:'a lokum maker' } },
+  mihri:{ name:'Mihrî', skin:'#E0B088', sh:'#C28E66', blush:'#D98A74', lip:'#9E4A44', hair:'#1E1A22', hs:'plait',
     brow:'arch', bw:2.4, eyes:'round', nose:'small', face:[22,26], lashes:true,
     ott:{ body:'robe', c1:'#21665F', c2:'#DDB46A', c3:'#A0503C', hem:54, shoe:'#3A2A22',
-      hat:{k:'scarf', c1:'#CFC8E4', c2:'#8E8A9E', dots:false}, prop:'book', run:'level', role:'a poet' } },
-  aliye:{ name:'Fatma Aliye', skin:'#EBC9A3', sh:'#CFA27C', blush:'#E0907C', lip:'#9E4A44', hair:'#2A1C18', hs:'none',
+      hat:{k:'circlet'}, prop:'book', run:'level', role:'a poet' } },
+  aliye:{ name:'Fatma Aliye', skin:'#EBC9A3', sh:'#CFA27C', blush:'#E0907C', lip:'#9E4A44', hair:'#3A2A22', hs:'updo',
     brow:'arch', bw:2.2, eyes:'round', nose:'long', face:[22,26], lashes:true,
     ott:{ body:'robe', c1:'#3A3F5C', c2:'#C9C6E4', c3:'#7A4A86', hem:56, wide:true, loose:true, shoe:'#25233F',
-      hat:{k:'scarf', c1:'#EDE6D6', c2:'#8E8A9E', dots:false}, prop:'papers', run:'level', role:'a writer' } },
+      hat:{k:'flowers'}, prop:'papers', run:'level', role:'a writer' } },
 });
 
 /* what each one carries, in the hand: (x,y) is the palm, as for the spice bowl and the map */
@@ -594,6 +595,49 @@ Object.assign(PROP, {
     `<path d="M${x+22},${y-4} L${x+36},${y-52}" stroke="#25233F" stroke-width="3.2" stroke-linecap="round"/><path d="M${x+36},${y-52} l-1.4,-7" stroke="#DDB46A" stroke-width="2.4" stroke-linecap="round"/>`,
 });
 
+/* ---- uncovered hair (the author, 2026-11-08: no headcloth on any of the five) ----
+   Each style returns {back, front, bv}: `back` is drawn behind the face, `front` over it, and `bv` only
+   when seen from behind (what hangs down the back). A style is a hair colour and a shape; the
+   accessories (ribbon, circlet, flowers) go through the hat slot and never cover the hair. */
+const HAIR = {
+  // Emine: grey, parted in the middle and smoothed over the ears, gathered in a low knot at the nape
+  lowbun:(c)=>({
+    back:'',
+    front:`<path d="M85,114 Q82,76 110,72 Q138,76 135,114 Q133,98 126,94 Q118,90 110,96 Q102,90 94,94 Q87,98 85,114Z" fill="${c.hair}"/><path d="M85,110 Q83,124 88,133 L92,112Z M135,110 Q137,124 132,133 L128,112Z" fill="${c.hair}"/><path d="M110,75 L110,96" stroke="#00000026" stroke-width="1.4"/>`,
+    bv:`<circle cx="110" cy="142" r="15" fill="${c.hair}"/><path d="M99,137 Q110,129 121,137 M101,147 Q110,153 119,147" stroke="#00000030" stroke-width="2" fill="none"/><path d="M119,149 l12,-9" stroke="#C99A4B" stroke-width="2.8" stroke-linecap="round"/>`,
+  }),
+  // Zeynep: loose, wavy, to below the shoulder, and a fringe swept to one side
+  loose:(c)=>({
+    back:`<path d="M87,98 Q70,130 76,166 Q72,190 84,204 Q97,198 94,177 Q100,150 94,118Z" fill="${c.hair}"/><path d="M133,98 Q150,130 144,166 Q148,190 136,204 Q123,198 126,177 Q120,150 126,118Z" fill="${c.hair}"/>`,
+    front:`<path d="M85,112 Q80,74 110,70 Q140,74 135,112 Q132,94 120,91 Q112,101 104,92 Q91,94 85,112Z" fill="${c.hair}"/><path d="M92,82 Q102,74 114,77 M118,76 Q128,78 132,88" stroke="#FFFFFF" stroke-opacity=".16" stroke-width="2.4" fill="none" stroke-linecap="round"/>`,
+    bv:`<path d="M84,104 Q72,160 80,206 Q95,218 110,207 Q125,218 140,206 Q148,160 136,104Z" fill="${c.hair}"/><path d="M96,130 Q104,160 98,196 M110,128 Q116,164 110,200 M124,130 Q118,160 124,194" stroke="#00000026" stroke-width="2" fill="none" stroke-linecap="round"/>`,
+  }),
+  // Mihrî: parted and smoothed back from a gold circlet, in one long plait down the back
+  plait:(c)=>({
+    back:'',
+    front:`<path d="M85,114 Q82,76 110,72 Q138,76 135,114 Q133,98 126,94 Q118,90 110,96 Q102,90 94,94 Q87,98 85,114Z" fill="${c.hair}"/><path d="M85,110 Q83,122 88,130 L92,112Z M135,110 Q137,122 132,130 L128,112Z" fill="${c.hair}"/><path d="M110,75 L110,96" stroke="#FFFFFF" stroke-opacity=".18" stroke-width="1.4"/>`,
+    bv:[0,1,2,3,4,5,6,7,8,9].map(i=>`<ellipse cx="${110+(i%2?2:-2)}" cy="${146+i*15}" rx="${9-i*.35}" ry="9" fill="${c.hair}"/>`).join('')+`<rect x="104" y="292" width="12" height="7" rx="2.5" fill="#C99A4B"/><path d="M106,299 l-3,10 M110,299 v11 M114,299 l3,10" stroke="${c.hair}" stroke-width="3" stroke-linecap="round"/>`,
+  }),
+  // Fatma Aliye: the 1890s, waved and puffed over the brow and pinned up in a roll on the crown
+  updo:(c)=>({
+    back:`<ellipse cx="110" cy="64" rx="25" ry="15" fill="${c.hair}"/>`,
+    front:`<path d="M84,114 Q78,72 110,66 Q142,72 136,114 Q132,94 122,88 Q110,80 98,88 Q88,94 84,114Z" fill="${c.hair}"/><path d="M92,84 Q104,72 118,76 M100,92 Q110,84 122,90" stroke="#FFFFFF" stroke-opacity=".14" stroke-width="2.4" fill="none" stroke-linecap="round"/>`,
+    bv:`<path d="M92,92 Q110,104 128,92 M88,108 Q110,122 132,108 M96,124 Q110,132 124,124" stroke="#00000026" stroke-width="2" fill="none" stroke-linecap="round"/>`,
+  }),
+};
+function hairSVG(c){ return HAIR[c.hs] ? HAIR[c.hs](c) : hairSVGBase(c) }
+
+/* the accessories: none of them covers the hair */
+const HATS = {
+  // a satin ribbon round the crown, tied in a bow at one temple
+  ribbon:(h)=>`<path d="M86,100 Q110,84 134,100 L134,106 Q110,91 86,106Z" fill="${h.c1}"/><path d="M92,99 Q74,86 76,104 Q86,108 92,99Z M92,99 Q98,82 110,86 Q104,98 92,99Z" fill="${h.c1}"/><circle cx="92" cy="99" r="3.2" fill="#8F3416"/><path d="M90,103 Q84,118 88,128 M92,103 Q96,116 94,126" stroke="${h.c1}" stroke-width="3.6" fill="none" stroke-linecap="round"/>`,
+  // a thin gold band over the brow with one stone and a drop
+  circlet:(h)=>`<path d="M86,100 Q110,84 134,100" stroke="#DDB46A" stroke-width="4.2" fill="none" stroke-linecap="round"/><circle cx="110" cy="91.5" r="3.6" fill="#2F8C86"/><path d="M110,95 v6" stroke="#DDB46A" stroke-width="2" stroke-linecap="round"/><circle cx="110" cy="103" r="2.2" fill="#C8552E"/>`,
+  // a sprig of small flowers pinned at the crown
+  flowers:(h)=>`<path d="M122,70 Q134,64 144,72 M126,78 Q140,80 146,90" stroke="#4B7A52" stroke-width="2.4" fill="none" stroke-linecap="round"/><g><circle cx="128" cy="68" r="5.6" fill="#E8A5B0"/><circle cx="138" cy="72" r="5" fill="#F6EEDF"/><circle cx="130" cy="79" r="4.6" fill="#C8552E"/><circle cx="143" cy="84" r="4.2" fill="#E8A5B0"/></g><g fill="#DDB46A"><circle cx="128" cy="68" r="1.8"/><circle cx="138" cy="72" r="1.6"/><circle cx="130" cy="79" r="1.5"/><circle cx="143" cy="84" r="1.4"/></g>`,
+};
+function hatSVG(h){ return h && HATS[h.k] ? HATS[h.k](h) : hatSVGBase(h) }
+
 /* the captions and the stories, in the voice and length of the seven (cast.ts). English is what the page shows (D80);
    the Turkish and the Persian are drafts for the author, in case the stories are ever localised. */
 const WHO = {
@@ -625,13 +669,13 @@ const CAND = [
     tr:'Zeynep lokumun olup olmadığını anlamak için soğuk suya bir damla sıcak şerbet damlatır. Kendi damak tadından çok bu denemeye güvenir, çünkü deneme her seferinde aynı cevabı verir.',
     fa:'زینب برای اینکه بفهمد لوکوم آماده است یا نه، یک قطره شربت داغ توی آب سرد می‌ریزد. به این آزمایش بیشتر از مزه‌ی دهان خودش اعتماد دارد، چون هر بار همان جواب را می‌دهد.' },
   { code:'D', id:'mihri', cap:'Mihrî · poet', kind:'Inspired by Mihrî Hatun (Amasya, 15th century)',
-    who:'Mihrî Hatun, an Ottoman poet from Amasya whose collected poems are the first by an Ottoman woman known to survive; her style is described as plain and sincere. Drawn as a woman of the 15th-century provinces: a pale headcloth, a plain robe, her divan and a reed pen.',
+    who:'Mihrî Hatun, an Ottoman poet from Amasya whose collected poems are the first by an Ottoman woman known to survive; her style is described as plain and sincere. Drawn as a woman of the 15th-century provinces: hair parted and plaited, a gold circlet, a plain robe, her divan and a reed pen.',
     idea:'Clear instructions: say what you mean in plain words.',
     story:'Mihrî of Amasya wrote the oldest book of poems by an Ottoman woman that still survives. She said what she meant in plain words, and readers still understand her.',
     tr:'Amasyalı Mihrî, bir Osmanlı kadınının günümüze ulaşan ilk şiir kitabını yazdı. Ne demek istiyorsa sade sözlerle söyledi, okurlar onu hâlâ anlıyor.',
     fa:'میهری از آماسیا قدیمی‌ترین دفتر شعرِ یک زن عثمانی را نوشت که تا امروز مانده. حرفش را با کلمه‌های ساده می‌زد و هنوز هم خواننده منظورش را می‌فهمد.' },
   { code:'E', id:'aliye', cap:'Fatma Aliye · writer', kind:'Inspired by Fatma Aliye (1862 to 1936)',
-    who:'Fatma Aliye Hanım, one of the first women in the Ottoman lands to write novels. She entered print as a translator, signing as "A Woman". Drawn in the loose coat and sheer headcloth of 1890s Istanbul, with a sheaf of pages and a pen.',
+    who:'Fatma Aliye Hanım, one of the first women in the Ottoman lands to write novels. She entered print as a translator, signing as "A Woman". Drawn in the loose coat of 1890s Istanbul, her hair waved and pinned up with flowers, with a sheaf of pages and a pen.',
     idea:'Judge an answer by what it says, not by who or what sent it.',
     story:'Fatma Aliye began as a translator and signed her first book only "A Woman". Readers could judge nothing but the pages, as you should judge a model\'s answer.',
     tr:'Fatma Aliye çevirmen olarak başladı ve ilk kitabını yalnızca "Bir Kadın" diye imzaladı. Okurun elinde sayfalardan başka bir şey yoktu; bir modelin cevabını da böyle değerlendirmek gerekir.',

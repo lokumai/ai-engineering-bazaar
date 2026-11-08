@@ -8,7 +8,7 @@ description: >
   (M64 to M69), the search filters (M70) and their Filters disclosure (M71), the gate stories (M72),
   Advanced Agent Servers (M73), vendor logos (M74), course call-out cards, Mermaid themes and Mihrî
   (M75), the For Everyone versions (M76 to M79), shared headings and logos (M80), and diagram
-  backgrounds and copy (M81). Each milestone carries its deliverables and acceptance
+  backgrounds and copy (M81), and Agentic UI (M82). Each milestone carries its deliverables and acceptance
   criteria as `- [ ]` checkboxes, ticked as the work lands, and closes with a dated report; the loop
   that governs that is below, in this file.
   NOT here: why a choice was made (BRAINSTORM.md), or any rule that outlives the milestone
@@ -16,8 +16,8 @@ description: >
 authority: state
 writes: agent, every session
 status: active
-covers: "M50 to M81, 2026-11-06 onward"
-last_updated: 2026-11-08
+covers: "M50 to M82, 2026-11-06 onward"
+last_updated: 2026-11-09
 ---
 
 # 📈 PROGRESS, part 3 — M50 onward
@@ -1248,6 +1248,20 @@ sweep. Logos by a Sonnet subagent from vendor repositories, sites and icon sets,
 - [x] "Redux dark and redux dark color are duplicate": measured, not a site bug. Mermaid's `-color`
       themes colour groups, so the twins match on the 92 plain flowcharts and differ on the 6 mind maps
       and 6 subgraph flowcharts; both kept (PR #83).
+
+## 🏁 Milestone M82: Agentic UI written, and Advanced Agentic UI planned (D110)
+
+The author, 2026-11-09, approved a draft of the technical module after reading it in chat, and asked for
+everything else: the GIF as WebP, Turkish and Persian, the For Everyone version and its translations, a
+Haiku review, and the merge.
+
+- [ ] `ui` retitled Agentic UI and written (ready, 25 minutes), with a quiz; `advanced_ui` retitled Advanced
+      Agentic UI with the author's topics; series maps, README and index renamed; `topics.txt` updated.
+- [ ] Two figures: the agent protocol stack (`ag-ui-mcp.png`) and a streaming run (`streaming-ui.webp`,
+      converted from a 5.2 MB GIF to a 672 KB animated WebP at 1280 px, 344 frames).
+- [ ] Turkish and Persian technical versions, technical words kept English; the quiz in three languages.
+- [ ] The For Everyone version in English, Turkish and Persian, with the technical headings (D109).
+- [ ] A Haiku review at xhigh, findings fixed, merged.
 
 ---
 

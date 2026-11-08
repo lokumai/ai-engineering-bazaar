@@ -9,8 +9,8 @@ description: >
 authority: reasoning
 writes: agent, when a decision is taken
 status: active
-covers: "D97 to D109 so far — 2026-11-06 onward"
-last_updated: 2026-11-08
+covers: "D97 to D110 so far — 2026-11-06 onward"
+last_updated: 2026-11-09
 ---
 
 # 🧠 BRAINSTORM, part 3 — D97 onward
@@ -315,6 +315,24 @@ one heading lets a reader, a search result and the mobile reader name the same s
 **With it, the same day:** technical concepts stay English in Turkish and Persian, as the translation
 rules already said, and the headings that had translated them were corrected in the technical track too
 (Parametric Memory, Vector Database'ler, Tool Schema, Context Isolation and others).
+
+### D110 · "Generative UI" becomes Agentic UI; generative UI moves to Advanced Agentic UI — 2026-11-09
+
+**Asked by the author:** the intermediate module is renamed **Agentic UI**, after CopilotKit's
+definition: user interface built for humans and AI agents to work in the same application, streaming
+agent work as it happens, accepting steering and approvals mid-run, rendering agent-generated interface
+beside developer-built components, and keeping state synchronised. Its subject is the streaming base:
+why a run is streamed as events, the event contract between backend and frontend, the coupling a
+framework's own format creates, **AG-UI** as the shared contract (the same decoupling MCP gave tools), and
+the protocol stack MCP / A2A / AG-UI. **Generative UI** (the agent producing the interface itself) is not
+taught there; it moves to the Expert module, retitled **Advanced Agentic UI**, together with shared state,
+human in the loop, agentic GenUI, A2UI, MCP Apps, OpenUI and json-render. **Kept:** the module names `ui` and
+`advanced_ui` and their addresses, so only the titles change and nothing needs a `moved.ts` entry.
+**Rejected:** keeping "Generative UI" as the intermediate title, which names the advanced idea and not the
+streaming base the module teaches. AG-UI facts (event names, fields, integrations) were read from its docs
+and its 1.0 JSON schema, not from memory: the wire `type` is `RUN_STARTED` and so on, the docs name the
+events `RunStarted` and so on, and the docs credit the CopilotKit team "in collaboration with" partner
+frameworks rather than a single origin.
 
 ## Open questions
 

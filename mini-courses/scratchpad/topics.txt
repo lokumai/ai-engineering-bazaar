@@ -20,7 +20,7 @@ https://www.langchain.com/blog/traces-start-agent-improvement-loop
 12) agents_in_practice (Agents in Practice: why take these courses and why Claude, then the Claude Academy courses; engineers: claude-101, claude-code-101, claude-code-in-action, introduction-to-claude-cowork; everyone: claude-101, claude-code-101 (optional), introduction-to-claude-cowork; Cowork vs. Duet)
 13) harness_engineering (includes guardrails, hooks, sandboxes, etc)
 14) loop_engineering (Rubric Evals; Agent Teams, Dynamic Workflows and RLMs moved to advanced_loop_engineering, issue #48)
-15) ui (generative UI, event streaming, SSE)
+15) ui, titled Agentic UI (agentic UI per CopilotKit, why a run is streamed as events, the frontend/backend event contract, AG-UI and its events, decoupling like MCP, the agent protocol stack MCP/A2A/AG-UI; written 2026-11-09. Generative UI moved to advanced_ui)
 16) security (Jailbreaking, White-box, Black-box, Guardrails, Llama Guard, NemotronGuard etc.)
 17) personal_agents (Opeclaw, Hermes Agent, Moltbook)
 
@@ -39,7 +39,7 @@ https://www.langchain.com/blog/traces-start-agent-improvement-loop
 28) advanced_harness_engineering (harness profiles, linting (LSP) and pre-commit gate with security scan and Ruff, system prompts, changing tool names, self evolving harnessess, context and harness embedded in llm anthtropic article: https://claude.com/blog/the-new-rules-of-context-engineering-for-claude-5-generation-models)
 29) advanced_loop_engineering (Agent Teams, Dynamic Workflows, RLMs, moved from loop_engineering, issue #48)
 30) advanced_agent_architectures (THREAD, ReAct, Deep, CodeAct, RLM; Dynamic Workflows moved to advanced_loop_engineering)
-31) advanced_ui (agentic UI, AG-UI, MCP-Apps UI, A2UI, Copilotkit, Agent Client Protocol ACP, TUI for agents)
+31) advanced_ui, titled Advanced Agentic UI (generative UI: the model producing the interface, not just the text inside it; shared state; human in the loop; agentic GenUI; A2UI; MCP Apps; OpenUI; json-render; CopilotKit; Agent Client Protocol ACP; TUI for agents. Sources: https://www.copilotkit.ai/ag-ui, https://dojo.ag-ui.com/, https://www.copilotkit.ai/generative-ui, https://research.google/blog/generative-ui-a-rich-custom-visual-interactive-user-experience-for-any-prompt/)
 32) advanced_deployment (agent server, langchain agent protocol, the tech stack for UI REDIS WORKER et, Human-in-the-Lopp (Interrupt, Steering), Runtime (Checkpoints, Fault Tolerance, Time Travel)) 
 33) advanced_agent_servers ("Advanced Agent Servers"; drafted in 3_expert/advanced_agent_servers.md from these notes, to be revised when the module is planned):
   1. Aegra (native Redis worker queue + lease locks; simple blocking pipelines; lease-based heartbeat in Redis for crash recovery; Redis pub/sub for streaming to the frontend; needs custom application-level heartbeat loops; brittle: if a worker crashes without a standalone sweeper script, jobs disappear. Choose it for a lightweight, simple, multi-language cluster where tasks are linear and memory costs must stay minimal: absolute minimum infrastructure overhead, zero RAM accumulation (data leaves memory on pop), supported in every programming language.)

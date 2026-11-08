@@ -222,7 +222,7 @@ graph LR
     C --> D[Agents in Practice]
     D --> E[Harness Engineering]
     E --> F[Loop Engineering]
-    F --> G[Generative UI]
+    F --> G[Agentic UI]
     G --> H[Security]
     H --> I[Personal Agents]
     style A fill:#90EE90

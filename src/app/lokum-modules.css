@@ -9,7 +9,7 @@
    there has to be. What the generator removes is writing them out by hand,
    keyed on a number the curriculum computes.
 
-   44 modules, 20 of them drawn. */
+   44 modules, 21 of them drawn. */
 
 @layer components {
   /* A. Every module. The segment fills with its own category's hue.
@@ -77,6 +77,7 @@
   html.hl-e-signed-12 [data-track="everyone"] .bz-seg[data-module="12"],
   html.hl-e-signed-13 [data-track="everyone"] .bz-seg[data-module="13"],
   html.hl-e-signed-14 [data-track="everyone"] .bz-seg[data-module="14"],
+  html.hl-e-signed-15 [data-track="everyone"] .bz-seg[data-module="15"],
   html.hl-e-signed-16 [data-track="everyone"] .bz-seg[data-module="16"],
   html.hl-e-signed-17 [data-track="everyone"] .bz-seg[data-module="17"],
   html.hl-e-signed-35 [data-track="everyone"] .bz-seg[data-module="35"],
@@ -109,6 +110,7 @@
   html.hl-signed-12 [data-track="engineers"] .bz-item[data-module="12"] .bz-tick,
   html.hl-signed-13 [data-track="engineers"] .bz-item[data-module="13"] .bz-tick,
   html.hl-signed-14 [data-track="engineers"] .bz-item[data-module="14"] .bz-tick,
+  html.hl-signed-15 [data-track="engineers"] .bz-item[data-module="15"] .bz-tick,
   html.hl-signed-16 [data-track="engineers"] .bz-item[data-module="16"] .bz-tick,
   html.hl-signed-17 [data-track="engineers"] .bz-item[data-module="17"] .bz-tick,
   html.hl-signed-35 [data-track="engineers"] .bz-item[data-module="35"] .bz-tick,
@@ -131,6 +133,7 @@
   html.hl-e-signed-12 [data-track="everyone"] .bz-item[data-module="12"] .bz-tick,
   html.hl-e-signed-13 [data-track="everyone"] .bz-item[data-module="13"] .bz-tick,
   html.hl-e-signed-14 [data-track="everyone"] .bz-item[data-module="14"] .bz-tick,
+  html.hl-e-signed-15 [data-track="everyone"] .bz-item[data-module="15"] .bz-tick,
   html.hl-e-signed-16 [data-track="everyone"] .bz-item[data-module="16"] .bz-tick,
   html.hl-e-signed-17 [data-track="everyone"] .bz-item[data-module="17"] .bz-tick,
   html.hl-e-signed-35 [data-track="everyone"] .bz-item[data-module="35"] .bz-tick,
@@ -158,6 +161,7 @@
   html.hl-signed-12 [data-track="engineers"] .bz-cmod[data-module="12"] .bz-cmod-mark,
   html.hl-signed-13 [data-track="engineers"] .bz-cmod[data-module="13"] .bz-cmod-mark,
   html.hl-signed-14 [data-track="engineers"] .bz-cmod[data-module="14"] .bz-cmod-mark,
+  html.hl-signed-15 [data-track="engineers"] .bz-cmod[data-module="15"] .bz-cmod-mark,
   html.hl-signed-16 [data-track="engineers"] .bz-cmod[data-module="16"] .bz-cmod-mark,
   html.hl-signed-17 [data-track="engineers"] .bz-cmod[data-module="17"] .bz-cmod-mark,
   html.hl-signed-35 [data-track="engineers"] .bz-cmod[data-module="35"] .bz-cmod-mark,
@@ -180,6 +184,7 @@
   html.hl-e-signed-12 [data-track="everyone"] .bz-cmod[data-module="12"] .bz-cmod-mark,
   html.hl-e-signed-13 [data-track="everyone"] .bz-cmod[data-module="13"] .bz-cmod-mark,
   html.hl-e-signed-14 [data-track="everyone"] .bz-cmod[data-module="14"] .bz-cmod-mark,
+  html.hl-e-signed-15 [data-track="everyone"] .bz-cmod[data-module="15"] .bz-cmod-mark,
   html.hl-e-signed-16 [data-track="everyone"] .bz-cmod[data-module="16"] .bz-cmod-mark,
   html.hl-e-signed-17 [data-track="everyone"] .bz-cmod[data-module="17"] .bz-cmod-mark,
   html.hl-e-signed-35 [data-track="everyone"] .bz-cmod[data-module="35"] .bz-cmod-mark,
@@ -213,6 +218,7 @@
   html.hl-signed-12 [data-track="engineers"] .bz-cmod[data-module="12"] .bz-cmod-said,
   html.hl-signed-13 [data-track="engineers"] .bz-cmod[data-module="13"] .bz-cmod-said,
   html.hl-signed-14 [data-track="engineers"] .bz-cmod[data-module="14"] .bz-cmod-said,
+  html.hl-signed-15 [data-track="engineers"] .bz-cmod[data-module="15"] .bz-cmod-said,
   html.hl-signed-16 [data-track="engineers"] .bz-cmod[data-module="16"] .bz-cmod-said,
   html.hl-signed-17 [data-track="engineers"] .bz-cmod[data-module="17"] .bz-cmod-said,
   html.hl-signed-35 [data-track="engineers"] .bz-cmod[data-module="35"] .bz-cmod-said,
@@ -235,6 +241,7 @@
   html.hl-e-signed-12 [data-track="everyone"] .bz-cmod[data-module="12"] .bz-cmod-said,
   html.hl-e-signed-13 [data-track="everyone"] .bz-cmod[data-module="13"] .bz-cmod-said,
   html.hl-e-signed-14 [data-track="everyone"] .bz-cmod[data-module="14"] .bz-cmod-said,
+  html.hl-e-signed-15 [data-track="everyone"] .bz-cmod[data-module="15"] .bz-cmod-said,
   html.hl-e-signed-16 [data-track="everyone"] .bz-cmod[data-module="16"] .bz-cmod-said,
   html.hl-e-signed-17 [data-track="everyone"] .bz-cmod[data-module="17"] .bz-cmod-said,
   html.hl-e-signed-35 [data-track="everyone"] .bz-cmod[data-module="35"] .bz-cmod-said,
@@ -266,6 +273,7 @@
   html.hl-signed-12 [data-track="engineers"] .bz-seg[data-module="12"],
   html.hl-signed-13 [data-track="engineers"] .bz-seg[data-module="13"],
   html.hl-signed-14 [data-track="engineers"] .bz-seg[data-module="14"],
+  html.hl-signed-15 [data-track="engineers"] .bz-seg[data-module="15"],
   html.hl-signed-16 [data-track="engineers"] .bz-seg[data-module="16"],
   html.hl-signed-17 [data-track="engineers"] .bz-seg[data-module="17"],
   html.hl-signed-35 [data-track="engineers"] .bz-seg[data-module="35"],
@@ -292,6 +300,7 @@
   html.hl-e-signed-12 [data-track="everyone"] .bz-seg[data-module="12"],
   html.hl-e-signed-13 [data-track="everyone"] .bz-seg[data-module="13"],
   html.hl-e-signed-14 [data-track="everyone"] .bz-seg[data-module="14"],
+  html.hl-e-signed-15 [data-track="everyone"] .bz-seg[data-module="15"],
   html.hl-e-signed-16 [data-track="everyone"] .bz-seg[data-module="16"],
   html.hl-e-signed-17 [data-track="everyone"] .bz-seg[data-module="17"],
   html.hl-e-signed-35 [data-track="everyone"] .bz-seg[data-module="35"],

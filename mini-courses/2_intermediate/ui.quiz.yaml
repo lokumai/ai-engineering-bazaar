@@ -1,0 +1,105 @@
+# Quick quiz: Agentic UI. Reinforcement, not assessment.
+questions:
+  - answer: 2
+    en:
+      question: "What does an agentic UI assume that a traditional UI does not?"
+      options:
+        - "That the user types one question and waits for one answer"
+        - "That the software behaves the same way every time"
+        - "That an agent is already running, and the human watches, directs and corrects it"
+        - "That the screen is drawn only after the work is finished"
+      explain: "A traditional UI assumes a human issuing commands to deterministic software. An agentic UI assumes a running agent whose work the human watches, directs and corrects."
+    tr:
+      question: "Agentic UI, geleneksel bir UI'ın varsaymadığı neyi varsayar?"
+      options:
+        - "Kullanıcının tek bir soru yazıp tek bir cevap beklemesini"
+        - "Yazılımın her seferinde aynı şekilde davranmasını"
+        - "Bir agent'ın zaten çalışıyor olmasını; insanın onu izlemesini, yönlendirmesini ve düzeltmesini"
+        - "Ekranın ancak iş bittikten sonra çizilmesini"
+      explain: "Geleneksel bir UI, her seferinde aynı davranan bir yazılıma komut veren bir insan varsayar. Agentic UI ise çalışan bir agent varsayar ve insan bu agent'ın işini izler, yönlendirir, düzeltir."
+    fa:
+      question: "یه agentic UI چه چیزی رو فرض می‌کنه که رابط کاربری سنتی فرض نمی‌کنه؟"
+      options:
+        - "اینکه کاربر یه سؤال می‌نویسه و منتظر یه جواب می‌مونه"
+        - "اینکه نرم‌افزار هر بار دقیقاً یه جور رفتار می‌کنه"
+        - "اینکه یه agent همین الان داره کار می‌کنه و آدم نگاهش می‌کنه، هدایتش می‌کنه و اصلاحش می‌کنه"
+        - "اینکه صفحه فقط بعد از تموم شدن کار کشیده می‌شه"
+      explain: "رابط سنتی فرض می‌کنه یه آدم به نرم‌افزاری دستور می‌ده که همیشه یه جور رفتار می‌کنه. agentic UI فرض می‌کنه یه agent در حال اجراست و آدم کارش رو می‌بینه، هدایتش می‌کنه و اصلاحش می‌کنه."
+
+  - answer: 0
+    en:
+      question: "Why does an agentic UI stream the run instead of returning the final answer at the end?"
+      options:
+        - "The work is produced step by step anyway, and showing it lets the user see progress and catch a mistake early"
+        - "Streaming makes the model generate its answer faster"
+        - "A final answer cannot contain tool results"
+        - "The browser cannot receive one large response"
+      explain: "An agent run can take minutes. Streaming each step as it happens avoids a blank wait and lets the user stop a run that is going wrong while it is still cheap."
+    tr:
+      question: "Agentic UI neden nihai cevabı sonda döndürmek yerine run'ı stream eder?"
+      options:
+        - "İş zaten adım adım üretiliyor; onu göstermek kullanıcının ilerlemeyi görmesini ve bir hatayı erken yakalamasını sağlar"
+        - "Streaming, modelin cevabını daha hızlı üretmesini sağlar"
+        - "Nihai bir cevap tool sonuçlarını içeremez"
+        - "Tarayıcı büyük tek bir response alamaz"
+      explain: "Bir agent run'ı dakikalarca sürebilir. Her adımı olurken stream etmek boş bir beklemeyi önler ve yanlış giden bir run'ı, durdurması hâlâ ucuzken durdurmana izin verir."
+    fa:
+      question: "چرا یه agentic UI به‌جای اینکه آخر کار جواب نهایی رو برگردونه، run رو stream می‌کنه؟"
+      options:
+        - "کار به‌هرحال قدم‌به‌قدم ساخته می‌شه، و نشون دادنش باعث می‌شه کاربر پیشرفت رو ببینه و یه اشتباه رو زود بگیره"
+        - "streaming باعث می‌شه مدل جوابش رو سریع‌تر تولید کنه"
+        - "یه جواب نهایی نمی‌تونه نتیجه‌ی tool‌ها رو داشته باشه"
+        - "مرورگر نمی‌تونه یه response بزرگ رو دریافت کنه"
+      explain: "یه run‌ی agent ممکنه چند دقیقه طول بکشه. اگه هر قدم همون لحظه stream بشه، کاربر منتظر یه صفحه‌ی خالی نمی‌مونه و می‌تونه run‌ای که داره اشتباه می‌ره رو تا وقتی هنوز ارزونه متوقف کنه."
+
+  - answer: 3
+    en:
+      question: "What problem does AG-UI solve?"
+      options:
+        - "It connects an agent to its tools and data"
+        - "It lets one agent hand work to another agent"
+        - "It makes the model produce fewer tokens"
+        - "It gives every framework one shared set of events, so the front end does not depend on one backend"
+      explain: "Each framework streams its own event format, which ties the front end to it. AG-UI is one open event contract, so the agent behind the screen can be replaced, the same way MCP did it for tools."
+    tr:
+      question: "AG-UI hangi sorunu çözer?"
+      options:
+        - "Bir agent'ı tool'larına ve verisine bağlar"
+        - "Bir agent'ın işi başka bir agent'a devretmesini sağlar"
+        - "Modelin daha az token üretmesini sağlar"
+        - "Her framework'e ortak tek bir event kümesi verir; böylece front end tek bir backend'e bağımlı olmaz"
+      explain: "Her framework kendi event formatını stream eder ve bu, front end'i ona bağlar. AG-UI açık ve ortak tek bir event sözleşmesidir; böylece ekranın arkasındaki agent, MCP'nin tool'larda yaptığı gibi değiştirilebilir."
+    fa:
+      question: "AG-UI چه مشکلی رو حل می‌کنه؟"
+      options:
+        - "agent رو به tool‌ها و داده‌هاش وصل می‌کنه"
+        - "به یه agent اجازه می‌ده کار رو بسپره به یه agent دیگه"
+        - "باعث می‌شه مدل token کمتری تولید کنه"
+        - "یه مجموعه event مشترک به همه‌ی framework‌ها می‌ده، تا frontend به یه backend خاص وابسته نباشه"
+      explain: "هر framework فرمت event خودش رو stream می‌کنه و همین frontend رو بهش گره می‌زنه. AG-UI یه قرارداد باز و مشترکه، برای همین می‌شه agent پشت صفحه رو عوض کرد، همون‌طور که MCP برای tool‌ها این کار رو کرد."
+
+  - answer: 1
+    en:
+      question: "In the agent protocol stack, which side of the agent does each protocol connect?"
+      options:
+        - "MCP to users, A2A to tools, AG-UI to other agents"
+        - "MCP to tools and data, A2A to other agents, AG-UI to users"
+        - "MCP to other agents, A2A to users, AG-UI to tools"
+        - "All three connect the agent to its tools"
+      explain: "MCP covers tools and data, A2A covers other agents, and AG-UI covers the users in front of the application. A real product often uses all three."
+    tr:
+      question: "Agent protocol stack'inde her protocol agent'ın hangi tarafını bağlar?"
+      options:
+        - "MCP kullanıcılara, A2A tool'lara, AG-UI diğer agent'lara"
+        - "MCP tool'lara ve veriye, A2A diğer agent'lara, AG-UI kullanıcılara"
+        - "MCP diğer agent'lara, A2A kullanıcılara, AG-UI tool'lara"
+        - "Üçü de agent'ı tool'larına bağlar"
+      explain: "MCP tool'ları ve veriyi, A2A diğer agent'ları, AG-UI ise uygulamanın önündeki kullanıcıları kapsar. Gerçek bir ürün çoğu zaman üçünü birden kullanır."
+    fa:
+      question: "توی protocol stack برای agent، هر protocol کدوم طرف agent رو وصل می‌کنه؟"
+      options:
+        - "MCP به کاربرها، A2A به tool‌ها، AG-UI به agent‌های دیگه"
+        - "MCP به tool‌ها و داده، A2A به agent‌های دیگه، AG-UI به کاربرها"
+        - "MCP به agent‌های دیگه، A2A به کاربرها، AG-UI به tool‌ها"
+        - "هر سه agent رو به tool‌هاش وصل می‌کنن"
+      explain: "MCP tool‌ها و داده رو پوشش می‌ده، A2A agent‌های دیگه رو، و AG-UI کاربرهایی که جلوی برنامه نشستن رو. یه محصول واقعی معمولاً از هر سه استفاده می‌کنه."

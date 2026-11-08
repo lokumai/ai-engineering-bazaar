@@ -12,7 +12,7 @@ A reference to help you learn practical topics in modern AI engineering. Our goa
 | [Intermediate](https://ai-bazaar.lokum.dev/courses/intermediate/) | 9 | Prompt engineering, context engineering, code agents, agents in practice, harness engineering, loop engineering, generative UI, security, personal agents. |
 | [Ecosystem](https://ai-bazaar.lokum.dev/courses/ecosystem/) | 6 | Agent frameworks, inference providers, inference engines, UI design, choosing a tech stack, and a reference of every protocol and spec in the series. |
 | [IN PROGRESS] [Expert](https://ai-bazaar.lokum.dev/courses/expert/) | 17 | Advanced LLM, fine-tuning, post-training, RAG, tools, memory, multi-agent, prompting, context engineering, coding agents, harness engineering, loop engineering, agent architectures, UI, deployment, agent servers, LLM evaluation. |
-| [IN PROGRESS] [Emerging Trends](https://ai-bazaar.lokum.dev/sheets/trends/) | 4 | Ideas that are hot in industry and research but not settled yet: LLMs that can't jump, video rendering, recursive self-improvement, decision models. |
+| [IN PROGRESS] [Emerging](https://ai-bazaar.lokum.dev/sheets/trends/) | 4 | Ideas that are hot in industry and research but not settled yet: LLMs that can't jump, video rendering, recursive self-improvement, decision models. |
 
 ### How to Use
 

@@ -862,7 +862,26 @@ test.describe('M16 stage 6 — code and figures', () => {
   /** A module with both a code slab and a diagram in it. */
   const WITH_BOTH = '/courses/fundamentals/rag/'
 
+  /**
+   * THE MOCKUP'S FRAME IS DARK, AND A READER'S FIRST FRAME IS NOT (2026-11-08).
+   *
+   * `01` draws a diagram on the dark slab. A reader who has chosen nothing now gets Mermaid's
+   * own `default` theme, which is a light drawing, and a light drawing on a dark frame is
+   * unreadable, so a light theme sits on Paper's values (`diagram-themes.ts`, DESIGN.md). The
+   * dark frame is still what the language draws for the dark themes, and that is the frame
+   * `01` specifies, so these two tests stamp one and compare it. The light frame is a
+   * recorded deviation, held by `mermaid.spec.ts` (an edge line owes 3:1 on it in every
+   * theme) and not by the mockup, which has nothing to say about it.
+   */
+  const withDarkTheme = (page: import('@playwright/test').Page) =>
+    page.addInitScript(() => {
+      window.localStorage.setItem('hl-record', JSON.stringify({
+        schema: 1, savedAt: '2026-11-08T10:00:00.000Z', data: { prefs: { diagramTheme: 'dark' } },
+      }))
+    })
+
   test('is indistinguishable from the mockup, slab and frame alike', async ({ page }) => {
+    await withDarkTheme(page)
     await page.goto(MOCKUP_URL)
     await freezeMotion(page)
     const reference = await extractDesignFacts(page, MOCKUP_SELECTORS)
@@ -896,6 +915,7 @@ test.describe('M16 stage 6 — code and figures', () => {
    * until stage 6, and undoing the rebinding is exactly how it looked.
    */
   test('notices when a figure stops rebinding the page palette', async ({ page }) => {
+    await withDarkTheme(page)
     await page.goto(WITH_BOTH)
     await freezeMotion(page)
 

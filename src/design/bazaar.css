@@ -1566,13 +1566,20 @@
   }
 
   /* -- the palettes: Night, Paper, Blueprint ------------------------------
-     The author asked for three colourings for the diagrams and three
-     highlightings for the code (`src/lib/reading/palettes.ts` carries the
-     words). Night is the slab as designed and needs no rule here — it is what
-     `.bz-figure` and `.bz-slab` already bind. The other two REBIND, the way
-     `.bz-figure` rebinds the page palette onto the slab: a diagram's SVG and a
-     code block's token classes read custom properties, so redeclaring those on
-     the block recolours it with no re-render and no re-highlight.
+     The author asked for three highlightings for the code
+     (`src/lib/reading/palettes.ts` carries the words). Night is the slab as
+     designed and needs no rule here — it is what `.bz-slab` already binds. The
+     other two REBIND, the way `.bz-figure` rebinds the page palette onto the
+     slab: a code block's token classes read custom properties, so redeclaring
+     those on the block recolours it with no re-highlight.
+
+     THE DIAGRAMS ARE NOT A PALETTE ANY MORE (2026-11-08). The reader chooses one
+     of Mermaid's own themes (`src/lib/reading/diagram-themes.ts`), Mermaid paints
+     the drawing, and the only thing this file decides is the FRAME's ground: a
+     light theme's frame takes Paper's values and a dark theme's takes Night's,
+     chosen by the `data-hl-diagram` stamp. So the Paper rules below serve two
+     things, the code's Paper and the light diagrams' frame, and Blueprint serves
+     the code alone.
 
      **No new colour, and every value fixed in both themes.** Each palette is
      assembled from tokens the language already declares and that do not flip
@@ -1588,19 +1595,18 @@
                  #7a4a86 6.45 (#91609d 4.66 in the dark theme, where the token
                  lifts), string #a0503c 5.48, comment #6e737f 4.60, function
                  and number #282864 12.9, plain #1b1b47 15.7.
-       Blueprint — ground #282864, nodes #1b1b47. Lines #c9c6e4 8.04 / 9.80;
-                 labels #ffffff 13.3; verify 3.31; caution 4.16; info #848bd0
-                 4.17; fault takes the slab's orchid #c48ce0 at 5.18, because
-                 the clay measures 2.77 on cobalt and fails. Code keeps the
-                 slab's five hues, which were tuned for a dark ground and clear
-                 this one (5.18 to 7.33); comment #c9c6e4 8.04; plain 13.3.
-     `mermaid.spec.ts` and `accessibility.spec.ts` re-measure them off the
-     painted pixels in every palette. */
+       Blueprint (code only) — ground #282864. Code keeps the slab's five hues,
+                 which were tuned for a dark ground and clear this one (5.18 to
+                 7.33); comment #c9c6e4 8.04; plain #ffffff 13.3.
+     `accessibility.spec.ts` re-measures the code's off the painted pixels in
+     every palette, and `mermaid.spec.ts` measures the four semantic edge hues
+     on the light frame and on the dark one (3:1, in both page themes), and every
+     theme's labels, node edges and arrows on the frame its tone gives it. */
 
   /* The SLAB half of a palette: the frame, its tools and its fallback text.
      Applied to the figure's tool strip as well as its frame, because the
      strip sits over the frame and has to take the frame's ink. */
-  html[data-hl-figures="paper"] :is(.bz-figure, .bz-figure-tools, .bz-expand-view),
+  html:not(:is([data-hl-diagram="dark"], [data-hl-diagram="redux-dark"], [data-hl-diagram="redux-dark-color"], [data-hl-diagram="neo-dark"])) :is(.bz-figure, .bz-figure-tools, .bz-expand-view),
   html[data-hl-code="paper"] .bz-slab {
     --color-slab-surface: var(--color-bar-chip);
     --color-slab-surface-raised: var(--color-on-bar);
@@ -1611,7 +1617,6 @@
     --color-slab-on-raised: var(--color-on-bar-chip);
   }
 
-  html[data-hl-figures="blueprint"] :is(.bz-figure, .bz-figure-tools, .bz-expand-view),
   html[data-hl-code="blueprint"] .bz-slab {
     --color-slab-surface: var(--color-bar);
     --color-slab-surface-raised: var(--color-bar-hover);
@@ -1635,9 +1640,11 @@
     --color-slab-comment: var(--color-on-bar-dim);
   }
 
-  /* The DIAGRAM half: the page tokens mermaid's `themeCSS` paints with, which
-     `.bz-figure` already redeclares for Night. */
-  html[data-hl-figures="paper"] :is(.bz-figure, .bz-expand-view) {
+  /* The DIAGRAM half: the page tokens the semantic edges are painted with
+     (`mermaid-config.ts`), which `.bz-figure` already redeclares for the dark ground.
+     A light theme takes Paper's, so `fault`, `verify`, `info` and `caution` are
+     the hues that clear 3:1 on the light frame. */
+  html:not(:is([data-hl-diagram="dark"], [data-hl-diagram="redux-dark"], [data-hl-diagram="redux-dark-color"], [data-hl-diagram="neo-dark"])) :is(.bz-figure, .bz-expand-view) {
     --color-surface: var(--color-bar-chip);
     --color-surface-raised: var(--color-on-bar);
     --color-line-strong: var(--color-slab-arrow);
@@ -1645,16 +1652,6 @@
     --color-primary: var(--color-bar);
     --color-category-5: var(--color-band-c);
     --color-on-primary: var(--color-on-bar);
-  }
-
-  html[data-hl-figures="blueprint"] :is(.bz-figure, .bz-expand-view) {
-    --color-surface: var(--color-bar);
-    --color-surface-raised: var(--color-on-bar-chip);
-    --color-line-strong: var(--color-on-bar-dim);
-    --color-on-surface: var(--color-on-bar);
-    --color-primary: var(--color-slab-info);
-    --color-category-5: var(--color-slab-keyword);
-    --color-on-primary: var(--color-bar);
   }
 
   /* -- a tool: the icon button a diagram or a code block carries ---------
@@ -1729,6 +1726,20 @@
 
   .bz-optmenu-item:hover { background: var(--color-surface-sunken); }
 
+  /* The diagram theme menu's two groups, Light and Dark: a quiet label over each run of rows.
+     Muted ink on the raised page surface the panel is. */
+  .bz-optmenu-head {
+    margin: 0;
+    padding: 8px 10px 3px;
+    color: var(--color-on-surface-muted);
+    font: 600 var(--text-mark) / 1 var(--font-sans);
+  }
+
+  .bz-optmenu-group + .bz-optmenu-group {
+    margin-top: 4px;
+    border-top: 1px solid var(--color-line);
+  }
+
   /* The chosen palette: a check and the word `current`, both revealed by the
      carrier below and never by React, so the menu says what the page shows
      in frame one. */
@@ -1741,13 +1752,21 @@
 
   .bz-optmenu-said { display: var(--bz-chosen, none); }
 
-  /* THE CARRIER: each stamped palette with its own item, plus Night where
-     nothing is stamped — the reader who never chose, and every reader with
-     no script. One custom property, read by the two things above. */
-  html[data-hl-figures="night"] [data-hl-options="figures"] [data-hl-palette="night"],
-  html[data-hl-figures="paper"] [data-hl-options="figures"] [data-hl-palette="paper"],
-  html[data-hl-figures="blueprint"] [data-hl-options="figures"] [data-hl-palette="blueprint"],
-  html:not([data-hl-figures]) [data-hl-options="figures"] [data-hl-palette="night"],
+  /* THE CARRIER: each stamped theme or palette with its own item, plus the default
+     where nothing is stamped (the reader who never chose, and every reader with no
+     script). The diagrams' default is Mermaid's `default` and the code's is Night. One
+     custom property, read by the two things above. */
+  html[data-hl-diagram="default"] [data-hl-options="figures"] [data-hl-theme="default"],
+  html[data-hl-diagram="redux-color"] [data-hl-options="figures"] [data-hl-theme="redux-color"],
+  html[data-hl-diagram="redux-dark-color"] [data-hl-options="figures"] [data-hl-theme="redux-dark-color"],
+  html[data-hl-diagram="redux"] [data-hl-options="figures"] [data-hl-theme="redux"],
+  html[data-hl-diagram="redux-dark"] [data-hl-options="figures"] [data-hl-theme="redux-dark"],
+  html[data-hl-diagram="neutral"] [data-hl-options="figures"] [data-hl-theme="neutral"],
+  html[data-hl-diagram="dark"] [data-hl-options="figures"] [data-hl-theme="dark"],
+  html[data-hl-diagram="forest"] [data-hl-options="figures"] [data-hl-theme="forest"],
+  html[data-hl-diagram="neo"] [data-hl-options="figures"] [data-hl-theme="neo"],
+  html[data-hl-diagram="neo-dark"] [data-hl-options="figures"] [data-hl-theme="neo-dark"],
+  html:not([data-hl-diagram]) [data-hl-options="figures"] [data-hl-theme="default"],
   html[data-hl-code="night"] [data-hl-options="code"] [data-hl-palette="night"],
   html[data-hl-code="paper"] [data-hl-options="code"] [data-hl-palette="paper"],
   html[data-hl-code="blueprint"] [data-hl-options="code"] [data-hl-palette="blueprint"],

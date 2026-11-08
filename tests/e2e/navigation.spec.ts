@@ -1,6 +1,7 @@
 import { existsSync, readdirSync } from 'node:fs'
 import { join } from 'node:path'
 import { expect, test } from '@playwright/test'
+import { levelTitlePattern } from './levels'
 import { A0, INDEX_SHEET, SHEETS } from './sheets'
 
 /**
@@ -78,7 +79,7 @@ test('next walks 1 to 32 straight through every category boundary', async ({ pag
          author asked for that line to be plain text. The trail names it in
          words on every module page and no fold can hide it. */
       await expect(page.locator('nav[aria-label="Curriculum"]')).toContainText(
-        new RegExp(expected.category.replace('-', '[ -]'), 'i'),
+        levelTitlePattern(expected.category),
       )
     }
   }

@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest'
+import { DIAGRAM_THEME_ATTRIBUTE, DIAGRAM_THEME_IDS } from '@/lib/reading/diagram-themes'
 import { PALETTE_IDS } from '@/lib/reading/palettes'
 import { RECORD_BOOT_SCRIPT, recordBootScript } from '@/lib/record/boot'
 import { stampClassesFor, stampProgressFor } from '@/lib/record/stamp'
@@ -313,7 +314,7 @@ describe('a record that carries nothing stamps nothing (§15.11)', () => {
     ['a freshly minted record, which is what a migration stamp leaves behind', EMPTY_RECORD],
     [
       'a record holding only a preference',
-      { ...EMPTY_RECORD, prefs: { charKeys: false, railFolded: false, catalogView: null, figurePalette: null, codePalette: null } },
+      { ...EMPTY_RECORD, prefs: { charKeys: false, railFolded: false, catalogView: null, diagramTheme: null, codePalette: null } },
     ],
     ['a record holding only an empty module entry', withSheet({})],
     ['a day on which something was written', { ...EMPTY_RECORD, days: ['2026-08-31'] }],
@@ -450,21 +451,26 @@ describe('a record that carries nothing stamps nothing (§15.11)', () => {
       ).toBe(view)
   })
 
-  it('stamps both palettes on a record that carries nothing, and only ids it knows', () => {
+  it('stamps the diagram theme and the code palette on a record that carries nothing, and only ids it knows', () => {
     const stamped = run(script, {
-      stored: envelope({ prefs: { figurePalette: 'paper', codePalette: 'blueprint' } }),
+      stored: envelope({ prefs: { diagramTheme: 'forest', codePalette: 'blueprint' } }),
     })
     // Before the gate, like the rail and the view: a reader whose only stored
-    // state is a colour choice would otherwise meet Night on every load.
-    expect(stamped.attributes.get('data-hl-figures')).toBe('paper')
+    // state is a colour choice would otherwise meet the default on every load.
+    expect(stamped.attributes.get(DIAGRAM_THEME_ATTRIBUTE)).toBe('forest')
     expect(stamped.attributes.get('data-hl-code')).toBe('blueprint')
     expect(stamped.classes.size).toBe(0)
 
-    for (const palette of ['sepia', '', 7, null, {}, 'PAPER'])
-      for (const [field, attribute] of [['figurePalette', 'data-hl-figures'], ['codePalette', 'data-hl-code']])
+    // Each field refuses the other's ids too: `night` is a code palette and not a theme,
+    // `forest` a theme and not a palette.
+    for (const [field, attribute, wrong] of [
+      ['diagramTheme', DIAGRAM_THEME_ATTRIBUTE, 'night'],
+      ['codePalette', 'data-hl-code', 'forest'],
+    ])
+      for (const value of ['sepia', '', 7, null, {}, 'FOREST', 'PAPER', wrong])
         expect(
-          run(script, { stored: envelope({ prefs: { [field]: palette } }) }).attributes.has(attribute),
-          `${field}: ${JSON.stringify(palette)}`,
+          run(script, { stored: envelope({ prefs: { [field]: value } }) }).attributes.has(attribute),
+          `${field}: ${JSON.stringify(value)}`,
         ).toBe(false)
     // Every id it does know, read from the list rather than typed out, so the
     // refusal above cannot be passing because the stamp is broken for all.
@@ -473,6 +479,21 @@ describe('a record that carries nothing stamps nothing (§15.11)', () => {
         run(script, { stored: envelope({ prefs: { codePalette: palette } }) })
           .attributes.get('data-hl-code'),
       ).toBe(palette)
+    for (const theme of DIAGRAM_THEME_IDS)
+      expect(
+        run(script, { stored: envelope({ prefs: { diagramTheme: theme } }) })
+          .attributes.get(DIAGRAM_THEME_ATTRIBUTE),
+      ).toBe(theme)
+  })
+
+  it('stamps nothing for a record that still carries the retired diagram palette', () => {
+    // `figurePalette` held night, paper or blueprint until 2026-11-08. Nothing reads it, so
+    // such a reader gets `default`, the same as one who never chose.
+    for (const old of ['night', 'paper', 'blueprint']) {
+      const stamped = run(script, { stored: envelope({ prefs: { figurePalette: old } }) })
+      expect(stamped.attributes.has(DIAGRAM_THEME_ATTRIBUTE), old).toBe(false)
+      expect(stamped.attributes.has('data-hl-figures'), old).toBe(false)
+    }
   })
 
   it('does not throw on a hand-edited record whose fields are the wrong shape', () => {

@@ -9,8 +9,8 @@ description: >
 authority: reasoning
 writes: agent, when a decision is taken
 status: active
-covers: "D97 to D105 so far — 2026-11-06 onward"
-last_updated: 2026-11-07
+covers: "D97 to D107 so far — 2026-11-06 onward"
+last_updated: 2026-11-08
 ---
 
 # 🧠 BRAINSTORM, part 3 — D97 onward
@@ -198,6 +198,34 @@ references list; one-colour marks ship black as `*-mono.svg` for the theme to in
 the review:** no mark that carries a raster image or depends on the reader's operating-system colour
 scheme, and none unreadable at text height (a wide wordmark, a pale yellow); a mark and its name never
 part at a line break (`.bz-logo-pair`, `src/lib/content/render.ts`).
+
+### D106 · A course to take is a GitHub alert call-out, not raw HTML or a custom fence — 2026-11-08
+
+**Asked by the author:** the courses in Agents in Practice "should force people and warn them to STOP
+there, go over the courses ... and then come back", with a centred card and emoji to catch the eye,
+because as plain sections readers skip them. **Chosen:** GitHub's alert syntax (`> [!WARNING]` for the
+stop banner, `> [!IMPORTANT]` for a course card). The renderer turns a known kind into a centred
+`bz-callout` card in the design tokens: the first paragraph is the title, and a last paragraph holding only
+a link becomes a `bz-btn` button (`src/lib/content/callout.ts`, `rehypeBlockquotes` in `render.ts`).
+**Rejected:** raw HTML, which the renderer strips and which would bypass the design tokens; a custom
+fenced block, which GitHub shows as a code block. Only the alert renders as a card on the site and
+still reads as a tinted box on GitHub. A corpus test fails any page where an `[!X]` marker survives.
+
+### D107 · Diagrams use Mermaid's own themes, chosen by the reader, `default` first — 2026-11-08
+
+**Asked by the author:** the diagram fills and backgrounds "are not contrastive enough and look very
+bland", so allow Mermaid's official themes, with Mermaid's `default` as the default everywhere.
+**Before:** every diagram was Mermaid's `base` theme repainted from the site's tokens (the earlier "three
+palettes" option), so a diagram could only look like the site. **Now:** the reader picks one of the ten themes
+the installed Mermaid ships (`default`, `redux-color`, `redux-dark-color`, `redux`, `redux-dark`,
+`neutral`, `dark`, `forest`, `neo`, `neo-dark`); Mermaid paints the diagram and the site adds only the
+semantic edge colours and the frame's ground (`src/lib/reading/diagram-themes.ts`). The pick persists as
+`prefs.diagramTheme`, is stamped as `data-hl-diagram` before first paint, and redraws every diagram live.
+The old `figurePalette` is removed end to end, and a stored one falls back to `default`. **Rejected:**
+silently swapping in a dark variant on the dark site, because a reader who chose `forest`, which has no
+dark variant, would get something else; the frame instead takes a light or a dark ground to match the
+chosen theme's tone. A first-time reader's frame is therefore light where the shell mockup draws it
+dark, a deviation recorded in DESIGN.md. Code highlighting keeps its own three palettes, now decoupled.
 
 ## Open questions
 

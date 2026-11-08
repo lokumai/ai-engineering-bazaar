@@ -12,7 +12,7 @@
 
 /** An old level slug, and the slug its level answers at now. */
 export const MOVED_LEVELS: Readonly<Record<string, string>> = {
-  // "Protocols & Specs" became "Emerging Trends" (D94).
+  // "Protocols & Specs" became "Emerging Trends" (D94), and the level is now called "Emerging".
   protocols: 'trends',
 }
 

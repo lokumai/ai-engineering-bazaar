@@ -2,12 +2,15 @@
 /**
  * Writes the seven people at the home page's gate into their art files.
  *
- * The cast is the author's picks of 2026-11-06 (M49: Bit, Mei, Deniz, Leyla, Dariush N2,
- * Piri W2) and the Janissary he asked for, finished in
- * `playground/2026-11-round-3/N-cast-final.html` (M50). That page draws every figure in
- * script from one generator. This script loads it in Chrome, asks it for each figure and
- * stores the markup, the same way `capture-stall-scenes.mjs` stores the stalls, so the
- * page, reduced motion and no script all show finished pictures with nothing to compute:
+ * The cast is the author's picks of 2026-11-06 (M49: Bit, Mei, Deniz, Dariush N2, Piri W2)
+ * and the Janissary he asked for, finished in `playground/2026-11-round-3/N-cast-final.html`
+ * (M50), and Mihrî, who took the place of Leyla (2026-11-08: the author picked candidate D
+ * of `playground/2026-11-round-4/P-turkish-woman.html`). Both pages draw every figure in
+ * script from one generator (the second is the first with more hair, hats and props, and
+ * draws the old figures unchanged). This script loads each in Chrome, asks it for its
+ * figures and stores the markup, the same way `capture-stall-scenes.mjs` stores the
+ * stalls, so the page, reduced motion and no script all show finished pictures with nothing
+ * to compute:
  *
  * - `cast-<id>.html`: the figure the gate places, with its front and back layers (`.v-f`,
  *   `.v-b`), both sets of arms and the carried layer the chase swaps between;
@@ -26,14 +29,31 @@ import path from 'node:path'
 import { chromium } from '@playwright/test'
 
 const ROOT = process.cwd()
-const PAGE = path.join(ROOT, 'playground/2026-11-round-3/N-cast-final.html')
+/* Which page draws whom. A person is drawn by the page that holds the artwork the author
+   picked; the others stay as M50 finished them, so running this changes nothing but the
+   figure whose drawing changed. `delay` is each figure's idle delay, by its place in the
+   cast's own order (`cast.ts`), which is the order the six were first captured in. */
+const SOURCES = [
+  {
+    page: 'playground/2026-11-round-3/N-cast-final.html',
+    ids: ['dariush', 'deniz', 'bit', 'murat', 'mei', 'piri'],
+    delays: { dariush: 0.6, deniz: 1.2, bit: 1.8, murat: 2.4, mei: 3.0, piri: 3.6 },
+  },
+  {
+    page: 'playground/2026-11-round-4/P-turkish-woman.html',
+    ids: ['mihri'],
+    delays: { mihri: 0 },
+  },
+]
 const ART = path.join(ROOT, 'src/components/home/street/art')
 
 const browser = await chromium.launch({ channel: 'chrome' })
+const all = []
+for (const source of SOURCES) {
 const page = await browser.newPage()
-await page.goto('file://' + PAGE, { waitUntil: 'load' })
-const figures = await page.evaluate(() => {
-  /* global ORDER, draw */
+await page.goto('file://' + path.join(ROOT, source.page), { waitUntil: 'load' })
+const figures = await page.evaluate(({ ids, delays }) => {
+  /* global draw */
   const out = {}
   const tidy = (svg) => {
     svg.removeAttribute('role')
@@ -43,12 +63,13 @@ const figures = await page.evaluate(() => {
     svg.classList.remove('back', 'run')
     return svg
   }
-  ORDER.forEach((id, k) => {
+  ids.forEach((id) => {
     const box = document.createElement('div')
-    box.innerHTML = draw(id, { dl: (k * 0.6).toFixed(1) + 's' })
+    box.innerHTML = draw(id, { dl: delays[id].toFixed(1) + 's' })
     const full = tidy(box.firstElementChild)
     /* The chase moves the person and their shadow, never the goods at their feet
-       (Leyla's sacks): those two go into one group the motion transforms. */
+       (goods drawn at a person's feet, such as the sacks the retired Leyla stood among): those
+       two go into one group the motion transforms. */
     const mover = document.createElementNS('http://www.w3.org/2000/svg', 'g')
     mover.setAttribute('class', 'mover')
     const shad = full.querySelector(':scope > .shad')
@@ -60,10 +81,14 @@ const figures = await page.evaluate(() => {
     tile.querySelectorAll('.v-b').forEach((n) => n.remove())
     out[id] = { full: full.outerHTML, tile: tile.outerHTML }
   })
-  return { order: ORDER, out }
-})
+  return { order: ids, out }
+}, { ids: source.ids, delays: source.delays })
+all.push(figures)
+await page.close()
+}
 await browser.close()
 
+for (const figures of all)
 for (const id of figures.order) {
   const { full, tile } = figures.out[id]
   if (/NaN|undefined/.test(full)) throw new Error(`${id}: the generator wrote NaN or undefined`)

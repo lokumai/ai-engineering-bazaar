@@ -28,6 +28,7 @@ import {
   emptySheetRecord,
   isSafeKey,
   type CatalogViewId,
+  type DiagramThemeId,
   type PaletteId,
   type RecordData,
   type SheetRecord,
@@ -192,13 +193,13 @@ export function setCatalogView(data: RecordData, view: CatalogViewId): RecordDat
 }
 
 /**
- * The palette a reader chose for the diagrams. `setCatalogView`'s shape and its
+ * The Mermaid theme a reader chose for the diagrams. `setCatalogView`'s shape and its
  * reasons: written through the store or not at all, and no day stamped, because
  * choosing a colour is not work on the curriculum.
  */
-export function setFigurePalette(data: RecordData, palette: PaletteId): RecordData {
-  if (data.prefs.figurePalette === palette) return data
-  return { ...data, prefs: { ...data.prefs, figurePalette: palette } }
+export function setDiagramTheme(data: RecordData, theme: DiagramThemeId): RecordData {
+  if (data.prefs.diagramTheme === theme) return data
+  return { ...data, prefs: { ...data.prefs, diagramTheme: theme } }
 }
 
 /** The same, for the code blocks. */

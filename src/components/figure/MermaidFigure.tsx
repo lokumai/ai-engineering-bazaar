@@ -9,6 +9,7 @@ import {
   mermaidConfig,
 } from '@/lib/figure/mermaid-config'
 import { widthForNaturalWidth } from '@/lib/figure/width'
+import { DIAGRAM_THEME_ATTRIBUTE, diagramThemeOf } from '@/lib/reading/diagram-themes'
 import {
   RESET_VIEW,
   type View,
@@ -38,11 +39,15 @@ import {
  *    and every listing page — never fetch the 500kB chunk. The check has to
  *    happen before the `await`, which is why it reads the DOM rather than
  *    taking a prop.
- * 2. **A theme switch costs 0ms and never re-renders (§9.2).** Nothing here
- *    reads `.dark`, subscribes to it, or re-runs on it. The SVG's colours are
- *    `var(--color-…)` references that cascade in from `<html>` (B4), so the
- *    diagram re-themes in the same frame as the rest of the page, and this
- *    effect runs exactly once per document.
+ * 2. **The site's light and dark theme still costs nothing, and a diagram theme
+ *    is a redraw.** Nothing here reads `.dark`. What it does read is
+ *    `data-hl-diagram` on `<html>` (`diagram-themes.ts`): the theme Mermaid draws
+ *    with, which `boot.ts` stamps before first paint and `ReadingOptions` stamps
+ *    on a choice. Mermaid writes a theme's colours into the SVG as it draws, so a
+ *    change of that attribute draws every diagram again (the token repaint this
+ *    replaced could switch in the same frame, and could only ever look like the
+ *    site). The draws are queued, so two quick choices never run at once, and a
+ *    draw that a later choice has overtaken stops at its next diagram.
  * 3. **A malformed diagram never blanks the sheet.** It falls back to the
  *    source, which is what the reader would have seen in a plain markdown
  *    viewer, and the figure stays unready so `EXPAND` never appears offering to
@@ -175,17 +180,22 @@ export function MermaidFigure() {
   const [view, setView] = useState<View>(RESET_VIEW)
 
   const renderer = useRef<Mermaid | null>(null)
+  /** The draws in flight and queued. Expand waits behind them: it draws with the config the
+   * last of them set, so it never opens a drawing in a theme the page has already left. */
+  const drawing = useRef<Promise<void>>(Promise.resolve())
   const trigger = useRef<HTMLElement | null>(null)
   const drag = useRef<{ pointer: number; x: number; y: number } | null>(null)
   /** The fitted view for the figure that is open, which `Fit` and `0` return to. */
   const fitted = useRef<View>(RESET_VIEW)
 
   const expand = useCallback(async (button: HTMLElement) => {
+    await drawing.current
     const mermaid = renderer.current
-    const figure = button.closest('.bz-fig')
+    const figure = button.closest<HTMLElement>('.bz-fig')
     const marker = figure?.querySelector<HTMLElement>('.mermaid-source[data-mermaid]')
     const source = marker?.dataset.mermaid
-    if (!mermaid || !figure || !marker || !source) return
+    // A figure whose redraw failed is showing its source and has nothing to magnify.
+    if (!mermaid || !figure || !marker || !source || figure.dataset.hlReady === undefined) return
 
     // The overlay draws its own copy at its own id: mermaid writes the id into
     // the `url(#…)` marker references, and two copies sharing one id would
@@ -220,6 +230,11 @@ export function MermaidFigure() {
     }
 
     let cancelled = false
+    /** Which draw is current; a draw that finds a newer one stops. */
+    let generation = 0
+    /** The theme the last draw was scheduled for, so a stamp that did not change draws nothing. */
+    let scheduled: string | null = null
+    const stamped = () => diagramThemeOf(document.documentElement.getAttribute(DIAGRAM_THEME_ATTRIBUTE)).id
 
     const onClick = (event: MouseEvent) => {
       const target = event.target
@@ -228,11 +243,11 @@ export function MermaidFigure() {
       if (button) void expand(button)
     }
 
-    void (async () => {
-      const mermaid = (await import('mermaid')).default
-      if (cancelled) return
-
-      mermaid.initialize(mermaidConfig())
+    const drawAll = async (mermaid: Mermaid, mine: number) => {
+      // A draw that a later choice has overtaken, or a page that has gone, stops before it
+      // touches Mermaid's one global configuration, and again before each diagram.
+      if (cancelled || mine !== generation) return
+      mermaid.initialize(mermaidConfig(document.documentElement.getAttribute(DIAGRAM_THEME_ATTRIBUTE)))
       renderer.current = mermaid
 
       for (const [index, node] of nodes.entries()) {
@@ -241,9 +256,10 @@ export function MermaidFigure() {
         node.dataset.hlFigure = String(index)
 
         const id = figureRenderId(index)
+        if (cancelled || mine !== generation) return
         try {
           const { svg } = await mermaid.render(id, source)
-          if (cancelled) return
+          if (cancelled || mine !== generation) return
           node.innerHTML = svg
 
           const drawing = node.querySelector('svg')
@@ -257,11 +273,39 @@ export function MermaidFigure() {
             figure.dataset.hlReady = ''
           }
         } catch {
-          if (cancelled) return
+          if (cancelled || mine !== generation) return
           sweep(id)
           showSource(node, source)
+          // The source is on show, and an EXPAND that offers to magnify a drawing that is not
+          // there is the control `data-hl-ready` exists to hide.
+          delete node.closest<HTMLElement>('.bz-fig')?.dataset.hlReady
         }
       }
+    }
+
+    let loaded: Mermaid | null = null
+    const schedule = () => {
+      if (loaded === null) return
+      const theme = stamped()
+      // The attribute is set on every choice, the chosen theme included: the same theme
+      // twice is not a change, and a redraw of thirty diagrams for nothing is a flash.
+      if (theme === scheduled) return
+      scheduled = theme
+      const mermaid = loaded
+      const mine = ++generation
+      drawing.current = drawing.current.then(() => drawAll(mermaid, mine))
+    }
+    const observer = new MutationObserver(() => schedule())
+
+    void (async () => {
+      const mermaid = (await import('mermaid')).default
+      if (cancelled) return
+      loaded = mermaid
+      schedule()
+      observer.observe(document.documentElement, {
+        attributes: true,
+        attributeFilter: [DIAGRAM_THEME_ATTRIBUTE],
+      })
     })()
 
     document.addEventListener('click', onClick)
@@ -269,6 +313,7 @@ export function MermaidFigure() {
     return () => {
       instances -= 1
       cancelled = true
+      observer.disconnect()
       document.removeEventListener('click', onClick)
     }
   }, [expand])

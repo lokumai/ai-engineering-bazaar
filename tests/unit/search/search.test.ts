@@ -1,7 +1,7 @@
 import MiniSearch from 'minisearch'
 import { describe, expect, it } from 'vitest'
 import { loadAllModules, loadModuleIn } from '@/lib/content/loader'
-import { searchDocs, type SearchDoc } from '@/lib/search/documents'
+import { plain, searchDocs, sections, type SearchDoc } from '@/lib/search/documents'
 import { SEARCH_LANGS, joinedVariant, normalise, queryTokenize, searchOptions, type SearchLang } from '@/lib/search/normalise'
 import { renderMarkdown } from '@/lib/content/render'
 import { TRACK_IDS, moduleRoute } from '@/lib/tracks'
@@ -155,3 +155,23 @@ describe('every section points at a heading the page renders', () => {
   }, 120_000)
 })
 
+
+describe('a call-out in the index (callout.ts)', () => {
+  const body = '# T\n\nOpening.\n\n## Section\n\n> [!IMPORTANT]\n> **Take the course now**\n>\n> Body words.\n\nAfter.\n'
+
+  it('is searched by its words and never by its marker, in a section built from markdown', () => {
+    const { parts } = sections(body)
+    const text = plain(parts[0].nodes)
+    expect(text, 'the card vanished from the index').toContain('Take the course now')
+    expect(text).toContain('Body words.')
+    expect(text).not.toMatch(/\[!/)
+    expect(text).not.toContain('IMPORTANT')
+  })
+
+  it.each(SEARCH_LANGS)('leaves no marker in any document built from the corpus: %s', (lang) => {
+    for (const doc of searchDocs(lang)) {
+      expect(doc.text, doc.id).not.toMatch(/\[![A-Za-z]+\]/)
+      expect(doc.excerpt, doc.id).not.toMatch(/\[![A-Za-z]+\]/)
+    }
+  })
+})

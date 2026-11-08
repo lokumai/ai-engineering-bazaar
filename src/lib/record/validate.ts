@@ -24,6 +24,7 @@
  */
 
 import { isViewId } from '../catalog/views'
+import { isDiagramThemeId } from '../reading/diagram-themes'
 import { isPaletteId } from '../reading/palettes'
 import { migrate } from './migrate'
 import {
@@ -204,12 +205,14 @@ export function coerceRecordData(input: unknown): RecordData {
        */
       catalogView: isViewId(prefs.catalogView) ? prefs.catalogView : null,
       /**
-       * The two palettes, on `catalogView`'s terms: matched against the list,
-       * because the id reaches an attribute selector, and null for anything
-       * else — including every record written before these fields existed,
-       * which needs no rung on the migration ladder.
+       * The diagram theme and the code palette, on `catalogView`'s terms: matched against
+       * the list, because the id reaches an attribute selector, and null for anything
+       * else — including every record written before these fields existed, and a record
+       * that still carries the retired `figurePalette`, which is dropped here because
+       * this builds `prefs` from the fields it knows. Both read back as "has not chosen",
+       * so neither needs a rung on the migration ladder.
        */
-      figurePalette: isPaletteId(prefs.figurePalette) ? prefs.figurePalette : null,
+      diagramTheme: isDiagramThemeId(prefs.diagramTheme) ? prefs.diagramTheme : null,
       codePalette: isPaletteId(prefs.codePalette) ? prefs.codePalette : null,
     },
     meta: {

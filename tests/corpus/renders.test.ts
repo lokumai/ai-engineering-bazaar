@@ -2,9 +2,12 @@ import { existsSync, readFileSync, readdirSync } from 'node:fs'
 import { join } from 'node:path'
 import { describe, expect, it } from 'vitest'
 import { imageBaseFor } from '@/lib/content/images'
-import { loadAllModules } from '@/lib/content/loader'
+import { TRANSLATED_LANGS, type ReadingLang } from '@/lib/content/languages'
+import { loadAllModules, loadModuleIn } from '@/lib/content/loader'
 import { CONTENT_ROOT } from '@/lib/content/paths'
 import { renderMarkdown } from '@/lib/content/render'
+import { isSafeHref } from '@/lib/content/safe-href'
+import { TRACK_IDS } from '@/lib/tracks'
 
 /**
  * The whole corpus, checked against rules rather than against facts.
@@ -51,6 +54,53 @@ describe('every module in the set', () => {
     // sheets cite a repository file that does.
     for (const page of await renderAll()) {
       expect(page.html, page.slug).not.toMatch(/href="(?!https?:)[^"]*\.md"/)
+    }
+  })
+
+  it('links only to addresses on the allowlist, in the files and on the pages', async () => {
+    // Two checks, because they answer different questions. The renderer drops an address that
+    // is not allowed (`rehypeSafeLinks`), so the pages cannot fail this by themselves; the
+    // files can, and a link that quietly lost its address is a defect the author should see.
+    let links = 0
+    for (const module of modules) {
+      for (const track of TRACK_IDS) {
+        for (const lang of ['en', ...TRANSLATED_LANGS] as ReadingLang[]) {
+          const version = loadModuleIn(module.slug, lang, track)
+          if (!version) continue
+          for (const [, target] of version.body.matchAll(/\]\(<?([^)\s>]+)/g)) {
+            links += 1
+            expect(isSafeHref(target), `${module.slug} ${track} ${lang} links to ${target}`).toBe(true)
+          }
+          const { html } = await renderMarkdown(version.body, {
+            imageBase: imageBaseFor(module.category.slug),
+            sheet: module.frontmatter.module,
+          })
+          for (const [, href] of html.matchAll(/<a [^>]*href="([^"]*)"/g)) {
+            expect(isSafeHref(href), `${module.slug} ${track} ${lang} renders ${href}`).toBe(true)
+          }
+        }
+      }
+    }
+    expect(links, 'no link in the corpus to check').toBeGreaterThan(0)
+  })
+
+  it('leaves no call-out marker on a page, in any language or track', async () => {
+    // A GitHub alert (`> [!IMPORTANT]`) is the call-out syntax (callout.ts). A kind the
+    // renderer does not know, or a marker with a typo in it, is not an error: it falls
+    // through as a quote and prints the marker as text, which nothing else notices.
+    const langs: ReadingLang[] = ['en', ...TRANSLATED_LANGS]
+    for (const module of modules) {
+      for (const track of TRACK_IDS) {
+        for (const lang of langs) {
+          const version = loadModuleIn(module.slug, lang, track)
+          if (!version) continue
+          const { html } = await renderMarkdown(version.body, {
+            imageBase: imageBaseFor(module.category.slug),
+            sheet: module.frontmatter.module,
+          })
+          expect(html, `${module.slug} ${track} ${lang}`).not.toMatch(/\[![A-Za-z]+\]/)
+        }
+      }
     }
   })
 

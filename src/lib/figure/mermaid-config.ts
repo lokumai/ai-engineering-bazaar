@@ -1,72 +1,52 @@
 /**
- * Requirement B4 — the mermaid configuration, and why every value in it is the
- * value §6.10 chose.
+ * Requirement B4 — the mermaid configuration, as it is since the reader may choose
+ * Mermaid's own theme (2026-11-08, `lib/reading/diagram-themes.ts`).
  *
- * The whole point is that mermaid emits **zero inline colours**. `theme: 'base'`
- * is the only built-in theme whose generated CSS `themeCSS` can override
- * wholesale, and every declaration below resolves to a `var(--color-…)`. CSS
- * custom properties cascade into inline SVG, so flipping `.dark` on `<html>`
- * re-themes all thirty diagrams with no re-render, no re-parse and no
- * JavaScript — which is the 0ms theme switch §9.2 demands, and the reason this
- * file may not contain a single colour literal.
+ * **Before:** every diagram was `theme: 'base'` and a stylesheet repainted every node, edge
+ * and label from the site's tokens, so a diagram could only look like the site and the
+ * theme switch cost nothing. The author found the result bland (box fills and backgrounds
+ * not contrastive enough) and asked for Mermaid's official themes, `default` first.
  *
- * `curve: 'linear'` and `rx/ry: 0` (T7) are what make an embedded figure look
- * like it came from the same draughtsman as the site chrome.
+ * **Now:** Mermaid's theme paints. What this file still adds is only what the corpus needs
+ * and no theme knows: the four semantic edges (`fault`, `verify`, `info`, `caution`, the
+ * only colour a diagram's author may ask for, `mermaid.ts`), drawn in the site's tokens so
+ * they are right on whichever ground the frame has, and one family and size of type so a
+ * module reads the same whichever theme it is in. Rejected: keeping the token repaint
+ * as a theme of its own beside the ten. It would be an eleventh look that no reader asked
+ * for and that Mermaid does not ship, and it would have to be kept in step with every
+ * diagram type Mermaid adds.
+ *
+ * Dropped with the repaint, because each one fought a theme: the straight-edge curve, the
+ * zero corner radius, and every fill, label and arrowhead colour. A theme that is chosen
+ * should look like itself.
+ *
+ * **A theme change draws the diagrams again** (`MermaidFigure` watches `data-hl-diagram`),
+ * which the token switch never had to. It is the price of letting Mermaid choose the colours:
+ * they are written into the SVG when it is drawn.
  */
 
 import type { MermaidConfig } from 'mermaid'
+import { DEFAULT_DIAGRAM_THEME, diagramThemeOf } from '../reading/diagram-themes'
 
 /**
- * §6.10 B4's block, with every selector bound to a token. This is the whole of
- * the diagram palette: the source B2 emits binds a node to a semantic *class*
- * and nothing else, because mermaid's `classDef` grammar cannot hold a `var()`.
+ * The semantic classes' edges, bound to tokens. The source B2 emits binds a node to a
+ * semantic *class* and nothing else, because mermaid's `classDef` grammar cannot hold a
+ * `var()`: so the class is declared in the source and painted here.
  *
- * `stroke-width` is `1px` throughout: §2.2 quantises line weight to three
- * values and a diagram edge is a hairline, the same weight as every other rule
- * on the sheet.
+ * Only the EDGE, and never a fill (BRAINSTORM D33): the fill stays the theme's own, so a
+ * semantic node is a node of the chosen theme with a heavier edge in one of four hues.
+ * The 2px weight is not decoration. A hue must never be the only carrier of meaning, and
+ * a weight is the one second signal available inside a shape mermaid draws.
  *
- * Three additions to the spec's block, each one a colour that would otherwise
- * survive into the drawing and be wrong in dark mode:
- *
- * - `.cluster.<class>` — **MEASURED:** figure 13.1 classes four *subgraphs*
- *   (untrusted content, agent loop, private data, egress), and a subgraph is a
- *   cluster, not a node. Without it the one diagram in the corpus that draws
- *   the lethal trifecta loses its trifecta.
- * - `.cluster-label text` / `.cluster text` — mermaid publishes its generated
- *   CSS at the render id (`#hl-fig-0 .cluster-label text`), which outranks a
- *   bare `text` selector at the same id. A subgraph title would stay near-black
- *   on the dark ground: §10.1's exact failure mode.
- * - `.edgeLabel` grounds — mermaid paints an edge label's box in a computed
- *   `hsl()` at `opacity: 0.5`. **MEASURED:** module 6's agent loop labels its
- *   branch edges `Yes` / `No`.
+ * A diagram can class a *subgraph* as well as a node, and a subgraph is a cluster, not a
+ * node, so each class has a `.cluster` rule too. No diagram in the corpus classes either today
+ * (the semantic classes survive only in the progress rails the build strips), so these rules
+ * are held by the unit test on this string and by `mermaid.spec.ts`, which measures the four
+ * hues on both frames; no drawing of them has been looked at. The tokens are rebound by the
+ * frame to the ground the theme's tone gives it (`bazaar.css`), which is why one rule serves
+ * all ten themes.
  */
 export const MERMAID_THEME_CSS = `
-  .node rect, .node polygon, .node circle, .node ellipse, .node path {
-    fill: var(--color-surface-raised);
-    stroke: var(--color-line-strong);
-    stroke-width: 1px;
-    rx: 0;
-    ry: 0;
-  }
-  .cluster rect {
-    fill: var(--color-surface);
-    stroke: var(--color-line-strong);
-    stroke-width: 1px;
-    rx: 0;
-    ry: 0;
-  }
-  /* The four semantics ride the node's EDGE and never become a fill
-     (BRAINSTORM D33). The retired palette gave each of them a base, an ink and
-     a pale wash; this language has no tint scale at all, and inventing one for
-     four diagram classes is the shape of the mistake M16 exists to correct. So
-     the fill stays the node's own and the hue moves to the stroke, taken from
-     colours the language already declares: verify is success, caution is
-     caution, fault is the clay of category-5, info is the cobalt primary.
-
-     The 2px stroke is not decoration. A hue must never be the only carrier of
-     meaning, and a diagram node's own label is the other one — but a weight a
-     viewer can see without separating teal from cobalt is worth having, and it
-     is the one signal available inside a shape mermaid controls. */
   .node.fault rect, .node.fault polygon, .node.fault path,
   .node.verify rect, .node.verify polygon, .node.verify path,
   .node.info rect, .node.info polygon, .node.info path,
@@ -91,28 +71,6 @@ export const MERMAID_THEME_CSS = `
   .cluster.caution rect {
     stroke: var(--color-caution);
   }
-  .nodeLabel, .edgeLabel, .cluster-label, .label, .label text, text,
-  .nodeLabel p, .edgeLabel p, .cluster-label span,
-  .cluster-label text, .cluster text {
-    color: var(--color-on-surface);
-    fill: var(--color-on-surface);
-  }
-  .edgeLabel, .edgeLabel p, .edgeLabel span {
-    background-color: var(--color-surface);
-  }
-  .edgeLabel rect, .labelBkg, .edgeLabel .label-container {
-    fill: var(--color-surface);
-    stroke: none;
-    opacity: 1;
-  }
-  .edgePath path, .flowchart-link {
-    stroke: var(--color-line-strong);
-    stroke-width: 1px;
-  }
-  marker path, marker polygon {
-    fill: var(--color-line-strong);
-    stroke: none;
-  }
 `
 
 /**
@@ -130,11 +88,17 @@ export function expandRenderId(index: number): string {
   return `hl-fig-${index}-expanded`
 }
 
-/** §6.10 B4, verbatim. */
-export function mermaidConfig(): MermaidConfig {
+/**
+ * The configuration for one theme, by id. An id that is not in the list, or none at all,
+ * is `default`: this is where "the default is Mermaid's own default" is held, so a stamp
+ * that is missing, stale or hand-edited cannot reach `mermaid.initialize` as anything else.
+ */
+export function mermaidConfig(themeId: unknown = DEFAULT_DIAGRAM_THEME): MermaidConfig {
+  const theme = diagramThemeOf(themeId)
   return {
     startOnLoad: false,
-    theme: 'base',
+    theme: theme.id,
+    ...(theme.look ? { look: theme.look } : {}),
     securityLevel: 'strict',
     // A diagram that fails to parse throws to the caller, which falls back to
     // the source (§6.10's "must never blank the sheet"). Without this mermaid
@@ -142,7 +106,6 @@ export function mermaidConfig(): MermaidConfig {
     // its own colours, in the middle of a technical drawing.
     suppressErrorRendering: true,
     flowchart: {
-      curve: 'linear',
       htmlLabels: false,
       padding: 12,
       nodeSpacing: 40,
@@ -151,6 +114,8 @@ export function mermaidConfig(): MermaidConfig {
     themeVariables: {
       fontFamily: 'var(--font-sans)',
       fontSize: '13px',
+      ...(theme.darkMode ? { darkMode: true } : {}),
+      ...theme.variables,
     },
     themeCSS: MERMAID_THEME_CSS,
   }

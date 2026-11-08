@@ -4,6 +4,7 @@ import { toString } from 'mdast-util-to-string'
 import remarkGfm from 'remark-gfm'
 import remarkParse from 'remark-parse'
 import { unified } from 'unified'
+import { withoutCalloutMarkers } from '@/lib/content/callout'
 import { CATEGORIES } from '@/lib/content/curriculum-file'
 import { SERIES_HEADINGS } from '@/lib/content/lines'
 import { loadAllModules, loadModuleIn } from '@/lib/content/loader'
@@ -62,8 +63,9 @@ function blockText(node: RootContent): string {
   if (LEAF.has(node.type) || !('children' in node)) return toString(node)
   return (node.children as RootContent[]).map(blockText).join(' ')
 }
-const plain = (nodes: RootContent[]): string =>
-  nodes.map(blockText).join(' ').replace(/\s+/g, ' ').trim()
+/* A call-out's `[!IMPORTANT]` marker is markup, not words a reader meets (`callout.ts`). */
+export const plain = (nodes: RootContent[]): string =>
+  withoutCalloutMarkers(nodes.map(blockText).join(' ')).replace(/\s+/g, ' ').trim()
 
 const excerpt = (text: string): string => (text.length <= EXCERPT ? text : `${text.slice(0, EXCERPT).replace(/\s+\S*$/, '')}…`)
 
@@ -73,8 +75,8 @@ interface Section {
   nodes: RootContent[]
 }
 
-/** The opening (before the first `##`) and each `##` section, in order. */
-function sections(body: string): { opening: RootContent[]; parts: Section[] } {
+/** The opening (before the first `##`) and each `##` section, in order. Exported for the test. */
+export function sections(body: string): { opening: RootContent[]; parts: Section[] } {
   const tree = parser.parse(body) as Root
   const slugger = new GithubSlugger()
   const opening: RootContent[] = []

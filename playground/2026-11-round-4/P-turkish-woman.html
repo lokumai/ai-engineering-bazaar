@@ -1,0 +1,719 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>P: a Turkish woman for the gate</title>
+<meta name="description" content="Round 4, P: five candidates to take Leyla's place at the home page's gate, the cast's Turkish woman: three bazaar traders and two inspired by Mihrî Hatun and Fatma Aliye, drawn by the same hand, at the size of the street.">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght,SOFT@9..144,500..800,0..100&display=swap">
+<style>
+:root{
+  --ground:#FDFBF7; --raised:#FFFFFF; --sand:#E6DAC6; --line:#D8CBB4; --line-strong:#C3B299;
+  --ink:#20242E; --title:#1B1B47; --muted:#6A6558; --faint:#948D7D; --cobalt:#282864; --cobalt-hover:#363680;
+  --on-bar:#FFFFFF; --on-bar-dim:#C9C6E4; --focus:#A0503C; --gold:#C8A078;
+  --teal:#2F8C86; --plum:#7A4A86; --ochre:#B8873B; --brick:#A0503C; --iron:#25233F;
+  --sans:"Avenir Next", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --display:"Fraunces", "Iowan Old Style", Georgia, serif;
+}
+*{box-sizing:border-box}
+html{overflow-x:clip}
+body{margin:0; background:var(--ground); color:var(--ink); font-family:var(--sans); font-size:17px; line-height:1.55; -webkit-font-smoothing:antialiased; overflow-x:clip}
+/* ---------- the people ---------- */
+.v-b{visibility:hidden}
+.back .v-f{visibility:hidden} .back .v-b{visibility:visible}
+/* M50 — the run, as the chase draws it: a bob, the feet lifting in turn, the free arm swinging */
+.run .fg{transform-box:view-box; transform-origin:110px 392px; animation:run-bob .34s ease-in-out infinite}
+@keyframes run-bob{0%,100%{transform:translateY(0) rotate(-2.5deg)} 50%{transform:translateY(-10px) rotate(2.5deg)}}
+.run .foot{transform-box:view-box; animation:run-leg .34s ease-in-out infinite alternate}
+.run .foot-l{transform-origin:96px 240px} .run .foot-r{transform-origin:124px 240px; animation-direction:alternate-reverse}
+/* seen from behind, a runner's feet lift in turn; they do not swing sideways (a sideways swing
+   crossed Bit's long legs) */
+@keyframes run-leg{from{transform:translateY(0)} to{transform:translateY(-9px)}}
+.run .arm .gest{animation:run-arm .34s ease-in-out infinite alternate !important}
+.run .arm-r .gest{animation-direction:alternate-reverse !important}
+@keyframes run-arm{from{transform:rotate(-16deg)} to{transform:rotate(16deg)}}
+/* what each carried thing does in the run (the decision per prop) */
+.run[data-run="level"] .holding .gest, .run[data-run="roll"] .holding .gest, .run[data-run="gun"] .gun-arm .gest{animation:none !important}
+.run[data-run="raise"] .holding .gest{animation:none !important; transform:rotate(-24deg)}
+.run[data-run="flutter"] .holding .gest{animation:none !important}
+.run[data-run="flutter"] .tail{transform-box:fill-box; transform-origin:50% 0; animation:run-flutter .2s ease-in-out infinite alternate}
+@keyframes run-flutter{from{transform:skewX(-14deg) scaleY(1)} to{transform:skewX(12deg) scaleY(.92)}}
+@media (prefers-reduced-motion: reduce){ .run *, .run .arm .gest{animation:none !important} }
+.fig .breathe{transform-box:view-box; transform-origin:110px 392px; animation:fg-breathe 4.2s ease-in-out infinite; animation-delay:var(--dl,0s)}
+@keyframes fg-breathe{0%,100%{transform:scale(1,1)} 50%{transform:scale(1.008,1.018)}}
+.fig .head{transform-box:view-box; transform-origin:110px 140px; animation:fg-nod 6s ease-in-out infinite; animation-delay:var(--dl,0s)}
+@keyframes fg-nod{0%,100%{transform:rotate(0)} 30%{transform:rotate(-2deg)} 60%{transform:rotate(1.5deg)}}
+.fig .blink{transform-box:view-box; transform-origin:110px 111px; animation:fg-blink 5.5s infinite; animation-delay:var(--dl,0s)}
+.f-robot .blink{transform-origin:110px 98px}
+@keyframes fg-blink{0%,95%,100%{transform:scaleY(1)} 97%{transform:scaleY(.1)}}
+.fig .sash{transform-box:view-box; transform-origin:129px 246px; animation:fg-sway 3.4s ease-in-out infinite alternate; animation-delay:var(--dl,0s)}
+@keyframes fg-sway{from{transform:rotate(-5deg)} to{transform:rotate(5deg)}}
+.fig .arm-r .gest{transform-box:view-box; transform-origin:138px 160px}
+.fig .arm-l .gest{transform-box:view-box; transform-origin:82px 160px}
+.fig .waving .gest{animation:fg-wave 1s ease-in-out infinite alternate; animation-delay:var(--dl,0s)}
+@keyframes fg-wave{from{transform:rotate(-10deg)} to{transform:rotate(8deg)}}
+.f-kofi .arm-r .gest,.f-ivan .arm-r .gest{animation:fg-hold 4.6s ease-in-out infinite; animation-delay:var(--dl,0s)}
+.f-mei .arm-r .gest{animation:fg-hold 3.8s ease-in-out infinite; animation-delay:var(--dl,0s)}
+@keyframes fg-hold{0%,100%{transform:rotate(0)} 40%{transform:rotate(-6deg)} 70%{transform:rotate(3deg)}}
+.f-robot .led{animation:fg-led 1.6s steps(1) infinite; animation-delay:var(--dl,0s)}
+@keyframes fg-led{0%,50%{opacity:1} 51%,100%{opacity:.25}}
+.f-robot .aitext{animation:fg-glow 2.4s ease-in-out infinite alternate}
+@keyframes fg-glow{from{opacity:.65} to{opacity:1}}
+.f-robot .arm-l .gest{animation:fg-tinker 2.8s ease-in-out infinite; animation-delay:var(--dl,0s)}
+@keyframes fg-tinker{0%,100%{transform:rotate(0)} 30%{transform:rotate(12deg)} 60%{transform:rotate(-4deg)}}
+.rotor{transform-box:view-box}
+
+.fig .holding .gest{animation:fg-hold 4.4s ease-in-out infinite; animation-delay:var(--dl,0s)}
+@media (prefers-reduced-motion: reduce){ .fig *{animation:none !important} }
+.paused .fig *{animation-play-state:paused !important}
+.top-bar{background:var(--cobalt); color:#fff}
+.top-bar .in{max-width:1400px; margin:0 auto; padding:14px 24px; display:flex; align-items:center; gap:12px; font-weight:700}
+main{max-width:1400px; margin:0 auto; padding:28px 24px 80px}
+h1,h2{font-family:var(--display); color:var(--title); line-height:1.1}
+h1{font-size:44px; margin:10px 0 14px} h2{font-size:30px; margin:48px 0 8px}
+.lede{max-width:820px; color:var(--ink)}
+.notes{max-width:900px} .notes li{margin:4px 0}
+.row{display:grid; grid-template-columns:repeat(auto-fill, minmax(230px, 1fr)); gap:18px; margin-top:18px}
+.card{background:var(--raised); border:1px solid var(--line); border-radius:9px; padding:14px 14px 16px; position:relative}
+.card .stage{background:linear-gradient(#EFE5D4, #EFE5D4 78%, #DCCEB5 78%); border-radius:7px; height:330px; display:flex; align-items:flex-end; justify-content:center; overflow:hidden}
+.card .stage svg{height:310px; width:auto}
+.card .face{position:absolute; right:22px; top:22px; width:74px; height:74px; border-radius:50%; background:#FFFDF7; border:1px solid var(--line); overflow:hidden}
+.card .face svg{width:100%; height:100%}
+.code{display:inline-block; background:var(--cobalt); color:#fff; font-weight:800; border-radius:6px; padding:1px 8px; margin-right:8px; font-size:15px}
+.rec{display:inline-block; border:1px solid var(--teal); color:var(--teal); border-radius:6px; font-size:13px; font-weight:700; padding:0 7px; margin-left:6px}
+.card h3{margin:12px 0 2px; font-size:19px; color:var(--title)} .card p{margin:4px 0 0; color:var(--muted); font-size:15px}
+.lineup{margin-top:18px; background:linear-gradient(#EFE5D4, #EFE5D4 80%, #DCCEB5 80%); border:1px solid var(--line); border-radius:9px; display:flex; align-items:flex-end; justify-content:center; gap:4px; padding:20px 12px 0; overflow-x:auto}
+.lineup svg{height:280px; width:auto; flex:none}
+.lineup svg.child{height:200px}
+.row.wide{grid-template-columns:repeat(auto-fill, minmax(min(100%, 460px), 1fr))}
+.views{display:grid; grid-template-columns:repeat(3,1fr); gap:6px}
+.views figure{margin:0}
+.views .stage{height:230px}
+.views .stage svg{height:214px}
+.views figcaption{font-size:13px; color:var(--muted); text-align:center; margin-top:4px}
+.cap{margin:10px 0 0; font-weight:700; color:var(--title); font-size:16px}
+.story{margin:4px 0 0; color:var(--ink); font-size:15px; line-height:1.5}
+.lineup .who{display:flex; flex-direction:column; align-items:center}
+.lineup{gap:18px}
+.lineup .who small{font-size:12px; color:var(--muted); margin:2px 0 8px; text-align:center; line-height:1.3}
+.lineup .who small b{display:block; color:var(--title); font-size:13px}
+.phones{display:flex; gap:28px; flex-wrap:wrap; align-items:flex-start; margin-top:18px}
+.phone{width:390px; border:1px solid var(--line-strong); border-radius:12px; background:#EFE5D4; padding:16px; box-sizing:border-box}
+.phone h3{margin:0 0 10px; font-size:17px; color:var(--title)}
+.p-grid{display:grid; grid-template-columns:repeat(4,1fr); gap:8px 4px}
+.p-scroll{display:flex; gap:6px; overflow-x:auto; scroll-snap-type:x mandatory; padding-bottom:8px}
+.p-scroll .tile{flex:0 0 96px; scroll-snap-align:start}
+.tile{display:flex; flex-direction:column; align-items:center; min-width:44px; min-height:44px; border:0; background:transparent; padding:4px; border-radius:8px; font:inherit; cursor:pointer}
+.tile:focus-visible{outline:3px solid var(--focus); outline-offset:2px}
+.tile .fbox{height:116px; display:flex; align-items:flex-end; justify-content:center}
+.tile svg{height:112px; width:auto}
+.tile svg.child{height:84px}
+.tile b{font-size:13px; color:var(--title)} .tile span{font-size:11.5px; color:var(--muted); line-height:1.2; text-align:center}
+button.motion{margin-top:12px; border:1px solid var(--line-strong); background:var(--raised); border-radius:6px; padding:6px 12px; font:inherit; cursor:pointer}
+
+/* ---------- round 4, P ---------- */
+.ground{background:linear-gradient(#E4D8BD, #E4D8BD 80%, #CDBD9C 80%)}
+.lineup.street{background:linear-gradient(#D6C7AC, #D6C7AC 80%, #C2B190 80%); margin-top:8px}
+.lineup .who{position:relative}
+.pick .code, .who .code{position:absolute; top:-2px; left:50%; transform:translateX(-50%); z-index:2; margin:0}
+.who.pick small b{color:var(--brick)}
+.five{margin-top:18px; border:1px solid var(--line); border-radius:9px; display:flex; align-items:flex-end; justify-content:flex-start; gap:34px; padding:34px 12px 0; overflow-x:auto}
+.five.ground svg{height:280px; width:auto; flex:none}
+.five .who:first-child{margin-left:auto} .five .who:last-child{margin-right:auto}
+.lineup .who:first-child{margin-left:auto} .lineup .who:last-child{margin-right:auto}
+.five .who{display:flex; flex-direction:column; align-items:center; position:relative}
+.five .who small{font-size:13px; color:var(--muted); margin:2px 0 8px; text-align:center; line-height:1.3}
+.five .who small b{display:block; color:var(--title); font-size:15px}
+.cards{display:grid; grid-template-columns:repeat(auto-fill, minmax(min(100%, 520px), 1fr)); gap:18px; margin-top:18px}
+.card .cap .code{margin-right:8px}
+.card .kind{margin:2px 0 0; color:var(--brick); font-size:13.5px; font-weight:700}
+.card .who-note{margin:6px 0 0; font-size:14px; color:var(--muted)}
+.card .story{margin-top:8px; font-weight:500}
+.card .idea{margin:6px 0 0; font-size:14px; color:var(--teal)}
+.card .idea b{color:var(--title)}
+.card .loc{margin:8px 0 0; font-size:14px; color:var(--ink); border-top:1px solid var(--line); padding-top:6px}
+.card .loc b{display:inline-block; font-size:11px; color:#fff; background:var(--muted); border-radius:4px; padding:0 5px; margin-right:6px}
+.card .loc.rtl{text-align:right}
+.card .loc.rtl b{margin-right:0; margin-left:6px}
+.scale{margin-top:18px; border:1px solid var(--line); border-radius:9px; display:flex; align-items:flex-end; justify-content:center; gap:14px; padding:34px 12px 0; overflow-x:auto}
+.scale svg{height:280px; width:auto; flex:none}
+.scale svg.child{height:200px}
+.scale .who{display:flex; flex-direction:column; align-items:center; position:relative}
+.scale .who small{font-size:12px; color:var(--muted); margin:2px 0 8px; text-align:center; line-height:1.3}
+.scale .who small b{display:block; color:var(--title); font-size:13px}
+h3{color:var(--title); margin:26px 0 0}
+.cards .card{min-width:0}
+.cards .views{grid-template-columns:repeat(3,minmax(0,1fr))}
+.cards .stage svg{max-width:100%}
+
+</style>
+</head>
+<body>
+<div class="top-bar"><div class="in">Playground, round 2026-11 · round 4</div></div>
+<main>
+<a href="index.html">Round 4</a>
+<h1>A Turkish woman for the gate</h1>
+<p class="lede">The cast has a foreign man, a foreign woman and a Turkish man, and no Turkish woman. Leyla, the spice seller, gives up her place. Pick one of five, <b>A to E</b>, and she takes it; nothing on the site has changed yet. Each is drawn by the same hand as the seven (the same 220 by 400 grid, stroke weight, palette, face and robe), in the dress of old Istanbul and with a trade prop in her hand (D93).</p>
+<ul class="notes">
+<li><b>A, B and C</b> are the bazaar's own traders, each with a trade and a prop: a bohçacı with her knotted bundle, an embroiderer at her hoop, a lokum maker with a copper tray.</li>
+<li><b>D and E</b> are inspired by two women of Turkish letters, in the dress of their own time: Mihrî Hatun of Amasya (15th century) and Fatma Aliye (1862 to 1936). They are drawn as period figures with a pen and pages, not as portraits.</li>
+<li>Each story is two sentences, about the length of the seven, with a gentle idea from the course in it. The story is English, as on the home page (D80); a Turkish and a Persian draft sit under each in case that changes.</li>
+<li>The candidates keep to the street's rules: a front view, a back view and a run (a prop that must stay level does not swing), and each fits under the same caption chip as the others.</li>
+</ul>
+<button type="button" class="motion" id="motion">Stop the motion</button>
+
+<h2>The five, side by side</h2>
+<p class="lede">On the street ground, at the height the street draws an adult. Leyla, whose place one of them takes, stands first for scale.</p>
+<div class="five ground" id="five"></div>
+
+<h2>Each one, with her story</h2>
+<div class="cards" id="cards"></div>
+
+<h2>At the gate, in Leyla's place</h2>
+<p class="lede">The candidate stands where Leyla does, left of the doorway, with Dariush, Deniz, Bit, Murat, Mei and Piri as they stand now.</p>
+<div id="lineups"></div>
+
+</main>
+<script>
+/* ================= the figure generator ================= */
+/* One 220 x 400 drawing grid for everyone, the Sipahi's: feet at y 388, shoulders at 150,
+   head centred on (110,112). Skin, hair, face, clothes and hat are parameters, so every
+   person is drawn by the same hand and still reads as someone else. */
+let uid = 0;
+const STEEL='#AEB2C8', STEEL_D='#8E8A9E', IRON='#25233F', GLOW='#8FE3DA';
+
+const CAST = {
+  /* the seven at the gate, the author's picks (M49) and the Janissary he asked for (M50) */
+  mei:{ name:'Mei', skin:'#F0CFA6', sh:'#D9B183', blush:'#E59A86', lip:'#C8604F', hair:'#1E1A22', hs:'bun',
+    brow:'thin', bw:2, eyes:'almond', nose:'small', face:[22,26], lashes:true,
+    ott:{ body:'robe', collar:'cross', wide:true, c1:'#2F8C86', c2:'#F6EEDF', c3:'#A0503C', hem:56, shoe:'#25233F', prop:'silk', run:'flutter', role:'a silk trader' } },
+  leyla:{ name:'Leyla', skin:'#8A5A3C', sh:'#6E452D', blush:'#B5605A', lip:'#7A2F36', hair:'#2A1C18', hs:'puff',
+    brow:'arch', bw:2.7, eyes:'wide', nose:'broad', face:[24,26], hoops:true, lashes:true,
+    ott:{ body:'robe', c1:'#7A4A86', c2:'#C99A4B', c3:'#B8873B', hem:54, vest:'#B8873B', shoe:'#5C4A32', prop:'spices', run:'level', ground:'sacks', role:'a spice seller' } },
+  deniz:{ name:'Deniz', skin:'#D49A6A', sh:'#B87D52', blush:'#E08E78', lip:'#B5524F', hair:'#3A2A22', hs:'curls',
+    brow:'normal', bw:2.4, eyes:'round', nose:'button', face:[25,26], child:true, openSmile:true,
+    ott:{ body:'robe', c1:'#2F8C86', c2:'#F6EEDF', c3:'#A0503C', hem:56, vest:'#F6EEDF', hat:{k:'takke', c1:'#F6EEDF', c2:'#2F8C86'}, shoe:'#5C4A32', prop:'simit', run:'raise', role:'a simit seller' } },
+  dariush:{ name:'Dariush', skin:'#D9A47A', sh:'#BC8660', blush:'#CF7C66', lip:'#9E4A44', hair:'#2A1C18', hs:'none',
+    brow:'heavy', bw:3.4, eyes:'small', nose:'long', face:[24,27], beard:'moustache', beardC:'#2A1C18',
+    ott:{ body:'robe', c1:'#282864', c2:'#C99A4B', c3:'#A0503C', hem:58, hat:{k:'kolah'}, shoe:'#3A2A22', prop:'carpet', run:'roll', role:'a carpet merchant' } },
+  piri:{ name:'Piri', skin:'#C98F62', sh:'#AA7448', blush:'#C77560', lip:'#8E4440', hair:'#BDB8C4', hs:'none',
+    brow:'heavy', bw:3.4, eyes:'old', nose:'long', face:[24,27], beard:'long', beardC:'#C9C4D0', lines:true,
+    ott:{ body:'robe', c1:'#282864', c2:'#DDB46A', c3:'#A0503C', hem:60, vest:'#A0503C', shoe:'#3A2A22', hat:{k:'turban', c1:'#F6EEDF', c2:'#A0503C'}, prop:'map', run:'level', role:'a map-maker' } },
+  // M50 — the Janissary: the börk with its spoon-holder and its long cloth down the back, a
+  // kaftan over a red sash, a yatağan tucked in the sash, a musket on his shoulder, at rest
+  murat:{ name:'Murat', skin:'#D6A27A', sh:'#B9845C', blush:'#CC7E68', lip:'#9E4A44', hair:'#2A1C18', hs:'none',
+    brow:'heavy', bw:3.6, eyes:'small', nose:'long', face:[24,27], beard:'handlebar', beardC:'#1E1A22',
+    ott:{ body:'robe', c1:'#2E3A78', c2:'#C99A4B', c3:'#A0503C', hem:58, vest:'#A0503C', shoe:'#B8873B', hat:{k:'bork'}, gun:true, blade:true, run:'gun', role:'a Janissary, the gate\'s guard' } },
+};
+const PROP = {
+  // M49 — what each person's trade is, in their hand
+  spices:(x,y)=>`<path d="M${x-22},${y-8} Q${x},${y+16} ${x+22},${y-8}Z" fill="#8A6328"/><path d="M${x-20},${y-8} Q${x-10},${y-24} ${x-2},${y-21} Q${x+8},${y-26} ${x+20},${y-8}Z" fill="#C8552E"/><path d="M${x-6},${y-21} Q${x+2},${y-28} ${x+9},${y-20}Z" fill="#D9A441"/><g fill="#7A2F1E">${[[-12,-13],[-5,-16],[4,-15],[11,-12],[0,-11]].map(([a,b])=>`<circle cx="${x+a}" cy="${y+b}" r="1.5"/>`).join('')}</g><path d="M${x+14},${y-18} L${x+30},${y-34}" stroke="#C99A4B" stroke-width="3.4" stroke-linecap="round"/><ellipse cx="${x+12}" cy="${y-16}" rx="6" ry="3.6" fill="#C99A4B" transform="rotate(-40 ${x+12} ${y-16})"/>`,
+  silk:(x,y)=>`<path class="tail" d="M${x-4},${y+2} Q${x-10},${y+40} ${x+4},${y+66} L${x+16},${y+62} Q${x+6},${y+38} ${x+12},${y+2}Z" fill="#C9785F"/><g transform="rotate(-18 ${x} ${y})"><rect x="${x-32}" y="${y-13}" width="64" height="26" rx="7" fill="#A0503C"/><rect x="${x-32}" y="${y-13}" width="64" height="8" rx="4" fill="#C9785F"/><path d="M${x-14},${y-13} V${y+13} M${x+6},${y-13} V${y+13}" stroke="#DDB46A" stroke-width="3"/><ellipse cx="${x+32}" cy="${y}" rx="5" ry="13" fill="#7A3A2C"/></g>`,
+  // M50 — larger and plainly a simit: a thick sesame ring the size of the child's head
+  simit:(x,y)=>{const cx=x+4, cy=y-18, R=22; return `<circle cx="${cx}" cy="${cy}" r="${R}" fill="none" stroke="#9A5A22" stroke-width="15"/><circle cx="${cx}" cy="${cy}" r="${R}" fill="none" stroke="#C47A34" stroke-width="12"/><circle cx="${cx-2}" cy="${cy-2}" r="${R}" fill="none" stroke="#DE9C55" stroke-width="5"/><path d="M${cx-R+3},${cy-6} Q${cx},${cy-R-4} ${cx+R-3},${cy-6}" stroke="#ECB775" stroke-width="2.4" fill="none" opacity=".8"/><g fill="#FFF6E2">${Array.from({length:22},(_,k)=>{const a=k*16.4, rr=R+(k%3-1)*4.2, t=a*Math.PI/180, px=(cx+rr*Math.cos(t)).toFixed(1), py=(cy+rr*Math.sin(t)).toFixed(1); return `<ellipse cx="${px}" cy="${py}" rx="1.9" ry="1.1" transform="rotate(${(a+30).toFixed(0)} ${px} ${py})"/>`}).join('')}</g>`},
+  // M50 — the carpet held open by its top edge: a red field, a cobalt border with a gold line,
+  // a centre medallion, four corner pieces and fringed ends
+  carpet:(x,y)=>{const L=x-26, T=y-8, W=70, H=132, R=L+W, B=T+H, mx=L+W/2, my=T+H/2;
+    const fringe=(yy,d)=>Array.from({length:12},(_,k)=>`M${(L+4+k*5.6).toFixed(1)},${yy} v${d}`).join(' ');
+    const corner=(px,py,sx,sy)=>`<path d="M${px},${py} h${sx*16} q${-sx*2},${sy*10} ${-sx*16},${sy*16}Z" fill="#282864"/><path d="M${px+sx*3},${py+sy*3} h${sx*7} q${-sx*1},${sy*4} ${-sx*7},${sy*7}Z" fill="#DDB46A"/>`;
+    return `<path d="${fringe(T,-11)}" stroke="#F6EEDF" stroke-width="2" stroke-linecap="round"/><path d="${fringe(B,13)}" stroke="#F6EEDF" stroke-width="2" stroke-linecap="round"/>`+
+    `<rect x="${L}" y="${T}" width="${W}" height="${H}" rx="2" fill="#282864"/><rect x="${L+6}" y="${T+6}" width="${W-12}" height="${H-12}" fill="#A0503C"/>`+
+    `<rect x="${L+3}" y="${T+3}" width="${W-6}" height="${H-6}" fill="none" stroke="#DDB46A" stroke-width="1.4" stroke-dasharray="4 3"/><rect x="${L+9}" y="${T+9}" width="${W-18}" height="${H-18}" fill="none" stroke="#DDB46A" stroke-width="1.2"/>`+
+    corner(L+9,T+9,1,1)+corner(R-9,T+9,-1,1)+corner(L+9,B-9,1,-1)+corner(R-9,B-9,-1,-1)+
+    `<path d="M${mx},${my-34} L${mx+19},${my} L${mx},${my+34} L${mx-19},${my}Z" fill="#DDB46A"/><path d="M${mx},${my-25} L${mx+13},${my} L${mx},${my+25} L${mx-13},${my}Z" fill="#282864"/><path d="M${mx},${my-13} L${mx+7},${my} L${mx},${my+13} L${mx-7},${my}Z" fill="#C9785F"/><circle cx="${mx}" cy="${my}" r="2.4" fill="#F6EEDF"/>`+
+    `<path d="M${mx},${my-34} v-10 M${mx},${my+34} v10" stroke="#DDB46A" stroke-width="2.4"/><g fill="#DDB46A">${[[-20,-46],[20,-46],[-20,46],[20,46]].map(([a,b])=>`<circle cx="${mx+a}" cy="${my+b}" r="2.2"/>`).join('')}</g>`},
+  // the same carpet rolled up, for his back and for the run
+  carpetRolled:(x,y)=>`<g transform="rotate(-8 ${x} ${y})"><rect x="${x-13}" y="${y-70}" width="26" height="112" rx="10" fill="#A0503C"/>${[-56,-36,-16,4,24].map(b=>`<rect x="${x-13}" y="${y+b}" width="26" height="9" fill="#282864"/><path d="M${x-9},${y+b+4.5}h18" stroke="#DDB46A" stroke-width="2" stroke-dasharray="3 3"/>`).join('')}<ellipse cx="${x}" cy="${y-70}" rx="13" ry="5" fill="#7A3A2C"/><path d="M${x-10},${y+42} v8 M${x-5},${y+42} v9 M${x},${y+42} v8 M${x+5},${y+42} v9 M${x+10},${y+42} v8" stroke="#F6EEDF" stroke-width="2" stroke-linecap="round"/></g>`,
+  map:(x,y)=>`<rect x="${x-26}" y="${y-38}" width="44" height="36" fill="#EFE2C4"/><path d="M${x-22},${y-30} Q${x-10},${y-20} ${x-14},${y-12} Q${x-2},${y-6} ${x+6},${y-16} Q${x+12},${y-26} ${x+14},${y-34}" stroke="#2F8C86" stroke-width="2.4" fill="none"/><circle cx="${x+4}" cy="${y-28}" r="5" fill="none" stroke="#A0503C" stroke-width="1.4"/><path d="M${x+4},${y-35} v14 M${x-3},${y-28} h14" stroke="#A0503C" stroke-width="1.4"/><rect x="${x+16}" y="${y-42}" width="10" height="44" rx="5" fill="#C99A4B"/><ellipse cx="${x+21}" cy="${y-42}" rx="5" ry="2.4" fill="#8A6328"/>`,
+};
+
+// M49 — goods at a person's feet
+const GROUND = {
+  sacks:`<path d="M6,392 Q2,350 14,338 L44,338 Q56,350 52,392Z" fill="#C9A571"/><path d="M12,340 Q29,326 46,340Z" fill="#C8552E"/><path d="M14,338 Q29,346 44,338" stroke="#8A6328" stroke-width="2.4" fill="none"/><path d="M168,392 Q164,356 174,346 L200,346 Q210,356 206,392Z" fill="#C9A571"/><path d="M173,348 Q187,334 201,348Z" fill="#D9A441"/><path d="M174,346 Q187,353 200,346" stroke="#8A6328" stroke-width="2.4" fill="none"/>`,
+};
+function eyesSVG(c){
+  const e=c.eyes, L=101, R=119, y=111; let s='';
+  const dark = c.skin==='#5D3B2B' ? '#1B1418' : IRON;
+  if(e==='wide'){ s+=`<ellipse cx="${L}" cy="${y}" rx="4.3" ry="4.1" fill="#FFFDF7"/><ellipse cx="${R}" cy="${y}" rx="4.3" ry="4.1" fill="#FFFDF7"/><circle cx="${L}" cy="${y+.4}" r="2.7" fill="${dark}"/><circle cx="${R}" cy="${y+.4}" r="2.7" fill="${dark}"/>`; }
+  else if(e==='almond'){ s+=`<ellipse cx="${L}" cy="${y+.5}" rx="3.9" ry="2.3" fill="${dark}" transform="rotate(7 ${L} ${y})"/><ellipse cx="${R}" cy="${y+.5}" rx="3.9" ry="2.3" fill="${dark}" transform="rotate(-7 ${R} ${y})"/><circle cx="${L+.8}" cy="${y}" r=".8" fill="#fff"/><circle cx="${R+.8}" cy="${y}" r=".8" fill="#fff"/>`; }
+  else if(e==='old'){ s+=`<path d="M${L-4},${y} Q${L},${y-3} ${L+4},${y}" stroke="${dark}" stroke-width="2.4" fill="none" stroke-linecap="round"/><path d="M${R-4},${y} Q${R},${y-3} ${R+4},${y}" stroke="${dark}" stroke-width="2.4" fill="none" stroke-linecap="round"/><path d="M${L-7},${y-1} l-3,-2 M${L-7},${y+2} l-3,1 M${R+7},${y-1} l3,-2 M${R+7},${y+2} l3,1" stroke="${c.sh}" stroke-width="1.3" stroke-linecap="round"/>`; }
+  else if(e==='small'){ s+=`<ellipse cx="${L}" cy="${y}" rx="2.3" ry="2.1" fill="${dark}"/><ellipse cx="${R}" cy="${y}" rx="2.3" ry="2.1" fill="${dark}"/>`; }
+  else if(e==='blue'){ s+=`<ellipse cx="${L}" cy="${y}" rx="3.6" ry="3.5" fill="#FFFDF7"/><ellipse cx="${R}" cy="${y}" rx="3.6" ry="3.5" fill="#FFFDF7"/><circle cx="${L}" cy="${y+.3}" r="2.4" fill="#3D6B9A"/><circle cx="${R}" cy="${y+.3}" r="2.4" fill="#3D6B9A"/><circle cx="${L}" cy="${y+.3}" r="1.1" fill="${dark}"/><circle cx="${R}" cy="${y+.3}" r="1.1" fill="${dark}"/>`; }
+  else { s+=`<ellipse cx="${L}" cy="${y}" rx="2.7" ry="3.3" fill="${dark}"/><ellipse cx="${R}" cy="${y}" rx="2.7" ry="3.3" fill="${dark}"/>`; }
+  if(c.lashes) s+=`<path d="M${L-4.4},${y-1.6} l-2.6,-2 M${L-3},${y-3.4} l-1.4,-2.6 M${R+4.4},${y-1.6} l2.6,-2 M${R+3},${y-3.4} l1.4,-2.6" stroke="${dark}" stroke-width="1.5" stroke-linecap="round"/>`;
+  return `<g class="blink">${s}</g>`;
+}
+function browsSVG(c){
+  const col = c.hs==='tufts' ? '#C9C6D2' : c.hair;
+  const w=c.bw||2.4; let d;
+  if(c.brow==='arch') d='M94,102 Q99,96 106,100 M114,100 Q121,96 126,102';
+  else if(c.brow==='thin') d='M95,102 Q100,100.5 106,101.5 M114,101.5 Q120,100.5 125,102';
+  else if(c.brow==='thick') d='M94,103 Q100,98.5 106,101.5 M114,101.5 Q120,98.5 126,103';
+  else if(c.brow==='heavy') d='M94,102.5 Q100,98 107,101.5 M113,101.5 Q120,98 126,102.5';
+  else d='M95,103 Q100,100 105,102 M115,102 Q120,100 125,103';
+  return `<path d="${d}" stroke="${col}" stroke-width="${w}" fill="none" stroke-linecap="round"/>`;
+}
+function noseSVG(c){
+  if(c.nose==='broad') return `<path d="M104.5,118.5 Q110,123.5 115.5,118.5" stroke="${c.sh}" stroke-width="2.2" fill="none" stroke-linecap="round"/><path d="M109,112 Q108,117 109.5,118" stroke="${c.sh}" stroke-width="1.6" fill="none" stroke-linecap="round" opacity=".7"/>`;
+  if(c.nose==='button') return `<circle cx="110" cy="118" r="2.4" fill="${c.sh}"/>`;
+  if(c.nose==='small') return `<path d="M108,117 Q110,119.5 112,117" stroke="${c.sh}" stroke-width="1.8" fill="none" stroke-linecap="round"/>`;
+  return `<path d="M110,112 Q106,119 111,120.5" stroke="${c.sh}" stroke-width="2" fill="none" stroke-linecap="round"/>`;
+}
+function mouthSVG(c){
+  if(c.openSmile) return `<path d="M102,130 Q110,141 118,130Z" fill="#7A3E2E"/><path d="M105,135 Q110,139 115,135 Q110,133 105,135Z" fill="#D9766A"/>`;
+  if(c.lashes || c.hs==='bob' || c.hs==='none') return `<path d="M103,131.5 Q110,128.5 117,131.5 Q110,138.5 103,131.5Z" fill="${c.lip}"/><path d="M103,131.5 Q110,134 117,131.5" stroke="#00000022" stroke-width="1" fill="none"/>`;
+  if(c.beard==='handlebar') return `<path d="M104.5,134 Q110,137.5 115.5,134" stroke="${c.lip}" stroke-width="2.4" fill="none" stroke-linecap="round"/>`;
+  if(c.beard) return `<path d="M103,133 Q110,138 117,133" stroke="#E7A79A" stroke-width="2.4" fill="none" stroke-linecap="round"/>`;
+  return `<path d="M104,132 Q110,136.5 116,132" stroke="${c.lip}" stroke-width="2.2" fill="none" stroke-linecap="round"/>`;
+}
+function hatSVGBase(h){
+  if(!h) return '';
+  const k=h.k;
+  // M49 — an Ottoman scholar's kavuk: a tall rounded cap wound in white
+  if(k==='kavuk') return `<path d="M84,100 Q80,60 110,46 Q140,60 136,100 Q110,92 84,100Z" fill="#F6EEDF"/><path d="M86,92 Q110,70 134,80 M85,80 Q108,60 132,66 M90,68 Q108,52 126,54" stroke="#D8CBB4" stroke-width="3" fill="none"/><path d="M84,96 Q110,104 136,96 L136,101 Q110,109 84,101Z" fill="#E6DAC6"/>`;
+  // M50 — the Janissary's börk: a tall white felt cap on a gilt band, a brass spoon-holder
+  // (kaşıklık) at its front; its top folds back into the long cloth drawn by borkCloth()
+  if(k==='bork') return `<path d="M88,101 L91,36 Q110,27 129,36 L132,101 Q110,95 88,101Z" fill="#F4EFE6"/><path d="M97,40 L95,96 M110,32 V94 M123,40 L125,96" stroke="#DCD3C3" stroke-width="2"/><path d="M91,36 Q110,27 129,36 Q132,42 128,46 Q110,38 92,46 Q88,42 91,36Z" fill="#E4DCCD"/><path d="M86,98 Q110,90 134,98 L134,105 Q110,97 86,105Z" fill="#C99A4B"/><path d="M86,101.5 Q110,93.5 134,101.5" stroke="#8A6328" stroke-width="1.2" fill="none"/><path d="M106,97 L106,62 Q110,55 114,62 L114,97Z" fill="#C99A4B"/><path d="M107.5,94 V64 M112.5,94 V64" stroke="#8A6328" stroke-width="1"/><ellipse cx="110" cy="56" rx="4.6" ry="6.4" fill="#DDB46A" stroke="#8A6328" stroke-width="1.2"/>`;
+  // a Qajar kolah: a tall dark felt cap
+  if(k==='kolah') return `<path d="M88,100 L92,50 Q110,44 128,50 L132,100 Q110,94 88,100Z" fill="#2E2A33"/><path d="M96,56 L95,96 M110,50 L110,95 M124,56 L125,96" stroke="#45404C" stroke-width="2.2"/><path d="M88,96 Q110,90 132,96" stroke="#1E1A22" stroke-width="4" fill="none"/>`;
+  // a Persian dastar: a low wound turban in a colour
+  if(k==='dastar') return `<path d="M80,98 Q78,68 110,62 Q142,68 140,98 Q110,88 80,98Z" fill="${h.c1}"/><path d="M82,90 Q110,70 138,88 M84,80 Q108,66 134,76" stroke="${h.c2}" stroke-width="3.2" fill="none"/><path d="M80,96 Q110,104 140,96 L140,101 Q110,110 80,101Z" fill="${h.c2}"/>`;
+  if(k==='turban') return `<ellipse cx="110" cy="78" rx="36" ry="24" fill="${h.c1}"/><path d="M76,84 Q110,64 144,84 M80,70 Q110,52 140,70 M84,92 Q110,76 136,92" stroke="#D8CBB4" stroke-width="3" fill="none"/><path d="M76,90 Q110,100 144,90 L144,96 Q110,106 76,96Z" fill="${h.c2}"/><circle cx="110" cy="94" r="3.6" fill="#A0503C"/>`;
+  if(k==='fez') return `<path d="M88,92 L93,56 L127,56 L132,92 Q110,99 88,92Z" fill="${h.c1}"/><ellipse cx="110" cy="56" rx="17" ry="4.5" fill="#B9694F"/><path d="M127,58 Q142,66 140,92" stroke="${IRON}" stroke-width="2" fill="none"/><path d="M137,90 l3,12 l3,-12Z" fill="${IRON}"/>`;
+  if(k==='hotoz') return `<path d="M91,96 Q90,62 110,60 Q130,62 129,96 Q110,90 91,96Z" fill="${h.c1}"/><path d="M92,90 Q110,84 128,90" stroke="${h.c2}" stroke-width="5" fill="none"/><circle cx="110" cy="66" r="4" fill="${h.c2}"/><path d="M96,78h8M116,78h8" stroke="${h.c2}" stroke-width="2" stroke-linecap="round"/>`;
+  if(k==='takke') return `<path d="M86,100 Q86,70 110,68 Q134,70 134,100 Q110,92 86,100Z" fill="${h.c1}"/><path d="M87,95 Q110,87 133,95" stroke="${h.c2}" stroke-width="5" fill="none"/><circle cx="110" cy="76" r="3" fill="${h.c2}"/>`;
+  if(k==='flatcap') return `<path d="M83,100 Q84,72 112,72 Q138,74 137,100 Q110,92 83,100Z" fill="${h.c1}"/><path d="M82,99 Q112,108 142,99 L140,94 Q112,86 84,94Z" fill="#2B2B46"/>`;
+  if(k==='cap') return `<path d="M85,100 Q84,70 110,68 Q136,70 135,100 Q110,92 85,100Z" fill="${h.c1}"/><path d="M84,98 Q106,104 146,106 L146,100 Q112,94 84,92Z" fill="#21665F"/><circle cx="110" cy="70" r="3" fill="#21665F"/>`;
+  if(k==='band') return `<path d="M84,100 Q110,88 136,100 L136,111 Q110,99 84,111Z" fill="${h.c1}"/><path d="M92,100v6M102,97v6M112,96v6M122,98v6M131,101v5" stroke="${h.c2}" stroke-width="2.4" stroke-linecap="round"/><path d="M136,102 Q150,92 150,106 Q144,110 138,108Z" fill="${h.c1}"/><path d="M136,108 Q146,118 140,124 Q136,116 136,108Z" fill="${h.c1}"/>`;
+  if(k==='phones') return `<path d="M82,108 Q84,52 110,50 Q136,52 138,108" stroke="${IRON}" stroke-width="5" fill="none" stroke-linecap="round"/><rect x="76" y="102" width="12" height="24" rx="5" fill="${IRON}"/><rect x="132" y="102" width="12" height="24" rx="5" fill="${IRON}"/><rect x="79" y="107" width="6" height="14" rx="3" fill="#63B2AB"/><rect x="135" y="107" width="6" height="14" rx="3" fill="#63B2AB"/>`;
+  return '';
+}
+// M50 — the börk's cloth: from the folded top of the cap down the back to the shoulder
+// blades. From the front only its edge shows, behind the head on one side.
+function borkCloth(view){
+  if(view==='b') return `<path d="M102,40 Q110,32 118,40 L122,196 Q110,204 98,196Z" fill="#F4EFE6"/><path d="M106,52 L104,192 M110,46 V198 M114,52 L116,192" stroke="#DCD3C3" stroke-width="1.6"/><path d="M98,196 Q110,204 122,196 L122,190 Q110,198 98,190Z" fill="#E4DCCD"/>`;
+  return `<path d="M124,38 Q144,34 147,54 L150,170 Q146,180 139,172 L137,70 Q134,48 124,46Z" fill="#E9E2D5"/><path d="M142,58 L145,168" stroke="#D2C8B7" stroke-width="2"/>`;
+}
+function hairSVGBase(c){
+  const hc=c.hair; let back='', front='';
+  switch(c.hs){
+    case 'puff':
+      back = `<g fill="${hc}"><circle cx="110" cy="84" r="25"/>`+[[84,92],[78,108],[86,74],[100,62],[120,62],[134,74],[142,92],[136,108]].map(p=>`<circle cx="${p[0]}" cy="${p[1]}" r="13"/>`).join('')+`</g>`;
+      front = `<path d="M87,104 Q86,86 110,82 Q134,86 133,104 Q128,92 118,92 Q110,96 102,92 Q92,92 87,104Z" fill="${hc}"/>`; break;
+    case 'bob':
+      back = `<path d="M82,104 Q76,150 92,158 L128,158 Q144,150 138,104Z" fill="${hc}"/>`;
+      front = `<path d="M84,110 Q82,72 110,70 Q138,72 136,110 L135,98 Q124,90 110,92 Q96,90 85,98Z" fill="${hc}"/><path d="M84,100 Q85,120 88,128 L90,104Z M136,100 Q135,120 132,128 L130,104Z" fill="${hc}"/>`; break;
+    case 'tufts':
+      front = `<ellipse cx="87" cy="108" rx="5.5" ry="12" fill="${hc}"/><ellipse cx="133" cy="108" rx="5.5" ry="12" fill="${hc}"/>`; break;
+    case 'tousled':
+      front = `<path d="M85,110 Q82,78 110,72 Q138,78 135,110 Q132,96 124,92 Q110,98 96,92 Q88,96 85,110Z" fill="${hc}"/><g fill="${hc}"><circle cx="94" cy="78" r="8"/><circle cx="108" cy="71" r="9"/><circle cx="123" cy="75" r="8"/><circle cx="132" cy="86" r="6"/><circle cx="88" cy="88" r="6"/></g>`; break;
+    case 'curls':
+      front = `<path d="M85,108 Q84,80 110,76 Q136,80 135,108 Q130,94 122,92 Q110,98 98,92 Q90,94 85,108Z" fill="${hc}"/><g fill="${hc}">`+[[88,92],[95,80],[108,74],[122,76],[131,86],[134,98]].map(p=>`<circle cx="${p[0]}" cy="${p[1]}" r="8.5"/>`).join('')+`</g>`; break;
+    case 'bun':
+      // M49 — hair drawn back into a high bun, held by two pins: the way a
+      // Chinese merchant woman of the period wore it
+      back = `<circle cx="110" cy="66" r="15" fill="${hc}"/><ellipse cx="110" cy="76" rx="20" ry="7" fill="${hc}"/>`;
+      front = `<path d="M85,110 Q83,76 110,74 Q137,76 135,110 Q131,92 114,88 L110,92 L106,88 Q89,92 85,110Z" fill="${hc}"/><path d="M90,58 L132,70 M92,66 L130,77" stroke="#C99A4B" stroke-width="2.6" stroke-linecap="round"/><circle cx="90" cy="58" r="3.4" fill="#A0503C"/><circle cx="92" cy="66" r="3" fill="#2F8C86"/><path d="M88,60 l-4,6 M90,68 l-4,6" stroke="#C99A4B" stroke-width="1.6" stroke-linecap="round"/>`; break;
+    case 'braids':
+      // a centre parting and two long braids over the shoulders
+      back = `<path d="M84,104 Q80,138 92,146 L128,146 Q140,138 136,104Z" fill="${hc}"/>`;
+      front = `<path d="M85,110 Q83,76 110,74 Q137,76 135,110 Q132,90 112,86 L110,90 L108,86 Q88,90 85,110Z" fill="${hc}"/>`+
+        [86,134].map(x=>[0,1,2,3,4,5].map(i=>`<ellipse cx="${x+(x<110?-1:1)*i*.6}" cy="${128+i*14}" rx="6.4" ry="8.6" fill="${hc}"/>`).join('')+`<rect x="${x-4}" y="${208}" width="8" height="6" rx="2" fill="${c.tie||'#A0503C'}"/><path d="M${x-3},${214} l-2,8 M${x},${214} v9 M${x+3},${214} l2,8" stroke="${hc}" stroke-width="2.2" stroke-linecap="round"/>`).join(''); break;
+    default: break;
+  }
+  return {back, front};
+}
+function scarfSVG(h){
+  const c1=h.c1, c2=h.c2;
+  const back = `<path d="M80,112 Q78,66 110,62 Q142,66 140,112 Q142,146 132,162 Q124,176 110,178 Q96,176 88,162 Q78,146 80,112Z" fill="${c1}"/>`;
+  const shade = `<path d="M118,64 Q142,70 140,112 Q142,146 132,162 Q124,176 110,178 Q122,150 122,120 Q122,86 118,64Z" fill="${c2}" opacity=".22"/>`;
+  const dots = h.dots ? `<g fill="${c2}">`+[[88,92],[96,76],[110,70],[124,76],[132,92],[86,120],[134,120],[90,146],[130,146],[100,166],[120,166],[110,176]].map(p=>`<circle cx="${p[0]}" cy="${p[1]}" r="2.8"/>`).join('')+`</g>`:'';
+  const front = `<path d="M88,112 Q86,84 110,80 Q134,84 132,112 Q131,100 122,95 Q110,98 98,95 Q89,100 88,112Z" fill="${c1}"/><path d="M88,110 Q110,92 132,110" stroke="${c2}" stroke-width="2.2" fill="none" opacity=".55"/>`;
+  return {back, shade, dots, front};
+}
+function headSVG(c, o, view){
+  const [rx,ry]=c.face, sc=(o.hat&&o.hat.k==='scarf')?scarfSVG(o.hat):null;
+  const H=hairSVG(c);
+  let s='';
+  if(view==='b'){
+    if(sc) return sc.back+sc.shade+sc.dots;
+    s+=`<ellipse cx="85" cy="114" rx="5" ry="7" fill="${c.sh}"/><ellipse cx="135" cy="114" rx="5" ry="7" fill="${c.sh}"/>`;
+    s+=H.back;
+    const bald = c.hs==='tufts';
+    s+=`<ellipse cx="110" cy="110" rx="${rx+.5}" ry="${ry+1}" fill="${(c.hs==='none'||bald)?c.skin:c.hair}"/>`;
+    if(bald) s+=`<ellipse cx="87" cy="110" rx="6" ry="13" fill="${c.hair}"/><ellipse cx="133" cy="110" rx="6" ry="13" fill="${c.hair}"/><path d="M92,126 Q110,150 128,126 L128,140 Q110,158 92,140Z" fill="${c.beardC}"/>`;
+    if(c.hs==='bob'||c.hs==='tousled'||c.hs==='curls'||c.hs==='lowbun'||c.hs==='loose'||c.hs==='plait'||c.hs==='updo') s+=`<ellipse cx="110" cy="108" rx="${rx+1}" ry="${ry+2}" fill="${c.hair}"/>`;
+    if(c.hs==='puff') s+=`<ellipse cx="110" cy="108" rx="${rx+3}" ry="${ry}" fill="${c.hair}"/>`;
+    s+=H.front;
+    s+=(H.bv||'');
+    s+=hatSVG(o.hat);
+    if(o.hat && o.hat.k==='bork') s+=borkCloth('b');
+    return s;
+  }
+  if(sc) s+=sc.back+sc.shade+sc.dots;
+  if(o.hat && o.hat.k==='bork') s+=borkCloth('f');
+  s+=H.back;
+  if(!sc) s+=`<ellipse cx="${110-rx}" cy="114" rx="5" ry="7" fill="${c.sh}"/><ellipse cx="${110+rx}" cy="114" rx="5" ry="7" fill="${c.sh}"/>`;
+  if(c.hoops && !sc) s+=`<circle cx="${110-rx-1}" cy="126" r="4.2" fill="none" stroke="#C99A4B" stroke-width="2"/><circle cx="${110+rx+1}" cy="126" r="4.2" fill="none" stroke="#C99A4B" stroke-width="2"/>`;
+  s+=`<ellipse cx="110" cy="112" rx="${sc?rx-2:rx}" ry="${sc?ry-1:ry}" fill="${c.skin}"/>`;
+  s+=`<circle cx="97" cy="122" r="5" fill="${c.blush}" opacity=".35"/><circle cx="123" cy="122" r="5" fill="${c.blush}" opacity=".35"/>`;
+  if(c.freckles) s+=`<g fill="#B9774F" opacity=".75">`+[[96,117],[100,120],[94,121],[104,118],[124,117],[120,120],[126,121],[116,118],[110,114],[108,115.5]].map(p=>`<circle cx="${p[0]}" cy="${p[1]}" r="1"/>`).join('')+`</g>`;
+  if(c.lines) s+=`<path d="M96,92 Q110,88 124,92" stroke="${c.sh}" stroke-width="1.4" fill="none" opacity=".7"/><path d="M95,124 Q93,128 96,132 M125,124 Q127,128 124,132" stroke="${c.sh}" stroke-width="1.4" fill="none" opacity=".8" stroke-linecap="round"/>`;
+  s+=noseSVG(c);
+  if(c.beard){
+    const bc=c.beardC;
+    if(c.beard==='long') s+=`<path d="M86,114 Q84,168 110,208 Q136,168 134,114 Q132,128 122,130 Q110,124 98,130 Q88,128 86,114Z" fill="${bc}"/><path d="M100,150 Q104,176 108,196 M118,150 Q116,176 112,196 M110,140 V200" stroke="#00000014" stroke-width="1.6" fill="none"/><path d="M96,127 Q104,120 110,124 Q116,120 124,127 Q118,131 110,128 Q102,131 96,127Z" fill="${bc}" stroke="#00000018" stroke-width="1"/>`;
+    // M50 — a Janissary's long moustache, its ends curled up; the chin shaved
+    else if(c.beard==='handlebar') s+=`<path d="M110,122.5 Q101,119.5 93,124 Q87,127.5 83.5,121.5 Q83,129 89,131.5 Q99,134 110,127.5 Q121,134 131,131.5 Q137,129 136.5,121.5 Q133,127.5 127,124 Q119,119.5 110,122.5Z" fill="${bc}"/><path d="M96,126 Q103,124 110,125.5 M124,126 Q117,124 110,125.5" stroke="#00000030" stroke-width="1" fill="none"/>`;
+    else if(c.beard==='moustache') s+=`<path d="M86,116 Q88,140 110,146 Q132,140 134,116 Q130,128 120,129 Q110,124 100,129 Q90,128 86,116Z" fill="${bc}"/><path d="M92,128 Q100,119 110,124 Q120,119 128,128 Q132,132 136,127 Q132,136 122,133 Q110,129 98,133 Q88,136 84,127 Q88,132 92,128Z" fill="${bc}"/>`;
+    else if(c.beard==='full') s+=`<path d="M86,114 Q86,154 110,168 Q134,154 134,114 Q132,128 122,130 Q110,124 98,130 Q88,128 86,114Z" fill="${bc}"/><path d="M98,127 Q104,121 110,125 Q116,121 122,127 Q116,130 110,128 Q104,130 98,127Z" fill="${bc}" stroke="#00000018" stroke-width="1"/>`;
+    else s+=`<path d="M87,114 Q88,144 110,152 Q132,144 133,114 Q131,126 122,128 Q110,123 98,128 Q89,126 87,114Z" fill="${bc}"/><path d="M99,127 Q105,122 110,125 Q115,122 121,127 Q115,129 110,127.5 Q105,129 99,127Z" fill="${bc}"/>`;
+  }
+  s+=mouthSVG(c);
+  s+=eyesSVG(c)+browsSVG(c);
+  s+=H.front;
+  if(sc) s+=sc.front;
+  s+=hatSVG(o.hat);
+  if(o.glasses) s+=`<g fill="#FFFFFF" fill-opacity=".16" stroke="${IRON}" stroke-width="2"><circle cx="101" cy="111" r="7.6"/><circle cx="119" cy="111" r="7.6"/></g><path d="M108.6,110 Q110,108 111.4,110 M93.4,110 L88,108 M126.6,110 L132,108" stroke="${IRON}" stroke-width="2" fill="none"/>`;
+  return s;
+}
+
+function torsoSVG(c, o, view){
+  const b=o.body, cl='cp'+(uid++); let s='';
+  const neck=`<path d="M101,130 L119,130 L120,154 Q110,160 100,154Z" fill="${c.sh}"/>`;
+  if(b==='robe'){
+    const hw=o.hem||57, L=110-hw, R=110+hw, q=hw/4.5;
+    s+=`<path d="M78,150 Q110,141 142,150 L150,238 L${R},382 Q110,391 ${L},382 L70,238Z" fill="${o.c1}"/>`;
+    s+=`<path d="M${L+3},378 Q110,387 ${R-3},378" stroke="${o.c2}" stroke-width="6" fill="none"/>`;
+    if(view==='f' && o.collar==='cross'){
+      // M49 — the right lapel crosses over the left to the armpit
+      s+=`<path d="M98,147 L118,147 L148,214 L138,220Z" fill="${o.c2}"/><path d="M100,147 L140,218" stroke="${o.c3}" stroke-width="2.4"/><path d="M96,148 Q110,158 124,148" stroke="${o.c2}" stroke-width="5" fill="none"/>`;
+    } else if(view==='f'){
+      if(o.c1!=='#F6EEDF') s+=`<path d="M104,148 L116,148 L${110+q},386 L${110-q},386Z" fill="#F6EEDF"/>`;
+      s+=`<path d="M104,148 L${110-q},386 M116,148 L${110+q},386" stroke="${o.c2}" stroke-width="3"/>`;
+      if(o.vest) s+=`<path d="M78,150 L100,152 L98,238 L70,238Z M142,150 L120,152 L122,238 L150,238Z" fill="${o.vest}"/><path d="M100,152 L98,238 M120,152 L122,238" stroke="${o.c2}" stroke-width="2.6"/>`;
+    } else {
+      s+=`<path d="M110,148 L110,386" stroke="${o.c2}" stroke-width="2.4" opacity=".7"/>`;
+      if(o.vest) s+=`<path d="M78,150 Q110,141 142,150 L150,238 L70,238Z" fill="${o.vest}"/>`;
+    }
+    if(!o.loose) s+=`<rect x="72" y="232" width="76" height="16" rx="5" fill="${o.c3}"/><path d="M72,237H148" stroke="#00000030" stroke-width="2"/><g class="sash"><path d="M122,246 L118,294 L128,292 L134,298 L136,246Z" fill="${o.c3}"/><path d="M118,294 L128,292 L134,298" stroke="#00000030" stroke-width="2" fill="none"/></g>`;
+    if(view==='f') s+=`<path d="M98,148 Q110,162 122,148" stroke="${o.c2}" stroke-width="3" fill="none"/>`;
+    // M50 — the yatağan: a short curved sword in its scabbard, tucked across the sash, the
+    // bone hilt with its two 'ears' up at the wearer's right
+    if(view==='f' && o.blade) s+=`<path d="M100,236 Q124,240 146,270 Q148,276 143,277 Q121,248 99,244Z" fill="#3A2A22"/><path d="M100,236 Q124,240 146,270" stroke="#C99A4B" stroke-width="1.6" fill="none"/><path d="M118,240 l3,7 M132,251 l4,6" stroke="#C99A4B" stroke-width="3"/><path d="M142,271 L147,278" stroke="#C99A4B" stroke-width="4" stroke-linecap="round"/><rect x="95" y="233" width="7" height="13" rx="1.5" fill="#C99A4B" transform="rotate(-62 98.5 239.5)"/><path d="M95,237 L82,226" stroke="#EDE3CF" stroke-width="7" stroke-linecap="round"/><ellipse cx="78" cy="222" rx="4.2" ry="2.6" fill="#EDE3CF" transform="rotate(-20 78 222)"/><ellipse cx="82" cy="219" rx="4.2" ry="2.6" fill="#EDE3CF" transform="rotate(-70 82 219)"/>`;
+    return neck+s;
+  }
+  if(b==='tee'||b==='hoodie'||b==='blazer'||b==='cardigan'){
+    const long = b==='blazer'||b==='cardigan';
+    const bot = long?262:250;
+    const shape=`M78,152 Q110,141 142,152 L148,${bot} Q110,${bot+8} 72,${bot}Z`;
+    s+=`<clipPath id="${cl}"><path d="${shape}"/></clipPath><path d="${shape}" fill="${o.c1}"/>`;
+    if(o.stripes) s+=`<g clip-path="url(#${cl})" fill="${o.c2}">`+[160,178,196,214,232].map(y=>`<rect x="60" y="${y}" width="100" height="8"/>`).join('')+`</g>`;
+    if(b==='hoodie'){
+      if(view==='f') s+=`<path d="M84,148 Q110,172 136,148 L140,160 Q110,188 80,160Z" fill="${o.c2}"/><path d="M100,166 L98,196 M120,166 L122,196" stroke="#F6EEDF" stroke-width="2.4" stroke-linecap="round"/><path d="M84,214 L136,214 L132,238 L88,238Z" fill="${o.c2}"/>`;
+      else s+=`<path d="M82,150 Q110,196 138,150 L142,168 Q110,214 78,168Z" fill="${o.c2}"/>`;
+      s+=`<path d="M72,${bot}H148" stroke="${o.c2}" stroke-width="8"/>`;
+    }
+    if(b==='blazer'){
+      if(view==='f') s+=`<path d="M98,150 L110,214 L122,150Z" fill="${o.c2}"/><path d="M98,150 L110,214 L90,236 L80,152Z M122,150 L110,214 L130,236 L140,152Z" fill="#1A1A45"/><circle cx="110" cy="226" r="2.4" fill="#C99A4B"/>`;
+      else s+=`<path d="M110,150 V262" stroke="#1A1A45" stroke-width="2.4"/>`;
+    }
+    if(b==='cardigan'){
+      if(view==='f') s+=`<path d="M96,150 L110,164 L124,150 L126,262 L94,262Z" fill="${o.c2}"/><path d="M96,150 L94,262 M124,150 L126,262" stroke="#00000030" stroke-width="2.4"/><g fill="#C99A4B"><circle cx="110" cy="188" r="2.2"/><circle cx="110" cy="212" r="2.2"/><circle cx="110" cy="236" r="2.2"/></g>`;
+      else s+=`<path d="M110,150 V262" stroke="#00000030" stroke-width="2.4"/>`;
+    }
+    if(view==='f' && b==='tee') s+=`<path d="M98,150 Q110,164 122,150" fill="${c.sh}" stroke="${o.c2||'#00000030'}" stroke-width="3"/>`;
+    return neck+s;
+  }
+  if(b==='coat'){
+    s+=`<path d="M78,152 Q110,141 142,152 L152,334 L68,334Z" fill="${o.c1}"/><path d="M68,334 L152,334" stroke="#00000030" stroke-width="4"/>`;
+    if(view==='f') s+=`<path d="M110,152 V334" stroke="#00000030" stroke-width="2.6"/><rect x="74" y="238" width="72" height="10" rx="3" fill="#00000026"/><g fill="#F6EEDF"><circle cx="102" cy="190" r="2.4"/><circle cx="102" cy="214" r="2.4"/><circle cx="102" cy="262" r="2.4"/><circle cx="102" cy="290" r="2.4"/></g>`;
+    else s+=`<path d="M110,152 V334" stroke="#00000030" stroke-width="2.6"/>`;
+    return neck+s;
+  }
+  return neck;
+}
+
+function legsSVG(c, o){
+  const sh=o.shoe;
+  if(o.body==='robe') return [`<ellipse cx="94" cy="388" rx="17" ry="6" fill="${sh}"/>`, `<ellipse cx="128" cy="388" rx="17" ry="6" fill="${sh}"/>`];
+  const lw=25, lb=378, sk=!!o.shorts;
+  const L=`<path d="M97,236 L94,${lb}" stroke="${o.pants}" stroke-width="${lw}"/>`+(sk?`<path d="M95.5,300 L94,${lb}" stroke="${c.skin}" stroke-width="15"/>`:'')+`<rect x="76" y="372" width="34" height="17" rx="8" fill="${sh}"/>`;
+  const R=`<path d="M123,236 L126,${lb}" stroke="${o.pants}" stroke-width="${lw}"/>`+(sk?`<path d="M124.5,300 L126,${lb}" stroke="${c.skin}" stroke-width="15"/>`:'')+`<rect x="110" y="372" width="34" height="17" rx="8" fill="${sh}"/>`;
+  return [L,R];
+}
+
+const ARM = { l:'M82,160 L72,214 L86,242', r:'M138,160 L148,214 L134,242',
+              hold:'M138,160 L168,198 L166,176', wave:'M138,160 L170,150 L178,120' };
+const HAND = { l:[86,242], r:[134,242], hold:[166,176], wave:[178,120] };
+// M50 — the musket, shouldered at rest: the butt in the left hand at the hip, the barrel up
+// along the shoulder and past the head, the muzzle to the sky; never pointed
+const MUSKET = `<g class="musket"><path d="M80,286 Q92,292 104,285 L93,204 L81,205Z" fill="#7A4E2A"/><path d="M81,283 Q92,289 103,282" stroke="#C99A4B" stroke-width="3.4" fill="none"/><path d="M84.5,204 L58,18" stroke="#5E6070" stroke-width="6.5" stroke-linecap="round"/><rect x="85" y="214" width="8" height="16" rx="2" fill="#B8873B" transform="rotate(-8 89 222)"/><path d="M88.5,204 L63,30" stroke="#7A4E2A" stroke-width="3.4" stroke-linecap="round"/><path d="M90,206 L64.5,32" stroke="#3E4050" stroke-width="1.2"/><path d="M76,150 l7,1 M68.5,98 l7,1 M62.5,56 l6,1" stroke="#C99A4B" stroke-width="3"/><rect x="81" y="200" width="11" height="9" rx="2" fill="#C99A4B"/><path d="M86,200 l-3,-6" stroke="#3E4050" stroke-width="2.4" stroke-linecap="round"/><path d="M57,14 l3,0.4" stroke="#3E4050" stroke-width="4" stroke-linecap="round"/></g>`;
+function armSVG(side, c, o, pose, view, part='all'){
+  const key = side==='l' ? 'l' : (pose||'r');
+  const d = ARM[key], hand = HAND[key];
+  const pts = d.split(/[ML ]+/).filter(Boolean).map(p=>p.split(',').map(Number));
+  const long = o.sleeve!=='short';
+  let s='';
+  // From behind, a carried thing is behind the body and the arm is not: the back view asks for
+  // the two separately (part 'arm' and part 'prop'). A raised simit stays in the hand, above the shoulder.
+  const inHand = part==='all' || (part==='arm' && o.run==='raise');
+  if(part==='prop') return side==='l' ? (o.gun ? MUSKET : '') : (pose==='hold' && o.prop && o.run!=='raise' ? (PROP[o.prop+'Rolled']||PROP[o.prop])(HAND.hold[0]+1,HAND.hold[1]+7) : '');
+  if(side==='l' && o.gun && part==='all') s+=MUSKET;
+  if(long){
+    s+=`<path d="${d}" stroke="${o.c1}" stroke-width="${o.wide?30:24}" fill="none" stroke-linecap="round" stroke-linejoin="round"/>`;
+    if(o.body==='robe'||o.body==='cardigan'||o.body==='blazer'){
+      const e=pts[1], h=pts[2], dx=h[0]-e[0], dy=h[1]-e[1], len=Math.hypot(dx,dy), ux=dx/len, uy=dy/len;
+      s+=`<path d="M${(h[0]-ux*7).toFixed(1)},${(h[1]-uy*7).toFixed(1)} L${(h[0]-ux*5).toFixed(1)},${(h[1]-uy*5).toFixed(1)}" stroke="${o.c2}" stroke-width="25" stroke-linecap="butt"/>`;
+    }
+  } else {
+    const a=pts[0], e=pts[1];
+    s+=`<path d="${d}" stroke="${c.skin}" stroke-width="18" fill="none" stroke-linecap="round" stroke-linejoin="round"/>`;
+    s+=`<path d="M${a[0]},${a[1]} L${(a[0]+(e[0]-a[0])*.5).toFixed(1)},${(a[1]+(e[1]-a[1])*.5).toFixed(1)}" stroke="${o.c1}" stroke-width="25" stroke-linecap="round"/>`;
+  }
+  const handDot = `<circle cx="${hand[0]}" cy="${hand[1]}" r="9" fill="${c.skin}"/>`;
+  if(side==='r' && pose==='hold' && o.prop && inHand){
+    // from behind, a prop with a carried form (the open carpet rolled up) shows that form
+    const back = view==='b' && PROP[o.prop+'Rolled'];
+    const prop = (back ? PROP[o.prop+'Rolled'] : PROP[o.prop])(hand[0]+1,hand[1]+7);
+    // a hand grips the top of an open carpet and the side of a simit, so it is drawn over them
+    s += (!back && ['carpet','simit','bohca','hoop','book','papers'].includes(o.prop)) ? prop+handDot : handDot+prop;
+  } else s+=handDot;
+  return s;
+}
+
+function personSVG(id, st, opt={}){
+  const c=CAST[id], o=c[st];
+  const rightPose = o.prop ? 'hold' : (c.wave ? 'wave' : 'r');
+  const ground = o.ground && GROUND[o.ground] ? GROUND[o.ground] : '';
+  const [legL,legR]=legsSVG(c,o);
+  const part = (view) => view==='b' ? 'arm' : 'all';
+  const arms = (view) => `<g class="arm arm-l${o.gun?' gun-arm':''}"><g class="gest">${armSVG('l',c,o,undefined,view,part(view))}</g></g>`+
+    `<g class="arm arm-r${rightPose==='wave'?' waving':''}${rightPose==='hold'?' holding':''}"><g class="gest">${armSVG('r',c,o,rightPose,view,part(view))}</g></g>`;
+  const carried = armSVG('l',c,o,undefined,'b','prop') + armSVG('r',c,o,rightPose,'b','prop');
+  const cls = ['fig', 'f-'+id, c.child?'child':'', opt.back?'back':'', opt.run?'run':''].filter(Boolean).join(' ');
+  return `<svg class="${cls}" viewBox="${opt.vb||'0 0 220 400'}" role="img" aria-label="${c.name}, ${o.role}" data-run="${o.run||''}" style="--dl:${opt.dl||'0s'}">`+
+   `<g class="shad"><ellipse cx="110" cy="392" rx="78" ry="8" fill="#25233F" opacity=".14"/></g>`+ground+
+   `<g class="fg">`+
+   `<g class="foot foot-l">${legL}</g><g class="foot foot-r">${legR}</g>`+
+   `<g class="breathe">`+
+   // M50 — from behind, the arms and what they carry are behind the body, and the sides swap
+   `<g class="carried v-b" transform="matrix(-1 0 0 1 220 0)">${carried}</g>`+
+   `<g class="v-f">${torsoSVG(c,o,'f')}</g><g class="v-b">${torsoSVG(c,o,'b')}</g>`+
+   `<g class="arms arms-b v-b" transform="matrix(-1 0 0 1 220 0)">${arms('b')}</g>`+
+   (o.cans?`<g class="v-f"><path d="M88,152 Q110,176 132,152" stroke="${IRON}" stroke-width="5" fill="none"/><rect x="82" y="146" width="10" height="18" rx="4" fill="${IRON}"/><rect x="128" y="146" width="10" height="18" rx="4" fill="${IRON}"/></g>`:'')+
+   `<g class="arms arms-f v-f">${arms('f')}</g>`+
+   `<g${c.child?' transform="translate(110 140) scale(1.16) translate(-110 -140)"':''}><g class="head"><g class="v-f">${headSVG(c,o,'f')}</g><g class="v-b">${headSVG(c,o,'b')}</g></g></g>`+
+   `</g></g></svg>`;
+}
+
+function robotSVG(acc, opt={}){
+  const fez = acc==='fez', ph = acc==='phones';
+  const antY = fez?30:48;
+  const sash = fez ? `<path d="M80,150 L146,222 L146,236 L74,160Z" fill="#2F8C86"/><path d="M80,150 L74,160 L146,236" stroke="#21665F" stroke-width="2" fill="none"/>` : '';
+  const front = `<rect x="74" y="146" width="72" height="108" rx="18" fill="${STEEL}"/><rect x="74" y="214" width="72" height="40" rx="14" fill="#00000012"/>${sash}<rect x="86" y="158" width="48" height="40" rx="8" fill="${IRON}"/><text x="110" y="187" text-anchor="middle" font-family="Avenir Next, system-ui, sans-serif" font-weight="800" font-size="26" fill="${GLOW}" class="aitext">AI</text><circle cx="94" cy="216" r="5" fill="#A0503C"/><circle cx="110" cy="216" r="5" fill="#B8873B"/><circle cx="126" cy="216" r="5" fill="#2F8C86"/><path d="M92,232h36M92,240h36" stroke="${STEEL_D}" stroke-width="3" stroke-linecap="round"/><rect x="74" y="246" width="72" height="10" rx="4" fill="#B8873B"/>`;
+  const back = `<rect x="74" y="146" width="72" height="108" rx="18" fill="${STEEL}"/><rect x="74" y="214" width="72" height="40" rx="14" fill="#00000012"/><rect x="86" y="158" width="48" height="62" rx="8" fill="${STEEL_D}"/><path d="M92,170h36M92,180h36M92,190h36M92,200h36" stroke="#00000040" stroke-width="3" stroke-linecap="round"/><rect x="96" y="226" width="28" height="12" rx="3" fill="${IRON}"/><circle cx="104" cy="232" r="2.6" fill="${GLOW}"/><circle cx="112" cy="232" r="2.6" fill="#B8873B"/><circle cx="120" cy="232" r="2.6" fill="#A0503C"/><rect x="74" y="246" width="72" height="10" rx="4" fill="#B8873B"/>`;
+  const headF = `<rect x="78" y="70" width="64" height="64" rx="16" fill="${STEEL}"/><rect x="78" y="112" width="64" height="22" rx="14" fill="#00000012"/><rect x="86" y="80" width="48" height="42" rx="12" fill="${IRON}"/><g class="blink"><ellipse cx="99" cy="98" rx="6" ry="6.6" fill="${GLOW}"/><ellipse cx="121" cy="98" rx="6" ry="6.6" fill="${GLOW}"/><circle cx="101" cy="95.6" r="1.8" fill="#fff"/><circle cx="123" cy="95.6" r="1.8" fill="#fff"/></g><path d="M100,111 Q110,119 120,111" stroke="${GLOW}" stroke-width="3" fill="none" stroke-linecap="round"/>`;
+  const headB = `<rect x="78" y="70" width="64" height="64" rx="16" fill="${STEEL}"/><rect x="78" y="112" width="64" height="22" rx="14" fill="#00000012"/><rect x="88" y="82" width="44" height="40" rx="10" fill="${STEEL_D}"/><path d="M94,92h32M94,100h32M94,108h32" stroke="#00000040" stroke-width="3" stroke-linecap="round"/><circle cx="90" cy="86" r="2.2" fill="#B8873B"/><circle cx="130" cy="86" r="2.2" fill="#B8873B"/><circle cx="90" cy="118" r="2.2" fill="#B8873B"/><circle cx="130" cy="118" r="2.2" fill="#B8873B"/>`;
+  const common = `<rect x="68" y="90" width="12" height="26" rx="5" fill="#B8873B"/><rect x="140" y="90" width="12" height="26" rx="5" fill="#B8873B"/><rect x="102" y="130" width="16" height="18" rx="4" fill="${IRON}"/>`;
+  const antenna = `<path d="M110,${fez?48:70} V${antY+6}" stroke="${STEEL_D}" stroke-width="4" stroke-linecap="round"/><circle class="led" cx="110" cy="${antY}" r="6.5" fill="#A0503C"/><circle cx="108" cy="${antY-2}" r="1.8" fill="#fff" opacity=".7"/>`;
+  const rotor = `<g class="rotor" opacity="0"><rect x="108" y="${antY-12}" width="4" height="8" fill="#B8873B"/><ellipse cx="110" cy="${antY-12}" rx="40" ry="5" fill="${IRON}" opacity=".9"/><circle cx="110" cy="${antY-12}" r="4" fill="#B8873B"/></g>`;
+  const hat = fez ? `<path d="M90,74 L94,50 L126,50 L130,74 Q110,81 90,74Z" fill="#A0503C"/><ellipse cx="110" cy="50" rx="16" ry="4.2" fill="#B9694F"/><path d="M126,52 Q140,60 138,76" stroke="${IRON}" stroke-width="2" fill="none"/><path d="M135,74 l3,11 l3,-11Z" fill="${IRON}"/>` :
+    ph ? `<path d="M72,102 Q76,54 110,52 Q144,54 148,102" stroke="${IRON}" stroke-width="5" fill="none" stroke-linecap="round"/><rect x="62" y="94" width="14" height="30" rx="6" fill="${IRON}"/><rect x="144" y="94" width="14" height="30" rx="6" fill="${IRON}"/><rect x="65" y="99" width="7" height="18" rx="3" fill="#63B2AB"/><rect x="148" y="99" width="7" height="18" rx="3" fill="#63B2AB"/>` : '';
+  const armL = `<path d="M80,166 L68,214 L80,244" stroke="${STEEL_D}" stroke-width="15" fill="none" stroke-linecap="round" stroke-linejoin="round"/><circle cx="68" cy="214" r="8" fill="#B8873B"/><circle cx="80" cy="246" r="10" fill="#2F8C86"/><path d="M76,250 l-2,6 M82,251 l0,6 M87,248 l3,5" stroke="#21665F" stroke-width="3" stroke-linecap="round"/>`;
+  const armR = `<path d="M140,166 L152,214 L140,244" stroke="${STEEL_D}" stroke-width="15" fill="none" stroke-linecap="round" stroke-linejoin="round"/><circle cx="152" cy="214" r="8" fill="#B8873B"/><circle cx="140" cy="246" r="10" fill="#2F8C86"/><path d="M135,250 l-2,6 M140,251 l0,6 M145,249 l3,5" stroke="#21665F" stroke-width="3" stroke-linecap="round"/>`;
+  const footL = `<path d="M96,252 V366" stroke="${STEEL_D}" stroke-width="15"/><circle cx="96" cy="300" r="9" fill="#B8873B"/><path d="M96,314v10M96,332v10M96,350v10" stroke="#00000030" stroke-width="3" stroke-linecap="round"/><rect x="76" y="364" width="38" height="24" rx="11" fill="#2F8C86"/><rect x="76" y="378" width="38" height="10" rx="5" fill="#21665F"/>`;
+  const footR = `<path d="M124,252 V366" stroke="${STEEL_D}" stroke-width="15"/><circle cx="124" cy="300" r="9" fill="#B8873B"/><path d="M124,314v10M124,332v10M124,350v10" stroke="#00000030" stroke-width="3" stroke-linecap="round"/><rect x="106" y="364" width="38" height="24" rx="11" fill="#2F8C86"/><rect x="106" y="378" width="38" height="10" rx="5" fill="#21665F"/>`;
+  return `<svg class="fig f-robot${opt.back?' back':''}${opt.run?' run':''}" viewBox="${opt.vb||'0 0 220 400'}" role="img" aria-label="Bit, an AI robot, in a fez" data-run="free" style="--dl:${opt.dl||'0s'}">`+
+   `<g class="shad"><ellipse cx="110" cy="392" rx="78" ry="8" fill="#25233F" opacity=".14"/></g>`+
+   `<g class="fg"><g class="foot foot-l">${footL}</g><g class="foot foot-r">${footR}</g>`+
+   `<g class="breathe"><g class="v-f">${front}</g><g class="v-b">${back}</g>`+
+   `<g class="arm arm-l"><g class="gest">${armL}</g></g><g class="arm arm-r"><g class="gest">${armR}</g></g>`+
+   `<g class="rhead"><g class="head">${common}<g class="v-f">${headF}</g><g class="v-b">${headB}</g>${antenna}${rotor}${hat}</g></g>`+
+   `</g></g></svg>`;
+}
+/* ================= round 4, P: five candidates for the Turkish woman ================= */
+/* Same generator, same 220 x 400 grid, same hand: only the people, their headcloths and what they carry are new.
+   Skin, face, hair, robe and prop are parameters, as for the seven. */
+Object.assign(CAST, {
+  nuriye:{ name:'Nuriye', skin:'#D9A47A', sh:'#BC8660', blush:'#CF7C66', lip:'#A5504C', hair:'#2A1C18', hs:'braids', tie:'#2F8C86',
+    brow:'normal', bw:2.4, eyes:'wide', nose:'long', face:[23,26], lashes:true,
+    ott:{ body:'robe', c1:'#A0503C', c2:'#F6EEDF', c3:'#2F8C86', hem:54, shoe:'#5C4A32',
+      prop:'bohca', run:'level', role:'a cloth peddler' } },
+  emine:{ name:'Emine', skin:'#E3B58E', sh:'#C58F6A', blush:'#D98B74', lip:'#A5504C', hair:'#B9B4BE', hs:'lowbun',
+    brow:'normal', bw:2.2, eyes:'round', nose:'small', face:[23,26], lashes:true, lines:true,
+    ott:{ body:'robe', c1:'#7A4A86', c2:'#C99A4B', c3:'#B8873B', hem:55, shoe:'#5C4A32',
+      prop:'hoop', run:'level', role:'an embroiderer' } },
+  zeynep:{ name:'Zeynep', skin:'#D49A6A', sh:'#B87D52', blush:'#E08E78', lip:'#B5524F', hair:'#6B3A22', hs:'loose',
+    brow:'thick', bw:2.8, eyes:'wide', nose:'button', face:[23,25], lashes:true,
+    ott:{ body:'robe', c1:'#3D6B9A', c2:'#F6EEDF', c3:'#C8552E', hem:54, vest:'#F6EEDF', shoe:'#5C4A32',
+      hat:{k:'ribbon', c1:'#C8552E'}, prop:'tray', run:'level', role:'a lokum maker' } },
+  mihri:{ name:'Mihrî', skin:'#E0B088', sh:'#C28E66', blush:'#D98A74', lip:'#9E4A44', hair:'#1E1A22', hs:'plait',
+    brow:'arch', bw:2.4, eyes:'round', nose:'small', face:[22,26], lashes:true,
+    ott:{ body:'robe', c1:'#21665F', c2:'#DDB46A', c3:'#A0503C', hem:54, shoe:'#3A2A22',
+      hat:{k:'circlet'}, prop:'book', run:'level', role:'a poet' } },
+  aliye:{ name:'Fatma Aliye', skin:'#EBC9A3', sh:'#CFA27C', blush:'#E0907C', lip:'#9E4A44', hair:'#3A2A22', hs:'updo',
+    brow:'arch', bw:2.2, eyes:'round', nose:'long', face:[22,26], lashes:true,
+    ott:{ body:'robe', c1:'#3A3F5C', c2:'#C9C6E4', c3:'#7A4A86', hem:56, wide:true, loose:true, shoe:'#25233F',
+      hat:{k:'flowers'}, prop:'papers', run:'level', role:'a writer' } },
+});
+
+/* what each one carries, in the hand: (x,y) is the palm, as for the spice bowl and the map */
+Object.assign(PROP, {
+  // a bohça: a square of cloth knotted over a bundle, carried by its knot (the bohçacı of old Istanbul)
+  bohca:(x,y)=>`<path d="M${x-5},${y+2} Q${x-34},${y+14} ${x-31},${y+44} Q${x-28},${y+70} ${x},${y+70} Q${x+28},${y+70} ${x+31},${y+44} Q${x+34},${y+14} ${x+5},${y+2}Z" fill="#F6EEDF"/>`+
+    `<path d="M${x-31},${y+44} Q${x-28},${y+70} ${x},${y+70} Q${x+28},${y+70} ${x+31},${y+44} Q${x},${y+54} ${x-31},${y+44}Z" fill="#282864"/>`+
+    `<path d="M${x-26},${y+22} Q${x},${y+34} ${x+27},${y+22}" stroke="#D8CBB4" stroke-width="2" fill="none"/>`+
+    `<path d="M${x+8},${y+30} L${x+26},${y+18} L${x+31},${y+44} L${x+13},${y+46}Z" fill="#C8552E"/><path d="M${x+15},${y+34} h10 M${x+16},${y+40} h11" stroke="#F6EEDF" stroke-width="1.6"/>`+
+    `<path d="M${x-8},${y+4} Q${x-22},${y-14} ${x-12},${y-8} Q${x-6},${y-4} ${x},${y+1} Q${x+6},${y-4} ${x+12},${y-8} Q${x+22},${y-14} ${x+8},${y+4}Z" fill="#E9DCC0" stroke="#D8CBB4" stroke-width="1.4"/>`,
+  // a kasnak: the embroidery hoop, with a tulip half stitched, the needle and its thread hanging
+  hoop:(x,y)=>{const cx=x+6, cy=y-24, R=26; return `<path d="M${cx-8},${cy+R+2} Q${cx-16},${cy+R+22} ${cx-8},${cy+R+34}" stroke="#C8552E" stroke-width="2" fill="none" stroke-linecap="round"/>`+
+    `<circle cx="${cx}" cy="${cy}" r="${R}" fill="#F6EEDF"/>`+
+    `<path d="M${cx},${cy+16} Q${cx-2},${cy+4} ${cx},${cy-4}" stroke="#2F8C86" stroke-width="2.6" fill="none"/><path d="M${cx},${cy+8} Q${cx-12},${cy+6} ${cx-14},${cy-2} Q${cx-4},${cy-2} ${cx},${cy+8}Z M${cx},${cy+10} Q${cx+12},${cy+8} ${cx+14},${cy+1} Q${cx+4},${cy+1} ${cx},${cy+10}Z" fill="#2F8C86"/>`+
+    `<path d="M${cx},${cy-4} Q${cx-10},${cy-12} ${cx-7},${cy-20} Q${cx-2},${cy-14} ${cx},${cy-16} Q${cx+2},${cy-14} ${cx+7},${cy-20} Q${cx+10},${cy-12} ${cx},${cy-4}Z" fill="#C8552E"/><path d="M${cx},${cy-16} Q${cx-1},${cy-9} ${cx},${cy-5}" stroke="#7A2F1E" stroke-width="1.4" fill="none"/>`+
+    `<path d="M${cx-18},${cy+14} h5 M${cx+14},${cy+14} h5 M${cx-20},${cy-10} h5 M${cx+16},${cy-12} h5" stroke="#B8873B" stroke-width="1.8" stroke-linecap="round" stroke-dasharray="2 3"/>`+
+    `<circle cx="${cx}" cy="${cy}" r="${R}" fill="none" stroke="#8A5A3C" stroke-width="5"/><circle cx="${cx}" cy="${cy}" r="${R+2.5}" fill="none" stroke="#6E452D" stroke-width="1.2"/><rect x="${cx-5}" y="${cy-R-9}" width="10" height="9" rx="2" fill="#6E452D"/><circle cx="${cx}" cy="${cy-R-5}" r="1.6" fill="#C99A4B"/>`+
+    `<path d="M${cx+8},${cy+4} l10,-6" stroke="#AEB2C8" stroke-width="2" stroke-linecap="round"/>`;},
+  // a copper tray of lokum: cubes dusted in sugar, piled in a small heap, in rose, white and pistachio
+  tray:(x,y)=>{const cube=(cx,cy,c)=>`<rect x="${cx}" y="${cy}" width="15" height="13" rx="3" fill="${c}"/><path d="M${cx+2},${cy+3} h11" stroke="#FFFFFF" stroke-width="2.4" opacity=".7" stroke-linecap="round"/>`;
+    return `<path d="M${x-40},${y-4} Q${x},${y+12} ${x+40},${y-4} L${x+34},${y+3} Q${x},${y+15} ${x-34},${y+3}Z" fill="#8A6328"/>`+
+    `<ellipse cx="${x}" cy="${y-5}" rx="40" ry="9" fill="#C99A4B"/><ellipse cx="${x}" cy="${y-5}" rx="34" ry="6.4" fill="#DDB46A"/>`+
+    cube(x-27,y-17,'#E8A5B0')+cube(x-12,y-17,'#F6EEDF')+cube(x+3,y-17,'#9CC9A0')+cube(x+17,y-16,'#E8A5B0')+
+    cube(x-19,y-29,'#9CC9A0')+cube(x-4,y-29,'#E8A5B0')+cube(x+10,y-28,'#F6EEDF')+
+    cube(x-11,y-41,'#F6EEDF')+cube(x+4,y-41,'#9CC9A0')+
+    `<g fill="#FFFFFF" opacity=".85"><circle cx="${x-22}" cy="${y-8}" r="1.2"/><circle cx="${x+4}" cy="${y-7}" r="1.2"/><circle cx="${x+28}" cy="${y-8}" r="1.2"/><circle cx="${x-8}" cy="${y-6}" r="1"/></g>`;},
+  // a divan: a bound book of poems with a flap, and a reed pen (kalem) held beside it
+  book:(x,y)=>`<rect x="${x-17}" y="${y-52}" width="36" height="46" rx="3" fill="#7A2F36"/><rect x="${x+16}" y="${y-50}" width="5" height="42" rx="1.5" fill="#F6EEDF"/>`+
+    `<rect x="${x-13}" y="${y-48}" width="28" height="38" rx="2" fill="none" stroke="#DDB46A" stroke-width="1.6"/>`+
+    `<path d="M${x+1},${y-42} L${x+9},${y-29} L${x+1},${y-16} L${x-7},${y-29}Z" fill="#DDB46A"/><path d="M${x+1},${y-36} L${x+5},${y-29} L${x+1},${y-22} L${x-3},${y-29}Z" fill="#21665F"/>`+
+    `<path d="M${x-13},${y-48} L${x+15},${y-22}" stroke="#5E1F28" stroke-width="1.4" opacity=".6"/>`+
+    `<path d="M${x+20},${y-4} L${x+34},${y-58}" stroke="#5C4A32" stroke-width="3.6" stroke-linecap="round"/><path d="M${x+34},${y-58} l-2,-9" stroke="#2A1C18" stroke-width="2.4" stroke-linecap="round"/>`,
+  // a sheaf of pages, written on, with a ribbon, and a pen
+  papers:(x,y)=>`<g transform="rotate(-6 ${x} ${y})"><rect x="${x-20}" y="${y-54}" width="42" height="52" rx="2" fill="#E6DAC6"/><rect x="${x-22}" y="${y-56}" width="42" height="52" rx="2" fill="#F6EEDF" stroke="#D8CBB4" stroke-width="1.2"/>`+
+    `<path d="M${x-15},${y-46} h30 M${x-15},${y-39} h30 M${x-15},${y-32} h22 M${x-15},${y-25} h30 M${x-15},${y-18} h26 M${x-15},${y-11} h14" stroke="#8E8A9E" stroke-width="1.6" stroke-linecap="round"/>`+
+    `<path d="M${x+8},${y-56} v22 l4,-4 l4,4 v-22Z" fill="#A0503C"/></g>`+
+    `<path d="M${x+22},${y-4} L${x+36},${y-52}" stroke="#25233F" stroke-width="3.2" stroke-linecap="round"/><path d="M${x+36},${y-52} l-1.4,-7" stroke="#DDB46A" stroke-width="2.4" stroke-linecap="round"/>`,
+});
+
+/* ---- uncovered hair (the author, 2026-11-08: no headcloth on any of the five) ----
+   Each style returns {back, front, bv}: `back` is drawn behind the face, `front` over it, and `bv` only
+   when seen from behind (what hangs down the back). A style is a hair colour and a shape; the
+   accessories (ribbon, circlet, flowers) go through the hat slot and never cover the hair. */
+const HAIR = {
+  // Emine: grey, parted in the middle and smoothed over the ears, gathered in a low knot at the nape
+  lowbun:(c)=>({
+    back:'',
+    front:`<path d="M85,114 Q82,76 110,72 Q138,76 135,114 Q133,98 126,94 Q118,90 110,96 Q102,90 94,94 Q87,98 85,114Z" fill="${c.hair}"/><path d="M85,110 Q83,124 88,133 L92,112Z M135,110 Q137,124 132,133 L128,112Z" fill="${c.hair}"/><path d="M110,75 L110,96" stroke="#00000026" stroke-width="1.4"/>`,
+    bv:`<circle cx="110" cy="142" r="15" fill="${c.hair}"/><path d="M99,137 Q110,129 121,137 M101,147 Q110,153 119,147" stroke="#00000030" stroke-width="2" fill="none"/><path d="M119,149 l12,-9" stroke="#C99A4B" stroke-width="2.8" stroke-linecap="round"/>`,
+  }),
+  // Zeynep: loose, wavy, to below the shoulder, and a fringe swept to one side
+  loose:(c)=>({
+    back:`<path d="M87,98 Q70,130 76,166 Q72,190 84,204 Q97,198 94,177 Q100,150 94,118Z" fill="${c.hair}"/><path d="M133,98 Q150,130 144,166 Q148,190 136,204 Q123,198 126,177 Q120,150 126,118Z" fill="${c.hair}"/>`,
+    front:`<path d="M85,112 Q80,74 110,70 Q140,74 135,112 Q132,94 120,91 Q112,101 104,92 Q91,94 85,112Z" fill="${c.hair}"/><path d="M92,82 Q102,74 114,77 M118,76 Q128,78 132,88" stroke="#FFFFFF" stroke-opacity=".16" stroke-width="2.4" fill="none" stroke-linecap="round"/>`,
+    bv:`<path d="M84,104 Q72,160 80,206 Q95,218 110,207 Q125,218 140,206 Q148,160 136,104Z" fill="${c.hair}"/><path d="M96,130 Q104,160 98,196 M110,128 Q116,164 110,200 M124,130 Q118,160 124,194" stroke="#00000026" stroke-width="2" fill="none" stroke-linecap="round"/>`,
+  }),
+  // Mihrî: parted and smoothed back from a gold circlet, in one long plait down the back
+  plait:(c)=>({
+    back:'',
+    front:`<path d="M85,114 Q82,76 110,72 Q138,76 135,114 Q133,98 126,94 Q118,90 110,96 Q102,90 94,94 Q87,98 85,114Z" fill="${c.hair}"/><path d="M85,110 Q83,122 88,130 L92,112Z M135,110 Q137,122 132,130 L128,112Z" fill="${c.hair}"/><path d="M110,75 L110,96" stroke="#FFFFFF" stroke-opacity=".18" stroke-width="1.4"/>`,
+    bv:[0,1,2,3,4,5,6,7,8,9].map(i=>`<ellipse cx="${110+(i%2?2:-2)}" cy="${146+i*15}" rx="${9-i*.35}" ry="9" fill="${c.hair}"/>`).join('')+`<rect x="104" y="292" width="12" height="7" rx="2.5" fill="#C99A4B"/><path d="M106,299 l-3,10 M110,299 v11 M114,299 l3,10" stroke="${c.hair}" stroke-width="3" stroke-linecap="round"/>`,
+  }),
+  // Fatma Aliye: the 1890s, waved and puffed over the brow and pinned up in a roll on the crown
+  updo:(c)=>({
+    back:`<ellipse cx="110" cy="64" rx="25" ry="15" fill="${c.hair}"/>`,
+    front:`<path d="M84,114 Q78,72 110,66 Q142,72 136,114 Q132,94 122,88 Q110,80 98,88 Q88,94 84,114Z" fill="${c.hair}"/><path d="M92,84 Q104,72 118,76 M100,92 Q110,84 122,90" stroke="#FFFFFF" stroke-opacity=".14" stroke-width="2.4" fill="none" stroke-linecap="round"/>`,
+    bv:`<path d="M92,92 Q110,104 128,92 M88,108 Q110,122 132,108 M96,124 Q110,132 124,124" stroke="#00000026" stroke-width="2" fill="none" stroke-linecap="round"/>`,
+  }),
+};
+function hairSVG(c){ return HAIR[c.hs] ? HAIR[c.hs](c) : hairSVGBase(c) }
+
+/* the accessories: none of them covers the hair */
+const HATS = {
+  // a satin ribbon round the crown, tied in a bow at one temple
+  ribbon:(h)=>`<path d="M86,100 Q110,84 134,100 L134,106 Q110,91 86,106Z" fill="${h.c1}"/><path d="M92,99 Q74,86 76,104 Q86,108 92,99Z M92,99 Q98,82 110,86 Q104,98 92,99Z" fill="${h.c1}"/><circle cx="92" cy="99" r="3.2" fill="#8F3416"/><path d="M90,103 Q84,118 88,128 M92,103 Q96,116 94,126" stroke="${h.c1}" stroke-width="3.6" fill="none" stroke-linecap="round"/>`,
+  // a thin gold band over the brow with one stone and a drop
+  circlet:(h)=>`<path d="M86,100 Q110,84 134,100" stroke="#DDB46A" stroke-width="4.2" fill="none" stroke-linecap="round"/><circle cx="110" cy="91.5" r="3.6" fill="#2F8C86"/><path d="M110,95 v6" stroke="#DDB46A" stroke-width="2" stroke-linecap="round"/><circle cx="110" cy="103" r="2.2" fill="#C8552E"/>`,
+  // a sprig of small flowers pinned at the crown
+  flowers:(h)=>`<path d="M122,70 Q134,64 144,72 M126,78 Q140,80 146,90" stroke="#4B7A52" stroke-width="2.4" fill="none" stroke-linecap="round"/><g><circle cx="128" cy="68" r="5.6" fill="#E8A5B0"/><circle cx="138" cy="72" r="5" fill="#F6EEDF"/><circle cx="130" cy="79" r="4.6" fill="#C8552E"/><circle cx="143" cy="84" r="4.2" fill="#E8A5B0"/></g><g fill="#DDB46A"><circle cx="128" cy="68" r="1.8"/><circle cx="138" cy="72" r="1.6"/><circle cx="130" cy="79" r="1.5"/><circle cx="143" cy="84" r="1.4"/></g>`,
+};
+function hatSVG(h){ return h && HATS[h.k] ? HATS[h.k](h) : hatSVGBase(h) }
+
+/* the captions and the stories, in the voice and length of the seven (cast.ts). English is what the page shows (D80);
+   the Turkish and the Persian are drafts for the author, in case the stories are ever localised. */
+const WHO = {
+  leyla:   { cap:'Leyla · spice seller' },
+  dariush: { cap:'Dariush · carpet merchant' },
+  deniz:   { cap:'Deniz · simit seller' },
+  bit:     { cap:'Bit · AI robot' },
+  murat:   { cap:'Murat · Janissary' },
+  mei:     { cap:'Mei · silk trader' },
+  piri:    { cap:'Piri · map-maker' },
+};
+const CAND = [
+  { code:'A', id:'nuriye', cap:'Nuriye · cloth peddler', kind:'A bazaar trader',
+    who:'A bohçacı, one of the women who carried a knotted bundle of cloth and trinkets from house to house in old Istanbul.',
+    idea:'Retrieval: bring only what this question needs, not the whole library.',
+    story:'Nuriye carries a bundle of cloth from door to door. She knows what each house needs, so she packs only that, never the whole bazaar.',
+    tr:'Nuriye kapı kapı bohça taşır. Hangi evin neye ihtiyacı olduğunu bilir; bohçasına yalnızca onu koyar, koca çarşıyı değil.',
+    fa:'نوریه بقچه‌ی پارچه‌اش را از این در به آن در می‌برد. می‌داند هر خانه چه لازم دارد، برای همین فقط همان را توی بقچه می‌گذارد، نه کل بازار را.' },
+  { code:'B', id:'emine', cap:'Emine · embroiderer', kind:'A bazaar trader',
+    who:'An older embroiderer at her kasnak (hoop), stitching a tulip, the flower of Ottoman cloth and tile.',
+    idea:'Learning from examples: patterns taken in by repetition, before they can be explained.',
+    story:'Emine learned every pattern by copying her grandmother\'s cloth, one stitch at a time. Now her hands know a pattern before she can explain it.',
+    tr:'Emine her deseni büyükannesinin işlemesine bakarak, iğne iğne öğrendi. Şimdi elleri bir deseni, kendisi anlatamadan önce biliyor.',
+    fa:'امینه هر نقشی را از روی دست‌دوزی مادربزرگش یاد گرفت، سوزن به سوزن. حالا دستش نقش را زودتر از اینکه بتواند توضیحش بدهد می‌شناسد.' },
+  { code:'C', id:'zeynep', cap:'Zeynep · lokum maker', kind:'A bazaar trader',
+    who:'A maker of lokum (Turkish delight), with a copper tray of cubes dusted in sugar. Lokum is also the site\'s own sweet (the tray offered at each door).',
+    idea:'Evaluation: a fixed test instead of a judgement by eye.',
+    story:'Zeynep drops a little hot syrup into cold water to check if the lokum is ready. She trusts that test over her own taste, because it gives the same answer every time.',
+    tr:'Zeynep lokumun hazır olup olmadığını anlamak için soğuk suya bir damla sıcak şerbet damlatır. Kendi damak tadından çok bu denemeye güvenir, çünkü deneme her seferinde aynı cevabı verir.',
+    fa:'زینب برای اینکه بفهمد لوکوم آماده است یا نه، یک قطره شربت داغ توی آب سرد می‌ریزد. به این آزمایش بیشتر از مزه‌ی دهان خودش اعتماد دارد، چون هر بار همان جواب را می‌دهد.' },
+  { code:'D', id:'mihri', cap:'Mihrî · poet', kind:'Inspired by Mihrî Hatun (Amasya, 15th century)',
+    who:'Mihrî Hatun, an Ottoman poet from Amasya whose collected poems are the first by an Ottoman woman known to survive; her style is described as plain and sincere. Her look is our own design (hair parted and plaited, a gold circlet, a plain robe, her divan and a reed pen), not documented 15th-century dress.',
+    idea:'Clear instructions: say what you mean in plain words.',
+    story:'Mihrî of Amasya wrote the oldest book of poems by an Ottoman woman that still survives. She said what she meant in plain words.',
+    tr:'Amasyalı Mihrî, bir Osmanlı kadınının günümüze ulaşan ilk şiir kitabını yazdı. Ne demek istiyorsa sade sözlerle söyledi.',
+    fa:'میهری از آماسیا قدیمی‌ترین دفتر شعرِ یک زن عثمانی را نوشت که تا امروز مانده. حرفش را با کلمه‌های ساده می‌زد.' },
+  { code:'E', id:'aliye', cap:'Fatma Aliye · writer', kind:'Inspired by Fatma Aliye (1862 to 1936)',
+    who:'Fatma Aliye Hanım, one of the first women in the Ottoman lands to write novels. She entered print as a translator, signing as "A Woman". Drawn in the loose coat of 1890s Istanbul, her hair waved and pinned up with flowers, with a sheaf of pages and a pen.',
+    idea:'Judge an answer by what it says, not by who or what sent it.',
+    story:'Fatma Aliye began as a translator and signed her first book only "A Woman". Readers could judge nothing but the pages, as you should judge a model\'s answer.',
+    tr:'Fatma Aliye çevirmen olarak başladı ve ilk kitabını yalnızca "Bir Kadın" diye imzaladı. Okurun elinde sayfalardan başka bir şey yoktu; bir modelin cevabını da böyle değerlendirmek gerekir.',
+    fa:'فاطمه علیه کارش را با ترجمه شروع کرد و اولین کتابش را فقط «یک زن» امضا کرد. خواننده چیزی جز صفحه‌ها برای قضاوت نداشت؛ جواب یک مدل را هم باید همین‌طور سنجید.' },
+];
+const ORDER = ['leyla', 'dariush', 'deniz', 'bit', 'murat', 'mei', 'piri'];
+const draw = (id, opt={}) => id === 'bit' ? robotSVG('fez', opt) : personSVG(id, 'ott', opt);
+const nm = (id) => id === 'bit' ? 'Bit' : CAST[id].name;
+const trade = (id) => id === 'bit' ? 'AI robot' : (WHO[id] || CAND.find(c => c.id === id)).cap.split(' · ')[1];
+
+/* 1. the five, side by side, on the street ground, at the size the street draws them */
+document.getElementById('five').innerHTML = `<div class="who">${draw('leyla', { dl: '0s' })}<small><b>Leyla</b>spice seller, today</small></div>` + CAND.map((c, k) =>
+  `<div class="who pick"><span class="code">${c.code}</span>${draw(c.id, { dl: ((k + 1) * .6) + 's' })}<small><b>${nm(c.id)}</b>${trade(c.id)}</small></div>`).join('');
+
+/* 2. each one, front, from behind and running, with name, trade, story */
+document.getElementById('cards').innerHTML = CAND.map((c, k) => {
+  const dl = (k * .6) + 's';
+  const v = (label, opt) => `<figure><div class="stage">${draw(c.id, { dl, ...opt })}</div><figcaption>${label}</figcaption></figure>`;
+  return `<div class="card"><div class="views">${v('front', {})}${v('back', { back:true })}${v('running', { back:true, run:true })}</div>
+    <p class="cap"><span class="code">${c.code}</span>${c.cap}</p>
+    <p class="kind">${c.kind}</p>
+    <p class="who-note">${c.who}</p>
+    <p class="story">${c.story}</p>
+    <p class="idea"><b>The AI idea:</b> ${c.idea}</p>
+    <p class="loc" lang="tr"><b>TR</b> ${c.tr}</p>
+    <p class="loc rtl" lang="fa" dir="rtl"><b>FA</b> ${c.fa}</p></div>`;
+}).join('');
+
+/* 3. at the gate: the candidate takes Leyla's place, left of the doorway, the rest as they stand now */
+document.getElementById('lineups').innerHTML = CAND.map((c, k) => {
+  const row = [c.id, ...ORDER.slice(1)];
+  return `<h3><span class="code">${c.code}</span>${c.cap.split(' · ')[0]} in Leyla's place</h3><div class="lineup street">` +
+    row.map((id, j) => `<div class="who${j === 0 ? ' pick' : ''}">${draw(id, { dl: (j * .5 + k) + 's' })}<small><b>${nm(id)}</b>${trade(id)}</small></div>`).join('') + `</div>`;
+}).join('');
+
+const btn = document.getElementById('motion')
+btn.addEventListener('click', () => { const p = document.body.classList.toggle('paused'); btn.textContent = p ? 'Start the motion' : 'Stop the motion' })
+
+</script>
+</body>
+</html>

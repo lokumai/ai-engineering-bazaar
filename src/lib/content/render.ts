@@ -10,11 +10,13 @@ import { toString as hastToString } from 'hast-util-to-string'
 import type { Element, ElementContent, Root, RootContent, Text } from 'hast'
 import { widthForColumns } from '@/lib/figure/width'
 import type { ChecklistItem } from './checklist'
+import { CALLOUT_MARKER, calloutKindOf } from './callout'
 import { DIAGRAM_HEADING, SERIES_HEADINGS } from './lines'
 import { courseLinkFor, isCourseLink, sheetSource } from './links'
+import { isSafeHref } from './safe-href'
 import { assertNoRawHex, remapMermaidFills } from './mermaid'
 import { CODE_TOKEN_ROLES, codeThemes, readDesignToken, toHex } from './code-theme'
-import { icon, paletteMenu } from './tools'
+import { diagramThemeMenu, icon, paletteMenu } from './tools'
 
 export interface TocEntry {
   id: string
@@ -145,6 +147,23 @@ function label(prefix: string, sheet: number | undefined, index: number): string
 // ---------------------------------------------------------------------------
 // B6.1 / B6.2 — the two lines the sheet header already states
 // ---------------------------------------------------------------------------
+
+/**
+ * Every link on the page carries an address from the allowlist in `safe-href.ts`, or none.
+ * An `<a>` outside it keeps its text and loses its `href`, so it is inert and says nothing
+ * about where it would have gone. First in the pipeline once the tree exists, so no later
+ * plugin (the course-link resolver, the external mark, the call-out button) ever sees an
+ * address that was not allowed.
+ */
+function rehypeSafeLinks() {
+  return (tree: Root) => {
+    visit(tree, 'element', (node: Element) => {
+      if (node.tagName !== 'a') return
+      const value = node.properties?.href
+      if (typeof value === 'string' && !isSafeHref(value)) delete node.properties.href
+    })
+  }
+}
 
 /** Strip the leading h1; the module page renders the title from frontmatter. */
 function rehypeDropFirstH1() {
@@ -722,7 +741,7 @@ function rehypeFigures(options: RenderOptions) {
               be drawn (§1), and with no script there is no drawing.
             */
             element('div', { className: ['bz-figure-tools'], lang: 'en' }, [
-              paletteMenu('figures'),
+              diagramThemeMenu(),
               element(
                 'button',
                 {
@@ -785,20 +804,79 @@ function rehypeFigures(options: RenderOptions) {
 // ---------------------------------------------------------------------------
 
 /**
+ * A GitHub alert (`callout.ts`) becomes a call-out card: the marker is taken off, the first
+ * paragraph is the card's title, and a last paragraph that holds nothing but a link is the
+ * button, drawn with the language's own `bz-btn`. The kind is an attribute, so the
+ * stylesheet decides what each looks like and a new kind needs no change here.
+ *
+ * Returns true when the quote was a call-out, so the pull-rule label logic leaves it alone.
+ */
+function openCallout(quote: Element, first: Element, id: string): boolean {
+  const lead = first.children[0]
+  if (lead?.type !== 'text') return false
+  const kind = calloutKindOf(lead.value)
+  if (kind === null) return false
+
+  lead.value = lead.value.replace(CALLOUT_MARKER, '')
+  // The marker ends its line, and a line that ends in two spaces leaves a `<br>` after it
+  // (GitHub shows no gap there either): neither is part of the card.
+  while (first.children.length > 0) {
+    const next = first.children[0]
+    if ((next.type === 'text' && next.value.trim() === '') || (isElement(next) && next.tagName === 'br')) {
+      first.children.shift()
+    } else break
+  }
+  // A marker alone in its paragraph leaves nothing: the paragraph goes, and the next one is the title.
+  if (first.children.length === 0) quote.children.splice(quote.children.indexOf(first), 1)
+  const title = first.children.length === 0 ? elementChildren(quote).find((c) => c.tagName === 'p') : first
+
+  quote.properties = {
+    ...quote.properties,
+    className: ['bz-quote', 'bz-callout'],
+    'data-hl-callout': kind,
+    // A card the page puts in front of the reader is a note, named by its own title; left as
+    // a blockquote it would be announced as a quotation, which it is not.
+    role: 'note',
+    ...(title ? { 'aria-labelledby': id } : {}),
+  }
+  if (title) title.properties = { ...title.properties, className: ['bz-callout-title'], id }
+
+  const blocks = elementChildren(quote)
+  const last = blocks[blocks.length - 1]
+  if (last !== undefined && last !== title && last.tagName === 'p') {
+    const inner = last.children.filter((child) => !isBlank(child))
+    // `**[text](url)**` reads as a bold link on GitHub; the button is the link itself.
+    const only = inner.length === 1 ? inner[0] : undefined
+    const wrapped = isElement(only) && only.tagName === 'strong' ? only.children.filter((child) => !isBlank(child)) : []
+    const link = wrapped.length === 1 ? wrapped[0] : only
+    // A link with no address (`rehypeSafeLinks` took it away) is not a button to press.
+    if (isElement(link) && link.tagName === 'a' && typeof link.properties?.href === 'string') {
+      link.properties = { ...link.properties, className: ['bz-btn'] }
+      last.properties = { ...last.properties, className: ['bz-callout-cta'] }
+      last.children = [link]
+    }
+  }
+  return true
+}
+
+/**
  * §6.8 — a blockquote is a pull-rule, not a left bar, and one whose first child
  * is a bold lead-in ending in `:` gets that label lifted into a mono mark above
  * the rule. **MEASURED:** 13 blockquote lines exist in the whole corpus, three
  * of them `> **Boundary, not guardrail:** …`. They stay inline; marginalia
  * hoisting into the right rail is cut (§4.6).
  */
-function rehypeBlockquotes() {
+function rehypeBlockquotes(idPrefix: string) {
   return (tree: Root) => {
+    let callouts = 0
     visit(tree, 'element', (node: Element) => {
       if (node.tagName !== 'blockquote') return
       node.properties = { ...node.properties, className: ['bz-quote'] }
 
       const paragraph = node.children.find(isElement)
       if (!paragraph || paragraph.tagName !== 'p') return
+
+      if (openCallout(node, paragraph, `${idPrefix}-${++callouts}`)) return
 
       const lead = paragraph.children.find((c) => !isBlank(c))
       if (!isElement(lead) || lead.tagName !== 'strong') return
@@ -1121,6 +1199,7 @@ export async function renderMarkdown(
     .use(remarkParse)
     .use(remarkGfm)
     .use(remarkRehype)
+    .use(rehypeSafeLinks)
     .use(rehypeDropFirstH1)
     .use(rehypeDropDek)
     // §12.6 — before the lead class is spent and before figures are numbered.
@@ -1132,7 +1211,7 @@ export async function renderMarkdown(
     .use(rehypeRewriteImages, options.imageBase)
     .use(rehypeFigures, options)
     .use(rehypeKeepLogoWithName)
-    .use(rehypeBlockquotes)
+    .use(rehypeBlockquotes, `callout-${options.sheet ?? options.excerptOf ?? 0}${options.excerptOf === undefined ? '' : '-ex'}`)
     .use(rehypeSlug)
     .use(rehypeCollectToc, toc)
     .use(rehypeHeadingAnchors)

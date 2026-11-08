@@ -42,7 +42,8 @@ test('every person at the gate is a named button, in the cast order, with a stor
   for (const [i, m] of CAST.entries()) {
     const btn = gate(page).nth(i)
     await expect(btn).toHaveAttribute('data-who', m.id)
-    await expect(btn).toHaveAccessibleName(new RegExp(`^${m.name}\\b.*${m.trade}$`))
+    // A name may end in a letter outside ASCII (Mihrî), where `\b` finds no boundary.
+    await expect(btn).toHaveAccessibleName(new RegExp(`^${m.name}(?![\\p{L}\\d]).*${m.trade}$`, 'u'))
     await expect(btn).toHaveAccessibleDescription(m.story)
   }
 })

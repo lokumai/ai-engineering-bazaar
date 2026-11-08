@@ -20,14 +20,14 @@ import { closeClouds } from './clouds'
  * inner groups (`.breathe`, `.gest`, `.head`). What it moves:
  *
  * - `.mover`, the person and their shadow: along the pavement and into the depth (the goods
- *   at Leyla's feet stay where they are);
+ *   at a person's feet stay where they are);
  * - `.fg`: the run's bob and the squash of a turn;
  * - the arms (`.arm-l`, `.arm-r`, both the front and the mirrored back set), the feet and
  *   Bit's head (`.rhead`);
  * - the drawing's `back` class, which swaps the front for the back (`home.css`).
  *
  * The run, seen from behind, is a bob and a sway, the feet lifting in turn and the free arm
- * swinging; the arm holding something does not swing, so the bowl stays level, the musket
+ * swinging; the arm holding something does not swing, so the book stays level, the musket
  * stays on Murat's shoulder and the simit stays up (M50's decision per prop).
  */
 
@@ -73,7 +73,7 @@ const FOLLOW: Array<[CastId, number]> = [
   ['deniz', -50],
   ['dariush', -110],
   ['murat', 60],
-  ['leyla', -160],
+  ['mihri', -160],
   ['mei', 120],
   ['piri', 170],
 ]

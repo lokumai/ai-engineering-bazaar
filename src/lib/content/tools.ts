@@ -1,4 +1,5 @@
 import type { Element, ElementContent } from 'hast'
+import { DIAGRAM_MENU_LABEL, DIAGRAM_THEMES } from '../reading/diagram-themes'
 import { PALETTES, PALETTE_SUBJECTS, type PaletteSubject } from '../reading/palettes'
 
 /**
@@ -86,26 +87,52 @@ function el(tagName: string, properties: Element['properties'], children: Elemen
   return { type: 'element', tagName, properties, children }
 }
 
-/**
- * The three-palette menu for `subject`. The panel is a named `group` of plain
- * buttons — a short list of choices, not an application menu, so it does not
- * take `role="menu"` and the arrow-key contract that role would oblige.
- */
-export function paletteMenu(subject: PaletteSubject): Element {
-  const { label } = PALETTE_SUBJECTS[subject]
+/** The menu's own markup, which the two menus share: a disclosure, a named group of plain buttons. */
+function optionMenu(subject: 'figures' | PaletteSubject, label: string, items: Element[]): Element {
   return el('details', { className: ['bz-optmenu'], 'data-hl-options': subject }, [
     el('summary', { className: ['bz-tool'], 'aria-label': label, title: label }, [icon('palette')]),
-    el(
-      'div',
-      { className: ['bz-optmenu-panel'], role: 'group', 'aria-label': label },
-      PALETTES.map((palette) =>
-        el('button', { type: 'button', className: ['bz-optmenu-item'], 'data-hl-palette': palette.id }, [
-          el('span', { className: ['bz-swatch'], 'data-swatch': palette.id, ariaHidden: 'true' }),
-          { type: 'text', value: palette.name },
-          el('span', { className: ['sr-only', 'bz-optmenu-said'] }, [{ type: 'text', value: ', current' }]),
-          icon('check', 12, 'bz-optmenu-check'),
-        ]),
-      ),
-    ),
+    // A short list of choices, not an application menu, so it does not take
+    // `role="menu"` and the arrow-key contract that role would oblige.
+    el('div', { className: ['bz-optmenu-panel'], role: 'group', 'aria-label': label }, items),
   ])
+}
+
+function optionItem(attribute: string, id: string, swatch: string, name: string): Element {
+  return el('button', { type: 'button', className: ['bz-optmenu-item'], [attribute]: id }, [
+    el('span', { className: ['bz-swatch'], 'data-swatch': swatch, ariaHidden: 'true' }),
+    { type: 'text', value: name },
+    el('span', { className: ['sr-only', 'bz-optmenu-said'] }, [{ type: 'text', value: ', current' }]),
+    icon('check', 12, 'bz-optmenu-check'),
+  ])
+}
+
+/** The three-palette menu for the code blocks. */
+export function paletteMenu(subject: PaletteSubject): Element {
+  return optionMenu(subject, PALETTE_SUBJECTS[subject].label, PALETTES.map((palette) =>
+    optionItem('data-hl-palette', palette.id, palette.id, palette.name)))
+}
+
+/**
+ * The diagram theme menu: Mermaid's own themes, in two groups by the ground their frame takes
+ * (`diagram-themes.ts`), headed Light and Dark. The headings are the second thing that tells
+ * `Redux`, `Redux color`, `Neo` and `Forest` apart: their names alone say nothing about what
+ * they look like, and a reader choosing between ten of them is helped by knowing which half
+ * of the list is dark before opening one. Each group is a named `group` of plain buttons, so
+ * a screen reader says "Dark themes" on entering it, and the heading is not a stop of its
+ * own. No ids: the menu is emitted into every figure, and an id would repeat on the page.
+ * Each row's swatch is the frame's ground, Paper's for a light theme and Night's for a dark
+ * one, not what Mermaid will paint on it, because the site has no business holding
+ * Mermaid's colours.
+ */
+export function diagramThemeMenu(): Element {
+  const group = (tone: 'light' | 'dark', heading: string): Element => el(
+    'div',
+    { className: ['bz-optmenu-group'], role: 'group', 'aria-label': `${heading} themes` },
+    [
+      el('p', { className: ['bz-optmenu-head'], ariaHidden: 'true' }, [{ type: 'text', value: heading }]),
+      ...DIAGRAM_THEMES.filter((theme) => theme.tone === tone).map((theme) =>
+        optionItem('data-hl-theme', theme.id, tone === 'dark' ? 'night' : 'paper', theme.name)),
+    ],
+  )
+  return optionMenu('figures', DIAGRAM_MENU_LABEL, [group('light', 'Light'), group('dark', 'Dark')])
 }

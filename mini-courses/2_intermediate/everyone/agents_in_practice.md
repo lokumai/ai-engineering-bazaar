@@ -13,6 +13,15 @@ writes documents, searches the web and uses your apps, one step after another, u
 done. You can read about agents for a long time. But the fastest way to understand them is to
 give one a real job and watch what it does.
 
+> [!WARNING]
+> **🛑 STOP. Take the courses first, then come back.**
+>
+> Reading this page is not the lesson. It points you to three free courses, and taking them is the lesson. Two are required and take about five hours in total: Claude 101 and Introduction to Claude Cowork, about two and a half hours each. The third, Claude Code 101, is optional and adds about one and a half hours.
+>
+> ⏱️ About five hours required · ➕ About one and a half hours optional
+>
+> Plan the time, take the courses in the order below, and return to this page when you are done.
+
 ## Why Take These Courses
 
 When you read about an agent, everything goes well. When you work with one, it sometimes
@@ -29,6 +38,17 @@ assistants.
 
 ## Claude 101
 
+> [!IMPORTANT]
+> **🛑 Course 1 of 3: stop here and take it now**
+>
+> **Claude 101**: Claude for everyday work: your first conversation, better answers, and projects that keep one job together.
+>
+> ⏱️ About two and a half hours · ✅ Required · 🏅 Free course, with a quiz and a badge
+>
+> Open the course, finish it, then come back to this page and carry on.
+>
+> **[Open Claude 101](https://academy.claude.com/courses/claude-101)**
+
 [Claude 101](https://academy.claude.com/courses/claude-101) is where everyone should start. It
 shows you how to use Claude in your daily work: your first conversation, how to ask so that you get
 better answers, and how to keep the documents and instructions for one piece of work together in a
@@ -39,6 +59,17 @@ Cowork and Research, need a paid plan if you want to try them yourself. It takes
 about two and a half hours.
 
 ## Claude Code 101 (Optional)
+
+> [!NOTE]
+> **💡 Course 2 of 3: optional, take it if you are curious**
+>
+> **Claude Code 101**: the coding agent for developers, which people with no coding skill also use to build small tools.
+>
+> ⏱️ About one and a half hours · ➕ Optional · 🏅 Free course, with a quiz and a badge
+>
+> If you take it, finish it, then come back to this page and carry on. If you skip it, go to the next course.
+>
+> **[Open Claude Code 101](https://academy.claude.com/courses/claude-code-101)**
 
 [Claude Code 101](https://academy.claude.com/courses/claude-code-101) teaches Claude Code. Claude
 Code is an agent that you talk to in a text window called a terminal. It was made for writing
@@ -51,6 +82,17 @@ and automate boring tasks. The course itself expects you to know a code editor a
 a little. It needs a paid Claude plan or an API key.
 
 ## Introduction to Claude Cowork
+
+> [!IMPORTANT]
+> **🛑 Course 3 of 3: stop here and take it now**
+>
+> **Introduction to Claude Cowork**: Claude working with the files, folders and apps on your computer.
+>
+> ⏱️ About two and a half hours · ✅ Required · 🏅 Free course, with a quiz and a badge
+>
+> Open the course, finish it, then come back to this page for the summary.
+>
+> **[Open Introduction to Claude Cowork](https://academy.claude.com/courses/introduction-to-claude-cowork)**
 
 If you do not write code, take this course after Claude 101. **Claude Cowork** is Claude working
 directly with the files, folders and apps on your computer. It is part of the normal
@@ -72,7 +114,8 @@ you with a short summary every morning.)
 
 You learn to work with an AI agent by working with one. Start with Claude 101. Then take
 Introduction to Claude Cowork, which teaches an agent that works with your files and apps. Claude
-Code 101 is optional for you, but it shows that you can build things without knowing how to code.
+Code 101 is optional for you. The course is written for developers, but the tool it teaches, Claude Code, can
+build small things for people who do not code.
 
 ## References
 

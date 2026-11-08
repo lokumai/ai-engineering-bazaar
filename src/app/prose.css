@@ -384,6 +384,73 @@
   .bz-quote-body > :last-child { margin-bottom: 0; }
 
   /* ---------------------------------------------------------------------------
+     7b. A CALL-OUT CARD: a GitHub alert (`callout.ts`) the renderer has turned into
+     a stop sign for the reader.
+
+     Centred, with a heavier edge than a quote and a button for its link, because the
+     job is the opposite of a quote's: a quote is "an aside the reader can skip" and
+     this is the one thing on the page that must not be skipped. The kind sets the
+     edge, and an edge is not the only signal: the title line is the first thing in
+     the card and says what to do in words, so the colour agrees with it rather than
+     carrying it. Every colour is a token; the filled warning pairs `caution` with
+     `on-caution`, the one pair the language measures for type on a chromatic fill.
+
+     The button is the language's own `bz-btn`, which the renderer puts on the link,
+     so its fill, its hover and its 44px floor below 768px come from the language.
+     --------------------------------------------------------------------------- */
+  .bz-callout {
+    margin: 36px 0;
+    padding: 26px 24px 28px;
+    border-width: 2px;
+    border-color: var(--color-primary);
+    text-align: center;
+  }
+
+  .bz-callout[data-hl-callout="warning"],
+  .bz-callout[data-hl-callout="caution"] {
+    border-color: var(--color-fault);
+  }
+
+  .bz-callout[data-hl-callout="tip"] { border-color: var(--color-success); }
+  .bz-callout[data-hl-callout="note"] { border-color: var(--color-line-strong); }
+
+  /* The stop banner: filled, so it is a block of colour in a column of text. */
+  .bz-callout[data-hl-callout="warning"] {
+    border-color: var(--color-on-caution);
+    background: var(--color-caution);
+    color: var(--color-on-caution);
+  }
+
+  .bz-callout[data-hl-callout="warning"] :is(strong, .bz-callout-title) {
+    color: inherit;
+  }
+
+  .bz-callout-title {
+    margin: 0 0 12px;
+    color: var(--color-on-surface-title);
+    font: 700 var(--text-subsection) / var(--text-subsection--line-height) var(--font-sans);
+  }
+
+  .bz-callout[data-hl-callout="warning"] .bz-callout-title { font-size: var(--text-section); }
+
+  .bz-callout > p:not(.bz-callout-title) {
+    max-width: 52ch;
+    margin-inline: auto;
+  }
+
+  .bz-callout-cta { margin-top: 22px; }
+
+  .bz-callout-cta .bz-btn {
+    padding: 14px 30px;
+    font-size: var(--text-control);
+    text-decoration: none;
+  }
+
+  /* `bz-ext-mark` is faint ink for a link in prose; on a filled button it would
+     read as a smudge, so it takes the button's own ink. */
+  .bz-callout-cta .bz-ext-mark { color: inherit; }
+
+  /* ---------------------------------------------------------------------------
      8. INLINE THINGS.
      --------------------------------------------------------------------------- */
 

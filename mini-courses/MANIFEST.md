@@ -63,9 +63,9 @@ Think of this as a cheatsheet for AI engineering, not a textbook. Knowing what t
 out comes from building things, not from searching. That choice is part of what you get
 here.
 
-## Two versions of every module
+## Two versions of a module
 
-Every module has a version **For Engineers** and a version **For Everyone**.
+Modules come in two versions, **For Engineers** and **For Everyone**.
 
 The For Everyone version is for people who are not engineers: someone in HR, in finance, a manager.
 It is still AI engineering, on purpose. You talk to today's AI in normal language, so anyone who can

@@ -9,6 +9,7 @@ import {
   mermaidConfig,
 } from '@/lib/figure/mermaid-config'
 import { widthForNaturalWidth } from '@/lib/figure/width'
+import { DIAGRAM_THEME_ATTRIBUTE } from '@/lib/reading/diagram-themes'
 import {
   RESET_VIEW,
   type View,
@@ -38,11 +39,15 @@ import {
  *    and every listing page — never fetch the 500kB chunk. The check has to
  *    happen before the `await`, which is why it reads the DOM rather than
  *    taking a prop.
- * 2. **A theme switch costs 0ms and never re-renders (§9.2).** Nothing here
- *    reads `.dark`, subscribes to it, or re-runs on it. The SVG's colours are
- *    `var(--color-…)` references that cascade in from `<html>` (B4), so the
- *    diagram re-themes in the same frame as the rest of the page, and this
- *    effect runs exactly once per document.
+ * 2. **The site's light and dark theme still costs nothing, and a diagram theme
+ *    is a redraw.** Nothing here reads `.dark`. What it does read is
+ *    `data-hl-diagram` on `<html>` (`diagram-themes.ts`): the theme Mermaid draws
+ *    with, which `boot.ts` stamps before first paint and `ReadingOptions` stamps
+ *    on a choice. Mermaid writes a theme's colours into the SVG as it draws, so a
+ *    change of that attribute draws every diagram again (the token repaint this
+ *    replaced could switch in the same frame, and could only ever look like the
+ *    site). The draws are queued, so two quick choices never run at once, and a
+ *    draw that a later choice has overtaken stops at its next diagram.
  * 3. **A malformed diagram never blanks the sheet.** It falls back to the
  *    source, which is what the reader would have seen in a plain markdown
  *    viewer, and the figure stays unready so `EXPAND` never appears offering to
@@ -220,6 +225,9 @@ export function MermaidFigure() {
     }
 
     let cancelled = false
+    /** Which draw is current; a draw that finds a newer one stops. */
+    let generation = 0
+    let queue: Promise<void> = Promise.resolve()
 
     const onClick = (event: MouseEvent) => {
       const target = event.target
@@ -228,11 +236,8 @@ export function MermaidFigure() {
       if (button) void expand(button)
     }
 
-    void (async () => {
-      const mermaid = (await import('mermaid')).default
-      if (cancelled) return
-
-      mermaid.initialize(mermaidConfig())
+    const drawAll = async (mermaid: Mermaid, mine: number) => {
+      mermaid.initialize(mermaidConfig(document.documentElement.getAttribute(DIAGRAM_THEME_ATTRIBUTE)))
       renderer.current = mermaid
 
       for (const [index, node] of nodes.entries()) {
@@ -243,7 +248,7 @@ export function MermaidFigure() {
         const id = figureRenderId(index)
         try {
           const { svg } = await mermaid.render(id, source)
-          if (cancelled) return
+          if (cancelled || mine !== generation) return
           node.innerHTML = svg
 
           const drawing = node.querySelector('svg')
@@ -257,11 +262,31 @@ export function MermaidFigure() {
             figure.dataset.hlReady = ''
           }
         } catch {
-          if (cancelled) return
+          if (cancelled || mine !== generation) return
           sweep(id)
           showSource(node, source)
         }
       }
+    }
+
+    const observer = new MutationObserver(() => schedule())
+    let loaded: Mermaid | null = null
+    const schedule = () => {
+      if (loaded === null) return
+      const mermaid = loaded
+      const mine = ++generation
+      queue = queue.then(() => drawAll(mermaid, mine))
+    }
+
+    void (async () => {
+      const mermaid = (await import('mermaid')).default
+      if (cancelled) return
+      loaded = mermaid
+      schedule()
+      observer.observe(document.documentElement, {
+        attributes: true,
+        attributeFilter: [DIAGRAM_THEME_ATTRIBUTE],
+      })
     })()
 
     document.addEventListener('click', onClick)
@@ -269,6 +294,7 @@ export function MermaidFigure() {
     return () => {
       instances -= 1
       cancelled = true
+      observer.disconnect()
       document.removeEventListener('click', onClick)
     }
   }, [expand])

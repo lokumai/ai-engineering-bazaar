@@ -1,4 +1,5 @@
 import { type Page, expect, test } from '@playwright/test'
+import { DEFAULT_DIAGRAM_THEME, DIAGRAM_THEMES, DIAGRAM_THEME_ATTRIBUTE } from '@/lib/reading/diagram-themes'
 import { PALETTES, PALETTE_SUBJECTS } from '@/lib/reading/palettes'
 import { SHORT } from './sheets'
 
@@ -37,11 +38,10 @@ function groundOf(page: Page, selector: string): Promise<string> {
 }
 
 for (const [subject, { attribute, label }] of Object.entries(PALETTE_SUBJECTS)) {
-  const block = subject === 'figures' ? '.bz-figure' : '.bz-slab'
+  const block = '.bz-slab'
 
   test(`choosing a ${subject} palette recolours the page and survives a reload`, async ({ page }) => {
     await page.goto(SHORT.path)
-    if (subject === 'figures') await figuresReady(page)
 
     const before = await groundOf(page, block)
     const menu = page.locator(`[data-hl-options="${subject}"]`).first()
@@ -73,6 +73,77 @@ for (const [subject, { attribute, label }] of Object.entries(PALETTE_SUBJECTS)) 
     await expect(menu.getByRole('button', { name: current(chosen.name) })).toBeVisible()
   })
 }
+
+/**
+ * 2026-11-08 — the diagrams are drawn in Mermaid's own themes, and the reader picks one.
+ * Three claims: the default is `default` for a reader who has never chosen, a choice draws
+ * the diagrams again in that theme and survives a reload, and a dark theme gets a dark frame
+ * (a light drawing on a dark ground, or the reverse, is unreadable).
+ */
+test('a diagram theme is drawn again on choosing, kept across a reload, and defaults to default', async ({ page }) => {
+  await page.goto(SHORT.path)
+  await figuresReady(page)
+
+  const html = page.locator('html')
+  await expect(html, 'nothing is stamped for a reader who has not chosen').not.toHaveAttribute(DIAGRAM_THEME_ATTRIBUTE, /.+/)
+
+  const menu = page.locator('[data-hl-options="figures"]').first()
+  const trigger = menu.locator('summary')
+  await expect(trigger).toHaveAttribute('aria-label', 'Diagram theme')
+  await expect(menu.getByRole('button')).toHaveCount(0)
+  await trigger.click()
+  await expect(menu.getByRole('button')).toHaveCount(DIAGRAM_THEMES.length)
+
+  const first = DIAGRAM_THEMES.find((theme) => theme.id === DEFAULT_DIAGRAM_THEME)!
+  await expect(menu.getByRole('button', { name: current(first.name) }), 'the default is marked current').toBeVisible()
+
+  const drawing = () => page.locator('[data-hl-prose] .bz-diagram .mermaid-source svg').first().evaluate(
+    (svg) => svg.querySelector('style')?.textContent ?? '',
+  )
+  const styleBefore = await drawing()
+  const groundBefore = await groundOf(page, '.bz-figure')
+
+  const dark = DIAGRAM_THEMES.find((theme) => theme.tone === 'dark')!
+  await menu.getByRole('button', { name: dark.name, exact: true }).click()
+  await expect(html).toHaveAttribute(DIAGRAM_THEME_ATTRIBUTE, dark.id)
+  await expect(menu).not.toHaveAttribute('open', '')
+  await expect(trigger, 'focus returns to the control that opened the menu').toBeFocused()
+
+  // Drawn again: the SVG's own stylesheet is the theme's, so it changes, and it does so
+  // without a reload, once the draws have been queued and finished.
+  await expect.poll(drawing, { message: 'the diagram was not drawn again in the chosen theme' }).not.toBe(styleBefore)
+  await figuresReady(page)
+  const groundAfter = await groundOf(page, '.bz-figure')
+  expect(groundAfter, 'a dark theme keeps the light frame').not.toBe(groundBefore)
+  const styleChosen = await drawing()
+
+  // Channel A: stamped before first paint on the next load, and drawn in the same theme.
+  await page.reload()
+  await expect(html).toHaveAttribute(DIAGRAM_THEME_ATTRIBUTE, dark.id)
+  await figuresReady(page)
+  expect(await groundOf(page, '.bz-figure')).toBe(groundAfter)
+  expect(await drawing(), 'the reload drew a different theme').toBe(styleChosen)
+  await trigger.click()
+  await expect(menu.getByRole('button', { name: current(dark.name) })).toBeVisible()
+})
+
+test('a stored theme that is not on offer, or the retired figure palette, draws the default', async ({ page }) => {
+  for (const prefs of [{ diagramTheme: 'base' }, { diagramTheme: 'sepia' }, { figurePalette: 'blueprint' }]) {
+    await page.addInitScript((value) => {
+      window.localStorage.setItem(
+        'hl-record',
+        JSON.stringify({ schema: 1, savedAt: '2026-11-08T10:00:00.000Z', data: { prefs: value } }),
+      )
+    }, prefs)
+    await page.goto(SHORT.path)
+    await figuresReady(page)
+    await expect(page.locator('html'), JSON.stringify(prefs)).not.toHaveAttribute(DIAGRAM_THEME_ATTRIBUTE, /.+/)
+    await page.locator('[data-hl-options="figures"]').first().locator('summary').click()
+    const menu = page.locator('[data-hl-options="figures"]').first()
+    await expect(menu.getByRole('button', { name: current('Default') })).toBeVisible()
+    await page.evaluate(() => window.localStorage.clear())
+  }
+})
 
 test('a palette menu closes on Escape and hands focus back', async ({ page }) => {
   await page.goto(SHORT.path)

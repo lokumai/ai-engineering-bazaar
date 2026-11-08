@@ -1,4 +1,5 @@
 import type { Element, ElementContent } from 'hast'
+import { DIAGRAM_MENU_LABEL, DIAGRAM_THEMES } from '../reading/diagram-themes'
 import { PALETTES, PALETTE_SUBJECTS, type PaletteSubject } from '../reading/palettes'
 
 /**
@@ -86,26 +87,38 @@ function el(tagName: string, properties: Element['properties'], children: Elemen
   return { type: 'element', tagName, properties, children }
 }
 
-/**
- * The three-palette menu for `subject`. The panel is a named `group` of plain
- * buttons — a short list of choices, not an application menu, so it does not
- * take `role="menu"` and the arrow-key contract that role would oblige.
- */
-export function paletteMenu(subject: PaletteSubject): Element {
-  const { label } = PALETTE_SUBJECTS[subject]
+/** The menu's own markup, which the two menus share: a disclosure, a named group of plain buttons. */
+function optionMenu(subject: 'figures' | PaletteSubject, label: string, items: Element[]): Element {
   return el('details', { className: ['bz-optmenu'], 'data-hl-options': subject }, [
     el('summary', { className: ['bz-tool'], 'aria-label': label, title: label }, [icon('palette')]),
-    el(
-      'div',
-      { className: ['bz-optmenu-panel'], role: 'group', 'aria-label': label },
-      PALETTES.map((palette) =>
-        el('button', { type: 'button', className: ['bz-optmenu-item'], 'data-hl-palette': palette.id }, [
-          el('span', { className: ['bz-swatch'], 'data-swatch': palette.id, ariaHidden: 'true' }),
-          { type: 'text', value: palette.name },
-          el('span', { className: ['sr-only', 'bz-optmenu-said'] }, [{ type: 'text', value: ', current' }]),
-          icon('check', 12, 'bz-optmenu-check'),
-        ]),
-      ),
-    ),
+    // A short list of choices, not an application menu, so it does not take
+    // `role="menu"` and the arrow-key contract that role would oblige.
+    el('div', { className: ['bz-optmenu-panel'], role: 'group', 'aria-label': label }, items),
   ])
+}
+
+function optionItem(attribute: string, id: string, swatch: string, name: string): Element {
+  return el('button', { type: 'button', className: ['bz-optmenu-item'], [attribute]: id }, [
+    el('span', { className: ['bz-swatch'], 'data-swatch': swatch, ariaHidden: 'true' }),
+    { type: 'text', value: name },
+    el('span', { className: ['sr-only', 'bz-optmenu-said'] }, [{ type: 'text', value: ', current' }]),
+    icon('check', 12, 'bz-optmenu-check'),
+  ])
+}
+
+/** The three-palette menu for the code blocks. */
+export function paletteMenu(subject: PaletteSubject): Element {
+  return optionMenu(subject, PALETTE_SUBJECTS[subject].label, PALETTES.map((palette) =>
+    optionItem('data-hl-palette', palette.id, palette.id, palette.name)))
+}
+
+/**
+ * The diagram theme menu: Mermaid's own themes, each with a swatch of the ground its
+ * frame takes. A light theme's swatch is Paper's and a dark theme's is Night's, the two
+ * grounds the frame can have (`diagram-themes.ts`); the swatch says which, not what
+ * Mermaid will paint on it, because the site has no business holding Mermaid's colours.
+ */
+export function diagramThemeMenu(): Element {
+  return optionMenu('figures', DIAGRAM_MENU_LABEL, DIAGRAM_THEMES.map((theme) =>
+    optionItem('data-hl-theme', theme.id, theme.tone === 'dark' ? 'night' : 'paper', theme.name)))
 }

@@ -15,7 +15,7 @@ import { DIAGRAM_HEADING, SERIES_HEADINGS } from './lines'
 import { courseLinkFor, isCourseLink, sheetSource } from './links'
 import { assertNoRawHex, remapMermaidFills } from './mermaid'
 import { CODE_TOKEN_ROLES, codeThemes, readDesignToken, toHex } from './code-theme'
-import { icon, paletteMenu } from './tools'
+import { diagramThemeMenu, icon, paletteMenu } from './tools'
 
 export interface TocEntry {
   id: string
@@ -723,7 +723,7 @@ function rehypeFigures(options: RenderOptions) {
               be drawn (§1), and with no script there is no drawing.
             */
             element('div', { className: ['bz-figure-tools'], lang: 'en' }, [
-              paletteMenu('figures'),
+              diagramThemeMenu(),
               element(
                 'button',
                 {

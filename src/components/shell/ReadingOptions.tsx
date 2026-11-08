@@ -1,18 +1,19 @@
 'use client'
 
 import { useEffect } from 'react'
-import { setCodePalette, setFigurePalette } from '@/lib/record/events'
+import { setCodePalette, setDiagramTheme } from '@/lib/record/events'
 import { update } from '@/lib/record/store'
-import { PALETTE_SUBJECTS, isPaletteId, type PaletteSubject } from '@/lib/reading/palettes'
+import { DIAGRAM_THEME_ATTRIBUTE, isDiagramThemeId } from '@/lib/reading/diagram-themes'
+import { PALETTE_SUBJECTS, isPaletteId } from '@/lib/reading/palettes'
 
 /**
- * The palette menus' behaviour, once per document — the arrangement
+ * The two option menus' behaviour, once per document — the arrangement
  * `Affordances` has for the copy control and the scroll fade, and for the same
  * reason: the menus are build-time markup in every figure and every code block
  * (`src/lib/content/tools.ts`), so one delegated listener serves them all and
  * no block needs an island of its own.
  *
- * ## Choosing a palette
+ * ## Choosing a palette, or a diagram theme
  *
  * Written through `store.ts`, the only writer of learner state
  * (`kia-context/specs/ARCHITECTURE.md` §5), and stamped on `<html>` in the same
@@ -31,15 +32,10 @@ import { PALETTE_SUBJECTS, isPaletteId, type PaletteSubject } from '@/lib/readin
  */
 
 const MENU = '.bz-optmenu'
-const OPTION = '[data-hl-palette]'
+const OPTION = '[data-hl-palette], [data-hl-theme]'
 
 /** One enhancer per document: two would write every choice twice. */
 let instances = 0
-
-const WRITERS: Record<PaletteSubject, typeof setFigurePalette> = {
-  figures: setFigurePalette,
-  code: setCodePalette,
-}
 
 function close(menu: HTMLDetailsElement, refocus: boolean): void {
   menu.open = false
@@ -67,12 +63,19 @@ export function ReadingOptions() {
       if (!option || !menu) return
 
       const subject = menu.dataset.hlOptions
-      const palette = option.dataset.hlPalette
-      if (subject !== 'figures' && subject !== 'code') return
-      if (!isPaletteId(palette)) return
-
-      document.documentElement.setAttribute(PALETTE_SUBJECTS[subject].attribute, palette)
-      update((data) => WRITERS[subject](data, palette))
+      if (subject === 'figures') {
+        // The diagrams: a Mermaid theme. `MermaidFigure` watches this attribute and
+        // draws every diagram again, so nothing here touches one.
+        const theme = option.dataset.hlTheme
+        if (!isDiagramThemeId(theme)) return
+        document.documentElement.setAttribute(DIAGRAM_THEME_ATTRIBUTE, theme)
+        update((data) => setDiagramTheme(data, theme))
+      } else if (subject === 'code') {
+        const palette = option.dataset.hlPalette
+        if (!isPaletteId(palette)) return
+        document.documentElement.setAttribute(PALETTE_SUBJECTS.code.attribute, palette)
+        update((data) => setCodePalette(data, palette))
+      } else return
       close(menu, true)
     }
 

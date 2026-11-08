@@ -32,15 +32,20 @@ export type { CatalogViewId }
 export const CATALOG_VIEWS: readonly CatalogViewId[] = CATALOG_VIEW_IDS
 
 /**
- * The palettes a reader can put the diagrams and the code in
- * (`lib/reading/palettes.ts`). The boot script embeds this array to match a
- * stored id before it reaches an attribute.
+ * The palettes a reader can put the code in (`lib/reading/palettes.ts`) and the Mermaid
+ * themes a reader can draw the diagrams in (`lib/reading/diagram-themes.ts`). The boot
+ * script embeds both arrays to match a stored id before it reaches an attribute.
  */
+import {
+  DIAGRAM_THEME_IDS as READING_DIAGRAM_THEME_IDS,
+  type DiagramThemeId,
+} from '../reading/diagram-themes'
 import { type PaletteId, PALETTE_IDS as READING_PALETTE_IDS } from '../reading/palettes'
 import type { Track } from '../tracks'
 
-export type { PaletteId }
+export type { DiagramThemeId, PaletteId }
 export const PALETTE_IDS: readonly PaletteId[] = READING_PALETTE_IDS
+export const DIAGRAM_THEME_IDS: readonly DiagramThemeId[] = READING_DIAGRAM_THEME_IDS
 
 export interface SheetRecord {
   /** ISO instant of completion; null = not completed. The reader asserts it. */
@@ -79,9 +84,13 @@ export interface RecordData {
      * default moves only the readers who never chose.
      */
     catalogView: CatalogViewId | null
-    /** 2026-10-11 — the palette for the diagrams, or `null` for "has not chosen". */
-    figurePalette: PaletteId | null
-    /** The same, for the code blocks. A separate choice on purpose. */
+    /**
+     * 2026-11-08 — the Mermaid theme the diagrams are drawn in, or `null` for "has not
+     * chosen", which is `default`. It replaced `figurePalette`, which a stored record may
+     * still carry and which nothing reads.
+     */
+    diagramTheme: DiagramThemeId | null
+    /** The palette for the code blocks, or `null` for "has not chosen". */
     codePalette: PaletteId | null
   }
   meta: {
@@ -159,7 +168,7 @@ export const EMPTY_RECORD: RecordData = deepFreeze<RecordData>({
     charKeys: true,
     railFolded: false,
     catalogView: null,
-    figurePalette: null,
+    diagramTheme: null,
     codePalette: null,
   },
   meta: { lastExport: null, persisted: null },

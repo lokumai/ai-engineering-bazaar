@@ -12,7 +12,7 @@ authority: blueprint
 writes: agent, as the language evolves
 status: active
 covers: "the Bazaar language, transcribed from T4 on ground G3, with its derived dark sibling, plus the six primitives M16 derived from the component mockups — 2026-09-13, with ten recorded deviations (the sixth and seventh, the logo and the rail group, 2026-10-11; the eighth, the pager, the ninth, the Bazaar Street front door, and the tenth, a right-to-left script, 2026-10-12), the three reader palettes, and the end of a reading page"
-last_updated: 2026-11-07
+last_updated: 2026-11-08
 ---
 
 ---
@@ -454,14 +454,24 @@ value they need is prefixed `slab-`. It is a self-contained set precisely so a s
 anywhere without the surrounding ground leaking into it. Syntax colours are tuned against
 `slab-surface` alone.
 
-**And a reader may choose another ground for it — three in all, under the same names for code and
-for diagrams.** `Night` is the slab as above and the default. `Paper` is the bar's own fixed powder
+**And a reader may choose another ground for the code — three in all.** `Night` is the slab as above
+and the default. `Paper` is the bar's own fixed powder
 with cobalt, clay and the slab's arrow grey for ink; `Blueprint` is the bar's cobalt carrying the
 slab's own token hues, which were tuned for a dark ground and clear it. **None of the three adds a
 colour**: each is the slab tokens REBOUND to values the language already declares and that do not flip
 with the theme, so a palette a reader chose looks the same in both themes, and every pair is measured
 against the ground it is painted on (the source of the palettes lists them). It is the figure's own
 rebinding mechanism, below, applied a second time.
+
+**A diagram is drawn in one of the diagram library's own themes, and the language decides only its
+frame.** The reader chooses among ten, `default` first and the default for everyone; the library
+paints the nodes, edges and labels, and the language neither repaints nor measures them. What it does
+decide is the frame's ground, by the theme's tone: a light theme sits on `Paper`'s values and a dark
+theme on `Night`'s, so an arrow, which runs on the frame itself, is readable in every theme and on
+both page themes (3:1, measured per theme). The four semantic hues survive as the colour of a
+node's heavier edge. **This is a deviation from the shell mockup, which draws every diagram on the dark
+slab:** a reader's first frame is now Mermaid's `default` theme on a light frame, because a light drawing
+on a dark ground is unreadable. The dark frame is unchanged, and it is what the dark themes get.
 
 ### The accepted risk, named
 
@@ -797,12 +807,12 @@ carries one where a real, legible mark exists (D105). M68, M69, M74.
 
 **Each carries its tools as icons, in its top-right corner.** A `tool` is a 32px square that is
 TRANSPARENT at rest — the glyph alone, in the ground's muted ink — and takes an edge and a raised fill
-on hover, on focus and while its menu is open. A figure's tools are a palette menu and an expand
+on hover, on focus and while its menu is open. A figure's tools are a theme menu (ten rows) and an expand
 control, on a strip carrying the frame's own ground so an overflowing drawing's fade never sits under
 them; a slab's are a palette menu and a copy control whose glyph becomes a check for a moment. Every
 tool is named by a label and never by its glyph alone. The palette menu is a raised page surface even
-over a dark block, as the bar's own menu is — three rows, each a small diagonal swatch of its ground
-and ink, the chosen one carrying a check.
+over a dark block, as the bar's own menu is — a row per choice, each with a small diagonal swatch of its
+ground and ink (a theme's is the light or the dark frame it sits on), the chosen one carrying a check.
 
 **An opened figure is a dialog inset from the window**, over the page dimmed by the slab's ground at
 partial opacity — the language declares no translucent surface, so the dimming is the element's own.
@@ -845,12 +855,12 @@ to repeat one number and one of them to be wrong about it.
 is a graphic token and its label stays ordinary ink, so the meaning is the word, then the edge, then
 the hue. "Erase everything" is the signal and the colour agrees with it.
 
-**A figure REBINDS the page's palette onto itself, and that is the mechanism the whole diagram
-treatment rests on.** A drawing is inline SVG generated in the browser, and a diagram library's own
-class grammar cannot hold a CSS function — so every colour a diagram asks for is named as an
-ordinary surface token, and the frame redeclares those tokens in slab terms. Custom properties
-cascade into inline SVG, so one rule puts every drawing on the dark ground with no second stylesheet
-and no re-render. Two consequences are not obvious and are both measured. A filled accent inside a
+**A figure REBINDS the page's palette onto itself, and that is the mechanism the frame and the semantic
+edges rest on.** A drawing is inline SVG generated in the browser, and a diagram library's own
+class grammar cannot hold a CSS function — so the one colour the language asks of a diagram, a
+semantic node's edge, is named as an ordinary surface token, and the frame redeclares those tokens
+in the terms of its ground. Custom properties cascade into inline SVG, so one rule puts the edge
+in the right hue on whichever ground the theme's tone gives, with no second stylesheet. Two consequences are not obvious and are both measured. A filled accent inside a
 figure carries **dark** type, for the same reason it does on a dark page. And a diagram's strokes are
 its **content** rather than a control's edge, so they take the 3:1 graphic floor and not the accepted
 risk below: `slab-line-raised` measures 1.80:1 on the slab ground and `slab-arrow` measures 3.47:1.

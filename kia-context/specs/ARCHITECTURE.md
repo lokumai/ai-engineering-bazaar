@@ -12,7 +12,7 @@ authority: blueprint
 writes: agent, when explicitly refactoring
 status: active
 covers: the whole system as built on 2026-09-10, with M16 shipped — every route on the design language; the record, channel A and the render step corrected for M24 on 2026-10-11, and the quiz and the end of a module for M25 on 2026-10-12, the Bazaar Street front door for M27 and the Persian pages for M28 the same day, and the progress page slimmed to its circles and its data row for M38 on 2026-11-05, and the account layer, role paths, record of work and two thirds of the test suite removed for M40 the same day, and the two tracks (For Engineers, For Everyone) and their per-track record for M43 the same day; the custom domain (D92), Emerging Trends and moved addresses (D94) on 2026-11-06, and the people at the gate (M58), search (M59) and the catalog without its Sources count (M55) the same day; and for M64 to M69 the same night, a planned module that renders the sections it already has (D102), inline vendor logos, and the first For Everyone module; and the search filters and the level bar on a result (M70, D103), folded behind a Filters disclosure (M71, D104), and the stories at the gate kept until everyone has turned (M72), on 2026-11-07
-last_updated: 2026-11-07
+last_updated: 2026-11-08
 ---
 
 # 🏗️ ARCHITECTURE — How this project is built
@@ -320,7 +320,7 @@ RecordData
   sheets          { [slug]: { signedOff, signedRevision, reachedEnd, dwellSeconds, checklist {} } }
   everyoneSheets  { [slug]: the same shape }                    For Everyone, since M43
   days            [ ISO dates ]
-  prefs           { charKeys, railFolded, catalogView, figurePalette, codePalette }
+  prefs           { charKeys, railFolded, catalogView, diagramTheme, codePalette }
   meta            { lastExport, persisted }
 ```
 
@@ -332,15 +332,16 @@ writes `reachedEnd` or `dwellSeconds` any more; they are kept so a stored value 
 
 **`prefs` holds the browser's preferences, not the reader's history.** `charKeys` is SC 2.1.4's off
 switch, `railFolded` (M10) is whether the curriculum rail on a module page is folded away,
-`catalogView` (M12) is which of the catalog's three views the reader last chose, and `figurePalette`
-and `codePalette` (M24) are which of three palettes the reader put the diagrams and the code in. All
-of them are facts about the machine in front of the reader rather than about the reader, which is why `prefs` is the one
+`catalogView` (M12) is which of the catalog's three views the reader last chose, `codePalette` (M24)
+is which of three palettes the reader put the code in, and `diagramTheme` (2026-11-08) is which of
+Mermaid's ten themes the diagrams are drawn in; it replaced `figurePalette`, which a stored record may
+still carry and which `coerceRecordData` drops like any key it does not know. All of them are facts about the machine in front of the reader rather than about the reader, which is why `prefs` is the one
 field `carriesNothing` ignores. A widening here needs
 no migration rung: `coerceRecordData` defaults a missing key, and the default is the honest answer for
 a reader who never expressed a preference.
 
 **`catalogView` is `null` rather than `'overview'` by default, and the distinction is load-bearing** —
-and the two palettes are `null` rather than `'night'` for the same reason.
+and the two choices are `null` rather than `'night'` and `'default'` for the same reason.
 Null is "has not chosen", which is not the same as "chose the view that happens to be the default":
 the boot script stamps nothing for null, the stylesheet's fallback rule reveals the default view, and
 a later change of default therefore moves the reader who never chose and leaves the reader who did
@@ -399,7 +400,7 @@ Both are needed and neither replaces the other.
   progress: `data-bz-rail="folded"` (M10) is stamped **before** the `carriesNothing` gate, because a
   reader whose only stored state is a folded rail carries nothing by that rule and the rail would
   spring open on every load for exactly the readers who asked for it to be shut. `data-hl-view`
-  (M12) and the two palettes, `data-hl-figures` and `data-hl-code` (M24), are stamped before it for
+  (M12), the diagram theme `data-hl-diagram` (2026-11-08) and the code palette `data-hl-code` (M24) are stamped before it for
   the same reason, each matched against its id list first because the value came out of storage.
 - **Channel B** — React islands after mount. `getServerSnapshot` returns a frozen empty record,
   because the prerendered HTML has never met the reader.
@@ -509,7 +510,11 @@ file still carries what it holds; there is simply no longer a control on a modul
 them, and since M38 no page that shows them either.
 The module's task-list checkboxes are untouched and still write `checklist`.
 
-**In the browser**, mermaid renders client-side from that `data-mermaid` source. This is the cause of
+**In the browser**, mermaid renders client-side from that `data-mermaid` source, in the theme the
+reader chose: `MermaidFigure` reads `data-hl-diagram` on `<html>` (stamped by `boot.ts`, and by
+`ReadingOptions` on a choice), draws every diagram with `mermaidConfig(theme)`, and draws them again
+when the attribute changes, because Mermaid writes a theme's colours into the SVG. A value that is
+not one of the ten, or none, is `default`. This is the cause of
 the diagram overflow measured on 2026-09-08: the injected SVG arrives at its natural content width —
 1,423px against a 656px column — and escapes the scroll container meant to hold it, painting over both
 rails. See `logs/BRAINSTORM_1.md` D10.

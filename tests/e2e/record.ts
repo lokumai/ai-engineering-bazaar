@@ -76,8 +76,8 @@ export interface RecordData {
     charKeys: boolean
     railFolded: boolean
     catalogView: 'overview' | 'cards' | 'table' | null
-    /** M24 — the two palettes, `null` until a reader chooses. */
-    figurePalette: 'night' | 'paper' | 'blueprint' | null
+    /** 2026-11-08 — the diagrams' Mermaid theme (a plain string here, as the rule above says), and the code's palette: null until chosen. */
+    diagramTheme: string | null
     codePalette: 'night' | 'paper' | 'blueprint' | null
   }
   meta: { lastExport: string | null; persisted: boolean | null }
@@ -142,7 +142,7 @@ export function recordData(seed: RecordSeed = {}): RecordData {
       charKeys: true,
       railFolded: false,
       catalogView: null,
-      figurePalette: null,
+      diagramTheme: null,
       codePalette: null,
       ...seed.prefs,
     },

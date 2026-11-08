@@ -1097,7 +1097,7 @@ files** (measured with `grep` over the modules and `ls` over `images/logos/`).
 The `## Open questions` heading of `BRAINSTORM.md` had been deleted by the scripted insert that added
 D104 (its text survived without the heading); restored.
 
-## 🏁 Milestone M75: Course cards in Agents in Practice, Mermaid's own themes, and five Turkish women for the gate (D106, D107)
+## 🏁 Milestone M75: Course cards in Agents in Practice, Mermaid's own themes, and Mihrî at the gate (D106, D107) — DONE
 
 The author, 2026-11-08, three subtasks given to one Sonnet High subagent on one branch while the
 For Everyone blueprints were being decided: (1) the courses in Agents in Practice read "like just
@@ -1106,19 +1106,36 @@ back; (2) the diagram colours are "bland", so the reader picks any of Mermaid's 
 Mermaid's `default` as the default; (3) the cast has a foreign man, a foreign woman and a Turkish man but
 no Turkish woman, so Leyla is to be replaced; first, five candidates to choose from in the playground,
 then a redraw with no hijab ("I want characters without hijab"). Reviewed by two Haiku reviewers at
-xhigh from two perspectives before the merge.
+xhigh from two perspectives before the merge. Added during the milestone: the author picked candidate D,
+Mihrî, for the home page, and asked for the fifth level to be titled "Emerging" instead of "Emerging Trends".
 
-- [ ] A STOP banner and one call-out card per course, in both tracks and all three languages, a real
+- [x] A STOP banner and one call-out card per course, in both tracks and all three languages, a real
       card on the site in both themes and in RTL, and a tinted box on GitHub (D106).
-- [ ] The reader chooses any of Mermaid's ten themes; `default` first and the default; the choice
+- [x] The reader chooses any of Mermaid's ten themes; `default` first and the default; the choice
       persists, applies before first paint and redraws every diagram live (D107).
-- [ ] Five Turkish-woman candidates, A to E, in `playground/2026-11-round-4/P-turkish-woman.html`,
+- [x] Five Turkish-woman candidates, A to E, in `playground/2026-11-round-4/P-turkish-woman.html`,
       drawn like the cast, in period dress with a trade prop and uncovered hair, openable from the main
       checkout.
-- [ ] Two reviews of the PR, their findings fixed, merged.
+- [x] Mihrî (candidate D) replaces Leyla on the home page: art, name, story, tests.
+- [x] The fifth level is titled "Emerging"; slug, folder and addresses unchanged.
+- [x] Two reviews of the PR, their findings fixed, merged.
 
-Not in this milestone: replacing Leyla in `cast.ts` with the chosen candidate, which waits on the
-author's pick.
+**Report, 2026-11-08.** One Sonnet High subagent built all of it on `feat/turkish-woman-and-course-card`
+(PR #79). **Cards:** GitHub alerts become centred `bz-callout` cards with `role="note"`; the engineers'
+track requires all four courses (7.5 hours, confirmed by the author) and For Everyone requires two (5 hours,
+Claude Code 101 optional). **Themes:** ten Mermaid themes in a menu grouped Light and Dark; Mermaid 11.17.2
+already shipped them, so no upgrade. Three themes needed one `themeVariables` override to clear the site's
+floors (`neutral` node edge 2.46 → 3.9:1, `dark` edge label 4.43 → 6.1:1, `neo-dark` 2.25 → 4.3:1).
+**Cast:** five candidates, redrawn without headcloths at the author's request; he chose D. Mihrî's art is
+captured from the playground by `scripts/capture-cast.mjs`, and the other six re-captured byte-identical.
+**Reviews:** the reader-side review found a contradiction (all four courses required, then a quick check about
+which to skip), a card announced as a quotation, an unnumbered DESIGN deviation (now the eleventh) and wording
+issues. The code review found that a link in a card kept any URL scheme, including `javascript:` (now an
+allowlist, `src/lib/content/safe-href.ts`, with a corpus check), that the diagram label-contrast gate had been
+dropped (restored for every theme, nothing exempted), a 20-cycle e2e test past the 30 s timeout (split per theme),
+redraw races in `MermaidFigure`, and negative-only callout tests that passed with no callout. All seventeen
+were fixed. **Gate:** typecheck, 1,229 unit tests, build and link check, 545 browser tests passed and 10 skipped.
+Seen while checking: the home page keeps its light ground in dark mode, the same on the live site before this PR.
 
 ---
 

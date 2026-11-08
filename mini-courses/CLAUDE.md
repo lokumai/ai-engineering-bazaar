@@ -263,6 +263,27 @@ above. It uses the same name, so it needs no line of its own in `curriculum.yaml
 name is not listed fails the build. Until the file exists, the site shows that module's For Everyone
 page as not written yet. Adding one regenerates `src/app/lokum-modules.css`, in the same commit.
 
+**How a For Everyone module is written (D108).** It teaches the same engineering, never a lesser
+subject: not the technical text with the code removed, not a summary, not only a change of tone, but
+all three. The reader is an HR specialist, an accountant or a manager who does not know what a
+function or a terminal is.
+
+- Frontmatter `summary` and `objectives`, the H1 the module's title, an opening that connects to the
+  previous module, then `## Why This Matters to You`: why this reader is learning it.
+- The concepts as a story with everyday examples, one analogy per hard idea, called back later (the
+  context is a chat read from the top every time; a team of agents is a manager and a team). Move an
+  example into the reader's world when the technical one is about code.
+- Keep almost every image, with a caption rewritten in plain words; images are `../images/...`. Code,
+  formulas and commands may stay where the technical module has them, with one line saying it is
+  fine not to follow them.
+- Explain the core in full (MANIFESTO rule 19 names it); for the rest, knowing the keyword and why
+  it matters is enough, so the module comes out shorter than the technical one.
+- End with `## Words You Now Know` (each keyword, one plain line), `## Summary` with the quick check,
+  and `## References`, which may stay a little technical. No series map and no quiz.
+- Prose links are written as in the technical module (they resolve against its folder) and point at
+  the For Everyone page once that module has one.
+- A draft or planned module gets no For Everyone version.
+
 ## The quick quiz
 
 A written module carries `<name>.quiz.yaml` beside it, shown at the end of the module page. It is

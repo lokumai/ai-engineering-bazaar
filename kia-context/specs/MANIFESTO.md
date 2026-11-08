@@ -10,14 +10,14 @@ authority: law
 writes: agent, from what the human decided
 status: active
 covers: the whole product
-last_updated: "2026-11-05"
+last_updated: "2026-11-08"
 ---
 
 # 📜 MANIFESTO — What we are building, and why
 
 > **Rules 1 to 7 are not new here.** They were written by the author in
 > `mini-courses/MANIFEST.md`, which is a public document for readers. This file restates them as the
-> boundary an agent may not cross, and adds the working rules 8 to 18 that came out of building it.
+> boundary an agent may not cross, and adds the working rules 8 to 19 that came out of building it.
 > Where the two disagree, `MANIFEST.md` is the one the readers see and the one that wins.
 
 ---
@@ -61,6 +61,11 @@ Three groups, in the order they created the need:
    the third time.
 3. **Anyone else with the same problem**, including companies who want their engineers working this
    way and have no roadmap for it.
+4. **People who are not engineers**: an HR specialist, an accountant, a manager, who may not know what
+   a CPU, a function or a terminal is. They read the For Everyone version of each module (**D86**,
+   **D108**). It is still AI *engineering*, not "AI for your job": the interface to AI is now natural
+   language, so solving problems with AI is no longer only an engineer's work, but doing it well
+   needs the engineering concepts.
 
 Much of that audience does not read English as a first language, so the language has to be plain
 enough to read at speed in a second one. A Turkish version of every module exists for the same
@@ -123,6 +128,12 @@ reason, and so does a Persian version of every written one (**D80**). See `genes
     longer, plainer sentence. The author's words: *"we hate very short and dense sentences ... as if
     everyone is beginner here."* Reasoning, and why it was applied as a hunt and not a rewrite:
     `logs/BRAINSTORM_2.md` **D83**.
+19. **A For Everyone module teaches the same subject, never a lesser one.** It is not the technical
+    module with the code removed, not a summary and not a change of tone, but all three together: a
+    subset of the same concepts, told as a story with everyday examples, answering "why am I learning
+    this?", and shorter than the technical module. The core ideas (the context, prompt engineering, the
+    system prompt, tools, memory, an agent against a plain model) are explained until a non-engineer can picture
+    them. Reasoning and the blueprint process: `logs/BRAINSTORM.md` **D108**.
 
 ## 6. What this is NOT
 

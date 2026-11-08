@@ -63,7 +63,26 @@
     background: var(--bz-cat);
     border-color: var(--bz-cat);
   }
-  html.hl-e-signed-12 [data-track="everyone"] .bz-seg[data-module="12"] {
+  html.hl-e-signed-1  [data-track="everyone"] .bz-seg[data-module="1"],
+  html.hl-e-signed-2  [data-track="everyone"] .bz-seg[data-module="2"],
+  html.hl-e-signed-3  [data-track="everyone"] .bz-seg[data-module="3"],
+  html.hl-e-signed-4  [data-track="everyone"] .bz-seg[data-module="4"],
+  html.hl-e-signed-5  [data-track="everyone"] .bz-seg[data-module="5"],
+  html.hl-e-signed-6  [data-track="everyone"] .bz-seg[data-module="6"],
+  html.hl-e-signed-7  [data-track="everyone"] .bz-seg[data-module="7"],
+  html.hl-e-signed-8  [data-track="everyone"] .bz-seg[data-module="8"],
+  html.hl-e-signed-9  [data-track="everyone"] .bz-seg[data-module="9"],
+  html.hl-e-signed-10 [data-track="everyone"] .bz-seg[data-module="10"],
+  html.hl-e-signed-11 [data-track="everyone"] .bz-seg[data-module="11"],
+  html.hl-e-signed-12 [data-track="everyone"] .bz-seg[data-module="12"],
+  html.hl-e-signed-13 [data-track="everyone"] .bz-seg[data-module="13"],
+  html.hl-e-signed-14 [data-track="everyone"] .bz-seg[data-module="14"],
+  html.hl-e-signed-16 [data-track="everyone"] .bz-seg[data-module="16"],
+  html.hl-e-signed-17 [data-track="everyone"] .bz-seg[data-module="17"],
+  html.hl-e-signed-35 [data-track="everyone"] .bz-seg[data-module="35"],
+  html.hl-e-signed-36 [data-track="everyone"] .bz-seg[data-module="36"],
+  html.hl-e-signed-37 [data-track="everyone"] .bz-seg[data-module="37"],
+  html.hl-e-signed-38 [data-track="everyone"] .bz-seg[data-module="38"] {
     background: var(--bz-cat);
     border-color: var(--bz-cat);
   }
@@ -98,7 +117,26 @@
   html.hl-signed-38 [data-track="engineers"] .bz-item[data-module="38"] .bz-tick {
     display: grid;
   }
-  html.hl-e-signed-12 [data-track="everyone"] .bz-item[data-module="12"] .bz-tick {
+  html.hl-e-signed-1  [data-track="everyone"] .bz-item[data-module="1"] .bz-tick,
+  html.hl-e-signed-2  [data-track="everyone"] .bz-item[data-module="2"] .bz-tick,
+  html.hl-e-signed-3  [data-track="everyone"] .bz-item[data-module="3"] .bz-tick,
+  html.hl-e-signed-4  [data-track="everyone"] .bz-item[data-module="4"] .bz-tick,
+  html.hl-e-signed-5  [data-track="everyone"] .bz-item[data-module="5"] .bz-tick,
+  html.hl-e-signed-6  [data-track="everyone"] .bz-item[data-module="6"] .bz-tick,
+  html.hl-e-signed-7  [data-track="everyone"] .bz-item[data-module="7"] .bz-tick,
+  html.hl-e-signed-8  [data-track="everyone"] .bz-item[data-module="8"] .bz-tick,
+  html.hl-e-signed-9  [data-track="everyone"] .bz-item[data-module="9"] .bz-tick,
+  html.hl-e-signed-10 [data-track="everyone"] .bz-item[data-module="10"] .bz-tick,
+  html.hl-e-signed-11 [data-track="everyone"] .bz-item[data-module="11"] .bz-tick,
+  html.hl-e-signed-12 [data-track="everyone"] .bz-item[data-module="12"] .bz-tick,
+  html.hl-e-signed-13 [data-track="everyone"] .bz-item[data-module="13"] .bz-tick,
+  html.hl-e-signed-14 [data-track="everyone"] .bz-item[data-module="14"] .bz-tick,
+  html.hl-e-signed-16 [data-track="everyone"] .bz-item[data-module="16"] .bz-tick,
+  html.hl-e-signed-17 [data-track="everyone"] .bz-item[data-module="17"] .bz-tick,
+  html.hl-e-signed-35 [data-track="everyone"] .bz-item[data-module="35"] .bz-tick,
+  html.hl-e-signed-36 [data-track="everyone"] .bz-item[data-module="36"] .bz-tick,
+  html.hl-e-signed-37 [data-track="everyone"] .bz-item[data-module="37"] .bz-tick,
+  html.hl-e-signed-38 [data-track="everyone"] .bz-item[data-module="38"] .bz-tick {
     display: grid;
   }
 
@@ -128,7 +166,26 @@
   html.hl-signed-38 [data-track="engineers"] .bz-cmod[data-module="38"] .bz-cmod-mark {
     display: inline-flex;
   }
-  html.hl-e-signed-12 [data-track="everyone"] .bz-cmod[data-module="12"] .bz-cmod-mark {
+  html.hl-e-signed-1  [data-track="everyone"] .bz-cmod[data-module="1"] .bz-cmod-mark,
+  html.hl-e-signed-2  [data-track="everyone"] .bz-cmod[data-module="2"] .bz-cmod-mark,
+  html.hl-e-signed-3  [data-track="everyone"] .bz-cmod[data-module="3"] .bz-cmod-mark,
+  html.hl-e-signed-4  [data-track="everyone"] .bz-cmod[data-module="4"] .bz-cmod-mark,
+  html.hl-e-signed-5  [data-track="everyone"] .bz-cmod[data-module="5"] .bz-cmod-mark,
+  html.hl-e-signed-6  [data-track="everyone"] .bz-cmod[data-module="6"] .bz-cmod-mark,
+  html.hl-e-signed-7  [data-track="everyone"] .bz-cmod[data-module="7"] .bz-cmod-mark,
+  html.hl-e-signed-8  [data-track="everyone"] .bz-cmod[data-module="8"] .bz-cmod-mark,
+  html.hl-e-signed-9  [data-track="everyone"] .bz-cmod[data-module="9"] .bz-cmod-mark,
+  html.hl-e-signed-10 [data-track="everyone"] .bz-cmod[data-module="10"] .bz-cmod-mark,
+  html.hl-e-signed-11 [data-track="everyone"] .bz-cmod[data-module="11"] .bz-cmod-mark,
+  html.hl-e-signed-12 [data-track="everyone"] .bz-cmod[data-module="12"] .bz-cmod-mark,
+  html.hl-e-signed-13 [data-track="everyone"] .bz-cmod[data-module="13"] .bz-cmod-mark,
+  html.hl-e-signed-14 [data-track="everyone"] .bz-cmod[data-module="14"] .bz-cmod-mark,
+  html.hl-e-signed-16 [data-track="everyone"] .bz-cmod[data-module="16"] .bz-cmod-mark,
+  html.hl-e-signed-17 [data-track="everyone"] .bz-cmod[data-module="17"] .bz-cmod-mark,
+  html.hl-e-signed-35 [data-track="everyone"] .bz-cmod[data-module="35"] .bz-cmod-mark,
+  html.hl-e-signed-36 [data-track="everyone"] .bz-cmod[data-module="36"] .bz-cmod-mark,
+  html.hl-e-signed-37 [data-track="everyone"] .bz-cmod[data-module="37"] .bz-cmod-mark,
+  html.hl-e-signed-38 [data-track="everyone"] .bz-cmod[data-module="38"] .bz-cmod-mark {
     display: inline-flex;
   }
 
@@ -164,7 +221,26 @@
   html.hl-signed-38 [data-track="engineers"] .bz-cmod[data-module="38"] .bz-cmod-said {
     display: inline;
   }
-  html.hl-e-signed-12 [data-track="everyone"] .bz-cmod[data-module="12"] .bz-cmod-said {
+  html.hl-e-signed-1  [data-track="everyone"] .bz-cmod[data-module="1"] .bz-cmod-said,
+  html.hl-e-signed-2  [data-track="everyone"] .bz-cmod[data-module="2"] .bz-cmod-said,
+  html.hl-e-signed-3  [data-track="everyone"] .bz-cmod[data-module="3"] .bz-cmod-said,
+  html.hl-e-signed-4  [data-track="everyone"] .bz-cmod[data-module="4"] .bz-cmod-said,
+  html.hl-e-signed-5  [data-track="everyone"] .bz-cmod[data-module="5"] .bz-cmod-said,
+  html.hl-e-signed-6  [data-track="everyone"] .bz-cmod[data-module="6"] .bz-cmod-said,
+  html.hl-e-signed-7  [data-track="everyone"] .bz-cmod[data-module="7"] .bz-cmod-said,
+  html.hl-e-signed-8  [data-track="everyone"] .bz-cmod[data-module="8"] .bz-cmod-said,
+  html.hl-e-signed-9  [data-track="everyone"] .bz-cmod[data-module="9"] .bz-cmod-said,
+  html.hl-e-signed-10 [data-track="everyone"] .bz-cmod[data-module="10"] .bz-cmod-said,
+  html.hl-e-signed-11 [data-track="everyone"] .bz-cmod[data-module="11"] .bz-cmod-said,
+  html.hl-e-signed-12 [data-track="everyone"] .bz-cmod[data-module="12"] .bz-cmod-said,
+  html.hl-e-signed-13 [data-track="everyone"] .bz-cmod[data-module="13"] .bz-cmod-said,
+  html.hl-e-signed-14 [data-track="everyone"] .bz-cmod[data-module="14"] .bz-cmod-said,
+  html.hl-e-signed-16 [data-track="everyone"] .bz-cmod[data-module="16"] .bz-cmod-said,
+  html.hl-e-signed-17 [data-track="everyone"] .bz-cmod[data-module="17"] .bz-cmod-said,
+  html.hl-e-signed-35 [data-track="everyone"] .bz-cmod[data-module="35"] .bz-cmod-said,
+  html.hl-e-signed-36 [data-track="everyone"] .bz-cmod[data-module="36"] .bz-cmod-said,
+  html.hl-e-signed-37 [data-track="everyone"] .bz-cmod[data-module="37"] .bz-cmod-said,
+  html.hl-e-signed-38 [data-track="everyone"] .bz-cmod[data-module="38"] .bz-cmod-said {
     display: inline;
   }
 }
@@ -202,7 +278,26 @@
     background: CanvasText;
     border-color: CanvasText;
   }
-  html.hl-e-signed-12 [data-track="everyone"] .bz-seg[data-module="12"] {
+  html.hl-e-signed-1  [data-track="everyone"] .bz-seg[data-module="1"],
+  html.hl-e-signed-2  [data-track="everyone"] .bz-seg[data-module="2"],
+  html.hl-e-signed-3  [data-track="everyone"] .bz-seg[data-module="3"],
+  html.hl-e-signed-4  [data-track="everyone"] .bz-seg[data-module="4"],
+  html.hl-e-signed-5  [data-track="everyone"] .bz-seg[data-module="5"],
+  html.hl-e-signed-6  [data-track="everyone"] .bz-seg[data-module="6"],
+  html.hl-e-signed-7  [data-track="everyone"] .bz-seg[data-module="7"],
+  html.hl-e-signed-8  [data-track="everyone"] .bz-seg[data-module="8"],
+  html.hl-e-signed-9  [data-track="everyone"] .bz-seg[data-module="9"],
+  html.hl-e-signed-10 [data-track="everyone"] .bz-seg[data-module="10"],
+  html.hl-e-signed-11 [data-track="everyone"] .bz-seg[data-module="11"],
+  html.hl-e-signed-12 [data-track="everyone"] .bz-seg[data-module="12"],
+  html.hl-e-signed-13 [data-track="everyone"] .bz-seg[data-module="13"],
+  html.hl-e-signed-14 [data-track="everyone"] .bz-seg[data-module="14"],
+  html.hl-e-signed-16 [data-track="everyone"] .bz-seg[data-module="16"],
+  html.hl-e-signed-17 [data-track="everyone"] .bz-seg[data-module="17"],
+  html.hl-e-signed-35 [data-track="everyone"] .bz-seg[data-module="35"],
+  html.hl-e-signed-36 [data-track="everyone"] .bz-seg[data-module="36"],
+  html.hl-e-signed-37 [data-track="everyone"] .bz-seg[data-module="37"],
+  html.hl-e-signed-38 [data-track="everyone"] .bz-seg[data-module="38"] {
     /* Filled with the system colour, so "signed off" is still a filled cell
        against an empty one: a difference in fill, not in hue. `forced-color-
        adjust` is set to `none` on `.bz-seg` where that segment is drawn. */

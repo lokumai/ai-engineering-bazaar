@@ -828,12 +828,12 @@ carries one where a real, legible mark exists (D105). M68, M69, M74.
 
 **Each carries its tools as icons, in its top-right corner.** A `tool` is a 32px square that is
 TRANSPARENT at rest — the glyph alone, in the ground's muted ink — and takes an edge and a raised fill
-on hover, on focus and while its menu is open. A figure's tools are a theme menu (ten rows) and an expand
-control, on a strip carrying the frame's own ground so an overflowing drawing's fade never sits under
+on hover, on focus and while its menu is open. A figure's tools are a theme menu (ten rows), a copy control
+(the same one a slab has, copying the diagram's source) and an expand control, on a strip carrying the frame's own ground so an overflowing drawing's fade never sits under
 them; a slab's are a palette menu and a copy control whose glyph becomes a check for a moment. Every
 tool is named by a label and never by its glyph alone. The palette menu is a raised page surface even
 over a dark block, as the bar's own menu is — a row per choice, each with a small diagonal swatch of its
-ground and ink (a theme's is the light or the dark frame it sits on), the chosen one carrying a check.
+ground and ink (a theme's is Mermaid's own ground for that theme), the chosen one carrying a check.
 
 **An opened figure is a dialog inset from the window**, over the page dimmed by the slab's ground at
 partial opacity — the language declares no translucent surface, so the dimming is the element's own.

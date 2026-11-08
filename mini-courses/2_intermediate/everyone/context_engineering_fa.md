@@ -64,7 +64,7 @@ context engineering جواب یه سواله: **چی باید بره توی چت
 
 خیلی از محصول‌های AI به این می‌گن **long-term memory** (حافظه‌ی بلندمدت)، همون ایده‌ی [حافظه](../1_fundamentals/memory_fa.md). معمولاً سه جور نگهش می‌دارن:
 
-![سه جور حافظه‌ی بلندمدت](../images/semantic-episodic-procedural.png)  
+![سه جور long-term memory](../images/semantic-episodic-procedural.png)  
 *Semantic memory (واقعیت‌هایی درباره‌ی تو) کم‌کم و به‌مرور جمع می‌شه. Episodic memory (یادداشت کارهای گذشته) نمی‌ذاره agent یه اشتباه رو تکرار کنه. Procedural memory (دستورها) بهش می‌گه کارها رو چطور انجام بده. agent این سه تا رو توی زمان‌های مختلف می‌نویسه و می‌خونه.*
 
 همون هشدار این‌جا هم هست: یکی باید تصمیم بگیره چی ارزش نوشتن داره، و این تصمیم گاهی غلطه.

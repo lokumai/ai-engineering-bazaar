@@ -63,6 +63,21 @@ Think of this as a cheatsheet for AI engineering, not a textbook. Knowing what t
 out comes from building things, not from searching. That choice is part of what you get
 here.
 
+## Two versions of every module
+
+Every module has a version **For Engineers** and a version **For Everyone**.
+
+The For Everyone version is for people who are not engineers: someone in HR, in finance, a manager.
+It is still AI engineering, on purpose. You talk to today's AI in normal language, so anyone who can
+explain a problem clearly can now build with it, a small website or a tool, without learning to
+program. But to use that language well, you need to know how the AI works: what it sees, what it
+remembers, where it goes wrong. Those are the engineering concepts, and everyone can learn them.
+
+So the For Everyone version is not the same page with the code taken out, and it is not a summary.
+It explains the same ideas as a story, with everyday examples, and tells you why each one matters to
+you. It is usually much shorter, because knowing what a word means and why it matters is enough
+there.
+
 ---
 
 Modules are written in English first. The Turkish versions follow once the English is

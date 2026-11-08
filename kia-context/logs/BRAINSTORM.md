@@ -9,7 +9,7 @@ description: >
 authority: reasoning
 writes: agent, when a decision is taken
 status: active
-covers: "D97 to D107 so far — 2026-11-06 onward"
+covers: "D97 to D108 so far — 2026-11-06 onward"
 last_updated: 2026-11-08
 ---
 
@@ -226,6 +226,42 @@ silently swapping in a dark variant on the dark site, because a reader who chose
 dark variant, would get something else; the frame instead takes a light or a dark ground to match the
 chosen theme's tone. A first-time reader's frame is therefore light where the shell mockup draws it
 dark, a deviation recorded in DESIGN.md. Code highlighting keeps its own three palettes, now decoupled.
+
+### D108 · What a For Everyone module is: the same engineering, as a story, a third to a half as long — 2026-11-08
+
+**Asked by the author**, before the non-technical versions were written: *"Someone would think that if
+we just remove codes and technical words, it becomes suitable for non-tech people. WRONG! Someone may
+think we can just summarize it. WRONG! Someone may say lets just change the tone. WRONG! What I want is
+exactly none of them but all of them."* The reader is an HR specialist, a finance person or a manager
+who does not know what RAM, a function or a terminal is. **Why engineering, for them:** the only
+interface to today's AI is natural language, so anyone who can explain a problem can build with AI (a
+website, a small tool), but using that language well needs the engineering concepts. The course does
+not make anyone an engineer and does not teach "AI for your job"; it is a cheatsheet of AI engineering
+concepts for everyone.
+
+**Decided, module by module, in five blueprint batches** (Fundamentals ×2, Intermediate ×2, Ecosystem),
+each a table of every section with keep / short / drop and how to explain it, approved before writing:
+- A **"Why This Matters to You"** section after the opening; a **"Words You Now Know"** list before the
+  Summary; the Summary and Quick check stay; **no series map** and **no quiz**.
+- **Narrative and everyday examples**: the context is a WhatsApp chat read from the top every time;
+  training is an empty brain going to school, fine-tuning is learning one job; a team of agents is a
+  müdür, a hoca and öğrenciler; a hook is a locked door against a sign; a trace is a bank statement.
+  Examples move to the reader's world (an HR team of agents in Prompt Engineering, a CV carrying hidden
+  instructions in Security, flights and a calendar in AI Agents).
+- **Almost every figure stays**, technical ones included ("these guys know mathematics and uni
+  level"). **Code, formulas and commands may stay** where the technical module has them, with a line
+  saying it is fine not to follow them; references may stay a little technical.
+- **The core is explained in full**, not skimmed: context, prompt engineering, system prompt, tools,
+  memory, agent against LLM. So Fundamentals runs longer than the "30 to 50%" the author expected for
+  the rest.
+- **A draft or planned module gets none** (Generative UI, Choosing a Tech Stack, Protocols Reference),
+  the same rule as Persian; Expert and Emerging are left for later.
+
+**Rejected:** stripping the technical text (removes words, keeps the density); summarising (keeps the
+jargon and drops the explanation); a tone change alone; and, from D86, a separate shorter module list.
+**Language:** the author's standing rule, restated for both tracks: middle-school plain, "no room for
+language play, vague or dense sentences"; his example of what not to write is a teaser such as "this
+problem catches people at exactly the wrong moment".
 
 ## Open questions
 

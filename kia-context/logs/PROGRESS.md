@@ -13,7 +13,7 @@ description: >
 authority: state
 writes: agent, every session
 status: active
-covers: "M50 to M75, 2026-11-06 onward"
+covers: "M50 to M79, 2026-11-06 onward"
 last_updated: 2026-11-08
 ---
 
@@ -1136,6 +1136,50 @@ dropped (restored for every theme, nothing exempted), a 20-cycle e2e test past t
 redraw races in `MermaidFigure`, and negative-only callout tests that passed with no callout. All seventeen
 were fixed. **Gate:** typecheck, 1,229 unit tests, build and link check, 545 browser tests passed and 10 skipped.
 Seen while checking: the home page keeps its light ground in dark mode, the same on the live site before this PR.
+
+## 🏁 Milestone M76: The For Everyone approach recorded (D108) — DONE
+
+The author, 2026-11-08: adding a non-technical version of each module "is actually an update to the
+philosophy of this project", so record it minimally where the rules live. Decided first in five
+blueprint batches, each approved by the author before any writing.
+
+- [x] D108 in `BRAINSTORM.md`: what a For Everyone module is, what was rejected, and the per-batch
+      decisions.
+- [x] `MANIFESTO.md`: non-engineers as the fourth audience, and rule 19 (the same subject, never a
+      lesser one).
+- [x] `mini-courses/MANIFEST.md`: a short, reader-facing "Two versions of every module" section.
+- [x] `mini-courses/CLAUDE.md` and `AGENTS.md` (byte-identical): how a For Everyone module is written.
+
+## 🏁 Milestone M77: Nineteen For Everyone modules in English — DONE
+
+Every written module of Fundamentals (8), Intermediate (7; Agents in Practice already had one, and
+Generative UI is a draft) and Ecosystem (4; two drafts skipped), following the approved blueprints.
+
+- [x] Fundamentals: LLM Fundamentals, Training LLMs, RAG & Embeddings, Tool Calling, Memory, AI Agents,
+      Multi-Agent Systems, Observability.
+- [x] Intermediate: Prompt Engineering, Context Engineering, Code Agents, Harness Engineering, Loop
+      Engineering, Security, Personal Agents.
+- [x] Ecosystem: Agent Frameworks, Inference Providers, Inference Engines, UI Design.
+- [x] Every figure path resolves, no em dash, every diagram parses, the build and its link gate pass,
+      and `src/app/lokum-modules.css` is regenerated in the same commit.
+
+**Report, 2026-11-08.** Written in the main session from the approved blueprints. Each opens with "Why
+This Matters to You" and ends with "Words You Now Know", Summary and quick check, and References.
+Fundamentals keeps the core in full and runs 51 to 86% of the technical word count (Observability
+lowest, Memory highest); Intermediate and Ecosystem run 40 to 70% (`wc -w` on each pair). Gate:
+typecheck, 1,229 unit tests (one reference-group order fixed in LLM Fundamentals), the build and link
+check, `check-mermaid.mjs` on every file, and the rendered LLM Fundamentals page looked at.
+
+## 🏁 Milestone M78: Turkish and Persian For Everyone versions
+
+- [ ] A `_tr.md` and an `_fa.md` beside each of the nineteen, written by Sonnet High subagents from the
+      final English under the translation rules (native Turkish, colloquial Persian, the four Persian
+      strings, structure kept).
+
+## 🏁 Milestone M79: Reviewed, merged, and nothing left stale
+
+- [ ] Two Haiku reviews at xhigh on the PR, from two perspectives; findings fixed.
+- [ ] Merged; kia-context, memory, and every CLAUDE.md and AGENTS.md current; no open PR of ours left.
 
 ---
 

@@ -13,8 +13,8 @@ description: >
 authority: state
 writes: agent, every session
 status: active
-covers: "M50 to M74, 2026-11-06 onward"
-last_updated: 2026-11-07
+covers: "M50 to M75, 2026-11-06 onward"
+last_updated: 2026-11-08
 ---
 
 # 📈 PROGRESS, part 3 — M50 onward
@@ -1096,6 +1096,29 @@ files** (measured with `grep` over the modules and `ls` over `images/logos/`).
 
 The `## Open questions` heading of `BRAINSTORM.md` had been deleted by the scripted insert that added
 D104 (its text survived without the heading); restored.
+
+## 🏁 Milestone M75: Course cards in Agents in Practice, Mermaid's own themes, and five Turkish women for the gate (D106, D107)
+
+The author, 2026-11-08, three subtasks given to one Sonnet High subagent on one branch while the
+For Everyone blueprints were being decided: (1) the courses in Agents in Practice read "like just
+another module", so readers skim past them; the page must tell them to STOP, take the courses and come
+back; (2) the diagram colours are "bland", so the reader picks any of Mermaid's official themes, with
+Mermaid's `default` as the default; (3) the cast has a foreign man, a foreign woman and a Turkish man but
+no Turkish woman, so Leyla is to be replaced; first, five candidates to choose from in the playground,
+then a redraw with no hijab ("I want characters without hijab"). Reviewed by two Haiku reviewers at
+xhigh from two perspectives before the merge.
+
+- [ ] A STOP banner and one call-out card per course, in both tracks and all three languages, a real
+      card on the site in both themes and in RTL, and a tinted box on GitHub (D106).
+- [ ] The reader chooses any of Mermaid's ten themes; `default` first and the default; the choice
+      persists, applies before first paint and redraws every diagram live (D107).
+- [ ] Five Turkish-woman candidates, A to E, in `playground/2026-11-round-4/P-turkish-woman.html`,
+      drawn like the cast, in period dress with a trade prop and uncovered hair, openable from the main
+      checkout.
+- [ ] Two reviews of the PR, their findings fixed, merged.
+
+Not in this milestone: replacing Leyla in `cast.ts` with the chosen candidate, which waits on the
+author's pick.
 
 ---
 

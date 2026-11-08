@@ -43,7 +43,7 @@ export const CAST: readonly CastMember[] = [
     id: 'mihri',
     name: 'Mihrî',
     trade: 'poet',
-    story: 'Mihrî of Amasya wrote the oldest book of poems by an Ottoman woman that still survives. She said what she meant in plain words, and readers still understand her.',
+    story: 'Mihrî of Amasya wrote the oldest book of poems by an Ottoman woman that still survives. She said what she meant in plain words.',
     x: 0,
     y: FEET,
     s: ADULT,

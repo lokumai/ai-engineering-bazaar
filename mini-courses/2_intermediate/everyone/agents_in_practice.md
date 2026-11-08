@@ -45,7 +45,7 @@ assistants.
 >
 > ⏱️ About two and a half hours · ✅ Required · 🏅 Free course, with a quiz and a badge
 >
-> Open the course, finish it, then come back to this page and carry on.
+> Open the course, finish it, then come back to this page and carry on.
 >
 > **[Open Claude 101](https://academy.claude.com/courses/claude-101)**
 
@@ -67,7 +67,7 @@ about two and a half hours.
 >
 > ⏱️ About one and a half hours · ➕ Optional · 🏅 Free course, with a quiz and a badge
 >
-> If you take it, finish it, then come back to this page and carry on. If you skip it, go to the next course.
+> If you take it, finish it, then come back to this page and carry on. If you skip it, go to the next course.
 >
 > **[Open Claude Code 101](https://academy.claude.com/courses/claude-code-101)**
 
@@ -114,7 +114,8 @@ you with a short summary every morning.)
 
 You learn to work with an AI agent by working with one. Start with Claude 101. Then take
 Introduction to Claude Cowork, which teaches an agent that works with your files and apps. Claude
-Code 101 is optional for you, but it shows that you can build things without knowing how to code.
+Code 101 is optional for you. The course is written for developers, but the tool it teaches, Claude Code, can
+build small things for people who do not code.
 
 ## References
 

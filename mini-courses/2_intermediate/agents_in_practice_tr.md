@@ -5,7 +5,7 @@
 > [!WARNING]
 > **🛑 DUR. Önce kursları al, sonra buraya dön.**
 >
-> Asıl ders bu sayfada değil. Bu sayfa seni dört ücretsiz kursa yönlendiriyor; öğrenme o kursları yaparken oluyor. Toplam yaklaşık yedi buçuk saat sürüyorlar: Claude 101 ve Introduction to Claude Cowork yaklaşık ikişer buçuk saat, Claude Code 101 yaklaşık bir buçuk saat, Claude Code in Action ise yaklaşık bir saat.
+> Asıl ders bu sayfada değil. Bu sayfa seni dört ücretsiz kursa yönlendiriyor; öğrenme o kursları yaparken oluyor. Hepsi birlikte yaklaşık yedi buçuk saat sürüyor.
 >
 > ⏱️ Toplam yaklaşık yedi buçuk saat · ✅ Dördü de zorunlu
 >
@@ -17,7 +17,7 @@ Bir agent hakkında okumak ile bir agent'la çalışmak ayrı becerilerdir. Okur
 
 Aşağıdaki dört kurs ücretsiz, kısa ve uygulamalı. Hepsini, bu araçları geliştiren ekip yazdı ve her biri kısa bir quiz ve bir tamamlama rozetiyle bitiyor.
 
-Peki neden ![](./images/logos/claude.svg)**Claude**? Bu satırların yazıldığı sırada pratik yapmak için en iyi yerin Claude olduğunu düşünüyoruz ve bunun üç sebebi var:
+Peki neden ![](./images/logos/claude.svg)**Claude**? Bu yazıyı yazdığımız sırada pratik yapmak için en iyi yerin Claude olduğunu düşünüyoruz ve bunun üç sebebi var:
 
 - **En yetenekli olanı**: agent işlerinde, özellikle de kodda, bugün ondan daha güçlü bir model ailesi olmadığını düşünüyoruz.
 - **En güvenilir olanı**: Anthropic güvenliği en başa koyuyor ve araçları riskli bir şey yapmadan önce sana soruyor.
@@ -34,7 +34,7 @@ flowchart TD
     A --> D["Introduction to Claude Cowork"]
 ```
 
-Claude 101 ile başlamanı öneriyoruz, çünkü diğer üçünün üzerine kurulduğu temelleri veriyor. Sonra ihtiyacın olan dalı takip et: kod için Claude Code dalını, dokümanlar, dosyalar ve uygulamalarla yapılan işler için Cowork dalını. Bir mühendis olarak ikisini de al.
+Claude 101 ile başlamanı öneriyoruz, çünkü diğer üçünün üzerine kurulduğu temelleri veriyor. Ondan sonra iki dal var: kod için Claude Code dalı (önce Claude Code 101, sonra Claude Code in Action) ve dokümanlar, dosyalar ve uygulamalarla yapılan işler için Cowork dalı. Bir mühendis olarak ikisini de almalısın.
 
 ## Claude 101
 
@@ -117,7 +117,7 @@ Bu kurs, [Harness Engineering](harness_engineering_tr.md) ve [Loop Engineering](
 
 **Kimin için:** işi dosyalar, uygulamalar ve araçlar arasında gidip gelen herkes için. Kod yazmayı bilmen gerekmiyor; ücretli bir Claude planına, bilgisayarındaki klasörlerle çalışılan dersler için de Claude masaüstü uygulamasına ihtiyacın var. Yaklaşık iki buçuk saat sürüyor.
 
-Bir mühendis için Cowork, Claude Code ile aynı mantık, yalnızca bir repo yerine dokümanlara yönelmiş hali: tool'ları, context'i ve bir planı olan bir agent döngüsü.
+Bir mühendis için Cowork, Claude Code ile aynı mantık, yalnızca bir repo yerine dokümanlara yönelmiş hali. Yani tool'ları, context'i ve bir planı olan bir agent döngüsü.
 
 (Cowork'ü **Claude Duet** ile karıştırma. Cowork'te işi sen başlatırsın. Duet'te ise işi Claude başlatır: Duet bulutta kendine ait bir bilgisayarda çalışır, bağladığın uygulamaları takip eder ve her sabah sana bir özetle gelir. Onu [Personal Agent'lar](personal_agents_tr.md) modülü anlatıyor.)
 
@@ -145,7 +145,7 @@ Bir agent'la çalışmayı, bir agent'la çalışarak öğrenirsin. Claude Acade
 
 Sırada harness engineering var: Claude Code in Action'da ayarladığın şeyin, baştan anlatılmış hali.
 
-**Hızlı Kontrol**: İlk hangi kursu alırdın ve hiç kod yazmıyorsan hangisini atlardın? Cowork ile Duet arasındaki fark nedir?
+**Hızlı Kontrol**: İlk hangi kursu alırsın ve diğer üçü neden ondan sonra geliyor? Cowork ile Duet arasındaki fark nedir?
 
 ## Kaynaklar
 

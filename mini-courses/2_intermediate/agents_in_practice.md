@@ -2,7 +2,7 @@
 summary: "Four free courses from Claude Academy that take you from reading about agents to using them every day."
 objectives:
   - "Say why practice with a real agent teaches what reading about one cannot"
-  - "Pick the right Claude Academy course for where you are now"
+  - "Name the four Claude Academy courses and the order to take them in"
   - "Tell Claude Cowork apart from Claude Code and from Claude Duet"
 ---
 
@@ -16,7 +16,7 @@ real tool open in front of you.
 > [!WARNING]
 > **🛑 STOP. Take the courses first, then come back.**
 >
-> Reading this page is not the lesson. It points you to four free courses, and taking them is the lesson. They take about seven and a half hours in total: Claude 101 and Introduction to Claude Cowork take about two and a half hours each, Claude Code 101 takes about one and a half hours, and Claude Code in Action takes about one hour.
+> Reading this page is not the lesson. It points you to four free courses, and taking them is the lesson. Together they take about seven and a half hours.
 >
 > ⏱️ About seven and a half hours in total · ✅ All four are required
 >
@@ -54,9 +54,9 @@ flowchart TD
 ```
 
 We suggest that you start with Claude 101, because it gives you the basics that the other three
-build on. Then follow the branch you need: the
-Claude Code branch for code, the Cowork branch for work with documents, files and apps. As an
-engineer, take both.
+build on. After that there are two branches: the Claude Code branch for code (Claude Code 101,
+then Claude Code in Action) and the Cowork branch for work with documents, files and apps. As an
+engineer, take both branches.
 
 ## Claude 101
 
@@ -67,7 +67,7 @@ engineer, take both.
 >
 > ⏱️ About two and a half hours · ✅ Required · 🏅 Free course, with a quiz and a badge
 >
-> Open the course, finish it, then come back to this page and carry on.
+> Open the course, finish it, then come back to this page and carry on.
 >
 > **[Open Claude 101](https://academy.claude.com/courses/claude-101)**
 
@@ -94,7 +94,7 @@ once and use again.
 >
 > ⏱️ About one and a half hours · ✅ Required · 🏅 Free course, with a quiz and a badge
 >
-> Open the course, finish it, then come back to this page and carry on.
+> Open the course, finish it, then come back to this page and carry on.
 >
 > **[Open Claude Code 101](https://academy.claude.com/courses/claude-code-101)**
 
@@ -120,7 +120,7 @@ keyboard.
 >
 > ⏱️ About one hour · ✅ Required · 🏅 Free course, with a quiz and a badge
 >
-> Open the course, finish it, then come back to this page and carry on.
+> Open the course, finish it, then come back to this page and carry on.
 >
 > **[Open Claude Code in Action](https://academy.claude.com/courses/claude-code-in-action)**
 
@@ -170,7 +170,7 @@ You need a paid Claude plan, and the Claude desktop app for the lessons that wor
 your computer. It takes about two and a half hours.
 
 For an engineer, Cowork is the same idea as Claude Code, pointed at documents instead of a
-repository: an agent loop with tools, context and a plan.
+repository. It is an agent loop with tools, context and a plan.
 
 (Do not confuse Cowork with **Claude Duet**. With Cowork, you start the work. With Duet, Claude
 starts it: Duet runs on its own computer in the cloud, watches the apps you connect, and comes to
@@ -205,8 +205,8 @@ apps. With Cowork, you start the work. With Claude Duet, Claude starts it.
 Next: harness engineering, which is what you configure in Claude Code in Action, explained from
 the start.
 
-**Quick Check**: which course would you take first, and which one would you skip if you never write
-code? What is the difference between Cowork and Duet?
+**Quick Check**: which course do you take first, and why do the other three come after it? What is
+the difference between Cowork and Duet?
 
 ## References
 

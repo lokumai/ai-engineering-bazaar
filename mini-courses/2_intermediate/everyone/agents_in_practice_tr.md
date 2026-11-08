@@ -17,7 +17,7 @@ Bir agent hakkında okurken her şey yolunda gider. Onunla çalışırken ise ba
 
 Aşağıdaki üç kurs ücretsiz ve kısa; yaparak öğreniyorsun. Hepsini araçları geliştiren şirket yazdı ve her biri kısa bir quiz ve bir rozetle bitiyor.
 
-Üçü de Anthropic'in geliştirdiği yapay zekâ asistanı ![](../images/logos/claude.svg)**Claude**'u kullanıyor. Bu satırların yazıldığı sırada bu tür işler için en yetenekli, en güvenilir ve en çok özelliğe sahip asistanın Claude olduğunu düşünüyoruz. Onunla öğrendiklerin başka yapay zekâ asistanlarında da işine yarar.
+Üçü de Anthropic'in geliştirdiği yapay zekâ asistanı ![](../images/logos/claude.svg)**Claude**'u kullanıyor. Bu yazıyı yazdığımız sırada bu tür işler için en yetenekli, en güvenilir ve en çok özelliğe sahip asistanın Claude olduğunu düşünüyoruz. Onunla öğrendiklerin başka yapay zekâ asistanlarında da işine yarar.
 
 ## Claude 101
 
@@ -74,7 +74,7 @@ Kod yazmıyorsan, Claude 101'den sonra bu kursu al. **Claude Cowork**, Claude'un
 
 ## Özet
 
-Bir yapay zekâ agent'ıyla çalışmayı, onunla çalışarak öğrenirsin. Claude 101 ile başla. Sonra dosyaların ve uygulamalarınla çalışan bir agent'ı öğreten Introduction to Claude Cowork kursunu al. Claude Code 101 senin için isteğe bağlı, ama kod yazmayı bilmeden de bir şeyler yapabileceğini gösteriyor.
+Bir yapay zekâ agent'ıyla çalışmayı, onunla çalışarak öğrenirsin. Claude 101 ile başla. Sonra dosyaların ve uygulamalarınla çalışan bir agent'ı öğreten Introduction to Claude Cowork kursunu al. Claude Code 101 senin için isteğe bağlı. Kurs geliştiriciler için yazılmış, ama anlattığı araç olan Claude Code, kod bilmeyen insanların da küçük şeyler yapmasına yardım ediyor.
 
 ## Kaynaklar
 

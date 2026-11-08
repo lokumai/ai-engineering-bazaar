@@ -113,12 +113,26 @@ export function paletteMenu(subject: PaletteSubject): Element {
 }
 
 /**
- * The diagram theme menu: Mermaid's own themes, each with a swatch of the ground its
- * frame takes. A light theme's swatch is Paper's and a dark theme's is Night's, the two
- * grounds the frame can have (`diagram-themes.ts`); the swatch says which, not what
- * Mermaid will paint on it, because the site has no business holding Mermaid's colours.
+ * The diagram theme menu: Mermaid's own themes, in two groups by the ground their frame takes
+ * (`diagram-themes.ts`), headed Light and Dark. The headings are the second thing that tells
+ * `Redux`, `Redux color`, `Neo` and `Forest` apart: their names alone say nothing about what
+ * they look like, and a reader choosing between ten of them is helped by knowing which half
+ * of the list is dark before opening one. Each group is a named `group` of plain buttons, so
+ * a screen reader says "Dark themes" on entering it, and the heading is not a stop of its
+ * own. No ids: the menu is emitted into every figure, and an id would repeat on the page.
+ * Each row's swatch is the frame's ground, Paper's for a light theme and Night's for a dark
+ * one, not what Mermaid will paint on it, because the site has no business holding
+ * Mermaid's colours.
  */
 export function diagramThemeMenu(): Element {
-  return optionMenu('figures', DIAGRAM_MENU_LABEL, DIAGRAM_THEMES.map((theme) =>
-    optionItem('data-hl-theme', theme.id, theme.tone === 'dark' ? 'night' : 'paper', theme.name)))
+  const group = (tone: 'light' | 'dark', heading: string): Element => el(
+    'div',
+    { className: ['bz-optmenu-group'], role: 'group', 'aria-label': `${heading} themes` },
+    [
+      el('p', { className: ['bz-optmenu-head'], ariaHidden: 'true' }, [{ type: 'text', value: heading }]),
+      ...DIAGRAM_THEMES.filter((theme) => theme.tone === tone).map((theme) =>
+        optionItem('data-hl-theme', theme.id, tone === 'dark' ? 'night' : 'paper', theme.name)),
+    ],
+  )
+  return optionMenu('figures', DIAGRAM_MENU_LABEL, [group('light', 'Light'), group('dark', 'Dark')])
 }

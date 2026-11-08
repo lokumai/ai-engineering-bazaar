@@ -55,6 +55,13 @@ export interface DiagramTheme {
   look?: 'neo'
   /** Mermaid's `darkMode` theme variable, which the dark themes are written for. */
   darkMode?: true
+  /**
+   * The smallest `themeVariables` override that brings the theme to the site's floors: 4.5:1
+   * for a label and 3:1 for a node's edge and an arrow, measured off the painted pixels by
+   * `mermaid.spec.ts`. Empty for a theme that clears them as Mermaid draws it, and each entry
+   * records the ratio it started from, so the next reader knows what the override is for.
+   */
+  variables?: Readonly<Record<string, string>>
 }
 
 export const DIAGRAM_THEMES: readonly DiagramTheme[] = [
@@ -63,11 +70,14 @@ export const DIAGRAM_THEMES: readonly DiagramTheme[] = [
   { id: 'redux-dark-color', name: 'Redux dark color', tone: 'dark', darkMode: true },
   { id: 'redux', name: 'Redux', tone: 'light' },
   { id: 'redux-dark', name: 'Redux dark', tone: 'dark', darkMode: true },
-  { id: 'neutral', name: 'Neutral', tone: 'light' },
-  { id: 'dark', name: 'Dark', tone: 'dark', darkMode: true },
+  // A node's edge was 2.46:1 on its own fill (#999999 on #eeeeee); #767676 makes it 3.9:1.
+  { id: 'neutral', name: 'Neutral', tone: 'light', variables: { nodeBorder: '#767676' } },
+  // An edge label was 4.43:1 (#cccccc on #585858); on #444444 it is 6.1:1.
+  { id: 'dark', name: 'Dark', tone: 'dark', darkMode: true, variables: { edgeLabelBackground: '#444444' } },
   { id: 'forest', name: 'Forest', tone: 'light' },
   { id: 'neo', name: 'Neo', tone: 'light', look: 'neo' },
-  { id: 'neo-dark', name: 'Neo dark', tone: 'dark', look: 'neo', darkMode: true },
+  // The edge's blue end was 2.25:1 on a node's fill (#0042eb on #2a2020); #4d7dff makes it 4.3:1.
+  { id: 'neo-dark', name: 'Neo dark', tone: 'dark', look: 'neo', darkMode: true, variables: { gradientStart: '#4d7dff' } },
 ]
 
 /** What a reader who has never chosen gets: Mermaid's own default, everywhere. */

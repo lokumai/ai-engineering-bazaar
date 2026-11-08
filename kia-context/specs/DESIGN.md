@@ -11,7 +11,7 @@ source: playground/01-theme-T4-ground-G3-powder.html (light) · playground/01-th
 authority: blueprint
 writes: agent, as the language evolves
 status: active
-covers: "the Bazaar language, transcribed from T4 on ground G3, with its derived dark sibling, plus the six primitives M16 derived from the component mockups — 2026-09-13, with ten recorded deviations (the sixth and seventh, the logo and the rail group, 2026-10-11; the eighth, the pager, the ninth, the Bazaar Street front door, and the tenth, a right-to-left script, 2026-10-12), the three reader palettes, and the end of a reading page"
+covers: "the Bazaar language, transcribed from T4 on ground G3, with its derived dark sibling, plus the six primitives M16 derived from the component mockups — 2026-09-13, with eleven recorded deviations (the sixth and seventh, the logo and the rail group, 2026-10-11; the eighth, the pager, the ninth, the Bazaar Street front door, and the tenth, a right-to-left script, 2026-10-12; the eleventh, the diagram frame's ground, 2026-11-08), the three reader palettes for code, the ten Mermaid themes for diagrams, the call-out card, and the end of a reading page"
 last_updated: 2026-11-08
 ---
 
@@ -469,9 +469,21 @@ paints the nodes, edges and labels, and the language neither repaints nor measur
 decide is the frame's ground, by the theme's tone: a light theme sits on `Paper`'s values and a dark
 theme on `Night`'s, so an arrow, which runs on the frame itself, is readable in every theme and on
 both page themes (3:1, measured per theme). The four semantic hues survive as the colour of a
-node's heavier edge. **This is a deviation from the shell mockup, which draws every diagram on the dark
+node's heavier edge. **This is the eleventh deviation from the shell mockup, which draws every diagram on the dark
 slab:** a reader's first frame is now Mermaid's `default` theme on a light frame, because a light drawing
-on a dark ground is unreadable. The dark frame is unchanged, and it is what the dark themes get.
+on a dark ground is unreadable. The dark frame is unchanged, and it is what the dark themes get. It is
+not in `transcription.test.ts`'s `DEVIATIONS`, which lists a colour the language replaced: this adds no
+colour and removes none, since both grounds are values the language already declares, so the colour
+comparison against the mockup is unchanged. `fidelity.spec.ts` compares the dark frame to the mockup, and
+`mermaid.spec.ts` holds the light one to the same floors.
+
+**A call-out card is a note the page puts in front of the reader.** It is a `card` in the `leaf` shape,
+centred, with a 2px edge (`primary` for a note that sends the reader somewhere, `fault` for a caution,
+`success` for a tip, `line-strong` for a quiet note), its title first, and its link as a `button-primary`
+at the foot. One kind is filled: the warning, a stop banner on `caution` with `on-caution` type, which is
+the only filled block in a reading column and is used for one thing, an instruction not to read on. Colour
+is never the only signal: the title says what to do in words, and the edge agrees with it. It is
+announced as a note named by its title, not as a quotation.
 
 ### The accepted risk, named
 

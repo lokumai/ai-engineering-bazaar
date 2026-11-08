@@ -104,8 +104,10 @@ tinted box on GitHub, and the site draws it as a centred card:
 
 The first paragraph is the card's title. A last paragraph that holds only a link becomes the
 button. The five kinds are `NOTE`, `TIP`, `IMPORTANT`, `WARNING` and `CAUTION`; `WARNING` is the
-filled stop banner. The wording is yours, in each language. Raw HTML does not render here, so this
-is the only call-out syntax. Use it sparingly: a card that is everywhere is skipped like any other.
+filled stop banner. The marker has to stand alone on its line, as on GitHub: `> [!NOTE] Title` on one
+line is an ordinary quote. The wording is yours, in each language. A `> **Note:** …` quote is not a
+call-out; it is the quiet aside. Raw HTML does not render here, so this is the only call-out syntax.
+Use it sparingly: a card that is everywhere is skipped like any other.
 
 ## How a module gets written
 
@@ -161,7 +163,9 @@ planned module gets none. Everything above holds, plus:
   parentheses the first time: `استدلال (reasoning)`.
 - **No frontmatter.** **ASCII digits**, Persian punctuation (`،` `؛` `؟`).
 - **Four strings the site matches**, spelled exactly: `## کجای این مجموعه هستیم`, `## خلاصه`,
-  `## منابع`, and `**بررسی سریع**:` at the start of the quick check line. The callout is `**نکته:**`.
+  `## منابع`, and `**بررسی سریع**:` at the start of the quick check line. The aside's label, the bold lead-in of a `> ` quote (`> **Note:**` in English), is
+  `**نکته:**`; a call-out card is the other thing, the `> [!NOTE]` alert of [Call-outs](#call-outs), and its
+  marker is never translated.
 - **Links** to a written module point at its `_fa.md` with its Persian title; a link to a planned
   module stays as in the English.
 - **Code blocks and the series map's mermaid stay byte-identical**; other diagrams translate labels

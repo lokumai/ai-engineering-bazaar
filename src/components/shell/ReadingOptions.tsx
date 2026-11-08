@@ -68,7 +68,11 @@ export function ReadingOptions() {
         // draws every diagram again, so nothing here touches one.
         const theme = option.dataset.hlTheme
         if (!isDiagramThemeId(theme)) return
-        document.documentElement.setAttribute(DIAGRAM_THEME_ATTRIBUTE, theme)
+        // Only a change is stamped: `MermaidFigure` watches the attribute, and setting it to the
+        // value it has would still wake the watcher.
+        if (document.documentElement.getAttribute(DIAGRAM_THEME_ATTRIBUTE) !== theme) {
+          document.documentElement.setAttribute(DIAGRAM_THEME_ATTRIBUTE, theme)
+        }
         update((data) => setDiagramTheme(data, theme))
       } else if (subject === 'code') {
         const palette = option.dataset.hlPalette

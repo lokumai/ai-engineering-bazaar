@@ -9,7 +9,7 @@ import {
   mermaidConfig,
 } from '@/lib/figure/mermaid-config'
 import { widthForNaturalWidth } from '@/lib/figure/width'
-import { DIAGRAM_THEME_ATTRIBUTE } from '@/lib/reading/diagram-themes'
+import { DIAGRAM_THEME_ATTRIBUTE, diagramThemeOf } from '@/lib/reading/diagram-themes'
 import {
   RESET_VIEW,
   type View,
@@ -180,17 +180,22 @@ export function MermaidFigure() {
   const [view, setView] = useState<View>(RESET_VIEW)
 
   const renderer = useRef<Mermaid | null>(null)
+  /** The draws in flight and queued. Expand waits behind them: it draws with the config the
+   * last of them set, so it never opens a drawing in a theme the page has already left. */
+  const drawing = useRef<Promise<void>>(Promise.resolve())
   const trigger = useRef<HTMLElement | null>(null)
   const drag = useRef<{ pointer: number; x: number; y: number } | null>(null)
   /** The fitted view for the figure that is open, which `Fit` and `0` return to. */
   const fitted = useRef<View>(RESET_VIEW)
 
   const expand = useCallback(async (button: HTMLElement) => {
+    await drawing.current
     const mermaid = renderer.current
-    const figure = button.closest('.bz-fig')
+    const figure = button.closest<HTMLElement>('.bz-fig')
     const marker = figure?.querySelector<HTMLElement>('.mermaid-source[data-mermaid]')
     const source = marker?.dataset.mermaid
-    if (!mermaid || !figure || !marker || !source) return
+    // A figure whose redraw failed is showing its source and has nothing to magnify.
+    if (!mermaid || !figure || !marker || !source || figure.dataset.hlReady === undefined) return
 
     // The overlay draws its own copy at its own id: mermaid writes the id into
     // the `url(#…)` marker references, and two copies sharing one id would
@@ -227,7 +232,9 @@ export function MermaidFigure() {
     let cancelled = false
     /** Which draw is current; a draw that finds a newer one stops. */
     let generation = 0
-    let queue: Promise<void> = Promise.resolve()
+    /** The theme the last draw was scheduled for, so a stamp that did not change draws nothing. */
+    let scheduled: string | null = null
+    const stamped = () => diagramThemeOf(document.documentElement.getAttribute(DIAGRAM_THEME_ATTRIBUTE)).id
 
     const onClick = (event: MouseEvent) => {
       const target = event.target
@@ -237,6 +244,9 @@ export function MermaidFigure() {
     }
 
     const drawAll = async (mermaid: Mermaid, mine: number) => {
+      // A draw that a later choice has overtaken, or a page that has gone, stops before it
+      // touches Mermaid's one global configuration, and again before each diagram.
+      if (cancelled || mine !== generation) return
       mermaid.initialize(mermaidConfig(document.documentElement.getAttribute(DIAGRAM_THEME_ATTRIBUTE)))
       renderer.current = mermaid
 
@@ -246,6 +256,7 @@ export function MermaidFigure() {
         node.dataset.hlFigure = String(index)
 
         const id = figureRenderId(index)
+        if (cancelled || mine !== generation) return
         try {
           const { svg } = await mermaid.render(id, source)
           if (cancelled || mine !== generation) return
@@ -265,18 +276,26 @@ export function MermaidFigure() {
           if (cancelled || mine !== generation) return
           sweep(id)
           showSource(node, source)
+          // The source is on show, and an EXPAND that offers to magnify a drawing that is not
+          // there is the control `data-hl-ready` exists to hide.
+          delete node.closest<HTMLElement>('.bz-fig')?.dataset.hlReady
         }
       }
     }
 
-    const observer = new MutationObserver(() => schedule())
     let loaded: Mermaid | null = null
     const schedule = () => {
       if (loaded === null) return
+      const theme = stamped()
+      // The attribute is set on every choice, the chosen theme included: the same theme
+      // twice is not a change, and a redraw of thirty diagrams for nothing is a flash.
+      if (theme === scheduled) return
+      scheduled = theme
       const mermaid = loaded
       const mine = ++generation
-      queue = queue.then(() => drawAll(mermaid, mine))
+      drawing.current = drawing.current.then(() => drawAll(mermaid, mine))
     }
+    const observer = new MutationObserver(() => schedule())
 
     void (async () => {
       const mermaid = (await import('mermaid')).default

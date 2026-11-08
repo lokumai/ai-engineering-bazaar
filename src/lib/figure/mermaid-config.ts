@@ -38,10 +38,13 @@ import { DEFAULT_DIAGRAM_THEME, diagramThemeOf } from '../reading/diagram-themes
  * The 2px weight is not decoration. A hue must never be the only carrier of meaning, and
  * a weight is the one second signal available inside a shape mermaid draws.
  *
- * **MEASURED:** figure 13.1 classes four *subgraphs* (untrusted content, agent loop,
- * private data, egress), and a subgraph is a cluster, not a node, so each class has a
- * `.cluster` rule as well. The tokens it names are rebound by the frame to the ground the
- * theme's tone gives it (`bazaar.css`), which is why one rule serves all ten themes.
+ * A diagram can class a *subgraph* as well as a node, and a subgraph is a cluster, not a
+ * node, so each class has a `.cluster` rule too. No diagram in the corpus classes either today
+ * (the semantic classes survive only in the progress rails the build strips), so these rules
+ * are held by the unit test on this string and by `mermaid.spec.ts`, which measures the four
+ * hues on both frames; no drawing of them has been looked at. The tokens are rebound by the
+ * frame to the ground the theme's tone gives it (`bazaar.css`), which is why one rule serves
+ * all ten themes.
  */
 export const MERMAID_THEME_CSS = `
   .node.fault rect, .node.fault polygon, .node.fault path,
@@ -112,6 +115,7 @@ export function mermaidConfig(themeId: unknown = DEFAULT_DIAGRAM_THEME): Mermaid
       fontFamily: 'var(--font-sans)',
       fontSize: '13px',
       ...(theme.darkMode ? { darkMode: true } : {}),
+      ...theme.variables,
     },
     themeCSS: MERMAID_THEME_CSS,
   }

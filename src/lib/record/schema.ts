@@ -31,11 +31,6 @@ import { type CatalogViewId, VIEW_IDS as CATALOG_VIEW_IDS } from '../catalog/vie
 export type { CatalogViewId }
 export const CATALOG_VIEWS: readonly CatalogViewId[] = CATALOG_VIEW_IDS
 
-/**
- * The palettes a reader can put the code in (`lib/reading/palettes.ts`) and the Mermaid
- * themes a reader can draw the diagrams in (`lib/reading/diagram-themes.ts`). The boot
- * script embeds both arrays to match a stored id before it reaches an attribute.
- */
 import {
   DIAGRAM_THEME_IDS as READING_DIAGRAM_THEME_IDS,
   type DiagramThemeId,
@@ -44,6 +39,12 @@ import { type PaletteId, PALETTE_IDS as READING_PALETTE_IDS } from '../reading/p
 import type { Track } from '../tracks'
 
 export type { DiagramThemeId, PaletteId }
+
+/**
+ * The palettes a reader can put the code in (`lib/reading/palettes.ts`) and the Mermaid
+ * themes a reader can draw the diagrams in (`lib/reading/diagram-themes.ts`). The boot
+ * script embeds both arrays to match a stored id before it reaches an attribute.
+ */
 export const PALETTE_IDS: readonly PaletteId[] = READING_PALETTE_IDS
 export const DIAGRAM_THEME_IDS: readonly DiagramThemeId[] = READING_DIAGRAM_THEME_IDS
 

@@ -26,12 +26,18 @@
 export const CALLOUT_KINDS = ['note', 'tip', 'important', 'warning', 'caution'] as const
 export type CalloutKind = (typeof CALLOUT_KINDS)[number]
 
-/** `[!IMPORTANT]` at the start of a quote's first paragraph, with the line break after it. */
-export const CALLOUT_MARKER = new RegExp(`^\\[!(${CALLOUT_KINDS.join('|')})\\][ \\t]*\\r?\\n?`, 'i')
+/**
+ * `[!IMPORTANT]` alone on the first line of a quote, as GitHub reads it: the marker, then the end of
+ * its line. `> [!NOTE] Title` on one line is not an alert there, so it is not a call-out here either;
+ * it stays a quote with the marker in it, which the corpus check refuses to let reach a page.
+ */
+export const CALLOUT_MARKER = new RegExp(`^\\[!(${CALLOUT_KINDS.join('|')})\\][ \\t]*(?:\\r?\\n|$)`, 'i')
 
 /** The text with every marker taken out, for a reader of the words alone (the search index). */
 export function withoutCalloutMarkers(text: string): string {
-  return text.replace(new RegExp(CALLOUT_MARKER.source.replace(/^\^/, ''), 'gi'), ' ')
+  // Anywhere, and without the line end: text read out of a tree has lost the line break, or has
+  // a hard break in its place, and the marker is not a word for a reader to search for.
+  return text.replace(new RegExp(`\\[!(?:${CALLOUT_KINDS.join('|')})\\]`, 'gi'), ' ')
 }
 
 /** The kind a text opens with, or `null` when it is not a call-out. */

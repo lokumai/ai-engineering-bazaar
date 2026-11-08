@@ -111,10 +111,10 @@ test('a diagram theme is drawn again on choosing, kept across a reload, and defa
 
   // Drawn again: the SVG's own stylesheet is the theme's, so it changes, and it does so
   // without a reload, once the draws have been queued and finished.
-  await expect.poll(drawing, { message: 'the diagram was not drawn again in the chosen theme' }).not.toBe(styleBefore)
+  await expect.poll(drawing, { message: 'the diagram\'s own stylesheet did not change after a theme was chosen, so it was not drawn again' }).not.toBe(styleBefore)
   await figuresReady(page)
   const groundAfter = await groundOf(page, '.bz-figure')
-  expect(groundAfter, 'a dark theme keeps the light frame').not.toBe(groundBefore)
+  expect(groundAfter, 'choosing a dark theme left the frame on the light ground').not.toBe(groundBefore)
   const styleChosen = await drawing()
 
   // Channel A: stamped before first paint on the next load, and drawn in the same theme.
@@ -127,21 +127,58 @@ test('a diagram theme is drawn again on choosing, kept across a reload, and defa
   await expect(menu.getByRole('button', { name: current(dark.name) })).toBeVisible()
 })
 
+test('choosing the theme that is already drawn does not draw the diagrams again, and a new one does', async ({ page }) => {
+  await page.goto(SHORT.path)
+  await figuresReady(page)
+  const svg = page.locator('[data-hl-prose] .bz-diagram .mermaid-source svg').first()
+  // A probe a redraw would destroy: mermaid replaces the whole drawing.
+  await svg.evaluate((node) => node.setAttribute('data-hl-probe', 'set'))
+
+  const menu = page.locator('[data-hl-options="figures"]').first()
+  await menu.locator('summary').click()
+  await menu.getByRole('button', { name: current('Default') }).click()
+  await page.waitForTimeout(1500)
+  await expect(svg, 'the same theme drew the diagrams again').toHaveAttribute('data-hl-probe', 'set')
+
+  await menu.locator('summary').click()
+  await menu.getByRole('button', { name: 'Forest', exact: true }).click()
+  await expect(
+    page.locator('[data-hl-prose] .bz-diagram .mermaid-source svg[data-hl-probe]'),
+    'a different theme did not draw them again',
+  ).toHaveCount(0)
+})
+
 test('a stored theme that is not on offer, or the retired figure palette, draws the default', async ({ page }) => {
+  await page.goto(SHORT.path)
   for (const prefs of [{ diagramTheme: 'base' }, { diagramTheme: 'sepia' }, { figurePalette: 'blueprint' }]) {
-    await page.addInitScript((value) => {
+    // Seeded after load and read on the reload, so nothing is left registered on the page for the next case.
+    await page.evaluate((value) => {
       window.localStorage.setItem(
         'hl-record',
         JSON.stringify({ schema: 1, savedAt: '2026-11-08T10:00:00.000Z', data: { prefs: value } }),
       )
     }, prefs)
-    await page.goto(SHORT.path)
+    await page.reload()
     await figuresReady(page)
     await expect(page.locator('html'), JSON.stringify(prefs)).not.toHaveAttribute(DIAGRAM_THEME_ATTRIBUTE, /.+/)
-    await page.locator('[data-hl-options="figures"]').first().locator('summary').click()
     const menu = page.locator('[data-hl-options="figures"]').first()
+    await menu.locator('summary').click()
     await expect(menu.getByRole('button', { name: current('Default') })).toBeVisible()
-    await page.evaluate(() => window.localStorage.clear())
+    await menu.locator('summary').click()
+  }
+})
+
+test('the diagram theme menu is grouped under Light and Dark, and every theme is one button', async ({ page }) => {
+  await page.goto(SHORT.path)
+  await figuresReady(page)
+  const menu = page.locator('[data-hl-options="figures"]').first()
+  await menu.locator('summary').click()
+  for (const tone of ['light', 'dark'] as const) {
+    const group = menu.getByRole('group', { name: new RegExp(`^${tone} themes$`, 'i') })
+    await expect(group).toHaveCount(1)
+    const ids = DIAGRAM_THEMES.filter((theme) => theme.tone === tone).map((theme) => theme.id)
+    await expect(group.locator('[data-hl-theme]')).toHaveCount(ids.length)
+    for (const id of ids) await expect(group.locator(`[data-hl-theme="${id}"]`)).toHaveCount(1)
   }
 })
 

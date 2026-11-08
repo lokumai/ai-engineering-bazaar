@@ -1,7 +1,7 @@
 import { expect, test } from '@playwright/test'
 import { A0, A4, sheetByModule } from './sheets'
 import { DIAGRAM_THEMES } from '@/lib/reading/diagram-themes'
-import { useTheme } from './contrast'
+import { contrastSamples, useTheme, worst } from './contrast'
 import { watchPage } from './watch'
 
 /**
@@ -125,49 +125,72 @@ test('a module that is planned downloads no mermaid bundle', async ({ page }) =>
   expect(requested.filter((url) => /mermaid/i.test(url))).toHaveLength(0)
 })
 
+/** A reader who has chosen `theme` for the diagrams and nothing else, on the page's next load. */
+async function chooseTheme(page: import('@playwright/test').Page, theme: string): Promise<void> {
+  await page.evaluate((id) => {
+    window.localStorage.setItem('hl-record', JSON.stringify({
+      schema: 1, savedAt: '2026-11-08T10:00:00.000Z', data: { prefs: { diagramTheme: id } },
+    }))
+  }, theme)
+  await page.reload()
+}
+
+async function figuresDrawn(page: import('@playwright/test').Page): Promise<void> {
+  await page.waitForFunction(
+    () => {
+      const all = document.querySelectorAll('[data-hl-prose] .bz-diagram').length
+      const ready = document.querySelectorAll('[data-hl-prose] .bz-diagram[data-hl-ready]').length
+      return all > 0 && all === ready
+    },
+    null,
+    { timeout: 20_000 },
+  )
+}
+
 /**
- * What a diagram owes the reader, per theme, measured off the painted pixels.
+ * What a diagram owes the reader, in every theme the reader can choose, measured off the
+ * painted pixels, in both site themes. It is the gate this suite has always had on diagrams,
+ * and Mermaid's own themes are not exempt from it:
  *
- * Mermaid paints a node's fill, its text and its edge labels itself, as pairs it chose, so
- * those are Mermaid's to get right and are not measured here. **MEASURED, and the reason:**
- * the first version of this test asked 4.5:1 of every edge label, and Mermaid's own `dark`
- * theme draws "blocked" in #cccccc on #585858, which is 4.43:1 and is not the site's to fix.
- * What the SITE decides is the ground each theme is drawn on: a light theme on a dark frame,
- * or the reverse, would leave the arrows, which run on the frame itself, unreadable. So for
- * every theme, in both site themes, this takes each edge line and recomputes its ratio
- * against the frame's own ground. An edge line owes 3:1 as a graphic.
+ * - every label owes 4.5:1 as text, against the ground it is painted on (a node's fill, an
+ *   edge label's box, or the frame);
+ * - every node's edge owes 3:1 as a graphic against the node's own fill and against the
+ *   frame, and so does every arrow.
+ *
+ * A theme that misses a floor gets the smallest override that clears it, in
+ * `diagram-themes.ts` (`variables`), with the number it started from written beside it. It is
+ * not excused here: the site never ships a label below its floor because the library drew it.
  *
  * Run in both site themes even though the frame does not flip, because "does not flip" is
  * the claim: a frame that quietly inherited the page's palette would pass in one and fail
- * in the other.
+ * in the other. One test per theme, so one theme's failure names itself and none of them
+ * waits on nine others.
  */
-test('a diagram theme is drawn on a ground it can be read on, in both site themes', async ({ page }) => {
-  for (const diagramTheme of DIAGRAM_THEMES)
+for (const diagramTheme of DIAGRAM_THEMES)
+test(`the ${diagramTheme.id} diagram theme clears the label and line floors, in both site themes`, async ({ page }) => {
+  test.setTimeout(90_000)
+  await page.goto(A0.path)
+  await chooseTheme(page, diagramTheme.id)
+  await figuresDrawn(page)
+
   for (const site of ['light', 'dark'] as const) {
-    await page.goto(A0.path)
-    await page.evaluate(([id]) => {
-      window.localStorage.setItem('hl-record', JSON.stringify({
-        schema: 1, savedAt: '2026-11-08T10:00:00.000Z', data: { prefs: { diagramTheme: id } },
-      }))
-    }, [diagramTheme.id])
-    await page.reload()
-    await page.waitForFunction(
-      () => {
-        const all = document.querySelectorAll('[data-hl-prose] .bz-diagram').length
-        const ready = document.querySelectorAll(
-          '[data-hl-prose] .bz-diagram[data-hl-ready]',
-        ).length
-        return all > 0 && all === ready
-      },
-      null,
-      { timeout: 20_000 },
-    )
     await useTheme(page, site)
     const name = `${diagramTheme.id}/${site}`
 
-    // The geometry, as in every earlier version of this test: a stroke is a graphic, so
-    // SC 1.4.11's 3:1, against the frame the figure is drawn on.
-    const lines = await page.evaluate(() => {
+    const labels = (
+      await contrastSamples(
+        page,
+        '[data-hl-prose] .bz-diagram .mermaid-source svg .nodeLabel, [data-hl-prose] .bz-diagram .mermaid-source svg text',
+      )
+    ).filter((sample) => sample.text !== '')
+    expect(labels.length, `${name}: no diagram label to measure`).toBeGreaterThan(5)
+    const quietest = worst(labels)
+    expect(
+      quietest.ratio,
+      `${name}: "${quietest.text}" at ${quietest.ratio.toFixed(2)}:1 (${quietest.color} on ${quietest.background})`,
+    ).toBeGreaterThanOrEqual(4.5)
+
+    const geometry = await page.evaluate(() => {
       const canvas = document.createElement('canvas')
       canvas.width = 1
       canvas.height = 1
@@ -190,23 +213,116 @@ test('a diagram theme is drawn on a ground it can be read on, in both site theme
         const [hi, lo] = [luminance(a), luminance(b)].sort((x, y) => y - x)
         return (hi + 0.05) / (lo + 0.05)
       }
-      const found: number[] = []
+      /* A stroke is a colour, or a gradient (the neo themes draw a node's edge from blue to red):
+         every stop of a gradient is a colour the edge is painted in, so the weakest of them decides. */
+      const colours = (svg: Element, value: string): string[] => {
+        const id = /^url\(["']?#([^"')]+)["']?\)$/.exec(value)?.[1]
+        if (id === undefined) return [value]
+        const stops = [...(svg.ownerDocument.getElementById(id)?.querySelectorAll('stop') ?? [])]
+        return stops.map((stop) => getComputedStyle(stop).stopColor)
+      }
+      const found: { what: string; ratio: number }[] = []
       for (const svg of document.querySelectorAll('[data-hl-prose] .bz-diagram .mermaid-source svg')) {
-        const figure = svg.closest('.bz-figure')!
-        const ground = paint(getComputedStyle(figure).backgroundColor)
+        const ground = paint(getComputedStyle(svg.closest('.bz-figure')!).backgroundColor)
+        for (const node of svg.querySelectorAll('.node rect, .node polygon, .node circle, .node ellipse, .node path')) {
+          const style = getComputedStyle(node)
+          if (!style.stroke || style.stroke === 'none') continue
+          for (const colour of colours(svg, style.stroke)) {
+            found.push({ what: 'a node edge on the frame', ratio: ratio(paint(colour), ground) })
+            if (style.fill && style.fill !== 'none' && !style.fill.startsWith('url(')) {
+              found.push({ what: 'a node edge on its own fill', ratio: ratio(paint(colour), paint(style.fill)) })
+            }
+          }
+        }
         for (const node of svg.querySelectorAll('.edgePath path, path.flowchart-link')) {
           const stroke = getComputedStyle(node).stroke
           if (!stroke || stroke === 'none') continue
-          found.push(ratio(paint(stroke), ground))
+          for (const colour of colours(svg, stroke)) {
+            found.push({ what: 'an arrow on the frame', ratio: ratio(paint(colour), ground) })
+          }
         }
       }
       return found
     })
 
-    expect(lines.length, `${name}: no edge line to measure`).toBeGreaterThan(2)
+    expect(geometry.length, `${name}: no diagram geometry to measure`).toBeGreaterThan(5)
+    const weakest = geometry.reduce((low, one) => (one.ratio < low.ratio ? one : low))
     expect(
-      Math.min(...lines),
-      `${name}: an edge line is ${Math.min(...lines).toFixed(2)}:1 on its frame`,
+      weakest.ratio,
+      `${name}: ${weakest.what} is ${weakest.ratio.toFixed(2)}:1`,
     ).toBeGreaterThanOrEqual(3.0)
   }
+})
+
+/**
+ * The four semantic edges are the one colour the site paints on a diagram
+ * (`mermaid-config.ts`), and they are painted from tokens the frame rebinds to the ground the
+ * theme's tone gives it. So each owes 3:1 as a graphic on BOTH grounds, a light theme's and a
+ * dark one's, in both site themes. This reads the tokens as the figure resolves them, which is
+ * what the stylesheet paints with, and the frame's own ground.
+ */
+test('the four semantic edge hues clear 3:1 on the light frame and on the dark one', async ({ page }) => {
+  for (const [theme, tone] of [['default', 'light'], ['dark', 'dark']] as const)
+  for (const site of ['light', 'dark'] as const) {
+    await page.goto(A0.path)
+    await chooseTheme(page, theme)
+    await figuresDrawn(page)
+    await useTheme(page, site)
+    const hues = await page.locator('.bz-figure').first().evaluate((figure) => {
+      const style = getComputedStyle(figure)
+      const canvas = document.createElement('canvas')
+      canvas.width = 1
+      canvas.height = 1
+      const context = canvas.getContext('2d', { willReadFrequently: true })!
+      const paint = (colour: string): number[] => {
+        context.clearRect(0, 0, 1, 1)
+        context.fillStyle = colour
+        context.fillRect(0, 0, 1, 1)
+        return [...context.getImageData(0, 0, 1, 1).data]
+      }
+      const luminance = (rgb: readonly number[]) => {
+        const [r, g, b] = [rgb[0], rgb[1], rgb[2]].map((value) => {
+          const channel = value / 255
+          return channel <= 0.03928 ? channel / 12.92 : ((channel + 0.055) / 1.055) ** 2.4
+        })
+        return 0.2126 * r + 0.7152 * g + 0.0722 * b
+      }
+      const ground = paint(style.backgroundColor)
+      return ['--color-category-5', '--color-success', '--color-primary', '--color-caution'].map((token) => {
+        const [hi, lo] = [luminance(paint(style.getPropertyValue(token))), luminance(ground)].sort((a, b) => b - a)
+        return { token, ratio: (hi + 0.05) / (lo + 0.05) }
+      })
+    })
+    for (const { token, ratio } of hues) {
+      expect(ratio, `${tone} frame, ${site} site: ${token} at ${ratio.toFixed(2)}:1`).toBeGreaterThanOrEqual(3.0)
+    }
+  }
+})
+
+/**
+ * Every diagram type the corpus draws, in a theme that is not the default and in a dark one.
+ * A theme that cannot draw a type does not fail loudly: the figure falls back to its source
+ * (`MermaidFigure`), and a unit test that built the config would never see it. So this loads
+ * a page with a mind map and a page with flowcharts, and asks that every marker became an
+ * SVG, that none fell back, and that the mind map is a mind map.
+ */
+const TYPES = [
+  { path: '/courses/intermediate/harness-engineering/', kind: 'mindmap' },
+  { path: '/courses/fundamentals/rag/', kind: 'flowchart' },
+] as const
+for (const theme of ['neo', 'redux-color', 'dark', 'neo-dark'])
+for (const { path, kind } of TYPES)
+test(`draws a ${kind} in the ${theme} theme as a drawing, not as its source`, async ({ page }) => {
+  test.setTimeout(60_000)
+  await page.goto(path)
+  await chooseTheme(page, theme)
+  await figuresDrawn(page)
+  const markers = await page.locator('[data-hl-prose] .mermaid-source').count()
+  expect(markers, 'a page with no diagram proves nothing').toBeGreaterThan(0)
+  await expect(page.locator('[data-hl-prose] .bz-fig-fallback'), 'a diagram fell back to its source').toHaveCount(0)
+  await expect(page.locator('[data-hl-prose] .mermaid-source svg')).toHaveCount(markers)
+  await expect(
+    page.locator(`[data-hl-prose] .mermaid-source svg[aria-roledescription^="${kind}"]`).first(),
+    `no ${kind} among the drawings`,
+  ).toBeVisible()
 })

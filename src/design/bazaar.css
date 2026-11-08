@@ -1599,8 +1599,9 @@
                  which were tuned for a dark ground and clear this one (5.18 to
                  7.33); comment #c9c6e4 8.04; plain #ffffff 13.3.
      `accessibility.spec.ts` re-measures the code's off the painted pixels in
-     every palette, and `mermaid.spec.ts` re-measures the semantic edges on the
-     frame each theme's tone gives it. */
+     every palette, and `mermaid.spec.ts` measures the four semantic edge hues
+     on the light frame and on the dark one (3:1, in both page themes), and every
+     theme's labels, node edges and arrows on the frame its tone gives it. */
 
   /* The SLAB half of a palette: the frame, its tools and its fallback text.
      Applied to the figure's tool strip as well as its frame, because the
@@ -1724,6 +1725,20 @@
   }
 
   .bz-optmenu-item:hover { background: var(--color-surface-sunken); }
+
+  /* The diagram theme menu's two groups, Light and Dark: a quiet label over each run of rows.
+     Muted ink on the raised page surface the panel is. */
+  .bz-optmenu-head {
+    margin: 0;
+    padding: 8px 10px 3px;
+    color: var(--color-on-surface-muted);
+    font: 600 var(--text-mark) / 1 var(--font-sans);
+  }
+
+  .bz-optmenu-group + .bz-optmenu-group {
+    margin-top: 4px;
+    border-top: 1px solid var(--color-line);
+  }
 
   /* The chosen palette: a check and the word `current`, both revealed by the
      carrier below and never by React, so the menu says what the page shows

@@ -24,6 +24,24 @@
  * values are theme data and so live here, as the tone does: the stylesheets may not hold a
  * colour the mockups do not, and a Mermaid colour is not one of the site's.
  *
+ * **`redux` and `redux-color`, `redux-dark` and `redux-dark-color` look the same on most
+ * diagrams, and that is Mermaid's, not this file's** (the author, 2026-11-08: "duplicate").
+ * The config hands Mermaid each theme's own name, and a mind map proves it (`mermaid.spec.ts`:
+ * the `-color` theme paints it in more colours). What a `-color` theme adds is a colour per
+ * *group*: the branches of a mind map, the subgraphs of a flowchart, the entities of an ER
+ * diagram. A flowchart of plain nodes has no group, so Mermaid paints it identically in both
+ * twins. Measured by comparing every painted fill, stroke and ink of the course's 104 unique
+ * flowcharts and mind maps (every `.md` under `mini-courses/`, `style … fill:` lines dropped),
+ * in Mermaid 11.17.2: the 92 flowcharts without a subgraph are identical in both pairs; the
+ * 6 with a subgraph differ in the light pair (the group's tint) and not in the dark pair; the
+ * 6 mind maps differ in both pairs. Mermaid 12.2.0 changes only that the dark pair also
+ * differs on a subgraph, and it draws every theme with `look: neo` unless told otherwise, so
+ * the upgrade was not taken for six diagrams. **Kept as four entries, not merged**, because
+ * the pairs are not identical for every type the course draws (mind maps, subgraphs); merging
+ * would drop Mermaid's own colour from those, and painting colour onto plain flowchart nodes
+ * ourselves would be inventing a palette Mermaid does not apply there. A merge, if the author
+ * prefers one, is two rows removed from `DIAGRAM_THEME_IDS` and this table.
+ *
  * **The reader's pick applies as it is, on a light site and on a dark one.** The figure is
  * a frame with its own ground, as it always was, so each theme carries a `tone`, which picks
  * the semantic edge hues and the ink of the tools over the ground. Rejected:

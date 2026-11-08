@@ -328,6 +328,35 @@ test(`draws a ${kind} in the ${theme} theme as a drawing, not as its source`, as
 })
 
 /**
+ * The two `-color` Redux themes are Mermaid's, and they colour only what Mermaid colours:
+ * the branches of a mind map, the groups of a flowchart (a subgraph), and the diagram types
+ * the course does not draw. A flowchart of plain nodes is painted the same in `redux` and
+ * `redux-color`, and in `redux-dark` and `redux-dark-color` (measured on every flowchart of
+ * the course, in Mermaid 11.17.2 and 12.2.0). So the proof that the config passes the theme
+ * through is a mind map: each `-color` theme must paint it in more colours than its plain
+ * twin, and a regression that handed Mermaid the wrong name (or none) fails here.
+ */
+for (const [plain, colour] of [['redux', 'redux-color'], ['redux-dark', 'redux-dark-color']])
+test(`${colour} paints a mind map in more colours than ${plain}`, async ({ page }) => {
+  test.setTimeout(60_000)
+  const hues = async (theme: string) => {
+    await page.goto('/courses/intermediate/harness-engineering/')
+    await chooseTheme(page, theme)
+    await figuresDrawn(page)
+    return page.locator('[data-hl-prose] .mermaid-source svg[aria-roledescription^="mindmap"]').first().evaluate((svg) => {
+      const painted = new Set<string>()
+      for (const node of svg.querySelectorAll('.node *, .mindmap-node *, path, rect, circle')) {
+        const style = getComputedStyle(node)
+        for (const value of [style.fill, style.stroke]) if (value && value !== 'none') painted.add(value)
+      }
+      return painted.size
+    })
+  }
+  const [plainHues, colourHues] = [await hues(plain), await hues(colour)]
+  expect(colourHues, `${colour} (${colourHues}) against ${plain} (${plainHues})`).toBeGreaterThan(plainHues)
+})
+
+/**
  * Each theme sits on its own Mermaid background (D107, revised 2026-11-08): the frame, the
  * tool strip over it and the opened view all paint the value `diagram-themes.ts` carries for
  * the chosen theme, on a light site and a dark one, and the unstamped page is the default's.

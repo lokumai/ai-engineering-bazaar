@@ -245,6 +245,19 @@ markdown byte for byte, because §6.10 B3 forbids a colour literal anywhere in t
 site does not draw those fills either; the one difference is that a diagram with a `style X fill:` line
 copies it as the `classDef`/`class` pair the build turned it into.
 
+**Same day, "redux dark and redux dark color are duplicate".** Investigated, not merged. The config passes
+each name through (a mind map paints in more colours in `-color`, held by `mermaid.spec.ts`). Mermaid's
+`-color` themes colour a *group*, and a flowchart of plain nodes has none, so Mermaid paints the twins the
+same there. Measured by painted fill, stroke and ink over the 104 unique flowcharts and mind maps of
+`mini-courses/` (Mermaid 11.17.2): 92 plain flowcharts identical in both pairs; 6 flowcharts with a
+subgraph differ in the light pair only; 6 mind maps differ in both. Mermaid 12.2.0 (the first to colour
+subgraphs in the dark pair too) changes nothing for the 92 and defaults every theme to `look: neo`, so
+**rejected: the major upgrade, for six diagrams; rejected: colouring plain flowchart nodes from the
+theme's palette ourselves, which Mermaid does not do; not taken: merging each pair into one entry**, since
+the rule for merging was "identical for every type the course draws" and mind maps and subgraphs differ.
+The four entries stay and the reasoning is in the `diagram-themes.ts` header. If the author wants the pairs
+merged anyway, it is two entries fewer and loses colour on those twelve diagrams.
+
 ### D108 · What a For Everyone module is: the same engineering, as a story, and shorter — 2026-11-08
 
 **Asked by the author**, before the non-technical versions were written: *"Someone would think that if

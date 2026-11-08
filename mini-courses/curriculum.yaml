@@ -82,7 +82,7 @@ categories:
   - slug: intermediate
     title: Intermediate
     status: ready
-    blurb: Prompting, context, coding agents and practice with them, harnesses, loops, generative UI, and security.
+    blurb: Prompting, context, coding agents and practice with them, harnesses, loops, agentic UI, and security.
     modules:
       - name: prompt_engineering
         title: Prompt Engineering
@@ -133,9 +133,14 @@ categories:
           Rubric Evals; Agent Teams, Dynamic Workflows and RLMs moved to
           Advanced Loop Engineering (issue #48)
       - name: ui
-        title: Generative UI
-        status: draft
-        notes: generative UI, event streaming, SSE
+        title: Agentic UI
+        status: ready
+        minutes: 25
+        needs: [loop_engineering]
+        notes: >-
+          agentic UI (CopilotKit's definition), why a run is streamed as events,
+          the coupling problem, AG-UI and its events, the agent protocol stack
+          (MCP, A2A, AG-UI). Generative UI moved to advanced_ui.
       - name: security
         title: Security
         status: ready
@@ -258,11 +263,12 @@ categories:
           THREAD, ReAct, Deep, CodeAct, RLM (Dynamic Workflows are taught in
           Advanced Loop Engineering, issue #48)
       - name: advanced_ui
-        title: Advanced UI
+        title: Advanced Agentic UI
         status: draft
         notes: >-
-          agentic UI, AG-UI, MCP-Apps UI, A2UI, Copilotkit, Agent Client
-          Protocol ACP, TUI for agents
+          generative UI (the agent producing the interface itself), shared
+          state, human in the loop, agentic GenUI, A2UI, MCP Apps, OpenUI,
+          json-render, CopilotKit, Agent Client Protocol ACP, TUI for agents
       - name: advanced_deployment
         title: Advanced Deployment
         status: draft

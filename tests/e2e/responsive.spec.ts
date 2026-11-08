@@ -698,6 +698,9 @@ test('no label paints its text over the text beside it', async ({ page }) => {
  * page and waits for nothing.
  */
 test('no module route scrolls the document sideways, at any width', async ({ page }) => {
+  // It visits every module route, so it grows with the course: at 34 s after the For Everyone
+  // pages (M77, M78) it passed the 30 s default. A hang still fails at 90 s.
+  test.setTimeout(90_000)
   const width = page.viewportSize()!.width
   const overflowing: string[] = []
 

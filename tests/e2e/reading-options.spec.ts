@@ -260,3 +260,53 @@ test('the copy control is an icon that says what it did', async ({ page, context
   const shown = await page.locator('.bz-slab').first().locator('pre').textContent()
   expect(copied).toBe(shown)
 })
+
+test('every diagram carries the code blocks\' copy control, and it copies the Mermaid source', async ({ page, context }) => {
+  await context.grantPermissions(['clipboard-read', 'clipboard-write'])
+  await page.goto(SHORT.path)
+  await figuresReady(page)
+
+  const diagrams = page.locator('[data-hl-prose] .bz-diagram')
+  const total = await diagrams.count()
+  expect(total, 'a page with no diagram proves nothing').toBeGreaterThan(0)
+  await expect(
+    page.locator('[data-hl-prose] .bz-diagram .bz-figure-tools [data-hl-copy]'),
+    'one copy control on every diagram',
+  ).toHaveCount(total)
+
+  const figure = diagrams.first()
+  const copy = figure.locator('[data-hl-copy]')
+  // The same control as the code block's: its name, its glyphs and its live word.
+  await expect(copy).toHaveAttribute('aria-label', 'Copy code')
+  await expect(copy, 'an icon, with no word painted on it').toHaveText('')
+  await expect(copy.locator('.bz-copy-idle')).toBeVisible()
+  const code = page.locator('.bz-slab [data-hl-copy]').first()
+  expect(await copy.evaluate((node) => node.className)).toBe(await code.evaluate((node) => node.className))
+  // Beside EXPAND, in the figure's own tool strip.
+  const order = await figure.locator('.bz-figure-tools > *').evaluateAll((nodes) =>
+    nodes.map((node) => (node.hasAttribute('data-hl-copy') ? 'copy' : node.hasAttribute('data-hl-expand') ? 'expand' : 'menu')))
+  expect(order).toEqual(['menu', 'copy', 'expand'])
+
+  // Reached by keyboard, with a visible ring, and worked by Enter.
+  await copy.focus()
+  await expect(copy).toBeFocused()
+  const ring = await copy.evaluate((node) => {
+    const style = getComputedStyle(node)
+    return { style: style.outlineStyle, width: parseFloat(style.outlineWidth) }
+  })
+  expect(ring.style, 'no focus ring on the copy control').not.toBe('none')
+  expect(ring.width).toBeGreaterThan(0)
+  await page.keyboard.press('Enter')
+  await expect(copy).toHaveAttribute('data-hl-copied', '')
+  await expect(copy.locator('[data-hl-copy-said]')).toHaveText('Copied')
+  await expect(copy.locator('.bz-copy-done')).toBeVisible()
+
+  // What it copied is the diagram's source, which is the text the island drew from, and not the SVG.
+  const copied = await page.evaluate(() => navigator.clipboard.readText())
+  const source = await figure.locator('.mermaid-source').getAttribute('data-mermaid')
+  expect(copied).toBe(source)
+  expect(copied).not.toContain('<svg')
+  expect(copied.trim().length).toBeGreaterThan(0)
+  // The glyph goes back after the moment, as the code block's does.
+  await expect(copy).not.toHaveAttribute('data-hl-copied', '')
+})

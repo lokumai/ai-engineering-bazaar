@@ -326,3 +326,85 @@ test(`draws a ${kind} in the ${theme} theme as a drawing, not as its source`, as
     `no ${kind} among the drawings`,
   ).toBeVisible()
 })
+
+/**
+ * The two `-color` Redux themes are Mermaid's, and they colour only what Mermaid colours:
+ * the branches of a mind map, the groups of a flowchart (a subgraph), and the diagram types
+ * the course does not draw. A flowchart of plain nodes is painted the same in `redux` and
+ * `redux-color`, and in `redux-dark` and `redux-dark-color` (measured on every flowchart of
+ * the course, in Mermaid 11.17.2 and 12.2.0). So the proof that the config passes the theme
+ * through is a mind map: each `-color` theme must paint it in more colours than its plain
+ * twin, and a regression that handed Mermaid the wrong name (or none) fails here.
+ */
+for (const [plain, colour] of [['redux', 'redux-color'], ['redux-dark', 'redux-dark-color']])
+test(`${colour} paints a mind map in more colours than ${plain}`, async ({ page }) => {
+  test.setTimeout(60_000)
+  const hues = async (theme: string) => {
+    await page.goto('/courses/intermediate/harness-engineering/')
+    await chooseTheme(page, theme)
+    await figuresDrawn(page)
+    return page.locator('[data-hl-prose] .mermaid-source svg[aria-roledescription^="mindmap"]').first().evaluate((svg) => {
+      const painted = new Set<string>()
+      for (const node of svg.querySelectorAll('.node *, .mindmap-node *, path, rect, circle')) {
+        const style = getComputedStyle(node)
+        for (const value of [style.fill, style.stroke]) if (value && value !== 'none') painted.add(value)
+      }
+      return painted.size
+    })
+  }
+  const [plainHues, colourHues] = [await hues(plain), await hues(colour)]
+  expect(colourHues, `${colour} (${colourHues}) against ${plain} (${plainHues})`).toBeGreaterThan(plainHues)
+})
+
+/**
+ * Each theme sits on its own Mermaid background (D107, revised 2026-11-08): the frame, the
+ * tool strip over it and the opened view all paint the value `diagram-themes.ts` carries for
+ * the chosen theme, on a light site and a dark one, and the unstamped page is the default's.
+ * `diagram-themes.test.ts` holds that value to the installed Mermaid's own; this holds the
+ * page to the value. Colours are compared as the browser resolves them, so `white` and
+ * `#ffffff` are the same ground.
+ */
+const resolved = (page: import('@playwright/test').Page, colour: string) =>
+  page.evaluate((value) => {
+    const probe = document.createElement('div')
+    probe.style.color = value
+    document.body.append(probe)
+    const out = getComputedStyle(probe).color
+    probe.remove()
+    return out
+  }, colour)
+
+test('an unchosen page draws every diagram on the default theme\'s own background', async ({ page }) => {
+  await page.goto(WITH_FIGURES)
+  await figuresDrawn(page)
+  const expected = await resolved(page, DIAGRAM_THEMES.find((theme) => theme.id === 'default')!.background)
+  const grounds = await page.locator('.bz-figure').evaluateAll((nodes) => nodes.map((node) => getComputedStyle(node).backgroundColor))
+  expect(grounds.length).toBeGreaterThan(0)
+  for (const ground of grounds) expect(ground).toBe(expected)
+})
+
+for (const diagramTheme of DIAGRAM_THEMES)
+test(`the ${diagramTheme.id} theme's frame, tools and expanded view are its own Mermaid background, on both sites`, async ({ page }) => {
+  test.setTimeout(60_000)
+  await page.goto(WITH_FIGURES)
+  await chooseTheme(page, diagramTheme.id)
+  await figuresDrawn(page)
+  const expected = await resolved(page, diagramTheme.background)
+
+  for (const site of ['light', 'dark'] as const) {
+    await useTheme(page, site)
+    const frame = page.locator('.bz-figure').first()
+    expect(await frame.evaluate((node) => getComputedStyle(node).backgroundColor), `${diagramTheme.id}/${site}: frame`).toBe(expected)
+    expect(
+      await page.locator('.bz-figure-tools').first().evaluate((node) => getComputedStyle(node).backgroundColor),
+      `${diagramTheme.id}/${site}: tools`,
+    ).toBe(expected)
+  }
+
+  await page.locator('[data-hl-expand]').first().click()
+  await expect(page.locator('.bz-expand-view')).toBeVisible()
+  expect(
+    await page.locator('.bz-expand-view').evaluate((node) => getComputedStyle(node).backgroundColor),
+    `${diagramTheme.id}: expanded view`,
+  ).toBe(expected)
+})

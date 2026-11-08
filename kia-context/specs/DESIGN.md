@@ -463,19 +463,28 @@ with the theme, so a palette a reader chose looks the same in both themes, and e
 against the ground it is painted on (the source of the palettes lists them). It is the figure's own
 rebinding mechanism, below, applied a second time.
 
-**A diagram is drawn in one of the diagram library's own themes, and the language decides only its
-frame.** The reader chooses among ten, `default` first and the default for everyone; the library
-paints the nodes, edges and labels, and the language neither repaints nor measures them. What it does
-decide is the frame's ground, by the theme's tone: a light theme sits on `Paper`'s values and a dark
-theme on `Night`'s, so an arrow, which runs on the frame itself, is readable in every theme and on
-both page themes (3:1, measured per theme). The four semantic hues survive as the colour of a
-node's heavier edge. **This is the eleventh deviation from the shell mockup, which draws every diagram on the dark
-slab:** a reader's first frame is now Mermaid's `default` theme on a light frame, because a light drawing
-on a dark ground is unreadable. The dark frame is unchanged, and it is what the dark themes get. It is
-not in `transcription.test.ts`'s `DEVIATIONS`, which lists a colour the language replaced: this adds no
-colour and removes none, since both grounds are values the language already declares, so the colour
-comparison against the mockup is unchanged. `fidelity.spec.ts` compares the dark frame to the mockup, and
-`mermaid.spec.ts` holds the light one to the same floors.
+**A diagram is drawn in one of the diagram library's own themes, on that theme's own background, and
+the language decides only the frame's ink.** The reader chooses among ten, `default` first and the
+default for everyone; the library paints the nodes, edges and labels, and the language neither
+repaints nor measures them. The frame's ground is the one the library itself uses for that theme,
+its `background` theme variable: white for the six light themes (`default`, `redux-color`, `redux`,
+`neutral`, `forest`, `neo`) and `#333` for the four dark ones (`redux-dark-color`, `redux-dark`, `dark`,
+`neo-dark`), the grounds a diagram has in the library's own editor and documentation (revised
+2026-11-08, D107). The values are the library's and not the site's, so they live in the theme table
+(`src/lib/reading/diagram-themes.ts`), which the layout emits as `--bz-diagram-ground` per
+`data-hl-diagram` stamp; `bazaar.css` reads the property and names no colour, and a unit test asks the
+installed library for each theme's background and compares. The theme's tone still decides the tools'
+ink and the four semantic hues, which are the node's heavier edge: a light theme takes `Paper`'s values
+and a dark theme `Night`'s, with the fault hue lifted 25% towards the slab's ink (mixed from two tokens, so
+no colour is added) because `Night`'s value was tuned for a ground darker than `#333` and measured 2.63:1
+on it. An arrow runs on the frame itself, so it is measured per theme and on both page themes (3:1).
+**This is the eleventh deviation from the shell mockup, which draws every diagram on the dark
+slab:** a reader's first frame is now Mermaid's `default` theme on white, because a light drawing on a
+dark ground is unreadable, and the dark themes are on the library's dark grey and not the slab's
+near-black. It is not in `transcription.test.ts`'s `DEVIATIONS`, which lists a colour the language
+replaced: the ground is not a language token at all, so the colour comparison against the mockup is
+unchanged. `fidelity.spec.ts` compares the dark frame to the mockup's geometry, and `mermaid.spec.ts`
+holds every theme to the label and line floors on the ground it is painted on.
 
 **A call-out card is a note the page puts in front of the reader.** It is a `card` in the `leaf` shape,
 centred, with a 2px edge (`primary` for a note that sends the reader somewhere, `fault` for a caution,

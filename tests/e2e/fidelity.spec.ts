@@ -868,10 +868,10 @@ test.describe('M16 stage 6 — code and figures', () => {
    * `01` draws a diagram on the dark slab. A reader who has chosen nothing now gets Mermaid's
    * own `default` theme, which is a light drawing, and a light drawing on a dark frame is
    * unreadable, so a light theme sits on Paper's values (`diagram-themes.ts`, DESIGN.md). The
-   * dark frame is still what the language draws for the dark themes, and that is the frame
-   * `01` specifies, so these two tests stamp one and compare it. The light frame is a
-   * recorded deviation, held by `mermaid.spec.ts` (an edge line owes 3:1 on it in every
-   * theme) and not by the mockup, which has nothing to say about it.
+   * dark theme is the frame's geometry and ink `01` specifies, so these two tests stamp one and
+   * compare it; its ground is Mermaid's own `#333` and not the slab's, a recorded deviation
+   * held by `mermaid.spec.ts` (every theme's frame is its own Mermaid background, and an edge
+   * line owes 3:1 on it) and not by the mockup, which has nothing to say about it.
    */
   const withDarkTheme = (page: import('@playwright/test').Page) =>
     page.addInitScript(() => {
@@ -903,7 +903,12 @@ test.describe('M16 stage 6 — code and figures', () => {
     }
     expect(BUILT.every((role) => shown(reference, role)), 'a role the mockup does not draw').toBe(true)
 
-    expect(differencesAt(reference, actual, BUILT, page.viewportSize()!.width)).toEqual([])
+    /* The one recorded difference: the frame's ground. `01` draws it on the slab's near-black;
+       a diagram theme now sits on Mermaid's own background for that theme (D107, revised
+       2026-11-08, DESIGN.md's eleventh deviation), and `mermaid.spec.ts` holds every theme's
+       frame to that value. Everything else about the frame, slab and code is still the mockup's. */
+    const differences = differencesAt(reference, actual, BUILT, page.viewportSize()!.width)
+    expect(differences.filter((one) => one.fact !== 'figure.backgroundColor')).toEqual([])
   })
 
   /**

@@ -1,4 +1,5 @@
 import { expect, test } from '@playwright/test'
+import { levelTitlePattern } from './levels'
 import { SHEETS } from './sheets'
 import { watchPage } from './watch'
 
@@ -61,7 +62,7 @@ for (const sheet of SHEETS) {
       await expect(page.locator('.bz-facts')).toHaveCount(0)
     }
     await expect(page.locator('nav[aria-label="Curriculum"]'))
-      .toContainText(new RegExp(sheet.category.replace('-', '[ -]'), 'i'))
+      .toContainText(levelTitlePattern(sheet.category))
 
     /* M21 — **and the last crumb is the module's NAME, not its slug.**
        `breadcrumbFor` labels a segment no route table knows by de-hyphenating

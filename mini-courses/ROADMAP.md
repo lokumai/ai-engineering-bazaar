@@ -55,7 +55,7 @@ this. What exactly we take from it is still to be decided.
 
 ## 6. The remaining material
 
-Ecosystem, from Agent Frameworks through the Protocols Reference, and Emerging Trends: the
+Ecosystem, from Agent Frameworks through the Protocols Reference, and the Emerging level: the
 ideas that are hot but not settled yet (LLMs that can't jump, video rendering, recursive
 self-improvement, decision models).
 

@@ -179,7 +179,7 @@ mindmap
 
 Philipp Schmid'in [Agents 2.0: From Shallow Loops to Deep Agents](https://www.philschmid.de/agents-2.0-deep-agents) yazısı dördüncü bir unsur ekliyor: çok uzun ve çok özel bir system prompt. Bazen binlerce token'a ulaşıyor. Bu prompt, agent'a ne zaman plan yapacağını, ne zaman bir subagent başlatacağını ve dosyalarını nasıl düzenleyeceğini söylüyor. NVIDIA'nın [What Is a Deep Agent?](https://www.nvidia.com/en-us/glossary/deep-agents/) sayfası aynı mimariyi aynı terimlerle anlatıyor. Tüm bu fikre **Agents 2.0** dendiğini de duyacaksın. Aslında bu, başka bir adla anılan aynı şey. Bu ad, [AI Agents](../1_fundamentals/agents_tr.md) modülünde anlatılan düz döngüden kopuşun gerçek boyutunu yansıtıyor. [The Agent 2.0 Era: Mastering Long-Horizon Tasks with Deep Agents](https://medium.com/@amirkiarafiei/the-agent-2-0-era-mastering-long-horizon-tasks-with-deep-agents-part-3-745705e13b16) ise bunu baştan sona adım adım anlatıyor.
 
-Bir tane kurmak istersen en basit başlangıç noktası LangChain'in [deepagents](https://github.com/langchain-ai/deepagents) kütüphanesi. Kendini bir "batteries-included agent harness" (hazır parçalarla gelen bir agent iskeleti) olarak tanımlıyor. İçinde hazır gelen parçalar tam olarak şunlar:
+Bir tane kurmak istersen en basit başlangıç noktası LangChain'in ![](./images/logos/deepagents.svg)[deepagents](https://github.com/langchain-ai/deepagents) kütüphanesi. Kendini bir "batteries-included agent harness" (hazır parçalarla gelen bir agent iskeleti) olarak tanımlıyor. İçinde hazır gelen parçalar tam olarak şunlar:
 
 - planlama
 - takılabilir bir dosya sistemi

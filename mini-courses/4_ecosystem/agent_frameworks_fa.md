@@ -27,9 +27,9 @@ graph TD
 
 ![](./images/logos/langgraph-mono.svg)**[LangGraph](https://github.com/langchain-ai/langgraph)** همون runtime‌ه و پایین‌ترین سطح از این سه تا. agent‌ت رو به شکل یه graph تعریف می‌کنی: node‌ها مرحله‌ها هستن، edge‌ها می‌گن بعد از هر مرحله چی می‌تونه بیاد، و state بینشون دست‌به‌دست می‌شه. چون state صریح و مشخصه، runtime می‌تونه ذخیره‌ش کنه و بعداً از همون‌جا ادامه بده، و حتی اجازه بده یه آدم وسط اجرا وارد بشه و agent رو نگه داره. هر وقت سخت‌ترین قسمت کار کنترل جریان (control flow) بود و خواستی خودت کنترلش کنی، برو سراغ LangGraph.
 
-![](./images/logos/langchain-mono.svg)**[LangChain](https://github.com/langchain-ai/langchain)** رابط اصلیه و نقطه‌ی شروع تو. روی LangGraph ساخته شده و agent معمولی رو با چند خط کد بهت می‌ده: یه مدل، چند تا tool و یه سری middleware. کارهای [Harness Engineering](../2_intermediate/harness_engineering_fa.md) توی همین middleware انجام می‌شه، و guardrail‌های [Security](../2_intermediate/security_fa.md) هم همین‌جا می‌شینن.
+![](./images/logos/langchain.svg)**[LangChain](https://github.com/langchain-ai/langchain)** رابط اصلیه و نقطه‌ی شروع تو. روی LangGraph ساخته شده و agent معمولی رو با چند خط کد بهت می‌ده: یه مدل، چند تا tool و یه سری middleware. کارهای [Harness Engineering](../2_intermediate/harness_engineering_fa.md) توی همین middleware انجام می‌شه، و guardrail‌های [Security](../2_intermediate/security_fa.md) هم همین‌جا می‌شینن.
 
-**[deepagents](https://github.com/langchain-ai/deepagents)** بالاترین سطحه و روی دو تای دیگه ساخته شده. به خودش می‌گه یه agent harness «batteries-included»، یعنی هر چی لازم داری از قبل توشه. این امکانات آماده دقیقاً همون لیستیه که توی [Context Engineering](../2_intermediate/context_engineering_fa.md) دیدیم:
+![](./images/logos/deepagents.svg)**[deepagents](https://github.com/langchain-ai/deepagents)** بالاترین سطحه و روی دو تای دیگه ساخته شده. به خودش می‌گه یه agent harness «batteries-included»، یعنی هر چی لازم داری از قبل توشه. این امکانات آماده دقیقاً همون لیستیه که توی [Context Engineering](../2_intermediate/context_engineering_fa.md) دیدیم:
 
 - برنامه‌ریزی (planning)
 - یه filesystem
@@ -54,7 +54,7 @@ graph TD
 اینجا دو تا framework ارزش شناختن دارن، چون کل استک بالا اول برای Python ساخته شده، در حالی که بیشتر کدهای محصول با Python نوشته نمی‌شن.
 
 - ![](./images/logos/mastra-mono.svg)**[Mastra](https://github.com/mastra-ai/mastra)** یه framework مدرن TypeScript برای ساختن agent و اپلیکیشن‌های AI‌ه، و توی این زبون نزدیک‌ترین چیز به LangChain همینه.
-- **[VoltAgent](https://github.com/VoltAgent/voltagent)** یه پلتفرم agent engineering‌ه که روی یه framework متن‌باز TypeScript ساخته شده، برای همین بیشتر روی بخش عملیاتی (operations) تمرکز داره، یعنی کارهایی که بعد از ساختن agent‌ها پیش میاد: اجرا کردنشون، زیر نظر گرفتنشون و مدیریتشون.
+- ![](./images/logos/voltagent.svg)**[VoltAgent](https://github.com/VoltAgent/voltagent)** یه پلتفرم agent engineering‌ه که روی یه framework متن‌باز TypeScript ساخته شده، برای همین بیشتر روی بخش عملیاتی (operations) تمرکز داره، یعنی کارهایی که بعد از ساختن agent‌ها پیش میاد: اجرا کردنشون، زیر نظر گرفتنشون و مدیریتشون.
 
 ## AI Workflow‌ها
 

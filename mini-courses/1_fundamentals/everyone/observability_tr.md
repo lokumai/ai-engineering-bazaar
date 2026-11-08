@@ -32,7 +32,7 @@ LangChain bunu açıkça söylüyor: normal yazılımda davranışı kod anlatı
 
 ## Observability Araçları
 
-- ![](../images/logos/langchain-mono.svg)**LangSmith**, LangChain'in kendi aracı; zaten LangChain kullanan ekipler için kolay seçim.
+- ![](../images/logos/langsmith-mono.svg)**LangSmith**, LangChain'in kendi aracı; zaten LangChain kullanan ekipler için kolay seçim.
 - ![](../images/logos/langfuse.svg)**[Langfuse](https://github.com/langfuse/langfuse)** açık kaynak; trace'lerin şirketin kendi bilgisayarlarında kalması gerektiğinde olağan seçim.
 - ![](../images/logos/latitude.svg)**[Latitude](https://github.com/latitude-dev/latitude-llm)** de açık kaynak ve canlı sistemleri izlemeye odaklanıyor.
 

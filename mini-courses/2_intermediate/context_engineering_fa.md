@@ -178,7 +178,7 @@ mindmap
 
 Philipp Schmid توی [Agents 2.0: From Shallow Loops to Deep Agents](https://www.philschmid.de/agents-2.0-deep-agents) یه چهارمی هم اضافه می‌کنه: یه system prompt خیلی بلند و خیلی دقیق، که گاهی به هزاران token می‌رسه و به agent می‌گه کی برنامه بریزه، کی یه subagent راه بندازه و فایل‌هاش رو چطور مرتب کنه. NVIDIA هم توی [What Is a Deep Agent?](https://www.nvidia.com/en-us/glossary/deep-agents/) همین معماری رو با همین اصطلاح‌ها توضیح می‌ده. ممکنه کل این ایده رو با اسم **Agents 2.0** هم بشنوی که همون چیزه با یه اسم دیگه، و این اسم خوب نشون می‌ده فاصله‌ی این معماری با loop ساده‌ی درس [AI Agents](../1_fundamentals/agents_fa.md) واقعاً چقدر زیاده. [The Agent 2.0 Era: Mastering Long-Horizon Tasks with Deep Agents](https://medium.com/@amirkiarafiei/the-agent-2-0-era-mastering-long-horizon-tasks-with-deep-agents-part-3-745705e13b16) هم کل ماجرا رو از سیر تا پیاز توضیح داده.
 
-اگه بخوای یکی بسازی، ساده‌ترین نقطه‌ی شروع [deepagents](https://github.com/langchain-ai/deepagents) از LangChain‌ه که خودش رو یه agent harness «batteries-included» معرفی می‌کنه، یعنی همه‌ی لوازمش همراهشه. اون لوازم دقیقاً همین لیسته:
+اگه بخوای یکی بسازی، ساده‌ترین نقطه‌ی شروع ![](./images/logos/deepagents.svg)[deepagents](https://github.com/langchain-ai/deepagents) از LangChain‌ه که خودش رو یه agent harness «batteries-included» معرفی می‌کنه، یعنی همه‌ی لوازمش همراهشه. اون لوازم دقیقاً همین لیسته:
 
 - planning
 - یه filesystem که می‌شه برش داشت و یکی دیگه جاش گذاشت

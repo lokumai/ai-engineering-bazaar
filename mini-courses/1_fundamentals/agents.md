@@ -103,7 +103,7 @@ of it by hand means a lot of boilerplate code:
 - deciding when to stop
 
 ![](./images/logos/huggingface.svg)[smolagents](https://github.com/huggingface/smolagents) and
-![](./images/logos/langchain-mono.svg)[LangChain](https://github.com/langchain-ai/langchain) exist to write that code once.
+![](./images/logos/langchain.svg)[LangChain](https://github.com/langchain-ai/langchain) exist to write that code once.
 
 **And now think back to [LLM Fundamentals](llms.md)**. There, we ran an LLM straight from the
 terminal with no framework at all. Why did we not need a framework there? Because that was one
@@ -182,7 +182,7 @@ That is a complete agent. Notice what is *not* there:
 `CodeAgent` does all of it, and `agent.run` is the loop.
 
 Other frameworks solve the same problem in different ways:
-![](./images/logos/langchain-mono.svg)[LangChain](https://github.com/langchain-ai/langchain),
+![](./images/logos/langchain.svg)[LangChain](https://github.com/langchain-ai/langchain),
 ![](./images/logos/crewai.svg)[crewAI](https://github.com/crewAIInc/crewAI) and ![](./images/logos/autogen.svg)[AutoGen](https://github.com/microsoft/autogen).
 [Agent Frameworks](../4_ecosystem/agent_frameworks.md) compares them.
 

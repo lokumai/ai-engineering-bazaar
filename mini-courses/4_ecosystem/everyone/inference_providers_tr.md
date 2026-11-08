@@ -19,9 +19,9 @@ Bir **inference provider**, yapay zekâ modellerini kendi bilgisayarlarında ça
 
 Bedeli, seninle model arasında bir şirket daha ve küçük bir gecikme.
 
-**Portkey**, aynı yönlendirme işini senin kendi hesaplarınla yapıyor ve bir şirket ekibinin istediği şeyleri ekliyor: koruyucular, izler, bütçe sınırları ve caching.
+![](../images/logos/portkey.svg)**Portkey**, aynı yönlendirme işini senin kendi hesaplarınla yapıyor ve bir şirket ekibinin istediği şeyleri ekliyor: koruyucular, izler, bütçe sınırları ve caching.
 
-Farklı türde bir router için bir uyarı: **AgentRouter**, bir agent'ın kullanabileceği e-posta, telefon ve seyahat rezervasyonu gibi birçok ücretli servis için tek bir cüzdan veriyor. Paranı tutuyor, üzerinden gönderdiğin her çağrıyı görüyor ve web sitesi onu hangi şirketin işlettiğini söylemiyor. Verilerini işleyen herhangi bir üçüncü taraf gibi davran.
+Farklı türde bir router için bir uyarı: ![](../images/logos/agentrouter.svg)**AgentRouter**, bir agent'ın kullanabileceği e-posta, telefon ve seyahat rezervasyonu gibi birçok ücretli servis için tek bir cüzdan veriyor. Paranı tutuyor, üzerinden gönderdiğin her çağrıyı görüyor ve web sitesi onu hangi şirketin işlettiğini söylemiyor. Verilerini işleyen herhangi bir üçüncü taraf gibi davran.
 
 ## LLM Üreticilerinden Doğrudan Inference
 

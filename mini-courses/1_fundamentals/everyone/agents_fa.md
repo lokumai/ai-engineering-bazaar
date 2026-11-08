@@ -71,7 +71,7 @@ graph TD
 ![یه agent، بدون ماسک](../images/agents-in-action.jpeg)  
 *زیر لباس مبدل: دستورها، قاعده‌های ساده، حلقه‌ها و برنامه‌های کوچیک. چیز دیگه‌ای اون تو نیست.*
 
-نوشتن اون برنامه کلی کار روتینه، برای همین نسخه‌های آماده‌ش وجود دارن، به اسم **framework**. ![](../images/logos/langchain-mono.svg)[LangChain](https://github.com/langchain-ai/langchain) و ![](../images/logos/huggingface.svg)[smolagents](https://github.com/huggingface/smolagents) دو تا اسمی‌ان که می‌شنوی.
+نوشتن اون برنامه کلی کار روتینه، برای همین نسخه‌های آماده‌ش وجود دارن، به اسم **framework**. ![](../images/logos/langchain.svg)[LangChain](https://github.com/langchain-ai/langchain) و ![](../images/logos/huggingface.svg)[smolagents](https://github.com/huggingface/smolagents) دو تا اسمی‌ان که می‌شنوی.
 
 این ما رو به نکته‌ی اصلی این مجموعه می‌رسونه. **LLM فقط یه مغزه. متن میره تو و متن میاد بیرون. هیچ‌چیز ذخیره نمی‌کنه و هیچ کار دیگه‌ای نمی‌کنه.** هر چیزی که گفتیم دور همین مغز ساخته شده، که بتونه:
 

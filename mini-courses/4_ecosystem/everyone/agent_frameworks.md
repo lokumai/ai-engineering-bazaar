@@ -45,8 +45,8 @@ graph TD
 ```
 
 - ![](../images/logos/langgraph-mono.svg)**LangGraph** is the lowest layer, for teams that want full control over each step.
-- ![](../images/logos/langchain-mono.svg)**LangChain** is the main layer, and where most teams start.
-- **deepagents** is the top layer: the deep agent from
+- ![](../images/logos/langchain.svg)**LangChain** is the main layer, and where most teams start.
+- ![](../images/logos/deepagents.svg)**deepagents** is the top layer: the deep agent from
   [Context Engineering](../2_intermediate/context_engineering.md), with planning, helpers, notes
   and summarising already built in.
 
@@ -58,7 +58,7 @@ They do the same job with different trade-offs:
 - ![](../images/logos/huggingface.svg)**smolagents** from Hugging Face is small on purpose and easy to read.
 - ![](../images/logos/agno.svg)**Agno** focuses on running and managing many agents as one system.
 - ![](../images/logos/pydantic.svg)**Pydantic AI** focuses on strict checking, so mistakes show up as clear errors.
-- ![](../images/logos/mastra-mono.svg)**Mastra** and **VoltAgent** are for companies whose product is written in TypeScript rather than Python.
+- ![](../images/logos/mastra-mono.svg)**Mastra** and ![](../images/logos/voltagent.svg)**VoltAgent** are for companies whose product is written in TypeScript rather than Python.
 
 ## AI Workflows
 

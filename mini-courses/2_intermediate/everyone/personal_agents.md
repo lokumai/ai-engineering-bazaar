@@ -55,7 +55,7 @@ graph TD
 An Austrian developer, Peter Steinberger, had a personal assistant project called **Clawd**, named
 after Claude, the model it ran on. He released it in November 2025, and it grew very fast. Then
 Anthropic's lawyers wrote to him, because "Clawd" was too close to "Claude". He agreed at once and
-renamed it **Moltbot**, and three days later **OpenClaw**.
+renamed it **Moltbot**, and three days later ![](../images/logos/openclaw.svg)**OpenClaw**.
 
 Two things went wrong during the renaming. He gave up the old account names before claiming the new
 ones, and in about ten seconds someone else took them. And a fake cryptocurrency appeared, using the
@@ -86,7 +86,7 @@ and the agent will not notice: it wakes up, reads the file, and becomes whatever
 ## Hermes Agent
 
 OpenClaw grew so fast that its engineering did not keep up: a heavy install, and slow memory. Many
-people moved to **Hermes Agent** from Nous Research, which takes the same idea and builds it more
+people moved to ![](../images/logos/hermes-agent-mono.svg)**Hermes Agent** from Nous Research, which takes the same idea and builds it more
 carefully: fast, searchable memory, skills it writes itself, scheduling in plain language ("every
 Monday morning, remind me..."), and helpers that work in their own safe space.
 

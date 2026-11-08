@@ -32,7 +32,7 @@ LangChain صاف می‌گه: توی نرم‌افزار معمولی، کد ر�
 
 ## ابزارهای Observability
 
-- ![](../images/logos/langchain-mono.svg)**LangSmith** ابزار خودِ LangChain‌ه، انتخاب راحت برای تیم‌هایی که از قبل از LangChain استفاده می‌کنن.
+- ![](../images/logos/langsmith-mono.svg)**LangSmith** ابزار خودِ LangChain‌ه، انتخاب راحت برای تیم‌هایی که از قبل از LangChain استفاده می‌کنن.
 - ![](../images/logos/langfuse.svg)**[Langfuse](https://github.com/langfuse/langfuse)** متن‌بازه، و انتخاب معمول وقتیه که trace‌ها باید روی کامپیوترهای خودِ شرکت بمونن.
 - ![](../images/logos/latitude.svg)**[Latitude](https://github.com/latitude-dev/latitude-llm)** هم متن‌بازه، و روی نظارت بر سیستم‌هایی که زنده‌ان تمرکز داره.
 

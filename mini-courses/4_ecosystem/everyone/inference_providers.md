@@ -35,10 +35,10 @@ so you use one account, one bill and one way of connecting, and you can reach al
 
 The cost is one more company between you and the model, and a tiny delay.
 
-**Portkey** does the same routing job with your own accounts, and adds things a company team asks
+![](../images/logos/portkey.svg)**Portkey** does the same routing job with your own accounts, and adds things a company team asks
 for: guards, traces, budget limits and caching.
 
-A warning about a different kind of router: **AgentRouter** gives one wallet for many paid services
+A warning about a different kind of router: ![](../images/logos/agentrouter.svg)**AgentRouter** gives one wallet for many paid services
 an agent might use, such as email, phone and travel booking. It holds your money and sees every call
 you send through it, and its website does not say which company runs it. Treat it like any third
 party that handles your data.

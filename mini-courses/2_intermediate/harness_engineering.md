@@ -148,13 +148,13 @@ Take one model, run it on one benchmark, and change nothing except the harness. 
 
 That chart is from Composio's [Finding the Best Harness for DeepSeek V4 Flash](https://composio.dev/content/best-agent-harness-deepseek-v4-flash). It ran the model through eight harnesses:
 
-- Pi Agent
+- ![](./images/logos/pi-mono.svg)Pi Agent
 - Prime Agent
 - OMP
 - ![](./images/logos/claude.svg)Claude Code
 - ![](./images/logos/openai-mono.svg)Codex
-- DeepAgents
-- Hermes Agent
+- ![](./images/logos/deepagents.svg)DeepAgents
+- ![](./images/logos/hermes-agent-mono.svg)Hermes Agent
 - ![](./images/logos/opencode-mono.svg)OpenCode
 
 Pi Agent came first at 66.7%, which is twenty of thirty workflows. Claude Code was the fastest, at 122.7 seconds per task, but it cost the most per success.

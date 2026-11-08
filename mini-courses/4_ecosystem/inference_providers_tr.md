@@ -17,7 +17,7 @@ Bu erişimi almanın iki yolu var ve ikisini birbirinden net ayırmak, neyi sat�
 
 Bunun bedeli, isteğinin başkasının altyapısından geçtiği bir ek adım (hop) olur. Bu da biraz gecikme (latency) ekler ve sen ile model arasına bir şirket daha girmiş olur.
 
-OpenRouter, bu işi yapan tek gateway değil. **[Portkey](https://portkey.ai/)** de aynı yönlendirme işini yapar, ama düzeni farklıdır. OpenRouter'da kredi satın alır, tek bir OpenRouter key'i kullanır ve tek bir fatura alırsın. Bu arada provider'lara ödemeyi de OpenRouter senin yerine yapar. Portkey'de ise genellikle kendi provider key'lerini getirirsin ve Portkey'in [gateway](https://github.com/Portkey-AI/gateway)'i açık kaynak olduğu için onu kendi altyapında da çalıştırabilirsin.
+OpenRouter, bu işi yapan tek gateway değil. ![](./images/logos/portkey.svg)**[Portkey](https://portkey.ai/)** de aynı yönlendirme işini yapar, ama düzeni farklıdır. OpenRouter'da kredi satın alır, tek bir OpenRouter key'i kullanır ve tek bir fatura alırsın. Bu arada provider'lara ödemeyi de OpenRouter senin yerine yapar. Portkey'de ise genellikle kendi provider key'lerini getirirsin ve Portkey'in [gateway](https://github.com/Portkey-AI/gateway)'i açık kaynak olduğu için onu kendi altyapında da çalıştırabilirsin.
 
 Portkey yönlendirmeyi, yeniden denemeyi (retry) ve fallback'i yapmanın yanında, canlı ortamda çalışan bir ekibin istediği şeyleri de ekler:
 
@@ -28,7 +28,7 @@ Portkey yönlendirmeyi, yeniden denemeyi (retry) ve fallback'i yapmanın yanınd
 
 Palo Alto Networks, 2026'da Portkey'i satın aldı, bu yüzden Portkey'i Palo Alto Networks markası altında da görebilirsin.
 
-Bu ikisiyle kolayca karıştırılabilen farklı bir tür router daha var. **[AgentRouter](https://www.agentrouter.to/quick-start)** bir LLM router değil, AI agent'lar için bir API router'dır. Bir agent'a tek bir key ve önceden yüklenmiş tek bir cüzdan verir, bunlarla da agent çok farklı türdeki API'leri bulabilir, bunlar için ödeme yapabilir ve onları çağırabilir. Bu API'lerden bazıları şunlardır:
+Bu ikisiyle kolayca karıştırılabilen farklı bir tür router daha var. ![](./images/logos/agentrouter.svg)**[AgentRouter](https://www.agentrouter.to/quick-start)** bir LLM router değil, AI agent'lar için bir API router'dır. Bir agent'a tek bir key ve önceden yüklenmiş tek bir cüzdan verir, bunlarla da agent çok farklı türdeki API'leri bulabilir, bunlar için ödeme yapabilir ve onları çağırabilir. Bu API'lerden bazıları şunlardır:
 
 - e-posta
 - telefon ve SMS

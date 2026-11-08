@@ -30,8 +30,8 @@ graph TD
 ```
 
 - ![](../images/logos/langgraph-mono.svg)**LangGraph** پایین‌ترین لایه‌ست، برای تیم‌هایی که کنترل کامل روی هر قدم می‌خوان.
-- ![](../images/logos/langchain-mono.svg)**LangChain** لایه‌ی اصلیه، و جاییه که بیشتر تیم‌ها از اون‌جا شروع می‌کنن.
-- **deepagents** لایه‌ی بالاییه: همون deep agent از
+- ![](../images/logos/langchain.svg)**LangChain** لایه‌ی اصلیه، و جاییه که بیشتر تیم‌ها از اون‌جا شروع می‌کنن.
+- ![](../images/logos/deepagents.svg)**deepagents** لایه‌ی بالاییه: همون deep agent از
   [Context Engineering](../2_intermediate/context_engineering_fa.md)، که برنامه‌ریزی، کمک‌کارها، یادداشت‌برداری و خلاصه کردن از قبل توش ساخته شده.
 
 ## بقیه‌ی گزینه‌های Python
@@ -42,7 +42,7 @@ graph TD
 - ![](../images/logos/huggingface.svg)**smolagents** از Hugging Face عمداً کوچیکه و خوندنش آسونه.
 - ![](../images/logos/agno.svg)**Agno** روی اجرا و مدیریت کلی agent به شکل یه سیستم تمرکز داره.
 - ![](../images/logos/pydantic.svg)**Pydantic AI** روی بررسی سخت‌گیرانه تمرکز داره، که اشتباه‌ها به شکل خطای روشن ظاهر بشن.
-- ![](../images/logos/mastra-mono.svg)**Mastra** و **VoltAgent** برای شرکت‌هایی‌ان که محصولشون به جای Python با TypeScript نوشته شده.
+- ![](../images/logos/mastra-mono.svg)**Mastra** و ![](../images/logos/voltagent.svg)**VoltAgent** برای شرکت‌هایی‌ان که محصولشون به جای Python با TypeScript نوشته شده.
 
 ## AI Workflow‌ها
 

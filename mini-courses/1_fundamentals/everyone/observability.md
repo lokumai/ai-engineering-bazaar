@@ -50,7 +50,7 @@ traces do.
 
 ## Observability Tools
 
-- ![](../images/logos/langchain-mono.svg)**LangSmith** is LangChain's own tool, the easy choice for teams that already use LangChain.
+- ![](../images/logos/langsmith-mono.svg)**LangSmith** is LangChain's own tool, the easy choice for teams that already use LangChain.
 - ![](../images/logos/langfuse.svg)**[Langfuse](https://github.com/langfuse/langfuse)** is open source, the usual choice when traces must stay on the company's own computers.
 - ![](../images/logos/latitude.svg)**[Latitude](https://github.com/latitude-dev/latitude-llm)** is also open source, and it focuses on watching live systems.
 

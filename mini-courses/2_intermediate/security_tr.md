@@ -78,7 +78,7 @@ Bunlarla gerçekten inşa edebileceğin üç framework var:
 
 - ![](./images/logos/guardrailsai.svg)**[Guardrails AI](https://github.com/guardrails-ai/guardrails)** model çağrısını sarar. Dönen çıktıyı, birleştirdiğin bir validator kümesine karşı doğrular. Bir kontrol başarısız olursa yeniden dener ya da çıktıyı düzeltir.
 - ![](./images/logos/nvidia.svg)**[NeMo Guardrails](https://github.com/NVIDIA-NeMo/Guardrails)** NVIDIA'dan gelir ve konuşma tabanlı sistemler için programlanabilir rail'ler sunar. İzin verilen konuşma akışlarını tarif edersin, o da modeli bu akışların içinde tutar.
-- ![](./images/logos/langchain-mono.svg)**[LangChain's guardrails](https://docs.langchain.com/oss/python/langchain/guardrails)** before-agent ve after-agent hook'ları olan middleware'lerdir. Bu hook'lar tam olarak yukarıdaki iki kutudur. LangChain, PII tespiti ve insan onaylı işlem (human-in-the-loop) ile gelir. Kendi guardrail'lerini de bunların üstüne ekleyebilirsin.
+- ![](./images/logos/langchain.svg)**[LangChain's guardrails](https://docs.langchain.com/oss/python/langchain/guardrails)** before-agent ve after-agent hook'ları olan middleware'lerdir. Bu hook'lar tam olarak yukarıdaki iki kutudur. LangChain, PII tespiti ve insan onaylı işlem (human-in-the-loop) ile gelir. Kendi guardrail'lerini de bunların üstüne ekleyebilirsin.
 
 Akılda tutman gereken önemli bir ayrım da şu: bir guardrail ya bir kural olur ya da bir model. Kurallar hızlı ve ucuzdur, ama kolayca kandırılabilir. Model ise ince vakaları yakalar, fakat her kontrol için ayrı bir model çağrısı, yani ek bir maliyet demektir.
 

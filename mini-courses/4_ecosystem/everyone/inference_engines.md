@@ -49,7 +49,7 @@ graph TD
   LM Studio or Ollama.
 - **On a company server with many users**, a proper serving engine: ![](../images/logos/vllm.svg)**vLLM** is the usual
   default. SGLang and NVIDIA's TensorRT-LLM are other names you will hear.
-- **Across many machines**, a system such as **llm-d** coordinates them.
+- **Across many machines**, a system such as ![](../images/logos/llm-d.svg)**llm-d** coordinates them.
 
 ## The One Idea That Explains the Numbers
 
@@ -63,7 +63,7 @@ they fill every trip.
 
 ## Something to Put in Front of it
 
-An engine gives programs a way to talk to it, but nothing for a person to look at. **Open WebUI** is
+An engine gives programs a way to talk to it, but nothing for a person to look at. ![](../images/logos/open-webui-mono.svg)**Open WebUI** is
 the chat screen companies often put in front of their own model, so employees get something that
 looks and works like ChatGPT, running on the company's own computers.
 

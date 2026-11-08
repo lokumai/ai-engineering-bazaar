@@ -34,7 +34,7 @@ graph TD
     A --> B --> C --> D --> E --> F
 ```
 
-Avusturyalı bir geliştirici olan Peter Steinberger'in, çalıştığı model olan Claude'dan esinlenerek **Clawd** adını verdiği kişisel bir asistan projesi vardı. Projeyi Kasım 2025'te yayımladı ve çok hızlı büyüdü. Sonra Anthropic'in avukatları ona yazdı, çünkü "Clawd" adı "Claude"a fazla yakındı. Hemen kabul etti ve adını **Moltbot** yaptı, üç gün sonra da **OpenClaw**.
+Avusturyalı bir geliştirici olan Peter Steinberger'in, çalıştığı model olan Claude'dan esinlenerek **Clawd** adını verdiği kişisel bir asistan projesi vardı. Projeyi Kasım 2025'te yayımladı ve çok hızlı büyüdü. Sonra Anthropic'in avukatları ona yazdı, çünkü "Clawd" adı "Claude"a fazla yakındı. Hemen kabul etti ve adını **Moltbot** yaptı, üç gün sonra da ![](../images/logos/openclaw.svg)**OpenClaw**.
 
 Yeniden adlandırma sırasında iki şey ters gitti. Yeni hesap adlarını almadan önce eskilerini bıraktı ve yaklaşık on saniye içinde başkası onları aldı. Bir de projenin adını kullanan sahte bir kripto para ortaya çıktı. Şubat 2026'da Steinberger OpenAI'a katıldı ve projeyi kâr amacı gütmeyen bir kuruluşa, OpenClaw Foundation'a devretti. Proje bugün GitHub'da, geliştiriciler arasındaki popülerliğin bir ölçüsü olan 380.000'in çok üzerinde yıldıza sahip.
 
@@ -52,7 +52,7 @@ Bu dosya değiştirilebilir de. O dosyaya yazabilen her şey, agent'ının kim o
 
 ## Hermes Agent
 
-OpenClaw o kadar hızlı büyüdü ki mühendisliği yetişemedi: ağır bir kurulum ve yavaş bir hafıza. Birçok insan, aynı fikri daha dikkatli kuran Nous Research'ün **Hermes Agent**'ına geçti: hızlı ve aranabilir hafıza, kendi yazdığı skill'ler, sade dille zamanlama ("her pazartesi sabahı bana şunu hatırlat...") ve kendi güvenli alanlarında çalışan yardımcılar.
+OpenClaw o kadar hızlı büyüdü ki mühendisliği yetişemedi: ağır bir kurulum ve yavaş bir hafıza. Birçok insan, aynı fikri daha dikkatli kuran Nous Research'ün ![](../images/logos/hermes-agent-mono.svg)**Hermes Agent**'ına geçti: hızlı ve aranabilir hafıza, kendi yazdığı skill'ler, sade dille zamanlama ("her pazartesi sabahı bana şunu hatırlat...") ve kendi güvenli alanlarında çalışan yardımcılar.
 
 ![Hermes ve OpenClaw yan yana çizilmiş](../images/hermes-vs-openclaw-archi.png)  
 *Hermes, kullanıcıya geri dönen kapalı bir daire olarak çizilmiş: hatırladıkları ve yazdığı skill'ler bir sonraki konuşmayı besliyor. "Seninle birlikte büyüyor" fikri, bir şema olarak çizilmiş hâliyle.*

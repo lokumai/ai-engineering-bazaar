@@ -71,7 +71,7 @@ Döngünün hiçbir parçası yapay zekânın içinde olmaz. **Hepsi, normal bir
 ![Maskesi düşmüş bir agent](../images/agents-in-action.jpeg)  
 *Kostümün altında: talimatlar, basit kurallar, döngüler ve küçük programlar. Orada başka hiçbir şey yok.*
 
-Bu programı yazmak epey sıradan bir iş, bu yüzden **framework** denen hazır olanları var. ![](../images/logos/langchain-mono.svg)[LangChain](https://github.com/langchain-ai/langchain) ve ![](../images/logos/huggingface.svg)[smolagents](https://github.com/huggingface/smolagents) duyacağın iki isim.
+Bu programı yazmak epey sıradan bir iş, bu yüzden **framework** denen hazır olanları var. ![](../images/logos/langchain.svg)[LangChain](https://github.com/langchain-ai/langchain) ve ![](../images/logos/huggingface.svg)[smolagents](https://github.com/huggingface/smolagents) duyacağın iki isim.
 
 Bu da kursu ana noktasına getiriyor. **LLM yalnızca bir beyindir. İçeri metin girer, dışarı metin çıkar. Hiçbir şey saklamaz ve başka hiçbir şey yapmaz.** Şimdiye kadar anlattığımız her şey bu beynin etrafına kuruldu; böylece beyin şunları yapabiliyor:
 

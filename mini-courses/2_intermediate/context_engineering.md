@@ -316,7 +316,7 @@ Long-Horizon Tasks with Deep
 Agents](https://medium.com/@amirkiarafiei/the-agent-2-0-era-mastering-long-horizon-tasks-with-deep-agents-part-3-745705e13b16)
 walks through it from start to finish.
 
-To build one, the simplest place to start is [deepagents](https://github.com/langchain-ai/deepagents)
+To build one, the simplest place to start is ![](./images/logos/deepagents.svg)[deepagents](https://github.com/langchain-ai/deepagents)
 from LangChain. It calls itself a batteries-included agent harness. That means it comes with the main parts already
 built in, so you do not have to add them yourself. The batteries are exactly this
 list:

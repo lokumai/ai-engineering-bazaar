@@ -60,7 +60,7 @@ graph TD
 
 OpenClaw اون‌قدر سریع بزرگ شد که مهندسیش ازش جا موند. اولین نصبش بیشتر از یه گیگابایت حجم داشت، با بیشتر از سیصد تا dependency، و memory‌ش هم کند شده بود. توی یه مقایسه، یه recall query روی OpenClaw 19.6 ثانیه طول کشید، در حالی که روی رقیبش 113 میلی‌ثانیه بود. بعد از چند تا release پرمشکل، کاربرها کم‌کم شروع کردن به رفتن.
 
-مقصدشون **[Hermes Agent](https://github.com/NousResearch/hermes-agent)** از Nous Research بود: یه پروژه با لایسنس MIT که همون ایده رو برداشته و با دقت بیشتری ساخته. شعارش هم اینه: «the agent that grows with you». این کارها رو می‌کنه:
+مقصدشون ![](./images/logos/hermes-agent-mono.svg)**[Hermes Agent](https://github.com/NousResearch/hermes-agent)** از Nous Research بود: یه پروژه با لایسنس MIT که همون ایده رو برداشته و با دقت بیشتری ساخته. شعارش هم اینه: «the agent that grows with you». این کارها رو می‌کنه:
 
 - **memory‌ای که می‌شه توش گشت، نه فقط یه انبار بزرگ.** memory یه SQLite روی دیسکه و agent اون رو لایه‌لایه بازیابی می‌کنه. عدد میلی‌ثانیه‌ای بالا هم از همین‌جا میاد.
 - **skill‌هایی که خودش می‌سازه**، وقتی توی چیزهایی که مدام ازش می‌خوای یه الگو می‌بینه. skill‌های OpenClaw رو آدم‌ها دستی انتخاب می‌کردن و از طریق یه marketplace به اسم ClawHub با هم به اشتراک می‌ذاشتن، ولی Hermes skill‌هاش رو خودش می‌نویسه.
@@ -95,7 +95,7 @@ OpenClaw اون‌قدر سریع بزرگ شد که مهندسیش ازش جا 
 
 ## جایگزین‌ها، و اگه نخوای خودت host‌ش کنی
 
-**[nanoclaw](https://github.com/nanocoai/nanoclaw)** گزینه‌ی سبک‌وزنه، و سر مسئله‌ی ریسک یه تصمیم دیگه گرفته: هر agent توی یه container اجرا می‌شه. به WhatsApp، Telegram، Slack، Discord و Gmail وصل می‌شه، memory و job‌های زمان‌بندی‌شده داره، و مستقیم روی Agents SDK شرکت Anthropic اجرا می‌شه. اگه حس می‌کنی نصب نسخه‌ی کامل روی لپ‌تاپت زیادیه، از این شروع کن.
+![](./images/logos/nanoclaw.svg)**[nanoclaw](https://github.com/nanocoai/nanoclaw)** گزینه‌ی سبک‌وزنه، و سر مسئله‌ی ریسک یه تصمیم دیگه گرفته: هر agent توی یه container اجرا می‌شه. به WhatsApp، Telegram، Slack، Discord و Gmail وصل می‌شه، memory و job‌های زمان‌بندی‌شده داره، و مستقیم روی Agents SDK شرکت Anthropic اجرا می‌شه. اگه حس می‌کنی نصب نسخه‌ی کامل روی لپ‌تاپت زیادیه، از این شروع کن.
 
 اگه هم اصلاً نمی‌خوای هیچ‌کدومش رو خودت اجرا کنی، می‌تونی از نسخه‌ای استفاده کنی که یکی دیگه برات host می‌کنه. ![](./images/logos/kimi-mono.svg)**[Kimi Claw](https://www.kimi.com/en/help/kimi-claw)** مال Moonshot‌ه؛ برای desktop و Android ساخته شده و با WeChat، Feishu، WeCom و DingTalk یکپارچه‌ست، پس اگه کارت توی همین اپ‌ها می‌گذره، انتخاب منطقی همینه. **[myclaw.ai](https://myclaw.ai/)** هم به شکل یه سرویس برات یکی راه می‌ندازه. بده‌بستونش هم معلومه: دیگه زحمت نگهداریش با تو نیست، ولی دیگه فقط مال تو هم نیست.
 

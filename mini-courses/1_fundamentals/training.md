@@ -205,7 +205,7 @@ training cheaply. Quantization is about running cheaply.** People often use the 
 ## Unsloth
 
 If you write the training loop yourself, you must connect a lot of parts by hand. Making a model
-fit in the memory that you have is a separate skill. [Unsloth](https://unsloth.ai/docs) is an
+fit in the memory that you have is a separate skill. ![](./images/logos/unsloth.svg)[Unsloth](https://unsloth.ai/docs) is an
 open-source library that does both of these jobs.
 
 What you get from it:

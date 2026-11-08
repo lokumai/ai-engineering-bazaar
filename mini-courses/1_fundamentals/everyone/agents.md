@@ -95,7 +95,7 @@ computer.** That program:
 *Under the costume: instructions, simple rules, loops and small programs. There is nothing else in there.*
 
 That program is a lot of routine work to write, so ready-made ones exist, called **frameworks**.
-![](../images/logos/langchain-mono.svg)[LangChain](https://github.com/langchain-ai/langchain) and ![](../images/logos/huggingface.svg)[smolagents](https://github.com/huggingface/smolagents) are two names you will hear.
+![](../images/logos/langchain.svg)[LangChain](https://github.com/langchain-ai/langchain) and ![](../images/logos/huggingface.svg)[smolagents](https://github.com/huggingface/smolagents) are two names you will hear.
 
 This brings the course to its main point. **The LLM is only a brain. Text goes in, and text
 comes out. It stores nothing and does nothing else.** Everything we have covered is built around

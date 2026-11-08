@@ -134,7 +134,7 @@ system prompt‌های واقعی خیلی از محصولات لو رفته و 
 
 مدل همونه و weight‌ها همون، فقط حافظه یک‌چهارم شده؛ و فرق «اصلاً نمی‌تونم اجراش کنم» با «روی کامپیوتر خودم اجرا می‌شه» دقیقاً همین‌جاست.
 
-**یعنی باید خودت مدل‌ها رو quantize کنی؟** نه، و بهتره تقریباً هیچ‌وقت سراغش نری. ![](./images/logos/ollama-mono.svg)[Ollama](https://ollama.com/) و [Unsloth](https://unsloth.ai/) نسخه‌های quantize‌شده‌ی آماده‌ی مدل‌های معروف رو منتشر کردن، مثل Qwen، Llama، Mistral، Gemma و کلی مدل دیگه. کافیه یکی‌شون رو pull کنی و اجراش کنی.
+**یعنی باید خودت مدل‌ها رو quantize کنی؟** نه، و بهتره تقریباً هیچ‌وقت سراغش نری. ![](./images/logos/ollama-mono.svg)[Ollama](https://ollama.com/) و ![](./images/logos/unsloth.svg)[Unsloth](https://unsloth.ai/) نسخه‌های quantize‌شده‌ی آماده‌ی مدل‌های معروف رو منتشر کردن، مثل Qwen، Llama، Mistral، Gemma و کلی مدل دیگه. کافیه یکی‌شون رو pull کنی و اجراش کنی.
 
 ### موتورهایی که واقعاً مدل رو اجرا می‌کنن
 
@@ -142,7 +142,7 @@ system prompt‌های واقعی خیلی از محصولات لو رفته و 
 
 - ![](./images/logos/llamacpp.svg)**llama.cpp**
 - ![](./images/logos/vllm.svg)**vLLM** (روی NVIDIA، AMD و TPUs)
-- **SGLang** (فقط NVIDIA)
+- ![](./images/logos/sglang.svg)**SGLang** (فقط NVIDIA)
 - ![](./images/logos/nvidia.svg)**TensorRT-LLM** (روی NVIDIA و AMD)
 - **MLX** (فقط Apple)
 

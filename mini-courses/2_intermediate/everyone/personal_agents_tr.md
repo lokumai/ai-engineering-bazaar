@@ -10,11 +10,11 @@ Bu, kurstaki en yeni konu ve en az oturmuş olanı.
 
 Bu, günlük hayatta muhtemelen ilk karşılaşacağın, hatta belki zaten karşılaştığın agent türü. Büyük yapay zekâ şirketleri 2026'da kendi agent'larını çıkardı. Bunların nasıl çalıştığını bilmek, onlardan ne bekleyeceğini ve onlara neyi vermemen gerektiğini söylüyor.
 
-## Onları Farklı Yapan Nedir
+## Onları Farklı Yapan Şeyler
 
 Dört şey var ve hiçbiri aslında modelle ilgili değil:
 
-- **Ömür boyu hafıza.** Tek bir sohbet ya da tek bir oturumun özeti değil: sürekli büyüyen bir depo; böylece agent, Mart'ta ona ne söylediğini biliyor.
+- **Lifelong memory.** Tek bir sohbet ya da tek bir oturumun özeti değil: sürekli büyüyen bir depo; böylece agent, Mart'ta ona ne söylediğini biliyor.
 - **Kendi skill'lerini yazar.** Aynı şeyi tekrar tekrar istediğini fark ettiğinde, nasıl yapılacağını yazıyor ve onu yeniden kullanıyor. Bunlar [Code Agent'lar](coding_agents_tr.md) modülündeki skill'ler, ama kimse onları elle yazmadı.
 - **Sana, zaten bulunduğun yerde ulaşır**: Telegram, WhatsApp, Slack, e-posta. Açılacak bir uygulama yok. İnsanların bu agent'lara bu kadar bağlanmasının büyük bir kısmı bu.
 - **Gerçek erişiminle çalışır**: dosyaların, hesapların, oturumu açık tarayıcın. Onu işe yarar kılan o erişim. Bütün riskin geldiği yer de orası.
@@ -38,13 +38,13 @@ Avusturyalı bir geliştirici olan Peter Steinberger'in, çalıştığı model o
 
 Yeniden adlandırma sırasında iki şey ters gitti. Yeni hesap adlarını almadan önce eskilerini bıraktı ve yaklaşık on saniye içinde başkası onları aldı. Bir de projenin adını kullanan sahte bir kripto para ortaya çıktı. Şubat 2026'da Steinberger OpenAI'a katıldı ve projeyi kâr amacı gütmeyen bir kuruluşa, OpenClaw Foundation'a devretti. Proje bugün GitHub'da, geliştiriciler arasındaki popülerliğin bir ölçüsü olan 380.000'in çok üzerinde yıldıza sahip.
 
-## Moltbook: Agent'lar İçin Sosyal Medya
+## Moltbook: Agent'lar için Sosyal Medya
 
 Aynı sıralarda bir girişimci **Moltbook**'u başlattı: Reddit gibi bir sosyal ağ, ama kullanıcıları insan değil agent'lar. Agent'ını bağlıyorsun ve kendi hâline bırakıyorsun. Ne zaman paylaşım yapacağına ve nasıl cevap vereceğine kendisi karar veriyor.
 
 Bir gösteri gibi görünüyor, ama üzerine yapılan bir çalışma ciddi bir şey buldu: **gönderilerin yüzde 18,4'ü, diğer agent'lara bir şey yaptırmaya çalışan talimatlar içeriyordu.** Bu, [Güvenlik](security_tr.md) modülündeki indirect prompt injection'ın, gerçek hayatta yaşanması. Çalışma cesaret verici bir şey de buldu: agent'lar riskli gönderilere, zararsız olanlardan daha sık itiraz etti ve bunu kimse onlara söylemeden yaptı.
 
-## SOUL.md: Kişilik Dosyası
+## SOUL.md
 
 Her OpenClaw agent'ının `SOUL.md` adlı bir dosyası var. Agent'ın kim olduğunu söylüyor: nasıl davrandığını, neyi önemsediğini, nasıl konuştuğunu. Agent her uyandığında bu dosyayı önce okuyor. Dosya olarak tutulan bir system prompt.
 
@@ -68,7 +68,7 @@ Ağustos 2026'da OpenClaw 2.0 şikâyetlerin çoğuna cevap verdi. Kurulum çok 
 
 Daha hafif seçenekler de var (her agent'ı kendi kapalı container'ında çalıştıran nanoclaw) ve agent'ı senin yerine başkasının çalıştırdığı barındırılan seçenekler de (Kimi Claw gibi).
 
-## Büyük Şirketlerin Personal Agent'ları
+## Daha Fazla Personal Agent
 
 OpenClaw ve Hermes topluluktan geliyor. 2026'da büyük yapay zekâ şirketleri kendilerininkini çıkardı. Hepsinin ortak fikri şu: uygulamayı kapattıktan sonra arka planda çalışmaya devam eden bir agent.
 
@@ -80,7 +80,7 @@ OpenClaw ve Hermes topluluktan geliyor. 2026'da büyük yapay zekâ şirketleri 
 
 OpenClaw ve Hermes'ten büyük fark, nerede çalıştıkları: senin bilgisayarında değil, şirketin bilgisayarlarında. Kurulacak bir şey yok. Bunun bedeli, verilerinin ve erişimlerinin o şirkette durması.
 
-## Dikkatli Olman Gereken Kısım
+## Gerçekçi Olmamız Gereken Kısım
 
 Dosyalarına, hesaplarına, oturumu açık tarayıcına, hiç sıfırlanmayan bir hafızaya ve kendi skill'lerini yazma iznine sahip bir agent düşün. Bu kurstaki en yararlı asistan o. Aynı zamanda bu kurstaki en büyük risk de o.
 
@@ -105,7 +105,7 @@ Bu modül Güvenlik'ten sonra geliyor, çünkü bir agent'a bu kadar erişim ver
 
 ## Özet
 
-Personal agent, aynı teknolojinin hayatına yöneltilmiş hâli: her zaman açık, sohbet uygulamalarında, ömür boyu hafızayla ve kendi yazdığı skill'lerle. OpenClaw fikri meşhur etti; Hermes onu daha dikkatli kurdu; büyük şirketler de şimdi kendilerininkini barındırıyor, dots'tan Claude Duet'e kadar. Erişimi hem işe yaradığı yer hem riski, bu yüzden ona ayrı hesaplar ver, parolalarını ondan uzak tut ve geri alınamayan her şey için onay iste.
+Personal agent, aynı teknolojinin hayatına yöneltilmiş hâli: her zaman açık, sohbet uygulamalarında, lifelong memory'yle ve kendi yazdığı skill'lerle. OpenClaw fikri meşhur etti; Hermes onu daha dikkatli kurdu; büyük şirketler de şimdi kendilerininkini barındırıyor, dots'tan Claude Duet'e kadar. Erişimi hem işe yaradığı yer hem riski, bu yüzden ona ayrı hesaplar ver, parolalarını ondan uzak tut ve geri alınamayan her şey için onay iste.
 
 **Hızlı Kontrol**: Bir personal agent'ı farklı yapan dört şey nedir? Ona neden ana hesaplarını asla vermemelisin?
 

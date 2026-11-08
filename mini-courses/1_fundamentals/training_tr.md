@@ -144,7 +144,7 @@ graph LR
     C --> D["Özetleme konusunda uzman LLM"]
 ```
 
-## Parametre Açısından Verimli Fine-tuning (PEFT)
+## Parameter-efficient Fine-tuning (PEFT)
 
 Full fine-tuning her parametreyi günceller ve büyük bir model için bu hâlâ büyük GPU'lar demektir.
 Oysa çoğumuzun bu tür GPU'ları yok.

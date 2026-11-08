@@ -114,7 +114,7 @@ message, checks the weather, and adds the answer to the chat. Then the AI reads 
 replies to you. **The AI asks; something else does the work.** That split is the basis of every
 AI agent.
 
-## Temperature and Length
+## LLM Hyperparameters
 
 You can change how the AI answers with a few settings:
 
@@ -127,7 +127,7 @@ These settings are called **hyperparameters**. They are different from the param
 parameters are the numbers inside the model, and hyperparameters are the dials you set when
 you use it.
 
-## Running an LLM
+## Running an LLM (Inference)
 
 Running a model to get an answer is called **inference**. There are two ways to do it.
 
@@ -154,7 +154,7 @@ helps you see everything in this module for real.
 For the cloud, companies rent models through an **inference provider**. Some services, like
 ![](../images/logos/openrouter-mono.svg)[OpenRouter](https://openrouter.ai/), are one door to many models from many companies, with one account.
 
-## Writing a Good Prompt
+## LLM Prompting
 
 **Prompt engineering** means writing your input so that you get the output you want. It is like
 giving instructions to students. Clear instructions get the homework done properly. Vague

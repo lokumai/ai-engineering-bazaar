@@ -8,7 +8,7 @@ Bir **inference provider**, yapay zekâ modellerini kendi bilgisayarlarında ça
 
 Şirketin yapay zekâ erişimi satın alıyorsa, birinin bir provider seçmesi gerekir ve token başına fiyat, herkesin ilk baktığı rakamdır. Bu modül sana bundan daha önemli soruları veriyor; özellikle verilerinin nereye gittiğine dair olanı.
 
-## Gateway: Birçok Modele Tek Kapı
+## Gateway (Router)
 
 ![](../images/logos/openrouter-mono.svg)[OpenRouter](https://openrouter.ai/) bir **gateway** (router da deniyor). Birçok provider'ın önünde duruyor; böylece tek bir hesap, tek bir fatura ve tek bir bağlanma yöntemi kullanıyorsun ve neredeyse her modele ulaşabiliyorsun.
 
@@ -23,13 +23,13 @@ Bedeli, seninle model arasında bir şirket daha ve küçük bir gecikme.
 
 Farklı türde bir router için bir uyarı: **AgentRouter**, bir agent'ın kullanabileceği e-posta, telefon ve seyahat rezervasyonu gibi birçok ücretli servis için tek bir cüzdan veriyor. Paranı tutuyor, üzerinden gönderdiğin her çağrıyı görüyor ve web sitesi onu hangi şirketin işlettiğini söylemiyor. Verilerini işleyen herhangi bir üçüncü taraf gibi davran.
 
-## Doğrudan Üreticiden Almak
+## LLM Üreticilerinden Doğrudan Inference
 
 Diğer yol, modeli yapan şirketten doğrudan satın almak: ![](../images/logos/openai-mono.svg)OpenAI, ![](../images/logos/anthropic-mono.svg)Anthropic ya da ![](../images/logos/google.svg)Google. En yeni modellerine ilk sen ulaşıyorsun ve yalnızca onların sunduğu özelliklere de: tekrarlanan talimatlar için daha ucuz fiyat (caching), büyük toplu işler için indirimler ve daha yüksek limitler.
 
 Birçok şirket ikisini de yapıyor: her gün kullandıkları model için doğrudan satın alıyor, geri kalan her şeyi denemek için bir gateway kullanıyor.
 
-## Fiyatın Ötesinde Nelere Bakmalı
+## Fiyatın Ötesinde Neyi Karşılaştırmalısın
 
 Bir milyon token'ın fiyatı herkesin söylediği rakam ve tek başına karar vermek için en kötü rakam. İşte bir alıcı kontrol listesi:
 

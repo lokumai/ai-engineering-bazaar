@@ -13,7 +13,7 @@ Her şey bundan ibaret. Agent'lar hakkındaki kafa karışıklığının çoğu,
 
 "Agent", şu anda yapay zekâda en çok kullanılan kelime. Birçok satıcı bir tane satıyor. Bir agent'ın tool'larla birlikte bir döngü içindeki model olduğunu bildiğinde, hangisi hakkında olursa olsun doğru soruları sorabilirsin: hangi tool'ları var, o tool'lar neyi değiştirebiliyor ve onu ne durduruyor?
 
-## Bir Kez Cevap Vermek ve İş Bitene Kadar Çalışmak
+## Single Turn ve Multi Turn
 
 Önemli olan fark şu.
 
@@ -26,7 +26,7 @@ Her şey bundan ibaret. Agent'lar hakkındaki kafa karışıklığının çoğu,
 ![Bu bir agent mı?](../images/agent-multi-step-example.jpg)  
 *Evet. Tanım gerçekten bu. Şaka şu ki insanlar bundan daha fazlasını bekliyor.*
 
-## Döngünün Tek Bir Turu
+## Döngünün tek bir geçişi
 
 [Tool Calling](tools_tr.md) modülü tek bir tool çağrısını gösterdi. Bir agent, bunun tekrarlanmasıdır:
 
@@ -45,7 +45,7 @@ graph TD
 
 **Onu neyin bitirdiğine bak.** Ortada bir sayaç yok, "dur" diyen bir patron da yok. Döngü, yapay zekâ tool istemeyi bıraktığı için biter. Tool çağrısı yerine metin yazdığında, o metin cevaptır.
 
-### Kararın Ne Kadarını Yapay Zekâya Bırakıyorsun?
+### Kararın ne kadarını modele bıraktığın
 
 "Agent", evet ya da hayır diye cevaplanacak bir şey değil. Asıl soru, karar vermenin ne kadarını yapay zekâya verdiğin. Bunu bir ölçek olarak düşün:
 
@@ -58,7 +58,7 @@ graph TD
 
 Gerçek ürünlerin çoğu uç noktaya kadar gitmez ve bu çoğu zaman doğru seçimdir. Daha az serbestlik, işlerin ters gitmesi için daha az yol demektir. Bir yapay zekâ ürünü seçerken, onun bu ölçeğin neresinde durduğunu sormak haklı bir sorudur.
 
-## Döngü Nerede Çalışır?
+## Agent döngüsü nerede çalışır?
 
 Döngünün hiçbir parçası yapay zekânın içinde olmaz. **Hepsi, normal bir bilgisayardaki normal bir programda olur.** O program:
 
@@ -82,11 +82,11 @@ Bu da kursu ana noktasına getiriyor. **LLM yalnızca bir beyindir. İçeri meti
 
 Model gerçekten bu kadar basit. Geri kalan her şey, onun etrafındaki mühendislik.
 
-## Yapay Zekâ Hangi Tool'lara Sahip Olduğunu Nasıl Biliyor?
+## LLM hangi tool'lara sahip olduğunu nasıl biliyor?
 
 System prompt ona söylüyor. Döngüdeki her çağrıdan önce program, system prompt'u sohbetin en üstüne koyar. Orada agent'ın rolü ve her tool'un menü kartı bulunur; [Tool Calling](tools_tr.md) modülünde anlatıldığı gibi.
 
-## Bir Örnek
+## Bir örnek
 
 "Gelecek cuma için bana Ankara'ya bir uçuş bul ve en iyisini takvimime ekle" tek bir soru değil. Bu yüzden döngü birkaç kez çalışır:
 

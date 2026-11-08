@@ -22,7 +22,7 @@ If your company buys AI access, someone has to choose a provider, and the price 
 number everyone quotes. This module gives you the questions that matter more, especially the one
 about where your data goes.
 
-## A Gateway: One Door to Many Models
+## The Gateway (Router)
 
 ![](../images/logos/openrouter-mono.svg)[OpenRouter](https://openrouter.ai/) is a **gateway** (also called a router). It sits in front of many providers,
 so you use one account, one bill and one way of connecting, and you can reach almost any model.
@@ -43,7 +43,7 @@ an agent might use, such as email, phone and travel booking. It holds your money
 you send through it, and its website does not say which company runs it. Treat it like any third
 party that handles your data.
 
-## Going Straight to the Maker
+## Inference from LLM Vendors
 
 The other way is to buy directly from the company that made the model: ![](../images/logos/openai-mono.svg)OpenAI, ![](../images/logos/anthropic-mono.svg)Anthropic or
 ![](../images/logos/google.svg)Google. You get their newest models first, and features only they offer, such as cheaper

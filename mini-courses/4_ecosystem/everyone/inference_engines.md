@@ -20,7 +20,7 @@ engines for you and charges per token.
 Sooner or later someone in your company will ask: "should we run the AI ourselves, on our own
 servers?" This module gives you the three good reasons, and the main reason not to.
 
-## Why Run it Yourself
+## Why You Would Run it Yourself
 
 There are three reasons, and only these three are worth the trouble.
 
@@ -37,7 +37,7 @@ which version runs, so an update never surprises you.
 If none of these is true, use a provider. Running models yourself is a real, ongoing job for a team,
 and in the first month you mostly learn what you forgot to budget for.
 
-## The Engines, by the Size of the Job
+## The Engines, by the Size of the Problem
 
 ```mermaid
 graph TD
@@ -51,7 +51,7 @@ graph TD
   default. SGLang and NVIDIA's TensorRT-LLM are other names you will hear.
 - **Across many machines**, a system such as **llm-d** coordinates them.
 
-## The One Idea Behind the Numbers: Batching
+## The One Idea That Explains the Numbers
 
 A computer that answers one request at a time is mostly waiting. So engines serve many requests
 together, which is called **batching**. Think of a bus instead of a taxi for each person: the trip
@@ -61,7 +61,7 @@ The best engines do not even wait for the bus to fill: new requests join as soon
 finish, so the computer is never idle. This is one reason big providers can sell tokens cheaply:
 they fill every trip.
 
-## A Screen in Front of It
+## Something to Put in Front of it
 
 An engine gives programs a way to talk to it, but nothing for a person to look at. **Open WebUI** is
 the chat screen companies often put in front of their own model, so employees get something that

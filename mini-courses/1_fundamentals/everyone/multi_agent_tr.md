@@ -6,7 +6,7 @@
 
 Takımların nasıl çalıştığını zaten biliyorsun. Bir müdür görev dağıtır. Bir hoca birkaç öğrenciye ders verir ve her biri kendi bölümü üzerinde çalışır. İş arkadaşları işi birbirine devreder ve bazen yolda bir şey kaybolur. Bir AI agent takımı da aynı şekilde davranır. Yani bu modülün çoğunu zaten anlıyorsun. Yalnızca yeni isimlere ihtiyacı var.
 
-## Neden Birden Fazla Agent Kullanılır?
+## Neden Birden Fazla Agent'a İhtiyaç Duyabiliriz
 
 Birinden hem şirketin muhasebecisi hem de grafik tasarımcısı olmasını istediğini düşün. İkisini de yapabilir. Ama kafası iki işle dolar ve ikisinde de daha çok hata yapar.
 
@@ -19,7 +19,7 @@ Tek bir agent de aynı sorunu yaşar. Şu isteği ele alalım: *"Her bölgede ka
 
 Her biri, [AI Agents](agents_tr.md) modülündeki sıradan bir agent. Yeni bir şey icat edilmedi. Tek bir döngüden birkaç döngüye geçtin.
 
-## Takımı Düzenlemenin İki Yolu
+## Temel Multi-agent Mimarileri
 
 ![Tek agent, network ve supervisor mimarileri](../images/multiagents.png)  
 *Solda: tool'larıyla tek bir agent. Ortada: her agent'ın diğer her agent'la konuşabildiği bir network. Sağda: isteği alıp işi diğerlerine dağıtan bir supervisor. Diğerleri yalnızca supervisor'la konuşur.*
@@ -44,24 +44,24 @@ Buna **manager-worker** ya da **orchestrator-worker** dendiğini de duyacaksın.
 
 **Bir supervisor ile başla.** Kontrol etmesi daha kolaydır, çünkü her karar tek bir yerden geçer; tıpkı bir müdürün her görevin durumunu bilmesi gibi.
 
-## Bir Takımın Sorunları
+## Multi-agent'ın Dezavantajları
 
 İki sorun da işi bölmenin *kendisinden* gelir. Tek bir agent'ın ikisi de yoktur. İkisi de herhangi bir ofisten tanıdık gelecek.
 
 **Koordinasyon.** Kim neyi, hangi sırayla yapıyor? Bir işin bittiğini kimse nereden biliyor? İki agent aynı işi iki kez yapabilir. Bir agent hiç gelmeyecek bir şeyi sonsuza kadar bekleyebilir. Bir müdür sürekli görev dağıtıp hiç durmayabilir. Bunlar, kötü yönetilen bir takımın yaptığı hataların aynısı.
 
-**Devir (handover).** Her agent'ın kendi sohbeti, kendi çalışma belleği var. Peki veri agent'ı işini bitirdiğinde, grafik agent'ı tam olarak ne alıyor? Yalnızca sayıları mı? İlk soruyu da mı? Çok az verirsen sonraki agent, ihtiyaç duyduğu bilgi olmadan çalışır; hiç not almadan bir projeyi devralan bir iş arkadaşı gibi. Her şeyi verirsen maliyeti çok olur ve işi bölerek kaçınmaya çalıştığın karışıklık geri gelir.
+**Devir (handover).** Her agent'ın kendi sohbeti, kendi working memory'si var. Peki veri agent'ı işini bitirdiğinde, grafik agent'ı tam olarak ne alıyor? Yalnızca sayıları mı? İlk soruyu da mı? Çok az verirsen sonraki agent, ihtiyaç duyduğu bilgi olmadan çalışır; hiç not almadan bir projeyi devralan bir iş arkadaşı gibi. Her şeyi verirsen maliyeti çok olur ve işi bölerek kaçınmaya çalıştığın karışıklık geri gelir.
 
 Devri yanlış yapmak, bir agent takımının yerini aldığı tek agent'tan *daha kötü* çalışmasının olağan nedenidir.
 
-### Ortak Masa mı, Ayrı Masalar mı?
+### Shared Context mi, Isolated Context mi
 
 Bu da her agent takımının altındaki bir seçime çıkıyor:
 
-- **Ortak context (shared context):** herkes tek bir ortak masada çalışır ve her şeyi görür. Devirde hiçbir şey kaybolmaz, ama masa hızla dolar.
-- **Ayrı context (isolated context):** her agent'ın kendi masası vardır ve yalnızca kendisine verileni görür. Ucuz ve odaklıdır, ama kimsenin aktarmadığı şey kaybolur.
+- **Shared context:** herkes tek bir ortak masada çalışır ve her şeyi görür. Devirde hiçbir şey kaybolmaz, ama masa hızla dolar.
+- **Isolated context:** her agent'ın kendi masası vardır ve yalnızca kendisine verileni görür. Ucuz ve odaklıdır, ama kimsenin aktarmadığı şey kaybolur.
 
-## Diğer Takım Şekilleri
+## İleri Seviye Multi-agent Mimarileri
 
 Bu isimler kursun ilerleyen bölümlerinde karşına çıkacak:
 
@@ -69,7 +69,7 @@ Bu isimler kursun ilerleyen bölümlerinde karşına çıkacak:
 - **Agent-as-a-tool:** bir agent, sıradan bir tool'muş gibi başka bir agent'a verilir.
 - **Subagent'lar:** bir agent, her biri tek bir iş yapan kısa ömürlü yardımcılar gönderir; bir şeyi öğrenmesi için bir stajyer göndermek gibi. Yardımcı yalnızca sonuçla geri döner.
 
-## Tek Agent Ne Zaman Daha İyi?
+## Tek Bir Agent Ne Zaman Daha İyi Olabilir
 
 Daha çok agent bir yükseltme değil, bir takastır. Daha kısa talimatlar ve daha net işler elde edersin. Bedelini koordinasyon ve devirle ödersin. Tek bir talimat seti hâlâ iyi uyuyorsa tek bir agent ile kal. Tek bir talimat seti iki ilgisiz işi birden kapsamak zorunda kaldığında böl ve bir agent'tan diğerine en az bilginin geçmesi gereken yerden böl.
 
@@ -80,7 +80,7 @@ Daha çok agent bir yükseltme değil, bir takastır. Daha kısa talimatlar ve d
 - **Network** (swarm): agent'lar, müdür olmadan işi birbirine aktarır.
 - **Koordinasyon**: kimin neyi yapacağına ve ne zaman bittiğine karar vermek.
 - **Devir (handover, context transfer)**: her agent'a ne verileceğine karar vermek.
-- **Ortak ve ayrı context**: herkes için tek bir masa ya da her biri için bir masa.
+- **Shared ve isolated context**: herkes için tek bir masa ya da her biri için bir masa.
 - **Subagent**: yalnızca sonucunu geri veren, kısa ömürlü bir yardımcı.
 
 ## Özet

@@ -32,7 +32,7 @@ agent loop is simple. A framework is the ready-made plumbing around that loop:
 It is like buying a ready-made kitchen instead of building every cupboard yourself. That is why most
 teams stop writing their own loop after their second project.
 
-## The LangChain Family
+## The LangChain Stack
 
 This is the name you will hear most often. It is the most complete, and the one most likely to be in use near you. "LangChain"
 is really three layers:
@@ -50,7 +50,7 @@ graph TD
   [Context Engineering](../2_intermediate/context_engineering.md), with planning, helpers, notes
   and summarising already built in.
 
-## Other Names You Will Hear
+## The Other Python Options
 
 They do the same job with different trade-offs:
 
@@ -60,7 +60,7 @@ They do the same job with different trade-offs:
 - ![](../images/logos/pydantic.svg)**Pydantic AI** focuses on strict checking, so mistakes show up as clear errors.
 - ![](../images/logos/mastra-mono.svg)**Mastra** and **VoltAgent** are for companies whose product is written in TypeScript rather than Python.
 
-## Workflows: Fixed Steps
+## AI Workflows
 
 This is the most useful distinction in the module, and choosing wrong can cost months.
 
@@ -81,7 +81,7 @@ And the two now work together. n8n can be connected to a coding agent through MC
 the agent builds it in n8n, tests it and fixes what broke. The agent becomes the thing that writes
 the workflow.
 
-## No-code Platforms
+## No-code Options
 
 For many jobs, the right answer is a no-code platform. ![](../images/logos/lovable.svg)**[Lovable](https://lovable.dev/)**, ![](../images/logos/bolt-mono.svg)**[Bolt](https://bolt.new/)**
 and ![](../images/logos/replit.svg)**[Replit](https://replit.com/)** turn a description into a working app, put it online,

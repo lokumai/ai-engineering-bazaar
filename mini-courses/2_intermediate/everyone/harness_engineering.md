@@ -18,7 +18,7 @@ When a company lets an AI work with real data, real money or real customers, "it
 is not enough for some rules. This module explains how those rules are made safe, and why the
 same AI model can do very well in one product and badly in another.
 
-## The Problem Instructions Do Not Solve
+## The Problem Prompts Do Not Solve
 
 An AI does not do exactly the same thing every time. Give it the same input twice, and you can get
 two different answers. In technical words, it is **non-deterministic**. And an agent that works for
@@ -57,7 +57,7 @@ The harness is the **outer** layer. It does not replace prompt and context work;
 ![Prompt, context and harness as three layers](../images/onion-model.png)  
 *Each ring contains the one inside it. That is why these are never alternatives. The harness writes the system prompt, summarises the chat and sends the helpers, so your context work happens inside the harness you picked.*
 
-## Four Questions
+## Four Disciplines, Four Questions
 
 By 2026, this work has split into four jobs, and each asks one plain question.
 
@@ -117,7 +117,7 @@ Other checks are run by another AI, like a colleague reading the work over: they
 but they are slower, cost more and can vary. **Use the fixed, software kind wherever it can do the
 job**, because that is exactly the guarantee a prompt cannot give you.
 
-## Some Real Examples
+## Some Actual Examples
 
 None of these is big:
 

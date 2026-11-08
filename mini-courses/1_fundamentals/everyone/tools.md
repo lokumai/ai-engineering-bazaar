@@ -38,7 +38,7 @@ would like to run *check weather* with city = Istanbul". A normal program on a c
 that message, runs the weather tool, and adds the result to the chat: "34°C". Then the AI reads
 the result and answers you. **The AI asks; the computer does the work.**
 
-## Tool Calls Grow the Chat
+## Tool Calls Grow Context
 
 A tool call adds two new kinds of message to the chat. This picture shows the whole flow:
 
@@ -69,7 +69,7 @@ inside. Now it can see your documents.
 
 Without tools, an AI is a chatbot. With tools, it is an agent.
 
-## The Tool's Menu Card
+## Tool Schema
 
 Before the AI can choose a tool, it has to know three things: that the tool exists, what it
 does, and what details it needs. That description is called the **tool schema**. Think of it as
@@ -93,7 +93,7 @@ description are the only things it sees. Imagine a tool called "get data", with 
 "gets data". The AI will pick it at the wrong moments and skip it at the right ones. A clear name
 and a clear description are not decoration. They decide whether the assistant works well.
 
-## One Tool Call, Step by Step
+## Tool Call in Action
 
 Here is the weather example as it really happens:
 

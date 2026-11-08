@@ -11,7 +11,7 @@ Hâlâ sensin. Modern agent'lar ise bu işin büyük bölümünü kendi üzerler
 
 Yine de bütün bunların merkezinde hâlâ bir insan oturmuş enter tuşuna basıyor; bu modül de tam olarak o insanı döngüden çıkarmakla ilgili.
 
-## Loop Engineering nedir
+## Loop Engineering Nedir
 
 Loop engineering, kendi kendine tekrar eden döngüler (loop) tasarlama pratiğidir. Her döngü agent'ı eylem, gözlem ve ayarlama çevrimlerinden geçirir ve agent tanımlı bir hedefe ulaşana kadar bu çevrim sürer. Agent'a her seferinde tek tek prompt yazmak yerine kontrol sistemini kurarsın: bir çalışmayı neyin başlattığını, agent'a neyin verildiğini ve en önemlisi **ne zaman durduğunu**.
 
@@ -22,7 +22,7 @@ Arabaya geri dönelim: motor prompt'tur, gövde context'tir, pist ve engeller de
 ![Dört yılın iş unvanları](./images/loop-unemployment.jpeg)  
 *Şaka işe yarıyor, çünkü her panelde gerçekten var olmuş bir iş anlatılıyor. Şakanın asıl söylediği şey, okların kimden kime gittiğinde saklı. Ok 2026'da insandan agent'lara gidiyor; 2026.5'te insan tek bir agent'a işaret ediyor ve o agent diğerlerine işaret ediyor. Sonraki panel ise dürüst bir soru soruyor: bu nereye gidiyor? Son iki panelde otomatikleşen şey kodlama değil, denetleme.*
 
-## Döngüler beş seviyede oluşur
+## Döngüler Beş Seviyede Oluşur
 
 İnsanlar "loop engineering" dediklerinde genellikle en dıştaki döngüyü kastederler. Ama beşinin hepsini görmek faydalı, çünkü bunlar birbirinin üstüne yığılır. LangChain'in [The Art of Loop Engineering](https://www.langchain.com/blog/the-art-of-loop-engineering) yazısı bu pratiğe "döngü yığmanın sanatı" diyor ve bu tanım tam olarak yerinde.
 
@@ -37,19 +37,19 @@ graph TD
 
 *Her seviye bir altındakini sarar ve her biri senden bir kararı alır: seviye 0 bir sonraki token'a, seviye 1 sonraki tool çağrısına karar verir. Seviye 2 cevabın yeterince iyi olup olmadığına, seviye 3 ne zaman başlanacağına karar verir. Yalnızca seviye 4 yeniden denenip denenmeyeceğine karar verir. Asıl karar buydu ve şimdiye kadar onu sen veriyordun.*
 
-### Seviye 0: LLM döngüsü
+### Seviye 0: LLM Loop
 
 Döngü, modelin kendi içinde başlar. Modern LLM'lerin çoğu **autoregressive** çalışır, yani girdiyi alıp yalnızca bir token üretir. Bu token'ı girdinin sonuna ekler ve bu daha uzun girdiden bir sonrakini üretir. Bunu bir stop token'ı üretene ya da bir uzunluk sınırına ulaşana kadar tekrarlar. Bugüne kadar bir LLM'den okuduğun her cevap, tek tek token'larla böyle yazıldı.
 
 Bu, döngülerin seviye 0'ıdır ve LLM düzeyinde gerçekleşir. Kimse bunu tasarlamaz, çünkü modelin metin üretme biçimi budur. Üstelik bu modüldeki diğer bütün döngülerin dayandığı temel döngü de budur.
 
-### Seviye 1: Agent döngüsü
+### Seviye 1: Agent Loop
 
 Agent'ın kendisi de bir döngüdür: model bir tool çağırır, sonucu okur ve işin bittiğine karar verene kadar başka tool'lar çağırmaya devam eder. Bu, [AI Agents](../1_fundamentals/agents_tr.md) modülündeki döngüdür ve doğrudan seviye 0'ın üstüne, modelin kendi turunda oturur.
 
 Bunu da kimse tasarlamaz, çünkü LangChain, diğer framework'ler ve her coding agent bunu zaten uygular. İnsanlar loop engineering'den söz ettiğinde bu döngüyü kastetmezler. Burada durmasının sebebi, diğer üç seviyenin üstüne oturabileceği bir zemin olmasıdır.
 
-### Seviye 2: Doğrulama döngüsü
+### Seviye 2: Verification Loop
 
 Agent işini bitirir ve kimse işi kabul etmeden önce bir şey, işi kriterlere göre kontrol eder. İş yeterince iyi değilse geri bildirim agent'a döner ve agent bir tur daha yapar.
 
@@ -65,7 +65,7 @@ LangChain'de bunu rubric middleware ile kurarsın, Claude Code'da ise bu iş `/g
 
 Bu yapıya bak: bir hedef ve bir üst sınır var. Bu sınır bir süs değildir. Bir döngünün tek durma koşulu başarı olursa, başarı imkânsız hâle geldiğinde döngü hiç durmaz.
 
-### Seviye 3: Olay güdümlü döngü
+### Seviye 3: Event-driven Loop
 
 Bu seviyede konuşmanın dışındaki bir şey çalışmanın ne zaman yapılacağına karar verir: bir zamanlama ya da bir webhook. Agent artık senin açtığın bir şey olmaktan çıkar ve kendi kendine çalışan bir şeye dönüşür.
 
@@ -79,7 +79,7 @@ Claude Code'da `/loop` tekrarlayan bir işi kendi makinende çalıştırır. `/s
 
 İkisi de sen iptal ettiğinde ya da iş bittiğinde durur. Bu seviye değerlidir, çünkü agent artık çevresindeki sistemlere bağlıdır. Bir pull request açılır, bir build başarısız olur ya da bir uyarı tetiklenir; agent da bildirimi kimse okumadan önce işe koyulmuş olur.
 
-### Seviye 4: Otonom döngü
+### Seviye 4: Autonomous Loop
 
 Loop engineering'i bir konu hâline getiren asıl bu seviyedir.
 
@@ -116,7 +116,7 @@ Gerçek bir Ralph döngüsünü birkaç yerde bulabilirsin. [ralph-loop plugin](
 
 > **NOT:** LangChain farklı bir en üst seviye adlandırıyor: **hill climbing loop**. Bu döngü, sorunları bulmak için üretim trace'lerini (production traces) okur ve agent'ın kendi yapılandırmasını iyileştirir. Bu döngü, bu seviyenin bir üstünde yer alır ve bilmeye değer; çıktısı tamamlanmış bir iş değil, daha iyi bir harness'tir.
 
-## Döngüyü tasarlayan agent'lar
+## Döngüyü Tasarlayan Agent'lar
 
 Bu modüldeki her döngü, bir insanın tasarladığı bir döngü. Betiği sen yazıyorsun, kriterleri sen koyuyorsun ve bir çalışmayı neyin başlatacağına, ne zaman duracağına sen karar veriyorsun. Yapı ya senin ya da Ralph'inki gibi bilinen bir desen.
 

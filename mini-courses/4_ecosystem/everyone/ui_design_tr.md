@@ -8,19 +8,31 @@ Bu modül, ekran tasarlayan araçları ve bu soruna basit çözümü anlatıyor.
 
 Bir web sitesini ya da iç aracı, bu kursun vaat ettiği gibi, tarif ederek yapıyorsan, bu sorunla ikinci ekranında karşılaşacaksın. Çözüm tek bir dosya ve [Code Agent'lar](../2_intermediate/coding_agents_tr.md) modülündeki işe başlama notuyla aynı fikir.
 
-## Bir Tarifi Ekrana Çeviren İki Araç
+## Bir Açıklamayı Ekrana Dönüştüren İki Araç
 
 ![](../images/logos/google.svg)**[Google Stitch](https://stitch.withgoogle.com/)**, yazılı bir açıklamayı, bir görseli, kabaca bir çizimi ya da sesli bir açıklamayı alıp arkasında gerçek kod olan bitmiş bir tasarım üretiyor. Tasarımı, birçok tasarımcının kullandığı araç olan Figma'ya da gönderebiliyor.
 
+![Google Stitch](../images/google-stitch-ui.webp)  
+*Stitch'in kendi tanıtım görseli. Bir tasarımı yazıyla, sesle ("Listening...") ya da bir görsel veya bağlantıyla anlatıyorsun, sonra önizleyip düzenliyorsun. Design system panelindeki "Design.md" sekmesine dikkat et: aşağıdaki DESIGN.md bölümünün anlattığı dosya bu.*
+
 Anthropic'in ![](../images/logos/claude.svg)**[Claude Design](https://claude.ai/design)**'ı, Nisan 2026'da çıktı ve prototipleri, slaytları ve tek sayfalık dokümanları gerçek, çalışan kod olarak yapıyor. Var olan bir projeyi okuyabiliyor, içindeki tasarım kurallarını bulabiliyor ve bundan sonra ne istersen onlara uyarak yapabiliyor.
+
+![Claude Design şablonları](../images/claude-design-types.png)  
+*Claude Design tek bir istek ve bir şablonla başlıyor: mobil uygulama, slaytlar, doküman, wireframe ve daha fazlası. "Design system" menüsü, daha hiçbir şey çizilmeden bir dizi tasarım kararını seçiyor.*
+
+![Claude Design'da bir prototipi ayarlamak](../images/claude-design-ui.webp)  
+*Claude Design'da ayarlanan bir prototip. Tweaks paneli, yeni bir prompt yazmadan cihazı, karanlık modu, renk temasını ve yazı boyutlarını değiştiriyor.*
 
 İkisine birlikte bakınca örüntü net: bir ekranı tarif etmek artık onu çizmekten daha hızlı ve sonuç bir resim değil, çalışan kod.
 
-## Design System
+## Design System ve Neden Bir Dosyada Olması Gerektiği
 
 **Design system**, bir markanın bir kez verdiği ve bir daha kimsenin vermesi gerekmeyen tasarım kararlarının tamamı: renkler ve her birinin ne için olduğu, yazı tipleri ve boyutları, boşluklar, köşe şekilleri ve bir butonun üzerine geldiğinde ya da bastığında nasıl göründüğü. Pazarlamadan bir şirketin marka kılavuzunu gördüysen, aynı fikir bu.
 
 Bir ekran yapan yapay zekâ bu kararların her birini vermek zorunda. Seninkileri bilemez, bu yüzden makul görünen kararlar uyduruyor ve her seferinde farklı olanlar. Çözüm, talimatlardaki çözümle aynı: kararları bir dosyaya yaz ve yapay zekânın onu okumasına izin ver.
+
+![Bir design system ve ondan yapılmış bir ekran](../images/example-design-system.png)  
+*Google Stitch'te bir design system (solda): kesin kodlarıyla renkleri, üç yazı stili, butonlar ve ikonlar. Sağda ondan üretilmiş bir fitness dashboard'u var. İstediğin her yeni ekran, örneğin altta önerilen "workout details screen", aynı kararları yeniden kullanıyor.*
 
 ## DESIGN.md
 
@@ -33,7 +45,7 @@ Gösterim çok doğrudan. Bir yapay zekâya, Stripe'ın stilinden örnek alınm�
 
 Bu kursun şimdiye kadar tanıştırdığı üç dosyaya dikkat et. `AGENTS.md`, bir projede çalışmanın kurallarını tutuyor. [Personal Agent'lar](../2_intermediate/personal_agents_tr.md) modülündeki `SOUL.md`, bir agent'ın kim olduğunu tutuyor. `DESIGN.md` ise işinin nasıl görünmesi gerektiğini tutuyor.
 
-## Hâlâ Yapamadıkları
+## Bu Araçların Yapamadıkları
 
 Bu araçlar sana hızlıca iyi görünen bir ekran veriyor. Bir tasarımcının verdiğini vermiyorlar: ekranın *ne için* olduğunu bilmek; kullanıcının neyi bitirmeye çalıştığını ve neyin kolay olması gerektiğini.
 

@@ -48,7 +48,7 @@ Aynı mantık, kod dışında metinden oluşan her şey için de işler. Diyelim
 
 Altta yatan mekanizma budur: bir encoder modeli metni vektör embedding'lerine çevirir, bu embedding'leri bir vektör veritabanında saklarsın ve soru geldiğinde soruyu da bir vektöre çevirip en yakın eşleşmeleri bulursun.
 
-## Vektör Embedding'leri
+## Vector Embedding'ler
 
 Embedding, bir metin parçasını anlatan sayılardan oluşan bir listedir ve bunu bir parmak izi gibi düşünebilirsin. Bu sayıları, encoder adı verilen özel bir model üretir.
 
@@ -85,7 +85,7 @@ graph LR
 
 Bu iki maddenin anlamı aynıdır, ama neredeyse hiç ortak kelimeleri yoktur ve yine de vektörler yan yana düşer. Bu yüzden anahtar kelime araması Madde B'yi kaçırırdı, retrieval ise onu bulur.
 
-## Vektör Veritabanları
+## Vector Database'ler
 
 Bir vektör veritabanı bu parmak izlerinden milyonlarcasını saklar, her birini özgün metnine bağlı tutar ve hepsinde hızlı arama yapar. Ona bir sorgu vektörü verirsin, o da en yakın N tanesini geri döndürür ve sen bunları LLM'e iletirsin.
 

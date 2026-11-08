@@ -91,7 +91,7 @@ Bir agent turn'ünün içi daha kalabalıktır. HumanMessage'ından sonra model,
 
 Agent'ların nasıl işlediğinin temeli tam olarak bu ayrımdır. Bunu [LLM Tool Calling](tools_tr.md) ve [AI Agents](agents_tr.md) modüllerinde yeniden ele alacağız.
 
-## LLM Hiperparametreleri
+## LLM Hyperparameter'ları
 
 Modelin nasıl yanıt verdiğini **hiperparametre (hyperparameter)** ayarlarıyla değiştirebilirsin. Bu kelimedeki "hyper" kısmına dikkat et, çünkü bu kısım bunların yukarıdaki parametrelerle aynı şey olmadığını gösteriyor. Hiperparametreler üretimi etkiler. Yukarıda andığımız parametreler ise başka bir şeydir: onlar ağın içindeki sayılardır ve bu sayıların adedi modelin boyutunu belirler.
 

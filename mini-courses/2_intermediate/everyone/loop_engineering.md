@@ -39,7 +39,7 @@ Until now, a person drove. With loop engineering, the AI drives.
 ![Four years of job titles](../images/loop-unemployment.jpeg)  
 *Each panel is a joke about a job title, and the last one is a guess about the future. Read the arrows: first the person points at agents, then the person points at one agent, and that agent points at the others.*
 
-## Loops at Five Levels
+## Loops Happen at Five Levels
 
 When people say "loop engineering", they usually mean the outermost loop. But there are five levels,
 and each sits inside the next:

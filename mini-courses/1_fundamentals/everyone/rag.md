@@ -41,7 +41,7 @@ the parts that answer it, and it adds those parts to the chat, next to the quest
 answers from what it can now see. The name says it: **Retrieval-Augmented Generation**. First
 retrieve (find), then generate (answer).
 
-### The Desk and the Library
+### The Desktop and the Library
 
 Here is a simple picture.
 
@@ -55,7 +55,7 @@ is open on your desk is easy and exact. RAG chooses which pages go on the desk.
 ![The naive RAG flow](../images/rag.png)  
 *The basic RAG flow. The question goes two ways at once. One way goes to a search over your documents (the "embedding model" and "vector store index" boxes in the picture). The other goes straight to the AI, together with the pages the search found.*
 
-## Fingerprints of Meaning (Embeddings)
+## Vector Embeddings
 
 How does the search find the right clause? It does not look for matching words. It looks for
 matching *meaning*.
@@ -80,7 +80,7 @@ close. A normal keyword search would miss the second clause. A RAG search finds 
 These fingerprints are kept in a special database, called a **vector database**. It stores
 millions of them, each linked to its original text, and it can find the closest ones very fast.
 
-## The Two Phases
+## The RAG Process
 
 RAG has two parts.
 
@@ -101,7 +101,7 @@ RAG has two parts.
 ![RAG offline and online](../images/rag-offline-online.png)  
 *The top half runs once, and again when the documents change. The bottom half runs for every question. The picture adds one step: a second check (a "reranker") reads the 20 closest pieces and keeps the best 3, so the chat holds only what answers the question.*
 
-## Testing the Search
+## Measuring Retrieval
 
 The answer can only be as good as the pages that reach the desk. If the search brings the wrong
 pages, the AI never sees the right ones, and the answer is wrong. So a good team tests the search
@@ -113,7 +113,7 @@ on its own, before it judges the answers. Two simple measures:
 The wrong pages are not harmless. They also go on the desk, where they take space and can confuse
 the AI.
 
-## Why Not Train the Model on Your Documents?
+## Why Not Just Fine-tune the Model on Your Documents?
 
 You met fine-tuning in [Training LLMs](training.md), so this is a fair question.
 

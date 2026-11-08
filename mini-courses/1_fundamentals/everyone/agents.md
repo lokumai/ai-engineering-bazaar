@@ -25,7 +25,7 @@ something bigger.
 agent is a model in a loop with tools, you can ask the right questions about any of them: which
 tools does it have, what can those tools change, and what makes it stop?
 
-## Answering Once, and Working Until Done
+## Single Turn, and Multi Turn
 
 Here is the difference that matters.
 
@@ -42,7 +42,7 @@ many times it is called, and what it is shown each time.
 ![Is this an agent?](../images/agent-multi-step-example.jpg)  
 *Yes. That really is the definition. The joke is that people expect it to be more.*
 
-## One Round of the Loop
+## One Pass Through the Loop
 
 [Tool Calling](tools.md) showed a single tool call. An agent is that, repeated:
 
@@ -63,7 +63,7 @@ graph TD
 the AI stopped asking for tools. When it writes text instead of a tool call, that text is the
 answer.
 
-### How Much Deciding You Hand Over
+### How Much of the Deciding You Hand Over
 
 "Agent" is not a yes-or-no thing. The real question is how much of the deciding you give to the
 AI. Think of it as a scale:
@@ -80,7 +80,7 @@ Most real products do not go to the far end, and that is usually the right choic
 fewer ways for things to go wrong. When you choose an AI product, it is fair to ask where on this
 scale it sits.
 
-## Where Does the Loop Run?
+## Where Does the Agent Loop Run?
 
 None of the loop happens inside the AI. **All of it happens in a normal program on a normal
 computer.** That program:
@@ -108,7 +108,7 @@ that brain, so that it can:
 
 The model really is that simple. Everything else is engineering around it.
 
-## How the AI Knows Which Tools it Has
+## How the LLM Knows Which Tools it Has
 
 The system prompt tells it. Before every call in the loop, the program puts the system prompt at
 the top of the chat. It holds the agent's role and the menu card of every tool, as

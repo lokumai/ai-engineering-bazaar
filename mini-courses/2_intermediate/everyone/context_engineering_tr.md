@@ -8,13 +8,13 @@ Prompt engineering'den sonra context engineering geldi. 2025'in sonunda en çok 
 
 Bir yapay zekâ asistanını uzun bir iş için kullandıysan, muhtemelen şunu görmüşsündür: başlangıçta talimatlarını iyi takip ediyor, ama uzun bir süre sonra onları unutmaya, konudan sapmaya ya da bir şeyler uydurmaya başlıyor. Bu modül bunun neden olduğunu ve en iyi yapay zekâ araçlarının buna karşı ne yaptığını anlatıyor. Yapay zekânın bugün tek bir istekten bütün bir web sitesi yapabilmesinin sebeplerinden biri de bu.
 
-## Sohbet Fazla Uzayınca
+## Context Engineering'in Yükselişi
 
 [LLM Temelleri](../1_fundamentals/llms_tr.md) modülündeki WhatsApp sohbetine geri dönelim. Başlangıçta insanlar giderek daha büyük sohbetler istedi, çünkü daha fazla bilgi gerçekten daha iyi cevap demekti. Böylece sohbete eskisinden daha fazla şey eklediler ve sohbet eskisinden çok daha hızlı dolmaya başladı.
 
 Sohbet izin verilen en büyük boyutu aştığında ne oluyordu? Genellikle en eski mesajlar yukarıdan kayıp gidiyor ve unutuluyordu. Buna **sliding window** (kayan pencere) deniyor. Üstelik göründüğünden daha kötü bir durum: en eski mesajlar çoğu zaman neye ulaşmaya çalıştığını anlattığın mesajlardır. Yani yapay zekânın ilk unuttuğu şey hedef oluyor. İnsanlar da yapay zekâya işin ne olduğunu hatırlatmak için ilk talimatlarını elle tekrar yapıştırmak zorunda kaldı.
 
-## Context Rot
+## Context Rot (Pollution)
 
 Sonra Chroma'daki bir araştırma ekibi şaşırtıcı bir sonuç yayımladı: **sohbet büyüdükçe yapay zekâ görevde kötüleşiyor**, hiçbir şey silinmemiş olsa bile. Farklı şirketlerin 18 modelini test ettiler ve hepsi aynı işi kısa bir sohbette, çok uzun bir sohbete göre belirgin biçimde daha iyi yaptı.
 
@@ -47,7 +47,7 @@ Terim, Andrej Karpathy'nin 2025 ortasındaki bir yazısından sonra popüler old
 
 Bilmeye değer teknikler şunlar.
 
-## Sohbeti Özetlemek (Compaction)
+## Context Summarization (Compaction)
 
 Sohbet uzayınca onu kendi özetiyle değiştir. Kocaman bir konuşma, kısa bir nota dönüşür: "şunlara karar verdik, şunlar hâlâ bozuk, şurada kalmıştık." Bu, uzun bir toplantının kaydını toplantı tutanağıyla değiştirmeye benziyor.
 
@@ -58,18 +58,18 @@ Bugün çoğu yapay zekâ aracı, sohbet sınırına yaklaştığında bunu kend
 
 Bedeli gerçek. Tutanak, ihtiyacın olan bir şeyi dışarıda bırakabilir; ya kazara ya da özeti yazan kişi onu önemsiz bulduğu için.
 
-## Not Tutmak (Offloading)
+## Context Offloading
 
 Agent her şeyi sohbette tutmak yerine önemli bilgileri bir deftere, yani bilgisayardaki bir dosyaya yazar ve gerektiğinde geri okur. Bilgiler sohbetten çıkar ama kaybolmaz.
 
-Birçok yapay zekâ ürünü buna **long-term memory** (uzun süreli hafıza) diyor; [Memory](../1_fundamentals/memory_tr.md) modülündeki fikrin aynısı. Genellikle üç türde tutulur:
+Birçok yapay zekâ ürünü buna **long-term memory** diyor; [Memory](../1_fundamentals/memory_tr.md) modülündeki fikrin aynısı. Genellikle üç türde tutulur:
 
-![Üç tür uzun süreli hafıza](../images/semantic-episodic-procedural.png)  
+![Üç tür long-term memory](../images/semantic-episodic-procedural.png)  
 *Semantic memory (senin hakkındaki bilgiler) zamanla yavaş yavaş birikir. Episodic memory (geçmişteki eylemlere dair notlar), agent'ın aynı hatayı tekrarlamasını engeller. Procedural memory (talimatlar) ona işleri nasıl yapacağını söyler. Agent bu üçünü farklı zamanlarda yazar ve okur.*
 
 Aynı uyarı burada da geçerli: neyin yazılmaya değer olduğuna birinin karar vermesi gerekiyor ve bu karar bazen yanlış oluyor.
 
-## Yardımcı Göndermek (Subagent'lar)
+## Context Isolation
 
 Bir agent'a koca bir projenin ne hakkında olduğunu sorduğunu ve cevap vermek için onun 300 dosya okuması gerektiğini düşün. Bütün bu okuma sohbeti dolduruyor, cevap ise tek bir cümle. Artık sohbet, kendisinden sonra gelen her şeyi kötüleştiren okuma notlarıyla dolu.
 
@@ -83,7 +83,7 @@ Modern agent'lar yardımcıları art arda ya da aynı anda gönderiyor. Böylece
 ![Paralel çalışan subagent'lar](../images/subagents-in-parallel.webp)  
 *Üç yardımcı aynı anda çalışıyor ve her birinin kendi temiz sohbeti var. Bütün uzun okumalar ve çıkmaz sokaklar onlarda kalıyor; ana agent her birinden tek bir kısa sonuç alıyor.*
 
-## Yapılacaklar Listesi Tutmak (Planning)
+## Explicit Planning (TODO'lar)
 
 Bir agent'tan sana bir portfolyo sitesi yapmasını istediğini düşün. Bu birçok adım demek: sitede neyin olacağına karar vermek, teknolojiyi seçmek, sayfaları kurmak, metinleri yazmak ve siteyi yayına almak. Agent hemen inşa etmeye başlarsa bir adımı unutuyor ya da yoldan çıkıyor. Bu yüzden önce bir yapılacaklar listesi yazıyor:
 
@@ -100,7 +100,7 @@ Sonra listeyi tek tek işaretleyerek ilerliyor. Büyük iş küçük işlere dö
 
 Bir de ikinci bir etki var ve o daha önemli. Agent listeyi her yeniden okuyup yazdığında, hedef sohbetin altında, dikkatin en güçlü olduğu yerde yeniden görünüyor. Buna **recitation** (yeniden okuma) deniyor. Akademik üslubundan kayan kitabın doğrudan cevabı bu: talimat, onu tekrar eden hiçbir şey olmadığı için silikleşti; yapılacaklar listesi onu tekrar ediyor.
 
-## Bir Şeyi Bakıp Bulmak İçin Bilgi Tabanı
+## Explorable Context Olarak Knowledge Base
 
 Bazı bilgiler değerlidir ve nadiren değişir; şirketinin iç sistemlerinin nasıl çalıştığı gibi. Bunları her sohbete yapıştırma. Agent'ın arayabileceği bir doküman klasörüne koy ve ihtiyaç duyduğunda orada aramasına izin ver.
 
@@ -113,13 +113,13 @@ Yaygın bir örnek: bir model yalnızca eğitim verisinde olanı bilir ve bu ver
 
 Bunların hepsini kendi kendine yapan bir agent'a (plan yapar, yardımcı gönderir, not yazar ve kendi sohbetini özetler) **deep agent** deniyor. **Agents 2.0** adını da duyacaksın. Zaten kullanıyor olabileceğin çoğu yapay zekâ aracı, örneğin Claude Code, Codex ve Copilot, birer deep agent.
 
-## Uzun Soluklu Görevler
+## Long-horizon Görevler
 
 Bunların hepsini bir araya getirdiğinde yeni bir şey mümkün oluyor: kimse izlemeden saatlerce çalışan agent'lar. Birinin tek bir istekten bütün bir web sitesi ya da çalışan bir oyun elde ettiğini gördüğünde bu bir **long-horizon task**'tır (uzun soluklu görev) ve bu modüldeki teknikler onu mümkün kılan şeylerdir.
 
 Bunun gerçek bir ölçümü var. METR adlı bir araştırma grubu, bir yapay zekânın görevlerin yarısında başarısız olmaya başlamadan önce bir görevin ne kadar uzun olabileceğini (insanın çalışma süresi cinsinden) ölçüyor. Bu uzunluk 2019'dan beri yaklaşık her yedi ayda bir iki katına çıktı. Her model için [güncel rakamlar](https://metr.org/time-horizons/) herkese açık. Bir şirket agent'ının "altı saat çalıştığını" söylediğinde bu işine yarar.
 
-## Sesli Düşünmek Burada da İşe Yarar
+## Bir Context Engineering Aracı Olarak Chain of Thought
 
 [Prompt Engineering](prompt_engineering_tr.md) modülündeki chain of thought, uzun bir oturumu da yolda tutuyor. Yapay zekâ akıl yürütmesini yazarken çoğu zaman hedefi kendi kendine tekrar ediyor:
 

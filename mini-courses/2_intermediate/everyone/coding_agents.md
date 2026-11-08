@@ -42,7 +42,7 @@ coding agent helps with work that has nothing to do with software.
 Almost every modern coding agent has the same standard parts: ![](../images/logos/claude.svg)Claude Code, ![](../images/logos/openai-mono.svg)Codex, Copilot,
 OpenCode and others. Here they are.
 
-## AGENTS.md: the Onboarding Note
+## AGENTS.md
 
 When a new employee joins, you give them an onboarding note: how the team works, where things are,
 which rules to follow. **AGENTS.md** is that note, written for the agent. It is a plain text file in
@@ -56,13 +56,13 @@ You do not have to write it from scratch. Type `/init`, and the agent reads the 
 first draft for you to correct. (Claude Code reads a file called `CLAUDE.md` instead; it is the same
 idea.)
 
-## Slash Commands: Saved Prompts
+## Slash Commands
 
 A **slash command** is a prompt you write once and run again by typing `/name`, like an email
 template. For example, `/review` could run your team's checklist against a piece of work, so you do
 not type the same long prompt every week.
 
-## MCP: One Plug for Every Tool
+## Model Context Protocol (MCP)
 
 Say you build a tool that connects an AI to your company's Jira. Then you want the same thing in
 another AI product, and another. Without a standard, you build it again for each one.
@@ -82,13 +82,13 @@ What you get from it:
 One cost to know: every connected MCP server takes a little room in the chat, even when it is not
 used. So connect only the ones you need.
 
-## Subagents: Your Own Specialists
+## Subagents
 
 [Context Engineering](context_engineering.md) explained why helpers with a clean chat are useful.
 In a coding agent you can also define your own: a security reviewer, a test writer, a translator.
 Each one has its own fixed instructions and starts with a clean desk every time.
 
-## Skills: Recipe Binders on a Shelf
+## Skills
 
 A **skill** is a folder of instructions for one kind of task, such as "how to make a PDF report in
 our company style". Think of recipe binders on a kitchen shelf.
@@ -103,7 +103,7 @@ instructions. This idea has a name you should remember: **progressive disclosure
 Why skills, instead of one huge set of instructions? Because of context engineering: everything the
 agent might need is available, but only what it needs right now is in the chat.
 
-## Hooks: a Locked Door, Not a Sign
+## Hooks
 
 Everything above is advice. The AI follows it most of the time. A **hook** is different: it is a
 small program that runs at a fixed moment, for example just before the agent changes a file,
@@ -119,12 +119,12 @@ change to that file is the locked door.
 This difference, a request against a rule, is where the next module,
 [Harness Engineering](harness_engineering.md), begins.
 
-## Plugins: the Bundle
+## Plugins
 
 A **plugin** is a package of all the above: commands, skills, helpers, hooks and MCP servers,
 installed in one step. A new teammate gets the whole team setup at once.
 
-## Memory: What You Write and What the Agent Writes
+## MEMORY.md
 
 Every session starts with an empty chat. Two things carry knowledge from one session to the next:
 
@@ -137,21 +137,21 @@ Every session starts with an empty chat. Two things carry knowledge from one ses
 The agent writes its memory from the corrections you give it. So the thing you had to explain twice
 this week is still there next Monday. You can also say "remember that..." and it writes a note.
 
-## Plan Mode: Draw the Plan First
+## Plan Mode
 
 For a big job, starting to build at once is the wrong first step. In **plan mode**, the agent can
 look at everything but change nothing. It studies the project, asks you questions, and writes a
 plan. You approve or correct the plan, and only then does it start. It is like an architect who
 draws the plans and asks questions before anyone builds.
 
-## Reasoning Effort: the Thinking Dial Again
+## Reasoning Effort
 
 `/effort` sets how much the agent thinks, the same dial as in
 [Prompt Engineering](prompt_engineering.md). Medium suits small edits and questions. High suits
 normal work. The highest settings suit truly hard problems. More thinking costs more time and money,
 so match it to the task.
 
-## Notice What All of These Are
+## Notice What All of These are
 
 Look back: AGENTS.md, slash commands, subagents, skills, hooks, plugins, memory and plans. Almost all
 of them are **plain text files in folders**. You can open them in any editor, read them, and share

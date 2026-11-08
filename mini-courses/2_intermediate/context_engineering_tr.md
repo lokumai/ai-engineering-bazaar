@@ -4,7 +4,7 @@
 
 Prompt engineering'den sonra ise context engineering geldi ve 2025'in sonlarında büyük bir trend oldu. Bu modülde, bu yaklaşımın nereden çıktığını, nasıl geliştiğini ve bilmeye değer hangi tekniklerin bulunduğunu anlatacağız.
 
-## Context Engineering'in yükselişi
+## Context Engineering'in Yükselişi
 
 O dönemde bütün tartışma boyut üzerine dönüyordu. İnsanlar daha büyük bir context window'a sahip modeller istiyordu. Daha fazla context gerçekten daha iyi sonuç verdiği için modele giderek daha fazla şey veriyorlardı.
 
@@ -14,7 +14,7 @@ Peki birikmiş içerik pencereye sığmayacak kadar büyüdüğünde sistemler n
 
 Bu durum göründüğünden de kötü. Limiti aştığın an en eski context'i atmak zorunda kalırsın. Bu en eski kısım ise çoğu zaman neyi yapmaya çalıştığını anlattığın yerdir. Yani modelle birlikte kurduğun ortak anlayış, sistemin ilk attığı şey olur. Sonunda modele işin ne olduğunu hatırlatmak için kendi eski prompt'larını elle yeniden kopyalamak zorunda kalırsın.
 
-## Context rot (pollution)
+## Context Rot (Pollution)
 
 Herkes dolu bir pencereyi aşmanın yollarını ararken, Chroma ekibi [Context Rot: How Increasing Input Tokens Impacts LLM Performance](https://www.trychroma.com/research/context-rot) başlıklı bir çalışma yayımladı. Sonuç büyük bir sürpriz oldu: **context büyüdükçe model görevi giderek daha kötü yapar.**
 
@@ -38,7 +38,7 @@ Bu testin adını sürekli duyacaksın: **needle in a haystack** (samanlıkta i�
 
 Bütün bunlardan bir dizi uygulama ve bunlar için bir ad çıktı.
 
-## Context Engineering nedir?
+## Context Engineering Nedir?
 
 Context engineering tek bir soruya cevap verir: **context'e neler girmeli, neler dışarıda tutulmalı?**
 
@@ -51,7 +51,7 @@ Terim, 2025'in ortasında [Andrej Karpathy'nin bu konudaki paylaşımından](htt
 
 Şimdi bilmeye değer tekniklere bakalım.
 
-## Context özetleme (compaction)
+## Context Summarization (Compaction)
 
 Bu tekniklerin en basiti, context uzadığında onu kendi özetiyle değiştirmektir. Böylece 800K token'lık konuşma, "burada neye karar verdik, neyin hâlâ bozuk olduğu, nerede kaldık" diyen 20K token'lık bir özete dönüşür.
 
@@ -62,7 +62,7 @@ Bu tekniklerin en basiti, context uzadığında onu kendi özetiyle değiştirme
 
 Bunun bedeli gerçek ve açıkça söylenmeye değer. Özet, kimsenin bir daha ihtiyaç duymayacağı bir terminal komutunun 40,000 token'lık çıktısını atar ve asıl amaç da budur. Ama senin ihtiyacın olan bir şeyi de atabilir. Bu kazayla olabilir, ya da özeti yazan şey bir ayrıntının önemsiz olduğuna karar verip yanılmış olabilir. Tam da bu yüzden Anthropic'in compaction hakkındaki kendi rehberi, mimari kararları, çözülmemiş hataları ve uygulama ayrıntılarını korumayı öneriyor.
 
-## Context offloading
+## Context Offloading
 
 Bir şeyi context'te tutmak yerine agent, sonra okuyabileceği bir yere yazar. Bu yer genellikle bir markdown dosyasıdır. Önemli bilgiler böylece pencereden çıkıp diskte yaşar ve agent onları gerçekten ihtiyaç duyduğunda geri çeker.
 
@@ -77,7 +77,7 @@ Buradaki uyarı aynıdır ve kökü de aynıdır. Neyin saklanmaya değer olduğ
 ![Uzun vadeli belleğin üç türü](./images/semantic-episodic-procedural.png)  
 *Bu ayrım önemli, çünkü agent üçünü farklı zamanlarda yazar ve okur. Senin hakkındaki bilgiler zamanla sessizce birikir. Geçmiş eylemler, agent'ın aynı hatayı tekrarlamasını engeller. Talimat katmanı ise [LLM Tool Calling](../1_fundamentals/tools_tr.md) bölümündeki system prompt'un başka bir adla anılmasından ibaret.*
 
-## Context izolasyonu
+## Context Isolation
 
 Bunu açıkça gösteren bir örnek var.
 
@@ -95,7 +95,7 @@ Günümüzün agent'ları subagent'ları ya art arda ya da paralel çağırıyor
 ![Paralel çalışan subagent'lar](./images/subagents-in-parallel.webp)  
 *Üç subagent aynı anda, her biri kendi temiz context'inde çalışıyor. Uzun tool çıktıları, çıkmaz yollar ve yeniden yazmalar onların penceresinde kalır; ana thread her birinden yalnızca tek ve kısa bir sonuç alır.*
 
-## Açık planlama (TODO'lar)
+## Explicit Planning (TODO'lar)
 
 Diyelim ki bir agent'a portfolyo sitesi yaptırmak istiyorsun. Bu, şu adımların hepsi demek:
 
@@ -125,7 +125,7 @@ Recitation (tekrar) kelimesini aklında tut; bu modülün sonunda yeniden karş�
 
 **Nasıl çalışır?** Günümüzün agent'ları bunu hazır bir araç olarak sunuyor. Agent'ın böyle bir aracı yoksa ama bir dosya sistemine erişebiliyorsa, bir markdown dosyası tutarak aynı sonucu alabilir.
 
-## Keşfedilebilir bağlam olarak bilgi tabanı
+## Explorable Context Olarak Knowledge Base
 
 Bazı bilgiler gerçekten değerlidir ve sık sık değişmez; örneğin şirketinin iç API'sinin nasıl çalıştığı gibi. Bunları her prompt'a yapıştırmak yerine agent'ın gidip bakabileceği bir yere koy: okuyup arayabileceği bir markdown dosyaları klasörüne.
 
@@ -157,7 +157,7 @@ Bunların hepsinin ortak noktasına dikkat et: her biri context window'un dış�
 > **NOT:** Bunlar tekniklerin tamamı değil. [İleri Seviye Context Engineering](../3_expert/advanced_context_engineering_tr.md) daha zor olanları ele alıyor,
 > özellikle yazılım işleri için.
 
-## Deep agent'lar
+## Deep Agent'lar
 
 **Deep agent'lar**, bütün bunlar olurken yaygınlaşan bir agent mimarisi. Yukarıdaki tekniklerin hepsini kendi agent'ına elle tek tek eklemek zorunda değilsin. Deep agent, bunları bir araya getiren biçimdir. Bilmeye değer birkaç mimari var ve bunları [İleri Seviye Mimariler](../3_expert/advanced_agent_architectures_tr.md) modülü ele alıyor. Bu modülde anlatılması gereken mimari ise bu, çünkü context engineering'in bir tasarıma dönüşmüş hâli.
 
@@ -192,7 +192,7 @@ Asıl kazanç şu: deep agent, context engineering'in büyük kısmını senin y
 
 Dikkat etmen gereken bir şey daha var: zaten kullandığın agent'ların çoğu deep agent. Claude Code, Codex, Copilot ve OpenCode'un hepsinde planlama, subagent'lar ve bir dosya sistemi var.
 
-## Uzun ufuklu (long-horizon) görevler
+## Long-horizon Görevler
 
 Bütün bunları bir araya getirince yeni bir şey ortaya çıkıyor: kimse izlemeden saatlerce çalışan agent'lar.
 
@@ -211,7 +211,7 @@ Bunun ne kadar ilerlediğine dair gerçek bir ölçüm var ve bu, pazarlama dili
 
 Long-horizon, 2026'nın anahtar kelimesi ve her şirket peşinde. Peşinde olmalarının nedeni basit: sana iş yapmada yardımcı olan bir agent ile işi kendisi yapan bir agent arasındaki fark bu. Manşetler yerine araştırmanın genel manzarasına bakmak istersen, [Awesome-Long-Horizon-Agents](https://github.com/RUC-NLPIR/Awesome-Long-Horizon-Agents) deposuna bak. Bu, sürekli güncellenen bir okuma listesi; tüm alanı iki parçaya ayırıyor: modelin etrafında ne inşa ettiğin ve modelin içinde neyi değiştirdiğin.
 
-## Bir context engineering aracı olarak düşünce zinciri (chain of thought)
+## Bir Context Engineering Aracı Olarak Chain of Thought
 
 Son bir şey kaldı ve bu, tam olarak bu modül ile bir öncekinin arasında duruyor.
 

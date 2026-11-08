@@ -27,14 +27,23 @@ onboarding note from [Code Agents](../2_intermediate/coding_agents.md).
 spoken description, and produces a finished design with real code behind it. It can also send the
 design to Figma, the tool many designers use.
 
+![Google Stitch](../images/google-stitch-ui.webp)  
+*Stitch's own overview. You describe a design in words, by voice ("Listening...") or with an image or a link, then preview and edit it. Notice the "Design.md" tab in its design system panel: it is the file the DESIGN.md section below is about.*
+
 ![](../images/logos/claude.svg)**[Claude Design](https://claude.ai/design)** from Anthropic, launched in April 2026, makes prototypes,
 slides and one-page documents as real, working code. It can also read an existing project, find the
 design rules already in it, and follow them for whatever you ask next.
 
+![Claude Design's templates](../images/claude-design-types.png)  
+*Claude Design starts from one request and a template: a mobile app, slides, a document, a wireframe and more. The "Design system" menu picks a set of design decisions before anything is drawn.*
+
+![Tweaking a prototype in Claude Design](../images/claude-design-ui.webp)  
+*A prototype being adjusted in Claude Design. The Tweaks panel changes the device, dark mode, the colour theme and the text sizes without a new prompt.*
+
 Between the two, the pattern is clear: describing a screen is now faster than drawing one, and the
 result is working code, not a picture.
 
-## A Design System
+## A Design System, and Why the Agent Needs it in a File
 
 A **design system** is the set of design decisions a brand makes once, so nobody has to make them
 again: the colours and what each is for, the fonts and sizes, the spacing, the corner shapes, and how
@@ -44,6 +53,9 @@ marketing, that is the same idea.
 An AI building a screen has to make every one of those decisions. It cannot know yours, so it invents
 ones that look reasonable, and different ones each time. The fix is the same as for instructions:
 write the decisions down in a file, and let the AI read it.
+
+![A design system next to a screen built from it](../images/example-design-system.png)  
+*A design system in Google Stitch (left): its colours with their exact codes, three text styles, buttons and icons. On the right is a fitness dashboard generated from it. Every next screen you ask for, such as the suggested "workout details screen" below it, reuses the same decisions.*
 
 ## DESIGN.md
 

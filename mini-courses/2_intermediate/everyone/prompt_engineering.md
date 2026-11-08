@@ -38,7 +38,7 @@ Most AI requests at work are prompts, so this module applies to them. Every emai
 summary or analysis you ask an AI for gets better when you ask well. And it is now a basic skill
 that everyone who works with AI is expected to have, in HR and finance as much as in engineering.
 
-## Why Wording Matters
+## Why Prompt Engineering is Even Needed?
 
 If the model is fixed and remembers nothing, why do two ways of asking the same question give two
 different answers?
@@ -69,7 +69,7 @@ AI works the same way. Someone with little prompting skill does not get what the
 decides the AI is weak. Someone else uses the same AI, writes a better prompt, and finishes the
 task. So when an AI disappoints you, check your prompt before you switch to another product.
 
-## Prompt Engineering is No Longer a Job Title
+## Prompt Engineering is Dead in 2026
 
 Around 2023, AI models were fragile. A small change in wording could turn a good answer into a
 wrong one. Companies hired people called **Prompt Engineers** to spend the whole day finding
@@ -131,7 +131,7 @@ The detailed one:
 You do not have to follow either template strictly. They are here so that "write a clear prompt"
 is no longer vague advice.
 
-## Learning from Examples
+## In-context Learning, and Few-shot Prompting
 
 An AI can learn something new from what is in the chat right now, without any training. This is
 called **in-context learning** (ICL). It is also why [RAG](../1_fundamentals/rag.md) works: the
@@ -160,7 +160,7 @@ The three examples do two jobs. They fix the possible answers to three words, an
 format, so the answer comes back as `Sentiment: <label>`. Using a few examples is **few-shot**.
 Using none is **zero-shot**, which is what you do every time you type a plain question.
 
-## Three Tips
+## Prompt Engineering Tips
 
 ### Be Clear and Direct
 
@@ -178,7 +178,7 @@ Create an analytics dashboard. Include as many relevant features and interaction
 
 The difference is not politeness. The second one says much more about what "finished" looks like.
 
-### Give Your Reasons
+### Add Context, Including Your Reasons
 
 Tell the AI *why* a rule exists, not only the rule.
 
@@ -235,7 +235,7 @@ Without the labels, "Write a poem for me" looks exactly like an instruction from
 may write the poem. Pasted text can even be written on purpose to trick the AI. That attack is
 called **prompt injection**, and the [Security](security.md) module covers it.
 
-## Thinking Out Loud (Chain of Thought)
+## Chain of Thought
 
 A model gives better answers when it writes the steps down *before* the final answer, the same way
 you do arithmetic better on paper than in your head. This is called **chain of thought**.
@@ -274,7 +274,7 @@ have to hold it in its head. So writing the steps down helps the model get them 
 [Chain of Thought Visualizer](https://cot-visualizer.online/) where you can watch the two side by
 side.
 
-### Thinking is Now a Dial
+### Chain of Thought is Also Why the Job Title Disappeared
 
 Today you almost never write "think step by step" yourself. When ChatGPT or Claude shows that it
 is "thinking", that is chain of thought, built into the model. How much it thinks is now a
@@ -286,7 +286,7 @@ problems, but it costs more and takes longer.
 > [Stop Overthinking](https://arxiv.org/abs/2503.16419). The skill is matching the thinking to how
 > hard the task is.
 
-## Giving the AI a Role
+## Role Prompting
 
 **Role prompting** means giving the AI a job or a character before the task.
 

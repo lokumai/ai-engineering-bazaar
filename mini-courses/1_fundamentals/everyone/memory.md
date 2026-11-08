@@ -54,7 +54,7 @@ answers so much better from text that is in the chat than from what it learned i
 [LLM Fundamentals](llms.md)), and it is gone when you start a new chat. Every new chat starts
 completely empty.
 
-### The AI Forgets Between Messages
+### An LLM is Stateless During Generation
 
 Here is the most important idea in this module. The AI remembers nothing even *between two
 messages in the same chat*. Each message you send is a new, separate request, as if the AI had

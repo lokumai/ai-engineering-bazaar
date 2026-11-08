@@ -39,7 +39,7 @@ Bir model sabit bir veriyle eğitildiği için tek başına yeni bir şey bileme
 
 Tool'lar olmadan model bir chatbot'tur, tool'larla birlikte ise bir agent olur.
 
-## Tool Şeması
+## Tool Schema
 
 İnsanları şaşırtan kısım şu: model bir tool seçebilmeden önce birinin ona üç şey anlatması gerekir: tool'un var olduğu, ne yaptığı ve hangi argümanları aldığı. Bu açıklamaya **tool schema** denir ve JSON formatında yazılır.
 

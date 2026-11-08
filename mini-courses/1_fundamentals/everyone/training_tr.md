@@ -6,7 +6,7 @@
 
 Her yapay zekâ şirketi, modelinin bir şey üzerinde "eğitildiğini (trained)" ya da bir iş için "fine-tune edildiğini" söyler. Bu iki sözün ne demek olduğunu bilirsen, bir satıcının senin için gerçekte neler yapabileceğini ve neler yapamayacağını da bilirsin. Ayrıca "yapay zekâyı şirket dokümanlarımız üzerinde eğitelim" isteğinin neden çoğu zaman yanlış olduğunu ve onun yerine ne istemen gerektiğini öğrenirsin.
 
-## Eğitim Ne Demek?
+## Training Ne Demek?
 
 Yeni bir modeli boş bir beyin gibi düşün. Başlangıçta hiçbir şey bilmez. Her parametre rastgele bir sayıdır, dolayısıyla her cevap da rastgeledir.
 
@@ -34,7 +34,7 @@ graph LR
 
 Sonuçta **genel amaçlı** bir model ortaya çıkar. Okulu bitirmiş bir insana benzer: birçok konuda biraz bilgisi vardır, ama henüz hiçbirinde uzman değildir.
 
-## Pre-training Yapman Gerekmiyor
+## Pre-training Yapmak Zorunda Değil misin?
 
 Kendi modelini sıfırdan pre-train etmen hiçbir zaman gerekmez. Milyonları başkası zaten harcadı. Onların bitmiş modelini alıp ona bir şey daha öğretebilirsin. Buna **fine-tuning** denir.
 
@@ -50,7 +50,7 @@ Aradaki farkın en net göründüğü yer, her adımın kullandığı veri:
 
 Pre-training'in milyonlara mal olmasının, fine-tuning'in ise çok daha ucuz olmasının nedeni bu fark. Aşağıdaki LoRA, tek bir bilgisayara sığan sürüm.
 
-## Bir Örnekle Fine-tuning
+## Fine-tuning
 
 Makalelerin çok iyi kısa özetlerini yazan bir model istediğini varsayalım.
 
@@ -69,7 +69,7 @@ Eğitim çiftlerinden birkaçı şöyle:
 
 Model bu cevapları ezberlemez. *Kalıbı* öğrenir: uzun bir metinden temel bilgileri çıkarıp bunları kısa ve sade tek bir cümleye koymak.
 
-### İşe Yarıyor mu?
+### Gerçekten İşe Yarıyor mu?
 
 Modelin hiç görmediği yeni bir makale şu:
 
@@ -90,7 +90,7 @@ Modelin hiç görmediği yeni bir makale şu:
 
 İlk cevap uzun ve makaleyi neredeyse cümle cümle tekrar ediyor. İkincisi, öğrendiği kalıbı hiç görmediği bir makaleye uygulamış.
 
-## Daha Ucuz Bir Yol: LoRA
+## Parameter-efficient Fine-tuning (PEFT)
 
 Normal fine-tuning modeldeki her sayıyı değiştirir, bu yüzden büyük bir model yine büyük bilgisayarlar ister. Daha ucuz bir yol var; adı **PEFT** (parameter-efficient fine-tuning, yani parametre açısından verimli fine-tuning). Modelin neredeyse tamamını dondurur ve yalnızca küçücük bir ek parçayı eğitir; çoğu zaman sayıların yüzde 1'inden azını. En yaygın sürümünün sık sık duyacağın bir adı var: **LoRA**. Tek bir bilgisayarda çalışır, hızlıdır ve gerçek projelerin çoğu onu kullanır.
 
@@ -104,7 +104,7 @@ Normal fine-tuning modeldeki her sayıyı değiştirir, bu yüzden büyük bir m
 | Maliyeti | Milyonlarca dolar | Çok daha az; LoRA ile çoğu zaman tek bir bilgisayar |
 | Kim yapar | Birkaç büyük yapay zekâ şirketi | Neredeyse herkes |
 
-## Fine-tuning Ne Zaman Yapılmaz?
+## Ne Zaman Fine-tuning Yapmamalısın
 
 Fine-tuning isteyen birçok insanın aslında buna ihtiyacı yoktur. Cevabın "hayır" olduğu üç yaygın durum var.
 
@@ -114,7 +114,7 @@ Fine-tuning isteyen birçok insanın aslında buna ihtiyacı yoktur. Cevabın "h
 
 **Bir sonraki model seni geçebilir.** Bir modeli kendi işin için bir ay boyunca fine-tune ettiğini düşün. Sen bitirene kadar, hiç fine-tuning yapılmadan senin işini daha iyi yapan yeni bir model çıkabilir. Fine-tuning, işin gerçekten çok dar ve gerçekten sana özgü olduğu durumlarda hâlâ kazanır.
 
-## Hugging Face
+## Hugging Face Nedir?
 
 Bu ismi çok duyacaksın. ![](../images/logos/huggingface.svg)[Hugging Face](https://huggingface.co/), şirketlerin ve araştırmacıların yapay zekâ modellerini paylaştığı büyük, herkese açık bir kütüphane; modellerin çoğu ücretsiz indirilebiliyor. Bir ekip açık bir model yayımladığında genellikle burada görünür. Ayrıca bu modelleri fine-tune etmek için çoğu insanın kullandığı ücretsiz yazılımları da o yapıyor.
 

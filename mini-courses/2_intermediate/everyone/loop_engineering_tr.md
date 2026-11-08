@@ -10,7 +10,7 @@ Bu modül, o insanı çıkarmakla ilgili.
 
 Eskiden insanlar agent'larının başında oturmak, her cevabı kontrol etmek ve çalışmayı sürdürmek için araya girmek zorundaydı. Loop engineering bu işi bir script'e ya da başka bir agent'a veriyor; böylece iş, bir insan olmadan saatlerce ya da günlerce sürüyor. Bir yapay zekânın bir proje üzerinde "bütün hafta sonu çalıştığını" duyduğunda, bu böyle oluyor.
 
-## Loop Engineering Nedir?
+## Loop Engineering Nedir
 
 **Loop engineering**, kendiliğinden tekrar eden döngüler tasarlamaktır. Her döngü, tanımlı bir hedefe ulaşılana kadar bir agent'ı hareket etme, kontrol etme ve ayarlama turlarından geçirir. Talimatları tur tur sen vermezsin. Bir turu neyin başlattığını, neyin kontrol ettiğini ve ne zaman duracağını tasarlarsın.
 
@@ -21,7 +21,7 @@ Arabaya dönelim. Motor prompt, gövde context, pist ve bariyerler ise harness. 
 ![Dört yıllık iş unvanları](../images/loop-unemployment.jpeg)  
 *Her panel bir iş unvanıyla ilgili bir şaka, sonuncusu ise geleceğe dair bir tahmin. Oklara bak: önce insan agent'ları gösteriyor, sonra insan tek bir agent'ı gösteriyor ve o agent diğerlerini gösteriyor.*
 
-## Beş Seviyede Döngüler
+## Döngüler Beş Seviyede Oluşur
 
 İnsanlar "loop engineering" dediğinde genellikle en dıştaki döngüyü kastediyor. Ama beş seviye var ve her biri bir sonrakinin içinde duruyor:
 
@@ -34,15 +34,15 @@ graph TD
     L0["Seviye 0: LLM döngüsü<br/>model bir token üretir, bunu girdinin sonuna ekler ve sonrakini üretir"]
 ```
 
-### Seviye 0: LLM Döngüsü
+### Seviye 0: LLM Loop
 
 Model bir kelime yazıyor, onu metne ekliyor ve sonrakini yazıyor. Herhangi bir cevabı bu şekilde üretiyor. Bu döngüyü kimse tasarlamıyor.
 
-### Seviye 1: Agent Döngüsü
+### Seviye 1: Agent Loop
 
 Agent bir araç kullanıyor, sonucu okuyor ve işini bittiğine karar verene kadar başka bir araç kullanıyor. Bu, [AI Agent'lar](../1_fundamentals/agents_tr.md) modülündeki döngü. Her agent ürününde zaten var.
 
-### Seviye 2: Doğrulama Döngüsü
+### Seviye 2: Verification Loop
 
 Agent işi bitiriyor ve sonra biri kabul etmeden önce bir şey işi bir standarda göre kontrol ediyor. Yeterince iyi değilse geri bildirim, bir tur daha için agent'a dönüyor; bir öğretmenin ödevi düzeltilsin diye geri vermesi gibi.
 
@@ -54,7 +54,7 @@ Standart, kontrol edebileceğin herhangi bir şey olabilir: bütün testler geç
 
 Şekle bak: **bir hedef ve bir sınır**. Sınır önemli. Durmanın tek yolu başarı ise, imkânsız bir görev hiç durmaz.
 
-### Seviye 3: Olay Güdümlü Döngü
+### Seviye 3: Event-driven Loop
 
 Burada dışarıdaki bir şey, bir çalışmanın ne zaman olacağına karar veriyor: bir takvim ya da yeni bir e-posta veya yeni bir destek talebi gibi bir olay. Agent, senin açtığın bir şey olmaktan çıkıp kendi kendine çalışan bir şey oluyor. Örneğin: "her sabah saat 9'da yeni destek taleplerini oku ve sırala". Claude Code'da:
 
@@ -62,7 +62,7 @@ Burada dışarıdaki bir şey, bir çalışmanın ne zaman olacağına karar ver
 /loop 5m check my PR, address review comments, and fix failing CI
 ```
 
-### Seviye 4: Otonom Döngü
+### Seviye 4: Autonomous Loop
 
 Loop engineering'i bir konu hâline getiren seviye bu. **Ralph loop** ile başladı; adını Simpsonlar karakterinden alıyor. Bütün iş bitene kadar agent'ı tekrar tekrar başlatan çok basit bir script:
 

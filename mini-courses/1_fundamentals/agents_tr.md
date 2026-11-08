@@ -9,7 +9,7 @@ Tanım bu kadar, yine de bunu iki kez okumakta fayda var. Agent'lar hakkındaki 
 ![Bir hedefle döngüye girmiş bir LLM](./images/agent-wrapper-meme.jpg)  
 *Eğrinin iki ucu da aynı cevaba varıyor. Ortadakiler ise bunun yerine bir mimari aramaya koyuluyor.*
 
-## Tek turlu ve çok turlu
+## Single Turn ve Multi Turn
 
 Asıl önemli fark şu: düz bir LLM tek turludur. Ona bir girdi verirsin, o da bir çıktı döndürür ve iş biter. [LLM Temelleri](llms_tr.md) modülünde anlattığımız şey tam olarak budur, yani bir modelin yapabildiği tek şey.
 

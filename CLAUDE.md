@@ -12,11 +12,11 @@ This file holds what changes rarely: who owns what, the commands, and the rules 
 | `src/`, `tests/`, `scripts/` | this file | the author's website |
 | `mini-courses/` | [`mini-courses/CLAUDE.md`](mini-courses/CLAUDE.md) | the author's course |
 
-**The author's website comes first.** A colleague builds the mobile reader in its own repository.
-A colleague's pull request may not change the website's design, content or behaviour, or anything
-the author added, unless the author asks; one that merges without a conflict is not thereby
-acceptable (`kia-context/specs/MANIFESTO.md` §7, D90). Never merge a colleague's PR without the
-author's word.
+**One course, two apps.** The mobile reader is built in its own repository,
+lokumai/ai-engineering-bazaar-mobile. The website and the app may differ in design; their logic,
+behaviour and content are the same, and both come from this repository: the app reads the content
+bundle the build publishes and derives nothing (`kia-context/specs/MANIFESTO.md` §7, D111;
+ARCHITECTURE §13).
 
 **`mini-courses/curriculum.yaml` is where the two halves meet**: authored by the course side, read
 by the app. `mini-courses/AGENTS.md` is a byte-identical copy of the corpus agreement. The
@@ -42,13 +42,18 @@ specifies which role.
 
 ```bash
 npm run dev            # next dev on :3000
-npm run build          # static export into out/
+npm run build          # static export into out/, then the bundle finaliser; needs Playwright Chromium
 npm run typecheck      # tsc --noEmit, strict
 npm test               # vitest: tests/unit/** + tests/corpus/**
 npm run test:e2e       # playwright: builds, serves out/ on :3111, real Chrome
 npm run build && node scripts/check-links-out.mjs out   # the build Pages serves, and its link gate
 node scripts/check-mermaid.mjs <file>.md              # parses and renders every diagram
+node scripts/check-bundle-out.mjs out                 # the content bundle under out/api/ against its contract
 ```
+
+`npm run build` exits 1 without Playwright's bundled Chromium, which its `postbuild`
+(`scripts/finalize-bundle.mjs`) draws the bundle's diagrams in; install it once with
+`npx playwright install chromium`.
 
 CI runs typecheck, test, the build with its link check, then e2e. A green `npm test`
 means little alone: the link gate and the export only fail in `build`. `responsive` and
@@ -83,6 +88,8 @@ and erase on `/profile/`.
 - **The copy register** (`tests/unit/copy-register.test.ts`) bans exclamation marks, praise,
   "just"/"simply"/"easy", "please"/"sorry" and a second spelling of any status.
 - **Colour is never the only signal**; ratios are recomputed from the shipped stylesheets.
+- **The bundle under `out/api/v1/` is a published contract** the mobile reader depends on; what may
+  change inside v1 and what needs `api/v2/` is ARCHITECTURE §13.
 - Decisions are pure functions with the clock passed in: no `Date.now()` in a reducer.
 
 ## Working conventions

@@ -9,7 +9,7 @@ description: >
 authority: reasoning
 writes: agent, when a decision is taken
 status: active
-covers: "D97 to D110 so far — 2026-11-06 onward"
+covers: "D97 to D111 so far, and D89, which part 2 held for PR #57 — 2026-11-06 onward"
 last_updated: 2026-11-09
 ---
 
@@ -334,6 +334,92 @@ fields from its docs' events page, the wire `type` values (`RUN_STARTED` and so 
 schema in `ag-ui-protocol/ag-ui` (`spec/1.0/schema.json`), integrations from its overview, and CopilotKit's
 own page, which says the protocol is developed by the CopilotKit team "in collaboration with" partner
 frameworks.
+
+### D89 · The mobile reader reads a bundle the web build publishes — 2026-11-05, revised 2026-11-09
+
+*Numbered D89, out of order, because part 2 held the number for PR #57 while it was open; it is written
+here because part 2 closed before the PR merged.*
+
+The owner decided on a native reader app for learners, Android and iOS, with progress on the device and
+no account in its first version, and on content arriving as a JSON bundle the web build emits. What was
+decided here is the shape of that bundle and of the record the app keeps. The contract itself is
+ARCHITECTURE §13; what follows is why it looks that way.
+
+**A block tree, not HTML and not markdown.** *Shipping the rendered HTML* was rejected: it carries
+web-only structure, tool menus, `data-hl-*` attributes and `bz-` classes, which the app would have to
+recognise and discard. *Shipping the markdown* was rejected harder: the app would have to redo slugging,
+dropped rules, section marks, `FIG. n.m` numbering, row headers, link localisation and code tokens in
+Dart, a second copy of every transformation `render.ts` exists for, and the derive-never-restate rule
+would then hold on one side only. So every transformation runs in TypeScript, over the hast tree the web
+already renders, and the app maps one node type to one widget. The module page and the bundle read one
+render input (`module-render.ts`), so they cannot drift.
+
+**Both tracks, every language, in one index.** The app's first version shows English only, and the
+bundle still carries every language and both tracks (D91): emitting them costs one route each, keeps the
+contract whole, and lets a later app add them without a new major. A module is listed once with an entry
+per track, because the record keys a module the same way in both of its maps. A link's track and
+language are read back off the address the page's one link map returned, rather than decided again in
+the bundle.
+
+**Two producer stages, one writer per file.** *One stage in the route handlers* was the first draft,
+with the index route hashing every file. It cannot work: a diagram needs a browser to lay out its labels,
+and the index needs the hash of every other file, which exists only once the export does. So the routes
+write every document the pipeline can produce, plus a draft index that lists the diagrams by source, and
+a `postbuild` finaliser draws the diagrams, hashes everything and writes the index. *A separate manifest
+of diagram sources* beside the draft was rejected as a second file to keep in step with the first.
+
+**Mermaid's `default` for light and `dark` for dark, each on its own ground.** First written as the
+web's Paper and Night palettes; revised when D107 replaced those with Mermaid's own themes. The web lets
+a reader choose among ten; the app follows the device's light or dark mode and has no menu, so it takes
+the web's default for light and Mermaid's `dark` for dark, and the index names each variant's theme and
+ground. *One variant recoloured in the app* was rejected because a recolour is a palette written in
+Dart.
+
+**Labels in Vazirmatn, in every language.** The finaliser measures every label in Chromium, and the app
+draws it with `flutter_svg` at the positions Chromium measured. That only holds if both draw the same
+face. *The platform font* was rejected because neither platform's face is the one the labels were
+measured in, and a label set in a wider face overruns its box. *One face per script* was rejected
+because a Persian diagram mixes Latin and Persian in one label. Vazirmatn covers both, is already the
+site's Persian face, and is pinned as one TTF whose hash the index carries.
+
+**Content hashes, not ETags and not build times.** *`If-None-Match` against the host's ETag* was rejected
+because the ETag changes on every deploy even when nothing changed. *A build time or a commit hash in the
+version* was rejected because two builds of the same content would then disagree. So `contentVersion` is
+a hash of the index, which lists the hash of every file, and the app fetches each object by its own hash.
+`publishedAt`, the commit date, orders versions and is left out of the hash on purpose: a commit that
+changes only documentation keeps the version and moves the date.
+
+**The record fixture carries no vocabulary.** The app reads and writes the same record the web does, so
+the web's answers are pinned in a conformance snapshot the app's tests run against, for both tracks'
+maps. *Copying the web's lists of allowed values into the fixture* (catalog views, diagram themes, code
+palettes) was rejected: the app keeps the record as raw JSON and passes through every part it does not
+write, so the web stays the only place that coerces those values.
+
+**The record is included in device backup, and the erase screen says so.** *Excluding the record from
+backup* would make an erase complete, and would also lose every reader's progress on a new phone, with no
+account to bring it back. *Including it and saying nothing* would make the erase screen claim more than
+it does. **Taken by the owner: included, with the honest statement**, and MANIFESTO rule 10 says it too.
+
+### D111 · One course, two apps: the design may differ, the content and the logic may not — 2026-11-09
+
+**Decided by the owner**, correcting how D90 and MANIFESTO §7 had been read. D90 was taken to mean that
+the website and the mobile app are kept apart, each side building its own and the colleague's pull
+request touching nothing the author built. The owner, 2026-11-09: there is no rule that each side keeps
+to itself; a project has versions, and the point was about the mobile app. *"Mobile and web may behave
+differently in design; logic, behaviour and content must be the same. Web and mobile should give a
+similar user experience and the same content."*
+
+So the rule is the other way round from how it was applied. Each app is developed in its own repository
+and may look its own way; what a reader is taught, how far along they are and how the course behaves are
+one thing, derived in one place, this repository, and published to the app as the content bundle
+(ARCHITECTURE §13). A change here that shares logic with the app without changing what the website shows
+or does is the intended shape, not an intrusion: PR #57 moves the module page's derivations into
+`module-render.ts` for exactly that reason.
+
+**Rejected:** generating the bundle in the mobile repository from a pinned commit of this one, which was
+offered while D90 stood. It would have kept this repository untouched at the price of the app reading
+another repository's internals, its content arriving from a second host, and the logic having a second
+build to drift in. MANIFESTO §7 carries the rule in one line; the struck D90 bullet stays beside it.
 
 ## Open questions
 

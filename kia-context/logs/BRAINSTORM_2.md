@@ -9,7 +9,7 @@ description: >
 authority: reasoning
 writes: agent, when a decision is taken
 status: closed
-covers: "D26 to D88, D90 to D96, plus open questions O1 to O5 — 2026-09-09 to 2026-11-06 (D89 is on PR #57). D97 onward is in BRAINSTORM.md"
+covers: "D26 to D88, D90 to D96, plus open questions O1 to O5 — 2026-09-09 to 2026-11-06 (D89, held for PR #57, is in BRAINSTORM.md). D97 onward is in BRAINSTORM.md"
 last_updated: 2026-11-06
 ---
 
@@ -2148,6 +2148,8 @@ not guarding a reader:
 And CI runs four Playwright workers instead of two, on GitHub's 4-vCPU runner.
 
 ### D90 · The author's website comes first; a colleague's PR that merges cleanly is not thereby accepted — 2026-11-05
+
+*Superseded 2026-11-09 by the owner: D111, in `BRAINSTORM.md`.*
 
 A colleague (GitHub `cevheri`) builds a Flutter mobile reader in its own repository,
 `lokumai/ai-engineering-bazaar-mobile`, and opened PR #57 here so the website build publishes the

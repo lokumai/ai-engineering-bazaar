@@ -13,6 +13,15 @@ subagents, skills, hooks and plugins. You now know what each part is for. This m
 using them. The best way to learn that is a short course where you do the work yourself, with the
 real tool open in front of you.
 
+> [!WARNING]
+> **🛑 STOP. Take the courses first, then come back.**
+>
+> Reading this page is not the lesson. It points you to four free courses, and taking them is the lesson. They take about seven and a half hours in total: Claude 101 and Introduction to Claude Cowork take about two and a half hours each, Claude Code 101 takes about one and a half hours, and Claude Code in Action takes about one hour.
+>
+> ⏱️ About seven and a half hours in total · ✅ All four are required
+>
+> Plan the time, take the courses in the order below, and return to this page when you are done.
+
 ## Why Take These Courses
 
 Reading about an agent and working with one are different skills. When you read, everything goes
@@ -51,6 +60,17 @@ engineer, take both.
 
 ## Claude 101
 
+> [!IMPORTANT]
+> **🛑 Course 1 of 4: stop here and take it now**
+>
+> **Claude 101**: Claude for everyday work, from your first conversation to projects, skills and deep research.
+>
+> ⏱️ About two and a half hours · ✅ Required · 🏅 Free course, with a quiz and a badge
+>
+> Open the course, finish it, then come back to this page and carry on.
+>
+> **[Open Claude 101](https://academy.claude.com/courses/claude-101)**
+
 [Claude 101](https://academy.claude.com/courses/claude-101) teaches Claude for everyday work. It
 starts with your first conversation and how to get better answers. Then it covers projects,
 artifacts such as documents and designs, skills, connectors to your other tools, and deep research.
@@ -67,6 +87,17 @@ once and use again.
 
 ## Claude Code 101
 
+> [!IMPORTANT]
+> **🛑 Course 2 of 4: stop here and take it now**
+>
+> **Claude Code 101**: Claude Code, the coding agent in your terminal, from the install to subagents and hooks.
+>
+> ⏱️ About one and a half hours · ✅ Required · 🏅 Free course, with a quiz and a badge
+>
+> Open the course, finish it, then come back to this page and carry on.
+>
+> **[Open Claude Code 101](https://academy.claude.com/courses/claude-code-101)**
+
 [Claude Code 101](https://academy.claude.com/courses/claude-code-101) teaches Claude Code, the
 coding agent that lives in your terminal. You install it and write your first prompt. Then you
 learn the daily workflow: explore, plan, code and commit. After that, you learn to manage the
@@ -81,6 +112,17 @@ You will recognise most of it. It is [Code Agents](coding_agents.md), with your 
 keyboard.
 
 ## Claude Code in Action
+
+> [!IMPORTANT]
+> **🛑 Course 3 of 4: stop here and take it now**
+>
+> **Claude Code in Action**: Long Claude Code sessions that run with less supervision, and that you can still trust.
+>
+> ⏱️ About one hour · ✅ Required · 🏅 Free course, with a quiz and a badge
+>
+> Open the course, finish it, then come back to this page and carry on.
+>
+> **[Open Claude Code in Action](https://academy.claude.com/courses/claude-code-in-action)**
 
 [Claude Code in action](https://academy.claude.com/courses/claude-code-in-action) is the next step:
 long sessions that run with less supervision, and that you can still trust. It covers four things:
@@ -100,6 +142,17 @@ This course is where [Harness Engineering](harness_engineering.md) and
 [Loop Engineering](loop_engineering.md) become things you set up yourself.
 
 ## Introduction to Claude Cowork
+
+> [!IMPORTANT]
+> **🛑 Course 4 of 4: stop here and take it now**
+>
+> **Introduction to Claude Cowork**: Claude working with your files, folders and apps, and how to hand it work in many steps.
+>
+> ⏱️ About two and a half hours · ✅ Required · 🏅 Free course, with a quiz and a badge
+>
+> Open the course, finish it, then come back to this page for the summary.
+>
+> **[Open Introduction to Claude Cowork](https://academy.claude.com/courses/introduction-to-claude-cowork)**
 
 **Claude Cowork** is Claude working directly with your files, folders and apps. It is part of the
 main Claude app. You start the work: you give it a goal, a file or a schedule. Claude makes a plan,

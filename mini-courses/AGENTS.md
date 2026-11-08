@@ -86,6 +86,27 @@ A caption note attaches to an image only. A mermaid fence takes its label from t
 and an italic line after it stays an ordinary paragraph. Still write that line: it is where the
 punchline a mermaid node cannot hold belongs.
 
+## Call-outs
+
+When a module must stop the reader and send them somewhere, write a GitHub alert. It shows as a
+tinted box on GitHub, and the site draws it as a centred card:
+
+```markdown
+> [!IMPORTANT]
+> **🛑 Course 1 of 4: stop here and take it now**
+>
+> **Claude 101**: what it is, in one line.
+>
+> ⏱️ About two and a half hours · ✅ Required
+>
+> **[Open Claude 101](https://example.com)**
+```
+
+The first paragraph is the card's title. A last paragraph that holds only a link becomes the
+button. The five kinds are `NOTE`, `TIP`, `IMPORTANT`, `WARNING` and `CAUTION`; `WARNING` is the
+filled stop banner. The wording is yours, in each language. Raw HTML does not render here, so this
+is the only call-out syntax. Use it sparingly: a card that is everywhere is skipped like any other.
+
 ## How a module gets written
 
 - **Open by connecting, then name the one idea.** What the previous module established and what this

@@ -2,9 +2,11 @@ import { existsSync, readFileSync, readdirSync } from 'node:fs'
 import { join } from 'node:path'
 import { describe, expect, it } from 'vitest'
 import { imageBaseFor } from '@/lib/content/images'
-import { loadAllModules } from '@/lib/content/loader'
+import { TRANSLATED_LANGS, type ReadingLang } from '@/lib/content/languages'
+import { loadAllModules, loadModuleIn } from '@/lib/content/loader'
 import { CONTENT_ROOT } from '@/lib/content/paths'
 import { renderMarkdown } from '@/lib/content/render'
+import { TRACK_IDS } from '@/lib/tracks'
 
 /**
  * The whole corpus, checked against rules rather than against facts.
@@ -51,6 +53,26 @@ describe('every module in the set', () => {
     // sheets cite a repository file that does.
     for (const page of await renderAll()) {
       expect(page.html, page.slug).not.toMatch(/href="(?!https?:)[^"]*\.md"/)
+    }
+  })
+
+  it('leaves no call-out marker on a page, in any language or track', async () => {
+    // A GitHub alert (`> [!IMPORTANT]`) is the call-out syntax (callout.ts). A kind the
+    // renderer does not know, or a marker with a typo in it, is not an error: it falls
+    // through as a quote and prints the marker as text, which nothing else notices.
+    const langs: ReadingLang[] = ['en', ...TRANSLATED_LANGS]
+    for (const module of modules) {
+      for (const track of TRACK_IDS) {
+        for (const lang of langs) {
+          const version = loadModuleIn(module.slug, lang, track)
+          if (!version) continue
+          const { html } = await renderMarkdown(version.body, {
+            imageBase: imageBaseFor(module.category.slug),
+            sheet: module.frontmatter.module,
+          })
+          expect(html, `${module.slug} ${track} ${lang}`).not.toMatch(/\[![A-Za-z]+\]/)
+        }
+      }
     }
   })
 

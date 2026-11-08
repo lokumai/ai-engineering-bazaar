@@ -10,6 +10,7 @@ import { toString as hastToString } from 'hast-util-to-string'
 import type { Element, ElementContent, Root, RootContent, Text } from 'hast'
 import { widthForColumns } from '@/lib/figure/width'
 import type { ChecklistItem } from './checklist'
+import { CALLOUT_MARKER, calloutKindOf } from './callout'
 import { DIAGRAM_HEADING, SERIES_HEADINGS } from './lines'
 import { courseLinkFor, isCourseLink, sheetSource } from './links'
 import { assertNoRawHex, remapMermaidFills } from './mermaid'
@@ -785,6 +786,43 @@ function rehypeFigures(options: RenderOptions) {
 // ---------------------------------------------------------------------------
 
 /**
+ * A GitHub alert (`callout.ts`) becomes a call-out card: the marker is taken off, the first
+ * paragraph is the card's title, and a last paragraph that holds nothing but a link is the
+ * button, drawn with the language's own `bz-btn`. The kind is an attribute, so the
+ * stylesheet decides what each looks like and a new kind needs no change here.
+ *
+ * Returns true when the quote was a call-out, so the pull-rule label logic leaves it alone.
+ */
+function openCallout(quote: Element, first: Element): boolean {
+  const lead = first.children[0]
+  if (lead?.type !== 'text') return false
+  const kind = calloutKindOf(lead.value)
+  if (kind === null) return false
+
+  lead.value = lead.value.replace(CALLOUT_MARKER, '')
+  if (lead.value === '') first.children.shift()
+
+  quote.properties = { ...quote.properties, className: ['bz-quote', 'bz-callout'], 'data-hl-callout': kind }
+  first.properties = { ...first.properties, className: ['bz-callout-title'] }
+
+  const blocks = elementChildren(quote)
+  const last = blocks[blocks.length - 1]
+  if (last !== first && last.tagName === 'p') {
+    const inner = last.children.filter((child) => !isBlank(child))
+    // `**[text](url)**` reads as a bold link on GitHub; the button is the link itself.
+    const only = inner.length === 1 ? inner[0] : undefined
+    const wrapped = isElement(only) && only.tagName === 'strong' ? only.children.filter((child) => !isBlank(child)) : []
+    const link = wrapped.length === 1 ? wrapped[0] : only
+    if (isElement(link) && link.tagName === 'a') {
+      link.properties = { ...link.properties, className: ['bz-btn'] }
+      last.properties = { ...last.properties, className: ['bz-callout-cta'] }
+      last.children = [link]
+    }
+  }
+  return true
+}
+
+/**
  * §6.8 — a blockquote is a pull-rule, not a left bar, and one whose first child
  * is a bold lead-in ending in `:` gets that label lifted into a mono mark above
  * the rule. **MEASURED:** 13 blockquote lines exist in the whole corpus, three
@@ -799,6 +837,8 @@ function rehypeBlockquotes() {
 
       const paragraph = node.children.find(isElement)
       if (!paragraph || paragraph.tagName !== 'p') return
+
+      if (openCallout(node, paragraph)) return
 
       const lead = paragraph.children.find((c) => !isBlank(c))
       if (!isElement(lead) || lead.tagName !== 'strong') return

@@ -2,6 +2,15 @@
 
 [Code Agent'lar](coding_agents_tr.md) modülünde bir coding agent'ı parçalarına ayırdık: AGENTS.md, slash command'lar, MCP, subagent'lar, skill'ler, hook'lar ve plugin'ler. Artık her parçanın ne işe yaradığını biliyorsun. Bu modül ise onları kullanmakla ilgili. Bunu öğrenmenin en iyi yolu, gerçek aracı önünde açıkken işi kendi elinle yaptığın kısa bir kurs.
 
+> [!WARNING]
+> **🛑 DUR. Önce kursları al, sonra buraya dön.**
+>
+> Asıl ders bu sayfada değil. Bu sayfa seni dört ücretsiz kursa yönlendiriyor; öğrenme o kursları yaparken oluyor. Toplam yaklaşık yedi buçuk saat sürüyorlar: Claude 101 ve Introduction to Claude Cowork yaklaşık ikişer buçuk saat, Claude Code 101 yaklaşık bir buçuk saat, Claude Code in Action ise yaklaşık bir saat.
+>
+> ⏱️ Toplam yaklaşık yedi buçuk saat · ✅ Dördü de zorunlu
+>
+> Zamanını ayır, kursları aşağıdaki sırayla al ve bitirince bu sayfaya dön.
+
 ## Bu Kursları Neden Almalısın
 
 Bir agent hakkında okumak ile bir agent'la çalışmak ayrı becerilerdir. Okurken her şey yolunda gider. Çalışırken ise agent bir dosyayı yanlış okur, context'i tükenir ya da yanlış yöne sapar; bunu fark edip onu yeniden doğru yola sokmak sana düşer. Bu kısmı ancak pratik öğretir.
@@ -29,6 +38,17 @@ Claude 101 ile başlamanı öneriyoruz, çünkü diğer üçünün üzerine kuru
 
 ## Claude 101
 
+> [!IMPORTANT]
+> **🛑 Kurs 1 / 4: burada dur ve şimdi al**
+>
+> **Claude 101**: günlük işlerde Claude: ilk sohbetinden project'lere, skill'lere ve derinlemesine araştırmaya.
+>
+> ⏱️ Yaklaşık iki buçuk saat · ✅ Zorunlu · 🏅 Ücretsiz kurs, quiz ve rozetle bitiyor
+>
+> Kursu aç, bitir, sonra bu sayfaya dönüp devam et.
+>
+> **[Kursu aç: Claude 101](https://academy.claude.com/courses/claude-101)**
+
 [Claude 101](https://academy.claude.com/courses/claude-101), Claude'u günlük işlerde kullanmayı öğretiyor. İlk sohbetinle ve daha iyi cevaplar almanın yollarıyla başlıyor. Ardından project'leri, doküman ve tasarım gibi artifact'leri, skill'leri, diğer araçlarına bağlanan connector'ları ve derinlemesine araştırmayı anlatıyor. Sonunda rollere göre kullanım örnekleri ve diğer Claude ürünlerinin kısa bir turu var.
 
 **Kimin için:** Claude'u iş yerinde kullanmaya yeni başlayan herkes ve onu zaten kullanan ama hiç düzenli bir tur almamış olanlar için. Ücretsiz olan da dahil herhangi bir plandaki bir Claude hesabı yeterli; yapay zekâ deneyimi gerekmiyor. Yalnızca Cowork ve Research bölümlerini kendin denemek istersen ücretli bir plan gerekiyor. Yaklaşık iki buçuk saat sürüyor.
@@ -37,6 +57,17 @@ Büyük kısmı [Prompt Engineering](prompt_engineering_tr.md) ve [Context Engin
 
 ## Claude Code 101
 
+> [!IMPORTANT]
+> **🛑 Kurs 2 / 4: burada dur ve şimdi al**
+>
+> **Claude Code 101**: terminalinde yaşayan coding agent Claude Code, kurulumdan subagent'lara ve hook'lara kadar.
+>
+> ⏱️ Yaklaşık bir buçuk saat · ✅ Zorunlu · 🏅 Ücretsiz kurs, quiz ve rozetle bitiyor
+>
+> Kursu aç, bitir, sonra bu sayfaya dönüp devam et.
+>
+> **[Kursu aç: Claude Code 101](https://academy.claude.com/courses/claude-code-101)**
+
 [Claude Code 101](https://academy.claude.com/courses/claude-code-101), terminalinde yaşayan coding agent olan Claude Code'u öğretiyor. Onu kurup ilk prompt'unu yazıyorsun. Sonra günlük iş akışını öğreniyorsun: keşfet, planla, kodla ve commit et. Ardından context'i yönetmeyi ve yazdığı kodu review etmeyi öğreniyorsun. Son kısım agent'ı CLAUDE.md, subagent'lar, skill'ler, MCP ve hook'larla kendine göre ayarlamakla ilgili.
 
 **Kimin için:** daha önce bir coding agent kullanmamış geliştiriciler için, yeni olsun deneyimli olsun. Bir kod editöründe ve komut satırında rahat olman, bir de ücretli bir Claude planına ya da bir API key'e sahip olman gerekiyor. Yaklaşık bir buçuk saat sürüyor.
@@ -44,6 +75,17 @@ Büyük kısmı [Prompt Engineering](prompt_engineering_tr.md) ve [Context Engin
 Çoğunu tanıyacaksın: bu, ellerin klavyedeyken [Code Agent'lar](coding_agents_tr.md) modülünün ta kendisi.
 
 ## Claude Code in Action
+
+> [!IMPORTANT]
+> **🛑 Kurs 3 / 4: burada dur ve şimdi al**
+>
+> **Claude Code in Action**: daha az gözetimle çalışan ama yine de güvenebileceğin uzun Claude Code oturumları.
+>
+> ⏱️ Yaklaşık bir saat · ✅ Zorunlu · 🏅 Ücretsiz kurs, quiz ve rozetle bitiyor
+>
+> Kursu aç, bitir, sonra bu sayfaya dönüp devam et.
+>
+> **[Kursu aç: Claude Code in Action](https://academy.claude.com/courses/claude-code-in-action)**
 
 [Claude Code in action](https://academy.claude.com/courses/claude-code-in-action) bir sonraki adım: daha az gözetimle çalışan ama yine de güvenebileceğin uzun oturumlar. Dört konuyu kapsıyor:
 
@@ -57,6 +99,17 @@ Büyük kısmı [Prompt Engineering](prompt_engineering_tr.md) ve [Context Engin
 Bu kurs, [Harness Engineering](harness_engineering_tr.md) ve [Loop Engineering](loop_engineering_tr.md) konularının kendi elinle kurduğun şeylere dönüştüğü yer.
 
 ## Introduction to Claude Cowork
+
+> [!IMPORTANT]
+> **🛑 Kurs 4 / 4: burada dur ve şimdi al**
+>
+> **Introduction to Claude Cowork**: Claude'un dosyaların, klasörlerin ve uygulamalarınla çalışması ve ona çok adımlı işleri nasıl devredeceğin.
+>
+> ⏱️ Yaklaşık iki buçuk saat · ✅ Zorunlu · 🏅 Ücretsiz kurs, quiz ve rozetle bitiyor
+>
+> Kursu aç, bitir, sonra özet için bu sayfaya dön.
+>
+> **[Kursu aç: Introduction to Claude Cowork](https://academy.claude.com/courses/introduction-to-claude-cowork)**
 
 **Claude Cowork**, Claude'un doğrudan senin dosyaların, klasörlerin ve uygulamalarınla çalışmasıdır ve ana Claude uygulamasının bir parçasıdır. İşi sen başlatırsın: ona bir hedef, bir dosya ya da bir zamanlama verirsin. Claude bir plan yapar, bunu senin bilgisayarında uygular ve sen de yol boyunca onu yönlendirirsin. Sonuç yalnızca sohbetteki bir cevap değil; bir rapor, bir tablo ya da düzenlenmiş bir klasör gibi gerçek bir çıktıdır.
 

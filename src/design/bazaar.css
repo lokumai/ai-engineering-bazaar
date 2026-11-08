@@ -1478,7 +1478,11 @@
     --color-line-strong: var(--color-slab-arrow);
     --color-on-surface: var(--color-slab-on-raised);
     --color-primary: var(--color-slab-info);
-    --color-category-5: var(--color-slab-fault);
+    /* The fault edge, lifted 25% towards the slab's ink. A dark theme's frame is now Mermaid's
+       own #333, lighter than the slab's ground this value was tuned on, and `slab-fault` on it
+       measured 2.63:1, under the 3:1 a graphic owes. Mixed from two tokens the language already
+       has, so no colour is invented: 3.78:1 on #333, measured by `mermaid.spec.ts`. */
+    --color-category-5: color-mix(in srgb, var(--color-slab-fault) 75%, var(--color-slab-on-surface));
     /* DESIGN.md's dark-theme rule, applied to the one component that is dark
        in both themes: white on the lifted accent measures 3.19:1 and fails a
        text floor, while the ground on it reaches 5.15:1. So a filled accent
@@ -1575,10 +1579,12 @@
 
      THE DIAGRAMS ARE NOT A PALETTE ANY MORE (2026-11-08). The reader chooses one
      of Mermaid's own themes (`src/lib/reading/diagram-themes.ts`), Mermaid paints
-     the drawing, and the only thing this file decides is the FRAME's ground: a
-     light theme's frame takes Paper's values and a dark theme's takes Night's,
-     chosen by the `data-hl-diagram` stamp. So the Paper rules below serve two
-     things, the code's Paper and the light diagrams' frame, and Blueprint serves
+     the drawing, and the only thing this file decides is the FRAME's ink: the
+     frame's GROUND is the chosen theme's own Mermaid background, which
+     `diagram-themes.ts` supplies as `--bz-diagram-ground` (below), while a light
+     theme's tools and semantic hues take Paper's values and a dark theme's take
+     Night's, chosen by the `data-hl-diagram` stamp. So the Paper rules below serve
+     two things, the code's Paper and the light diagrams' ink, and Blueprint serves
      the code alone.
 
      **No new colour, and every value fixed in both themes.** Each palette is
@@ -1608,13 +1614,28 @@
      strip sits over the frame and has to take the frame's ink. */
   html:not(:is([data-hl-diagram="dark"], [data-hl-diagram="redux-dark"], [data-hl-diagram="redux-dark-color"], [data-hl-diagram="neo-dark"])) :is(.bz-figure, .bz-figure-tools, .bz-expand-view),
   html[data-hl-code="paper"] .bz-slab {
-    --color-slab-surface: var(--color-bar-chip);
     --color-slab-surface-raised: var(--color-on-bar);
     --color-slab-on-surface: var(--color-on-bar-chip);
     --color-slab-on-surface-muted: var(--color-slab-arrow);
     --color-slab-line: var(--color-band-b);
     --color-slab-line-raised: var(--color-band-b);
     --color-slab-on-raised: var(--color-on-bar-chip);
+  }
+
+  html[data-hl-code="paper"] .bz-slab { --color-slab-surface: var(--color-bar-chip); }
+
+  /* THE FRAME'S GROUND is the chosen theme's own Mermaid background, not a ground of the site's.
+     The author, 2026-11-08: each theme should sit on the background Mermaid itself draws it on
+     (white for the light themes, its dark grey for the dark ones), as mermaid.live and the docs
+     show it. The value is Mermaid's and is theme data, so it is not written here:
+     `diagram-themes.ts` emits `--bz-diagram-ground` per `data-hl-diagram` stamp into `<head>`,
+     and this reads it. The fallback is Paper's ground, for a page with no stylesheet from the
+     layout. The frame, the tool strip over it and the opened view take the one value, so the
+     strip never shows as a patch on the frame.
+     What the tone still decides is the ink and the semantic hues (the two rules above and below),
+     which were measured on the site's grounds and are re-measured on these by `mermaid.spec.ts`. */
+  :is(.bz-figure, .bz-figure-tools, .bz-expand-view) {
+    --color-slab-surface: var(--bz-diagram-ground, var(--color-bar-chip));
   }
 
   html[data-hl-code="blueprint"] .bz-slab {
@@ -1645,7 +1666,6 @@
      A light theme takes Paper's, so `fault`, `verify`, `info` and `caution` are
      the hues that clear 3:1 on the light frame. */
   html:not(:is([data-hl-diagram="dark"], [data-hl-diagram="redux-dark"], [data-hl-diagram="redux-dark-color"], [data-hl-diagram="neo-dark"])) :is(.bz-figure, .bz-expand-view) {
-    --color-surface: var(--color-bar-chip);
     --color-surface-raised: var(--color-on-bar);
     --color-line-strong: var(--color-slab-arrow);
     --color-on-surface: var(--color-on-bar-chip);

@@ -87,6 +87,31 @@ function el(tagName: string, properties: Element['properties'], children: Elemen
   return { type: 'element', tagName, properties, children }
 }
 
+/**
+ * The copy control a code block and a diagram share: the same button, glyphs, label and live
+ * word. `Affordances` copies whatever the control sits in (a block's `<pre>`, a diagram's
+ * Mermaid source) and swaps the glyph to the check for `COPIED_MS`; the control is named by
+ * `aria-label` because an icon swap is not something a screen reader hears, so what it says
+ * after a press goes through the hidden live word inside it.
+ */
+export function copyControl(): Element {
+  return el(
+    'button',
+    {
+      type: 'button',
+      className: ['bz-tool', 'bz-copy'],
+      'data-hl-copy': '',
+      'aria-label': 'Copy code',
+      title: 'Copy code',
+    },
+    [
+      icon('copy', 16, 'bz-copy-idle'),
+      icon('check', 16, 'bz-copy-done'),
+      el('span', { className: ['sr-only'], 'aria-live': 'polite', 'data-hl-copy-said': '' }),
+    ],
+  )
+}
+
 /** The menu's own markup, which the two menus share: a disclosure, a named group of plain buttons. */
 function optionMenu(subject: 'figures' | PaletteSubject, label: string, items: Element[]): Element {
   return el('details', { className: ['bz-optmenu'], 'data-hl-options': subject }, [
@@ -120,9 +145,9 @@ export function paletteMenu(subject: PaletteSubject): Element {
  * of the list is dark before opening one. Each group is a named `group` of plain buttons, so
  * a screen reader says "Dark themes" on entering it, and the heading is not a stop of its
  * own. No ids: the menu is emitted into every figure, and an id would repeat on the page.
- * Each row's swatch is the frame's ground, Paper's for a light theme and Night's for a dark
- * one, not what Mermaid will paint on it, because the site has no business holding
- * Mermaid's colours.
+ * Each row's swatch marks the group's tone, Paper's for a light theme and Night's for a dark
+ * one, and is not the theme's own ground: the site's swatch tokens are not Mermaid's colours,
+ * which live in `diagram-themes.ts` alone.
  */
 export function diagramThemeMenu(): Element {
   const group = (tone: 'light' | 'dark', heading: string): Element => el(

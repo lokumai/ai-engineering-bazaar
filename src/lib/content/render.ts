@@ -16,7 +16,7 @@ import { courseLinkFor, isCourseLink, sheetSource } from './links'
 import { isSafeHref } from './safe-href'
 import { assertNoRawHex, remapMermaidFills } from './mermaid'
 import { CODE_TOKEN_ROLES, codeThemes, readDesignToken, toHex } from './code-theme'
-import { diagramThemeMenu, icon, paletteMenu } from './tools'
+import { copyControl, diagramThemeMenu, icon, paletteMenu } from './tools'
 
 export interface TocEntry {
   id: string
@@ -742,6 +742,9 @@ function rehypeFigures(options: RenderOptions) {
             */
             element('div', { className: ['bz-figure-tools'], lang: 'en' }, [
               diagramThemeMenu(),
+              /* The same copy control the code blocks carry (`tools.ts`), beside EXPAND: it
+                 copies the diagram's Mermaid source, not the drawing. */
+              copyControl(),
               element(
                 'button',
                 {
@@ -1161,21 +1164,7 @@ function rehypeCodeBlocks() {
                icon swap is not something a screen reader hears. */
             element('div', { className: ['bz-slab-tools'], lang: 'en' }, [
               paletteMenu('code'),
-              element(
-                'button',
-                {
-                  type: 'button',
-                  className: ['bz-tool', 'bz-slab-copy'],
-                  'data-hl-copy': '',
-                  'aria-label': 'Copy code',
-                  title: 'Copy code',
-                },
-                [
-                  icon('copy', 16, 'bz-copy-idle'),
-                  icon('check', 16, 'bz-copy-done'),
-                  element('span', { className: ['sr-only'], 'aria-live': 'polite', 'data-hl-copy-said': '' }),
-                ],
-              ),
+              copyControl(),
             ]),
           ]),
           pre,

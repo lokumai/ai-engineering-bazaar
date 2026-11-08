@@ -259,9 +259,9 @@
      word into the hidden live region beside them. */
   .bz-copy-done { display: none; }
 
-  .bz-slab-copy[data-hl-copied] .bz-copy-idle { display: none; }
+  .bz-copy[data-hl-copied] .bz-copy-idle { display: none; }
 
-  .bz-slab-copy[data-hl-copied] .bz-copy-done { display: block; }
+  .bz-copy[data-hl-copied] .bz-copy-done { display: block; }
 
   /* ---------------------------------------------------------------------------
      §10.4'S TOUCH FLOOR, AS A HIT AREA RATHER THAN A BIGGER BUTTON.

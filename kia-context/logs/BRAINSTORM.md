@@ -227,6 +227,24 @@ dark variant, would get something else; the frame instead takes a light or a dar
 chosen theme's tone. A first-time reader's frame is therefore light where the shell mockup draws it
 dark, a deviation recorded in DESIGN.md. Code highlighting keeps its own three palettes, now decoupled.
 
+**Revised 2026-11-08: each theme's own Mermaid background.** The author: the frame's ground should be
+the one Mermaid itself shows for the theme, not the site's Paper or Night. Every one of the ten themes
+defines a `background` theme variable (read off the installed Mermaid 11.17.2 with
+`mermaidAPI.getConfig().themeVariables.background` after `initialize`): white for `default`,
+`redux-color`, `redux`, `neutral`, `forest` and `neo`, and `#333` for `redux-dark-color`, `redux-dark`,
+`dark` and `neo-dark`. They are the library's colours, so they sit in the theme table
+(`diagram-themes.ts`) and reach CSS as `--bz-diagram-ground`, one rule per `data-hl-diagram` stamp, in a
+`<style>` the layout emits; `bazaar.css` names no value, which `transcription.test.ts` would refuse. A
+unit test compares the table to the installed library. **Measured against the existing gates, on the new
+grounds:** `neo-dark`'s red gradient end fell to 2.77:1 on `#333` (now `gradientStop: #ff3366`, 3.56:1),
+and the semantic fault edge to 2.63:1 (now lifted 25% towards the slab ink with `color-mix`, 3.78:1);
+every other theme clears the floors as Mermaid draws it. **Added the same day:** a diagram carries the
+code blocks' copy control beside EXPAND, copying the Mermaid source the island draws from. **Rejected:**
+carrying the author's raw source, `fill:#…` lines included, in a second attribute so the copy matches the
+markdown byte for byte, because §6.10 B3 forbids a colour literal anywhere in the emitted HTML and the
+site does not draw those fills either; the one difference is that a diagram with a `style X fill:` line
+copies it as the `classDef`/`class` pair the build turned it into.
+
 ### D108 · What a For Everyone module is: the same engineering, as a story, and shorter — 2026-11-08
 
 **Asked by the author**, before the non-technical versions were written: *"Someone would think that if

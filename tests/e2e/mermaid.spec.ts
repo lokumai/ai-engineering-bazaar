@@ -326,3 +326,56 @@ test(`draws a ${kind} in the ${theme} theme as a drawing, not as its source`, as
     `no ${kind} among the drawings`,
   ).toBeVisible()
 })
+
+/**
+ * Each theme sits on its own Mermaid background (D107, revised 2026-11-08): the frame, the
+ * tool strip over it and the opened view all paint the value `diagram-themes.ts` carries for
+ * the chosen theme, on a light site and a dark one, and the unstamped page is the default's.
+ * `diagram-themes.test.ts` holds that value to the installed Mermaid's own; this holds the
+ * page to the value. Colours are compared as the browser resolves them, so `white` and
+ * `#ffffff` are the same ground.
+ */
+const resolved = (page: import('@playwright/test').Page, colour: string) =>
+  page.evaluate((value) => {
+    const probe = document.createElement('div')
+    probe.style.color = value
+    document.body.append(probe)
+    const out = getComputedStyle(probe).color
+    probe.remove()
+    return out
+  }, colour)
+
+test('an unchosen page draws every diagram on the default theme\'s own background', async ({ page }) => {
+  await page.goto(WITH_FIGURES)
+  await figuresDrawn(page)
+  const expected = await resolved(page, DIAGRAM_THEMES.find((theme) => theme.id === 'default')!.background)
+  const grounds = await page.locator('.bz-figure').evaluateAll((nodes) => nodes.map((node) => getComputedStyle(node).backgroundColor))
+  expect(grounds.length).toBeGreaterThan(0)
+  for (const ground of grounds) expect(ground).toBe(expected)
+})
+
+for (const diagramTheme of DIAGRAM_THEMES)
+test(`the ${diagramTheme.id} theme's frame, tools and expanded view are its own Mermaid background, on both sites`, async ({ page }) => {
+  test.setTimeout(60_000)
+  await page.goto(WITH_FIGURES)
+  await chooseTheme(page, diagramTheme.id)
+  await figuresDrawn(page)
+  const expected = await resolved(page, diagramTheme.background)
+
+  for (const site of ['light', 'dark'] as const) {
+    await useTheme(page, site)
+    const frame = page.locator('.bz-figure').first()
+    expect(await frame.evaluate((node) => getComputedStyle(node).backgroundColor), `${diagramTheme.id}/${site}: frame`).toBe(expected)
+    expect(
+      await page.locator('.bz-figure-tools').first().evaluate((node) => getComputedStyle(node).backgroundColor),
+      `${diagramTheme.id}/${site}: tools`,
+    ).toBe(expected)
+  }
+
+  await page.locator('[data-hl-expand]').first().click()
+  await expect(page.locator('.bz-expand-view')).toBeVisible()
+  expect(
+    await page.locator('.bz-expand-view').evaluate((node) => getComputedStyle(node).backgroundColor),
+    `${diagramTheme.id}: expanded view`,
+  ).toBe(expected)
+})

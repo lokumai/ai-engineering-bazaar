@@ -5,7 +5,7 @@ import { COPIED_MS, overflowState } from '@/lib/affordance'
 
 /**
  * The two behaviours §6 asks for that CSS cannot express: the `COPY` control on
- * a code block (§6.7) and the right-edge overflow fade on anything that scrolls
+ * a code block (§6.7) and on a diagram (which copies its Mermaid source), and the right-edge overflow fade on anything that scrolls
  * sideways (§6.5).
  *
  * Both are enhancements on markup the build already emitted, so this mounts
@@ -28,12 +28,26 @@ const COPY = '[data-hl-copy]'
 /** One enhancer per document: two would copy a block twice on a single click. */
 let instances = 0
 
-async function copyBlock(button: HTMLButtonElement): Promise<void> {
+/**
+ * What the control copies: a code block's text, or a diagram's Mermaid source. Never the
+ * drawing, which is an SVG nobody can paste into a Mermaid editor. The diagram's source is
+ * the one the island draws from, which is the markdown's own text except where the build
+ * turned a `style X fill:#…` line into a semantic class (`mermaid.ts`, B2): the pastel hex
+ * is the one thing that does not travel, because B3 forbids a colour literal anywhere in
+ * the emitted HTML, an attribute included, and the site does not draw it either.
+ */
+function textToCopy(button: HTMLElement): string | null {
   const code = button.closest('.bz-slab')?.querySelector('pre')
-  if (!code) return
+  if (code) return code.textContent ?? ''
+  return button.closest('.bz-fig')?.querySelector<HTMLElement>('.mermaid-source[data-mermaid]')?.dataset.mermaid ?? null
+}
+
+async function copyBlock(button: HTMLButtonElement): Promise<void> {
+  const text = textToCopy(button)
+  if (text === null) return
 
   try {
-    await navigator.clipboard.writeText(code.textContent ?? '')
+    await navigator.clipboard.writeText(text)
   } catch {
     // No clipboard (insecure context, or the user refused). Say nothing rather
     // than claim a copy that did not happen.

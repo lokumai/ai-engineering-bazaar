@@ -6,6 +6,7 @@ import { translatedSlugs } from '@/components/sheet/ModuleSheet'
 import { curriculumFacts } from '@/lib/content/facts'
 import { RecordStateSync } from '@/components/record/RecordStateSync'
 import { recordBootScript } from '@/lib/record/boot'
+import { diagramGroundCss } from '@/lib/reading/diagram-themes'
 import { SITE_DESCRIPTION, SITE_NAME } from '@/lib/site'
 import { THEME_BOOT_SCRIPT } from '@/lib/theme'
 import './globals.css'
@@ -78,6 +79,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           one element two boot scripts legitimately mutate before React sees it.
         */}
         <script dangerouslySetInnerHTML={{ __html: recordBoot }} />
+        {/*
+          Each diagram theme's own Mermaid background, as one custom property per
+          `data-hl-diagram` stamp (`diagram-themes.ts`). Generated from the theme table
+          because the value is Mermaid's and the language's stylesheet may not hold a
+          colour the mockups do not; `bazaar.css` reads the property and names no value.
+        */}
+        <style dangerouslySetInnerHTML={{ __html: diagramGroundCss() }} />
       </head>
       <body className="flex min-h-screen flex-col">
         <a href="#main" className="skip-link">

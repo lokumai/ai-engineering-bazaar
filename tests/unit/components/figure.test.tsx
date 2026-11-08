@@ -1,3 +1,5 @@
+import { readFileSync } from 'node:fs'
+import { join } from 'node:path'
 import { renderToStaticMarkup } from 'react-dom/server'
 import { describe, expect, it } from 'vitest'
 import { FIGURE_SELECTORS, MermaidFigure } from '@/components/figure/MermaidFigure'
@@ -46,5 +48,28 @@ describe('the contract with render.ts', () => {
 
     expect(source).toContain('classDef fault')
     expect(source).not.toMatch(/#[0-9A-Fa-f]{3,8}\b/)
+  })
+
+  it('gives every diagram the code blocks\' copy control, in its tool strip beside EXPAND', async () => {
+    const { html } = await renderMarkdown(`${FENCE}\n\n\`\`\`python\nprint(1)\n\`\`\``, { sheet: 13 })
+    const strip = /<div class="bz-figure-tools"[^>]*>([\s\S]*?)<figcaption/.exec(html)?.[1] ?? ''
+    const controls = (markup: string) =>
+      /<button type="button" class="bz-tool bz-copy" data-hl-copy="" aria-label="Copy code" title="Copy code">[\s\S]*?<\/button>/.exec(markup)?.[0]
+
+    const onDiagram = controls(strip)
+    const onCode = controls(html.slice(html.indexOf('class="bz-slab"')))
+    expect(onDiagram, 'no copy control in the diagram strip').toBeDefined()
+    // One component: the diagram's is byte for byte the code block's.
+    expect(onDiagram).toBe(onCode)
+    expect(strip.indexOf('data-hl-copy')).toBeLessThan(strip.indexOf('data-hl-expand'))
+    expect(strip.indexOf('data-hl-copy')).toBeGreaterThan(strip.indexOf('data-hl-options="figures"'))
+  })
+
+  it('has the copy control read the Mermaid source the island draws from, and nothing else', () => {
+    const source = readFileSync(join(process.cwd(), 'src/components/shell/Affordances.tsx'), 'utf8')
+    expect(source).toContain(".mermaid-source[data-mermaid]")
+    expect(source).toContain('dataset.mermaid')
+    // The drawing is never the text: the SVG is not read.
+    expect(source).not.toMatch(/outerHTML|innerHTML|querySelector\(['"]svg/)
   })
 })

@@ -1,10 +1,13 @@
 import { readFileSync, readdirSync } from 'node:fs'
 import { join } from 'node:path'
+import mermaid from 'mermaid'
 import { describe, expect, it } from 'vitest'
 import {
   DEFAULT_DIAGRAM_THEME,
+  DIAGRAM_GROUND_PROPERTY,
   DIAGRAM_THEMES,
   DIAGRAM_THEME_ATTRIBUTE,
+  diagramGroundCss,
   diagramThemeOf,
   isDiagramThemeId,
 } from '@/lib/reading/diagram-themes'
@@ -98,3 +101,40 @@ describe('the stylesheet', () => {
     }
   })
 })
+
+describe('the frame\'s ground', () => {
+  it('is Mermaid\'s own background for every theme, asked of the installed Mermaid', () => {
+    for (const theme of DIAGRAM_THEMES) {
+      mermaid.initialize({
+        startOnLoad: false,
+        theme: theme.id,
+        themeVariables: theme.darkMode ? { darkMode: true } : {},
+      })
+      const own = mermaid.mermaidAPI.getConfig().themeVariables?.background
+      expect(own, `${theme.id}: Mermaid defines no background`).toBeTruthy()
+      expect(theme.background, theme.id).toBe(own)
+    }
+  })
+
+  it('is written once per theme as a custom property, and the unstamped page is the default theme\'s', () => {
+    const generated = diagramGroundCss()
+    for (const theme of DIAGRAM_THEMES) {
+      expect(generated, theme.id).toContain(
+        `html[${DIAGRAM_THEME_ATTRIBUTE}="${theme.id}"]{${DIAGRAM_GROUND_PROPERTY}:${theme.background}}`,
+      )
+    }
+    const fallback = DIAGRAM_THEMES.find((theme) => theme.id === DEFAULT_DIAGRAM_THEME)!.background
+    expect(generated).toContain(`:root{${DIAGRAM_GROUND_PROPERTY}:${fallback}}`)
+  })
+
+  it('is read by the language and written in no stylesheet: the colour is Mermaid\'s, not the site\'s', () => {
+    expect(css).toContain(`var(${DIAGRAM_GROUND_PROPERTY}`)
+    const surfaces = [css, readFileSync(join(SRC, 'app/prose.css'), 'utf8'), readFileSync(join(SRC, 'app/derived.css'), 'utf8')]
+    for (const sheet of surfaces) {
+      expect(sheet).not.toContain(`${DIAGRAM_GROUND_PROPERTY}:`)
+    }
+    // The frame paints the property through the slab surface token, whichever tone the theme has.
+    expect(css).toMatch(/:is\(\.bz-figure, \.bz-figure-tools, \.bz-expand-view\) \{\s*--color-slab-surface: var\(--bz-diagram-ground/)
+  })
+})
+

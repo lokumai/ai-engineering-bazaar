@@ -15,9 +15,18 @@
  * The price is that a theme change re-renders the diagrams, which the old token switch did
  * not need; `MermaidFigure` does it, in the frame the reader chooses.
  *
+ * **Each theme sits on its own Mermaid background** (revised 2026-11-08, D107). The first
+ * version gave a light theme the site's Paper ground and a dark theme its Night ground, and
+ * the author said that is wrong: a theme should look the way Mermaid itself shows it. So each
+ * theme carries Mermaid's own `background` (white for the light ones, `#333` for the dark
+ * ones, the value `themeVariables.background` holds), and `diagramGroundCss` writes it as a
+ * custom property per theme, which the frame, its tools and the expand view paint. The
+ * values are theme data and so live here, as the tone does: the stylesheets may not hold a
+ * colour the mockups do not, and a Mermaid colour is not one of the site's.
+ *
  * **The reader's pick applies as it is, on a light site and on a dark one.** The figure is
- * a frame with its own ground, as it always was, so each theme carries a `tone`, and the
- * frame takes a light ground for a light theme and a dark one for a dark theme. Rejected:
+ * a frame with its own ground, as it always was, so each theme carries a `tone`, which picks
+ * the semantic edge hues and the ink of the tools over the ground. Rejected:
  * pairing a light theme with its dark variant when the site is dark. A reader who picked
  * `forest` would be given `dark` on one page and `forest` on the next, from a switch that is
  * somewhere else, and `forest` has no dark variant to pair with in the first place. The
@@ -49,8 +58,16 @@ export interface DiagramTheme {
   id: DiagramThemeId
   /** The words in the menu. */
   name: string
-  /** Which ground the frame takes. A light theme on a dark ground is unreadable, and the reverse. */
+  /** Whether the theme is drawn for a light ground or a dark one: it picks the semantic edge hues and the tools' ink. */
   tone: 'light' | 'dark'
+  /**
+   * The ground the frame takes: Mermaid's own `background` for this theme, written as Mermaid
+   * writes it (`white` and `#ffffff` are both in its source). It is what
+   * `mermaid.mermaidAPI.getConfig().themeVariables.background` answers after `initialize` with
+   * the theme, and a unit test compares the two, so a Mermaid release that moves a theme's
+   * ground fails there instead of leaving the frame on the old one.
+   */
+  background: string
   /** Mermaid's `look`, for the themes that are paired with one. */
   look?: 'neo'
   /** Mermaid's `darkMode` theme variable, which the dark themes are written for. */
@@ -65,19 +82,20 @@ export interface DiagramTheme {
 }
 
 export const DIAGRAM_THEMES: readonly DiagramTheme[] = [
-  { id: 'default', name: 'Default', tone: 'light' },
-  { id: 'redux-color', name: 'Redux color', tone: 'light' },
-  { id: 'redux-dark-color', name: 'Redux dark color', tone: 'dark', darkMode: true },
-  { id: 'redux', name: 'Redux', tone: 'light' },
-  { id: 'redux-dark', name: 'Redux dark', tone: 'dark', darkMode: true },
+  { id: 'default', name: 'Default', tone: 'light', background: 'white' },
+  { id: 'redux-color', name: 'Redux color', tone: 'light', background: '#ffffff' },
+  { id: 'redux-dark-color', name: 'Redux dark color', tone: 'dark', background: '#333', darkMode: true },
+  { id: 'redux', name: 'Redux', tone: 'light', background: '#ffffff' },
+  { id: 'redux-dark', name: 'Redux dark', tone: 'dark', background: '#333', darkMode: true },
   // A node's edge was 2.46:1 on its own fill (#999999 on #eeeeee); #767676 makes it 3.9:1.
-  { id: 'neutral', name: 'Neutral', tone: 'light', variables: { nodeBorder: '#767676' } },
+  { id: 'neutral', name: 'Neutral', tone: 'light', background: '#ffffff', variables: { nodeBorder: '#767676' } },
   // An edge label was 4.43:1 (#cccccc on #585858); on #444444 it is 6.1:1.
-  { id: 'dark', name: 'Dark', tone: 'dark', darkMode: true, variables: { edgeLabelBackground: '#444444' } },
-  { id: 'forest', name: 'Forest', tone: 'light' },
-  { id: 'neo', name: 'Neo', tone: 'light', look: 'neo' },
+  { id: 'dark', name: 'Dark', tone: 'dark', background: '#333', darkMode: true, variables: { edgeLabelBackground: '#444444' } },
+  { id: 'forest', name: 'Forest', tone: 'light', background: 'white' },
+  { id: 'neo', name: 'Neo', tone: 'light', background: '#ffffff', look: 'neo' },
   // The edge's blue end was 2.25:1 on a node's fill (#0042eb on #2a2020); #4d7dff makes it 4.3:1.
-  { id: 'neo-dark', name: 'Neo dark', tone: 'dark', look: 'neo', darkMode: true, variables: { gradientStart: '#4d7dff' } },
+  // Its red end was 2.77:1 on Mermaid's own ground (#eb0042 on #333); #ff3366 makes it 3.56:1.
+  { id: 'neo-dark', name: 'Neo dark', tone: 'dark', background: '#333', look: 'neo', darkMode: true, variables: { gradientStart: '#4d7dff', gradientStop: '#ff3366' } },
 ]
 
 /** What a reader who has never chosen gets: Mermaid's own default, everywhere. */
@@ -96,4 +114,24 @@ export function isDiagramThemeId(value: unknown): value is DiagramThemeId {
 export function diagramThemeOf(value: unknown): DiagramTheme {
   return DIAGRAM_THEMES.find((theme) => theme.id === value)
     ?? DIAGRAM_THEMES.find((theme) => theme.id === DEFAULT_DIAGRAM_THEME)!
+}
+
+/** The custom property the frame, its tools and the expand view paint their ground from. */
+export const DIAGRAM_GROUND_PROPERTY = '--bz-diagram-ground'
+
+/**
+ * The stylesheet that gives the property its value per theme, emitted into `<head>` by the
+ * layout. It is generated from the table so a theme's ground is written once, and it is plain
+ * CSS keyed on the `data-hl-diagram` stamp, so a reader who chose a theme gets its ground in
+ * the first frame with no script of its own (channel A: `boot.ts` already stamps the
+ * attribute). The unstamped page is the default theme.
+ */
+export function diagramGroundCss(): string {
+  const root = diagramThemeOf(DEFAULT_DIAGRAM_THEME)
+  return [
+    `:root{${DIAGRAM_GROUND_PROPERTY}:${root.background}}`,
+    ...DIAGRAM_THEMES.map(
+      (theme) => `html[${DIAGRAM_THEME_ATTRIBUTE}="${theme.id}"]{${DIAGRAM_GROUND_PROPERTY}:${theme.background}}`,
+    ),
+  ].join('\n')
 }

@@ -72,12 +72,16 @@ test('a Persian page searches its own language first, and pressing English narro
   await page.goto(persian)
   await page.keyboard.press('Control+k')
   await field(page).fill(PERSIAN!.frontmatter.title)
-  await expect(results(page).first()).toHaveAttribute('href', persian)
+  // Its own language first. The page itself need not top the list: a module's For Everyone
+  // version shares its title, and a shut filter searches both tracks (D104).
+  await expect(results(page).first()).toHaveAttribute('lang', 'fa')
+  await expect(hit(page, persian)).toBeVisible()
   await openFilters(page)
   await chip(page, 'English').click()
   await expect(hit(page, persian)).toHaveCount(0)
   await chip(page, 'English').click()
-  await expect(results(page).first()).toHaveAttribute('href', persian)
+  await expect(results(page).first()).toHaveAttribute('lang', 'fa')
+  await expect(hit(page, persian)).toBeVisible()
 })
 
 /* ---- D103/D104: the filters behind a disclosure, and the bar on each result ---- */
@@ -207,7 +211,7 @@ test('the language chip narrows to one language, and a second press widens it ag
   await chip(page, 'English').click()
   await expect(hit(page, persian)).toHaveCount(0)
   await chip(page, 'فارسی').click()
-  await expect(results(page).first()).toHaveAttribute('href', persian)
+  await expect(hit(page, persian)).toBeVisible()
   await chip(page, 'English').click()
   await expect(chip(page, 'English')).toHaveAttribute('aria-pressed', 'false')
   await expect(results(page).first()).toHaveAttribute('lang', 'fa')

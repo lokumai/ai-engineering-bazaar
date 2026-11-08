@@ -41,15 +41,13 @@ import {
   sheetPath,
 } from '@/lib/content/curriculum'
 import { moduleGraph } from '@/lib/content/edges'
-import { imageBaseFor } from '@/lib/content/images'
 import { railLevels } from '@/lib/content/rail'
 import { type CourseModule, loadAllModules, loadModuleIn } from '@/lib/content/loader'
-import { quizFor } from '@/lib/content/quiz'
-import { renderMarkdown } from '@/lib/content/render'
+import { moduleRenderInput } from '@/lib/content/module-render'
 import { href } from '@/lib/url'
 import { type Track, catalogRoute, moduleRoute } from '@/lib/tracks'
 import Link from 'next/link'
-import { scheduleOfParts, writtenSections, summarySentence } from '@/lib/content/schedule'
+import { summarySentence } from '@/lib/content/schedule'
 import { sheetFacts, sheetLabel } from '@/lib/content/title-block'
 import {
   type ReadingLang,
@@ -58,51 +56,6 @@ import {
   dirOf,
   langAttr,
 } from '@/lib/content/languages'
-
-/**
- * M19 — keep a Turkish reader in Turkish when they follow a cross-reference.
- *
- * `rehypeCourseLinks` resolves `llms_tr.md` to a route, and the route it
- * resolves to is the ENGLISH one. **MEASURED on the built tree before this
- * existed: all 121 cross-references in the corpus landed in English**, so every
- * Turkish page was a one-way door — and nothing failed, because every one of
- * those links resolved perfectly.
- *
- * **It only redirects where there IS a Turkish address.** A module with no
- * usable translation has no `/tr/` page (`generateStaticParams` does not emit
- * one), so a link to it stays English rather than becoming a 404 — a reader
- * sent to the English text of a module nobody translated is told nothing but is
- * also promised nothing, and a 404 would be worse on both counts.
- *
- * Built here rather than in `render.ts` because answering "does this module
- * have a translation" is the loader's knowledge, and `render.ts` may not import
- * the loader — the module page already does and the other direction is a cycle.
- */
-function routeMapFor(lang: TranslatedLang): (route: string) => string {
-  const translated = new Set(
-    loadAllModules()
-      .filter((sheet) => sheet.translations[lang] !== null)
-      .map((sheet) => `/courses/${sheet.slug}/`),
-  )
-  return (route) => (translated.has(route) ? `/${lang}${route}` : route)
-}
-
-/**
- * D91 — the same rule for a For Everyone page: a link to a module goes to its
- * For Everyone page in this language where one is written, and otherwise to the
- * For Engineers page the plain map above would choose. A reader is never sent to
- * a page that does not exist.
- */
-function everyoneRouteMap(lang: ReadingLang): (route: string) => string {
-  const written = new Map(
-    loadAllModules()
-      .filter((sheet) => sheet.everyone !== null
-        && (lang === 'en' || sheet.everyone.translations[lang] !== null))
-      .map((sheet) => [`/courses/${sheet.slug}/`, moduleRoute(sheet.slug, 'everyone', lang)]),
-  )
-  const plain = lang === 'en' ? (route: string) => route : routeMapFor(lang)
-  return (route) => written.get(route) ?? plain(route)
-}
 
 /** M28 — `'en' | 'tr'` until Persian; `languages.ts` owns the list now. */
 export type SheetLang = ReadingLang
@@ -327,39 +280,14 @@ export async function ModuleSheet({
   const contentLang = langAttr(lang)
   const contentDir = dirOf(lang)
 
-  /* One map for every link out of this page — the prose's cross-references, the
-     pager and the rail. Identity on the English tree, so nothing branches. */
-  const localise = track === 'everyone'
-    ? everyoneRouteMap(lang)
-    : lang !== 'en' ? routeMapFor(lang) : (route: string) => route
-
-  // The quick quiz, in the page's language, or null where the module has none
-  // (`quiz.ts`). A draft never has one: there is nothing yet to recall.
-  // A For Everyone page has none: the quiz file asks about the For Engineers text.
-  const quiz = drawn && track === 'engineers' ? quizFor(sheet.category.dir, sheet.name, lang) : null
-
-  // A4 sheets render no prose: §4.5's body is one sentence and a schedule, and
-  // the markdown holds nothing else once the h1, the dek, the placeholder note
-  // and the deleted progress rail are accounted for.
-  const rendered = drawn
-    ? await renderMarkdown(sheet.body, {
-      imageBase: imageBaseFor(sheet.category.slug),
-      sheet: number,
-      localiseRoute: translated || track === 'everyone' ? localise : undefined,
-    })
-    : null
-
-  // D102 — a planned module may already hold sections a written one gave it
-  // (`writtenSections`). They render as prose under the schedule; the sentence
-  // and the schedule above them are read exactly as before.
-  const early = drawn ? null : writtenSections(sheet.body)
-  const earlyRendered = early === null
-    ? null
-    : await renderMarkdown(early, {
-      imageBase: imageBaseFor(sheet.category.slug),
-      sheet: number,
-      localiseRoute: translated || track === 'everyone' ? localise : undefined,
-    })
+  /* Everything the page derives from the module, from one place the content
+     bundle reads too (`module-render.ts`): the one map for every link out of
+     this page, the quiz, the rendered prose and a planned module's written
+     sections. */
+  const input = await moduleRenderInput(sheet, lang, track)
+  const { localise, quiz } = input
+  const rendered = input.html === null ? null : { html: input.html, toc: input.toc, checklist: input.checklist }
+  const written = input.written
 
   // M11 — the RIGHT rail: what is on this page, and what sits either side of
   // it in the dependency graph. A draft has neither: no sections, because §4.5
@@ -392,9 +320,7 @@ export async function ModuleSheet({
 
   // §4.5 item 5 — the single descriptive sentence, read out of the source
   // rather than retyped, and absent rather than invented if it is not there.
-  const summary = drawn
-    ? null
-    : sheet.frontmatter.summary ?? summarySentence(sheet.body)
+  const summary = input.summary
 
   const { previous, next } = neighbours(slug)
 
@@ -430,7 +356,7 @@ export async function ModuleSheet({
             fixed`, so its place in the document decides only the TAB ORDER —
             and from here a keyboard reader could not reach it in 30 presses. */}
 
-        {format === 'A4' && <StatusBand written={early !== null} />}
+        {format === 'A4' && <StatusBand written={written !== null} />}
 
         {/* Below the width where a rail can sit beside the prose, both rails'
             content moves behind one control (§4.7). Which widths that is
@@ -541,9 +467,9 @@ export async function ModuleSheet({
               lang={translated ? 'en' : undefined}
             />
             {summary && <p className="bz-lead" lang={translated ? 'en' : undefined}>{summary}</p>}
-            <ScheduleOfParts parts={scheduleOfParts(sheet.body)} />
-            {earlyRendered && (
-              <Prose html={earlyRendered.html} lang={contentLang} dir={contentDir} />
+            <ScheduleOfParts parts={input.parts} />
+            {written && (
+              <Prose html={written.html} lang={contentLang} dir={contentDir} />
             )}
           </>
         )}

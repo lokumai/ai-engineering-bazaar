@@ -75,7 +75,7 @@ export function nowIso(): string {
   return new Date().toISOString()
 }
 
-function serialise(data: RecordData, at: string, pretty: boolean): string {
+export function serialise(data: RecordData, at: string, pretty: boolean): string {
   const envelope: Envelope = { schema: SCHEMA_VERSION, savedAt: at, data }
   return pretty ? JSON.stringify(envelope, null, 2) : JSON.stringify(envelope)
 }
@@ -436,6 +436,11 @@ export function storageReadout(): StorageReadout {
  */
 export function exportJson(data: RecordData, at: string = nowIso()): string {
   return serialise(data, at, true)
+}
+
+/** §12.12.1's rule for a filename: a fixed ASCII template, never the name. */
+export function exportFilename(at: string): string {
+  return `hl-record-${at.slice(0, 10)}.json`
 }
 
 /**

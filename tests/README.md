@@ -193,7 +193,7 @@ written. Three specific traps, each of which cost a red run:
   with a warm cache it is false. If the property is structural, assert it
   structurally.
 
-## Twelve checks that fail for a reason, not because they broke
+## Fourteen checks that fail for a reason, not because they broke
 
 Moved here from `README.md`, which was the only place they were written down.
 When one of these goes red, the cause is usually the thing it names rather than
@@ -264,6 +264,12 @@ the test.
   of the 123 reasons against the sheet it cites. Genuine citations score a median
   of 100%; the same citations pointed at a different sheet score a median of 33%.
   It asserts both, so it cannot pass by being vacuous.
+- **The bundle check** (`scripts/check-bundle-out.mjs`) reads the content bundle in a finished export and recomputes every claim its index makes.
+  It fails when a bundle file, a diagram SVG or a course image no longer has the sha256 the index lists, when a diagram breaks the SVG profile, and when a field or an SVG carries the base path the build was made with.
+  The mobile reader trusts those hashes to decide what to download, so a wrong one shows stale content with no error anywhere else.
+- **The record conformance snapshot** (`tests/unit/record/__snapshots__/record-conformance.v1.json`) pins how the web parses, reduces, exports and derives a record, in both tracks.
+  It fails on any change to those answers, and the mobile app, which runs the same file, must then be changed to match before the change ships.
+  Accept a deliberate change with `npx vitest -u`.
 
 ## Commands
 

@@ -7,9 +7,8 @@ import { SignOffMarks } from '@/components/record/SignOffMarks'
 import { PageShell } from '@/components/shell/PageShell'
 import { categoryBySlug } from '@/lib/content/curriculum-file'
 import { curriculumFacts } from '@/lib/content/facts'
-import { categoryIntro } from '@/lib/content/intro'
 import { categoryCoverage, categoryRows, sheetRows } from '@/lib/content/manifest'
-import { renderMarkdown } from '@/lib/content/render'
+import { levelRenderInput } from '@/lib/content/module-render'
 import type { Track } from '@/lib/tracks'
 
 /**
@@ -30,8 +29,7 @@ export async function LevelCatalog({
   if (!category) notFound()
 
   const own = categoryRows(category, track)
-  const intro = categoryIntro(category.slug)
-  const notes = intro === null ? null : await renderMarkdown(intro)
+  const notes = await levelRenderInput(category.slug)
 
   return (
     <PageShell column={false} track={track}>

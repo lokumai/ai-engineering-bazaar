@@ -2,7 +2,7 @@ import path from 'node:path'
 import { describe, expect, it } from 'vitest'
 import { loadModule } from '@/lib/content/loader'
 import { CONTENT_ROOT } from '@/lib/content/paths'
-import { buildRevisionIndex, parseRevisionLog, revisionFor } from '@/lib/content/revision'
+import { buildRevisionIndex, headCommitDate, parseRevisionLog, revisionFor } from '@/lib/content/revision'
 
 const LOG = [
   'c0ffee1 2026-08-31',
@@ -56,6 +56,16 @@ describe('buildRevisionIndex', () => {
     expect(buildRevisionIndex(notARepo).size).toBe(0)
   })
 
+  // git's own %h grows with the object count and follows core.abbrev, so the
+  // same commit printed a different hash on a different machine or a year on,
+  // and the bundle's contentVersion moved with no content change.
+  it('writes every hash at one fixed width, whatever length git would choose', () => {
+    const full = 'c0ffee1234567890abcdef1234567890abcdef12'
+    const log = [`${full} 2026-08-31`, '', 'mini-courses/1_fundamentals/llms.md', ''].join('\n')
+    const index = buildRevisionIndex((args) => (args.includes('rev-parse') ? '/repo\n' : log))
+    expect(index.get('/repo/mini-courses/1_fundamentals/llms.md')).toEqual({ hash: 'c0ffee1', date: '2026-08-31' })
+  })
+
   it('asks git for the last-touching commit of each file, never for HEAD', () => {
     const seen: string[][] = []
     buildRevisionIndex((args) => {
@@ -78,5 +88,32 @@ describe('revisionFor', () => {
 
   it('gives a file git has never seen null rather than a lie', () => {
     expect(revisionFor(path.join(CONTENT_ROOT, 'no_such_module.md'))).toBeNull()
+  })
+})
+
+describe('headCommitDate', () => {
+  it('asks git for the committer date of HEAD and returns it in UTC', () => {
+    const seen: string[][] = []
+    const date = headCommitDate((args) => {
+      seen.push([...args])
+      return '2026-11-05T10:20:30+03:00\n'
+    })
+    expect(date).toBe('2026-11-05T07:20:30.000Z')
+    expect(seen).toEqual([['log', '-1', '--format=%cI', 'HEAD']])
+  })
+
+  it('throws when git fails, because an index without a date cannot be ordered', () => {
+    const explode = () => {
+      throw new Error('spawn git ENOENT')
+    }
+    expect(() => headCommitDate(explode)).toThrow(/HEAD/)
+  })
+
+  it('throws when git prints nothing', () => {
+    expect(() => headCommitDate(() => '\n')).toThrow(/HEAD/)
+  })
+
+  it('throws when git prints something that is not a date', () => {
+    expect(() => headCommitDate(() => 'not a date\n')).toThrow(/not a date/)
   })
 })

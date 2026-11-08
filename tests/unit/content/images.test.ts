@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it } from 'vitest'
-import { imageBaseFor } from '@/lib/content/images'
+import { imageBaseFor, imagePathFor } from '@/lib/content/images'
 import { href } from '@/lib/url'
 
 describe('imageBaseFor', () => {
@@ -36,5 +36,17 @@ describe('imageBaseFor', () => {
     process.env.NEXT_PUBLIC_SITE_BASE_PATH = '/ai-engineering-bazaar'
     expect(imageBaseFor('expert').match(/\/ai-engineering-bazaar\//g))
       .toHaveLength(1)
+  })
+
+  /**
+   * The bundle names an image by a path relative to the site, so a native
+   * reader can resolve it against whatever host it fetched the bundle from.
+   */
+  it('imagePathFor carries no base path and no leading slash', () => {
+    process.env.NEXT_PUBLIC_SITE_BASE_PATH = '/ai-engineering-bazaar'
+    const path = imagePathFor('fundamentals')
+    expect(path).not.toContain('ai-engineering-bazaar')
+    expect(path.startsWith('/')).toBe(false)
+    expect(imageBaseFor('fundamentals')).toBe(href(`/${path}`))
   })
 })

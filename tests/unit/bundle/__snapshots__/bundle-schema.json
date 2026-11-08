@@ -1,0 +1,4360 @@
+{
+  "ApiIndex": {
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "type": "object",
+    "properties": {
+      "majors": {
+        "type": "array",
+        "items": {
+          "type": "integer",
+          "exclusiveMinimum": 0,
+          "maximum": 9007199254740991
+        },
+        "description": "The published majors; the app needs its own among them."
+      }
+    },
+    "required": [
+      "majors"
+    ],
+    "additionalProperties": false
+  },
+  "Index": {
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "type": "object",
+    "properties": {
+      "schemaVersion": {
+        "type": "number",
+        "const": 1
+      },
+      "contentVersion": {
+        "type": "string",
+        "pattern": "^[0-9a-f]{64}$",
+        "description": "sha256 of the canonical index with contentVersion and publishedAt emptied."
+      },
+      "publishedAt": {
+        "type": "string",
+        "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{3}Z$",
+        "description": "The committer date of the commit built, in UTC."
+      },
+      "sourceLanguage": {
+        "type": "string",
+        "const": "en"
+      },
+      "translations": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string",
+              "description": "A language id: en, or one of the translations the index lists."
+            },
+            "label": {
+              "type": "string",
+              "minLength": 1
+            },
+            "dir": {
+              "type": "string",
+              "enum": [
+                "ltr",
+                "rtl"
+              ]
+            }
+          },
+          "required": [
+            "id",
+            "label",
+            "dir"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "tracks": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string",
+              "description": "A track id from tracks.ts: engineers (For Engineers) or everyone (For Everyone)."
+            },
+            "label": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "required": [
+            "id",
+            "label"
+          ],
+          "additionalProperties": false
+        },
+        "description": "tracks.ts, in order."
+      },
+      "diagramFont": {
+        "type": "object",
+        "properties": {
+          "family": {
+            "type": "string",
+            "const": "Vazirmatn"
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$",
+            "description": "sha256 of the bytes, 64 lowercase hex."
+          }
+        },
+        "required": [
+          "family",
+          "sha256"
+        ],
+        "additionalProperties": false
+      },
+      "diagramThemes": {
+        "type": "object",
+        "properties": {
+          "light": {
+            "type": "object",
+            "properties": {
+              "theme": {
+                "type": "string",
+                "minLength": 1,
+                "description": "A Mermaid theme id from diagram-themes.ts."
+              },
+              "background": {
+                "type": "string",
+                "minLength": 1,
+                "description": "Mermaid's own background for that theme, as CSS colour text."
+              }
+            },
+            "required": [
+              "theme",
+              "background"
+            ],
+            "additionalProperties": false
+          },
+          "dark": {
+            "type": "object",
+            "properties": {
+              "theme": {
+                "type": "string",
+                "minLength": 1,
+                "description": "A Mermaid theme id from diagram-themes.ts."
+              },
+              "background": {
+                "type": "string",
+                "minLength": 1,
+                "description": "Mermaid's own background for that theme, as CSS colour text."
+              }
+            },
+            "required": [
+              "theme",
+              "background"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "required": [
+          "light",
+          "dark"
+        ],
+        "additionalProperties": false
+      },
+      "levels": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "slug": {
+              "type": "string",
+              "minLength": 1
+            },
+            "title": {
+              "type": "string",
+              "minLength": 1
+            },
+            "status": {
+              "type": "string",
+              "enum": [
+                "ready",
+                "draft"
+              ]
+            },
+            "blurb": {
+              "type": "string"
+            },
+            "total": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 9007199254740991,
+              "description": "Modules in this level, drafts included."
+            },
+            "readme": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "pattern": "^[^/\\s][^\\s]*$",
+                  "description": "A path relative to the site root: no base path and no leading slash."
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "The level document, or null when the level has no introduction."
+            }
+          },
+          "required": [
+            "slug",
+            "title",
+            "status",
+            "blurb",
+            "total",
+            "readme"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "modules": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "key": {
+              "type": "string",
+              "minLength": 1,
+              "description": "The record key, <level>/<module>, in both tracks' record maps."
+            },
+            "level": {
+              "type": "string",
+              "minLength": 1
+            },
+            "number": {
+              "type": "integer",
+              "exclusiveMinimum": 0,
+              "maximum": 9007199254740991,
+              "description": "The position in curriculum.yaml."
+            },
+            "minutes": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 9007199254740991
+            },
+            "prerequisites": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1
+              },
+              "description": "Prerequisite module keys."
+            },
+            "tracks": {
+              "type": "object",
+              "propertyNames": {
+                "type": "string",
+                "description": "A track id from tracks.ts: engineers (For Engineers) or everyone (For Everyone)."
+              },
+              "additionalProperties": {
+                "type": "object",
+                "properties": {
+                  "title": {
+                    "type": "string",
+                    "minLength": 1,
+                    "description": "The English title in this track."
+                  },
+                  "drawn": {
+                    "type": "boolean",
+                    "description": "Written in this track; an unwritten module has no documents."
+                  },
+                  "summary": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "hasQuiz": {
+                    "type": "boolean"
+                  },
+                  "revision": {
+                    "anyOf": [
+                      {
+                        "type": "object",
+                        "properties": {
+                          "hash": {
+                            "type": "string",
+                            "pattern": "^[0-9a-f]{4,40}$",
+                            "description": "The short hash the app writes to signedRevision."
+                          },
+                          "date": {
+                            "type": "string",
+                            "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+                          }
+                        },
+                        "required": [
+                          "hash",
+                          "date"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ],
+                    "description": "The commit that last touched this track's English file; signedRevision in this track's record map."
+                  },
+                  "docs": {
+                    "type": "object",
+                    "propertyNames": {
+                      "type": "string",
+                      "description": "A language id: en, or one of the translations the index lists."
+                    },
+                    "additionalProperties": {
+                      "type": "string",
+                      "pattern": "^[^/\\s][^\\s]*$",
+                      "description": "A path relative to the site root: no base path and no leading slash."
+                    },
+                    "description": "Language id to its module document; empty where the module is not written in this track."
+                  },
+                  "webPath": {
+                    "type": "string",
+                    "pattern": "^[^/\\s][^\\s]*$",
+                    "description": "The English web page in this track."
+                  }
+                },
+                "required": [
+                  "title",
+                  "drawn",
+                  "summary",
+                  "hasQuiz",
+                  "revision",
+                  "docs",
+                  "webPath"
+                ],
+                "additionalProperties": false
+              },
+              "description": "Every track, in tracks.ts order."
+            }
+          },
+          "required": [
+            "key",
+            "level",
+            "number",
+            "minutes",
+            "prerequisites",
+            "tracks"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "moved": {
+        "type": "object",
+        "properties": {
+          "levels": {
+            "type": "object",
+            "propertyNames": {
+              "type": "string",
+              "minLength": 1
+            },
+            "additionalProperties": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "modules": {
+            "type": "object",
+            "propertyNames": {
+              "type": "string",
+              "minLength": 1
+            },
+            "additionalProperties": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        },
+        "required": [
+          "levels",
+          "modules"
+        ],
+        "additionalProperties": false
+      },
+      "files": {
+        "type": "object",
+        "propertyNames": {
+          "type": "string",
+          "pattern": "^[^/\\s][^\\s]*$",
+          "description": "A path relative to the site root: no base path and no leading slash."
+        },
+        "additionalProperties": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$",
+          "description": "sha256 of the bytes, 64 lowercase hex."
+        },
+        "description": "Every file under api/v1/ except index.json and record-conformance.json."
+      },
+      "images": {
+        "type": "object",
+        "propertyNames": {
+          "type": "string",
+          "pattern": "^[^/\\s][^\\s]*$",
+          "description": "A path relative to the site root: no base path and no leading slash."
+        },
+        "additionalProperties": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$",
+          "description": "sha256 of the bytes, 64 lowercase hex."
+        },
+        "description": "Every image a level or module document names."
+      }
+    },
+    "required": [
+      "schemaVersion",
+      "contentVersion",
+      "publishedAt",
+      "sourceLanguage",
+      "translations",
+      "tracks",
+      "diagramFont",
+      "diagramThemes",
+      "levels",
+      "modules",
+      "moved",
+      "files",
+      "images"
+    ],
+    "additionalProperties": false
+  },
+  "IndexDraft": {
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "type": "object",
+    "properties": {
+      "schemaVersion": {
+        "type": "number",
+        "const": 1
+      },
+      "contentVersion": {
+        "type": "string",
+        "const": ""
+      },
+      "publishedAt": {
+        "type": "string",
+        "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{3}Z$",
+        "description": "The committer date of the commit built, in UTC."
+      },
+      "sourceLanguage": {
+        "type": "string",
+        "const": "en"
+      },
+      "translations": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string",
+              "description": "A language id: en, or one of the translations the index lists."
+            },
+            "label": {
+              "type": "string",
+              "minLength": 1
+            },
+            "dir": {
+              "type": "string",
+              "enum": [
+                "ltr",
+                "rtl"
+              ]
+            }
+          },
+          "required": [
+            "id",
+            "label",
+            "dir"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "tracks": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string",
+              "description": "A track id from tracks.ts: engineers (For Engineers) or everyone (For Everyone)."
+            },
+            "label": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "required": [
+            "id",
+            "label"
+          ],
+          "additionalProperties": false
+        },
+        "description": "tracks.ts, in order."
+      },
+      "diagramFont": {
+        "type": "object",
+        "properties": {
+          "family": {
+            "type": "string",
+            "const": "Vazirmatn"
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$",
+            "description": "sha256 of the bytes, 64 lowercase hex."
+          }
+        },
+        "required": [
+          "family",
+          "sha256"
+        ],
+        "additionalProperties": false
+      },
+      "diagramThemes": {
+        "type": "object",
+        "properties": {
+          "light": {
+            "type": "object",
+            "properties": {
+              "theme": {
+                "type": "string",
+                "minLength": 1,
+                "description": "A Mermaid theme id from diagram-themes.ts."
+              },
+              "background": {
+                "type": "string",
+                "minLength": 1,
+                "description": "Mermaid's own background for that theme, as CSS colour text."
+              }
+            },
+            "required": [
+              "theme",
+              "background"
+            ],
+            "additionalProperties": false
+          },
+          "dark": {
+            "type": "object",
+            "properties": {
+              "theme": {
+                "type": "string",
+                "minLength": 1,
+                "description": "A Mermaid theme id from diagram-themes.ts."
+              },
+              "background": {
+                "type": "string",
+                "minLength": 1,
+                "description": "Mermaid's own background for that theme, as CSS colour text."
+              }
+            },
+            "required": [
+              "theme",
+              "background"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "required": [
+          "light",
+          "dark"
+        ],
+        "additionalProperties": false
+      },
+      "levels": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "slug": {
+              "type": "string",
+              "minLength": 1
+            },
+            "title": {
+              "type": "string",
+              "minLength": 1
+            },
+            "status": {
+              "type": "string",
+              "enum": [
+                "ready",
+                "draft"
+              ]
+            },
+            "blurb": {
+              "type": "string"
+            },
+            "total": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 9007199254740991,
+              "description": "Modules in this level, drafts included."
+            },
+            "readme": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "pattern": "^[^/\\s][^\\s]*$",
+                  "description": "A path relative to the site root: no base path and no leading slash."
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "The level document, or null when the level has no introduction."
+            }
+          },
+          "required": [
+            "slug",
+            "title",
+            "status",
+            "blurb",
+            "total",
+            "readme"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "modules": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "key": {
+              "type": "string",
+              "minLength": 1,
+              "description": "The record key, <level>/<module>, in both tracks' record maps."
+            },
+            "level": {
+              "type": "string",
+              "minLength": 1
+            },
+            "number": {
+              "type": "integer",
+              "exclusiveMinimum": 0,
+              "maximum": 9007199254740991,
+              "description": "The position in curriculum.yaml."
+            },
+            "minutes": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 9007199254740991
+            },
+            "prerequisites": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1
+              },
+              "description": "Prerequisite module keys."
+            },
+            "tracks": {
+              "type": "object",
+              "propertyNames": {
+                "type": "string",
+                "description": "A track id from tracks.ts: engineers (For Engineers) or everyone (For Everyone)."
+              },
+              "additionalProperties": {
+                "type": "object",
+                "properties": {
+                  "title": {
+                    "type": "string",
+                    "minLength": 1,
+                    "description": "The English title in this track."
+                  },
+                  "drawn": {
+                    "type": "boolean",
+                    "description": "Written in this track; an unwritten module has no documents."
+                  },
+                  "summary": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "hasQuiz": {
+                    "type": "boolean"
+                  },
+                  "revision": {
+                    "anyOf": [
+                      {
+                        "type": "object",
+                        "properties": {
+                          "hash": {
+                            "type": "string",
+                            "pattern": "^[0-9a-f]{4,40}$",
+                            "description": "The short hash the app writes to signedRevision."
+                          },
+                          "date": {
+                            "type": "string",
+                            "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+                          }
+                        },
+                        "required": [
+                          "hash",
+                          "date"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ],
+                    "description": "The commit that last touched this track's English file; signedRevision in this track's record map."
+                  },
+                  "docs": {
+                    "type": "object",
+                    "propertyNames": {
+                      "type": "string",
+                      "description": "A language id: en, or one of the translations the index lists."
+                    },
+                    "additionalProperties": {
+                      "type": "string",
+                      "pattern": "^[^/\\s][^\\s]*$",
+                      "description": "A path relative to the site root: no base path and no leading slash."
+                    },
+                    "description": "Language id to its module document; empty where the module is not written in this track."
+                  },
+                  "webPath": {
+                    "type": "string",
+                    "pattern": "^[^/\\s][^\\s]*$",
+                    "description": "The English web page in this track."
+                  }
+                },
+                "required": [
+                  "title",
+                  "drawn",
+                  "summary",
+                  "hasQuiz",
+                  "revision",
+                  "docs",
+                  "webPath"
+                ],
+                "additionalProperties": false
+              },
+              "description": "Every track, in tracks.ts order."
+            }
+          },
+          "required": [
+            "key",
+            "level",
+            "number",
+            "minutes",
+            "prerequisites",
+            "tracks"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "moved": {
+        "type": "object",
+        "properties": {
+          "levels": {
+            "type": "object",
+            "propertyNames": {
+              "type": "string",
+              "minLength": 1
+            },
+            "additionalProperties": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "modules": {
+            "type": "object",
+            "propertyNames": {
+              "type": "string",
+              "minLength": 1
+            },
+            "additionalProperties": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        },
+        "required": [
+          "levels",
+          "modules"
+        ],
+        "additionalProperties": false
+      },
+      "files": {
+        "type": "object",
+        "properties": {},
+        "additionalProperties": false
+      },
+      "images": {
+        "type": "object",
+        "properties": {},
+        "additionalProperties": false
+      },
+      "diagrams": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{32}$"
+            },
+            "variant": {
+              "type": "string",
+              "enum": [
+                "light",
+                "dark"
+              ]
+            },
+            "source": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "required": [
+            "id",
+            "variant",
+            "source"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "render": {
+        "type": "object",
+        "properties": {
+          "light": {},
+          "dark": {}
+        },
+        "required": [
+          "light",
+          "dark"
+        ],
+        "additionalProperties": false,
+        "description": "The serialised mermaid config the finaliser renders each variant with."
+      }
+    },
+    "required": [
+      "schemaVersion",
+      "contentVersion",
+      "publishedAt",
+      "sourceLanguage",
+      "translations",
+      "tracks",
+      "diagramFont",
+      "diagramThemes",
+      "levels",
+      "modules",
+      "moved",
+      "files",
+      "images",
+      "diagrams",
+      "render"
+    ],
+    "additionalProperties": false
+  },
+  "Tokens": {
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "type": "object",
+    "properties": {
+      "schemaVersion": {
+        "type": "number",
+        "const": 1
+      },
+      "light": {
+        "type": "object",
+        "propertyNames": {
+          "type": "string",
+          "pattern": "^--"
+        },
+        "additionalProperties": {
+          "type": "string"
+        }
+      },
+      "dark": {
+        "type": "object",
+        "propertyNames": {
+          "type": "string",
+          "pattern": "^--"
+        },
+        "additionalProperties": {
+          "type": "string"
+        }
+      }
+    },
+    "required": [
+      "schemaVersion",
+      "light",
+      "dark"
+    ],
+    "additionalProperties": false
+  },
+  "LevelDoc": {
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "type": "object",
+    "properties": {
+      "schemaVersion": {
+        "type": "number",
+        "const": 1
+      },
+      "slug": {
+        "type": "string",
+        "minLength": 1
+      },
+      "title": {
+        "type": "string",
+        "minLength": 1
+      },
+      "blocks": {
+        "type": "array",
+        "items": {
+          "$ref": "#/$defs/__schema0"
+        }
+      }
+    },
+    "required": [
+      "schemaVersion",
+      "slug",
+      "title",
+      "blocks"
+    ],
+    "additionalProperties": false,
+    "$defs": {
+      "__schema0": {
+        "oneOf": [
+          {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "const": "paragraph"
+              },
+              "inlines": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/$defs/__schema1"
+                }
+              },
+              "lead": {
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "type",
+              "inlines"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "const": "heading"
+              },
+              "depth": {
+                "anyOf": [
+                  {
+                    "type": "number",
+                    "const": 2
+                  },
+                  {
+                    "type": "number",
+                    "const": 3
+                  },
+                  {
+                    "type": "number",
+                    "const": 4
+                  }
+                ]
+              },
+              "id": {
+                "type": "string",
+                "minLength": 1
+              },
+              "mark": {
+                "type": "string",
+                "minLength": 1
+              },
+              "inlines": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/$defs/__schema1"
+                }
+              }
+            },
+            "required": [
+              "type",
+              "depth",
+              "id",
+              "inlines"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "const": "list"
+              },
+              "ordered": {
+                "type": "boolean"
+              },
+              "start": {
+                "type": "integer",
+                "minimum": -9007199254740991,
+                "maximum": 9007199254740991
+              },
+              "items": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "task": {
+                      "type": "object",
+                      "properties": {
+                        "checked": {
+                          "type": "boolean"
+                        }
+                      },
+                      "required": [
+                        "checked"
+                      ],
+                      "additionalProperties": false
+                    },
+                    "blocks": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/$defs/__schema0"
+                      }
+                    }
+                  },
+                  "required": [
+                    "blocks"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            },
+            "required": [
+              "type",
+              "ordered",
+              "items"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "const": "quote"
+              },
+              "label": {
+                "type": "string",
+                "minLength": 1
+              },
+              "blocks": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/$defs/__schema0"
+                }
+              }
+            },
+            "required": [
+              "type",
+              "blocks"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "const": "callout"
+              },
+              "kind": {
+                "type": "string",
+                "enum": [
+                  "note",
+                  "tip",
+                  "important",
+                  "warning",
+                  "caution"
+                ]
+              },
+              "title": {
+                "anyOf": [
+                  {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/$defs/__schema1"
+                    }
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "blocks": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/$defs/__schema0"
+                }
+              },
+              "action": {
+                "anyOf": [
+                  {
+                    "type": "object",
+                    "properties": {
+                      "target": {
+                        "oneOf": [
+                          {
+                            "type": "object",
+                            "properties": {
+                              "kind": {
+                                "type": "string",
+                                "const": "module"
+                              },
+                              "key": {
+                                "type": "string",
+                                "minLength": 1
+                              },
+                              "track": {
+                                "type": "string",
+                                "description": "A track id from tracks.ts: engineers (For Engineers) or everyone (For Everyone)."
+                              },
+                              "lang": {
+                                "type": "string",
+                                "description": "A language id: en, or one of the translations the index lists."
+                              },
+                              "fragment": {
+                                "description": "The target heading id, without the # and not percent-encoded.",
+                                "type": "string",
+                                "minLength": 1
+                              }
+                            },
+                            "required": [
+                              "kind",
+                              "key",
+                              "track",
+                              "lang"
+                            ],
+                            "additionalProperties": false
+                          },
+                          {
+                            "type": "object",
+                            "properties": {
+                              "kind": {
+                                "type": "string",
+                                "const": "external"
+                              },
+                              "url": {
+                                "type": "string",
+                                "pattern": "^https?:\\/\\/"
+                              }
+                            },
+                            "required": [
+                              "kind",
+                              "url"
+                            ],
+                            "additionalProperties": false
+                          },
+                          {
+                            "type": "object",
+                            "properties": {
+                              "kind": {
+                                "type": "string",
+                                "const": "anchor"
+                              },
+                              "id": {
+                                "type": "string",
+                                "minLength": 1,
+                                "description": "A heading id in the same document, not percent-encoded."
+                              }
+                            },
+                            "required": [
+                              "kind",
+                              "id"
+                            ],
+                            "additionalProperties": false
+                          },
+                          {
+                            "type": "object",
+                            "properties": {
+                              "kind": {
+                                "type": "string",
+                                "const": "catalog"
+                              }
+                            },
+                            "required": [
+                              "kind"
+                            ],
+                            "additionalProperties": false
+                          }
+                        ]
+                      },
+                      "inlines": {
+                        "type": "array",
+                        "items": {
+                          "$ref": "#/$defs/__schema1"
+                        }
+                      }
+                    },
+                    "required": [
+                      "target",
+                      "inlines"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "description": "A last paragraph that is only a link, drawn as a button."
+              }
+            },
+            "required": [
+              "type",
+              "kind",
+              "title",
+              "blocks",
+              "action"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "const": "code"
+              },
+              "language": {
+                "type": "string",
+                "minLength": 1
+              },
+              "lines": {
+                "type": "array",
+                "items": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "text": {
+                        "type": "string"
+                      },
+                      "role": {
+                        "description": "The bz-tok-<role> suffix; coloured with --color-slab-<role>, or as a token with no role when the app has no such colour.",
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "bold": {
+                        "type": "boolean",
+                        "const": true
+                      }
+                    },
+                    "required": [
+                      "text"
+                    ],
+                    "additionalProperties": false
+                  }
+                }
+              }
+            },
+            "required": [
+              "type",
+              "language",
+              "lines"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "const": "table"
+              },
+              "number": {
+                "type": "string",
+                "pattern": "^\\d+(?:\\.\\d+)?$",
+                "description": "Printed after TBL. on a table and after FIG. on an image or a diagram; the two sequences are counted apart and share numbers."
+              },
+              "title": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "rowHeaders": {
+                "type": "boolean"
+              },
+              "align": {
+                "type": "array",
+                "items": {
+                  "anyOf": [
+                    {
+                      "type": "string",
+                      "enum": [
+                        "left",
+                        "center",
+                        "right"
+                      ]
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                }
+              },
+              "head": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "inlines": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/$defs/__schema1"
+                      }
+                    }
+                  },
+                  "required": [
+                    "inlines"
+                  ],
+                  "additionalProperties": false
+                }
+              },
+              "rows": {
+                "type": "array",
+                "items": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "inlines": {
+                        "type": "array",
+                        "items": {
+                          "$ref": "#/$defs/__schema1"
+                        }
+                      }
+                    },
+                    "required": [
+                      "inlines"
+                    ],
+                    "additionalProperties": false
+                  }
+                }
+              }
+            },
+            "required": [
+              "type",
+              "number",
+              "title",
+              "rowHeaders",
+              "align",
+              "head",
+              "rows"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "const": "image"
+              },
+              "number": {
+                "type": "string",
+                "pattern": "^\\d+(?:\\.\\d+)?$",
+                "description": "Printed after TBL. on a table and after FIG. on an image or a diagram; the two sequences are counted apart and share numbers."
+              },
+              "title": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "note": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "src": {
+                "type": "string",
+                "pattern": "^[^/\\s][^\\s]*$",
+                "description": "A path relative to the site root: no base path and no leading slash."
+              },
+              "alt": {
+                "type": "string"
+              },
+              "width": {
+                "type": "integer",
+                "exclusiveMinimum": 0,
+                "maximum": 9007199254740991
+              },
+              "height": {
+                "type": "integer",
+                "exclusiveMinimum": 0,
+                "maximum": 9007199254740991
+              }
+            },
+            "required": [
+              "type",
+              "number",
+              "title",
+              "note",
+              "src",
+              "alt",
+              "width",
+              "height"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "const": "diagram"
+              },
+              "number": {
+                "type": "string",
+                "pattern": "^\\d+(?:\\.\\d+)?$",
+                "description": "Printed after TBL. on a table and after FIG. on an image or a diagram; the two sequences are counted apart and share numbers."
+              },
+              "title": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "svg": {
+                "type": "object",
+                "properties": {
+                  "light": {
+                    "type": "string",
+                    "pattern": "^[^/\\s][^\\s]*$",
+                    "description": "A path relative to the site root: no base path and no leading slash."
+                  },
+                  "dark": {
+                    "type": "string",
+                    "pattern": "^[^/\\s][^\\s]*$",
+                    "description": "A path relative to the site root: no base path and no leading slash."
+                  }
+                },
+                "required": [
+                  "light",
+                  "dark"
+                ],
+                "additionalProperties": false
+              }
+            },
+            "required": [
+              "type",
+              "number",
+              "title",
+              "svg"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "const": "rule"
+              }
+            },
+            "required": [
+              "type"
+            ],
+            "additionalProperties": false
+          }
+        ]
+      },
+      "__schema1": {
+        "oneOf": [
+          {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "const": "text"
+              },
+              "text": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "type",
+              "text"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "const": "code"
+              },
+              "text": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "type",
+              "text"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "const": "break"
+              }
+            },
+            "required": [
+              "type"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "const": "strong"
+              },
+              "inlines": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/$defs/__schema1"
+                }
+              }
+            },
+            "required": [
+              "type",
+              "inlines"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "const": "emphasis"
+              },
+              "inlines": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/$defs/__schema1"
+                }
+              }
+            },
+            "required": [
+              "type",
+              "inlines"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "const": "delete"
+              },
+              "inlines": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/$defs/__schema1"
+                }
+              }
+            },
+            "required": [
+              "type",
+              "inlines"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "const": "link"
+              },
+              "target": {
+                "oneOf": [
+                  {
+                    "type": "object",
+                    "properties": {
+                      "kind": {
+                        "type": "string",
+                        "const": "module"
+                      },
+                      "key": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "track": {
+                        "type": "string",
+                        "description": "A track id from tracks.ts: engineers (For Engineers) or everyone (For Everyone)."
+                      },
+                      "lang": {
+                        "type": "string",
+                        "description": "A language id: en, or one of the translations the index lists."
+                      },
+                      "fragment": {
+                        "description": "The target heading id, without the # and not percent-encoded.",
+                        "type": "string",
+                        "minLength": 1
+                      }
+                    },
+                    "required": [
+                      "kind",
+                      "key",
+                      "track",
+                      "lang"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "kind": {
+                        "type": "string",
+                        "const": "external"
+                      },
+                      "url": {
+                        "type": "string",
+                        "pattern": "^https?:\\/\\/"
+                      }
+                    },
+                    "required": [
+                      "kind",
+                      "url"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "kind": {
+                        "type": "string",
+                        "const": "anchor"
+                      },
+                      "id": {
+                        "type": "string",
+                        "minLength": 1,
+                        "description": "A heading id in the same document, not percent-encoded."
+                      }
+                    },
+                    "required": [
+                      "kind",
+                      "id"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "kind": {
+                        "type": "string",
+                        "const": "catalog"
+                      }
+                    },
+                    "required": [
+                      "kind"
+                    ],
+                    "additionalProperties": false
+                  }
+                ]
+              },
+              "inlines": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/$defs/__schema1"
+                }
+              }
+            },
+            "required": [
+              "type",
+              "target",
+              "inlines"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "const": "logo"
+              },
+              "src": {
+                "type": "string",
+                "pattern": "^[^/\\s][^\\s]*$",
+                "description": "A vendor mark, an SVG, drawn at the height of the text around it."
+              },
+              "alt": {
+                "type": "string"
+              },
+              "mono": {
+                "type": "boolean",
+                "description": "A single-colour mark, inverted on a dark ground as the web does for a -mono.svg."
+              }
+            },
+            "required": [
+              "type",
+              "src",
+              "alt",
+              "mono"
+            ],
+            "additionalProperties": false
+          }
+        ]
+      }
+    }
+  },
+  "ModuleDoc": {
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "type": "object",
+    "properties": {
+      "schemaVersion": {
+        "type": "number",
+        "const": 1
+      },
+      "key": {
+        "type": "string",
+        "minLength": 1
+      },
+      "track": {
+        "type": "string",
+        "description": "A track id from tracks.ts: engineers (For Engineers) or everyone (For Everyone)."
+      },
+      "lang": {
+        "type": "string",
+        "description": "A language id: en, or one of the translations the index lists."
+      },
+      "dir": {
+        "type": "string",
+        "enum": [
+          "ltr",
+          "rtl"
+        ]
+      },
+      "title": {
+        "type": "string",
+        "minLength": 1,
+        "description": "The title in this document's track and language."
+      },
+      "objectives": {
+        "type": "object",
+        "properties": {
+          "lang": {
+            "type": "string",
+            "const": "en"
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        },
+        "required": [
+          "lang",
+          "items"
+        ],
+        "additionalProperties": false
+      },
+      "prerequisites": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "key": {
+              "type": "string",
+              "minLength": 1
+            },
+            "number": {
+              "type": "integer",
+              "exclusiveMinimum": 0,
+              "maximum": 9007199254740991
+            },
+            "title": {
+              "type": "string",
+              "minLength": 1,
+              "description": "The English For Engineers title, as the web pager prints it."
+            },
+            "drawn": {
+              "type": "boolean",
+              "description": "Written in the track the reference lands in."
+            },
+            "track": {
+              "type": "string",
+              "description": "The track of the page the reference lands on."
+            },
+            "lang": {
+              "type": "string",
+              "description": "The language of the page the reference lands on."
+            }
+          },
+          "required": [
+            "key",
+            "number",
+            "title",
+            "drawn",
+            "track",
+            "lang"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "previous": {
+        "anyOf": [
+          {
+            "type": "object",
+            "properties": {
+              "key": {
+                "type": "string",
+                "minLength": 1
+              },
+              "number": {
+                "type": "integer",
+                "exclusiveMinimum": 0,
+                "maximum": 9007199254740991
+              },
+              "title": {
+                "type": "string",
+                "minLength": 1,
+                "description": "The English For Engineers title, as the web pager prints it."
+              },
+              "drawn": {
+                "type": "boolean",
+                "description": "Written in the track the reference lands in."
+              },
+              "track": {
+                "type": "string",
+                "description": "The track of the page the reference lands on."
+              },
+              "lang": {
+                "type": "string",
+                "description": "The language of the page the reference lands on."
+              }
+            },
+            "required": [
+              "key",
+              "number",
+              "title",
+              "drawn",
+              "track",
+              "lang"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "next": {
+        "anyOf": [
+          {
+            "type": "object",
+            "properties": {
+              "key": {
+                "type": "string",
+                "minLength": 1
+              },
+              "number": {
+                "type": "integer",
+                "exclusiveMinimum": 0,
+                "maximum": 9007199254740991
+              },
+              "title": {
+                "type": "string",
+                "minLength": 1,
+                "description": "The English For Engineers title, as the web pager prints it."
+              },
+              "drawn": {
+                "type": "boolean",
+                "description": "Written in the track the reference lands in."
+              },
+              "track": {
+                "type": "string",
+                "description": "The track of the page the reference lands on."
+              },
+              "lang": {
+                "type": "string",
+                "description": "The language of the page the reference lands on."
+              }
+            },
+            "required": [
+              "key",
+              "number",
+              "title",
+              "drawn",
+              "track",
+              "lang"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "toc": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string",
+              "minLength": 1
+            },
+            "text": {
+              "type": "string"
+            },
+            "depth": {
+              "anyOf": [
+                {
+                  "type": "number",
+                  "const": 2
+                },
+                {
+                  "type": "number",
+                  "const": 3
+                }
+              ]
+            },
+            "mark": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "required": [
+            "id",
+            "text",
+            "depth"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "body": {
+        "anyOf": [
+          {
+            "type": "array",
+            "items": {
+              "$ref": "#/$defs/__schema0"
+            }
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "description": "Null for a draft, which renders no body."
+      },
+      "draft": {
+        "anyOf": [
+          {
+            "type": "object",
+            "properties": {
+              "summary": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "parts": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "written": {
+                "anyOf": [
+                  {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/$defs/__schema0"
+                    }
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "description": "Sections a planned module already holds, drawn under its parts; null when none."
+              }
+            },
+            "required": [
+              "summary",
+              "parts",
+              "written"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "quiz": {
+        "anyOf": [
+          {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "question": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "options": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "minLength": 1
+                  }
+                },
+                "answer": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 9007199254740991
+                },
+                "explain": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              },
+              "required": [
+                "question",
+                "options",
+                "answer",
+                "explain"
+              ],
+              "additionalProperties": false
+            }
+          },
+          {
+            "type": "null"
+          }
+        ]
+      }
+    },
+    "required": [
+      "schemaVersion",
+      "key",
+      "track",
+      "lang",
+      "dir",
+      "title",
+      "objectives",
+      "prerequisites",
+      "previous",
+      "next",
+      "toc",
+      "body",
+      "draft",
+      "quiz"
+    ],
+    "additionalProperties": false,
+    "$defs": {
+      "__schema0": {
+        "oneOf": [
+          {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "const": "paragraph"
+              },
+              "inlines": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/$defs/__schema1"
+                }
+              },
+              "lead": {
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "type",
+              "inlines"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "const": "heading"
+              },
+              "depth": {
+                "anyOf": [
+                  {
+                    "type": "number",
+                    "const": 2
+                  },
+                  {
+                    "type": "number",
+                    "const": 3
+                  },
+                  {
+                    "type": "number",
+                    "const": 4
+                  }
+                ]
+              },
+              "id": {
+                "type": "string",
+                "minLength": 1
+              },
+              "mark": {
+                "type": "string",
+                "minLength": 1
+              },
+              "inlines": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/$defs/__schema1"
+                }
+              }
+            },
+            "required": [
+              "type",
+              "depth",
+              "id",
+              "inlines"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "const": "list"
+              },
+              "ordered": {
+                "type": "boolean"
+              },
+              "start": {
+                "type": "integer",
+                "minimum": -9007199254740991,
+                "maximum": 9007199254740991
+              },
+              "items": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "task": {
+                      "type": "object",
+                      "properties": {
+                        "checked": {
+                          "type": "boolean"
+                        }
+                      },
+                      "required": [
+                        "checked"
+                      ],
+                      "additionalProperties": false
+                    },
+                    "blocks": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/$defs/__schema0"
+                      }
+                    }
+                  },
+                  "required": [
+                    "blocks"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            },
+            "required": [
+              "type",
+              "ordered",
+              "items"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "const": "quote"
+              },
+              "label": {
+                "type": "string",
+                "minLength": 1
+              },
+              "blocks": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/$defs/__schema0"
+                }
+              }
+            },
+            "required": [
+              "type",
+              "blocks"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "const": "callout"
+              },
+              "kind": {
+                "type": "string",
+                "enum": [
+                  "note",
+                  "tip",
+                  "important",
+                  "warning",
+                  "caution"
+                ]
+              },
+              "title": {
+                "anyOf": [
+                  {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/$defs/__schema1"
+                    }
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "blocks": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/$defs/__schema0"
+                }
+              },
+              "action": {
+                "anyOf": [
+                  {
+                    "type": "object",
+                    "properties": {
+                      "target": {
+                        "oneOf": [
+                          {
+                            "type": "object",
+                            "properties": {
+                              "kind": {
+                                "type": "string",
+                                "const": "module"
+                              },
+                              "key": {
+                                "type": "string",
+                                "minLength": 1
+                              },
+                              "track": {
+                                "type": "string",
+                                "description": "A track id from tracks.ts: engineers (For Engineers) or everyone (For Everyone)."
+                              },
+                              "lang": {
+                                "type": "string",
+                                "description": "A language id: en, or one of the translations the index lists."
+                              },
+                              "fragment": {
+                                "description": "The target heading id, without the # and not percent-encoded.",
+                                "type": "string",
+                                "minLength": 1
+                              }
+                            },
+                            "required": [
+                              "kind",
+                              "key",
+                              "track",
+                              "lang"
+                            ],
+                            "additionalProperties": false
+                          },
+                          {
+                            "type": "object",
+                            "properties": {
+                              "kind": {
+                                "type": "string",
+                                "const": "external"
+                              },
+                              "url": {
+                                "type": "string",
+                                "pattern": "^https?:\\/\\/"
+                              }
+                            },
+                            "required": [
+                              "kind",
+                              "url"
+                            ],
+                            "additionalProperties": false
+                          },
+                          {
+                            "type": "object",
+                            "properties": {
+                              "kind": {
+                                "type": "string",
+                                "const": "anchor"
+                              },
+                              "id": {
+                                "type": "string",
+                                "minLength": 1,
+                                "description": "A heading id in the same document, not percent-encoded."
+                              }
+                            },
+                            "required": [
+                              "kind",
+                              "id"
+                            ],
+                            "additionalProperties": false
+                          },
+                          {
+                            "type": "object",
+                            "properties": {
+                              "kind": {
+                                "type": "string",
+                                "const": "catalog"
+                              }
+                            },
+                            "required": [
+                              "kind"
+                            ],
+                            "additionalProperties": false
+                          }
+                        ]
+                      },
+                      "inlines": {
+                        "type": "array",
+                        "items": {
+                          "$ref": "#/$defs/__schema1"
+                        }
+                      }
+                    },
+                    "required": [
+                      "target",
+                      "inlines"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "description": "A last paragraph that is only a link, drawn as a button."
+              }
+            },
+            "required": [
+              "type",
+              "kind",
+              "title",
+              "blocks",
+              "action"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "const": "code"
+              },
+              "language": {
+                "type": "string",
+                "minLength": 1
+              },
+              "lines": {
+                "type": "array",
+                "items": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "text": {
+                        "type": "string"
+                      },
+                      "role": {
+                        "description": "The bz-tok-<role> suffix; coloured with --color-slab-<role>, or as a token with no role when the app has no such colour.",
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "bold": {
+                        "type": "boolean",
+                        "const": true
+                      }
+                    },
+                    "required": [
+                      "text"
+                    ],
+                    "additionalProperties": false
+                  }
+                }
+              }
+            },
+            "required": [
+              "type",
+              "language",
+              "lines"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "const": "table"
+              },
+              "number": {
+                "type": "string",
+                "pattern": "^\\d+(?:\\.\\d+)?$",
+                "description": "Printed after TBL. on a table and after FIG. on an image or a diagram; the two sequences are counted apart and share numbers."
+              },
+              "title": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "rowHeaders": {
+                "type": "boolean"
+              },
+              "align": {
+                "type": "array",
+                "items": {
+                  "anyOf": [
+                    {
+                      "type": "string",
+                      "enum": [
+                        "left",
+                        "center",
+                        "right"
+                      ]
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                }
+              },
+              "head": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "inlines": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/$defs/__schema1"
+                      }
+                    }
+                  },
+                  "required": [
+                    "inlines"
+                  ],
+                  "additionalProperties": false
+                }
+              },
+              "rows": {
+                "type": "array",
+                "items": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "inlines": {
+                        "type": "array",
+                        "items": {
+                          "$ref": "#/$defs/__schema1"
+                        }
+                      }
+                    },
+                    "required": [
+                      "inlines"
+                    ],
+                    "additionalProperties": false
+                  }
+                }
+              }
+            },
+            "required": [
+              "type",
+              "number",
+              "title",
+              "rowHeaders",
+              "align",
+              "head",
+              "rows"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "const": "image"
+              },
+              "number": {
+                "type": "string",
+                "pattern": "^\\d+(?:\\.\\d+)?$",
+                "description": "Printed after TBL. on a table and after FIG. on an image or a diagram; the two sequences are counted apart and share numbers."
+              },
+              "title": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "note": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "src": {
+                "type": "string",
+                "pattern": "^[^/\\s][^\\s]*$",
+                "description": "A path relative to the site root: no base path and no leading slash."
+              },
+              "alt": {
+                "type": "string"
+              },
+              "width": {
+                "type": "integer",
+                "exclusiveMinimum": 0,
+                "maximum": 9007199254740991
+              },
+              "height": {
+                "type": "integer",
+                "exclusiveMinimum": 0,
+                "maximum": 9007199254740991
+              }
+            },
+            "required": [
+              "type",
+              "number",
+              "title",
+              "note",
+              "src",
+              "alt",
+              "width",
+              "height"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "const": "diagram"
+              },
+              "number": {
+                "type": "string",
+                "pattern": "^\\d+(?:\\.\\d+)?$",
+                "description": "Printed after TBL. on a table and after FIG. on an image or a diagram; the two sequences are counted apart and share numbers."
+              },
+              "title": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "svg": {
+                "type": "object",
+                "properties": {
+                  "light": {
+                    "type": "string",
+                    "pattern": "^[^/\\s][^\\s]*$",
+                    "description": "A path relative to the site root: no base path and no leading slash."
+                  },
+                  "dark": {
+                    "type": "string",
+                    "pattern": "^[^/\\s][^\\s]*$",
+                    "description": "A path relative to the site root: no base path and no leading slash."
+                  }
+                },
+                "required": [
+                  "light",
+                  "dark"
+                ],
+                "additionalProperties": false
+              }
+            },
+            "required": [
+              "type",
+              "number",
+              "title",
+              "svg"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "const": "rule"
+              }
+            },
+            "required": [
+              "type"
+            ],
+            "additionalProperties": false
+          }
+        ]
+      },
+      "__schema1": {
+        "oneOf": [
+          {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "const": "text"
+              },
+              "text": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "type",
+              "text"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "const": "code"
+              },
+              "text": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "type",
+              "text"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "const": "break"
+              }
+            },
+            "required": [
+              "type"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "const": "strong"
+              },
+              "inlines": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/$defs/__schema1"
+                }
+              }
+            },
+            "required": [
+              "type",
+              "inlines"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "const": "emphasis"
+              },
+              "inlines": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/$defs/__schema1"
+                }
+              }
+            },
+            "required": [
+              "type",
+              "inlines"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "const": "delete"
+              },
+              "inlines": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/$defs/__schema1"
+                }
+              }
+            },
+            "required": [
+              "type",
+              "inlines"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "const": "link"
+              },
+              "target": {
+                "oneOf": [
+                  {
+                    "type": "object",
+                    "properties": {
+                      "kind": {
+                        "type": "string",
+                        "const": "module"
+                      },
+                      "key": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "track": {
+                        "type": "string",
+                        "description": "A track id from tracks.ts: engineers (For Engineers) or everyone (For Everyone)."
+                      },
+                      "lang": {
+                        "type": "string",
+                        "description": "A language id: en, or one of the translations the index lists."
+                      },
+                      "fragment": {
+                        "description": "The target heading id, without the # and not percent-encoded.",
+                        "type": "string",
+                        "minLength": 1
+                      }
+                    },
+                    "required": [
+                      "kind",
+                      "key",
+                      "track",
+                      "lang"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "kind": {
+                        "type": "string",
+                        "const": "external"
+                      },
+                      "url": {
+                        "type": "string",
+                        "pattern": "^https?:\\/\\/"
+                      }
+                    },
+                    "required": [
+                      "kind",
+                      "url"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "kind": {
+                        "type": "string",
+                        "const": "anchor"
+                      },
+                      "id": {
+                        "type": "string",
+                        "minLength": 1,
+                        "description": "A heading id in the same document, not percent-encoded."
+                      }
+                    },
+                    "required": [
+                      "kind",
+                      "id"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "kind": {
+                        "type": "string",
+                        "const": "catalog"
+                      }
+                    },
+                    "required": [
+                      "kind"
+                    ],
+                    "additionalProperties": false
+                  }
+                ]
+              },
+              "inlines": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/$defs/__schema1"
+                }
+              }
+            },
+            "required": [
+              "type",
+              "target",
+              "inlines"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "const": "logo"
+              },
+              "src": {
+                "type": "string",
+                "pattern": "^[^/\\s][^\\s]*$",
+                "description": "A vendor mark, an SVG, drawn at the height of the text around it."
+              },
+              "alt": {
+                "type": "string"
+              },
+              "mono": {
+                "type": "boolean",
+                "description": "A single-colour mark, inverted on a dark ground as the web does for a -mono.svg."
+              }
+            },
+            "required": [
+              "type",
+              "src",
+              "alt",
+              "mono"
+            ],
+            "additionalProperties": false
+          }
+        ]
+      }
+    }
+  },
+  "Ref": {
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "type": "object",
+    "properties": {
+      "key": {
+        "type": "string",
+        "minLength": 1
+      },
+      "number": {
+        "type": "integer",
+        "exclusiveMinimum": 0,
+        "maximum": 9007199254740991
+      },
+      "title": {
+        "type": "string",
+        "minLength": 1,
+        "description": "The English For Engineers title, as the web pager prints it."
+      },
+      "drawn": {
+        "type": "boolean",
+        "description": "Written in the track the reference lands in."
+      },
+      "track": {
+        "type": "string",
+        "description": "The track of the page the reference lands on."
+      },
+      "lang": {
+        "type": "string",
+        "description": "The language of the page the reference lands on."
+      }
+    },
+    "required": [
+      "key",
+      "number",
+      "title",
+      "drawn",
+      "track",
+      "lang"
+    ],
+    "additionalProperties": false
+  },
+  "Block": {
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "oneOf": [
+      {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "const": "paragraph"
+          },
+          "inlines": {
+            "type": "array",
+            "items": {
+              "$ref": "#/$defs/__schema0"
+            }
+          },
+          "lead": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "type",
+          "inlines"
+        ],
+        "additionalProperties": false
+      },
+      {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "const": "heading"
+          },
+          "depth": {
+            "anyOf": [
+              {
+                "type": "number",
+                "const": 2
+              },
+              {
+                "type": "number",
+                "const": 3
+              },
+              {
+                "type": "number",
+                "const": 4
+              }
+            ]
+          },
+          "id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "mark": {
+            "type": "string",
+            "minLength": 1
+          },
+          "inlines": {
+            "type": "array",
+            "items": {
+              "$ref": "#/$defs/__schema0"
+            }
+          }
+        },
+        "required": [
+          "type",
+          "depth",
+          "id",
+          "inlines"
+        ],
+        "additionalProperties": false
+      },
+      {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "const": "list"
+          },
+          "ordered": {
+            "type": "boolean"
+          },
+          "start": {
+            "type": "integer",
+            "minimum": -9007199254740991,
+            "maximum": 9007199254740991
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "task": {
+                  "type": "object",
+                  "properties": {
+                    "checked": {
+                      "type": "boolean"
+                    }
+                  },
+                  "required": [
+                    "checked"
+                  ],
+                  "additionalProperties": false
+                },
+                "blocks": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#"
+                  }
+                }
+              },
+              "required": [
+                "blocks"
+              ],
+              "additionalProperties": false
+            }
+          }
+        },
+        "required": [
+          "type",
+          "ordered",
+          "items"
+        ],
+        "additionalProperties": false
+      },
+      {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "const": "quote"
+          },
+          "label": {
+            "type": "string",
+            "minLength": 1
+          },
+          "blocks": {
+            "type": "array",
+            "items": {
+              "$ref": "#"
+            }
+          }
+        },
+        "required": [
+          "type",
+          "blocks"
+        ],
+        "additionalProperties": false
+      },
+      {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "const": "callout"
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "note",
+              "tip",
+              "important",
+              "warning",
+              "caution"
+            ]
+          },
+          "title": {
+            "anyOf": [
+              {
+                "type": "array",
+                "items": {
+                  "$ref": "#/$defs/__schema0"
+                }
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "blocks": {
+            "type": "array",
+            "items": {
+              "$ref": "#"
+            }
+          },
+          "action": {
+            "anyOf": [
+              {
+                "type": "object",
+                "properties": {
+                  "target": {
+                    "oneOf": [
+                      {
+                        "type": "object",
+                        "properties": {
+                          "kind": {
+                            "type": "string",
+                            "const": "module"
+                          },
+                          "key": {
+                            "type": "string",
+                            "minLength": 1
+                          },
+                          "track": {
+                            "type": "string",
+                            "description": "A track id from tracks.ts: engineers (For Engineers) or everyone (For Everyone)."
+                          },
+                          "lang": {
+                            "type": "string",
+                            "description": "A language id: en, or one of the translations the index lists."
+                          },
+                          "fragment": {
+                            "description": "The target heading id, without the # and not percent-encoded.",
+                            "type": "string",
+                            "minLength": 1
+                          }
+                        },
+                        "required": [
+                          "kind",
+                          "key",
+                          "track",
+                          "lang"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "kind": {
+                            "type": "string",
+                            "const": "external"
+                          },
+                          "url": {
+                            "type": "string",
+                            "pattern": "^https?:\\/\\/"
+                          }
+                        },
+                        "required": [
+                          "kind",
+                          "url"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "kind": {
+                            "type": "string",
+                            "const": "anchor"
+                          },
+                          "id": {
+                            "type": "string",
+                            "minLength": 1,
+                            "description": "A heading id in the same document, not percent-encoded."
+                          }
+                        },
+                        "required": [
+                          "kind",
+                          "id"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "kind": {
+                            "type": "string",
+                            "const": "catalog"
+                          }
+                        },
+                        "required": [
+                          "kind"
+                        ],
+                        "additionalProperties": false
+                      }
+                    ]
+                  },
+                  "inlines": {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/$defs/__schema0"
+                    }
+                  }
+                },
+                "required": [
+                  "target",
+                  "inlines"
+                ],
+                "additionalProperties": false
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "A last paragraph that is only a link, drawn as a button."
+          }
+        },
+        "required": [
+          "type",
+          "kind",
+          "title",
+          "blocks",
+          "action"
+        ],
+        "additionalProperties": false
+      },
+      {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "const": "code"
+          },
+          "language": {
+            "type": "string",
+            "minLength": 1
+          },
+          "lines": {
+            "type": "array",
+            "items": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "text": {
+                    "type": "string"
+                  },
+                  "role": {
+                    "description": "The bz-tok-<role> suffix; coloured with --color-slab-<role>, or as a token with no role when the app has no such colour.",
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "bold": {
+                    "type": "boolean",
+                    "const": true
+                  }
+                },
+                "required": [
+                  "text"
+                ],
+                "additionalProperties": false
+              }
+            }
+          }
+        },
+        "required": [
+          "type",
+          "language",
+          "lines"
+        ],
+        "additionalProperties": false
+      },
+      {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "const": "table"
+          },
+          "number": {
+            "type": "string",
+            "pattern": "^\\d+(?:\\.\\d+)?$",
+            "description": "Printed after TBL. on a table and after FIG. on an image or a diagram; the two sequences are counted apart and share numbers."
+          },
+          "title": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "rowHeaders": {
+            "type": "boolean"
+          },
+          "align": {
+            "type": "array",
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "enum": [
+                    "left",
+                    "center",
+                    "right"
+                  ]
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          },
+          "head": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "inlines": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/$defs/__schema0"
+                  }
+                }
+              },
+              "required": [
+                "inlines"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "rows": {
+            "type": "array",
+            "items": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "inlines": {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/$defs/__schema0"
+                    }
+                  }
+                },
+                "required": [
+                  "inlines"
+                ],
+                "additionalProperties": false
+              }
+            }
+          }
+        },
+        "required": [
+          "type",
+          "number",
+          "title",
+          "rowHeaders",
+          "align",
+          "head",
+          "rows"
+        ],
+        "additionalProperties": false
+      },
+      {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "const": "image"
+          },
+          "number": {
+            "type": "string",
+            "pattern": "^\\d+(?:\\.\\d+)?$",
+            "description": "Printed after TBL. on a table and after FIG. on an image or a diagram; the two sequences are counted apart and share numbers."
+          },
+          "title": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "note": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "src": {
+            "type": "string",
+            "pattern": "^[^/\\s][^\\s]*$",
+            "description": "A path relative to the site root: no base path and no leading slash."
+          },
+          "alt": {
+            "type": "string"
+          },
+          "width": {
+            "type": "integer",
+            "exclusiveMinimum": 0,
+            "maximum": 9007199254740991
+          },
+          "height": {
+            "type": "integer",
+            "exclusiveMinimum": 0,
+            "maximum": 9007199254740991
+          }
+        },
+        "required": [
+          "type",
+          "number",
+          "title",
+          "note",
+          "src",
+          "alt",
+          "width",
+          "height"
+        ],
+        "additionalProperties": false
+      },
+      {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "const": "diagram"
+          },
+          "number": {
+            "type": "string",
+            "pattern": "^\\d+(?:\\.\\d+)?$",
+            "description": "Printed after TBL. on a table and after FIG. on an image or a diagram; the two sequences are counted apart and share numbers."
+          },
+          "title": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "svg": {
+            "type": "object",
+            "properties": {
+              "light": {
+                "type": "string",
+                "pattern": "^[^/\\s][^\\s]*$",
+                "description": "A path relative to the site root: no base path and no leading slash."
+              },
+              "dark": {
+                "type": "string",
+                "pattern": "^[^/\\s][^\\s]*$",
+                "description": "A path relative to the site root: no base path and no leading slash."
+              }
+            },
+            "required": [
+              "light",
+              "dark"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "required": [
+          "type",
+          "number",
+          "title",
+          "svg"
+        ],
+        "additionalProperties": false
+      },
+      {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "const": "rule"
+          }
+        },
+        "required": [
+          "type"
+        ],
+        "additionalProperties": false
+      }
+    ],
+    "$defs": {
+      "__schema0": {
+        "oneOf": [
+          {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "const": "text"
+              },
+              "text": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "type",
+              "text"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "const": "code"
+              },
+              "text": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "type",
+              "text"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "const": "break"
+              }
+            },
+            "required": [
+              "type"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "const": "strong"
+              },
+              "inlines": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/$defs/__schema0"
+                }
+              }
+            },
+            "required": [
+              "type",
+              "inlines"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "const": "emphasis"
+              },
+              "inlines": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/$defs/__schema0"
+                }
+              }
+            },
+            "required": [
+              "type",
+              "inlines"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "const": "delete"
+              },
+              "inlines": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/$defs/__schema0"
+                }
+              }
+            },
+            "required": [
+              "type",
+              "inlines"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "const": "link"
+              },
+              "target": {
+                "oneOf": [
+                  {
+                    "type": "object",
+                    "properties": {
+                      "kind": {
+                        "type": "string",
+                        "const": "module"
+                      },
+                      "key": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "track": {
+                        "type": "string",
+                        "description": "A track id from tracks.ts: engineers (For Engineers) or everyone (For Everyone)."
+                      },
+                      "lang": {
+                        "type": "string",
+                        "description": "A language id: en, or one of the translations the index lists."
+                      },
+                      "fragment": {
+                        "description": "The target heading id, without the # and not percent-encoded.",
+                        "type": "string",
+                        "minLength": 1
+                      }
+                    },
+                    "required": [
+                      "kind",
+                      "key",
+                      "track",
+                      "lang"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "kind": {
+                        "type": "string",
+                        "const": "external"
+                      },
+                      "url": {
+                        "type": "string",
+                        "pattern": "^https?:\\/\\/"
+                      }
+                    },
+                    "required": [
+                      "kind",
+                      "url"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "kind": {
+                        "type": "string",
+                        "const": "anchor"
+                      },
+                      "id": {
+                        "type": "string",
+                        "minLength": 1,
+                        "description": "A heading id in the same document, not percent-encoded."
+                      }
+                    },
+                    "required": [
+                      "kind",
+                      "id"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "kind": {
+                        "type": "string",
+                        "const": "catalog"
+                      }
+                    },
+                    "required": [
+                      "kind"
+                    ],
+                    "additionalProperties": false
+                  }
+                ]
+              },
+              "inlines": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/$defs/__schema0"
+                }
+              }
+            },
+            "required": [
+              "type",
+              "target",
+              "inlines"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "const": "logo"
+              },
+              "src": {
+                "type": "string",
+                "pattern": "^[^/\\s][^\\s]*$",
+                "description": "A vendor mark, an SVG, drawn at the height of the text around it."
+              },
+              "alt": {
+                "type": "string"
+              },
+              "mono": {
+                "type": "boolean",
+                "description": "A single-colour mark, inverted on a dark ground as the web does for a -mono.svg."
+              }
+            },
+            "required": [
+              "type",
+              "src",
+              "alt",
+              "mono"
+            ],
+            "additionalProperties": false
+          }
+        ]
+      }
+    }
+  },
+  "Inline": {
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "oneOf": [
+      {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "const": "text"
+          },
+          "text": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "type",
+          "text"
+        ],
+        "additionalProperties": false
+      },
+      {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "const": "code"
+          },
+          "text": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "type",
+          "text"
+        ],
+        "additionalProperties": false
+      },
+      {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "const": "break"
+          }
+        },
+        "required": [
+          "type"
+        ],
+        "additionalProperties": false
+      },
+      {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "const": "strong"
+          },
+          "inlines": {
+            "type": "array",
+            "items": {
+              "$ref": "#"
+            }
+          }
+        },
+        "required": [
+          "type",
+          "inlines"
+        ],
+        "additionalProperties": false
+      },
+      {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "const": "emphasis"
+          },
+          "inlines": {
+            "type": "array",
+            "items": {
+              "$ref": "#"
+            }
+          }
+        },
+        "required": [
+          "type",
+          "inlines"
+        ],
+        "additionalProperties": false
+      },
+      {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "const": "delete"
+          },
+          "inlines": {
+            "type": "array",
+            "items": {
+              "$ref": "#"
+            }
+          }
+        },
+        "required": [
+          "type",
+          "inlines"
+        ],
+        "additionalProperties": false
+      },
+      {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "const": "link"
+          },
+          "target": {
+            "oneOf": [
+              {
+                "type": "object",
+                "properties": {
+                  "kind": {
+                    "type": "string",
+                    "const": "module"
+                  },
+                  "key": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "track": {
+                    "type": "string",
+                    "description": "A track id from tracks.ts: engineers (For Engineers) or everyone (For Everyone)."
+                  },
+                  "lang": {
+                    "type": "string",
+                    "description": "A language id: en, or one of the translations the index lists."
+                  },
+                  "fragment": {
+                    "description": "The target heading id, without the # and not percent-encoded.",
+                    "type": "string",
+                    "minLength": 1
+                  }
+                },
+                "required": [
+                  "kind",
+                  "key",
+                  "track",
+                  "lang"
+                ],
+                "additionalProperties": false
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "kind": {
+                    "type": "string",
+                    "const": "external"
+                  },
+                  "url": {
+                    "type": "string",
+                    "pattern": "^https?:\\/\\/"
+                  }
+                },
+                "required": [
+                  "kind",
+                  "url"
+                ],
+                "additionalProperties": false
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "kind": {
+                    "type": "string",
+                    "const": "anchor"
+                  },
+                  "id": {
+                    "type": "string",
+                    "minLength": 1,
+                    "description": "A heading id in the same document, not percent-encoded."
+                  }
+                },
+                "required": [
+                  "kind",
+                  "id"
+                ],
+                "additionalProperties": false
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "kind": {
+                    "type": "string",
+                    "const": "catalog"
+                  }
+                },
+                "required": [
+                  "kind"
+                ],
+                "additionalProperties": false
+              }
+            ]
+          },
+          "inlines": {
+            "type": "array",
+            "items": {
+              "$ref": "#"
+            }
+          }
+        },
+        "required": [
+          "type",
+          "target",
+          "inlines"
+        ],
+        "additionalProperties": false
+      },
+      {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "const": "logo"
+          },
+          "src": {
+            "type": "string",
+            "pattern": "^[^/\\s][^\\s]*$",
+            "description": "A vendor mark, an SVG, drawn at the height of the text around it."
+          },
+          "alt": {
+            "type": "string"
+          },
+          "mono": {
+            "type": "boolean",
+            "description": "A single-colour mark, inverted on a dark ground as the web does for a -mono.svg."
+          }
+        },
+        "required": [
+          "type",
+          "src",
+          "alt",
+          "mono"
+        ],
+        "additionalProperties": false
+      }
+    ]
+  },
+  "LinkTarget": {
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "oneOf": [
+      {
+        "type": "object",
+        "properties": {
+          "kind": {
+            "type": "string",
+            "const": "module"
+          },
+          "key": {
+            "type": "string",
+            "minLength": 1
+          },
+          "track": {
+            "type": "string",
+            "description": "A track id from tracks.ts: engineers (For Engineers) or everyone (For Everyone)."
+          },
+          "lang": {
+            "type": "string",
+            "description": "A language id: en, or one of the translations the index lists."
+          },
+          "fragment": {
+            "description": "The target heading id, without the # and not percent-encoded.",
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "kind",
+          "key",
+          "track",
+          "lang"
+        ],
+        "additionalProperties": false
+      },
+      {
+        "type": "object",
+        "properties": {
+          "kind": {
+            "type": "string",
+            "const": "external"
+          },
+          "url": {
+            "type": "string",
+            "pattern": "^https?:\\/\\/"
+          }
+        },
+        "required": [
+          "kind",
+          "url"
+        ],
+        "additionalProperties": false
+      },
+      {
+        "type": "object",
+        "properties": {
+          "kind": {
+            "type": "string",
+            "const": "anchor"
+          },
+          "id": {
+            "type": "string",
+            "minLength": 1,
+            "description": "A heading id in the same document, not percent-encoded."
+          }
+        },
+        "required": [
+          "kind",
+          "id"
+        ],
+        "additionalProperties": false
+      },
+      {
+        "type": "object",
+        "properties": {
+          "kind": {
+            "type": "string",
+            "const": "catalog"
+          }
+        },
+        "required": [
+          "kind"
+        ],
+        "additionalProperties": false
+      }
+    ]
+  },
+  "Cell": {
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "type": "object",
+    "properties": {
+      "inlines": {
+        "type": "array",
+        "items": {
+          "$ref": "#/$defs/__schema0"
+        }
+      }
+    },
+    "required": [
+      "inlines"
+    ],
+    "additionalProperties": false,
+    "$defs": {
+      "__schema0": {
+        "oneOf": [
+          {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "const": "text"
+              },
+              "text": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "type",
+              "text"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "const": "code"
+              },
+              "text": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "type",
+              "text"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "const": "break"
+              }
+            },
+            "required": [
+              "type"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "const": "strong"
+              },
+              "inlines": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/$defs/__schema0"
+                }
+              }
+            },
+            "required": [
+              "type",
+              "inlines"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "const": "emphasis"
+              },
+              "inlines": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/$defs/__schema0"
+                }
+              }
+            },
+            "required": [
+              "type",
+              "inlines"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "const": "delete"
+              },
+              "inlines": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/$defs/__schema0"
+                }
+              }
+            },
+            "required": [
+              "type",
+              "inlines"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "const": "link"
+              },
+              "target": {
+                "oneOf": [
+                  {
+                    "type": "object",
+                    "properties": {
+                      "kind": {
+                        "type": "string",
+                        "const": "module"
+                      },
+                      "key": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "track": {
+                        "type": "string",
+                        "description": "A track id from tracks.ts: engineers (For Engineers) or everyone (For Everyone)."
+                      },
+                      "lang": {
+                        "type": "string",
+                        "description": "A language id: en, or one of the translations the index lists."
+                      },
+                      "fragment": {
+                        "description": "The target heading id, without the # and not percent-encoded.",
+                        "type": "string",
+                        "minLength": 1
+                      }
+                    },
+                    "required": [
+                      "kind",
+                      "key",
+                      "track",
+                      "lang"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "kind": {
+                        "type": "string",
+                        "const": "external"
+                      },
+                      "url": {
+                        "type": "string",
+                        "pattern": "^https?:\\/\\/"
+                      }
+                    },
+                    "required": [
+                      "kind",
+                      "url"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "kind": {
+                        "type": "string",
+                        "const": "anchor"
+                      },
+                      "id": {
+                        "type": "string",
+                        "minLength": 1,
+                        "description": "A heading id in the same document, not percent-encoded."
+                      }
+                    },
+                    "required": [
+                      "kind",
+                      "id"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "kind": {
+                        "type": "string",
+                        "const": "catalog"
+                      }
+                    },
+                    "required": [
+                      "kind"
+                    ],
+                    "additionalProperties": false
+                  }
+                ]
+              },
+              "inlines": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/$defs/__schema0"
+                }
+              }
+            },
+            "required": [
+              "type",
+              "target",
+              "inlines"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "const": "logo"
+              },
+              "src": {
+                "type": "string",
+                "pattern": "^[^/\\s][^\\s]*$",
+                "description": "A vendor mark, an SVG, drawn at the height of the text around it."
+              },
+              "alt": {
+                "type": "string"
+              },
+              "mono": {
+                "type": "boolean",
+                "description": "A single-colour mark, inverted on a dark ground as the web does for a -mono.svg."
+              }
+            },
+            "required": [
+              "type",
+              "src",
+              "alt",
+              "mono"
+            ],
+            "additionalProperties": false
+          }
+        ]
+      }
+    }
+  },
+  "DiagramSource": {
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "type": "object",
+    "properties": {
+      "id": {
+        "type": "string",
+        "pattern": "^[0-9a-f]{32}$"
+      },
+      "variant": {
+        "type": "string",
+        "enum": [
+          "light",
+          "dark"
+        ]
+      },
+      "source": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "required": [
+      "id",
+      "variant",
+      "source"
+    ],
+    "additionalProperties": false
+  }
+}

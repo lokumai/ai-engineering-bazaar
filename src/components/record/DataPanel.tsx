@@ -13,6 +13,7 @@ import {
 import { markActivity, markExported } from '@/lib/record/events'
 import type { RecordData } from '@/lib/record/schema'
 import {
+  exportFilename,
   exportJson,
   flush,
   importJson,
@@ -45,11 +46,6 @@ import { EraseDialog } from './EraseDialog'
  * `.json` only: the RECORD OF WORK `.html` and its content digest went with the
  * report.
  */
-
-/** §12.12.1's rule for a filename: a fixed ASCII template, never the name. */
-function exportFilename(at: string): string {
-  return `hl-record-${at.slice(0, 10)}.json`
-}
 
 type ImportState =
   | { kind: 'idle' }

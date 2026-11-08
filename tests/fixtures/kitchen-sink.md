@@ -47,10 +47,45 @@ Program output, in an untagged fence.
 
 > A blockquote with no lead-in stays a plain pull-rule.
 
+> [!TIP]
+> **A call-out's title**
+>
+> A call-out's body, as GitHub writes an alert.
+>
+> **[A call-out's button](https://example.com/)**
+
+![Vendor](./images/logos/vendor.svg)**Vendor** names a product with its mark, and
+![Mono](./images/logos/mono-mono.svg) Mono names one with a single-colour mark.
+
 A checklist, which the record reads by index:
 
 - [ ] The first item, unticked.
 - [x] The second item, ticked.
+
+## IV. Marks, lists and rules
+
+A paragraph with *emphasis*, **strong** text, ~~deleted~~ text and `inline code`,\
+and a second line after a hard break.
+
+An ordered list that starts at three:
+
+3. The third step.
+4. The fourth step.
+
+#### A level-four heading
+
+A two-column table, centred on the left and aligned right on the right:
+
+| Name | Count |
+| :---: | ---: |
+| First | 1 |
+| Second | 22 |
+
+A cross-reference to [a part of another sheet](training.md#a-part), an anchor
+link [back to the top](#a-numbered-section), and a link to
+[the catalog](../index.md).
+
+---
 
 ## Summary
 

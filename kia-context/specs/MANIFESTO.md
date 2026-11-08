@@ -131,8 +131,8 @@ reason, and so does a Persian version of every written one (**D80**). See `genes
 19. **A For Everyone module teaches the same subject, never a lesser one.** It is not the technical
     module with the code removed, not a summary and not a change of tone, but all three together: a
     subset of the same concepts, told as a story with everyday examples, answering "why am I learning
-    this?", often a third to a half of the length. The core ideas (the context, the system prompt,
-    tools, memory, an agent against a plain model) are explained until a non-engineer can picture
+    this?", and shorter than the technical module. The core ideas (the context, prompt engineering, the
+    system prompt, tools, memory, an agent against a plain model) are explained until a non-engineer can picture
     them. Reasoning and the blueprint process: `logs/BRAINSTORM.md` **D108**.
 
 ## 6. What this is NOT

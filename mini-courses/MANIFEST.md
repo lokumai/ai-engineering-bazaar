@@ -65,7 +65,7 @@ here.
 
 ## Two versions of a module
 
-Modules come in two versions, **For Engineers** and **For Everyone**.
+Written modules come in two versions, **For Engineers** and **For Everyone**.
 
 The For Everyone version is for people who are not engineers: someone in HR, in finance, a manager.
 It is still AI engineering, on purpose. You talk to today's AI in normal language, so anyone who can
@@ -80,5 +80,4 @@ there.
 
 ---
 
-Modules are written in English first. The Turkish versions follow once the English is
-final.
+Each module is written in English first, then in Turkish and Persian.

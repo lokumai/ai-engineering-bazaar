@@ -1147,7 +1147,7 @@ blueprint batches, each approved by the author before any writing.
       decisions.
 - [x] `MANIFESTO.md`: non-engineers as the fourth audience, and rule 19 (the same subject, never a
       lesser one).
-- [x] `mini-courses/MANIFEST.md`: a short, reader-facing "Two versions of every module" section.
+- [x] `mini-courses/MANIFEST.md`: a short, reader-facing "Two versions of a module" section.
 - [x] `mini-courses/CLAUDE.md` and `AGENTS.md` (byte-identical): how a For Everyone module is written.
 
 ## 🏁 Milestone M77: Nineteen For Everyone modules in English — DONE
@@ -1165,8 +1165,9 @@ Generative UI is a draft) and Ecosystem (4; two drafts skipped), following the a
 
 **Report, 2026-11-08.** Written in the main session from the approved blueprints. Each opens with "Why
 This Matters to You" and ends with "Words You Now Know", Summary and quick check, and References.
-Fundamentals keeps the core in full and runs 51 to 86% of the technical word count (Observability
-lowest, Memory highest); Intermediate and Ecosystem run 40 to 70% (`wc -w` on each pair). Gate:
+Fundamentals keeps the core in full and runs 45 to 84% of the technical word count (RAG lowest, Memory
+highest); Intermediate and Ecosystem run 41 to 68% (`wc -w` on each pair, median 59%). 47 of 48 images
+kept, 14 of 23 diagrams. Gate:
 typecheck, 1,229 unit tests (one reference-group order fixed in LLM Fundamentals), the build and link
 check, `check-mermaid.mjs` on every file, and the rendered LLM Fundamentals page looked at.
 

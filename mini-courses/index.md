@@ -4,7 +4,7 @@ AI Engineering made simple, short, and useful.
 
 A reference to help you learn practical topics in modern AI engineering. Our goal with this project is to provide material that includes only the most important parts, and not the details or things that have no significant real-life use. We only discuss practical topics, in an easy-to-understand and fast way, so that beginner researchers and engineers can quickly learn the essentials. It includes pictures, visualizations, code samples, and also external references for further reading, such as YouTube videos, to help you understand the topics better, and sometimes Gen Z-style brain rot, memes or short videos.
 
-**Two versions of each module.** Fundamentals, Intermediate and Ecosystem come in two versions. *For Engineers* is the full technical text. *For Everyone* explains the same AI engineering ideas in plain words, with everyday examples, for readers who are not engineers, such as people in HR, finance or management. Switch between them at the top of any page.
+**Two versions of each written module.** The written modules of Fundamentals, Intermediate and Ecosystem come in two versions. *For Engineers* is the full technical text. *For Everyone* explains the same AI engineering ideas in plain words, with everyday examples, for readers who are not engineers, such as people in HR, finance or management. Switch between them at the top of any page.
 
 ## Structure
 

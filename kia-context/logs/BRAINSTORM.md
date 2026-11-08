@@ -227,7 +227,7 @@ dark variant, would get something else; the frame instead takes a light or a dar
 chosen theme's tone. A first-time reader's frame is therefore light where the shell mockup draws it
 dark, a deviation recorded in DESIGN.md. Code highlighting keeps its own three palettes, now decoupled.
 
-### D108 · What a For Everyone module is: the same engineering, as a story, a third to a half as long — 2026-11-08
+### D108 · What a For Everyone module is: the same engineering, as a story, and shorter — 2026-11-08
 
 **Asked by the author**, before the non-technical versions were written: *"Someone would think that if
 we just remove codes and technical words, it becomes suitable for non-tech people. WRONG! Someone may
@@ -248,12 +248,14 @@ each a table of every section with keep / short / drop and how to explain it, ap
   müdür, a hoca and öğrenciler; a hook is a locked door against a sign; a trace is a bank statement.
   Examples move to the reader's world (an HR team of agents in Prompt Engineering, a CV carrying hidden
   instructions in Security, flights and a calendar in AI Agents).
-- **Almost every figure stays**, technical ones included ("these guys know mathematics and uni
+- **Almost every picture stays** (47 of 48 images; 14 of 23 diagrams, where a blueprint simplified the
+  section), technical ones included ("these guys know mathematics and uni
   level"). **Code, formulas and commands may stay** where the technical module has them, with a line
   saying it is fine not to follow them; references may stay a little technical.
 - **The core is explained in full**, not skimmed: context, prompt engineering, system prompt, tools,
-  memory, agent against LLM. So Fundamentals runs longer than the "30 to 50%" the author expected for
-  the rest.
+  memory, agent against LLM. Measured on 2026-11-08 with `wc -w`, a module runs 41 to 84% of its
+  technical original (median 59%), longer than the "30 to 50%" the author first expected, mostly in
+  Fundamentals.
 - **A draft or planned module gets none** (Generative UI, Choosing a Tech Stack, Protocols Reference),
   the same rule as Persian; Expert and Emerging are left for later.
 

@@ -8,7 +8,7 @@ Bir ekip ya da bir satıcı bir yapay zekâ projesi önerdiğinde bir framework'
 
 ## Bir Framework Sana Ne Verir
 
-Bir framework'e kesin olarak ihtiyacın yok. [AI Agent'lar](../1_fundamentals/agents_tr.md) modülü, agent döngüsünün basit olduğunu göstermişti. Framework, bu döngünün etrafındaki hazır tesisat:
+Bir framework'e kesin olarak ihtiyacın yok. [AI Agent'lar](../1_fundamentals/agents_tr.md) modülü, agent döngüsünün basit olduğunu göstermişti. Framework, bu döngünün etrafındaki hazır gelen altyapı:
 
 - bir yapay zekâ servisi kısa süreliğine hata verdiğinde yeniden denemek
 - cevabı yazıldıkça kelime kelime göstermek

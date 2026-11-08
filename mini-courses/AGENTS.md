@@ -273,11 +273,11 @@ function or a terminal is.
 - The concepts as a story with everyday examples, one analogy per hard idea, called back later (the
   context is a chat read from the top every time; a team of agents is a manager and a team). Move an
   example into the reader's world when the technical one is about code.
-- Keep almost every figure, with a caption rewritten in plain words; images are `../images/...`. Code,
+- Keep almost every image, with a caption rewritten in plain words; images are `../images/...`. Code,
   formulas and commands may stay where the technical module has them, with one line saying it is
   fine not to follow them.
-- Explain the core in full (context, system prompt, tools, memory, agent against plain model); for
-  the rest, knowing the keyword and why it matters is enough. Often a third to a half of the length.
+- Explain the core in full (MANIFESTO rule 19 names it); for the rest, knowing the keyword and why
+  it matters is enough, so the module comes out shorter than the technical one.
 - End with `## Words You Now Know` (each keyword, one plain line), `## Summary` with the quick check,
   and `## References`, which may stay a little technical. No series map and no quiz.
 - Prose links are written as in the technical module (they resolve against its folder) and point at

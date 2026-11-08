@@ -1,6 +1,6 @@
 # Code Agent'lar
 
-[Context Engineering](context_engineering_tr.md) modülü bir noktayla bitmişti: belki de zaten kullandığın code agent'lar, deep agent'lardır. Plan yapıyorlar, yardımcı gönderiyorlar, dosyaları okuyup yazıyorlar. Bu modül o agent'ları ve onların standart parçalarını anlatıyor.
+[Context Engineering](context_engineering_tr.md) modülü bir noktayla bitmişti: belki de zaten kullandığın code agent'lar, deep agent'lardır. Plan yapıyorlar, alt agent'lar (subagent) başlatıyorlar, dosyaları okuyup yazıyorlar. Bu modül o agent'ları ve onların standart parçalarını anlatıyor.
 
 ## Bu Senin İçin Neden Önemli
 
@@ -31,7 +31,7 @@ Onu sıfırdan yazman gerekmiyor. `/init` yazarsan agent projeyi okuyor ve senin
 
 ## Slash Command'lar: Kayıtlı Prompt'lar
 
-**Slash command**, bir kez yazıp `/isim` yazarak tekrar çalıştırdığın bir prompt; bir e-posta şablonu gibi. Örneğin `/review`, ekibinin kontrol listesini bir işe karşı çalıştırabilir; böylece aynı uzun prompt'u her hafta yeniden yazmazsın.
+**Slash command**, bir kez yazıp `/name` yazarak tekrar çalıştırdığın bir prompt; bir e-posta şablonu gibi. Örneğin `/review`, ekibinin kontrol listesini bir işe karşı çalıştırabilir; böylece aynı uzun prompt'u her hafta yeniden yazmazsın.
 
 ## MCP: Her Araç İçin Tek Bir Fiş
 

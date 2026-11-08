@@ -1,6 +1,6 @@
 # RAG & Embeddings
 
-[LLM Temelleri](llms_tr.md) modülü sana yapay zekânın okuduğu sohbeti ve onun en büyük boyutunu, yani context window'u verdi. [Training LLMs](training_tr.md) modülü fine-tuning'i verdi; bu yöntem modelin kendisini değiştiriyor. Bu modül ise bir modele bilgi vermenin üçüncü yolunu anlatıyor. Bu yol aynı zamanda en sık kullanılanı.
+[LLM Temelleri](llms_tr.md) modülü sana yapay zekânın okuduğu sohbeti ve onun en büyük boyutunu, yani context window'u verdi. [Training LLMs](training_tr.md) modülü fine-tuning'i verdi; bu yöntem modelin kendisini değiştiriyor. Bu modül ise bir modele bilgi vermenin üçüncü yolunu anlatıyor. Ve en çok kullanılan yol da bu.
 
 ## Bu Senin İçin Neden Önemli
 
@@ -19,7 +19,7 @@ Bunların miktarı sohbete sığacak olandan çok daha fazla. İki yüz sözleş
 
 Ama önemli nokta şu: **tek bir soru için bunların hepsine ihtiyacın yok.** Biri, tek bir tedarikçi sözleşmesindeki fesih maddesini soruyor. Diğer iki yüz sözleşmeye ihtiyacı yok. Tek bir maddeye ihtiyacı var.
 
-RAG de şunu yapıyor: dokümanları yapay zekânın dışında tutuyor. Bir soru geldiğinde, yalnızca onu cevaplayan parçaları buluyor ve onları sohbete, sorunun yanına ekliyor. Sonra yapay zekâ, artık görebildiği şeyden yola çıkarak cevap veriyor. İsim de bunu söylüyor: **Retrieval-Augmented Generation**, yani getirmeyle güçlendirilmiş üretim. Önce retrieve (bul), sonra generate (cevapla).
+RAG de şunu yapıyor: dokümanları yapay zekânın dışında tutuyor. Bir soru geldiğinde, yalnızca onu cevaplayan parçaları buluyor ve onları sohbete, sorunun yanına ekliyor. Sonra yapay zekâ, artık görebildiği şeyden yola çıkarak cevap veriyor. Adı da bunu söylüyor: **Retrieval-Augmented Generation**, yani getirmeyle güçlendirilmiş üretim. Önce retrieve (bul), sonra generate (cevapla).
 
 ### Masa ve Kütüphane
 
@@ -108,7 +108,7 @@ Tek cümleyle: **fine-tuning modelin neyi *bildiğini* değiştirir; RAG modelin
 
 ## Özet
 
-RAG, dokümanlarını yapay zekânın dışında tutar ve her soru için masaya yalnızca ilgili parçaları koyar. Onları anlamla bulur; bunun için embedding denen parmak izlerini kullanır ve bu parmak izleri bir vektör veritabanında durur. Resmi hatırla: eğitim kütüphaneyi doldurur, RAG ise masaya neyin konacağını seçer.
+RAG, dokümanlarını yapay zekânın dışında tutar ve her soru için masaya yalnızca ilgili parçaları koyar. Onları anlamla bulur; bunun için embedding denen parmak izlerini kullanır ve bu parmak izleri bir vektör veritabanında durur. Bu resmi aklında tut: eğitim kütüphaneyi doldurur, RAG ise masaya neyin konacağını seçer.
 
 Sırada tool'lar var: bir yapay zekâ yalnızca okumayı bırakıp nasıl bir şeyler yapmaya başlıyor.
 

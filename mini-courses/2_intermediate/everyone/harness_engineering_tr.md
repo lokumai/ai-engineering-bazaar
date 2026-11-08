@@ -10,7 +10,7 @@ Bir şirket yapay zekânın gerçek verilerle, gerçek parayla ya da gerçek mü
 
 Bir yapay zekâ her seferinde tam olarak aynı şeyi yapmaz. Ona aynı girdiyi iki kez verirsen iki farklı cevap alabilirsin. Teknik dilde buna **non-deterministic** (deterministik olmayan) deniyor. İki saat boyunca çalışan bir agent ise binlerce küçük karar veriyor.
 
-Yani ne kadar sık istersen iste, güzelce rica etmek asla garanti vermez. Yapay zekânın bir müşteriye, bir insanın onayı olmadan asla e-posta göndermemesi gerektiğini düşün. Talimatlarına "onay olmadan asla e-posta gönderme" yazabilirsin. Bu çoğu zaman işe yarar. Ama bu kural için "çoğu zaman" yetmez. Yapay zekâ ne karar verirse versin her seferinde aynı şekilde davranan, ortama yerleştirilmiş bir şeye ihtiyacın var.
+Ne kadar nazik rica edersen et, bu bir garanti değildir. Yapay zekânın bir müşteriye, bir insanın onayı olmadan asla e-posta göndermemesi gerektiğini düşün. Talimatlarına "onay olmadan asla e-posta gönderme" yazabilirsin. Bu çoğu zaman işe yarar. Ama bu kural için "çoğu zaman" yetmez. Yapay zekâ ne karar verirse versin her seferinde aynı şekilde davranan, ortama yerleştirilmiş bir şeye ihtiyacın var.
 
 Bu ortamı tasarlamaya **harness engineering** deniyor.
 

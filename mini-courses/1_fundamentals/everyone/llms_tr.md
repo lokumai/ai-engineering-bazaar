@@ -8,7 +8,7 @@ Bu kurs bir AI *mühendisliği* kursu, ama yalnızca mühendisler için değil, 
 
 Bugünün yapay zekâsını kullanmak için matematik yazman, özel araçlar kurman ya da bir diploma sahibi olman gerekmiyor. Onunla bir iş arkadaşınla konuştuğun gibi, normal bir dille konuşuyorsun. Arayüz normal dil olduğu için, bir sorunu net anlatabilen herkes artık yapay zekâyla sorun çözebilir. Bir İK uzmanı, bir muhasebeci, bir mimar ya da bir voleybolcu, ne istediğini anlatarak küçük bir web sitesi ya da şirket içi bir araç yaptırabilir.
 
-Ama bunu iyi anlatabilmek için yapay zekânın nasıl çalıştığını bilmen gerekiyor: neyi görüyor, neyi hatırlıyor ve nerede yanılıyor. AI mühendisliği tam olarak bu. Mühendis olmak zorunda değilsin. Yalnızca kavramlara ihtiyacın var ve bu kurs, önemli olan kavramların kısa bir özeti.
+Ama bunu iyi anlatabilmek için yapay zekânın nasıl çalıştığını bilmen gerekiyor: neyi görüyor, neyi hatırlıyor ve nerede yanılıyor. AI mühendisliği tam olarak bu. Mühendis olmak zorunda değilsin. Sadece kavramları bilmen yeter; bu kurs, gerçekten önemli olanların kısa bir özeti.
 
 ## LLM Nedir?
 

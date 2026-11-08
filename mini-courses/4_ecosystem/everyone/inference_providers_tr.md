@@ -6,7 +6,7 @@ Bir **inference provider**, yapay zekâ modellerini kendi bilgisayarlarında ça
 
 ## Bu Senin İçin Neden Önemli
 
-Şirketin yapay zekâ erişimi satın alıyorsa, birinin bir provider seçmesi gerekir ve token başına fiyat herkesin söylediği rakamdır. Bu modül sana bundan daha önemli soruları veriyor; özellikle verilerinin nereye gittiğine dair olanı.
+Şirketin yapay zekâ erişimi satın alıyorsa, birinin bir provider seçmesi gerekir ve token başına fiyat, herkesin ilk baktığı rakamdır. Bu modül sana bundan daha önemli soruları veriyor; özellikle verilerinin nereye gittiğine dair olanı.
 
 ## Gateway: Birçok Modele Tek Kapı
 

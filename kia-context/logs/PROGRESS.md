@@ -1249,19 +1249,32 @@ sweep. Logos by a Sonnet subagent from vendor repositories, sites and icon sets,
       themes colour groups, so the twins match on the 92 plain flowcharts and differ on the 6 mind maps
       and 6 subgraph flowcharts; both kept (PR #83).
 
-## 🏁 Milestone M82: Agentic UI written, and Advanced Agentic UI planned (D110)
+## 🏁 Milestone M82: Agentic UI written, and Advanced Agentic UI planned (D110) — DONE
 
 The author, 2026-11-09, approved a draft of the technical module after reading it in chat, and asked for
 everything else: the GIF as WebP, Turkish and Persian, the For Everyone version and its translations, a
 Haiku review, and the merge.
 
-- [ ] `ui` retitled Agentic UI and written (ready, 25 minutes), with a quiz; `advanced_ui` retitled Advanced
+- [x] `ui` retitled Agentic UI and written (ready, 25 minutes), with a quiz; `advanced_ui` retitled Advanced
       Agentic UI with the author's topics; series maps, README and index renamed; `topics.txt` updated.
-- [ ] Two figures: the agent protocol stack (`ag-ui-mcp.png`) and a streaming run (`streaming-ui.webp`,
+- [x] Two figures: the agent protocol stack (`ag-ui-mcp.png`) and a streaming run (`streaming-ui.webp`,
       converted from a 5.2 MB GIF to a 672 KB animated WebP at 1280 px, 344 frames).
-- [ ] Turkish and Persian technical versions, technical words kept English; the quiz in three languages.
-- [ ] The For Everyone version in English, Turkish and Persian, with the technical headings (D109).
-- [ ] A Haiku review at xhigh, findings fixed, merged.
+- [x] Turkish and Persian technical versions, technical words kept English; the quiz in three languages.
+- [x] The For Everyone version in English, Turkish and Persian, with the technical headings (D109).
+- [x] A Haiku review at xhigh, findings fixed, merged.
+
+**Report, 2026-11-09.** The technical module was drafted in the main session, shown to the author in
+chat and approved; AG-UI facts read from its docs and its 1.0 JSON schema. Turkish and Persian by
+Sonnet subagents with technical words kept English; the For Everyone version written in the main
+session with the technical headings (D109) and a delivery-app picture for streaming, then translated.
+**Reviews** (two Haiku, xhigh): the quiz's correct option was the longest in every question (rebalanced);
+the protocol-stack caption said "one protocol on each side" while the picture puts MCP and A2A on the left
+(fixed); the streaming caption did not describe the animation, an empty prompt that fills with a ticking
+checklist (fixed); "most frameworks" and "every serious product" softened to what the sources support;
+generative UI left only as a pointer; the wire spelling explained; a Persian register slip and Turkish
+calques. Kept on purpose: the `topics.txt` edit, which the author asked for, and product screenshots with
+English text in the translated pages. **Gate:** typecheck, 1,234 unit tests, build and link check, 561
+browser tests passed and 10 skipped.
 
 ---
 

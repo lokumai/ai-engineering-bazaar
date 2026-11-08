@@ -7,7 +7,7 @@
 Bu modülün kullandığı tanım, CopilotKit'in [What Is Agentic UI?](https://www.copilotkit.ai/learning/what-is-agentic-ui) yazısından geliyor:
 
 > **Agentic UI, insanların ve AI agent'larının aynı uygulamada birlikte çalışması için geliştirilmiş kullanıcı arayüzüdür.**
-> Agent'ın işini olurken stream eder, çalışma sürerken insanın yönlendirmesini ve onaylarını kabul eder, agent'ın ürettiği arayüzü geliştiricinin yazdığı bileşenlerin yanında gösterir ve uygulamanın state'ini kullanıcı ile agent arasında senkron tutar.
+> Agent'ın işini gerçekleştikçe stream eder, çalışma sürerken insanın yönlendirmesini ve onaylarını kabul eder, agent'ın ürettiği arayüzü geliştiricinin yazdığı bileşenlerin yanında gösterir ve uygulamanın state'ini kullanıcı ile agent arasında senkron tutar.
 
 Bildiğin arayüzlerden farkı, işi kimin yaptığında.
 
@@ -15,7 +15,7 @@ Bildiğin arayüzlerden farkı, işi kimin yaptığında.
 - **Bir chat UI**, tek bir soru ve tek bir cevap varsayar. Yazarsın, beklersin ve bir cevap görünür.
 - **Bir agentic UI**, zaten çalışmakta olan bir agent varsayar. Agent çok sayıda karar verir ve çok sayıda tool çağırır; insan ise o çalışırken onu izler, yönlendirir ve düzeltir.
 
-Bu modül, tanımın her agentic UI'ın dayandığı ilk kısmını anlatıyor: **agent'ın işini olurken stream etmek** ve bunu standartlaştıran protocol. Yönlendirme, onaylar, ortak state ve agent'ın kendi ürettiği arayüz ise Expert modülün konusu: [İleri Seviye Agentic UI](../3_expert/advanced_ui_tr.md).
+Bu modül, tanımın her agentic UI'ın dayandığı ilk kısmını anlatıyor: **agent'ın işini gerçekleştikçe stream etmek** ve bunu standartlaştıran protocol. Yönlendirme, onaylar, ortak state ve agent'ın kendi ürettiği arayüz ise Expert modülün konusu: [İleri Seviye Agentic UI](../3_expert/advanced_ui_tr.md).
 
 ## Run'ı Neden Stream Ederiz
 
@@ -26,10 +26,10 @@ Dolayısıyla ekranı kurmanın iki yolu var.
 1. **Bekle, sonra hepsini göster.** Backend bütün agent loop'unu çalıştırır. Loop bitince nihai cevabı gönderir. Kullanıcı bütün bu süre boyunca bir spinner'a bakar ve agent'ın çalışıyor mu, takılmış mı, yoksa yanlış yöne mi gidiyor olduğunu bilemez.
 2. **Run'ı stream et.** Backend her iş parçasını oluştuğu anda front end'e gönderir: cevabın birkaç kelimesi, bir tool call'un başlangıcı, o çağrının sonucu. Kullanıcı ilerlemeyi olurken görür; tıpkı bir coding agent'ı terminalinde çalışırken izlediğin gibi.
 
-İkinci yol, ciddi her agent ürününün kullandığı yoldur. İş zaten adım adım üretiliyor, o yüzden onu sona kadar saklamanın bir anlamı yok. Adımları görmek, kullanıcının bir hatayı erken yakalamasını da sağlar; yani run'ı durdurmanın hâlâ ucuz olduğu bir anda.
+İkinci yolu coding agent'lar ve chat asistanları gibi agent ürünleri kullanır. İş zaten adım adım üretiliyor, o yüzden onu sona kadar saklamanın bir anlamı yok. Adımları görmek, kullanıcının bir hatayı erken yakalamasını da sağlar; yani run'ı durdurmanın hâlâ ucuz olduğu bir anda.
 
 ![Stream eden bir agent arayüzü](./images/streaming-ui.webp)  
-*Arayüze stream edilen bir agent run'ı. Her adım, agent üzerinde çalışırken ekranda belirir; böylece kullanıcı boş bir ekranın karşısında beklemez.*
+*Ekran boş bir prompt ile başlar. Agent çalışmaya başlayınca adımlarından oluşan bir checklist dolmaya başlar ve agent her adımı bitirdikçe o adım işaretlenir; böylece kullanıcı bir spinner yerine ilerlemeyi görür.*
 
 ## Neler Stream Edilir
 
@@ -66,7 +66,7 @@ Event türleri hemen hemen her agent'ta aynıdır:
 
 Sorun burada başlıyor. Event türleri her yerde benzer, ama tam şekilleri benzer değil. Her agent framework'ünün kendi event formatı var.
 
-Örneğin LangChain bir run'ı [event streaming](https://docs.langchain.com/oss/python/langchain/event-streaming) ile stream eder. Her model çağrısının metnini, reasoning'ini ve tool call'larını veren message stream'lerini alırsın; bunların yanında tool call'lar, subagent'lar ve run'ın state'i de gelir. Başka bir framework farklı isimler, farklı alanlar ve farklı bir sıra kullanır.
+Örneğin LangChain'in kendi [event streaming](https://docs.langchain.com/oss/python/langchain/event-streaming) API'si var. Her model mesajı metniyle, reasoning'iyle ve tool call'larıyla birlikte gelir. Stream ayrıca subagent'ları, run'ın state'ini ve özel (custom) güncellemeleri de bildirir. Başka bir framework farklı isimler, farklı alanlar ve farklı bir sıra kullanır. (LangChain AG-UI'ı da konuşuyor; aşağıda göreceğin gibi sektör tam olarak bu sorunu böyle çözdü.)
 
 Bu da front end'i backend'e bağlar. Front end, arkasındaki tek bir agent framework'ünün event'lerini anlamak zorunda kalır. Ekibin backend'i sonradan başka bir framework'e taşıması gerekirse, ekranın birebir aynı görünmesi gerekse bile front end'in de yeniden yazılması gerekir.
 
@@ -84,13 +84,13 @@ Event'ler, yukarıdaki türler gibi gruplanır. Ana event'ler, AG-UI'ın [event 
 | --- | --- |
 | Lifecycle | `RunStarted`, `RunFinished`, `RunError`, `StepStarted`, `StepFinished` |
 | Text message | `TextMessageStart`, `TextMessageContent`, `TextMessageEnd` |
-| Reasoning | `ReasoningStart`, `ReasoningMessageContent`, `ReasoningEnd` ve setin geri kalanı |
+| Reasoning | `ReasoningStart`, `ReasoningMessageContent`, `ReasoningEnd` ve dört tane daha |
 | Tool call | `ToolCallStart`, `ToolCallArgs`, `ToolCallEnd`, `ToolCallResult` |
 | Subagent | `SubagentStarted`, `SubagentFinished`, `SubagentError` |
 | State | `StateSnapshot`, `StateDelta`, `MessagesSnapshot` |
 | Special | `Raw`, `Custom` |
 
-Yukarıdaki hava durumu turunun AG-UI event'leri olarak kabloda (wire) görünüşü; her event için bir JSON nesnesi:
+Wire üzerinde her isim büyük harflerle ve alt çizgilerle yazılır; yani `RunStarted`, `RUN_STARTED` olarak gönderilir. Yukarıdaki hava durumu turunun AG-UI event'leri olarak ağ üzerinden giden hâli (wire); her event için bir JSON nesnesi:
 
 ```json
 {"type": "RUN_STARTED", "threadId": "t1", "runId": "r1"}
@@ -109,11 +109,11 @@ Yukarıdaki hava durumu turunun AG-UI event'leri olarak kabloda (wire) görünü
 
 Dikkat etmeye değer üç nokta var. Birincisi, bir tool call'un argümanları da tıpkı metin gibi `delta` parçaları hâlinde geliyor; böylece ekran, model tool call'u daha yazarken onu gösterebilir. İkincisi, her parça bir id taşıyor (`messageId`, `toolCallId`); front end hangi mesajı ya da hangi kartı güncelleyeceğini bu sayede biliyor. Üçüncüsü, buradaki hiçbir şey tek bir framework'e ait değil. Herhangi bir backend birebir bu satırları üretebilir.
 
-AG-UI, sıradan web'in üstünde çalışır: overview sayfası onun HTTP ve WebSockets üzerine kurulduğunu söylüyor; yani event'ler, front end'in zaten nasıl açacağını bildiği bir bağlantı üzerinden tarayıcıya ulaşır.
+AG-UI, sıradan web üzerinde çalışır. Overview sayfası onun HTTP ve WebSockets üzerine kurulduğunu söylüyor. Yani event'ler, front end'in zaten nasıl açacağını bildiği bir bağlantı üzerinden tarayıcıya ulaşır.
 
 ### Kim Destekliyor
 
-Sözleşme ortak olduğu için çoğu agent framework'ü artık onu konuşuyor. Overview sayfası, başka birçoğunun yanında şunları sayıyor:
+Sözleşme ortak olduğu için birçok agent framework'ü onu konuşuyor. Overview sayfası, diğerlerinin yanında şunları sayıyor:
 
 - **Partnerships**: LangChain ve CrewAI.
 - **First-party integrations**: Microsoft Agent Framework, Google ADK, AWS Strands Agents, Mastra, Pydantic AI, Agno, LlamaIndex ve AG2.
@@ -126,7 +126,7 @@ Kotlin ve Go'dan Rust ve .NET'e kadar birçok dilde client SDK'ları da var. Pro
 AG-UI, üç protocol'den biridir ve her biri agent'ın farklı bir tarafını kapsar.
 
 ![Agent protocol stack: MCP, A2A ve AG-UI](./images/ag-ui-mcp.png)  
-*Ortada bir agent ve onun her yanında bir protocol. MCP agent'ı tool'larına, A2A diğer agent'lara, AG-UI ise ekranın önündeki kullanıcılara bağlar.*
+*Agent ortada duruyor. MCP ve A2A sola uzanır: tool'lara ve diğer agent'lara. AG-UI ise sağa uzanır: ekranın önündeki kullanıcılara.*
 
 | Protocol | Agent'ı neye bağlar | Kimden geliyor |
 | --- | --- | --- |
@@ -138,12 +138,11 @@ Birbirleriyle rekabet etmezler. Gerçek bir üründe çoğu zaman üçü birden 
 
 ## Streaming'in Ötesi
 
-Streaming temeldir. Agentic UI tanımının geri kalanı onun üstüne kurulur ve [İleri Seviye Agentic UI](../3_expert/advanced_ui_tr.md) modülünde anlatılır:
+Streaming temeldir. Agentic UI tanımının geri kalanı onun üstüne kurulur ve Expert modül [İleri Seviye Agentic UI](../3_expert/advanced_ui_tr.md) bunu anlatacak:
 
 - **Human in the loop**: agent durur ve bir adımı çalıştırmadan önce kullanıcıdan onay ister.
 - **Shared state**: ekran ve agent aynı uygulama state'ini okur ve yazar.
-- **Generative UI**: ekranda ne görüneceğine, yalnızca içindeki metne değil, agent karar verir.
-- **Bunun specification'ları**: A2UI, MCP Apps, OpenUI ve json-render.
+- **Generative UI** ve bunun specification'ları: A2UI, MCP Apps, OpenUI ve json-render.
 
 ## Bu serinin neresindeyiz
 
@@ -168,9 +167,9 @@ graph LR
 
 ## Özet
 
-Agentic UI, bir insanın ve çalışan bir agent'ın aynı uygulamada birlikte çalıştığı arayüzdür. Temeli streaming'dir: agent'ın işi adım adım üretildiği için ekrana da adım adım gönderilir; run'ın lifecycle'ı, metni, reasoning'i, tool call'ları, subagent'ları ve state'i için tipli event'ler hâlinde. Her framework'ün kendi event formatı var ve bu, front end'i tek bir backend'e bağlıyor. AG-UI bu bağı, MCP'nin tool'lar için yaptığı gibi, açık ve ortak tek bir event kümesiyle ortadan kaldırıyor ve çoğu agent framework'ü onu destekliyor. MCP (tool'lar) ve A2A'in (diğer agent'lar) yanında, bir agent'ın üçüncü tarafı için, yani kullanıcıları için olan protocol bu.
+Agentic UI, bir insanın ve çalışan bir agent'ın aynı uygulamada birlikte çalıştığı arayüzdür. Temeli streaming'dir: agent'ın işi adım adım üretildiği için ekrana da adım adım gönderilir; run'ın lifecycle'ı, metni, reasoning'i, tool call'ları, subagent'ları ve state'i için tipli event'ler hâlinde. Her framework'ün kendi event formatı var ve bu, front end'i tek bir backend'e bağlıyor. AG-UI bu bağı, MCP'nin tool'lar için yaptığı gibi, açık ve ortak tek bir event kümesiyle ortadan kaldırıyor ve birçok agent framework'ü onu destekliyor. MCP (tool'lar) ve A2A'in (diğer agent'lar) yanında, bir agent'ın üçüncü tarafı için, yani kullanıcıları için olan protocol bu.
 
-Sıradaki konu: bir agent'ı yararlı yapan her şey onu aynı zamanda bir hedef de yapar. Bunu [Security](security_tr.md) modülü anlatıyor.
+Sıradaki konu: agent'ı denetlemeyi zorlaştıran her şey, onu saldırı için daha değerli bir hedef de yaptı. Bunu [Security](security_tr.md) modülü anlatıyor.
 
 **Hızlı Kontrol**: Bir agentic UI neden nihai cevabı beklemek yerine event'leri stream eder? AG-UI, her framework'ün kendi event formatının çözemediği hangi sorunu çözer? MCP, A2A ve AG-UI'ın her biri agent'ın hangi tarafını bağlar?
 

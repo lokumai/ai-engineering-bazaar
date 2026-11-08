@@ -329,10 +329,11 @@ taught there; it moves to the Expert module, retitled **Advanced Agentic UI**, t
 human in the loop, agentic GenUI, A2UI, MCP Apps, OpenUI and json-render. **Kept:** the module names `ui` and
 `advanced_ui` and their addresses, so only the titles change and nothing needs a `moved.ts` entry.
 **Rejected:** keeping "Generative UI" as the intermediate title, which names the advanced idea and not the
-streaming base the module teaches. AG-UI facts (event names, fields, integrations) were read from its docs
-and its 1.0 JSON schema, not from memory: the wire `type` is `RUN_STARTED` and so on, the docs name the
-events `RunStarted` and so on, and the docs credit the CopilotKit team "in collaboration with" partner
-frameworks rather than a single origin.
+streaming base the module teaches. AG-UI facts were read from sources, not from memory: event names and
+fields from its docs' events page, the wire `type` values (`RUN_STARTED` and so on) from the 1.0 JSON
+schema in `ag-ui-protocol/ag-ui` (`spec/1.0/schema.json`), integrations from its overview, and CopilotKit's
+own page, which says the protocol is developed by the CopilotKit team "in collaboration with" partner
+frameworks.
 
 ## Open questions
 

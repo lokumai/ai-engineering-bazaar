@@ -4,14 +4,14 @@
 
 ## Bu Senin İçin Neden Önemli
 
-İş yerinde kullanacağın her AI asistanı ilerleyişini ekranda gösterir: "arıyor", "dosyayı okuyor", "raporu yazıyor". Bu ekran iyi yapıldıysa agent'ı takip edebilir, bir hatayı erkenden yakalayabilir ve araya girebilirsin. Bu modül, o ekranın agent'ın işini nasıl aldığını ve bu ürünleri yapan şirketlerin neden bunu tek bir ortak yolla yapmakta anlaştığını açıklıyor.
+İş yerindeki birçok AI asistanı ilerleyişini ekranda gösterir: "arıyor", "dosyayı okuyor", "raporu yazıyor". Bu ekran iyi yapıldıysa agent'ı takip edebilir, bir hatayı erkenden yakalayabilir ve araya girebilirsin. Bu modül, o ekranın agent'ın işini nasıl aldığını ve bu ürünleri yapan şirketlerin birçoğunun neden artık tek bir ortak yol kullandığını açıklıyor.
 
 ## Agentic UI Nedir
 
 Bu arayüzleri geliştiren CopilotKit şirketi, agentic UI'ı şöyle tanımlıyor:
 
 > **Agentic UI, insanların ve AI agent'larının aynı uygulamada birlikte çalışması için geliştirilmiş kullanıcı arayüzüdür.**
-> Agent'ın işini olurken stream eder, çalışma sürerken insanın yönlendirmesini ve onaylarını kabul eder, agent'ın ürettiği arayüzü geliştiricinin yazdığı bileşenlerin yanında gösterir ve uygulamanın durumunu kullanıcı ile agent arasında senkron tutar.
+> Agent'ın işini gerçekleştikçe stream eder, çalışma sürerken insanın yönlendirmesini ve onaylarını kabul eder, agent'ın ürettiği arayüzü geliştiricinin yazdığı bileşenlerin yanında gösterir ve uygulamanın durumunu kullanıcı ile agent arasında senkron tutar.
 
 Sade bir dille söylersek, fark işi kimin yaptığında:
 
@@ -19,7 +19,7 @@ Sade bir dille söylersek, fark işi kimin yaptığında:
 - **Bir chat kutusu** bir kez cevap verir. Bir soru yazarsın, beklersin ve tek bir cevap görünür.
 - **Bir agentic UI** zaten çalışmakta olan bir agent'ı gösterir. Agent birçok karar verir ve birçok tool kullanır; sen de o çalışırken onu izler, yönlendirir ve düzeltirsin.
 
-Bu modül, bunların hepsinin temelini anlatıyor: **agent'ın işini olurken göstermek**. Adımları onayladığın ya da agent'ın ekranı kendisinin tasarladığı kısımlar Expert seviyesinde geliyor.
+Bu modül, bunların hepsinin temelini anlatıyor: **agent'ın işini gerçekleştikçe göstermek**. Adımları onayladığın ya da agent'ın ekranı kendisinin tasarladığı kısımlar Expert seviyesinde geliyor.
 
 ## Run'ı Neden Stream Ederiz
 
@@ -30,10 +30,10 @@ Bir agent de aynı şekilde çalışır. Bir model cevabını, [LLM Temelleri](.
 1. **Bekle, sonra hepsini göster.** Bütün bu süre boyunca dönen bir tekerleğe bakarsın ve agent'ın çalışıyor mu, takılmış mı, yoksa yanlış yöne mi gidiyor olduğunu anlayamazsın.
 2. **Run'ı stream et.** Ekran her iş parçasını oluştuğu anda gösterir: cevabın birkaç kelimesi, "şimdi hava durumuna bakıyorum", sonuç. Buna **streaming** denir.
 
-Ciddi her agent ürünü stream eder. İş zaten adım adım yapılıyor, o yüzden onu saklamanın bir sebebi yok. Adımları görmek, yanlış giden bir işi daha masrafı küçükken durdurmanı da sağlar.
+Chat asistanları ve coding agent'lar gibi agent ürünleri stream eder. İş zaten adım adım yapılıyor, o yüzden onu saklamanın bir sebebi yok. Adımları görmek, yanlış giden bir işi daha masrafı küçükken durdurmanı da sağlar.
 
 ![Stream eden bir agent arayüzü](../images/streaming-ui.webp)  
-*Bir agent'ın işi, olurken ekranda gösteriliyor. Her adım oluşur oluşmaz görünür; böylece boş bir ekranın karşısında beklemezsin.*
+*Ekran boş bir prompt ile başlar. Agent çalışmaya başlayınca adımlarından oluşan bir checklist dolar ve agent her adımı bitirdikçe o adım işaretlenir; böylece bir spinner yerine ilerlemeyi görürsün.*
 
 ## Neler Stream Edilir
 
@@ -55,7 +55,14 @@ sequenceDiagram
     B->>F: run bitti
 ```
 
-Event türleri hemen her agent'ta aynıdır: işin başlaması ya da bitmesi, cevabın bir parçası, agent'ın düşünmesi, kullanılan bir tool ve sonucu, yardımcı bir agent'ın (bir **subagent**) başlaması ya da bitmesi ve işin o anki durumu.
+Event türleri hemen her agent'ta aynıdır:
+
+- işin başlaması ya da bitmesi
+- cevabın bir parçası
+- agent'ın düşünmesi
+- kullanılan bir tool ve sonucu
+- yardımcı bir agent'ın (bir **subagent**) başlaması ya da bitmesi
+- işin o anki durumu
 
 ## Her Agent Kendi Formatını Konuşur
 
@@ -65,11 +72,16 @@ Mühendisler iki parça arasındaki bu tür bir bağdan kaçınmak için çok u�
 
 ## AG-UI
 
-**AG-UI**, **Agent–User Interaction Protocol**'ün kısaltmasıdır. **Protocol**, iki sistemin nasıl konuşacağını belirleyen, üzerinde anlaşılmış kurallar bütünüdür. AG-UI, her agent'ın gönderebileceği ve her ekranın okuyabileceği, açık ve ortak bir event listesidir. Yani AG-UI için yazılmış bir ekran, AG-UI konuşan her agent'la çalışır ve şirket, arkasındaki agent'ı istediği zaman değiştirebilir.
+**AG-UI**, **Agent–User Interaction Protocol**'ün kısaltmasıdır. **Protocol**, iki sistemin nasıl konuşacağını belirleyen, üzerinde anlaşılmış kurallar bütünüdür. AG-UI, açık ve ortak bir event listesidir. AG-UI konuşan bir agent bu event'leri gönderebilir, AG-UI için yazılmış bir ekran da onları gösterebilir. Böylece şirket, ekranın arkasındaki agent'ı istediği zaman değiştirebilir.
 
-Event'lerden bazıları, adlarıyla: `RunStarted` ve `RunFinished` (iş başlıyor ve bitiyor), `TextMessageContent` (cevabın bir parçası), `ToolCallStart` ve `ToolCallResult` (bir tool kullanılıyor ve ne döndürdü) ve `SubagentStarted` (yardımcı bir agent başlıyor).
+Event'lerden bazıları, adlarıyla:
 
-Merak edersen, hava durumu işi AG-UI event'leri olarak şöyle görünür, her satır bir event. Atlaman sorun değil:
+- `RunStarted` ve `RunFinished`: iş başlıyor ve bitiyor.
+- `TextMessageContent`: cevabın bir parçası.
+- `ToolCallStart` ve `ToolCallResult`: bir tool kullanılıyor ve ne döndürdü.
+- `SubagentStarted`: yardımcı bir agent başlıyor.
+
+Merak edersen, hava durumu işi AG-UI event'leri olarak şöyle görünür, her satır bir event. Wire üzerinde her ad büyük harflerle yazılır; yani `RunStarted`, `RUN_STARTED` olur. Atlaman sorun değil:
 
 ```json
 {"type": "RUN_STARTED", "threadId": "t1", "runId": "r1"}
@@ -88,14 +100,14 @@ Merak edersen, hava durumu işi AG-UI event'leri olarak şöyle görünür, her 
 
 ### Kim Destekliyor
 
-Liste ortak olduğu için çoğu agent ürünü artık onu konuşuyor: LangChain, CrewAI, Microsoft'un ve Google'ın agent kitleri, Claude Agent SDK ve OpenAI Agents SDK bunların arasında. CopilotKit ekibi onu bu partnerlerle birlikte geliştiriyor.
+Liste ortak olduğu için birçok agent ürünü onu konuşuyor. LangChain ve CrewAI partner. Microsoft'un ve Google'ın agent kitleri onu doğrudan destekliyor. Claude Agent SDK ve OpenAI Agents SDK ise community projeleri üzerinden destekliyor. CopilotKit ekibi onu partnerleriyle birlikte geliştiriyor.
 
 ## Agent Protocol Stack
 
 AG-UI, ortak üç protocol'den biridir ve her biri agent'ı farklı bir tarafa bağlar.
 
 ![Agent protocol stack: MCP, A2A ve AG-UI](../images/ag-ui-mcp.png)  
-*Ortada bir agent ve her yanında bir protocol. MCP onu tool'larına, A2A diğer agent'lara, AG-UI ise uygulamayı kullanan insanlara bağlar.*
+*Agent ortada duruyor. MCP ve A2A sola uzanır: tool'lara ve diğer agent'lara. AG-UI ise sağa uzanır: uygulamayı kullanan insanlara.*
 
 | Protocol | Agent'ı neye bağlar |
 | --- | --- |
@@ -107,12 +119,16 @@ Birlikte çalışırlar. Gerçek bir ürün çoğu zaman üçünü birden kullan
 
 ## Streaming'in Ötesi
 
-Streaming temeldir. Expert seviyesi gerisini anlatıyor: agent'ın önemli bir adımdan önce durup onayını istemesi (**human in the loop**), ekranın ve agent'ın aynı bilgiyi paylaşması ve agent'ın ekranın bazı kısımlarını kendisinin tasarlaması (**generative UI**).
+Streaming temeldir. Expert seviyesi üç şeyi daha anlatacak:
+
+- Agent durup önemli bir adım için senden onay isteyebilir (**human in the loop**).
+- Ekran ve agent aynı bilgiyi paylaşabilir.
+- Agent ekranın bazı kısımlarını kendisi tasarlayabilir (**generative UI**).
 
 ## Artık Bildiğin Terimler
 
 - **Agentic UI**: bir insanın ve çalışan bir agent'ın aynı uygulamayı birlikte kullandığı ekran.
-- **Streaming**: agent'ın işini olurken, parça parça göstermek.
+- **Streaming**: agent'ın işini gerçekleştikçe, parça parça göstermek.
 - **Event**: az önce ne olduğunu söyleyen küçük bir mesaj, örneğin "tool call başladı".
 - **Backend** ve **frontend**: agent'ın tarafı ve ekranın tarafı.
 - **Protocol**: iki sistemin nasıl konuşacağını belirleyen, üzerinde anlaşılmış kurallar.
@@ -122,7 +138,7 @@ Streaming temeldir. Expert seviyesi gerisini anlatıyor: agent'ın önemli bir a
 
 ## Özet
 
-Agentic UI, sen ile çalışan bir agent'ın bir uygulamayı paylaştığı ekrandır. Temeli streaming: agent işi adım adım yaptığı için ekran da onu adım adım gösterir, tıpkı bir yemek uygulamasının siparişinin her aşamasını göstermesi gibi. Her agent ürünü kendi formatını kullandı ve bu, ekranı tek bir agent'a bağladı. AG-UI, evrensel bir fiş gibi ortak bir format; böylece her ekran her agent'la çalışabiliyor. MCP (tool'lar) ve A2A'in (diğer agent'lar) yanında, agent'ı onu kullanan insanlara bağlıyor.
+Agentic UI, sen ve çalışan bir agent'ın aynı uygulamayı paylaştığı ekrandır. Temeli streaming: agent işi adım adım yaptığı için ekran da onu adım adım gösterir, tıpkı bir yemek uygulamasının siparişinin her aşamasını göstermesi gibi. Her agent ürünü kendi formatını kullandı ve bu, ekranı tek bir agent'a bağladı. AG-UI, evrensel bir fiş gibi ortak bir format; böylece her ekran her agent'la çalışabiliyor. MCP (tool'lar) ve A2A'in (diğer agent'lar) yanında, agent'ı onu kullanan insanlara bağlıyor.
 
 **Hızlı Kontrol**: Bir agentic UI agent'ın işini neden adım adım gösterir? AG-UI hangi sorunu çözer?
 

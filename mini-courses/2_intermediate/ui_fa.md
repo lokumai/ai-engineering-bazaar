@@ -25,10 +25,10 @@ CopilotKit توی [What Is Agentic UI?](https://www.copilotkit.ai/learning/what-
 1. **صبر کن، بعد همه‌چی رو یه‌جا نشون بده.** backend کل agent loop رو اجرا می‌کنه و وقتی loop تموم شد، جواب نهایی رو می‌فرسته. کاربر تمام این مدت به یه spinner زل می‌زنه و نمی‌دونه agent داره کار می‌کنه، گیر کرده یا به سمت اشتباه می‌ره.
 2. **run رو stream کن.** backend هر تیکه از کار رو به frontend می‌فرسته، به محض اینکه ساخته شد: چند کلمه از جواب، شروع یه tool call، نتیجه‌ی همون call. کاربر پیشرفت رو همون لحظه می‌بینه، درست مثل وقتی که کار یه coding agent رو توی terminal‌ش تماشا می‌کنی.
 
-هر محصول جدی agent از راه دوم می‌ره. کار به‌هرحال قدم‌به‌قدم ساخته می‌شه، پس دلیلی نداره تا آخر قایمش کنیم. وقتی قدم‌ها رو می‌بینه، کاربر می‌تونه یه اشتباه رو زود بگیره، یعنی وقتی که هنوز متوقف کردن run ارزونه.
+محصول‌های agent‌ای مثل coding agent‌ها و chat assistant‌ها از راه دوم می‌رن. کار به‌هرحال قدم‌به‌قدم ساخته می‌شه، پس دلیلی نداره تا آخر قایمش کنیم. وقتی قدم‌ها رو می‌بینه، کاربر می‌تونه یه اشتباه رو زود بگیره، یعنی وقتی که هنوز متوقف کردن run ارزونه.
 
 ![یه رابط agent با streaming](./images/streaming-ui.webp)  
-*یه run‌ی agent که داره توی رابط stream می‌شه. هر قدم همون موقع که agent هنوز داره روش کار می‌کنه ظاهر می‌شه، برای همین کاربر هیچ‌وقت جلوی یه صفحه‌ی خالی منتظر نمی‌مونه.*
+*صفحه با یه prompt خالی شروع می‌شه. وقتی agent شروع می‌کنه، یه checklist از قدم‌هاش پر می‌شه و هر قدم که agent تمومش می‌کنه تیک می‌خوره، برای همین کاربر به‌جای یه spinner پیشرفت رو می‌بینه.*
 
 ## چی stream می‌شه؟
 
@@ -65,7 +65,7 @@ frontend هر event رو می‌خونه و صفحه رو به‌روز می‌�
 
 مشکل اینجاست. نوع event‌ها همه‌جا شبیه همه، ولی شکل دقیقشون نه. هر framework فرمت event خودش رو داره.
 
-مثلاً LangChain یه run رو با [event streaming](https://docs.langchain.com/oss/python/langchain/event-streaming) stream می‌کنه. برای هر call به مدل، message stream‌هایی می‌گیری که متن، reasoning و tool call‌ها رو دارن، و جدا از اون‌ها tool call‌ها، subagent‌ها و state‌ی run رو. یه framework دیگه اسم‌ها و field‌های دیگه‌ای داره و ترتیبش هم فرق می‌کنه.
+مثلاً LangChain برای خودش یه API به اسم [event streaming](https://docs.langchain.com/oss/python/langchain/event-streaming) داره. هر message مدل با متن، reasoning و tool call‌هاش میاد. stream جدا از این‌ها subagent‌ها، state‌ی run و آپدیت‌های custom رو هم گزارش می‌ده. یه framework دیگه اسم‌ها و field‌های دیگه‌ای داره و ترتیبش هم فرق می‌کنه. (LangChain AG-UI رو هم بلده، پایین‌تر می‌بینیمش، و همین نشون می‌ده صنعت دقیقاً همین مشکل رو چطور حل کرد.)
 
 این یعنی frontend به backend گره می‌خوره. frontend باید event‌های همون framework‌ای رو بفهمه که پشتشه. اگه تیم بعداً backend رو ببره روی یه framework دیگه، frontend رو هم باید از نو بنویسه، با اینکه قراره صفحه دقیقاً همون شکلی بمونه.
 
@@ -83,13 +83,13 @@ event‌ها مثل همون نوع‌هایی که بالا گفتیم گروه
 | --- | --- |
 | Lifecycle | `RunStarted`, `RunFinished`, `RunError`, `StepStarted`, `StepFinished` |
 | پیام متنی | `TextMessageStart`, `TextMessageContent`, `TextMessageEnd` |
-| Reasoning | `ReasoningStart`, `ReasoningMessageContent`, `ReasoningEnd`, و بقیه‌ی مجموعه |
+| Reasoning | `ReasoningStart`, `ReasoningMessageContent`, `ReasoningEnd`, و چهار تای دیگه |
 | Tool call | `ToolCallStart`, `ToolCallArgs`, `ToolCallEnd`, `ToolCallResult` |
 | Subagent | `SubagentStarted`, `SubagentFinished`, `SubagentError` |
 | State | `StateSnapshot`, `StateDelta`, `MessagesSnapshot` |
 | ویژه | `Raw`, `Custom` |
 
-همون نوبت weather از بالا، به‌شکل event‌های AG-UI روی wire، با یه JSON برای هر event:
+روی wire اسم هر event با حروف بزرگ و با underscore نوشته می‌شه، یعنی `RunStarted` به‌شکل `RUN_STARTED` فرستاده می‌شه. همون نوبت weather از بالا، به‌شکل event‌های AG-UI روی wire، با یه JSON برای هر event:
 
 ```json
 {"type": "RUN_STARTED", "threadId": "t1", "runId": "r1"}
@@ -108,11 +108,11 @@ event‌ها مثل همون نوع‌هایی که بالا گفتیم گروه
 
 سه نکته توی این خط‌ها هست. اول، آرگومان‌های یه tool call هم مثل متن به‌شکل تیکه‌های `delta` می‌رسن، برای همین صفحه می‌تونه یه tool call رو همون موقع که مدل هنوز داره می‌نویسدش نشون بده. دوم، هر تیکه یه id داره (`messageId` و `toolCallId`)، پس frontend می‌دونه کدوم پیام یا کدوم کارت رو باید به‌روز کنه. سوم، هیچ‌چیزی اینجا مال یه framework خاص نیست. هر backend‌ای می‌تونه دقیقاً همین خط‌ها رو تولید کنه.
 
-AG-UI روی همون وب معمولی سوار می‌شه: overview‌ش می‌گه روی HTTP و WebSockets ساخته شده، برای همین event‌ها از یه اتصالی به مرورگر می‌رسن که frontend از قبل بلده بازش کنه.
+AG-UI روی همون وب معمولی کار می‌کنه. overview‌ش می‌گه روی HTTP و WebSockets ساخته شده. برای همین event‌ها از یه اتصالی به مرورگر می‌رسن که frontend از قبل بلده بازش کنه.
 
 ### کی ازش پشتیبانی می‌کنه؟
 
-چون قرارداد مشترکه، بیشتر framework‌های agent الان AG-UI رو بلدن. overview بین بقیه این‌ها رو اسم می‌بره:
+چون قرارداد مشترکه، خیلی از framework‌های agent AG-UI رو بلدن. overview بین بقیه این‌ها رو اسم می‌بره:
 
 - **Partnership‌ها**: LangChain و CrewAI.
 - **Integration‌های رسمی**: Microsoft Agent Framework، Google ADK، AWS Strands Agents، Mastra، Pydantic AI، Agno، LlamaIndex و AG2.
@@ -126,7 +126,7 @@ AG-UI روی همون وب معمولی سوار می‌شه: overview‌ش می
 AG-UI یکی از سه protocol‌ه، و هر کدوم یه طرف agent رو پوشش می‌دن.
 
 ![protocol stack برای agent: MCP و A2A و AG-UI](./images/ag-ui-mcp.png)  
-*یه agent وسطه و از هر طرفش یه protocol. MCP agent رو به tool‌هاش وصل می‌کنه، A2A به agent‌های دیگه، و AG-UI به کاربرهایی که پشت صفحه نشستن.*
+*agent وسطه. MCP و A2A به سمت چپ می‌رن، به tool‌ها و agent‌های دیگه. AG-UI به سمت راست می‌ره، به کاربرهایی که پشت صفحه نشستن.*
 
 | Protocol | agent رو وصل می‌کنه به | از طرف |
 | --- | --- | --- |
@@ -138,12 +138,11 @@ AG-UI یکی از سه protocol‌ه، و هر کدوم یه طرف agent رو �
 
 ## فراتر از Streaming
 
-streaming پایه‌ست. بقیه‌ی تعریف agentic UI روی همین بنا می‌شه و توی [Advanced Agentic UI](../3_expert/advanced_ui.md) بهش می‌رسیم:
+streaming پایه‌ست. بقیه‌ی تعریف agentic UI روی همین بنا می‌شه و درس Expert، [Advanced Agentic UI](../3_expert/advanced_ui.md)، بهش می‌رسه:
 
 - **Human in the loop**: agent وایمیسه و از کاربر می‌خواد یه قدم رو قبل از اجرا تأیید کنه.
 - **Shared state**: صفحه و agent هر دو روی یه state مشترک می‌خونن و می‌نویسن.
-- **Generative UI**: agent تصمیم می‌گیره چی روی صفحه بیاد، نه فقط متنی که توشه.
-- **Specification‌های مربوط بهش**: A2UI، MCP Apps، OpenUI و json-render.
+- **Generative UI** و specification‌های مربوط بهش: A2UI، MCP Apps، OpenUI و json-render.
 
 ## کجای این مجموعه هستیم
 
@@ -168,9 +167,9 @@ graph LR
 
 ## خلاصه
 
-Agentic UI رابطیه که توش یه آدم و یه agent‌ی در حال اجرا توی یه برنامه‌ی مشترک کار می‌کنن. پایه‌ش streaming‌ه: کار agent قدم‌به‌قدم ساخته می‌شه، پس قدم‌به‌قدم هم به صفحه فرستاده می‌شه، به‌شکل event‌هایی با نوع مشخص برای lifecycle، متن، reasoning، tool call‌ها، subagent‌ها و state‌ی run. هر framework فرمت event خودش رو داره و همین frontend رو به یه backend گره می‌زنه. AG-UI با یه مجموعه event باز و مشترک این گره رو باز می‌کنه، همون‌طور که MCP برای tool‌ها کرد، و بیشتر framework‌های agent ازش پشتیبانی می‌کنن. کنار MCP (برای tool‌ها) و A2A (برای agent‌های دیگه)، AG-UI protocol سومین طرف agent‌ه: کاربرهاش.
+Agentic UI رابطیه که توش یه آدم و یه agent‌ی در حال اجرا توی یه برنامه‌ی مشترک کار می‌کنن. پایه‌ش streaming‌ه: کار agent قدم‌به‌قدم ساخته می‌شه، پس قدم‌به‌قدم هم به صفحه فرستاده می‌شه، به‌شکل event‌هایی با نوع مشخص برای lifecycle، متن، reasoning، tool call‌ها، subagent‌ها و state‌ی run. هر framework فرمت event خودش رو داره و همین frontend رو به یه backend گره می‌زنه. AG-UI با یه مجموعه event باز و مشترک این گره رو باز می‌کنه، همون‌طور که MCP برای tool‌ها کرد، و خیلی از framework‌های agent ازش پشتیبانی می‌کنن. کنار MCP (برای tool‌ها) و A2A (برای agent‌های دیگه)، AG-UI protocol سومین طرف agent‌ه: کاربرهاش.
 
-قدم بعدی: هر چیزی که agent رو به‌دردبخور می‌کنه، هدف حمله‌ش هم می‌کنه. این موضوع [Security](security_fa.md) هست.
+قدم بعدی: هر چیزی که نظارت روی agent رو سخت‌تر کرد، اون رو به یه هدف باارزش‌تر برای حمله هم تبدیل کرد. این موضوع [Security](security_fa.md) هست.
 
 **بررسی سریع**: چرا یه agentic UI به‌جای اینکه منتظر جواب نهایی بمونه، event‌ها رو stream می‌کنه؟ AG-UI چه مشکلی رو حل می‌کنه که فرمت event خودِ هر framework حل نمی‌کنه؟ و MCP و A2A و AG-UI هر کدوم کدوم طرف agent رو وصل می‌کنن؟
 

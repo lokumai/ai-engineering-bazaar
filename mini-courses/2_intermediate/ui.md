@@ -54,12 +54,12 @@ So there are two ways to build the screen.
    a few words of the answer, the start of a tool call, the result of that call. The user sees the
    progress as it happens, the same way you watch a coding agent work in its terminal.
 
-The second way is the one every serious agent product uses. The work is produced step by step
+Agent products such as coding agents and chat assistants use the second way. The work is produced step by step
 anyway, so there is no reason to hide it until the end. Seeing the steps also lets the user catch a
 mistake early, while the run is still cheap to stop.
 
 ![A streaming agent interface](./images/streaming-ui.webp)  
-*An agent run streamed into the interface. Each step appears while the agent is still working on it, so the user never waits in front of an empty screen.*
+*The screen starts with an empty prompt. Once the agent starts, a checklist of its steps fills in, and each step is ticked off as the agent finishes it, so the user sees progress instead of a spinner.*
 
 ## What Gets Streamed
 
@@ -101,11 +101,12 @@ The kinds of event are the same in almost every agent:
 Here is the problem. The kinds of event are similar everywhere, but their exact shape is not. Each
 agent framework has its own event format.
 
-LangChain, for example, streams a run with
-[event streaming](https://docs.langchain.com/oss/python/langchain/event-streaming). You get message
-streams with the text, the reasoning and the tool calls of each model call, plus the tool calls,
-the subagents and the state of the run. Another framework uses different names, different fields,
-and a different order.
+LangChain, for example, has its own
+[event streaming](https://docs.langchain.com/oss/python/langchain/event-streaming) API. Each model
+message comes with its text, its reasoning and its tool calls. The stream also reports the
+subagents, the state of the run and custom updates. Another framework uses different names,
+different fields, and a different order. (LangChain also speaks AG-UI, below, which shows how the
+industry solved exactly this problem.)
 
 That ties the front end to the backend. The front end has to understand the events of the one
 agent framework behind it. If the team later moves the backend to another framework, the front end
@@ -133,13 +134,14 @@ The events are grouped like the kinds above. Here are the main ones, as AG-UI na
 | --- | --- |
 | Lifecycle | `RunStarted`, `RunFinished`, `RunError`, `StepStarted`, `StepFinished` |
 | Text message | `TextMessageStart`, `TextMessageContent`, `TextMessageEnd` |
-| Reasoning | `ReasoningStart`, `ReasoningMessageContent`, `ReasoningEnd`, and the rest of the set |
+| Reasoning | `ReasoningStart`, `ReasoningMessageContent`, `ReasoningEnd`, and four more |
 | Tool call | `ToolCallStart`, `ToolCallArgs`, `ToolCallEnd`, `ToolCallResult` |
 | Subagent | `SubagentStarted`, `SubagentFinished`, `SubagentError` |
 | State | `StateSnapshot`, `StateDelta`, `MessagesSnapshot` |
 | Special | `Raw`, `Custom` |
 
-The weather turn from above, as AG-UI events on the wire, one JSON object per event:
+On the wire, each name is written in capitals with underscores, so `RunStarted` is sent as
+`RUN_STARTED`. The weather turn from above, as AG-UI events on the wire, one JSON object per event:
 
 ```json
 {"type": "RUN_STARTED", "threadId": "t1", "runId": "r1"}
@@ -162,13 +164,12 @@ Second, every piece carries an id (`messageId`, `toolCallId`), so the front end 
 or which card to update. Third, nothing here belongs to one framework. Any backend can produce
 exactly these lines.
 
-AG-UI sits on top of the ordinary web: its overview says it builds on HTTP and WebSockets, so the
-events reach the browser over a connection the front end already knows how to open.
+AG-UI runs on the ordinary web. Its overview says it builds on HTTP and WebSockets. So the events
+reach the browser over a connection the front end already knows how to open.
 
 ### Who Supports It
 
-Because the contract is shared, most agent frameworks now speak it. The overview lists, among
-others:
+Because the contract is shared, many agent frameworks speak it. The overview lists, among others:
 
 - **Partnerships**: LangChain and CrewAI.
 - **First-party integrations**: Microsoft Agent Framework, Google ADK, AWS Strands Agents, Mastra,
@@ -185,7 +186,7 @@ frameworks, and builds its own front-end components on it. The source is on GitH
 AG-UI is one of three protocols, and each one covers a different side of the agent.
 
 ![The agent protocol stack: MCP, A2A and AG-UI](./images/ag-ui-mcp.png)  
-*One agent in the middle, and one protocol on each side of it. MCP connects the agent to its tools, A2A connects it to other agents, and AG-UI connects it to the users in front of the screen.*
+*The agent sits in the middle. MCP and A2A reach left, to its tools and to other agents. AG-UI reaches right, to the users in front of the screen.*
 
 | Protocol | Connects the agent to | Comes from |
 | --- | --- | --- |
@@ -198,13 +199,12 @@ part of the work to another agent over A2A, and streams everything it does to th
 
 ## Beyond Streaming
 
-Streaming is the base. The rest of the agentic UI definition builds on it, and it is covered in
-[Advanced Agentic UI](../3_expert/advanced_ui.md):
+Streaming is the base. The rest of the agentic UI definition builds on it, and the Expert module
+[Advanced Agentic UI](../3_expert/advanced_ui.md) will cover it:
 
 - **Human in the loop**: the agent pauses and asks the user to approve a step before it runs it.
 - **Shared state**: the screen and the agent read and write the same application state.
-- **Generative UI**: the agent decides what appears on the screen, not only the text inside it.
-- **The specifications for it**: A2UI, MCP Apps, OpenUI and json-render.
+- **Generative UI**, and the specifications for it: A2UI, MCP Apps, OpenUI and json-render.
 
 ## Where this fits in the series
 
@@ -234,11 +234,11 @@ base is streaming: the agent's work is produced step by step, so it is sent to t
 step, as typed events for the run's lifecycle, its text, its reasoning, its tool calls, its
 subagents and its state. Every framework has its own event format, and that ties the front end to
 one backend. AG-UI removes that tie with one open set of events, the same way MCP did for tools, and
-most agent frameworks support it. Next to MCP (tools) and A2A (other agents), it is the protocol for
+many agent frameworks support it. Next to MCP (tools) and A2A (other agents), it is the protocol for
 the third side of an agent: its users.
 
-Next: everything that makes an agent useful also makes it a target. That is the subject of
-[Security](security.md).
+Next: everything that made the agent harder to supervise also made it a more valuable target to
+attack. That is the subject of [Security](security.md).
 
 **Quick Check**: Why does an agentic UI stream events instead of waiting for the final answer? What
 problem does AG-UI solve that each framework's own event format does not? And which side of an agent

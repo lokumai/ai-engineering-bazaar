@@ -14,10 +14,10 @@ goes wrong, and approve the steps that matter. This module is about the screen w
 
 ## Why This Matters to You
 
-Every AI assistant you will use at work shows its progress on a screen: "searching", "reading the
+Many AI assistants at work show their progress on a screen: "searching", "reading the
 file", "writing the report". When that screen is built well, you can follow the agent, catch a
-mistake early, and step in. This module explains how that screen gets the agent's work, and why the
-companies building these products agreed on one shared way to do it.
+mistake early, and step in. This module explains how that screen gets the agent's work, and why many of
+the companies building these products now use one shared way to do it.
 
 ## What Agentic UI is
 
@@ -55,11 +55,11 @@ to build the screen:
 2. **Stream the run.** The screen shows each piece of work as soon as it exists: a few words of the
    answer, "now checking the weather", the result. This is called **streaming**.
 
-Every serious agent product streams. The work happens step by step anyway, so there is no reason to
+Agent products such as chat assistants and coding agents stream. The work happens step by step anyway, so there is no reason to
 hide it. And seeing the steps lets you stop a job that is going wrong while it is still cheap.
 
 ![A streaming agent interface](../images/streaming-ui.webp)  
-*An agent's work shown on the screen while it happens. Each step appears as soon as it exists, so you never wait in front of an empty screen.*
+*The screen starts with an empty prompt. Once the agent starts, a checklist of its steps fills in, and each step is ticked off as the agent finishes it, so you see progress instead of a spinner.*
 
 ## What Gets Streamed
 
@@ -83,9 +83,14 @@ sequenceDiagram
     B->>F: run finished
 ```
 
-The kinds of event are the same in almost every agent: the job started or finished, a piece of the
-answer, the agent's thinking, a tool being used and its result, a helper agent (a **subagent**)
-starting or finishing, and the current state of the work.
+The kinds of event are the same in almost every agent:
+
+- the job started or finished
+- a piece of the answer
+- the agent's thinking
+- a tool being used, and its result
+- a helper agent (a **subagent**) starting or finishing
+- the current state of the work
 
 ## Every Agent Speaks Its Own Format
 
@@ -101,16 +106,20 @@ between the agent and the screen, is AG-UI.
 ## AG-UI
 
 **AG-UI** stands for the **Agent–User Interaction Protocol**. A **protocol** is an agreed set of
-rules for how two systems talk. AG-UI is an open, shared list of events that every agent can send and
-every screen can read. So a screen built for AG-UI works with any agent that speaks AG-UI, and the
-company can change the agent behind it at any time.
+rules for how two systems talk. AG-UI is an open, shared list of events. An agent that speaks AG-UI
+can send them, and a screen built for AG-UI can show them. So the company can change the agent behind
+the screen at any time.
 
-Some of its events, by name: `RunStarted` and `RunFinished` (the job starts and ends),
-`TextMessageContent` (a piece of the answer), `ToolCallStart` and `ToolCallResult` (a tool is used,
-and what it returned), and `SubagentStarted` (a helper agent begins).
+Some of its events, by name:
 
-If you are curious, this is what the weather job looks like as AG-UI events, one line per event. It is
-fine to skip it:
+- `RunStarted` and `RunFinished`: the job starts and ends.
+- `TextMessageContent`: a piece of the answer.
+- `ToolCallStart` and `ToolCallResult`: a tool is used, and what it returned.
+- `SubagentStarted`: a helper agent begins.
+
+If you are curious, this is what the weather job looks like as AG-UI events, one line per event. On
+the wire each name is written in capitals, so `RunStarted` becomes `RUN_STARTED`. It is fine to skip
+it:
 
 ```json
 {"type": "RUN_STARTED", "threadId": "t1", "runId": "r1"}
@@ -129,16 +138,17 @@ fine to skip it:
 
 ### Who Supports It
 
-Because the list is shared, most agent products now speak it: among them LangChain, CrewAI,
-Microsoft's and Google's agent kits, the Claude Agent SDK and the OpenAI Agents SDK. The CopilotKit
-team develops it together with these partners.
+Because the list is shared, many agent products speak it. LangChain and CrewAI are partners.
+Microsoft's and Google's agent kits support it directly. The Claude Agent SDK and the OpenAI Agents
+SDK support it through community projects. The CopilotKit team develops it together with its
+partners.
 
 ## The Agent Protocol Stack
 
 AG-UI is one of three shared protocols, and each one connects the agent to a different side.
 
 ![The agent protocol stack: MCP, A2A and AG-UI](../images/ag-ui-mcp.png)  
-*One agent in the middle, and one protocol on each side. MCP connects it to its tools, A2A connects it to other agents, and AG-UI connects it to the people using the app.*
+*The agent sits in the middle. MCP and A2A reach left, to its tools and to other agents. AG-UI reaches right, to the people using the app.*
 
 | Protocol | Connects the agent to |
 | --- | --- |
@@ -150,9 +160,11 @@ They work together. A real product often uses all three at once.
 
 ## Beyond Streaming
 
-Streaming is the base. The Expert level covers the rest: the agent stopping to ask for your approval
-before an important step (**human in the loop**), the screen and the agent sharing the same
-information, and the agent designing parts of the screen itself (**generative UI**).
+Streaming is the base. The Expert level will cover three more things:
+
+- The agent can stop and ask you to approve an important step (**human in the loop**).
+- The screen and the agent can share the same information.
+- The agent can design parts of the screen itself (**generative UI**).
 
 ## Words You Now Know
 

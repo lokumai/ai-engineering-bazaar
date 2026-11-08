@@ -4,8 +4,10 @@ description: >
   the plan of what was left after the round-3 playground (the order table and the gate every build
   ends on), then M50 to M69: the round-3 art finished, the catalog without its Sources count, round 3
   built on the home page, search, the content phase, a certificate still to decide, download
-  cancelled, Emerging Trends, Caravan, the gate revised (M63), and content revision 4
-  (M64 to M69), the search filters (M70) and their Filters disclosure (M71). Each milestone carries its deliverables and acceptance
+  cancelled, the fifth level (now Emerging), Caravan, the gate revised (M63), and content revision 4
+  (M64 to M69), the search filters (M70) and their Filters disclosure (M71), the gate stories (M72),
+  Advanced Agent Servers (M73), vendor logos (M74), course call-out cards, Mermaid themes and Mihrî
+  (M75), and the For Everyone versions (M76 to M79). Each milestone carries its deliverables and acceptance
   criteria as `- [ ]` checkboxes, ticked as the work lands, and closes with a dated report; the loop
   that governs that is below, in this file.
   NOT here: why a choice was made (BRAINSTORM.md), or any rule that outlives the milestone

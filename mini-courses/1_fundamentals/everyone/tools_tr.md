@@ -121,7 +121,7 @@ Yapay zekâ, metin yazmaktan başka bir şey yapamaz. Bu yüzden dünyadan bir �
 
 Sırada hafıza var: bir yapay zekâ neyi, nerede hatırlıyor.
 
-**Hızlı Kontrol**: Tool'u kim çalıştırır, yapay zekâ mı bilgisayar mı? Tek bir tool çağrısının dört mesajı nedir? Belirsiz bir tool adı, asistanı neden daha kötü yapar?
+**Hızlı Kontrol**: Tool'u kim çalıştırır, yapay zekâ mı bilgisayar mı? Tek bir tool çağrısının dört adımı nedir ve her birini kim yapar? Belirsiz bir tool adı, asistanı neden daha kötü yapar?
 
 ## Kaynaklar
 

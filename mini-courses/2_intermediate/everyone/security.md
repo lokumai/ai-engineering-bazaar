@@ -28,7 +28,7 @@ plain words.
 **Jailbreaking** means getting an AI to produce something it was trained to refuse.
 
 Nothing is hacked in the usual sense. Nobody breaks into a server. Someone finds a way of asking
-that gets past the refusal. It is persuasion, not burglary.
+that gets past the refusal. The attacker persuades the AI; they do not break in.
 
 ![A refusal, then the same question with a jailbreak in front of it](../images/jb-exmaple-1.png)  
 *The question is the same in both halves. The only change is the text in front of it. The safety behaviour is not a locked door; it is a habit the model has, and the right words can talk it out of the habit.*
@@ -136,9 +136,9 @@ promptfoo and Microsoft's PyRIT.
 ## Agents That Do Security Work
 
 The same ability can point outward. Testing a company's security is mostly reading, reasoning and
-running commands, which is what a coding agent already does. So there are now agents that read a
-company's code, try attacks, prove which weaknesses are real, and write a report, such as Strix and
-PentAGI. One security skill can even be a single text file for an agent you already have, the
+running commands, which is what a coding agent already does. So there are now agents that find
+weaknesses on their own, such as Strix and PentAGI, and one, Shannon, runs real attacks to prove that
+a weakness is real. One security skill can even be a single text file for an agent you already have, the
 skills idea from [Code Agents](coding_agents.md).
 
 ## Words You Now Know

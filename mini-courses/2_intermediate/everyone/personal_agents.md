@@ -20,7 +20,7 @@ This is the newest topic in the course, and the least settled.
 ## Why This Matters to You
 
 This is probably the kind of AI agent you will meet first in daily life, or already have. The large
-AI companies all launched one in 2026. Knowing how they work tells you what to expect from them, and
+AI companies launched their own in 2026. Knowing how they work tells you what to expect from them, and
 what not to hand them.
 
 ## What Makes Them Different
@@ -47,7 +47,7 @@ graph TD
     B["Jan 27 2026<br/>Renamed Moltbot after a trademark complaint from Anthropic"]
     C["Jan 30 2026<br/>Renamed again to OpenClaw. Moltbook launches the same month"]
     D["Feb 2026<br/>Creator leaves for OpenAI, hands the project to the OpenClaw Foundation"]
-    E["Mid 2026<br/>People migrate to Hermes Agent, which does the same idea more cheaply"]
+    E["Mid 2026<br/>People migrate to Hermes Agent, which builds the same idea more carefully"]
     F["Aug 30 2026<br/>OpenClaw 2.0 answers most of the complaints"]
     A --> B --> C --> D --> E --> F
 ```

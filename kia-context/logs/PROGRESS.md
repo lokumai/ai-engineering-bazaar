@@ -1188,10 +1188,30 @@ in their language; the two new headings made the same in every file of a languag
 at the English module where a `_fa.md` exists. Gate: typecheck, 1,229 unit tests, the build and link
 check, and every diagram parsed.
 
-## 🏁 Milestone M79: Reviewed, merged, and nothing left stale
+## 🏁 Milestone M79: Reviewed, merged, and nothing left stale — DONE
 
-- [ ] Two Haiku reviews at xhigh on the PR, from two perspectives; findings fixed.
-- [ ] Merged; kia-context, memory, and every CLAUDE.md and AGENTS.md current; no open PR of ours left.
+- [x] Two Haiku reviews at xhigh on the PR, from two perspectives; findings fixed.
+- [x] Merged; kia-context, memory, and every CLAUDE.md and AGENTS.md current; no open PR of ours left.
+
+**Report, 2026-11-08.** PR #80. **Review one (translations, docs, site risk):** the translations held
+(structure, byte-identical code, links, site strings). It found the docs overclaiming: "almost every
+figure" and "a third to a half" were replaced by the measured numbers (47 of 48 images, 14 of 23
+diagrams, 41 to 84% of the words, median 59%); `INDEX.md` had stale rule, decision and milestone ranges;
+"two versions of every module" became "each written module"; 25 Persian joins used a tatweel instead of a
+zero-width non-joiner; and a few stiff Turkish and Persian lines. **Review two (English against the
+originals):** every number and date checked out. Fixed: the Harness Engineering summary listed the system
+prompt as part of the guarantee (it is advice); a UI Design accessibility bullet a screenshot can show;
+invented details (a week, "goes slower", "quality drops only a little", "thousands of words"); absolutes
+("almost every", "the most used", "the same day"); Loop Engineering's level headings now named as in its
+diagram; Shannon, not Strix, proves an exploit; teaser lines ("Read it twice", "where the promise becomes
+real"). One claim was not in the file (a loop-level note), and two were kept on purpose: the author's
+müdür, hoca and öğrenci analogy (now glossed in English) and the Cowork line, which Agents in Practice
+supports. A Sonnet subagent carried the meaning changes into the 38 translations. A search e2e test pinned
+the engineers page as the top hit for a module's title; a For Everyone page now shares that title, so it
+checks presence and language instead. **Gate:** typecheck, 1,229 unit tests, 545 browser tests passed and
+10 skipped, the link check (16,831 links), and every diagram. **Left for the author:** the same Harness
+Engineering summary sentence in the technical module, and the English objectives card on Turkish and
+Persian pages (an M19 decision).
 
 ---
 

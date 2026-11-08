@@ -6,7 +6,7 @@ Prompt engineering'den sonra context engineering geldi. 2025'in sonunda en çok 
 
 ## Bu Senin İçin Neden Önemli
 
-Bir yapay zekâ asistanını uzun bir iş için kullandıysan, muhtemelen şunu görmüşsündür: başlangıçta talimatlarını iyi takip ediyor, ama uzun bir süre sonra onları unutmaya, konudan sapmaya ya da bir şeyler uydurmaya başlıyor. Bu modül bunun neden olduğunu ve en iyi yapay zekâ araçlarının buna karşı ne yaptığını anlatıyor. Yapay zekânın bugün tek bir istekten bütün bir web sitesi yapabilmesinin sebebi de bu.
+Bir yapay zekâ asistanını uzun bir iş için kullandıysan, muhtemelen şunu görmüşsündür: başlangıçta talimatlarını iyi takip ediyor, ama uzun bir süre sonra onları unutmaya, konudan sapmaya ya da bir şeyler uydurmaya başlıyor. Bu modül bunun neden olduğunu ve en iyi yapay zekâ araçlarının buna karşı ne yaptığını anlatıyor. Yapay zekânın bugün tek bir istekten bütün bir web sitesi yapabilmesinin sebeplerinden biri de bu.
 
 ## Sohbet Fazla Uzayınca
 
@@ -65,7 +65,7 @@ Agent her şeyi sohbette tutmak yerine önemli bilgileri bir deftere, yani bilgi
 Birçok yapay zekâ ürünü buna **long-term memory** (uzun süreli hafıza) diyor; [Memory](../1_fundamentals/memory_tr.md) modülündeki fikrin aynısı. Genellikle üç türde tutulur:
 
 ![Üç tür uzun süreli hafıza](../images/semantic-episodic-procedural.png)  
-*Senin hakkındaki bilgiler zamanla yavaş yavaş birikir. Geçmişteki eylemlere dair notlar, agent'ın aynı hatayı tekrarlamasını engeller. Talimatlar ona işleri nasıl yapacağını söyler. Agent bu üçünü farklı zamanlarda yazar ve okur.*
+*Semantic memory (senin hakkındaki bilgiler) zamanla yavaş yavaş birikir. Episodic memory (geçmişteki eylemlere dair notlar), agent'ın aynı hatayı tekrarlamasını engeller. Procedural memory (talimatlar) ona işleri nasıl yapacağını söyler. Agent bu üçünü farklı zamanlarda yazar ve okur.*
 
 Aynı uyarı burada da geçerli: neyin yazılmaya değer olduğuna birinin karar vermesi gerekiyor ve bu karar bazen yanlış oluyor.
 

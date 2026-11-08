@@ -16,7 +16,7 @@ Bu bilgi yalnızca o çalıştırmanın kaydında bulunur. Bu kayda **trace** de
 
 ## Bu Senin İçin Neden Önemli
 
-Şirketin bir yapay zekâ asistanı kullanıyorsa ve asistan yanlış bir cevap verirse, biri "bunu neden yaptı?" diye soracak. Bu sorunun cevabı yalnızca trace'te var. Trace'ler ayrıca kullanıcıların yazdığı her şeyi ve tool'ların döndürdüğü her şeyi de içerir; bu yüzden nerede saklandıkları, veri ve gizlilik kurallarınla ilgili bir sorudur.
+Şirketin bir yapay zekâ asistanı kullanıyorsa ve asistan yanlış bir cevap verirse, biri "bunu neden yaptı?" diye soracak. Bu sorunun cevabını trace'te bulursun. Trace'ler ayrıca kullanıcıların yazdığı her şeyi ve tool'ların döndürdüğü her şeyi de içerir; bu yüzden nerede saklandıkları, veri ve gizlilik kurallarınla ilgili bir sorudur.
 
 ## Bir Trace'te Neler Var?
 

@@ -12,7 +12,7 @@ Bir **inference provider**, yapay zekâ modellerini kendi bilgisayarlarında ça
 
 ![](../images/logos/openrouter-mono.svg)[OpenRouter](https://openrouter.ai/) bir **gateway** (router da deniyor). Birçok provider'ın önünde duruyor; böylece tek bir hesap, tek bir fatura ve tek bir bağlanma yöntemi kullanıyorsun ve neredeyse her modele ulaşabiliyorsun.
 
-- **Modeli tek bir satırı değiştirerek değiştirebilirsin.** Pazartesi daha iyi bir model çıkarsa onu aynı gün kullanabilirsin.
+- **Modeli tek bir satırı değiştirerek değiştirebilirsin.** Pazartesi daha iyi bir model çıkarsa onu birkaç saat sonra kullanabilirsin.
 - **Birçok hesap yerine tek bir hesap.**
 - **Failover:** bir provider çökmüşse istek hata vermek yerine bir başkasına gidebilir.
 - **Aynı model, birkaç satıcıdan**, farklı fiyat ve hızlarda; böylece seçebilirsin.

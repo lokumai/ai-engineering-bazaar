@@ -73,8 +73,9 @@ bottom.
 
 That whole chat, everything the AI can see right now, is called the **context**. And there is
 a maximum size for it, called the **context window**. It counts your messages and the AI's
-replies together. When a chat goes past that size, the request fails. This is one reason why a
-very long chat sometimes stops working well, and a new chat fixes it.
+replies together. When a chat goes past that size, the request fails. A later module,
+[Context Engineering](../2_intermediate/context_engineering.md), explains why a long chat can also
+get worse before it is full.
 
 Some names you will hear for this same chat: **context**, **working memory**, **message
 history** and **short-term memory**. They all mean the stack of messages that the AI reads.
@@ -92,7 +93,7 @@ A normal chat has three kinds of message:
   use.
 
 ![The context of a plain LLM chat](../images/llm-context.jpeg)  
-*Two rounds of a plain chat: two of your messages and two AI replies. Nothing is removed. So in the second round, the AI also reads everything from the first round.*
+*Two turns of a plain chat: two of your messages and two AI replies. Nothing is removed. So in the second turn, the AI also reads everything from the first turn.*
 
 One message from you, plus the AI's reply to it, is called a **turn**. The picture above shows
 two turns.
@@ -104,8 +105,7 @@ rules and a list of the **tools** the AI is allowed to use:
 *Inside a system prompt: the behaviour rules, the list of tools, and sometimes some fixed reference text. All of it sits at the very top of the chat, before you say anything.*
 
 If you are curious, people have collected the real, leaked system prompts of many AI products
-in [system_prompts_leaks](https://github.com/asgeirtj/system_prompts_leaks). Many are thousands
-of words long.
+in [system_prompts_leaks](https://github.com/asgeirtj/system_prompts_leaks).
 
 One more idea, and we come back to it in [Tool Calling](tools.md). An AI on its own cannot check
 the weather, because it has no internet and no hands. It can only write text. So it writes a
@@ -118,8 +118,8 @@ AI agent.
 
 You can change how the AI answers with a few settings:
 
-- **Temperature**: the creativity dial, usually from 0 to 1. Low (0.1) gives the same, careful
-  answer each time. High (0.9) gives more creative answers, but they are less reliable.
+- **Temperature**: the creativity dial, usually from 0 to 1. Low (0.1) gives steady,
+  predictable answers. High (0.9) gives more creative answers, but they are less reliable.
 - **Max output tokens**: a limit on how long the answer can be. A **token** is a piece of a
   word, so this is roughly a word limit.
 
@@ -144,7 +144,7 @@ happens when you use ChatGPT or Claude.
 - **Not so good:** you need a strong computer, and you can only run the smaller models.
 
 To make a model fit on a normal computer, people shrink it. This is called **quantization**. It
-makes the model about four times smaller, and the quality drops only a little. You do not have
+makes the model need about four times less memory, and the model itself stays the same. You do not have
 to do this yourself: shrunk versions of popular models are ready to download.
 
 **Try it yourself:** ![](../images/logos/lmstudio-mono.svg)**[LM Studio](https://lmstudio.ai/)** is an app that lets you download a small
@@ -187,9 +187,12 @@ If the formula does not mean much to you, that is fine. The idea is the sentence
 - **System prompt**: hidden instructions at the top of the chat, written by the company.
 - **Turn**: one of your messages plus the AI's reply.
 - **Temperature**: the creativity dial.
+- **Hyperparameters**: the dials you set when you use a model, such as temperature.
 - **Token**: a piece of a word.
 - **Inference**: running a model to get an answer, in the cloud or on your own computer.
 - **Quantization**: shrinking a model so it fits on a normal computer.
+- **Inference provider**: a company that runs models and rents them to you.
+- **Prompt engineering**: writing your input so you get the answer you want.
 
 ## Summary
 

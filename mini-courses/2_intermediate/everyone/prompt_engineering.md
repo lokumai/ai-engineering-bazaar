@@ -30,9 +30,11 @@ want the most likely one:
 best prompt = the prompt that maximises P(the output you want | prompt)
 ```
 
+If the formulas mean nothing to you, that is fine: the sentence above them says the same thing.
+
 ## Why This Matters to You
 
-This is the most directly useful module in the course for daily work. Every email draft, report,
+Most AI requests at work are prompts, so this module applies to them. Every email draft, report,
 summary or analysis you ask an AI for gets better when you ask well. And it is now a basic skill
 that everyone who works with AI is expected to have, in HR and finance as much as in engineering.
 
@@ -174,7 +176,7 @@ More effective:
 Create an analytics dashboard. Include as many relevant features and interactions as possible. Go beyond the basics to create a fully-featured implementation.
 ```
 
-The second one is not more polite. It says much more about what "finished" looks like.
+The difference is not politeness. The second one says much more about what "finished" looks like.
 
 ### Give Your Reasons
 
@@ -268,7 +270,7 @@ Final Answer: 9 apples
 
 Why does this work? The model writes one word at a time, and every word it writes becomes part of
 what it reads next. Once it has written "23 - 20 = 3", that result is on the page, and it does not
-have to hold it in its head. For a model, writing is thinking. The author of this course built a
+have to hold it in its head. So writing the steps down helps the model get them right. The author of this course built a
 [Chain of Thought Visualizer](https://cot-visualizer.online/) where you can watch the two side by
 side.
 

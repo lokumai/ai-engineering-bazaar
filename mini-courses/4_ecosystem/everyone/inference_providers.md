@@ -28,7 +28,7 @@ about where your data goes.
 so you use one account, one bill and one way of connecting, and you can reach almost any model.
 
 - **You can switch models by changing one line.** If a better model comes out on Monday, you can
-  use it the same day.
+  use it a few hours later.
 - **One account instead of many.**
 - **Failover:** if one provider is down, the request can go to another one instead of failing.
 - **The same model from several sellers**, at different prices and speeds, so you can choose.

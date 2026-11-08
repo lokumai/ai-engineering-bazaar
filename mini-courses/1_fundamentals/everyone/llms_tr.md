@@ -38,7 +38,7 @@ Bu kurstaki her şeyi şekillendiren sınır burada.
 
 Bir WhatsApp sohbetini düşün. Mesajlar yukarıdan aşağı dizilir: biri senden, sonraki karşındaki kişiden, bir sonraki yine senden. Bir yapay zekâ sohbeti de tamamen aynıdır. Her mesaj gönderdiğinde yapay zekâ **sohbetin tamamını baştan** okur ve cevabını en alta yazar.
 
-Yapay zekânın o an görebildiği bu sohbetin tamamına **context** denir. Bunun da ulaşabileceği bir en büyük boyut vardır; buna **context window** diyoruz. Senin mesajların ve yapay zekânın cevapları birlikte sayılır. Bir sohbet bu boyutu aştığında istek başarısız olur. Çok uzun bir sohbetin bazen düzgün çalışmayı bırakmasının ve yeni bir sohbet açınca düzelmesinin nedenlerinden biri bu.
+Yapay zekânın o an görebildiği bu sohbetin tamamına **context** denir. Bunun da ulaşabileceği bir en büyük boyut vardır; buna **context window** diyoruz. Senin mesajların ve yapay zekânın cevapları birlikte sayılır. Bir sohbet bu boyutu aştığında istek başarısız olur. Daha sonraki bir modül olan [Context Engineering](../2_intermediate/context_engineering_tr.md), uzun bir sohbetin henüz dolmadan da neden kötüleşebildiğini anlatıyor.
 
 Aynı sohbet için başka isimler de duyacaksın: **context**, **working memory** (çalışma belleği), **message history** (mesaj geçmişi) ve **short-term memory** (kısa süreli bellek). Hepsi, yapay zekânın okuduğu mesaj yığını demek. [Memory](memory_tr.md) modülü buraya geri dönecek.
 
@@ -60,7 +60,7 @@ System prompt kısa bir cümle değildir. Çoğu zaman uzundur ve içinde davran
 ![System prompt'un içi](../images/system-prompt-context.jpeg)  
 *Bir system prompt'un içi: davranış kuralları, tool listesi ve bazen sabit bir referans metin. Hepsi sohbetin en üstünde durur ve sen daha bir şey söylemeden önce orada olur.*
 
-Merak edersen, insanlar birçok yapay zekâ ürününün gerçek ve sızdırılmış system prompt'larını [system_prompts_leaks](https://github.com/asgeirtj/system_prompts_leaks) adresinde toplamış. Çoğu binlerce kelime uzunluğunda.
+Merak edersen, insanlar birçok yapay zekâ ürününün gerçek ve sızdırılmış system prompt'larını [system_prompts_leaks](https://github.com/asgeirtj/system_prompts_leaks) adresinde toplamış.
 
 Bir fikir daha var ve ona [Tool Calling](tools_tr.md) modülünde döneceğiz. Yapay zekâ tek başına hava durumuna bakamaz, çünkü internete bağlı değildir ve elleri yoktur; yalnızca metin yazabilir. Bu yüzden "lütfen İstanbul'un hava durumuna bak" diyen bir mesaj yazar. Normal bir bilgisayar programı bu mesajı okur, hava durumuna bakar ve cevabı sohbete ekler. Sonra yapay zekâ cevabı okur ve sana yanıt verir. **Yapay zekâ ister; işi başka bir şey yapar.** Her AI agent'ının temeli bu ayrımdır.
 
@@ -68,7 +68,7 @@ Bir fikir daha var ve ona [Tool Calling](tools_tr.md) modülünde döneceğiz. Y
 
 Yapay zekânın nasıl cevap vereceğini birkaç ayarla değiştirebilirsin:
 
-- **Temperature**: yaratıcılık düğmesi, genellikle 0 ile 1 arasında. Düşük bir değer (0.1) her seferinde aynı, dikkatli cevabı verir. Yüksek bir değer (0.9) daha yaratıcı cevaplar verir, ama bunlar daha az güvenilirdir.
+- **Temperature**: yaratıcılık düğmesi, genellikle 0 ile 1 arasında. Düşük bir değer (0.1) istikrarlı, öngörülebilir cevaplar verir. Yüksek bir değer (0.9) daha yaratıcı cevaplar verir, ama bunlar daha az güvenilirdir.
 - **Max output tokens**: cevabın ne kadar uzun olabileceğine koyulan sınır. **Token**, bir kelimenin bir parçasıdır; yani bu ayar kabaca bir kelime sınırı gibidir.
 
 Bu ayarlara **hiperparametre (hyperparameter)** denir. Yukarıda anlattığımız parametrelerden farklıdırlar: parametreler modelin içindeki sayılardır, hiperparametreler ise modeli kullanırken senin ayarladığın düğmelerdir.
@@ -87,7 +87,7 @@ Bir modeli cevap alacak şekilde çalıştırmaya **inference** denir. Bunu yapm
 - **Artısı:** kurulumdan sonra ücretsizdir, internet olmadan çalışır ve yazdığın metin bilgisayarından hiç çıkmaz. Şirkete ait gizli veriler söz konusu olduğunda bu son madde çok önemli olabilir.
 - **Eksisi:** güçlü bir bilgisayar gerekir ve yalnızca daha küçük modelleri çalıştırabilirsin.
 
-Bir modeli normal bir bilgisayara sığdırmak için insanlar onu küçültür. Buna **quantization** denir. Model yaklaşık dört kat küçülür ve kalite yalnızca biraz düşer. Bunu kendin yapmak zorunda değilsin: popüler modellerin küçültülmüş sürümleri indirmeye hazır bekliyor.
+Bir modeli normal bir bilgisayara sığdırmak için insanlar onu küçültür. Buna **quantization** denir. Model yaklaşık dört kat daha az bellek kullanır; modelin kendisi aynı kalır. Bunu kendin yapmak zorunda değilsin: popüler modellerin küçültülmüş sürümleri indirmeye hazır bekliyor.
 
 **Kendin dene:** ![](../images/logos/lmstudio-mono.svg)**[LM Studio](https://lmstudio.ai/)**, küçük bir modeli indirip kendi dizüstü bilgisayarında, internet olmadan onunla sohbet etmeni sağlayan bir uygulama. Birkaç dakika sürüyor ve bu modüldeki her şeyi gerçekten görmene yardım ediyor.
 
@@ -121,9 +121,12 @@ Formül sana pek bir şey ifade etmiyorsa sorun değil. Önemli olan, formülün
 - **System prompt**: sohbetin en üstündeki, şirketin yazdığı gizli talimatlar.
 - **Tur (turn)**: senin bir mesajın ve yapay zekânın ona verdiği cevap.
 - **Temperature**: yaratıcılık düğmesi.
+- **Hiperparametre (hyperparameter)**: bir modeli kullanırken ayarladığın düğmeler, örneğin temperature.
 - **Token**: bir kelimenin bir parçası.
 - **Inference**: bir modeli cevap almak için çalıştırmak; bulutta ya da kendi bilgisayarında.
 - **Quantization**: bir modeli normal bir bilgisayara sığması için küçültmek.
+- **Inference provider**: modelleri çalıştıran ve sana kiralayan bir şirket.
+- **Prompt engineering**: istediğin cevabı alacak şekilde girdini yazmak.
 
 ## Özet
 

@@ -34,7 +34,7 @@ teams stop writing their own loop after their second project.
 
 ## The LangChain Family
 
-This is the name you will hear most often. It is the most complete and the most used. "LangChain"
+This is the name you will hear most often. It is the most complete, and the one most likely to be in use near you. "LangChain"
 is really three layers:
 
 ```mermaid

@@ -18,9 +18,11 @@ Prompt'un kendisi tam olarak bu context'tir. Yani bütün iş, istediğin cevab�
 best prompt = the prompt that maximises P(the output you want | prompt)
 ```
 
+Formüller sana bir şey ifade etmiyorsa sorun değil: üstlerindeki cümle aynı şeyi söylüyor.
+
 ## Bu Senin İçin Neden Önemli
 
-Bu modül, kurs boyunca günlük işine en doğrudan yarayan modül. Bir yapay zekâdan istediğin her e-posta taslağı, rapor, özet ya da analiz, iyi sorduğunda daha iyi olur. Üstelik bu artık yapay zekâyla çalışan herkesten beklenen temel bir beceri; İK ve finansta da mühendislikte olduğu kadar.
+İş yerinde yapay zekâya yaptığın isteklerin çoğu bir prompt'tur, bu yüzden bu modül onların hepsini ilgilendiriyor. Bir yapay zekâdan istediğin her e-posta taslağı, rapor, özet ya da analiz, iyi sorduğunda daha iyi olur. Üstelik bu artık yapay zekâyla çalışan herkesten beklenen temel bir beceri; İK ve finansta da mühendislikte olduğu kadar.
 
 ## Kelime Seçimi Neden Önemli
 
@@ -140,7 +142,7 @@ Daha etkili:
 Create an analytics dashboard. Include as many relevant features and interactions as possible. Go beyond the basics to create a fully-featured implementation.
 ```
 
-İkincisi daha kibar değil. Ama "bitmiş"in neye benzediğini çok daha net anlatıyor.
+Fark kibarlık değil. İkincisi, "bitmiş"in neye benzediğini çok daha net anlatıyor.
 
 ### Nedenini de Yaz
 
@@ -227,7 +229,7 @@ Step 2: final number after buying more. 3 + 6 = 9 apples.
 Final Answer: 9 apples
 ```
 
-Bu neden işe yarıyor? Model her seferinde tek bir kelime yazar ve yazdığı her kelime, bir sonraki adımda okuduğu şeyin parçası olur. "23 - 20 = 3" yazdığında bu sonuç sayfada durur ve modelin onu aklında tutması gerekmez. Bir model için yazmak, düşünmektir. Bu kursun yazarı, ikisini yan yana izleyebileceğin bir [Chain of Thought Visualizer](https://cot-visualizer.online/) geliştirdi.
+Bu neden işe yarıyor? Model her seferinde tek bir kelime yazar ve yazdığı her kelime, bir sonraki adımda okuduğu şeyin parçası olur. "23 - 20 = 3" yazdığında bu sonuç sayfada durur ve modelin onu aklında tutması gerekmez. Bu yüzden adımları yazmak, modelin onları doğru yapmasına yardım eder. Bu kursun yazarı, ikisini yan yana izleyebileceğin bir [Chain of Thought Visualizer](https://cot-visualizer.online/) geliştirdi.
 
 ### Düşünmek Artık Bir Kadran
 

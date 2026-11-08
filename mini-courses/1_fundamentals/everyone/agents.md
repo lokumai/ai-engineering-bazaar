@@ -13,15 +13,15 @@ Everything so far has been building to this. The definition is smaller than you 
 > **An AI agent is an LLM in a loop that uses tools until it reaches its goal. When the LLM stops
 > asking for tools, it writes the final answer, and the loop ends.**
 
-That is the whole thing. Read it twice. Most of the confusion about agents comes from expecting
+That is the whole thing. Most of the confusion about agents comes from expecting
 something bigger.
 
 ![An LLM in a loop with an objective](../images/agent-wrapper-meme.jpg)  
-*Both ends of the curve arrive at the same answer. The people in the middle go looking for something more complicated.*
+*Both ends of the IQ curve say the same simple thing. The person in the middle draws a complicated diagram.*
 
 ## Why This Matters to You
 
-"Agent" is the most used word in AI right now. Every vendor sells one. Once you know that an
+"Agent" is the most used word in AI right now. Many vendors sell one. Once you know that an
 agent is a model in a loop with tools, you can ask the right questions about any of them: which
 tools does it have, what can those tools change, and what makes it stop?
 
@@ -76,7 +76,7 @@ AI. Think of it as a scale:
 ![Three points on the autonomy spectrum](../images/llm-tool-agent-compare.png)  
 *The same model sits in all three panels. Two things change: how many times it is called, and who picks the next step. You pick it in the first two panels. The AI picks it in the third.*
 
-Most companies do not go to the far end, and that is usually the right choice. Less freedom means
+Most real products do not go to the far end, and that is usually the right choice. Less freedom means
 fewer ways for things to go wrong. When you choose an AI product, it is fair to ask where on this
 scale it sits.
 

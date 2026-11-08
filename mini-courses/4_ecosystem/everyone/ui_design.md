@@ -71,7 +71,7 @@ which is knowing what the screen is *for*: what the user is trying to finish, an
 uses only a keyboard or a screen reader (software that reads the screen aloud). Generated screens
 often get it wrong:
 
-- text too faint to read against its background
+- text whose contrast fails the measured ratio, which you can only measure, not see
 - no visible marker of where the keyboard is on the page
 - a control that only works with a mouse
 - an icon button with no name, so a screen reader cannot announce it

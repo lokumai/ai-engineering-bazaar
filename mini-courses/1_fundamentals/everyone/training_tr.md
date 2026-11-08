@@ -10,7 +10,7 @@ Her yapay zekâ şirketi, modelinin bir şey üzerinde "eğitildiğini (trained)
 
 Yeni bir modeli boş bir beyin gibi düşün. Başlangıçta hiçbir şey bilmez. Her parametre rastgele bir sayıdır, dolayısıyla her cevap da rastgeledir.
 
-Eğitim, modele metin göstermen ve her seferinde sayılarını çok küçük bir miktar düzeltmen demektir. Bunu milyonlarca kez yaparsın; sonunda modelin tahminleri rastgele olmaktan çıkar ve doğru olmaya başlar.
+Eğitim, modele metin göstermen ve her seferinde sayılarını çok küçük bir miktar düzeltmen demektir. Bunu tekrar tekrar yaparsın; sonunda modelin tahminleri rastgele olmaktan çıkar ve doğru olmaya başlar.
 
 ![Eğitilmemiş bir ağ ile eğitilmiş bir ağ yan yana](../images/training-network.jpg)  
 *Aynı ağ, eğitimden önce ve sonra. Metin "The students opened their". Rastgele sayılarla (solda) "Sun" tahmin ediyor. Eğitilmiş sayılarla (sağda) "Laptops" tahmin ediyor. Ağın şekli değişmedi. Yalnızca içindeki sayılar değişti.*
@@ -48,7 +48,7 @@ Aradaki farkın en net göründüğü yer, her adımın kullandığı veri:
 - **Pre-training**, tüm internetten sıradan metin okur. Kimse onun için cevap yazmaz, çünkü metindeki bir sonraki kelime zaten cevabın kendisidir.
 - **Fine-tuning**, küçük bir **çift** koleksiyonu okur: bir girdi ve o girdi için istediğin çıktı. Bu çiftleri genellikle insanlar yazar ya da kontrol eder. Bu da milyarlarca sayfa değil, birkaç bin çift demektir.
 
-Birinin milyonlara mal olup diğerinin tek bir bilgisayara sığmasının nedeni bu fark.
+Pre-training'in milyonlara mal olmasının, fine-tuning'in ise çok daha ucuz olmasının nedeni bu fark. Aşağıdaki LoRA, tek bir bilgisayara sığan sürüm.
 
 ## Bir Örnekle Fine-tuning
 
@@ -101,14 +101,14 @@ Normal fine-tuning modeldeki her sayıyı değiştirir, bu yüzden büyük bir m
 | Neye benzer | Okula gitmek | Okuldan sonra bir meslek öğrenmek |
 | Neyden öğrenir | Tüm internetten sıradan metin | Birkaç bin örnek çift |
 | Ne kazandırır | Her şey hakkında biraz bilgisi olan genel bir model | Tek bir işte iyi olan bir model |
-| Maliyeti | Milyonlarca dolar | Küçük, çoğu zaman tek bir bilgisayar |
+| Maliyeti | Milyonlarca dolar | Çok daha az; LoRA ile çoğu zaman tek bir bilgisayar |
 | Kim yapar | Birkaç büyük yapay zekâ şirketi | Neredeyse herkes |
 
 ## Fine-tuning Ne Zaman Yapılmaz?
 
 Fine-tuning isteyen birçok insanın aslında buna ihtiyacı yoktur. Cevabın "hayır" olduğu üç yaygın durum var.
 
-**Modele şirketinin bilgisini öğretmek için fine-tuning yapma.** Şirket bilgisi sürekli değişir: sözleşmeler güncellenir, politikalar değişir, yeni dokümanlar gelir. Fine-tuning, bir günün fotoğrafı gibidir. Sonrasında değişmez ve her hafta yeniden yapmak hem zaman hem para harcatır. Şirket bilgisi için ihtiyacın olan şey retrieval, yani bir sonraki modül olan [RAG & Embeddings](rag_tr.md).
+**Modele şirketinin bilgisini öğretmek için fine-tuning yapma.** Şirket bilgisi sürekli değişir: sözleşmeler güncellenir, politikalar değişir, yeni dokümanlar gelir. Fine-tuning, bir günün fotoğrafı gibidir. Sonrasında değişmez ve bir dosya her değiştiğinde yeniden yapmak hem zaman hem para harcatır. Şirket bilgisi için ihtiyacın olan şey retrieval, yani bir sonraki modül olan [RAG & Embeddings](rag_tr.md).
 
 **Fine-tuning'i bilgi için değil, beceri için yap.** Fine-tuning bir *davranışı* öğretmekte iyidir: şu biçimde yaz, metinleri şu kategorilere ayır. *Bilgi* öğretmekte ise zayıftır, çünkü senin birkaç yüz sayfan, modelin okuduğu diğer her şeyi tutan milyarlarca sayının arasına karışır.
 

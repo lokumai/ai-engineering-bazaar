@@ -124,7 +124,7 @@ Birçok harness artık açık kaynak; Claude Code'unki de dahil. Bu yüzden bir 
 
 ## Özet
 
-Bir yapay zekâ deterministik değildir; bu yüzden talimatlar iyi bir başarı oranı sağlar ama asla garanti vermez. Harness, yapay zekâ talimatlarına uymasa bile çalışmaya devam eden kısımdır: system prompt, tool'lar ve açıklamaları, güvenli çalışma yeri ve hook'lar. Agent = Model + Harness. Yalnızca harness'ı değiştirmek bir agent'ı yüzde 52,8'den yüzde 66,5'e taşıdı ve aynı model, sekiz harness'ta 30 üzerinden 14 ile 20 arasında puan aldı. En iyi harness diye bir şey yok, yalnızca en iyi eşleşme var.
+Bir yapay zekâ deterministik değildir; bu yüzden talimatlar iyi bir başarı oranı sağlar ama asla garanti vermez. Harness, yapay zekânın uymasına bağlı olmayan kısımdır: sandbox, izin kapıları, hook'lar ve iş bittikten sonra çalışan kontroller. System prompt ile AGENTS.md birer rehberdir, yani hâlâ tavsiyedir. Agent = Model + Harness. Yalnızca harness'ı değiştirmek bir agent'ı yüzde 52,8'den yüzde 66,5'e taşıdı ve aynı model, sekiz harness'ta 30 üzerinden 14 ile 20 arasında puan aldı. En iyi harness diye bir şey yok, yalnızca en iyi eşleşme var.
 
 Sırada şu var: şimdiye kadar direksiyonda hâlâ bir insan oturuyordu. Bir sonraki modül o insanın yerine geçiyor.
 

@@ -14,7 +14,7 @@ together, and it brings the same problems.
 
 ## Why This Matters to You
 
-You already know how teams work. A müdür hands out tasks. A hoca teaches several students, and
+You already know how teams work. A müdür (a manager) hands out tasks. A hoca (a teacher) teaches several students, and
 each one works on their own part. Colleagues hand work to each other, and sometimes something is
 lost on the way. A team of AI agents behaves the same way. So you already understand most of this
 module. It only needs new names.
@@ -46,7 +46,7 @@ from one loop to several.
 
 **Supervisor: a müdür and the team.** One agent receives the request, like a manager. It decides
 who should do each part, hands the work over, collects the results and answers the user. The
-team members talk to the manager and to no one else. It is like a hoca who gives each öğrenci a
+team members talk to the manager and to no one else. It is like a hoca who gives each öğrenci (student) a
 part of the project and then puts the parts together.
 
 In our example, the supervisor sends the question to the data agent and gets the numbers back.
@@ -112,7 +112,7 @@ These names will come up later in the course:
 
 More agents is not an upgrade. It is a trade. You get shorter instructions and clearer jobs. You
 pay with coordination and handover. Stay with one agent while one set of instructions still fits
-well. Split when one agent is trying to learn two unrelated jobs, and split where the least
+well. Split when one set of instructions has to cover two unrelated jobs, and split where the least
 information has to pass from one agent to the next.
 
 ## Words You Now Know
@@ -131,9 +131,15 @@ Several agents let each one keep short instructions and a single job, like speci
 The supervisor shape, a manager who hands out and collects work, is the one to start with. You get
 the same two problems any team has: coordination and handover.
 
-That is the core of Fundamentals. You now have the whole picture: a model that only predicts
-text, a chat that is its desk, search to fill that desk, tools to act, memory, a loop that makes
-it an agent, and a team when one agent is not enough.
+That is the core of Fundamentals. You now have the whole picture:
+
+- a model that only predicts text
+- a chat that is its desk
+- search to fill that desk
+- tools to act
+- memory
+- a loop that makes it an agent
+- a team when one agent is not enough
 
 **Quick check**: What are the two problems a team of agents has? And what is the difference
 between a supervisor and a network?

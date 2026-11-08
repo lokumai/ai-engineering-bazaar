@@ -4,7 +4,7 @@
 
 ## Bu Senin İçin Neden Önemli
 
-"Dokümanlarınla sohbet et" diyen hemen her ürün ve şirket içi politikalarla ilgili soruları cevaplayan hemen her şirket asistanı bu şekilde çalışır. Biri şirketine "tüm dokümanlarını bilen bir yapay zekâ" sunduğunda, bu modül içeride neyin olduğunu ve neyi sorman gerektiğini anlatıyor.
+"Dokümanlarınla sohbet et" diyen birçok ürün ve şirket içi politikalarla ilgili soruları cevaplayan birçok şirket asistanı bu şekilde çalışır. Biri şirketine "tüm dokümanlarını bilen bir yapay zekâ" sunduğunda, bu modül içeride neyin olduğunu ve neyi sorman gerektiğini anlatıyor.
 
 ## RAG Neden Var?
 
@@ -30,7 +30,7 @@ RAG de şunu yapıyor: dokümanları yapay zekânın dışında tutuyor. Bir sor
 Dev bir kütüphaneden tam bir cümleyi hatırlamak zor ve güvenilmezdir. Masanda açık duran bir sayfayı okumak ise kolay ve kesindir. RAG, hangi sayfaların masaya konacağını seçer.
 
 ![Basit RAG akışı](../images/rag.png)  
-*Temel RAG akışı. Soru aynı anda iki yöne gider. Bir yol, dokümanlarında yapılan aramaya gider (aşağıdaki "embedding model" ve "vector store"). Diğeri doğrudan yapay zekâya gider ve yanında aramanın bulduğu sayfalar vardır.*
+*Temel RAG akışı. Soru aynı anda iki yöne gider. Bir yol, dokümanlarında yapılan aramaya gider (resimdeki "embedding model" ve "vector store index" kutuları). Diğeri doğrudan yapay zekâya gider ve yanında aramanın bulduğu sayfalar vardır.*
 
 ## Anlamın Parmak İzi (Embedding'ler)
 
@@ -59,7 +59,7 @@ RAG iki parçadan oluşur.
 **Bir kez, bir de dokümanlar değiştikçe (hazırlık):**
 
 1. Dokümanları topla: sözleşmeler, politikalar, PDF'ler, herhangi bir metin.
-2. Onları küçük parçalara böl; örneğin bir paragraf ya da bir madde.
+2. Onları küçük parçalara (**chunk** denir) böl; örneğin bir paragraf ya da bir madde.
 3. Her parça için bir parmak izi üret.
 4. Parmak izlerini vektör veritabanında sakla.
 

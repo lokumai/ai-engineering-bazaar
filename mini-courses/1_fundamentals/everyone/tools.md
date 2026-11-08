@@ -166,8 +166,8 @@ can do whatever its access allows, so access is a decision to take seriously.
 
 Next comes memory: what an AI remembers, and where.
 
-**Quick check**: Who runs the tool, the AI or the computer? What are the four messages of one
-tool call? And why does a vague tool name make an assistant worse?
+**Quick check**: Who runs the tool, the AI or the computer? What are the four steps of one tool
+call, and who does each? And why does a vague tool name make an assistant worse?
 
 ## References
 

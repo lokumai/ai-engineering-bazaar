@@ -58,8 +58,8 @@ together, which is called **batching**. Think of a bus instead of a taxi for eac
 costs about the same, but it carries many more people.
 
 The best engines do not even wait for the bus to fill: new requests join as soon as older ones
-finish, so the computer is never idle. This is why big providers can sell tokens so cheaply: they
-fill every trip.
+finish, so the computer is never idle. This is one reason big providers can sell tokens cheaply:
+they fill every trip.
 
 ## A Screen in Front of It
 
@@ -79,7 +79,7 @@ looks and works like ChatGPT, running on the company's own computers.
 
 An inference engine runs the model; a provider is a company running one for you. Run it yourself
 only for one of three reasons: the data must stay inside, the volume is very large, or you need
-something no provider offers. Otherwise, rent. Batching is why large providers are cheap.
+something no provider offers. Otherwise, rent. Batching is one reason large providers are cheap.
 
 **Quick check**: What is the most common reason a company runs a model itself? And why does batching
 make each token cheaper?

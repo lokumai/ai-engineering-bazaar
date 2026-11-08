@@ -17,7 +17,7 @@ After prompt engineering came context engineering. It became the big topic of la
 
 If you have used an AI assistant for a long task, you have probably seen this: at the start it
 follows your instructions well, and after a long time it starts to forget them, drift, or invent
-things. This module explains why, and what the best AI tools do about it. It is also the reason
+things. This module explains why, and what the best AI tools do about it. It is also one reason
 AI can now build a whole website from one request.
 
 ## When the Chat Gets Too Long
@@ -106,7 +106,7 @@ Many AI products call this **long-term memory**, the same idea as in
 [Memory](../1_fundamentals/memory.md). It is usually kept in three kinds:
 
 ![Three kinds of long-term memory](../images/semantic-episodic-procedural.png)  
-*Facts about you collect slowly over time. Notes about past actions stop the agent from repeating a mistake. Instructions tell it how to do things. The agent writes and reads the three at different times.*
+*Semantic memory (facts about you) builds up slowly. Episodic memory (notes about past actions) stops the agent from repeating a mistake. Procedural memory (instructions) tells it how to do things. The agent writes and reads the three at different times.*
 
 The same warning applies: someone has to decide what is worth writing down, and that decision is
 sometimes wrong.

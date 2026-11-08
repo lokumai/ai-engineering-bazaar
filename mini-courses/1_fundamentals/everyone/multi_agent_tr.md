@@ -71,7 +71,7 @@ Bu isimler kursun ilerleyen bölümlerinde karşına çıkacak:
 
 ## Tek Agent Ne Zaman Daha İyi?
 
-Daha çok agent bir yükseltme değil, bir takastır. Daha kısa talimatlar ve daha net işler elde edersin. Bedelini koordinasyon ve devirle ödersin. Tek bir talimat seti hâlâ iyi uyuyorsa tek bir agent ile kal. Tek bir agent iki ilgisiz işi öğrenmeye çalıştığında böl ve bir agent'tan diğerine en az bilginin geçmesi gereken yerden böl.
+Daha çok agent bir yükseltme değil, bir takastır. Daha kısa talimatlar ve daha net işler elde edersin. Bedelini koordinasyon ve devirle ödersin. Tek bir talimat seti hâlâ iyi uyuyorsa tek bir agent ile kal. Tek bir talimat seti iki ilgisiz işi birden kapsamak zorunda kaldığında böl ve bir agent'tan diğerine en az bilginin geçmesi gereken yerden böl.
 
 ## Artık Bildiğin Terimler
 
@@ -87,7 +87,15 @@ Daha çok agent bir yükseltme değil, bir takastır. Daha kısa talimatlar ve d
 
 Birkaç agent, her birinin kısa talimatlar ve tek bir işle kalmasını sağlar; bir takımdaki uzmanlar gibi. Supervisor şekli, yani işi dağıtan ve toplayan bir müdür, başlanacak şekildir. Her takımın yaşadığı iki sorunla karşılaşırsın: koordinasyon ve devir.
 
-Fundamentals'ın özü bu. Artık bütün resmi biliyorsun: yalnızca metin tahmin eden bir model, onun masası olan bir sohbet, o masayı doldurmak için arama, harekete geçmek için tool'lar, bellek, onu bir agent yapan bir döngü ve bir agent yetmediğinde bir takım.
+Fundamentals'ın özü bu. Artık bütün resmi biliyorsun:
+
+- yalnızca metin tahmin eden bir model
+- onun masası olan bir sohbet
+- o masayı doldurmak için arama
+- harekete geçmek için tool'lar
+- bellek
+- onu bir agent yapan bir döngü
+- bir agent yetmediğinde bir takım
 
 **Hızlı Kontrol**: Bir agent takımının iki sorunu nedir? Supervisor ile network arasındaki fark ne?
 

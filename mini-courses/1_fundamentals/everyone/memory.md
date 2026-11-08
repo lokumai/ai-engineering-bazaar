@@ -78,7 +78,7 @@ graph TD
     A -->|appends response to the stack| A
 ```
 
-This is also why a very long chat costs more and goes slower: every new message makes the app
+This is also why a very long chat costs more: every new message makes the app
 send everything again.
 
 ![Short-Term vs Long-Term Memory](../images/short-vs-long-memory.png)  
@@ -91,11 +91,10 @@ summary somewhere outside the model, like notes in a notebook. Later, even in a 
 chat, it can look in the notebook and bring the right notes back into the chat. It often uses
 the search from [RAG & Embeddings](rag.md) to find them.
 
-**Example:** you upload 5 PDFs to ChatGPT in one chat. A week later, in a new chat, you ask
-about them, and ChatGPT still answers. This is not because the model learned them in training,
-and it is not because they are in the new chat, which started empty. It is because ChatGPT saved
-and indexed them earlier, and now it found them again and brought the right parts back into the
-chat.
+**Example:** you upload 5 PDFs to ChatGPT in one chat. Later, in a new chat, you ask about
+them, and ChatGPT may still answer. This is not because the model learned them in training, and
+it is not because they are in the new chat, which started empty. It is because ChatGPT saved and
+indexed them earlier, and now it found them again and brought the right parts back into the chat.
 
 ## Side-by-side Comparison
 
@@ -124,7 +123,7 @@ AI reads, outside its numbers. So together they are called **non-parametric memo
 | Good for | How the model behaves: a style, a format, a skill | What the model should know: facts and documents that change |
 
 The row that matters most is the source. When an AI answers from what it learned in training,
-nobody can say which document the answer came from. Go back to the person with 1,000 books: they
+you usually cannot tell which document the answer came from. Go back to the person with 1,000 books: they
 can tell you a fact, but not which book it came from. Give them their own notes, and they can
 point at the page.
 

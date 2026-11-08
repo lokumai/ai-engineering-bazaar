@@ -12,7 +12,7 @@ Sana ulaşma ihtimali en yüksek saldırı, bir chatbot'a bir şeyler yazan bir 
 
 **Jailbreaking**, bir yapay zekâyı, reddetmek üzere eğitildiği bir şeyi üretmeye ikna etmek demek.
 
-Olağan anlamda hiçbir şey hacklenmiyor. Kimse bir sunucuya girmiyor. Biri, reddi aşan bir soru sorma yolu buluyor. Bu bir hırsızlık değil, ikna.
+Olağan anlamda hiçbir şey hacklenmiyor. Kimse bir sunucuya girmiyor. Biri, reddi aşan bir soru sorma yolu buluyor. Saldırgan yapay zekâyı ikna ediyor; içeri girmiyor.
 
 ![Bir ret ve aynı sorunun önüne bir jailbreak konmuş hâli](../images/jb-exmaple-1.png)  
 *İki yarıda da soru aynı. Tek değişiklik, sorunun önündeki metin. Güvenlik davranışı kilitli bir kapı değil; modelin bir alışkanlığı ve doğru kelimeler onu bu alışkanlıktan vazgeçirebiliyor.*
@@ -96,7 +96,7 @@ Hiç denemediğin saldırılara karşı savunma yapamazsın. **Red teaming**, ba
 
 ## Güvenlik İşi Yapan Agent'lar
 
-Aynı yetenek dışarıya da çevrilebilir. Bir şirketin güvenliğini test etmek çoğunlukla okumak, akıl yürütmek ve komut çalıştırmaktır; bir code agent'ın zaten yaptığı şey bu. Bu yüzden artık bir şirketin kodunu okuyan, saldırılar deneyen, hangi zayıflıkların gerçek olduğunu kanıtlayan ve bir rapor yazan agent'lar var; Strix ve PentAGI gibi. Bir güvenlik skill'i, elindeki bir agent için tek bir metin dosyası bile olabilir; [Code Agent'lar](coding_agents_tr.md) modülündeki skill fikri.
+Aynı yetenek dışarıya da çevrilebilir. Bir şirketin güvenliğini test etmek çoğunlukla okumak, akıl yürütmek ve komut çalıştırmaktır; bir code agent'ın zaten yaptığı şey bu. Bu yüzden artık zayıflıkları kendi başına bulan agent'lar var; Strix ve PentAGI gibi. Bunlardan biri olan Shannon ise gerçek saldırılar çalıştırarak bir zayıflığın gerçek olduğunu kanıtlıyor. Bir güvenlik skill'i, elindeki bir agent için tek bir metin dosyası bile olabilir; [Code Agent'lar](coding_agents_tr.md) modülündeki skill fikri.
 
 ## Artık Bildiğin Terimler
 

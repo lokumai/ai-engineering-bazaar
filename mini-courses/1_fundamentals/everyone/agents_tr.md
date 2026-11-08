@@ -4,14 +4,14 @@
 
 > **Bir AI agent, hedefine ulaşana kadar tool kullanan, bir döngünün içindeki LLM'dir. LLM tool istemeyi bıraktığında nihai cevabı yazar ve döngü biter.**
 
-Her şey bundan ibaret. İki kez oku. Agent'lar hakkındaki kafa karışıklığının çoğu, daha büyük bir şey beklemekten geliyor.
+Her şey bundan ibaret. Agent'lar hakkındaki kafa karışıklığının çoğu, daha büyük bir şey beklemekten geliyor.
 
 ![Bir hedefle döngüye alınmış bir LLM](../images/agent-wrapper-meme.jpg)  
-*Eğrinin iki ucu da aynı cevaba varıyor. Ortadakiler ise daha karmaşık bir şey aramaya gidiyor.*
+*IQ eğrisinin iki ucu da aynı basit şeyi söylüyor. Ortadaki kişi karmaşık bir diyagram çiziyor.*
 
 ## Bu Senin İçin Neden Önemli
 
-"Agent", şu anda yapay zekâda en çok kullanılan kelime. Her satıcı bir tane satıyor. Bir agent'ın tool'larla birlikte bir döngü içindeki model olduğunu bildiğinde, hangisi hakkında olursa olsun doğru soruları sorabilirsin: hangi tool'ları var, o tool'lar neyi değiştirebiliyor ve onu ne durduruyor?
+"Agent", şu anda yapay zekâda en çok kullanılan kelime. Birçok satıcı bir tane satıyor. Bir agent'ın tool'larla birlikte bir döngü içindeki model olduğunu bildiğinde, hangisi hakkında olursa olsun doğru soruları sorabilirsin: hangi tool'ları var, o tool'lar neyi değiştirebiliyor ve onu ne durduruyor?
 
 ## Bir Kez Cevap Vermek ve İş Bitene Kadar Çalışmak
 
@@ -56,7 +56,7 @@ graph TD
 ![Özerklik ölçeğinde üç nokta](../images/llm-tool-agent-compare.png)  
 *Üç panelde de aynı model duruyor. İki şey değişiyor: modelin kaç kez çağrıldığı ve bir sonraki adımı kimin seçtiği. İlk iki panelde onu sen seçiyorsun. Üçüncüde yapay zekâ seçiyor.*
 
-Çoğu şirket uç noktaya kadar gitmez ve bu çoğu zaman doğru seçimdir. Daha az serbestlik, işlerin ters gitmesi için daha az yol demektir. Bir yapay zekâ ürünü seçerken, onun bu ölçeğin neresinde durduğunu sormak haklı bir sorudur.
+Gerçek ürünlerin çoğu uç noktaya kadar gitmez ve bu çoğu zaman doğru seçimdir. Daha az serbestlik, işlerin ters gitmesi için daha az yol demektir. Bir yapay zekâ ürünü seçerken, onun bu ölçeğin neresinde durduğunu sormak haklı bir sorudur.
 
 ## Döngü Nerede Çalışır?
 

@@ -4,7 +4,7 @@
 
 ## Bu Senin İçin Neden Önemli
 
-Bu kursun vaadinin gerçeğe dönüştüğü yer burası. Ne istediğini sade kelimelerle anlatıyorsun ve bir code agent onu inşa ediyor: küçük bir web sitesi, bir tabloyu temizleyen bir araç, bin dosyanın adını değiştiren bir script. Kod yazmayı bilmen gerekmiyor. İşi net anlatmayı ve agent'ın nasıl çalıştığını bilmen gerekiyor; bu kurs tam olarak bunu öğretiyor. [Agent'lar Pratikte](agents_in_practice_tr.md) modülü de bunu kendin denemen için sana kurslar veriyor.
+Bu modül, bir şeyi anlatarak inşa edebileceğini gösteriyor. Ne istediğini sade kelimelerle anlatıyorsun ve bir code agent onu inşa ediyor: küçük bir web sitesi, bir tabloyu temizleyen bir araç, bin dosyanın adını değiştiren bir script. Kod yazmayı bilmen gerekmiyor. İşi net anlatmayı ve agent'ın nasıl çalıştığını bilmen gerekiyor; bu kurs tam olarak bunu öğretiyor. [Agent'lar Pratikte](agents_in_practice_tr.md) modülü de bunu kendin denemen için sana kurslar veriyor.
 
 ## Bir Code Agent Neden Koddan Fazlasını Yapabilir
 

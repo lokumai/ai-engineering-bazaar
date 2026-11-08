@@ -50,7 +50,7 @@ graph TD
     A -->|cevabı yığına ekler| A
 ```
 
-Çok uzun bir sohbetin daha pahalıya gelmesinin ve daha yavaş çalışmasının nedeni de bu: her yeni mesajda uygulama her şeyi yeniden gönderiyor.
+Çok uzun bir sohbetin daha pahalıya gelmesinin nedeni de bu: her yeni mesajda uygulama her şeyi yeniden gönderiyor.
 
 ![Kısa ve Uzun Süreli Bellek](../images/short-vs-long-memory.png)  
 *Çalışma (kısa süreli) belleği, senin mesajlarından ve yapay zekânın cevaplarından oluşan büyüyen yığındır. Uzun süreli bellek ayrı bir depodur: sohbetin parçaları oraya kaydedilir ve daha sonra, yeni bir sohbette bile geri getirilir. "Checkpointer" ve "Store" etiketleri tek bir yazılım framework'ünden geliyor. Başkaları aynı fikir için farklı isimler kullanıyor.*
@@ -59,7 +59,7 @@ graph TD
 
 Bazen uygulama, sohbet bittiğinde çalışma belleğinin yok olmasına izin vermez. Modelin dışında bir yere notlar ya da bir özet kaydeder; tıpkı bir defterdeki notlar gibi. Daha sonra, tamamen yeni bir sohbette bile defterine bakıp doğru notları sohbete geri getirebilir. Onları bulmak için çoğu zaman [RAG & Embeddings](rag_tr.md) modülündeki aramayı kullanır.
 
-**Örnek:** bir sohbette ChatGPT'ye 5 PDF yüklüyorsun. Bir hafta sonra, yeni bir sohbette bunları soruyorsun ve ChatGPT hâlâ cevap veriyor. Bunun nedeni modelin onları eğitimde öğrenmiş olması değil; ayrıca boş başlayan yeni sohbette de bulunmuyorlar. Nedeni, ChatGPT'nin onları daha önce kaydedip indekslemiş olması ve şimdi yeniden bulup doğru parçaları sohbete geri getirmesi.
+**Örnek:** bir sohbette ChatGPT'ye 5 PDF yüklüyorsun. Daha sonra, yeni bir sohbette bunları soruyorsun ve ChatGPT yine de cevap verebiliyor. Bunun nedeni modelin onları eğitimde öğrenmiş olması değil; ayrıca boş başlayan yeni sohbette de bulunmuyorlar. Nedeni, ChatGPT'nin onları daha önce kaydedip indekslemiş olması ve şimdi yeniden bulup doğru parçaları sohbete geri getirmesi.
 
 ## Yan Yana Karşılaştırma
 
@@ -84,7 +84,7 @@ Ana fikir şu: **yapay zekânın kendisinin kendine ait bir belleği yoktur.** P
 | Cevap nereden geldi | Bilinmiyor | Biliniyor: tam doküman gösterilebilir |
 | Ne için iyi | Modelin nasıl davranacağı: bir üslup, bir biçim, bir beceri | Modelin ne bilmesi gerektiği: değişen bilgiler ve dokümanlar |
 
-En önemli satır kaynak. Bir yapay zekâ eğitimde öğrendiği şeyden cevap verdiğinde, cevabın hangi dokümandan geldiğini kimse söyleyemez. 1.000 kitap okumuş kişiye geri dön: sana bir bilgiyi söyleyebilir, ama hangi kitaptan geldiğini söyleyemez. Ona kendi notlarını ver, sayfayı gösterebilir.
+En önemli satır kaynak. Bir yapay zekâ eğitimde öğrendiği şeyden cevap verdiğinde, cevabın hangi dokümandan geldiğini çoğu zaman anlayamazsın. 1.000 kitap okumuş kişiye geri dön: sana bir bilgiyi söyleyebilir, ama hangi kitaptan geldiğini söyleyemez. Ona kendi notlarını ver, sayfayı gösterebilir.
 
 Parametrik olmayan bellekten gelen bir cevap **kaynak gösterebilir (cited)**: uygulama, yapay zekânın önünde duran dokümanı sana gösterebilir. Bir cevabı kontrol edebilmen gereken İK, finans ve hukuk işlerinde RAG'in çoğu zaman fine-tuning'den üstün olmasının başlıca nedenlerinden biri bu.
 

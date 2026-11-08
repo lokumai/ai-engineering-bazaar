@@ -14,7 +14,7 @@ module is about those agents and their standard parts.
 
 ## Why This Matters to You
 
-This is where the promise of this course becomes real. You describe what you want in plain words,
+This module shows how you can build things by describing them. You describe what you want in plain words,
 and a coding agent builds it: a small website, a tool that cleans up a spreadsheet, a script that
 renames a thousand files. You do not need to know how to code. You need to know how to describe the
 job clearly and how the agent works, which is what this course teaches. The

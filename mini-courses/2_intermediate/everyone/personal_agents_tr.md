@@ -8,7 +8,7 @@ Bu, kurstaki en yeni konu ve en az oturmuş olanı.
 
 ## Bu Senin İçin Neden Önemli
 
-Bu, günlük hayatta muhtemelen ilk karşılaşacağın, hatta belki zaten karşılaştığın agent türü. Büyük yapay zekâ şirketlerinin hepsi 2026'da birer tane çıkardı. Bunların nasıl çalıştığını bilmek, onlardan ne bekleyeceğini ve onlara neyi vermemen gerektiğini söylüyor.
+Bu, günlük hayatta muhtemelen ilk karşılaşacağın, hatta belki zaten karşılaştığın agent türü. Büyük yapay zekâ şirketleri 2026'da kendi agent'larını çıkardı. Bunların nasıl çalıştığını bilmek, onlardan ne bekleyeceğini ve onlara neyi vermemen gerektiğini söylüyor.
 
 ## Onları Farklı Yapan Nedir
 
@@ -29,7 +29,7 @@ graph TD
     B["27 Ocak 2026<br/>Anthropic'in marka şikâyetinin ardından Moltbot olarak yeniden adlandırıldı"]
     C["30 Ocak 2026<br/>OpenClaw adını aldı. Aynı ay Moltbook da yayına girdi"]
     D["Şubat 2026<br/>Yaratıcısı OpenAI'a geçti, proje OpenClaw Foundation'a devredildi"]
-    E["2026 ortası<br/>İnsanlar, aynı fikri daha ucuza uygulayan Hermes Agent'a geçiyor"]
+    E["2026 ortası<br/>İnsanlar, aynı fikri daha dikkatli kuran Hermes Agent'a geçiyor"]
     F["30 Ağustos 2026<br/>OpenClaw 2.0 şikâyetlerin çoğuna cevap veriyor"]
     A --> B --> C --> D --> E --> F
 ```

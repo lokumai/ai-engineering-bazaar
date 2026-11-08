@@ -26,7 +26,7 @@ Think of a new model as an empty brain. At the start it knows nothing. Every par
 random number, so every answer is random too.
 
 Training means that you show the model text and correct its numbers by a tiny amount each
-time. You do this millions of times, until its guesses stop being random and start being right.
+time. You do this again and again, until its guesses stop being random and start being right.
 
 ![An untrained network next to a trained one](../images/training-network.jpg)  
 *The same network before and after training. The text is "The students opened their". With random numbers (left) it guesses "Sun". With trained numbers (right) it guesses "Laptops". The shape did not change. Only the numbers inside it changed.*
@@ -76,7 +76,8 @@ The clearest difference is in the data that each step uses:
   it. People usually write or check these pairs. That is a few thousand pairs, not billions of
   pages.
 
-That difference is why one costs millions and the other fits on a single computer.
+That difference is why pre-training costs millions and fine-tuning costs far less. LoRA, below, is
+the version that fits on one computer.
 
 ## Fine-tuning, with an Example
 
@@ -138,7 +139,7 @@ computer, it is fast, and it is what most real projects use.
 | What it is like | Going to school | Learning one job after school |
 | What it learns from | Ordinary text from the whole internet | A few thousand example pairs |
 | What it gives you | A general model that knows a little about everything | A model that is good at one task |
-| Cost | Millions of dollars | Small, often one computer |
+| Cost | Millions of dollars | Far less; with LoRA, often one computer |
 | Who does it | A few big AI companies | Almost anyone |
 
 ## When Not to Fine-tune
@@ -148,8 +149,8 @@ answer is no.
 
 **Do not fine-tune to teach the model your company's knowledge.** Company knowledge changes all
 the time: contracts are updated, policies change, new documents arrive. Fine-tuning is like a
-photo of one day. It does not change after that, and doing it again every week costs time and
-money. For company knowledge you want retrieval, which is the next module,
+photo of one day. It does not change after that, and doing it again every time a file changes
+costs time and money. For company knowledge you want retrieval, which is the next module,
 [RAG & Embeddings](rag.md).
 
 **Fine-tune for skills, not for facts.** Fine-tuning is good at teaching a *behaviour*: write in

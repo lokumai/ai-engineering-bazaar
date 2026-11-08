@@ -15,7 +15,7 @@ most often.
 
 ## Why This Matters to You
 
-Almost every "chat with your documents" product, and almost every company assistant that
+Many "chat with your documents" products, and many company assistants that
 answers questions about internal policies, works this way. When someone offers your company an
 "AI that knows all your documents", this module tells you what is happening inside, and what to
 ask.
@@ -53,7 +53,7 @@ Remembering one exact sentence from a huge library is hard and unreliable. Readi
 is open on your desk is easy and exact. RAG chooses which pages go on the desk.
 
 ![The naive RAG flow](../images/rag.png)  
-*The basic RAG flow. The question goes two ways at once. One way goes to a search over your documents (the "embedding model" and "vector store" below). The other goes straight to the AI, together with the pages the search found.*
+*The basic RAG flow. The question goes two ways at once. One way goes to a search over your documents (the "embedding model" and "vector store index" boxes in the picture). The other goes straight to the AI, together with the pages the search found.*
 
 ## Fingerprints of Meaning (Embeddings)
 
@@ -87,7 +87,7 @@ RAG has two parts.
 **Once, and again whenever the documents change (preparing):**
 
 1. Collect the documents: contracts, policies, PDFs, any text.
-2. Cut them into small pieces, such as one paragraph or one clause.
+2. Cut them into small pieces (called **chunks**), such as one paragraph or one clause.
 3. Make a fingerprint for each piece.
 4. Store the fingerprints in the vector database.
 

@@ -33,11 +33,11 @@ instructions turn by turn. You design what starts a round, what checks it, and w
 The last part, **when it stops**, is the most important design choice. Stop too early, and the work
 is half done. Never stop, and you keep paying for an agent that goes in circles.
 
-Back to the car. The engine is the prompt, the body is the context, and the track is the harness.
+Back to the car. The engine is the prompt, the body is the context, and the track and barriers are the harness.
 Until now, a person drove. With loop engineering, the AI drives.
 
 ![Four years of job titles](../images/loop-unemployment.jpeg)  
-*Each panel is a real job that existed. Read the arrows: first the person points at agents, then the person points at one agent, and that agent points at the others.*
+*Each panel is a joke about a job title, and the last one is a guess about the future. Read the arrows: first the person points at agents, then the person points at one agent, and that agent points at the others.*
 
 ## Loops at Five Levels
 
@@ -53,7 +53,7 @@ graph TD
     L0["Level 0: the LLM loop<br/>the model generates one token, appends it, and generates the next"]
 ```
 
-### Level 0: One Word at a Time
+### Level 0: The LLM Loop
 
 The model writes one word, adds it to the text, and writes the next. That is how it produces any
 answer at all. Nobody designs this loop.
@@ -63,7 +63,7 @@ answer at all. Nobody designs this loop.
 The agent uses a tool, reads the result, and uses another, until it decides it is done. That is the
 loop from [AI Agents](../1_fundamentals/agents.md). Every agent product already has it.
 
-### Level 2: Checking the Work
+### Level 2: The Verification Loop
 
 The agent finishes, and then something checks the work against a standard before anyone accepts it.
 If it is not good enough, the feedback goes back to the agent for another round, like a teacher
@@ -79,7 +79,7 @@ checklist of what good work looks like. Claude Code has a command for this, `/go
 Look at the shape: **a target, and a limit**. The limit matters. If success is the only way to stop,
 an impossible task never stops.
 
-### Level 3: Started by a Clock or an Event
+### Level 3: The Event-driven Loop
 
 Here, something outside decides when a run happens: a schedule, or an event such as a new email or a
 new support ticket. The agent stops being something you open and becomes something that runs. For
@@ -89,7 +89,7 @@ example: "every morning at 9, read the new support tickets and sort them". In Cl
 /loop 5m check my PR, address review comments, and fix failing CI
 ```
 
-### Level 4: The Loop That Never Gets Tired
+### Level 4: The Autonomous Loop
 
 This is the level that made loop engineering a topic. It started with the **Ralph loop**, named
 after the Simpsons character. It is a very simple script that starts the agent, again and again,

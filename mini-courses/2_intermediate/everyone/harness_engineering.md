@@ -168,8 +168,9 @@ inside.
 ## Summary
 
 An AI is non-deterministic, so instructions get you a good success rate but never a guarantee. The
-harness is the part that keeps working even when the AI does not follow its instructions: the
-system prompt, the tools and their descriptions, the safe workplace, and the hooks. Agent = Model +
+harness is the part that does not depend on the AI obeying: the sandbox, the permission gates,
+the hooks, and the checks that run after the work. The system prompt and AGENTS.md are guides, so
+they are still advice. Agent = Model +
 Harness. Changing only the harness moved one agent from 52.8% to 66.5%, and the same model scored
 from 14 to 20 out of 30 across eight harnesses. There is no best harness, only a best match.
 

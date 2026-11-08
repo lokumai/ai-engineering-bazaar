@@ -20,7 +20,7 @@ Her dolabı kendin yapmak yerine hazır bir mutfak satın almaya benziyor. Çoğ
 
 ## LangChain Ailesi
 
-En sık duyacağın isim bu. En eksiksiz ve en çok kullanılan. "LangChain" aslında üç katman:
+En sık duyacağın isim bu. En eksiksiz olanı ve çevrende kullanılma ihtimali en yüksek olanı. "LangChain" aslında üç katman:
 
 ```mermaid
 graph TD

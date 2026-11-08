@@ -39,7 +39,7 @@ Bu araçlar sana hızlıca iyi görünen bir ekran veriyor. Bir tasarımcının 
 
 **Erişilebilirlik (accessibility)** en net eksik. Ekranı herkesin kullanabilmesi demek; yalnızca klavye ya da ekran okuyucu (ekranı sesli okuyan yazılım) kullanan biri dahil. Üretilen ekranlar bunu çoğu zaman yanlış yapıyor:
 
-- arka planına göre okunamayacak kadar soluk metin
+- kontrastı gereken orana ulaşmayan metin; bunu gözle değil, yalnızca ölçerek anlayabilirsin
 - klavyenin sayfada nerede olduğunu gösteren görünür bir işaret yok
 - yalnızca fareyle çalışan bir kontrol
 - adı olmayan bir ikon butonu; bu yüzden bir ekran okuyucu onu seslendiremiyor

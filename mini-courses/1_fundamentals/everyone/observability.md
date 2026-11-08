@@ -27,7 +27,7 @@ That information exists only in the record of that run. The record is called a *
 ## Why This Matters to You
 
 If your company uses an AI assistant and it gives a wrong answer, someone will ask "why did it do
-that?". The trace is the only place that answer exists. Traces also contain everything users
+that?". The trace is where you find the answer. Traces also contain everything users
 typed and everything the tools returned, so where they are stored is a question for your data and
 privacy rules.
 

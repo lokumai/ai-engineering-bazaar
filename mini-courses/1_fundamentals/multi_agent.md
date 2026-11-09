@@ -146,6 +146,81 @@ Look at `managed_agents`. You hand the workers to the supervisor in the same way
 tools to the agent in [AI Agents](agents.md). This is because, from the supervisor's point of view,
 that is what the workers are: things it can call and get a result from.
 
+## Agent2Agent Protocol (A2A)
+
+This is a short introduction. The details of the protocol are in
+[Protocols Reference](../4_ecosystem/protocols_reference.md).
+
+Look again at the code above. The supervisor and both workers are smolagents agents. That is not an
+accident. Agents built with one framework can talk to each other because they share that framework's
+API, its message format and its idea of what an agent is. So in practice, every agent in one system
+is built with the same framework: all smolagents, all LangChain, or all Claude Agent SDK.
+
+That couples the agents to each other. You cannot build the supervisor with the Claude Agent SDK, two
+workers with smolagents and the third worker with LangChain, and expect them to work together. Each
+framework speaks its own language, and an agent from another framework does not understand it.
+
+The **Agent2Agent Protocol (A2A)** solves this. It is an open standard that lets agents talk to each
+other whatever vendor or framework built them. Google developed it and donated it to the Linux
+Foundation, where a steering committee from several large companies now maintains it.
+
+![A client agent delegating to remote agents over A2A](./images/a2a-flow.webp)  
+*A user talks to one client agent. That agent hands parts of the job to three remote agents, each built by a different vendor, and every handover goes over A2A.*
+
+**How it works.** Every agent publishes an **Agent Card**. Think of it as the agent's CV. It says who
+the agent is, what it can do (its **skills**), where to reach it, and how to authenticate. It says
+nothing about the framework the agent was built with, because that no longer matters. The agent
+serves its card at a standard address, `/.well-known/agent-card.json`, on its own A2A server. Another
+agent reads the card, decides whether this agent can help, and then sends it a task, waits for the
+result, or talks with it.
+
+```json
+{
+  "name": "Hotel Booking Agent",
+  "description": "Finds and books hotel rooms.",
+  "url": "https://agents.hotels.example/a2a",
+  "capabilities": { "streaming": true },
+  "skills": [
+    { "id": "book-room", "name": "Book a room", "description": "Books a room for given dates and city." }
+  ]
+}
+```
+
+That is a simplified card, so you can see the idea. The real one has a few more fields.
+
+Notice how this sits next to MCP from [Tool Calling](tools.md). MCP connects an agent to its
+**tools**. A2A connects an agent to **other agents**. The A2A site itself says the two are
+complementary, not competitors.
+
+**Do you need it?** Honestly, most of the time you do not, and in a small project almost never. There
+is no reason to build each agent of one system with a different framework. If you build all of them
+with one framework, they already understand each other.
+
+A2A matters when the agents belong to **different organisations**. Say company A sells flights and
+has a flight-booking agent, built with smolagents. Company B sells hotel rooms and has a hotel-booking
+agent, built with the Claude Agent SDK. Company A now wants one assistant that books both a flight and
+a hotel. The flight part is its own agent. For the hotel part, it depends on company B's agent, and
+the two agents cannot talk to each other: different companies, different frameworks, different code.
+That is an **inter-organisation barrier**. If company B publishes an Agent Card for its agent,
+company A's agent can discover it and ask it to book the hotel.
+
+![A2A across an organisational boundary](./images/a2a-interorganization.webp)  
+*Two agents on either side of an organisational or technological boundary. Each has its own model, its own framework and its own local agents, and each reaches its own APIs and enterprise apps over MCP. Between the two agents, across the boundary, runs A2A.*
+
+```mermaid
+sequenceDiagram
+    participant A as Company A's agent (smolagents)
+    participant B as Company B's agent (Claude Agent SDK)
+    A->>B: read the Agent Card at /.well-known/agent-card.json
+    B-->>A: card: name, skills (book a room), endpoint, auth
+    A->>B: task: book a room in Istanbul, 12 to 14 May
+    B-->>A: result: booking confirmed
+```
+
+This use case is rare. It mostly shows up in large enterprises, or between teams inside one company
+whose agents were built separately, for example an HR agent and a finance agent built with different
+frameworks. But it is worth knowing that the barrier exists, and that A2A is the standard answer to it.
+
 ## When a Single Agent Might be Better
 
 Multi-agent is not an upgrade. It is a trade. You buy shorter prompts and a clearer separation
@@ -185,6 +260,10 @@ it is done. The second is **context transfer**: deciding what each agent is hand
 the whole difficulty. How you answer the second one (shared context or isolated context) shapes
 everything else.
 
+Agents from one framework understand each other, and agents from different frameworks do not. **A2A**
+is the open standard that lets them talk, through the Agent Card each one publishes. Most projects never
+need it; it matters when agents belong to different organisations.
+
 That is the core of Fundamentals. You now have the full picture:
 
 - a model that only predicts text
@@ -204,11 +283,21 @@ difference between shared and isolated context?
 
 ### 📄 Articles
 
+- [Announcing the Agent2Agent Protocol (A2A)](https://developers.googleblog.com/en/a2a-a-new-era-of-agent-interoperability/): Google's announcement, April 2025, and why agents from different vendors need a shared protocol
 - [Multi-agent systems](https://docs.langchain.com/oss/python/langchain/multi-agent): the patterns, in more depth
 - [LangGraph multi-agent concepts](https://langchain-ai.github.io/langgraph/concepts/multi_agent/): supervisor, network and the rest, with code
 - [What is an agent?](https://www.langchain.com/blog/what-is-an-agent): worth reading again here, because a supervisor is a decision about autonomy
+
+### 🛠️ Tools
+
+- [A2A Protocol](https://a2a-protocol.org/latest/): the open standard for agents from any framework to talk to each other, and its [agent discovery](https://a2a-protocol.org/latest/topics/agent-discovery/) page on Agent Cards
+
+### 🗃️ Repositories
+
+- [a2aproject/A2A](https://github.com/a2aproject/a2a): the specification and its SDKs
 
 ### 🧭 Modules
 
 - [AI Agents](agents.md): the single loop that all of this is built from
 - [Advanced Multi-Agent](../3_expert/advanced_multiagent.md): shared and isolated context, and agent-to-agent protocols
+- [Protocols Reference](../4_ecosystem/protocols_reference.md): A2A in detail, next to MCP and AG-UI

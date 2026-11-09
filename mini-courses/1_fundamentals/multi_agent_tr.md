@@ -103,6 +103,56 @@ supervisor.run("How many rows are in my tables? Show them in a bar chart.")
 
 Şimdi `managed_agents` parametresine bak. Worker'ları supervisor'a, [AI Agents](agents_tr.md) modülünde tool'ları agent'a verdiğin şekilde veriyorsun. Bunun nedeni, supervisor'ın gözünden worker'ların tam olarak bu olması: çağırıp sonuç alabileceği şeyler.
 
+## Agent2Agent Protocol (A2A)
+
+Bu kısa bir giriş. Protokolün ayrıntıları [Protokol Referansı](../4_ecosystem/protocols_reference_tr.md) modülünde.
+
+Yukarıdaki koda bir kez daha bak. Supervisor da iki worker da smolagents agent'ı. Bu tesadüf değil. Aynı framework ile yazılmış agent'lar birbirleriyle konuşabilir, çünkü aynı API'yi, aynı mesaj formatını ve "agent nedir" sorusuna aynı cevabı paylaşırlar. Bu yüzden pratikte bir sistemdeki bütün agent'lar aynı framework ile yazılır: hepsi smolagents, hepsi LangChain ya da hepsi Claude Agent SDK.
+
+Bu, agent'ları birbirine bağlar. Supervisor'ı Claude Agent SDK ile, iki worker'ı smolagents ile, üçüncü worker'ı da LangChain ile yazıp hepsinin birlikte çalışmasını bekleyemezsin. Her framework kendi dilini konuşur ve başka bir framework'ten gelen agent bu dili anlamaz.
+
+**Agent2Agent Protocol (A2A)** bu sorunu çözer. Agent'ı hangi şirket ya da hangi framework yazmış olursa olsun, agent'ların birbirleriyle konuşmasını sağlayan açık bir standarttır (open standard). Google geliştirdi ve Linux Foundation'a bağışladı. Şimdi birkaç büyük şirketten oluşan bir yönetim kurulu (steering committee) onu sürdürüyor.
+
+![A2A üzerinden remote agent'lara iş devreden bir client agent](./images/a2a-flow.webp)  
+*Kullanıcı tek bir client agent ile konuşur. Bu agent işin parçalarını, her biri farklı bir şirketin yazdığı üç remote agent'a devreder ve her devir A2A üzerinden gider.*
+
+**Nasıl çalışır.** Her agent bir **Agent Card** yayınlar. Bunu agent'ın CV'si gibi düşünebilirsin. Agent'ın kim olduğunu, neler yapabildiğini (**skill**'lerini), ona nereden ulaşılacağını ve nasıl authentication yapılacağını söyler. Agent'ın hangi framework ile yazıldığı hakkında ise hiçbir şey söylemez, çünkü artık bunun önemi kalmadı. Agent, kartını kendi A2A server'ında standart bir adresten sunar: `/.well-known/agent-card.json`. Başka bir agent kartı okur, bu agent'ın işine yarayıp yaramayacağına karar verir, sonra ona bir görev (task) gönderir, sonucu bekler ya da onunla karşılıklı konuşur.
+
+```json
+{
+  "name": "Hotel Booking Agent",
+  "description": "Finds and books hotel rooms.",
+  "url": "https://agents.hotels.example/a2a",
+  "capabilities": { "streaming": true },
+  "skills": [
+    { "id": "book-room", "name": "Book a room", "description": "Books a room for given dates and city." }
+  ]
+}
+```
+
+Bu, fikri görebilmen için sadeleştirilmiş bir kart. Gerçeğinde birkaç alan daha var.
+
+Bunun [LLM Tool Calling](tools_tr.md) modülündeki MCP ile nasıl yan yana durduğuna dikkat et. MCP, bir agent'ı **tool**'larına bağlar. A2A ise bir agent'ı **başka agent'lara** bağlar. A2A'nın kendi sitesi de ikisinin rakip değil, birbirini tamamlayan protokoller olduğunu söylüyor.
+
+**Buna ihtiyacın var mı?** Dürüst olmak gerekirse çoğu zaman yok, küçük bir projede de neredeyse hiç yok. Tek bir sistemin her agent'ını farklı bir framework ile yazmanın bir nedeni yok. Hepsini aynı framework ile yazarsan zaten birbirlerini anlarlar.
+
+A2A, agent'lar **farklı kurumlara** ait olduğunda önem kazanır. Diyelim ki A şirketi uçak bileti satıyor ve smolagents ile yazılmış bir uçak bileti agent'ı var. B şirketi otel odası satıyor ve Claude Agent SDK ile yazılmış bir otel rezervasyonu agent'ı var. A şirketi şimdi hem uçak hem otel ayırtan tek bir asistan istiyor. Uçak kısmı kendi agent'ı. Otel kısmı ise B şirketinin agent'ına bağlı ve iki agent birbiriyle konuşamıyor: farklı şirketler, farklı framework'ler, farklı kod. Bu, **kurumlar arası bir engel**. B şirketi agent'ı için bir Agent Card yayınlarsa, A şirketinin agent'ı onu keşfedip oteli ayırtmasını isteyebilir.
+
+![Kurumlar arası sınırın iki yanında A2A](./images/a2a-interorganization.webp)  
+*Kurumsal ya da teknolojik bir sınırın iki yanında duran iki agent. Her birinin kendi modeli, kendi framework'ü ve kendi yerel agent'ları var; her biri kendi API'lerine ve kurumsal uygulamalarına MCP ile ulaşır. Sınırın öte yanına, iki agent arasında ise A2A uzanır.*
+
+```mermaid
+sequenceDiagram
+    participant A as A şirketinin agent'ı (smolagents)
+    participant B as B şirketinin agent'ı (Claude Agent SDK)
+    A->>B: Agent Card'ı /.well-known/agent-card.json adresinden oku
+    B-->>A: kart: ad, skill'ler (oda ayırtma), endpoint, authentication
+    A->>B: görev: 12-14 Mayıs için İstanbul'da bir oda ayırt
+    B-->>A: sonuç: rezervasyon onaylandı
+```
+
+Bu kullanım nadir görülür. Çoğunlukla büyük şirketlerde ya da aynı şirket içinde ayrı ayrı yazılmış agent'lara sahip ekipler arasında karşına çıkar, örneğin farklı framework'lerle yazılmış bir İK agent'ı ile bir finans agent'ı. Yine de bu engelin var olduğunu ve A2A'nın bunun standart cevabı olduğunu bilmeye değer.
+
 ## Tek Bir Agent Ne Zaman Daha İyi Olabilir
 
 Multi-agent bir yükseltme değildir, bir takastır (trade-off). Karşılığında daha kısa prompt'lar ve işler arasında daha net bir ayrım elde edersin. Bunun bedelini ise koordinasyon ve bağlam aktarımıyla ödersin.
@@ -135,6 +185,8 @@ Birden fazla agent, her agent'ın kısa bir prompt'u ve tek bir işi olmasını 
 
 Ayrıca iki problemi de devralırsın. Birincisi **koordinasyon**: kimin ne yaptığına ve bir işin ne zaman bittiğine karar vermek. İkincisi **bağlam aktarımı**: her agent'a neyin verileceğine karar vermek. Zorluğun tamamı bu iki problemde toplanır. İkinci soruya nasıl yanıt verdiğin (ortak bağlam mı, izole bağlam mı) gerisini şekillendirir.
 
+Aynı framework'ün agent'ları birbirini anlar, farklı framework'lerin agent'ları anlamaz. **A2A**, her agent'ın yayınladığı Agent Card üzerinden onların konuşmasını sağlayan açık standarttır. Çoğu proje ona hiç ihtiyaç duymaz; agent'lar farklı kurumlara ait olduğunda önem kazanır.
+
 Bu, Fundamentals'ın özüdür. Artık resmin tamamı önünde:
 
 - yalnızca metin tahmin eden bir model
@@ -153,11 +205,21 @@ Intermediate'teki her şey bu yedi fikrin üzerine kurulu.
 
 ### 📄 Makaleler
 
+- [Announcing the Agent2Agent Protocol (A2A)](https://developers.googleblog.com/en/a2a-a-new-era-of-agent-interoperability/): Google'ın Nisan 2025 tarihli duyurusu ve farklı şirketlerin agent'larının neden ortak bir protocol'e ihtiyaç duyduğu
 - [Multi-agent systems](https://docs.langchain.com/oss/python/langchain/multi-agent): bu kalıpları daha derinlemesine anlatıyor
 - [LangGraph multi-agent concepts](https://langchain-ai.github.io/langgraph/concepts/multi_agent/): supervisor, network ve diğerleri, kod örnekleriyle birlikte
 - [What is an agent?](https://www.langchain.com/blog/what-is-an-agent): supervisor'ın aslında bir özerklik kararı olduğunu hatırlamak için burada yeniden okumaya değer
+
+### 🛠️ Araçlar
+
+- [A2A Protocol](https://a2a-protocol.org/latest/): her framework'ten agent'ın birbiriyle konuşması için açık standart ve Agent Card'lar hakkındaki [agent discovery](https://a2a-protocol.org/latest/topics/agent-discovery/) sayfası
+
+### 🗃️ Repolar
+
+- [a2aproject/A2A](https://github.com/a2aproject/a2a): spesifikasyon ve SDK'ları
 
 ### 🧭 Modüller
 
 - [AI Agents](agents_tr.md): bütün bunların üzerine kurulduğu tek döngü
 - [İleri Seviye Multi-Agent](../3_expert/advanced_multiagent_tr.md): ortak ve izole bağlam ile agent'lar arası protokoller
+- [Protokol Referansı](../4_ecosystem/protocols_reference_tr.md): A2A'nın ayrıntıları, MCP ve AG-UI ile birlikte

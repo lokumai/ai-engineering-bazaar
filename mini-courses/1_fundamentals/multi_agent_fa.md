@@ -103,6 +103,56 @@ supervisor.run("How many rows are in my tables? Show them in a bar chart.")
 
 به `managed_agents` نگاه کن. worker‌ها رو دقیقاً همون‌جوری به supervisor می‌دی که توی [AI Agents](agents_fa.md) tool‌ها رو به agent می‌دادی، چون از نگاه supervisor، worker‌ها هم دقیقاً همینن: چیزهایی که می‌شه صداشون زد و ازشون نتیجه گرفت.
 
+## Agent2Agent Protocol (A2A)
+
+این یه معرفی کوتاهه. جزئیات پروتکل توی [Protocols Reference](../4_ecosystem/protocols_reference.md) هست.
+
+دوباره به کد بالا نگاه کن. supervisor و هر دو worker، agent‌هایی از smolagents هستن و این اتفاقی نیست. agent‌هایی که با یه framework ساخته شدن می‌تونن با هم حرف بزنن، چون API، فرمت پیام و تعریف «agent چیه» رو از همون framework مشترک دارن. برای همین توی عمل، همه‌ی agent‌های یه سیستم با یه framework ساخته می‌شن: همه smolagents، همه LangChain، یا همه Claude Agent SDK.
+
+این یعنی agent‌ها به هم گره می‌خورن. نمی‌تونی supervisor رو با Claude Agent SDK بسازی، دو تا worker رو با smolagents و worker سوم رو با LangChain، و انتظار داشته باشی با هم کار کنن. هر framework زبون خودش رو حرف می‌زنه و agent‌ی که از یه framework دیگه باشه، اون زبون رو نمی‌فهمه.
+
+**Agent2Agent Protocol (A2A)** همین مشکل رو حل می‌کنه. یه استاندارد بازه که باعث می‌شه agent‌ها با هم حرف بزنن، مهم نیست کدوم شرکت یا کدوم framework ساخته‌شون. Google توسعه‌ش داده و به Linux Foundation بخشیده، و حالا یه کمیته‌ی راهبری از چند تا شرکت بزرگ نگهداریش می‌کنه.
+
+![یه client agent که از راه A2A کار رو به remote agent‌ها می‌سپره](./images/a2a-flow.webp)  
+*کاربر با یه client agent حرف می‌زنه. اون agent بخش‌هایی از کار رو به سه تا remote agent می‌سپره که هر کدوم رو یه شرکت متفاوت ساخته، و هر تحویل کار از راه A2A انجام می‌شه.*
+
+**چطوری کار می‌کنه.** هر agent یه **Agent Card** منتشر می‌کنه. اون رو مثل رزومه‌ی agent ببین: می‌گه agent کیه، چه کارهایی از دستش برمیاد (**skill**‌هاش)، از کجا می‌شه بهش رسید و چطوری باید authentication انجام داد. درباره‌ی این‌که agent با چه framework‌ی ساخته شده هیچی نمی‌گه، چون دیگه مهم نیست. agent کارتش رو توی یه آدرس استاندارد، یعنی `/.well-known/agent-card.json`، روی **A2A server** خودش می‌ذاره. agent دیگه کارت رو می‌خونه، تصمیم می‌گیره این agent می‌تونه کمک کنه یا نه، و بعد بهش یه task می‌فرسته، منتظر نتیجه می‌مونه یا باهاش گفت‌وگو می‌کنه.
+
+```json
+{
+  "name": "Hotel Booking Agent",
+  "description": "Finds and books hotel rooms.",
+  "url": "https://agents.hotels.example/a2a",
+  "capabilities": { "streaming": true },
+  "skills": [
+    { "id": "book-room", "name": "Book a room", "description": "Books a room for given dates and city." }
+  ]
+}
+```
+
+این یه کارت ساده‌شده‌ست که فقط ایده رو ببینی؛ کارت واقعی چند تا فیلد بیشتر داره.
+
+ببین این کنار MCP توی [Tool Calling](tools_fa.md) کجا می‌شینه. MCP یه agent رو به **tool**‌هاش وصل می‌کنه و A2A یه agent رو به **agent‌های دیگه**. خود سایت A2A هم می‌گه این دو تا مکمل همدیگه‌ن، نه رقیب.
+
+**لازمش داری؟** راستش بیشتر وقت‌ها نه، و توی یه پروژه‌ی کوچیک تقریباً هیچ‌وقت. دلیلی نداره هر agent یه سیستم رو با یه framework جدا بسازی؛ اگه همه رو با یه framework بسازی، خودشون همدیگه رو می‌فهمن.
+
+A2A وقتی به کار میاد که agent‌ها مال **سازمان‌های مختلف** باشن. فرض کن شرکت A بلیت پرواز می‌فروشه و یه agent رزرو پرواز داره که با smolagents ساخته شده. شرکت B اتاق هتل می‌فروشه و یه agent رزرو هتل داره که با Claude Agent SDK ساخته شده. حالا شرکت A یه دستیار می‌خواد که هم پرواز رو رزرو کنه هم هتل رو. بخش پرواز agent خودشه، ولی برای هتل به agent شرکت B احتیاج داره و این دو تا agent نمی‌تونن با هم حرف بزنن: شرکت‌هاشون فرق دارن، framework‌هاشون فرق دارن، کدشون فرق داره. به این می‌گن **مانع بین‌سازمانی (inter-organisation barrier)**. اگه شرکت B برای agent‌ش یه Agent Card منتشر کنه، agent شرکت A می‌تونه پیداش کنه و ازش بخواد هتل رو رزرو کنه.
+
+![A2A روی مرز بین دو سازمان](./images/a2a-interorganization.webp)  
+*دو agent، دو طرف یه مرز سازمانی یا فناوری. هر کدوم model، framework و agent‌های محلی خودش رو داره و با MCP به API‌ها و برنامه‌های سازمانی خودش وصل می‌شه. بین این دو تا agent، اون طرف مرز، A2A کار می‌کنه.*
+
+```mermaid
+sequenceDiagram
+    participant A as agent شرکت A (smolagents)
+    participant B as agent شرکت B (Claude Agent SDK)
+    A->>B: خوندن Agent Card از /.well-known/agent-card.json
+    B-->>A: کارت: اسم، skill‌ها (رزرو اتاق)، endpoint، authentication
+    A->>B: task: رزرو یه اتاق توی استانبول، 12 تا 14 مه
+    B-->>A: نتیجه: رزرو تأیید شد
+```
+
+این سناریو نادره. بیشتر توی شرکت‌های بزرگ پیدا می‌شه، یا بین تیم‌های یه شرکت که agent‌هاشون جدا از هم ساخته شدن، مثلاً یه agent منابع انسانی و یه agent مالی که با framework‌های مختلف نوشته شدن. ولی خوبه بدونی این مانع وجود داره و A2A جواب استاندارد بهشه.
+
 ## کی یه agent تنها بهتره
 
 multi-agent یه ارتقا نیست، یه معامله‌ست: prompt‌های کوتاه‌تر و مرز روشن‌تر بین کارها رو می‌خری و هزینه‌ش رو با coordination و context transfer می‌دی.
@@ -135,6 +185,8 @@ graph LR
 
 در عوض دو تا مشکل گردنت می‌افته. اولی **coordination**‌ه: این‌که کی چی کار کنه و کی کار تموم شده. دومی **context transfer**‌ه: این‌که به هر agent چی داده بشه. کل سختی کار همین دو تاست، و جوابی که به دومی می‌دی (context مشترک یا جداگانه) بقیه‌ی طراحی رو شکل می‌ده.
 
+agent‌هایی که از یه framework باشن همدیگه رو می‌فهمن و agent‌های framework‌های مختلف نه. **A2A** استاندارد بازیه که از طریق Agent Card‌ی که هر agent منتشر می‌کنه، اجازه می‌ده با هم حرف بزنن. بیشتر پروژه‌ها بهش نیاز پیدا نمی‌کنن؛ وقتی مهم می‌شه که agent‌ها مال سازمان‌های مختلف باشن.
+
 هسته‌ی بخش Fundamentals همین بود و حالا تصویر کامل دستته:
 
 - یه مدل که فقط متن پیش‌بینی می‌کنه
@@ -153,11 +205,21 @@ graph LR
 
 ### 📄 مقاله‌ها
 
+- [Announcing the Agent2Agent Protocol (A2A)](https://developers.googleblog.com/en/a2a-a-new-era-of-agent-interoperability/): اعلام رسمی Google در آوریل 2025، و این‌که چرا agent‌های شرکت‌های مختلف به یه protocol مشترک نیاز دارن
 - [Multi-agent systems](https://docs.langchain.com/oss/python/langchain/multi-agent): همین الگوها، با جزئیات بیشتر
 - [LangGraph multi-agent concepts](https://langchain-ai.github.io/langgraph/concepts/multi_agent/): supervisor، network و بقیه، همراه با کد
 - [What is an agent?](https://www.langchain.com/blog/what-is-an-agent): این‌جا ارزش دوباره خوندن داره، چون انتخاب supervisor در واقع یه تصمیم درباره‌ی میزان خودمختاریه
+
+### 🛠️ ابزارها
+
+- [A2A Protocol](https://a2a-protocol.org/latest/): استاندارد بازی که با اون agent‌های هر framework می‌تونن با هم حرف بزنن، و صفحه‌ی [agent discovery](https://a2a-protocol.org/latest/topics/agent-discovery/) اون درباره‌ی Agent Card‌ها
+
+### 🗃️ Repository‌ها
+
+- [a2aproject/A2A](https://github.com/a2aproject/a2a): specification و SDK‌هاش
 
 ### 🧭 ماژول‌ها
 
 - [AI Agents](agents_fa.md): همون loop تکی که همه‌ی این‌ها ازش ساخته شده
 - [Advanced Multi-Agent](../3_expert/advanced_multiagent.md): shared و isolated context، و پروتکل‌های ارتباط agent با agent
+- [Protocols Reference](../4_ecosystem/protocols_reference.md): A2A با جزئیات، کنار MCP و AG-UI

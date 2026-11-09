@@ -100,3 +100,29 @@ questions:
         - "توی shared فقط supervisor، context رو می‌بینه؛ توی isolated فقط worker‌ها می‌بیننش."
         - "توی shared همه‌ی agent‌ها از یه مدل استفاده می‌کنن؛ توی isolated هر agent مدل خودش رو داره."
       explain: "با shared context موقع دست‌به‌دست شدن کار چیزی گم نمی‌شه، ولی context سریع بزرگ می‌شه. با isolated context هر agent ارزون و متمرکز می‌مونه، ولی هر چیزی که یادت رفته باشه بهش بدی، از دست رفته."
+
+  - answer: 2
+    en:
+      question: "What does an A2A Agent Card describe?"
+      options:
+        - "The framework and the programming language the agent was written in"
+        - "The model weights the agent runs on, and how large they are"
+        - "Its identity, its skills, where to reach it, and how to log in"
+        - "The full message history of every task the agent has finished"
+      explain: "An Agent Card is like the agent's CV: its identity, its skills, its endpoint and its authentication. It says nothing about the framework, which is the point."
+    tr:
+      question: "Bir A2A Agent Card neyi anlatır?"
+      options:
+        - "Agent'ın hangi framework ve programlama diliyle yazıldığını"
+        - "Agent'ın üzerinde çalıştığı model weight'lerini ve boyutlarını"
+        - "Kimliğini, skill'lerini, adresini ve nasıl giriş yapılacağını"
+        - "Agent'ın bugüne kadar bitirdiği her görevin tüm mesaj geçmişini"
+      explain: "Agent Card, agent'ın CV'si gibidir: kimliği, skill'leri, endpoint'i ve authentication bilgisi. Framework hakkında hiçbir şey söylemez, asıl nokta da budur."
+    fa:
+      question: "Agent Card توی A2A چی رو توصیف می‌کنه؟"
+      options:
+        - "framework و زبان برنامه‌نویسی‌ای که agent باهاش نوشته شده"
+        - "وزن‌های مدلی که agent روش اجرا می‌شه و اندازه‌شون"
+        - "هویتش، skill‌هاش، آدرسش و این‌که چطوری باید واردش شد"
+        - "تاریخچه‌ی کامل پیام‌های هر taskی که agent تا حالا تموم کرده"
+      explain: "Agent Card مثل رزومه‌ی agent عمل می‌کنه: هویتش، skill‌هاش، endpoint و authentication رو می‌گه. درباره‌ی framework چیزی نمی‌گه، و دقیقاً همین نکته‌ی اصلیشه."

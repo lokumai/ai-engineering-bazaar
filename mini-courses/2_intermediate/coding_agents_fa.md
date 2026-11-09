@@ -87,6 +87,11 @@ claude mcp add playwright -- npx -y @playwright/mcp@latest
 
 > **نکته:** هر server که وصل می‌کنی، یه تیکه از context window رو می‌گیره، چون اسم و توضیح tool‌هاش توی هر session لود می‌شه. ده تا server که هیچ‌وقت صداشون نمی‌زنی هم برات خرج دارن، پس اون‌هایی رو که استفاده نمی‌کنی بردار، به همون دلیل‌هایی که توی [Context Engineering](context_engineering_fa.md) گفتیم.
 
+![MCP و A2A، کنار هم](./images/a2a-interorganization.webp)  
+*یادآوری از [Multi-Agent Systems](../1_fundamentals/multi_agent_fa.md): MCP از هر agent به سمت tool‌ها و برنامه‌های خودش پایین میاد، و A2A بین agent‌ها، افقی می‌ره.*
+
+MCP رو با A2A اشتباه نگیر. **MCP یه agent رو به tool‌ها وصل می‌کنه**؛ **A2A یه agent رو به agent‌های دیگه وصل می‌کنه**، اغلب بین شرکت‌های مختلف.
+
 ## Subagent‌ها
 
 توی [Context Engineering](context_engineering_fa.md) دیدیم subagent‌ها برای چی هستن: کار سنگین رو می‌برن توی یه context window تازه، تا به window اصلی فقط نتیجه برسه، نه کل ماجرای گشتن و پیدا کردن.

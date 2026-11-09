@@ -16,7 +16,7 @@ description: >
 authority: state
 writes: agent, every session
 status: active
-covers: "M50 to M84, 2026-11-06 onward, and M41, which part 2 held for PR #57"
+covers: "M50 to M85, 2026-11-06 onward, and M41, which part 2 held for PR #57"
 last_updated: 2026-11-09
 ---
 
@@ -1338,6 +1338,34 @@ yellow silk, an indigo Persian blue against a slate scholar's blue.
 **Report, 2026-11-09.** 30.1 MB to 6.2 MB of course images; the built `course-images/` 32 MB to 7.5 MB.
 Every converted image has SSIM at least 0.985 against its resized original. Gate: 1,459 unit tests, the build
 with its link check and `check-bundle-out.mjs` (131 images listed), 562 browser tests passed and 10 skipped.
+
+## 🏁 Milestone M85: A2A introduced in Multi-Agent Systems — DONE
+
+The author, 2026-11-09: Multi-Agent Systems should mention the Agent2Agent Protocol briefly, right after
+"Building a Multi-agent", as an introduction only; the details belong to Protocols Reference. His draft
+was the raw material: agents from one framework understand each other and agents from different frameworks
+do not, A2A is the open standard between them, an Agent Card is the agent's CV, most projects never need
+it, and the real case is an inter-organisation barrier (a flight company's agent asking a hotel company's
+agent).
+
+- [x] Technical section `## Agent2Agent Protocol (A2A)` with a simplified Agent Card and a sequence diagram,
+      a Summary paragraph, references (A2A Protocol, Protocols Reference) and a fifth quiz question.
+- [x] Turkish and Persian, technical words kept English; the quiz in three languages.
+- [x] The For Everyone section under the same heading (D109), with two new terms, in three languages.
+- [x] The author's two figures, as WebP (`a2a-flow.webp` from a 459 KB GIF to 210 KB, 10 frames;
+      `a2a-interorganization.webp` 67 KB to 36 KB, SSIM 0.986), and his three references (the GitHub repo, the
+      A2A site, Google's announcement).
+- [x] "Do not confuse" reminders: the inter-organisation figure at the end of Code Agents' MCP section (MCP
+      connects tools, A2A connects agents), and a line under Agentic UI's protocol stack pointing back to
+      where MCP and A2A were taught.
+
+**Report, 2026-11-09.** English written in the main session from the author's draft, with A2A's facts read
+from its site (created by Google, donated to the Linux Foundation, a technical steering committee; the Agent
+Card at `/.well-known/agent-card.json` with identity, endpoint, capabilities, authentication and skills; MCP
+and A2A "highly complementary"). Corrected from the draft: the inter-organisation barrier *prevents* agents of
+different organisations from talking. Turkish and Persian by Sonnet subagents, technical words kept English;
+the quiz's fifth question rebalanced in each language so the right option is never the longest. Gate: 1,459
+unit tests, build with link and bundle checks, 562 browser tests passed and 10 skipped.
 
 ---
 

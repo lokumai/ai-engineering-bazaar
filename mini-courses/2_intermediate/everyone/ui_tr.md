@@ -115,7 +115,7 @@ AG-UI, ortak üç protocol'den biridir ve her biri agent'ı farklı bir tarafa b
 | **A2A** | diğer agent'lara |
 | **AG-UI** | uygulamayı kullanan insanlara |
 
-Birlikte çalışırlar. Gerçek bir ürün çoğu zaman üçünü birden kullanır.
+Birlikte çalışırlar. Gerçek bir ürün çoğu zaman üçünü birden kullanır. Karıştırma: MCP ile [Code Agents](coding_agents_tr.md) modülünde, A2A ile [Multi-Agent Systems](../1_fundamentals/multi_agent_tr.md) modülünde tanıştın; AG-UI ise üçüncüsü, insanlara bakan.
 
 ## Streaming'in Ötesi
 

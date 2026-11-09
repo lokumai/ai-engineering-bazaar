@@ -136,6 +136,8 @@ AG-UI یکی از سه protocol‌ه، و هر کدوم یه طرف agent رو �
 
 این‌ها با هم رقابت نمی‌کنن. یه محصول واقعی معمولاً از هر سه استفاده می‌کنه: agent با MCP tool صدا می‌زنه، با A2A بخشی از کار رو می‌سپره به یه agent دیگه، و با AG-UI همه‌ی کارهاش رو برای کاربر stream می‌کنه.
 
+این سه تا رو با هم قاطی نکن. هر کدوم یه طرف متفاوت agent رو وصل می‌کنه، و دو تای دیگه رو قبلاً دیدی: MCP توی [Code Agent‌ها](coding_agents_fa.md) و A2A توی [Multi-Agent Systems](../1_fundamentals/multi_agent_fa.md).
+
 ## فراتر از Streaming
 
 streaming پایه‌ست. بقیه‌ی تعریف agentic UI روی همین بنا می‌شه و درس Expert، [Advanced Agentic UI](../3_expert/advanced_ui.md)، بهش می‌رسه:

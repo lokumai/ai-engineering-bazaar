@@ -69,6 +69,28 @@ Bu isimler kursun ilerleyen bölümlerinde karşına çıkacak:
 - **Agent-as-a-tool:** bir agent, sıradan bir tool'muş gibi başka bir agent'a verilir.
 - **Subagent'lar:** bir agent, her biri tek bir iş yapan kısa ömürlü yardımcılar gönderir; bir şeyi öğrenmesi için bir stajyer göndermek gibi. Yardımcı yalnızca sonuçla geri döner.
 
+## Agent2Agent Protocol (A2A)
+
+Bu yalnızca kısa bir tanıtım; ayrıntılar daha sonra [Protocols Reference](../4_ecosystem/protocols_reference_tr.md) modülünde.
+
+Şimdiye kadar bir takımdaki bütün agent'lar aynı yazılım kitiyle, yani aynı **framework** ile yapılmıştı. Birbirlerini bu sayede anlıyorlar. Farklı kitlerle yapılmış agent'lar ise farklı dil konuşan iş arkadaşları gibi: her biri işinde iyi olsa bile birlikte çalışamazlar.
+
+**A2A**, yani **Agent2Agent Protocol**, agent'lar için ortak bir dil. Google geliştirdi ve artık açık bir standart (open standard). Yani herhangi bir şirketin herhangi bir kitle yaptığı agent'lar birbirleriyle konuşabilir.
+
+![Bir client agent'ın A2A üzerinden remote agent'lara iş devretmesi](../images/a2a-flow.webp)  
+*Sen tek bir agent ile konuşursun. O, işin parçalarını her biri farklı bir şirketin yaptığı üç agent'a devreder ve her devir A2A, yani ortak dil üzerinden olur.*
+
+Nasıl çalışıyor? Her agent bir **Agent Card** yayımlar. Bunu agent'ın CV'si ya da kartviziti gibi düşün: kim olduğu, neler yapabildiği ve ona nasıl ulaşılacağı yazar. Başka bir agent kartı okur, bu agent'ın yardım edebileceğini görür ve ona bir görev verir.
+
+**Çoğu takımın buna ihtiyacı var mı?** Hayır. Tek bir proje içinde insanlar bütün agent'larını tek bir kitle yapar ve agent'lar zaten birbirlerini anlar. A2A, agent'lar farklı kuruluşlara ait olduğunda önem kazanır.
+
+Bir örnek. A şirketi uçak bileti satıyor ve bir uçuş rezervasyon agent'ı var. B şirketi otel odası satıyor ve bir otel rezervasyon agent'ı var. A şirketi hem uçuşu hem oteli ayarlayan tek bir asistan istiyor. Kendi agent'ı uçuşu halleder, ama otel için B şirketinin agent'ına ihtiyaç duyar; ikisi de farklı şirketlerce, farklı kitlerle yapılmış. B şirketi bir Agent Card yayımlarsa A şirketinin agent'ı onu bulup oteli rezerve etmesini isteyebilir.
+
+![Kuruluşlar arası sınırın iki yanında A2A](../images/a2a-interorganization.webp)  
+*İki şirket, her birinin kendi agent'ı var; her biri kendi yapay zekâ modeliyle ve kendi kitiyle yapılmış. Her agent kendi şirketinin sistemlerine MCP ile ulaşır. İki şirketin arasında ise A2A, agent'ların konuşmasını sağlar.*
+
+Bu nadir görülür. Çoğunlukla büyük şirketlerde ya da bir şirketin ayrı geliştirilmiş takımları arasında olur; mesela insan kaynakları agent'ı ile finans agent'ı. Ama adını bilmekte fayda var.
+
 ## Tek Bir Agent Ne Zaman Daha İyi Olabilir
 
 Daha çok agent bir yükseltme değil, bir takastır. Daha kısa talimatlar ve daha net işler elde edersin. Bedelini koordinasyon ve devirle ödersin. Tek bir talimat seti hâlâ iyi uyuyorsa tek bir agent ile kal. Tek bir talimat seti iki ilgisiz işi birden kapsamak zorunda kaldığında böl ve bir agent'tan diğerine en az bilginin geçmesi gereken yerden böl.
@@ -82,6 +104,8 @@ Daha çok agent bir yükseltme değil, bir takastır. Daha kısa talimatlar ve d
 - **Devir (handover, context transfer)**: her agent'a ne verileceğine karar vermek.
 - **Shared ve isolated context**: herkes için tek bir masa ya da her biri için bir masa.
 - **Subagent**: yalnızca sonucunu geri veren, kısa ömürlü bir yardımcı.
+- **A2A** (Agent2Agent Protocol): farklı şirketlerin ve kitlerin agent'larının birlikte çalışmasını sağlayan ortak dil.
+- **Agent Card**: bir agent'ın CV'si: kim olduğu, neler yapabildiği ve ona nasıl ulaşılacağı.
 
 ## Özet
 
@@ -103,5 +127,14 @@ Fundamentals'ın özü bu. Artık bütün resmi biliyorsun:
 
 ### 📄 Makaleler
 
+- [Announcing the Agent2Agent Protocol (A2A)](https://developers.googleblog.com/en/a2a-a-new-era-of-agent-interoperability/): Google'ın duyurusu, Nisan 2025
 - [Multi-agent systems](https://docs.langchain.com/oss/python/langchain/multi-agent): takım şekilleri, daha derinlemesine
 - [What is an agent?](https://www.langchain.com/blog/what-is-an-agent): yeniden okumaya değer, çünkü bir supervisor, yapay zekânın ne kadarına karar vereceğine dair bir karardır
+
+### 🛠️ Araçlar
+
+- [A2A Protocol](https://a2a-protocol.org/latest/): herhangi bir şirketin agent'larının birlikte çalışmasını sağlayan ortak dil
+
+### 🗃️ Repolar
+
+- [a2aproject/A2A](https://github.com/a2aproject/a2a): protocol'ün GitHub'daki evi

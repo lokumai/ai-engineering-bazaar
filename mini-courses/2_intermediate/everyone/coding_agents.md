@@ -82,6 +82,12 @@ What you get from it:
 One cost to know: every connected MCP server takes a little room in the chat, even when it is not
 used. So connect only the ones you need.
 
+![MCP and A2A, side by side](../images/a2a-interorganization.webp)  
+*A reminder from [Multi-Agent Systems](../1_fundamentals/multi_agent.md): MCP connects each agent to its own tools and apps, and A2A connects agents to each other.*
+
+Do not confuse MCP with A2A. **MCP connects an agent to tools**; **A2A connects an agent to other agents**,
+often across companies. They are two different plugs.
+
 ## Subagents
 
 [Context Engineering](context_engineering.md) explained why helpers with a clean chat are useful.

@@ -87,6 +87,11 @@ Hangi server'ların zaten var olduğuna bakmak için topluluk listesi olan [awes
 
 > **NOT:** Bağlı her server, context window'un bir kısmını kullanır. Tool adları ve açıklamaları her oturuma yüklenir; hiç çağırmadığın on server bile sana maliyet çıkarır. Kullanmadıklarını, [Context Engineering](context_engineering_tr.md) modülünde verilen nedenlerle kaldır.
 
+![MCP ve A2A, yan yana](./images/a2a-interorganization.webp)  
+*[Multi-Agent Systems](../1_fundamentals/multi_agent_tr.md) modülünden bir hatırlatma: MCP her agent'tan kendi tool'larına ve uygulamalarına iner, A2A ise agent'lar arasında yatay uzanır.*
+
+MCP ile A2A'yı karıştırma. **MCP, bir agent'ı tool'lara bağlar**; **A2A ise bir agent'ı başka agent'lara bağlar**, çoğu zaman şirketlerin sınırını aşarak.
+
 ## Subagent'lar
 
 [Context Engineering](context_engineering_tr.md) modülü subagent'ların neden var olduğunu anlatmıştı. Subagent, maliyetli bir işe taze bir context window verir. Böylece ana pencere, tüm araştırmanın yerine yalnızca sonucunu alır.

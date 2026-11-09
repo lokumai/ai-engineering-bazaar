@@ -559,6 +559,11 @@
     border-top-color: var(--about-bubble);
   }
 
+  /* the question, in the still: the same bubble, smaller and quieter, said earlier */
+  .bz-about .t-bubble.t-earlier {
+    font-size: clamp(11px, 1vw, 14px);
+  }
+
   .bz-about .t-yes {
     padding: 0 0.3em;
     border-radius: var(--radius-xs);
@@ -872,9 +877,10 @@
       font-size: clamp(28px, 8vw, 36px);
     }
 
-    /* the hall stays inside the window, so she is not cut off at its edge (R1b's own phone rule) */
+    /* The hall stays inside the window: the slot has a 16px gutter each side, and 4% of a 358px
+       slot is 14px, so the stage stops 2px short of the edge (R1b's -8% ran 13px past it). */
     .bz-about .t-stage {
-      inset: -2% -8% -8% -8%;
+      inset: -2% -4% -8% -4%;
     }
   }
 

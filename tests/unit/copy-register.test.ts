@@ -282,13 +282,21 @@ const ALLOWED: ReadonlyArray<{ text: RegExp; ban: string; why: string }> = [
       + 'avoid the phrase would make the sentence worse to read for no gain in consistency.',
   },
   {
-    text: /^(?:ME: ONE QUICK|MY ATTENTION SPAN:)$/,
-    ban: '*',
-    why: 'M90, D115 — two meme captions drawn inside the About page\'s stall 4 scene (4E, the author\'s '
-      + 'pick), in the format a meme is written in: "me: one quick question / the AI:" and "attention '
-      + 'is all you need / my attention span:". The voice is a reader\'s, quoted, not the site '
-      + 'speaking to one, and the joke is the point of the stall ("AI cannot enjoy a good '
-      + 'brainrot"). Exempt by the whole caption, so the same words anywhere else are still caught.',
+    text: /^MY ATTENTION SPAN:$/,
+    ban: 'anthropomorphism (first person)',
+    why: 'M90, D115 — a meme caption drawn inside the About page\'s stall 4 scene (4E, the author\'s '
+      + 'pick): "attention is all you need / my attention span:". The "my" is a reader\'s, quoted in '
+      + 'the format a meme is written in, not the site speaking as a person, and the joke is the '
+      + 'point of the stall ("AI cannot enjoy a good brainrot"). Exempt by the whole caption and for '
+      + 'this one ban, so the same words anywhere else, or another ban on these, are still caught.',
+  },
+  {
+    text: /^ME: ONE QUICK$/,
+    ban: 'condescension',
+    why: 'M90, D115 — the other caption of the same scene: "me: one quick question / the AI:". The '
+      + '"quick" is the reader\'s own question being short, which is the joke (the answer is forty '
+      + 'parts long); it tells nobody their struggle is trivial. Exempt by the whole caption and for '
+      + 'this one ban only.',
   },
   {
     text: /(?:^|\s)hl-/,

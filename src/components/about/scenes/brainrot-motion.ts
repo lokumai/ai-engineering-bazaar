@@ -1,6 +1,6 @@
 import { gsap } from 'gsap'
 import { BIT_READS } from './BrainrotScene'
-import type { SceneHandle } from './scene'
+import { type SceneHandle, snapshot } from './scene'
 
 /**
  * Stall 4 in motion: the playground's 4E timeline (`R4-stall-love.html`, `initE`), one 15-second
@@ -10,7 +10,7 @@ import type { SceneHandle } from './scene'
  *
  * The server's markup is the still frame, so the parts arrive here in that state; `rest()` puts each
  * one back to where the loop begins before the timeline is built, and `destroy()` returns every
- * attribute to the markup's own.
+ * attribute to the markup's own (`snapshot`), the font families React wrote included.
  */
 export function createBrainrot(scene: HTMLElement): SceneHandle {
   const svg = scene.querySelector('svg')!
@@ -18,7 +18,7 @@ export function createBrainrot(scene: HTMLElement): SceneHandle {
   const many = (name: string) => [...svg.querySelectorAll<SVGElement>(`[data-b="${name}"]`)]
 
   const parts = [...svg.querySelectorAll<SVGElement>('[data-b]')]
-  const saved = parts.map((el) => ({ el, transform: el.getAttribute('transform'), opacity: el.getAttribute('opacity'), height: el.getAttribute('height') }))
+  const restore = snapshot(parts)
   const btext = one('btext')
   const savedText = btext.textContent
 
@@ -151,13 +151,7 @@ export function createBrainrot(scene: HTMLElement): SceneHandle {
     destroy() {
       tl.kill()
       loops.forEach((l) => l.kill())
-      gsap.set(parts, { clearProps: 'all' })
-      for (const { el, transform, opacity, height } of saved) {
-        for (const [name, value] of [['transform', transform], ['opacity', opacity], ['height', height]] as const) {
-          if (value === null) el.removeAttribute(name)
-          else el.setAttribute(name, value)
-        }
-      }
+      restore()
       btext.textContent = savedText
     },
   }

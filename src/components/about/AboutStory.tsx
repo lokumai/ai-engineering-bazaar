@@ -15,7 +15,9 @@ import { TreatyScene } from './scenes/TreatyScene'
  *
  * Reference: `playground/2026-11-round-5/R0-about-design.html?bg=B2&feel=F1`, the author's pick of a
  * ground ("Dusk to dawn") and a feel ("Procession"), with the change he asked for: each stall's
- * heading is set smaller and runs the width of the text under it, so it takes one or two lines. The
+ * heading is set smaller and runs the width of the text under it, so most take one or two lines
+ * ("most of the time", his words; MEASURED at 1440, 1280 and 390: four of the five in one or two,
+ * stall 5's question in three). The
  * scenes are his picks from `R1` to `R5`, each un-boxed (see each scene's own header).
  *
  * **Everything a reader reads comes from `mini-courses/STORY.md`**, passed in as `story`: one stall
@@ -72,15 +74,6 @@ export function AboutStory({ story, fonts }: { story: Story; fonts: AboutFonts }
       <div id="about" className="bz-about">
         <div className="ground" aria-hidden="true" />
 
-        <nav className="rail" aria-label="Stalls">
-          {story.stalls.map((stall, i) => (
-            <a key={stall.heading} href={`#stall-${i + 1}`} data-k={i + 1}>
-              <span className="rail-mark" aria-hidden="true" />
-              <span className="sr-only">{stall.heading}</span>
-            </a>
-          ))}
-        </nav>
-
         <section className="hero" data-sec="hero" aria-labelledby="about-title">
           <div className="hero-in">
             <Arch finial />
@@ -93,7 +86,7 @@ export function AboutStory({ story, fonts }: { story: Story; fonts: AboutFonts }
 
         {story.stalls.map((stall, i) => (
           <section
-            key={stall.heading}
+            key={i}
             className={i % 2 === 1 ? 'stall flip' : 'stall'}
             id={`stall-${i + 1}`}
             data-sec={i + 1}
@@ -108,8 +101,8 @@ export function AboutStory({ story, fonts }: { story: Story; fonts: AboutFonts }
                 <h2 id={`stall-${i + 1}-h`} className={fonts.displayClass}>
                   {stall.heading}
                 </h2>
-                {stall.paragraphs.map((paragraph) => (
-                  <p key={paragraph}>{paragraph}</p>
+                {stall.paragraphs.map((paragraph, j) => (
+                  <p key={j}>{paragraph}</p>
                 ))}
               </div>
               <div className="obj">
@@ -148,6 +141,18 @@ export function AboutStory({ story, fonts }: { story: Story; fonts: AboutFonts }
             </div>
           </section>
         )}
+
+        {/* The rail is fixed at the window's edge, so where it sits in the document decides only its
+            tab order: after the story, so a keyboard reader meets the stalls first and the five
+            jump links after them (review A, item 8). It stays tabbable: it is navigation. */}
+        <nav className="rail" aria-label="Stalls">
+          {story.stalls.map((stall, i) => (
+            <a key={i} href={`#stall-${i + 1}`} data-k={i + 1}>
+              <span className="rail-mark" aria-hidden="true" />
+              <span className="sr-only">{stall.heading}</span>
+            </a>
+          ))}
+        </nav>
       </div>
       <AboutMotion rootId="about" />
     </>

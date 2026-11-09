@@ -17,11 +17,23 @@ export function AboutMotion({ rootId }: { rootId: string }) {
     if (!root) return
     let stop: (() => void) | null = null
     let gone = false
-    void import('./motion').then(({ initAbout }) => {
-      if (!gone) stop = initAbout(root)
-    })
+    let loading = false
+    // Under reduced motion the page is the still, so `gsap` is not even fetched; it is fetched the
+    // first time the reader allows motion, and from then on `initAbout` follows the setting itself.
+    const reduce = matchMedia('(prefers-reduced-motion: reduce)')
+    const load = () => {
+      if (reduce.matches || loading) return
+      loading = true
+      reduce.removeEventListener('change', load)
+      void import('./motion').then(({ initAbout }) => {
+        if (!gone) stop = initAbout(root)
+      })
+    }
+    load()
+    if (!loading) reduce.addEventListener('change', load)
     return () => {
       gone = true
+      reduce.removeEventListener('change', load)
       stop?.()
     }
   }, [rootId])

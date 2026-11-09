@@ -1,6 +1,6 @@
 import { gsap } from 'gsap'
-import { LIGHT_FROM, LIGHT_STILL, LIGHT_TO } from './EngravingScene'
-import type { SceneHandle } from './scene'
+import { LIGHT_FROM, LIGHT_TO } from './EngravingScene'
+import { type SceneHandle, snapshot } from './scene'
 
 /**
  * Stall 5 in motion: the playground's 5A timeline (`R5-stall-nietzsche.html`). The plate warms in, the
@@ -18,6 +18,7 @@ export function createEngraving(scene: HTMLElement): SceneHandle {
   const light = svg.querySelector<SVGRadialGradientElement>('.nz-light')!
   const plate = $('.nz-plate')
   const fades = $('.nz-tones, .nz-eyes, .nz-cap, .nz-sweep')
+  const restore = snapshot([...lines, ...irises, light, ...plate, ...fades])
 
   for (const iris of irises) iris.removeAttribute('transform')
   gsap.set(lines, { strokeDasharray: 1, strokeDashoffset: 1 })
@@ -68,9 +69,7 @@ export function createEngraving(scene: HTMLElement): SceneHandle {
     destroy() {
       tl.kill()
       sweep.kill()
-      gsap.set([...lines, ...fades, ...plate, ...irises], { clearProps: 'all' })
-      for (const iris of irises) iris.setAttribute('transform', 'translate(-1.4 -0.4)')
-      light.setAttribute('gradientTransform', LIGHT_STILL)
+      restore()
     },
   }
 }

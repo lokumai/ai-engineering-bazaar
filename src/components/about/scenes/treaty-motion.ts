@@ -99,7 +99,11 @@ export function createTreaty(scene: HTMLElement): SceneHandle {
     apply(frame(t), dt)
     raf = requestAnimationFrame(tick)
   }
-  // The loop starts from its first moment: the question, an empty cup, the whole treaty to come.
+  // The loop starts from its first moment: the question, an empty cup, the whole treaty to come. The
+  // still's smaller "earlier" question becomes the loop's own bubble.
+  const askStyle = ask.getAttribute('style')
+  const askClass = ask.getAttribute('class') ?? ''
+  ask.classList.remove('t-earlier')
   fade.ask = fade.reply = fade.tally = 0
   apply(frame(0), 0)
 
@@ -122,6 +126,9 @@ export function createTreaty(scene: HTMLElement): SceneHandle {
       fade.tally = f.tally.on ? 1 : 0
       apply(f, 0)
       reply.replaceChildren(...replyNodes)
+      ask.setAttribute('class', askClass)
+      if (askStyle === null) ask.removeAttribute('style')
+      else ask.setAttribute('style', askStyle)
     },
   }
 }

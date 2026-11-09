@@ -42,6 +42,12 @@ const T0 = 3.0
 export const LOOP = 16.5
 /** Where the still picture stands: the last page found, the cup raised. */
 export const STILL_AT = 13.6
+/**
+ * Where the question stands in the still, in percent of the stage: above her head and clear of the
+ * answer's bubble. The loop shows the question only in its first two seconds, so a still at the
+ * answer would tell half the joke; the still shows both (review A, item 6).
+ */
+export const ASK_IN_STILL = { left: 24, top: 29 } as const
 const END = T0 + N * SLOT
 const XD = (i: number) => 640 + 205 * i
 const XR = XD(N - 1) + 60

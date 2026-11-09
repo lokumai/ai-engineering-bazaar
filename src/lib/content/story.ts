@@ -14,8 +14,9 @@ import { CONTENT_ROOT } from './paths'
  *
  *  - every `##` heading opens one STALL, in file order, and the paragraphs under it are the stall's
  *    text, up to the next `##`;
- *  - the document's LAST paragraph is the MOTTO when it is a lead and a bold quotation, as
- *    `Our motto: **"…"**` is; it then belongs to no stall. The quotation is split into its
+ *  - a `###` or deeper heading is refused with a build error: the page has nowhere to put one;
+ *  - the document's LAST paragraph is the MOTTO when it reads `Our motto: **"…"**`; it then belongs
+ *    to no stall. The quotation is split into its
  *    sentences, which is how the page sets it on two lines, and its straight quotation marks become
  *    curly ones, the one typographic change the round-5 playground made (R0's header).
  *
@@ -47,10 +48,16 @@ export interface Story {
 
 export const STORY_FILE = path.join(CONTENT_ROOT, 'STORY.md')
 
-const H1 = /^#[ \t]+(.+?)[ \t]*#*[ \t]*$/
-const H2 = /^##[ \t]+(.+?)[ \t]*#*[ \t]*$/
-/** `Lead: **quotation**`, the whole paragraph. */
-const MOTTO = /^(.+?):\s*\*\*(.+)\*\*\s*$/
+/** A heading's closing hashes count only after a space, so `## Why C#` keeps its `#`. */
+const H1 = /^#[ \t]+(.+?)(?:[ \t]+#+)?[ \t]*$/
+const H2 = /^##[ \t]+(.+?)(?:[ \t]+#+)?[ \t]*$/
+const DEEPER = /^#{3,}[ \t]/
+/**
+ * `Our motto: **quotation**`, the whole paragraph. The lead is named, the way `intro.ts` names its
+ * `## Modules` heading: it is the file's marker for the motto, and without it any closing line shaped
+ * `Note: **…**` would have been taken for one.
+ */
+const MOTTO = /^(Our motto):\s*\*\*(.+)\*\*\s*$/i
 
 /** A paragraph's text with its inline marks dropped and its lines joined. */
 function plain(text: string): string {
@@ -100,6 +107,11 @@ export function parseStory(markdown: string): Story {
 
   for (const block of all) {
     const first = block.split('\n')[0]
+    // A stall is one `##` section and has no place for a sub-heading, so one fails the build rather
+    // than being folded silently into its stall's text.
+    if (DEEPER.test(first)) {
+      throw new Error(`STORY.md: "${first}" is a sub-heading, and a stall on the About page is one ## section of paragraphs. Make it a ## section or a sentence.`)
+    }
     const h2 = H2.exec(first)
     if (h2) {
       stalls.push({ heading: plain(h2[1]), paragraphs: [] })

@@ -43,8 +43,10 @@ describe('STORY.md becomes the About page', () => {
     // The quotation's words, with the curly marks put back to straight ones, are the line's words.
     const words = lines.join(' ').replace(/[“”]/g, '"')
     expect(lastLine).toContain(words)
-    // And it belongs to no stall.
-    for (const stall of story.stalls) expect(stall.paragraphs.join(' ')).not.toContain(lines[0])
+    // And it belongs to no stall: no stall's text holds the quotation, read with the file's own
+    // straight quotation marks, which is how a stall's text keeps them.
+    const straight = lines[0].replace(/[\u201C\u201D]/g, '"')
+    for (const stall of story.stalls) expect(stall.paragraphs.join(' ')).not.toContain(straight)
   })
 })
 
@@ -52,14 +54,29 @@ describe('the parser, on any story', () => {
   it('keeps a stall per heading, drops text before the first, and leaves the motto out of the stalls', () => {
     const story = parseStory(
       ['# A title', '', 'Preamble.', '', '## One', '', 'First.', '', 'Second', 'wrapped.', '', '## Two', 'Under it.', '',
-        'Lead: **"Alpha beta. Gamma?"**', ''].join('\n'),
+        'Our motto: **"Alpha beta. Gamma?"**', ''].join('\n'),
     )
     expect(story.title).toBe('A title')
     expect(story.stalls).toEqual([
       { heading: 'One', paragraphs: ['First.', 'Second wrapped.'] },
       { heading: 'Two', paragraphs: ['Under it.'] },
     ])
-    expect(story.motto).toEqual({ lead: 'Lead', lines: ['“Alpha beta.', 'Gamma?”'] })
+    expect(story.motto).toEqual({ lead: 'Our motto', lines: ['“Alpha beta.', 'Gamma?”'] })
+  })
+
+  it('keeps a hash that belongs to the heading, and drops closing hashes', () => {
+    const story = parseStory('## Why C#\n\nOne.\n\n## Closed ##\n\nTwo.\n')
+    expect(story.stalls.map((stall) => stall.heading)).toEqual(['Why C#', 'Closed'])
+  })
+
+  it('takes only an "Our motto" line for the motto, not any bold closing line', () => {
+    const story = parseStory('## One\n\nText.\n\nNote: **"Not a motto."**\n')
+    expect(story.motto).toBeNull()
+    expect(story.stalls[0].paragraphs).toEqual(['Text.', 'Note: "Not a motto."'])
+  })
+
+  it('refuses a sub-heading, which a stall has nowhere to put', () => {
+    expect(() => parseStory('## One\n\nText.\n\n### Deeper\n\nMore.\n')).toThrow(/sub-heading/)
   })
 
   it('reads no motto when the story does not end on one', () => {

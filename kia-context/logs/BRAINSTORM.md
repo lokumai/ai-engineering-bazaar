@@ -474,7 +474,9 @@ should be smaller in font size and also have width identical to the text below t
 Dusk to dawn** (deep clay, plum, cobalt, teal and umber per stall, then dawn sand at the motto with the text
 turning dark), the feel is **F1, Procession** (Fraunces headings, the site sans for reading, each stall pinned
 and played by the scroll, a gold gate arch round the title and the motto, a diamond rail of stalls), and the
-headings are set at about 30 px at 1440 and run the width of the text column, so each takes one or two lines.
+headings are set at about 30 px at 1440 and run the width of the text column, so most take one or two lines,
+as he asked ("most of the time"); MEASURED at 1440, 1280 and 390, four of the five do and stall 5's
+question takes three.
 The scenes: **2A** needle in the haystack (canvas, scroll driven), **3E** the seal (CSS 3D), **4E** brainrot
 (SVG), **5A** Nietzsche engraved (SVG), with R5's hand-drawn underline under the motto. **Stall 1 is 1B6,
 "Down the table, revised"** (`R1b-treaty-alternatives.html`), picked after he liked 1B "The treaty" and asked
@@ -491,6 +493,13 @@ art that reached the playground square's edge fades into the ground instead (the
 brainrot figures' bodies), the seal's desk is a pool of shade wider than the slot, and the engraving lost its
 cream oval plate and gold rings: the cream fades radially and the bust is masked by a soft ellipse, not
 clipped. `tests/e2e/about.spec.ts` checks it.
+
+**Three exceptions it made, each named.** The page's colours are an exception to **D31** (colour from the
+shell): its grounds and inks are page-scoped art in `components/about/palette.ts`, written into the page as
+custom properties the way `diagram-themes.ts` writes Mermaid's grounds. The copy register exempts two meme
+captions in 4E, each for the one ban it trips (`MY ATTENTION SPAN:` first person, `ME: ONE QUICK`
+"quick"), because the voice is a quoted reader's. And Bit's bubble in 4E moved left of where the playground
+drew it, because its longest line reached the scene's faded edge.
 
 **The text is STORY.md's**, read at build time (`src/lib/content/story.ts`): one stall per `##` section, in
 order, and the motto from the closing line. **Linked from the footer, not the bar**: the phone bar is full

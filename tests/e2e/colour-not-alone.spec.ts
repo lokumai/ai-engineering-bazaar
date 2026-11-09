@@ -249,3 +249,22 @@ test('the curriculum rail is still bounded under forced colours', async ({ page 
   ).toBe(true)
   expect(rail!.inlineOverflow, 'the forced-colours border reintroduced the overflow').toBe(0)
 })
+
+/*
+  M90, D115 — the About page's rail marks the stall a reader is in by filling its diamond with that
+  stall's glaze. Forced colours discard the fill, so the current diamond is also drawn LARGER, and that
+  is what this reads.
+*/
+test('the About rail marks the current stall by size as well as colour', async ({ page }) => {
+  await page.goto('/about/')
+  await expect(page.locator('.bz-about')).toHaveAttribute('data-motion', 'wide')
+  await page.locator('#stall-2 h2').scrollIntoViewIfNeeded()
+  await page.waitForTimeout(1500)
+  const marks = await page.locator('.bz-about .rail a').evaluateAll((links) =>
+    links.map((a) => ({ current: a.hasAttribute('aria-current'), width: a.querySelector('.rail-mark')!.getBoundingClientRect().width })),
+  )
+  const current = marks.filter((one) => one.current)
+  expect(current, 'no stall is marked current').toHaveLength(1)
+  const others = marks.filter((one) => !one.current).map((one) => one.width)
+  expect(current[0].width).toBeGreaterThan(Math.max(...others) + 1)
+})

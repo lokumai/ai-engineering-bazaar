@@ -1,6 +1,6 @@
 import { gsap } from 'gsap'
 import { SEAL_LINES } from './SealScene'
-import type { SceneHandle } from './scene'
+import { type SceneHandle, snapshot } from './scene'
 
 /**
  * Stall 3 in motion: the playground's 3E timeline (`R3-stall-humans.html`), on a loop. The desk tilts
@@ -8,8 +8,8 @@ import type { SceneHandle } from './scene'
  * seal drops onto the page with a ring of pressure; the desk turns a little and fades, and the loop
  * starts over on an empty page.
  *
- * `destroy()` kills the timeline and clears every property it set, which returns the scene to the
- * server's still picture: the stylesheet draws that, not this file.
+ * `destroy()` kills the timeline and puts back every attribute it wrote (`snapshot`), which returns
+ * the scene to the server's still picture: the stylesheet draws that, not this file.
  */
 export function createSeal(scene: HTMLElement): SceneHandle {
   const desk = scene.querySelector<HTMLElement>('.e-desk')!
@@ -18,6 +18,7 @@ export function createSeal(scene: HTMLElement): SceneHandle {
   const ring = scene.querySelector<HTMLElement>('.e-ring')!
   const all = [...scene.querySelectorAll<SVGPathElement>('.e-lines path')]
   const lens = all.map((p) => p.getTotalLength())
+  const restore = snapshot([desk, pen, seal, ring, ...all])
 
   const place = (p: SVGPathElement, len: number, k: number) => {
     const pt = p.getPointAtLength(len * k)
@@ -80,7 +81,7 @@ export function createSeal(scene: HTMLElement): SceneHandle {
     },
     destroy() {
       tl.kill()
-      gsap.set([desk, pen, seal, ring, ...all], { clearProps: 'all' })
+      restore()
     },
   }
 }

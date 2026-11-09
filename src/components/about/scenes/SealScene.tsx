@@ -65,8 +65,9 @@ export function SealScene() {
         aria-label="A page of paper on a desk, seen in perspective, written by hand in lines of script with one line crossed out, and a crimson wax seal pressed onto it that reads Written by humans, for humans."
       >
         <div className="e-desk">
-          <div className="e-table" />
-          <div className="e-shadow" />
+          {/* data-bleed: the desk pool and the shade are wider than the slot on purpose and fade out before their edges */}
+          <div className="e-table" data-bleed="" />
+          <div className="e-shadow" data-bleed="" />
           <div className="e-page">
             <svg viewBox="0 0 400 520" aria-hidden="true">
               <g stroke={PEN_INK} opacity="0.07" strokeWidth="1">

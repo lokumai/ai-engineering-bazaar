@@ -16,3 +16,27 @@ export interface SceneHandle {
    */
   progress?: { p: number }
 }
+
+/** The attributes a scene's motion may write: the markup's own values of these are its still picture. */
+const WRITTEN = ['style', 'transform', 'opacity', 'height', 'visibility', 'gradientTransform'] as const
+
+/**
+ * Remember `elements` as the server drew them, and return the function that puts them back exactly:
+ * every attribute a motion may write, React's own inline `style` included (a scene's SVG text carries
+ * its font family there), and GSAP's cache of each element dropped, so a scene made again later reads
+ * the markup and not the values of the last run. Rejected: GSAP's `clearProps: 'all'`, which empties
+ * the whole `style` attribute and with it the font family React wrote (review A, item 3).
+ */
+export function snapshot(elements: readonly Element[]): () => void {
+  const saved = elements.map((el) => ({ el, values: WRITTEN.map((name) => el.getAttribute(name)) }))
+  return () => {
+    for (const { el, values } of saved) {
+      WRITTEN.forEach((name, i) => {
+        const value = values[i]
+        if (value === null) el.removeAttribute(name)
+        else el.setAttribute(name, value)
+      })
+      Reflect.deleteProperty(el, '_gsap')
+    }
+  }
+}

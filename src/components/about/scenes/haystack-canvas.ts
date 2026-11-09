@@ -34,7 +34,9 @@ export function createHaystack(scene: HTMLElement): SceneHandle {
   cv.className = 'scene-canvas'
   cv.setAttribute('aria-hidden', 'true')
   scene.appendChild(cv)
-  if (still) still.style.visibility = 'hidden'
+  // Hidden by opacity, not visibility: the still is the scene's named image (`role="img"`), and the
+  // canvas over it is `aria-hidden`, so the name must stay in the tree while the canvas draws.
+  if (still) still.style.opacity = '0'
   const ctx = cv.getContext('2d')!
   const bed = document.createElement('canvas')
   const bx = bed.getContext('2d')!
@@ -318,7 +320,7 @@ export function createHaystack(scene: HTMLElement): SceneHandle {
       raf = 0
       observer.disconnect()
       cv.remove()
-      if (still) still.style.visibility = ''
+      if (still) still.style.opacity = ''
     },
   }
 }

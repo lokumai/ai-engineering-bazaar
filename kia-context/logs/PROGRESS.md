@@ -8,7 +8,9 @@ description: >
   (M64 to M69), the search filters (M70) and their Filters disclosure (M71), the gate stories (M72),
   Advanced Agent Servers (M73), vendor logos (M74), course call-out cards, Mermaid themes and Mihrî
   (M75), the For Everyone versions (M76 to M79), shared headings and logos (M80), and diagram
-  backgrounds and copy (M81), Agentic UI (M82), and the cast's colours (M83); and M41, the content bundle for the mobile reader. Each milestone carries its deliverables and acceptance
+  backgrounds and copy (M81), Agentic UI (M82), the cast's colours (M83), and M84 to M90 (content
+  and site fixes, the home page in Turkish and Persian, Dariush's motif, block menus in the top layer,
+  and About, the story of the Bazaar); and M41, the content bundle for the mobile reader. Each milestone carries its deliverables and acceptance
   criteria as `- [ ]` checkboxes, ticked as the work lands, and closes with a dated report; the loop
   that governs that is below, in this file.
   NOT here: why a choice was made (BRAINSTORM.md), or any rule that outlives the milestone
@@ -1434,7 +1436,7 @@ by its block but hung off the window's bottom. Fix in `ReadingOptions.tsx` and `
 bundle unchanged. The new test failed 6 of 8 cases on the unfixed build (all four code cases, the two diagram
 cases near the window's bottom) and passes 8 of 8 after.
 
-## 🏁 Milestone M90: About, the story of the Bazaar — DONE (D115), PR #97
+## 🏁 Milestone M90: About, the story of the Bazaar — BUILT, PR #97 OPEN (D115)
 
 The author, 2026-11-09: a new page named **About** that tells why the project exists, in five stalls
 and a motto, *"Imperfect Human Art with Soul. Not a Curriculum."* The text is his and final; it lives
@@ -1471,9 +1473,18 @@ heading, text and object swapping sides from stall to stall.
       the still (reduced motion and no script) shows page 412 of 412, the yes page and the raised cup;
       at 390 the hall stays inside the window (`scrollWidth` 390); the about, responsive, accessibility,
       navigation, layout, colour-not-alone, site-footer and containment specs pass (184 passed, 8 skipped),
-      and the copy register passes with no new exemption. Bit's bubble in stall 4 was moved left
+      and the copy register passes, with no exemption beyond the two 4E meme captions (each for one
+      ban, D115). Bit's bubble in stall 4 was moved left
       (x 390 to 574 of 600): its longest line, "humour.exe not found", now ends 20 units inside it,
       measured with `getBBox()` for all three of its lines.
+- [x] **Two Haiku reviews of PR #97, fixed.** The haystack keeps its named still in the tree while the
+      canvas draws (opacity, not visibility); scenes restore from a `snapshot` of their own attributes
+      instead of GSAP's `clearProps: 'all'`, which had wiped the fonts React wrote; the still of stall 1
+      shows the question too; the phone stage stops 2px inside the window (it ran 13px past); the stall
+      rail follows the story in the document; `gsap` is not fetched under reduced motion; the parser keeps
+      `## Why C#`, takes only an `Our motto:` line as the motto, and refuses `###`. **Report:** new and
+      tightened checks in `about.spec.ts`, `colour-not-alone.spec.ts`, `accessibility.spec.ts` and
+      `story.test.ts`, each seen failing once against a broken build or input (the PR says how).
 
 ---
 

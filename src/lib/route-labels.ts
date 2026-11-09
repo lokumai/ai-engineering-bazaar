@@ -154,8 +154,8 @@ const ROUTE_TITLES: Record<string, string> = {
 /**
  * M90, D115 — the About page: its address, and the name its `h1`, its crumb and its `<title>` share.
  * The footer links to it as `About`, which is what the page is; the page calls itself by its full
- * name, as the round-5 playground's hero does. Linked from the footer and not the bar: the phone bar
- * has no room left (`MainNav.tsx`, `data-bar-edge`).
+ * name, as the round-5 playground's hero does. Linked from the footer and, since 2026-11-10, as the
+ * bar's last item after Caravan, sharing Caravan's cut edge on a phone (`MainNav.tsx`, `data-bar-edge`).
  */
 export const ABOUT_ROUTE = '/about/'
 export const ABOUT_TITLE = ROUTE_TITLES.about

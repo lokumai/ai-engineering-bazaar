@@ -11,7 +11,7 @@ import { href } from '@/lib/url'
  *
  * The words are `mini-courses/STORY.md`, read here at build time (`lib/content/story.ts` reaches
  * `node:fs`, so this server route reads it and the island only ever receives strings). The page is
- * `components/about/AboutStory.tsx`; it is linked from the footer, not the bar.
+ * `components/about/AboutStory.tsx`; it is linked from the footer and last in the bar.
  *
  * The description is the story's own first heading, so the page states nothing the file does not.
  */

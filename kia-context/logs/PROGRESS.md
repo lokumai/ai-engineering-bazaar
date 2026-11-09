@@ -16,7 +16,7 @@ description: >
 authority: state
 writes: agent, every session
 status: active
-covers: "M50 to M87, 2026-11-06 onward, and M41, which part 2 held for PR #57"
+covers: "M50 to M88, 2026-11-06 onward, and M41, which part 2 held for PR #57"
 last_updated: 2026-11-09
 ---
 
@@ -1406,6 +1406,21 @@ became "hızlı bir başvuru kartı"; Persian "می‌گیم" became "یاد م�
 matches whole words and now covers the tellers (seen failing with the Sipahi renamed). Kept as built: the stall
 signs translate "For Engineers / For Everyone", because the stalls are content. Gate: 1,474 unit tests, build with
 link and bundle checks (bundle unchanged), 595 browser tests passed and 10 skipped.
+
+## 🏁 Milestone M88: Dariush's Persian embroidery — DONE
+
+The author, 2026-11-09: *"for the dariush character, ask sonnet to draw a persian symbol on his clothes
+similar to the chinese girl. symbol should be persian Toranj or Sarv show me 3 examples"*, then *"I
+select C"*. Three options were drawn in `playground/2026-11-round-4/Q-dariush-motif.html` (A one
+large toranj, B a column of boteh, C a smaller toranj, a hem of sarv and cuffs), in front, back and
+running views, the cast line-up and the phone row.
+
+- [x] **Option C at the source**, `playground/2026-11-round-3/N-cast-final.html`: the embroidery
+      functions, a hook in `torsoSVG` and one in `armSVG`, and `persian:{k:'C'}` on Dariush. Thread
+      gold `#DDB46A` and Mei's dragon crimson `#B3262E`, teal and ivory as accents; the robe, pose,
+      carpet and hat unchanged.
+- [x] **`node scripts/capture-cast.mjs`** rewrote only `cast-dariush.html` and `cast-dariush-tile.html`;
+      the other six figures came out byte-identical. The home page looked at on the build at 1440.
 
 ---
 

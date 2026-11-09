@@ -38,7 +38,6 @@ export type Track = 'eng' | 'all'
 const SITE: Record<Track, SiteTrack> = { eng: 'engineers', all: 'everyone' }
 const LOCAL: Record<SiteTrack, Track> = { engineers: 'eng', everyone: 'all' }
 
-const NAME: Record<Track, string> = { eng: 'For Engineers', all: 'For Everyone' }
 const OTHER: Record<Track, Track> = { eng: 'all', all: 'eng' }
 
 /** Sent on the street when a reader chooses at a sign; the motion listens, to bring the doors into view. */
@@ -68,14 +67,19 @@ export function initTrack(root: HTMLElement, go: (path: string) => void): () => 
 
   const bases = new Map(doors.map((door) => [door, baseOf(door)]))
 
+  /* A track's name is the page's own words, in the page's language (`lib/home-copy.ts`), so it
+     is read off the line the server wrote it on and never spelled here. */
+  const line = root.querySelector<HTMLElement>('[data-switch-line]')
+  const nameOf = (which: Track): string => (which === 'eng' ? line?.dataset.nameEng : line?.dataset.nameAll) ?? ''
+
   function apply(next: Track, chosen: boolean): void {
     track = next
     doors.forEach((door) => door.setAttribute('href', `${bases.get(door)}${pathOf(door, next)}`))
     if (chosen) root.dataset.track = next
     else delete root.dataset.track
     signs.forEach((sign) => sign.setAttribute('aria-pressed', String(chosen && sign.dataset.choose === next)))
-    $$('[data-track-name]', root).forEach((el) => { el.textContent = NAME[next] })
-    $$('[data-track-other]', root).forEach((el) => { el.textContent = NAME[OTHER[next]] })
+    $$('[data-track-name]', root).forEach((el) => { el.textContent = nameOf(next) })
+    $$('[data-track-other]', root).forEach((el) => { el.textContent = nameOf(OTHER[next]) })
   }
 
   const onClick = (event: MouseEvent) => {

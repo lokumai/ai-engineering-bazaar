@@ -40,6 +40,9 @@ const PAGES = [
   // manifest because it carries the 1060px table that used to live at `/` and
   // is still the widest non-prose thing on the site.
   ['home screen', '/'],
+  // The front door in its other two readings: longer strings, and Persian turned right to left.
+  ['home screen, in Turkish', '/tr/'],
+  ['home screen, in Persian', '/fa/'],
   ['manifest', INDEX_SHEET],
   ['level', CATEGORY_PATHS[1]],
   ['SHORT module', SHORT.path],

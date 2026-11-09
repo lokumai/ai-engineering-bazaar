@@ -1,4 +1,8 @@
 import { type Page, expect, test } from '@playwright/test'
+import { CAST } from '@/components/home/street/cast'
+import { HOME_LANGUAGE_PICKER_LABEL } from '@/components/shell/LanguageMenu'
+import { type ReadingLang, TRANSLATED_LANGS, TRANSLATIONS, dirOf, homeRoute } from '@/lib/content/languages'
+import { HOME_COPY } from '@/lib/home-copy'
 import { SITE_NAME } from '@/lib/site'
 import {
   type RecordSeed,
@@ -429,3 +433,223 @@ test('the track choice and its two characters stack on a phone without pushing t
 // The record survives the page it is edited from
 // ---------------------------------------------------------------------------
 
+
+// ---------------------------------------------------------------------------
+// The languages: the front door at /tr/ and /fa/ (D80, the author's rule of
+// 2026-11-09: only content is multilingual, never menus)
+// ---------------------------------------------------------------------------
+
+/** Every language the front door is read in, English first: from the registry, never typed in here. */
+const READINGS = (['en', ...TRANSLATED_LANGS] as ReadingLang[]).map((lang) => [lang, homeRoute(lang)] as const)
+const TRANSLATED = READINGS.filter(([lang]) => lang !== 'en')
+const CAST_NAMES = CAST.map((one) => one.name)
+const flat = (text: string) => text.replace(/\s+/g, ' ').trim()
+
+for (const [lang, path] of TRANSLATED) {
+  test(`${path} says the home page's words in ${lang}, marked as that language on the text and nowhere else`, async ({ page }) => {
+    const copy = HOME_COPY[lang]
+    await page.emulateMedia({ reducedMotion: 'reduce' })
+    await page.goto(path)
+
+    const h1 = page.locator('main h1')
+    expect(flat(await h1.innerText())).toBe(`${copy.hero.first} ${copy.hero.second}`)
+    await expect(h1).toHaveAttribute('lang', lang)
+    expect(await page.locator('.bz-lede').innerText()).toBe(copy.hero.lede)
+    await expect(page.locator('#gate').getByRole('link', { name: copy.hero.open, exact: true })).toHaveCount(1)
+
+    // The mottos, the question and both stalls, in the order the page hangs them.
+    expect(await page.locator('.bz-street .stall .sign h2').allInnerTexts()).toEqual(Object.values(copy.mottos).map((m) => m.title))
+    expect(await page.locator('#track-q').innerText()).toBe(copy.question)
+    expect(await page.locator('.bz-street .sg-t').allInnerTexts()).toEqual([copy.tracks.eng.name, copy.tracks.all.name])
+    expect(await page.locator('.bz-street .who-story .who-cloud').allTextContents()).toEqual([
+      copy.tracks.eng.teller.story,
+      copy.tracks.all.teller.story,
+    ])
+
+    // The language is on the words: the document keeps its own language and direction.
+    expect(await page.locator('html').getAttribute('lang')).toBe('en')
+    expect(await page.locator('html').getAttribute('dir')).toBeNull()
+    expect(await page.locator('body').getAttribute('dir')).toBeNull()
+    for (const text of ['h1', '.bz-lede', '.stall .sign h2', '.stall .sign p', '#track-q', '.sg-p', '.who-cloud']) {
+      // The mark may sit on the element or on the button that holds it (a story's cloud).
+      const marks = await page.locator(`.bz-street ${text}`).evaluateAll((els) => els.map((el) => ({
+        lang: el.closest('[lang]')?.getAttribute('lang') ?? null,
+        dir: el.closest('[dir]')?.getAttribute('dir') ?? null,
+      })))
+      expect(marks.length, `${text} is not on the page`).toBeGreaterThan(0)
+      for (const mark of marks) {
+        expect(mark.lang, `${text} is not marked ${lang}`).toBe(lang)
+        expect(mark.dir, `${text} is marked with the wrong direction`).toBe(dirOf(lang) ?? null)
+      }
+    }
+    // What is drawn does not flip: no direction on the street, a section, the art, the walk or the doors.
+    const drawn = await page.locator('.bz-street, .bz-street section, .bz-street article, .bz-street nav, .bz-street .door, .bz-street .cast-box, .bz-street [aria-hidden="true"]:not(.who-cloud)').evaluateAll(
+      (els) => els.filter((el) => el.hasAttribute('dir')).length,
+    )
+    expect(drawn, 'a direction was put on something that is drawn').toBe(0)
+
+    // A character's name is written as it is written.
+    await expect(page.locator('.bz-street .who-story').first().locator('[lang="tr"]')).toHaveText('Sipahi')
+    await expect(page.locator('.bz-street .cast-row .who-cap b')).toHaveText(CAST_NAMES)
+  })
+
+  test(`${path} keeps the Persian face on Persian text and the display face on Turkish, and loses no letter`, async ({ page }) => {
+    await page.goto(path)
+    await page.evaluate(() => document.fonts.ready)
+    const faces = await page.evaluate(() => ({
+      h1: getComputedStyle(document.querySelector('main h1')!).fontFamily,
+      body: getComputedStyle(document.querySelector('.sign p')!).fontFamily,
+    }))
+    if (lang === 'fa') {
+      expect(faces.h1, 'the Persian headline is not set in Vazirmatn').toMatch(/Vazirmatn/)
+      expect(faces.body, 'a Persian paragraph is not set in Vazirmatn').toMatch(/Vazirmatn/)
+    } else {
+      expect(faces.h1, 'the headline lost the display face').toMatch(/Fraunces/)
+      // Turkish letters outside Latin-1 come from a subset of their own: it has to arrive, and the
+      // page has to preload it, which is a file the English page does not draw.
+      const preloads = (target: Page) => target.locator('link[rel="preload"][as="font"]').count()
+      const english = await page.context().newPage()
+      await english.goto('/')
+      expect(await preloads(page), 'the Turkish page preloads no more than the English').toBeGreaterThan(await preloads(english))
+      await english.close()
+      await expect.poll(
+        () => page.evaluate(() => [...document.fonts].some((f) => f.status === 'loaded' && /U\+0?100/i.test(f.unicodeRange))),
+        { message: 'the Latin Extended subset is not loaded for Turkish' },
+      ).toBe(true)
+    }
+  })
+
+  test(`${path} is a page of its own: a title, a description and hreflang links to the other two`, async ({ page }) => {
+    await page.goto(path)
+    await expect(page).toHaveTitle(SITE_NAME)
+    await expect(page.locator('meta[name="description"]')).toHaveAttribute('content', HOME_COPY[lang].description)
+    const alternates = await page.locator('link[rel="alternate"][hreflang]').evaluateAll((els) =>
+      Object.fromEntries(els.map((el) => [el.getAttribute('hreflang'), el.getAttribute('href')])))
+    for (const [other, there] of READINGS) expect(alternates[other], `no hreflang for ${other}`).toBe(there)
+    expect(alternates['x-default']).toBe('/')
+    await expect(page.locator('link[rel="canonical"]')).toHaveAttribute('href', path)
+  })
+
+  test(`${path}: every link leaves for the same English address it leaves for from /`, async ({ page }) => {
+    await page.goto('/')
+    const english = await page.locator('.bz-street a[href], .bz-street .door').evaluateAll((els) => els.map((el) => el.getAttribute('href')))
+    await page.goto(path)
+    const there = await page.locator('.bz-street a[href], .bz-street .door').evaluateAll((els) => els.map((el) => el.getAttribute('href')))
+    expect(english.length, 'the page has no links at all').toBeGreaterThan(0)
+    expect(there).toEqual(english)
+    for (const address of there) expect(address, 'a link left for a translated address').not.toMatch(/^\/(?:tr|fa)\//)
+  })
+
+  test(`the way in from ${path} lands on the English catalog`, async ({ page }) => {
+    await page.goto(path)
+    await page.locator('#gate').getByRole('link', { name: HOME_COPY[lang].hero.open, exact: true }).click()
+    await expect(page).toHaveURL(/\/sheets\/$/)
+    expect(await page.locator('html').getAttribute('lang')).toBe('en')
+    // and it is the page `/` leads to, not a translated one
+    await expect(page.locator('main h1')).toHaveText(/^(?!.*\p{Script=Arabic}).*$/u)
+    expect(new URL(page.url()).pathname).not.toMatch(/^\/(?:tr|fa)\//)
+  })
+
+  test(`the track choice at ${path} names the choice in ${lang} and opens the For Everyone doors`, async ({ page }) => {
+    const copy = HOME_COPY[lang]
+    await page.emulateMedia({ reducedMotion: 'reduce' })
+    await page.goto(path)
+    const name = page.locator('.bz-street [data-track-name]')
+    const other = page.locator('.bz-street [data-track-other]')
+    await expect(name).toHaveText(copy.tracks.eng.name)
+    await expect(other).toHaveText(copy.tracks.all.name)
+    await page.locator('.bz-street [data-choose="all"]').click()
+    await expect(name).toHaveText(copy.tracks.all.name)
+    await expect(other).toHaveText(copy.tracks.eng.name)
+    for (const door of await page.locator('.bz-street .door').all()) {
+      await expect(door).toHaveAttribute('href', /\/everyone\/sheets\/[^/]+\/$/)
+    }
+    await page.locator('.bz-street .door').first().click()
+    await expect(page).toHaveURL(/\/everyone\/sheets\/[^/]+\/$/)
+  })
+
+  test(`${path} does not push the page sideways at 390 or 1440`, async ({ page }) => {
+    // The still picture lays every sign out on the page; on the walk they wait off screen by design.
+    await page.emulateMedia({ reducedMotion: 'reduce' })
+    for (const width of [390, 1440]) {
+      await page.setViewportSize({ width, height: width === 390 ? 844 : 900 })
+      await page.goto(path)
+      const sideways = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth)
+      expect(sideways, `${path} at ${width} scrolls sideways`).toBeLessThanOrEqual(0)
+      const outside = await page.locator('.bz-street .sign:visible, .bz-street .bz-hero-title, .bz-street .bz-lede, .bz-street .switch').evaluateAll((els) =>
+        els.filter((el) => { const r = el.getBoundingClientRect(); return r.left < -0.5 || r.right > document.documentElement.clientWidth + 0.5 }).length)
+      expect(outside, `${path} at ${width}: a sign or a line of text leaves the window`).toBe(0)
+    }
+  })
+}
+
+test('/ stays English whatever the browser asks for: no redirect, no banner, no mark on the words', async ({ browser }) => {
+  const context = await browser.newContext({ locale: 'tr-TR', extraHTTPHeaders: { 'Accept-Language': 'fa-IR,tr;q=0.9' } })
+  const page = await context.newPage()
+  const response = await page.goto('/')
+  expect(response?.status()).toBe(200)
+  expect(new URL(page.url()).pathname).toBe('/')
+  await expect(page.locator('main h1')).toHaveText(HOME_COPY.en.hero.first + ' ' + HOME_COPY.en.hero.second)
+  expect(await page.locator('main [dir]').count(), 'the English page carries a direction').toBe(0)
+  expect(await page.locator('main h1').getAttribute('lang')).toBeNull()
+  // no banner, no dialog, nothing offering a switch outside the bar's menu
+  expect(await page.locator('[role="dialog"], [role="alertdialog"], [role="banner"] ~ [role="status"]').count()).toBe(0)
+  await context.close()
+})
+
+test.describe('the bar offers the three languages on the home page', () => {
+  const picker = (page: Page) => page.getByRole('navigation', { name: HOME_LANGUAGE_PICKER_LABEL })
+
+  for (const [lang, path] of READINGS) {
+    test(`${path}: English, Türkçe and فارسی, each at its own address, ${lang} marked`, async ({ page }) => {
+      await page.goto(path)
+      const trigger = picker(page).locator('summary')
+      await trigger.click()
+      const links = picker(page).getByRole('link')
+      await expect(links).toHaveCount(READINGS.length)
+      for (const [one, there] of READINGS) {
+        const link = links.nth(READINGS.findIndex(([id]) => id === one))
+        await expect(link).toHaveAttribute('href', there)
+        await expect(link).toHaveAttribute('hreflang', one)
+        if (one === lang) await expect(link).toHaveAttribute('aria-current', 'page')
+        else await expect(link).not.toHaveAttribute('aria-current', 'page')
+      }
+      await expect(links).toHaveText(['English', ...TRANSLATIONS.map((one) => one.label)])
+    })
+  }
+
+  test('choosing a language goes to that reading of the page and the menu follows', async ({ page }) => {
+    await page.goto('/')
+    for (const [lang, path] of TRANSLATED) {
+      await picker(page).locator('summary').click()
+      await picker(page).getByRole('link', { name: TRANSLATIONS.find((one) => one.id === lang)!.label }).click()
+      await expect(page).toHaveURL(new RegExp(`${path}$`))
+      await expect(picker(page).locator('summary')).toHaveAttribute('aria-label', /Language: /)
+      await expect(page.locator('main h1')).toHaveAttribute('lang', lang)
+    }
+    await picker(page).locator('summary').click()
+    await picker(page).getByRole('link', { name: 'English' }).click()
+    await expect(page).toHaveURL(/\/$/)
+    await expect(page.locator('main h1')).toHaveText(HOME_COPY.en.hero.first + ' ' + HOME_COPY.en.hero.second)
+  })
+
+  test.describe('with no script', () => {
+    test.use({ javaScriptEnabled: false })
+    test('the menu still opens and its links still go', async ({ page }) => {
+      await page.goto('/tr/')
+      await picker(page).locator('summary').click()
+      await expect(picker(page).getByRole('link', { name: 'فارسی' })).toBeVisible()
+      await picker(page).getByRole('link', { name: 'فارسی' }).click()
+      await expect(page).toHaveURL(/\/fa\/$/)
+    })
+  })
+
+  test('the bar marks Home as the current page on every reading, and the menu is not on the catalog', async ({ page }) => {
+    for (const [, path] of READINGS) {
+      await page.goto(path)
+      await expect(page.getByRole('banner').getByRole('link', { name: 'Home', exact: true })).toHaveAttribute('aria-current', 'page')
+    }
+    await page.goto('/sheets/')
+    await expect(picker(page)).toHaveCount(0)
+  })
+})

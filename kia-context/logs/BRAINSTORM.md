@@ -9,7 +9,7 @@ description: >
 authority: reasoning
 writes: agent, when a decision is taken
 status: active
-covers: "D97 to D112 so far, and D89, which part 2 held for PR #57 — 2026-11-06 onward"
+covers: "D97 to D113 so far, and D89, which part 2 held for PR #57 — 2026-11-06 onward"
 last_updated: 2026-11-09
 ---
 
@@ -435,6 +435,21 @@ folder and the mobile bundle names images by that path (ARCHITECTURE §13), so i
 paths for a 50 KB saving. **Deferred, not done:** `loading="lazy"`, width and height on `<img>`, and a smaller
 phone variant. **For the app:** image paths and hashes change inside `api/v1/`, which is a content change;
 Flutter decodes WebP.
+
+### D113 · Only content is multilingual: the home page's words translate, menus never do — 2026-11-09
+
+**Asked by the author**, after asking what a Turkish and Persian home page would cost: *"the rule of thumb is
+that in my project multilinguality is only for content, not for menus! That's why even clicking on Turkish
+text which brings to catalog, should bring to English catalog because catalog is part of menus. But markdown
+contents or homepage cast trades and stories and stall etc are considered content so can be multilingual."*
+This generalises D80 (content level only) from module pages to every surface. **Done:** the home page has
+`/tr/` and `/fa/` addresses; its copy lives in one table, `src/lib/home-copy.ts`, keyed by the language
+registry; character names stay English; every link from a translated home lands on the same English page as
+from `/`; the language menu appears on the home page. `/` stays English. **Rejected:** a Turkish and Persian
+catalog (option b) so a journey stays in one language, because the catalog is a menu; detecting the browser's
+language and redirecting from `/`, because a shared link would then open in different languages for
+different people and the page would jump after it loads; a "this page is also in Türkçe" banner, which the
+author did not ask for.
 
 ## Open questions
 

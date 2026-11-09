@@ -10,6 +10,7 @@ import {
   TRANSLATED_LANGS,
   TRANSLATIONS,
   dirOf,
+  homeRoute,
 } from '@/lib/content/languages'
 
 /**
@@ -37,8 +38,11 @@ import {
  *
  * ## Where it appears
  *
- * Only on a module page that HAS a second address — the same rule the picker
- * kept in the column. Everywhere else it renders nothing rather than a
+ * On a module page that HAS a second address — the same rule the picker
+ * kept in the column — and on the home page, which has one in every language
+ * (`/`, `/tr/`, `/fa/`: the author's 2026-11-09 rule is that content is
+ * multilingual and menus are not, so this menu is the one control that carries
+ * a reader between the three). Everywhere else it renders nothing rather than a
  * disabled control, which would offer a 404 (§11.30): a Turkish page exists
  * only where `generateStaticParams` emitted one, and the bar learns which those
  * are from the layout, at build time, rather than guessing from the URL.
@@ -48,9 +52,14 @@ import {
  * carry it — right in frame one, and present for a reader with no script.
  */
 export const LANGUAGE_PICKER_LABEL = 'Language of this module'
+/** The same control on the home page, where it is not a module that has the languages. */
+export const HOME_LANGUAGE_PICKER_LABEL = 'Language of this page'
 
 /** `/courses/<level>/<module>/` and its translated twins, as one parse. */
 const MODULE = new RegExp(`^/(?:(${TRANSLATED_LANGS.join('|')})/)?(?:(${EVERYONE_SEGMENT})/)?courses/([^/]+/[^/]+)/?$`)
+
+/** `/`, `/tr/` and `/fa/`, and nothing that is not one of them. */
+const HOME = new RegExp(`^/(?:(${TRANSLATED_LANGS.join('|')})/?)?$`)
 
 /**
  * Every address of the module at `pathname` — English first, then each
@@ -64,7 +73,13 @@ const MODULE = new RegExp(`^/(?:(${TRANSLATED_LANGS.join('|')})/)?(?:(${EVERYONE
 export function alternatesOf(
   pathname: string,
   translated: Readonly<Record<TranslatedLang, ReadonlySet<string>>>,
-): { slug: string; track: Track; current: ReadingLang; available: readonly ReadingLang[] } | null {
+): { slug: string | null; track: Track | null; current: ReadingLang; available: readonly ReadingLang[] } | null {
+  /* The home page: translated whole, so every language has it, whichever modules do.
+     There is no module and so no track, and `slug` is null. */
+  const home = HOME.exec(pathname)
+  if (home) {
+    return { slug: null, track: null, current: (home[1] as TranslatedLang | undefined) ?? 'en', available: ['en', ...TRANSLATED_LANGS] }
+  }
   const match = MODULE.exec(pathname)
   if (!match) return null
   const slug = match[3]
@@ -206,7 +221,7 @@ export function LanguageMenu({
   const currentLabel = LANGUAGES.find((one) => one.id === here.current)!.label
 
   return (
-    <nav className="bz-langmenu" aria-label={LANGUAGE_PICKER_LABEL}>
+    <nav className="bz-langmenu" aria-label={here.slug === null ? HOME_LANGUAGE_PICKER_LABEL : LANGUAGE_PICKER_LABEL}>
       <details ref={panel} onKeyDown={keyDown} onBlur={blur}>
         <summary
           className="bz-langmenu-trigger"
@@ -221,7 +236,7 @@ export function LanguageMenu({
             <Link
               key={one.id}
               className="bz-menu-item"
-              href={moduleRoute(here.slug, here.track, one.id)}
+              href={here.slug === null ? homeRoute(one.id) : moduleRoute(here.slug, here.track ?? 'engineers', one.id)}
               hrefLang={one.id}
               lang={one.id}
               dir={dirOf(one.id)}

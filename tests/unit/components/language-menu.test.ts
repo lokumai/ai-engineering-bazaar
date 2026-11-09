@@ -41,7 +41,21 @@ describe('alternatesOf', () => {
   it('is not there at all where the module has one address', () => {
     expect(alternatesOf('/courses/fundamentals/llms/', sets([], []))).toBeNull()
     expect(alternatesOf('/sheets/', both)).toBeNull()
-    expect(alternatesOf('/', both)).toBeNull()
+  })
+
+  it('offers the home page in every language, whichever modules are translated', () => {
+    // The front door is translated whole, so it has an address in every language the registry
+    // lists even when no module has a translation at all.
+    for (const [path, current] of [['/', 'en'], ['/tr/', 'tr'], ['/fa/', 'fa'], ['/tr', 'tr']] as const) {
+      expect(alternatesOf(path, sets([], [])), path)
+        .toEqual({ slug: null, track: null, current, available: ['en', 'tr', 'fa'] })
+    }
+  })
+
+  it('takes a language prefix for the home page only where that language exists', () => {
+    expect(alternatesOf('/de/', both)).toBeNull()
+    expect(alternatesOf('/tr/fa/', both)).toBeNull()
+    expect(alternatesOf('/trx/', both)).toBeNull()
   })
 
   it('claims no language for an address that language never built', () => {

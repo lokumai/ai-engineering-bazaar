@@ -502,8 +502,11 @@ captions in 4E, each for the one ban it trips (`MY ATTENTION SPAN:` first person
 drew it, because its longest line reached the scene's faded edge.
 
 **The text is STORY.md's**, read at build time (`src/lib/content/story.ts`): one stall per `##` section, in
-order, and the motto from the closing line. **Linked from the footer, not the bar**: the phone bar is full
-(`MainNav.tsx`, `data-bar-edge`), and a page about the project sits with the repository and the licence.
+order, and the motto from the closing line. ~~**Linked from the footer, not the bar**: the phone bar is full
+(`MainNav.tsx`, `data-bar-edge`), and a page about the project sits with the repository and the licence.~~
+**Reversed 2026-11-10 by the author**: *"the about page should be also in navbar as the last item right after
+Caravan (as well)"*. It is the bar's last item and stays in the footer; on a phone it shares Caravan's cut edge
+(`data-bar-edge`, at most two, both after every guaranteed destination, each scrolled fully into view on focus).
 
 **Rejected:** backgrounds B1 (lamplit night) and B3 (inked paper); feels F2 (manuscript, inertia scroll) and
 F3 (chapters, one stall per wheel turn, which hijacks the wheel); for stall 1 the options 1A, 1C, 1D and 1E,

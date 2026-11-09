@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useEffect, useRef, useState } from 'react'
-import { INDEX_ROUTE, INDEX_TITLE, type CategoryLabel } from '@/lib/route-labels'
+import { ABOUT_ROUTE, INDEX_ROUTE, INDEX_TITLE, type CategoryLabel } from '@/lib/route-labels'
 import { TRACKS, type Track, EVERYONE_SEGMENT, catalogRoute, trackOfPath } from '@/lib/tracks'
 import { useReadingTrack } from '@/lib/use-reading-track'
 
@@ -113,6 +113,7 @@ interface Destination {
   owns: readonly string[]
   /**
    * May sit at the scroller's cut edge on a phone, reached by swipe or Tab.
+   * Only the last destinations may carry it (Caravan and About).
    * Every other destination must fit at 390 (D91's guarantee, asserted in
    * `tracks.spec.ts` and `search.spec.ts`).
    */
@@ -152,6 +153,10 @@ const DESTINATIONS: readonly Destination[] = [
   // the only ways to make room were removing the theme toggle or the language
   // flag; the navigation already scrolls there, so Caravan takes the edge.
   { href: '/caravan/', label: 'Caravan', owns: ['/caravan/'], edge: true },
+  // M90 — the story of the Bazaar, last in the bar after Caravan (the author,
+  // 2026-11-10: "the about page should be also in navbar as the last item right
+  // after Caravan"), and still in the footer. It shares Caravan's edge on a phone.
+  { href: ABOUT_ROUTE, label: 'About', owns: [ABOUT_ROUTE], edge: true },
 ]
 
 /**

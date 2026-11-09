@@ -1489,7 +1489,10 @@ heading, text and object swapping sides from stall to stall.
       `## Why C#`, takes only an `Our motto:` line as the motto, and refuses `###`. **Report:** new and
       tightened checks in `about.spec.ts`, `colour-not-alone.spec.ts`, `accessibility.spec.ts` and
       `story.test.ts`, each seen failing once against a broken build or input (the PR says how).
-
+- [x] **In the bar, last, after Caravan** (the author, 2026-11-10: *"the about page should be also in
+      navbar as the last item right after Caravan (as well)"*). Still in the footer. On a phone About
+      shares Caravan's cut edge: `tracks.spec.ts` now allows at most two `data-bar-edge` items, requires
+      them to be the last in the bar, and scrolls each fully into view on focus. D115 records the reversal.
 
 ## 🏁 Milestone M91: Caravan built, C4 Shadow Play on sample data, its format and its pipeline (D116) — DONE, PR #98
 

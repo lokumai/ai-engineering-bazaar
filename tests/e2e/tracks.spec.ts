@@ -100,8 +100,8 @@ test('on a phone every main destination is in view in the bar, with the switch a
   await page.setViewportSize({ width: 390, height: 844 })
   await page.goto(A0.path)
   const nav = await page.locator('.bz-bar-nav > ul').boundingBox()
-  // `data-bar-edge` marks the one destination allowed at the scroller's cut edge
-  // (Caravan, M62); it must still come fully into view when Tab reaches it.
+  // `data-bar-edge` marks the destinations allowed at the scroller's cut edge
+  // (Caravan and About, the last two); each must come fully into view when focused.
   const links = page.locator('.bz-bar-nav > ul > li:not([data-bar-edge])').filter({ visible: true })
   expect(await links.count(), 'no main destination is shown').toBeGreaterThan(1)
   for (const box of await links.evaluateAll((items) => items.map((item) => {
@@ -113,14 +113,20 @@ test('on a phone every main destination is in view in the bar, with the switch a
   }
   expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(390)
 
+  const items = page.locator('.bz-bar-nav > ul > li').filter({ visible: true })
+  const flags = await items.evaluateAll((lis) => lis.map((li) => li.hasAttribute('data-bar-edge')))
+  const edges = flags.filter(Boolean).length
+  expect(edges, 'more than two destinations are exempt from fitting').toBeLessThanOrEqual(2)
+  // The exempt ones are the last in the bar, so every guaranteed destination comes first.
+  expect(flags.slice(flags.length - edges).every(Boolean), 'an exempt destination sits before a guaranteed one').toBe(true)
   const edge = page.locator('.bz-bar-nav > ul > li[data-bar-edge]')
-  expect(await edge.count(), 'more than one destination is exempt from fitting').toBeLessThanOrEqual(1)
-  if (await edge.count()) {
-    await edge.locator('a').focus()
+  for (let i = 0; i < edges; i++) {
+    const one = edge.nth(i)
+    await one.locator('a').focus()
     await expect.poll(async () => {
-      const rect = (await edge.boundingBox())!
+      const rect = (await one.boundingBox())!
       return rect.x + rect.width <= nav!.x + nav!.width + 1 && rect.x >= nav!.x - 1
-    }, 'the edge destination does not scroll into view when focused').toBe(true)
+    }, `${await one.textContent()} does not scroll into view when focused`).toBe(true)
   }
 })
 

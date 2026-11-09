@@ -314,6 +314,26 @@ questions:
 The build validates the shape. **When a module changes, re-read its quiz**: a question about a cut
 section is the one thing nothing automated catches.
 
+## Writing a Caravan trend
+
+Caravan (`/caravan/`) is a quick overview of what was trending in AI engineering since the chatbot
+moment, one entry per trend in `caravan/trends.yaml`. A trend that deserves a module belongs in the
+Emerging level instead.
+
+- **Very high level**: "the chatbot moment", "agents". Never a model release: a release may date when
+  a trend started, but it is not a trend. A trend ends when people stop calling it new; until then
+  its `end` is `null`.
+- **One entry holds**: an `id` (lowercase and underscores, never changed), a `title`, a `start` and
+  an `end` month (`"YYYY-MM"`), ONE paragraph of `text` on what it was (written with `>-`), and
+  `links` grouped as References are: `articles`, `videos`, `tools`, `repositories` (each with the
+  page's own title and its URL) and `modules` (names from `curriculum.yaml`). The comment at the top
+  of the file shows the shape; the build checks it.
+- **The author writes every title and paragraph.** Agents find, fetch, measure and propose
+  (`.claude/skills/caravan-trends/`); they never write a sentence that ships.
+- **How strong a trend was is measured, never typed**: the pipeline writes it month by month into
+  `caravan/strength.yaml`. Nobody edits that file by hand.
+- English first. Turkish and Persian come later, under the translation rules above.
+
 ## README.md and index.md move together
 
 `README.md` and `mini-courses/index.md` are the same page for two audiences. **Change one, update the
@@ -353,6 +373,7 @@ mini-courses/            the authored course, and all this file governs
   _module_template.md    copy this to start a module
   index.md               the GitHub page for mini-courses/, mirrors README.md
   curriculum.yaml        the course shape
+  caravan/               Caravan's trends (trends.yaml) and their measured strength
   <level>/               modules, their _tr.md and _fa.md, quizzes and images
     everyone/            each module For Everyone, same names, same suffixes
   scratchpad/            research notes and diagram prompts, never published

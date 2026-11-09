@@ -1,0 +1,207 @@
+# ============================================================================
+# FORMAT EXAMPLE. NOT CARAVAN CONTENT. NOT A BACKFILL.
+#
+# This file shows the shape of Caravan's data in the three files the design
+# proposes. In the repository they would be three files, separated here by
+# `---`:
+#
+#   1. mini-courses/caravan/trends.yaml          the author's file: what ships
+#   2. mini-courses/caravan/sources.yaml         the ledger of every cited source
+#   3. mini-courses/caravan/evidence/<id>.yaml   the measurements, one per trend
+#
+# What is real and what is not:
+#   - Every `title`, `title`/`what`/`why` text is a PLACEHOLDER. The author
+#     writes these. No agent wrote a sentence that is meant to ship.
+#   - `start`, `end`, `named` and every intensity are EXAMPLE values. They were
+#     not measured by the method in DESIGN.md. Do not read them as findings.
+#   - The three sources marked `checked: 2026-11-09` were fetched on that date
+#     during the design work, and their titles and dates are copied from the
+#     fetched pages. The fourth source is UNVERIFIED on purpose, to show what
+#     the verifier does with a claim that only secondary pages make.
+#   - The counts in the evidence block are real responses from probe requests
+#     made on 2026-11-09 (DESIGN.md, "Sources, tested"). They cover a few
+#     months only, chosen to test the sources, so they are not a series.
+# ============================================================================
+
+# file: mini-courses/caravan/trends.yaml
+caravan: 1                     # the file's format version, not the method version
+first_month: "2022-11"         # the journey starts at ChatGPT; fixed by the author
+trends:
+  - id: model_context_protocol            # lowercase, digits, underscores; never changes
+    status: example                       # real values: proposed | approved; "example" marks this file only
+    title:
+      en: "PLACEHOLDER, up to six words"  # the author's words
+      tr: null                            # see open question Q3 (translations)
+      fa: null
+    what:
+      en: "PLACEHOLDER. One or two sentences on what the trend was, up to 35 words, written by the author."
+    why:
+      en: "PLACEHOLDER. One sentence on what changed for someone building with AI, written by the author."
+    start: "2024-11"            # EXAMPLE. The month the seed source appeared, not a measured start.
+    end: null                   # null: still on the road
+    named: null                 # optional: the month the trend got the name it is known by
+    seed: s_anthropic_mcp       # the source that started it; must be one of `sources`
+    sources: [s_anthropic_mcp]  # two or three ship; one here because this is a format example
+    modules: [tools, protocols_reference]   # names from curriculum.yaml, checked by the build
+    goods: null                 # optional: the merchant's goods from C2's fixed list
+    adjust: []                  # the author's overrides of a measured level, each with a reason
+    approved: null              # { by: amirkia, on: YYYY-MM-DD } once the author approves
+
+  - id: vibe_coding
+    status: example
+    title: { en: "PLACEHOLDER, up to six words", tr: null, fa: null }
+    what:  { en: "PLACEHOLDER. Written by the author." }
+    why:   { en: "PLACEHOLDER. Written by the author." }
+    start: "2025-02"            # EXAMPLE. The month of the seed post, not a measured start.
+    end: null
+    named: "2025-02"            # EXAMPLE: here the name and the seed are the same post
+    seed: s_karpathy_vibe_coding
+    sources: [s_karpathy_vibe_coding]
+    modules: [coding_agents]
+    goods: null
+    adjust:
+      # The shape of an override. The values are EXAMPLES.
+      - months: ["2025-03"]
+        level: 4
+        reason: "EXAMPLE. The author's reason, in his words, for moving the measured level."
+        by: amirkia
+        on: "2026-11-09"
+    approved: null
+
+  - id: context_engineering
+    status: example
+    title: { en: "PLACEHOLDER, up to six words", tr: null, fa: null }
+    what:  { en: "PLACEHOLDER. Written by the author." }
+    why:   { en: "PLACEHOLDER. Written by the author." }
+    start: "2025-06"            # EXAMPLE
+    end: null
+    named: "2025-06"            # EXAMPLE
+    seed: s_langchain_rise_of_context_engineering
+    sources: [s_langchain_rise_of_context_engineering]
+    modules: [context_engineering]
+    goods: null
+    adjust: []
+    approved: null
+
+---
+# file: mini-courses/caravan/sources.yaml
+# One entry per source any trend cites. Written by the collectors, checked by the
+# verifier, chosen by the author. A source no trend cites fails the build, and so
+# does a cited id with no entry (the curriculum's rule 6, applied to sources).
+sources:
+  - id: s_anthropic_mcp
+    url: "https://www.anthropic.com/news/model-context-protocol"
+    kind: announcement          # announcement | paper | repository | article | post | video | news | dataset
+    title: "Introducing the Model Context Protocol"   # the page's own title, verbatim
+    title_from: "<title>, site suffix ' \\ Anthropic' removed"
+    publisher: Anthropic
+    author: null
+    published: "2024-11-25"
+    published_from: "JSON-LD datePublished 2024-11-25T00:00:00.000Z; the page also prints Nov 25, 2024"
+    via: http                   # http | oembed | manual
+    fetched: "2026-11-09"
+    checked: "2026-11-09"       # the last date the verifier re-fetched it and the title and date matched
+    archived: "http://web.archive.org/web/20241126233832/https://www.anthropic.com/news/model-context-protocol"
+    state: live                 # live | moved | dead
+
+  - id: s_karpathy_vibe_coding
+    url: "https://x.com/karpathy/status/1886192184808149383"
+    kind: post
+    title: "Andrej Karpathy (@karpathy) on X"   # a post has no title; the rule is "<author_name> (@handle) on <platform>"
+    title_from: "oEmbed author_name and author_url"
+    quote: "There's a new kind of coding I call \"vibe coding\", where you fully give in to the vibes, embrace exponentials, and forget that the code even exists."
+    publisher: X
+    author: Andrej Karpathy
+    published: "2025-02-02"
+    published_from: "date printed in the oEmbed html: February 2, 2025"
+    via: oembed                 # https://publish.twitter.com/oembed?url=<post url>
+    fetched: "2026-11-09"
+    checked: "2026-11-09"
+    archived: null              # the verifier asks the Wayback availability API and fills this
+    state: live
+
+  - id: s_langchain_rise_of_context_engineering
+    url: "https://www.langchain.com/blog/the-rise-of-context-engineering"
+    kind: article
+    title: "The rise of \"context engineering\""
+    title_from: "page heading"
+    publisher: LangChain
+    author: Harrison Chase
+    published: "2025-06-23"
+    published_from: "date printed on the page: June 23, 2025"
+    via: http
+    fetched: "2026-11-09"
+    checked: "2026-11-09"
+    archived: null
+    state: live
+
+  # UNVERIFIED, to show the verifier's rule. A web search on 2026-11-09 returned
+  # secondary pages that credit an earlier post on X for the name and disagree on
+  # its day (June 18 or June 19, 2025). No agent fetched the post itself, so this
+  # entry has no url, no title and no date, and it cannot be cited. It stays a
+  # lead in the run's candidates file, never in sources.yaml. It is shown here
+  # only as the shape of a rejected lead.
+  # - id: lead_ceo_post_context_engineering
+  #   url: null
+  #   claim: "a June 2025 post on X used the term before LangChain's article"
+  #   claimed_by: [secondary glossary pages, one blog]
+  #   verdict: "not citable: the primary post was not fetched; the secondary dates disagree"
+
+---
+# file: mini-courses/caravan/evidence/model_context_protocol.yaml
+# Written by the measurer. Every number here came from a recorded request.
+# The build computes the monthly level from these counts with one pure function
+# (scripts/lib/caravan-intensity.mjs, proposed); nobody types a level.
+trend: model_context_protocol
+method: 1                         # the version of the intensity function these counts are read with
+families:
+  hn:                             # Hacker News, through the Algolia search API
+    endpoint: "https://hn.algolia.com/api/v1/search_by_date"
+    query: "MCP"
+    params: { tags: story, restrictSearchableAttributes: title, typoTolerance: "false", queryType: prefixNone, numericFilters: "points>=10" }
+    base:                         # the denominator: every story in the month with points >= 10
+      params: { tags: story, numericFilters: "points>=10" }
+    precision: null               # the verifier's sample: relevant hits out of sampled hits
+    months:                       # n: matching stories; base: the month's denominator; null: not measured in this probe
+      "2024-10": { n: 0,  base: null, fetched: "2026-11-09" }
+      "2024-11": { n: 1,  base: null, fetched: "2026-11-09" }
+      "2025-03": { n: 29, base: null, fetched: "2026-11-09" }
+      "2025-06": { n: 25, base: 3998, fetched: "2026-11-09" }
+      "2026-01": { n: 15, base: 4713, fetched: "2026-11-09" }
+      "2026-06": { n: 8,  base: 4431, fetched: "2026-11-09" }
+  github_repos:                   # new public repositories per month, through the GitHub search API
+    endpoint: "https://api.github.com/search/repositories"
+    query: "mcp in:name,description,topics created:<first day>..<last day>"
+    base:
+      query: "created:<first day>..<last day>"
+    precision: null               # "mcp" also names unrelated projects; the verifier samples before this counts
+    months:
+      "2024-11": { n: 375,   base: null,    fetched: "2026-11-09" }
+      "2024-12": { n: 1260,  base: null,    fetched: "2026-11-09" }
+      "2025-03": { n: 8009,  base: null,    fetched: "2026-11-09" }
+      "2025-06": { n: 15171, base: 4725957, fetched: "2026-11-09" }
+      "2026-01": { n: 16272, base: null,    fetched: "2026-11-09" }
+      "2026-06": { n: 36219, base: 8183661, fetched: "2026-11-09" }
+  github_stars:                   # star events on one anchor repository, from the public ClickHouse copy of GH Archive
+    endpoint: "https://play.clickhouse.com/?user=play"
+    query: "WatchEvent on repo_name = 'modelcontextprotocol/servers'"
+    base:
+      query: "every WatchEvent in the month"
+    health: "the base fell 38% below its trailing six-month median in 2025-06 and kept falling; months from 2025-06 are excluded for this family"
+    months:
+      "2024-11": { n: 2833,  base: 5886547, fetched: "2026-11-09" }
+      "2024-12": { n: 2596,  base: 6146038, fetched: "2026-11-09" }
+      "2025-01": { n: 1639,  base: 6206143, fetched: "2026-11-09" }
+      "2025-02": { n: 3430,  base: 6478740, fetched: "2026-11-09" }
+      "2025-03": { n: 15381, base: 6950493, fetched: "2026-11-09" }
+      "2025-04": { n: 12783, base: 6063489, fetched: "2026-11-09" }
+      "2025-05": { n: 6478,  base: 5494177, fetched: "2026-11-09" }
+  wikipedia:                      # monthly user pageviews of one English Wikipedia article
+    endpoint: "https://wikimedia.org/api/rest_v1/metrics/pageviews/per-article"
+    article: Model_Context_Protocol
+    note: "the series starts at 2025-03 with 0 views, so the article cannot measure the first months"
+    months:
+      "2025-03": { n: 0,     fetched: "2026-11-09" }
+      "2025-11": { n: 42398, fetched: "2026-11-09" }
+      "2026-07": { n: 36628, fetched: "2026-11-09" }
+levels: null    # derived by the build from the counts above; not computed for this example

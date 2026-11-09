@@ -29,6 +29,11 @@ public/course-images/
 test-results/
 playwright-report/
 
+# Caravan's pipeline runs (.claude/skills/caravan-trends/): raw responses and
+# working files, reproducible from the frozen queries. What a run keeps is the
+# diff to mini-courses/caravan/ and its PROGRESS entry.
+.caravan/
+
 # Playwright MCP session artifacts (console logs, page snapshots)
 .playwright-mcp/
 docs/superpowers/

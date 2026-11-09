@@ -1,0 +1,38 @@
+# Caravan: what was trending in AI engineering, one entry per trend.
+#
+# A trend is very high level ("the chatbot moment", "agents"), never a model
+# release; a release may date when a trend started, but it is not a trend. It
+# ends when people stop calling it new. Each entry is a quick overview: a
+# subject that deserves a module belongs in the Emerging level instead.
+#
+# Every sentence here is the author's. How strong a trend was is measured, not
+# written: the pipeline (.claude/skills/caravan-trends/) writes it month by
+# month into strength.yaml beside this file, and nobody types a level here.
+#
+# `id`     lowercase, digits and underscores; it never changes once published.
+# `title`  the trend's name, one line.
+# `start`  the month it started, YYYY-MM, quoted.
+# `end`    the month it ended, or null while people still call it new.
+# `text`   ONE paragraph on what it was, written with `>-` so it folds to one line.
+# `links`  grouped as a module's References are, each group only when it has an
+#          item: articles, videos, tools, repositories (each `{ title, url }`,
+#          the title copied from the page), and modules (names from
+#          curriculum.yaml, whose titles the site reads from there).
+#
+#   - id: example_trend
+#     title: The Trend's Name
+#     start: "2024-11"
+#     end: null
+#     text: >-
+#       One paragraph on what it was.
+#     links:
+#       articles:
+#         - { title: "The page's own title", url: "https://example.com/post" }
+#       modules: [tools]
+#
+# Until this list holds a trend, /caravan/ shows placeholder sample data and
+# says so. The build validates this file (src/lib/content/caravan-file.ts).
+
+caravan: 1
+first_month: "2022-11"
+trends: []

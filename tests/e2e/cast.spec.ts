@@ -1,5 +1,7 @@
 import { type Page, expect, test } from '@playwright/test'
 import { CAST } from '@/components/home/street/cast'
+import { TRANSLATED_LANGS, homeRoute, type ReadingLang } from '@/lib/content/languages'
+import { HOME_COPY } from '@/lib/home-copy'
 
 /**
  * M58 — the people at the gate, in a browser.
@@ -29,24 +31,33 @@ const cloudsReady = (page: Page) => expect(page.locator('.bz-street[data-clouds]
 /** ScrollTrigger scrubs with a lag (`scrub: 0.9`), so a pose is read after it settles. */
 const settle = (page: Page) => page.waitForTimeout(1600)
 
-async function walk(page: Page) {
+async function walk(page: Page, path = '/') {
   await page.setViewportSize(WALK)
   await page.emulateMedia({ reducedMotion: 'no-preference' })
-  await page.goto('/')
+  await page.goto(path)
   await expect(page.locator('html')).toHaveClass(/is-walk/)
 }
 
-test('every person at the gate is a named button, in the cast order, with a story as its description', async ({ page }) => {
-  await walk(page)
-  await expect(gate(page)).toHaveCount(CAST.length)
-  for (const [i, m] of CAST.entries()) {
-    const btn = gate(page).nth(i)
-    await expect(btn).toHaveAttribute('data-who', m.id)
-    // A name may end in a letter outside ASCII (Mihrî), where `\b` finds no boundary.
-    await expect(btn).toHaveAccessibleName(new RegExp(`^${m.name}(?![\\p{L}\\d]).*${m.trade}$`, 'u'))
-    await expect(btn).toHaveAccessibleDescription(m.story)
-  }
-})
+/** Every language the home page is read in, with its address: from the registry, never typed in. */
+const READINGS: ReadonlyArray<readonly [ReadingLang, string]> = (['en', ...TRANSLATED_LANGS] as ReadingLang[]).map(
+  (lang) => [lang, homeRoute(lang)] as const,
+)
+
+for (const [lang, path] of READINGS) {
+  test(`${lang}: every person at the gate is a named button, in the cast order, with a story as its description`, async ({ page }) => {
+    await walk(page, path)
+    await expect(gate(page)).toHaveCount(CAST.length)
+    for (const [i, m] of CAST.entries()) {
+      const words = HOME_COPY[lang].cast[m.id]
+      const btn = gate(page).nth(i)
+      await expect(btn).toHaveAttribute('data-who', m.id)
+      // A name may end in a letter outside ASCII (Mihrî), where `\b` finds no boundary. The
+      // name is the same in every language; the trade after it is the language's own.
+      await expect(btn).toHaveAccessibleName(new RegExp(`^${m.name}(?![\\p{L}\\d]).*${words.trade}$`, 'u'))
+      await expect(btn).toHaveAccessibleDescription(words.story)
+    }
+  })
+}
 
 test('the captions show before the chase and are gone once it begins (walk)', async ({ page }) => {
   await walk(page)
@@ -354,3 +365,83 @@ test('the walk draws the people larger than the still picture does, at the same 
   const walking = await height('no-preference')
   expect(walking / still, 'a person on the walk, against the gate art, is not larger').toBeGreaterThan(1.3)
 })
+
+/**
+ * The languages (the author's rule of 2026-11-09: only content is multilingual).
+ *
+ * A translated string is longer than the English one, and a cloud, a caption or a sign
+ * was sized for English. These claims hold in every language the registry lists, so the
+ * address, the words and the languages come from the registry and `lib/home-copy.ts`.
+ */
+
+/** Four points just inside an element, counted when something other than it or its children answers. */
+const coveredCorners = (el: Element) => {
+  const r = el.getBoundingClientRect()
+  const points = [[r.left + 3, r.top + 3], [r.right - 3, r.top + 3], [r.left + 3, r.bottom - 3], [r.right - 3, r.bottom - 3]]
+  return points.filter(([x, y]) => {
+    const hit = document.elementFromPoint(x, y)
+    return hit === null || !el.contains(hit)
+  }).length
+}
+
+for (const [lang, path] of READINGS) {
+  test(`${lang}: every story opens whole, inside the window, on a phone and on the walk`, async ({ page }) => {
+    test.setTimeout(120_000) // two page loads and sixteen stories
+    const words = HOME_COPY[lang]
+    for (const size of [{ width: 390, height: 844 }, WALK]) {
+      await page.setViewportSize(size)
+      await page.emulateMedia({ reducedMotion: 'no-preference' })
+      await page.goto(path)
+      await cloudsReady(page)
+      const people = size.width === 390 ? row(page) : gate(page)
+      for (const btn of await people.all()) {
+        await btn.scrollIntoViewIfNeeded()
+        await btn.click()
+        const cloud = btn.locator('.who-cloud')
+        await expect(cloud).toBeVisible()
+        const box = (await cloud.boundingBox())!
+        const who = await btn.getAttribute('data-who')
+        expect(box.x, `${lang} ${size.width}: ${who}'s story starts off the left edge`).toBeGreaterThanOrEqual(0)
+        expect(box.x + box.width, `${lang} ${size.width}: ${who}'s story runs off the right edge`).toBeLessThanOrEqual(size.width)
+        expect(await cloud.evaluate(coveredCorners), `${lang} ${size.width}: ${who}'s story is cut or covered`).toBe(0)
+        await page.keyboard.press('Escape')
+      }
+      for (const teller of await page.locator('.bz-street .who-story').all()) {
+        await teller.scrollIntoViewIfNeeded()
+        await page.keyboard.press('Shift')
+        await teller.focus()
+        await settle(page)
+        const cloud = teller.locator('.who-cloud')
+        await expect(cloud).toBeVisible()
+        const box = (await cloud.boundingBox())!
+        expect(box.x, `${lang} ${size.width}: a teller's story starts off the left edge`).toBeGreaterThanOrEqual(0)
+        expect(box.x + box.width, `${lang} ${size.width}: a teller's story runs off the right edge`).toBeLessThanOrEqual(size.width)
+        expect(await cloud.evaluate(coveredCorners), `${lang} ${size.width}: a teller's story is cut or covered`).toBe(0)
+        await page.keyboard.press('Escape')
+      }
+      // And it is the language's own story that opens.
+      const told = await page.locator('.bz-street .who-story .who-cloud').allTextContents()
+      expect(told).toEqual([words.tracks.eng.teller.story, words.tracks.all.teller.story])
+    }
+  })
+
+  test(`${lang}: on the walk no two captions touch and none leaves the window`, async ({ page }) => {
+    test.setTimeout(90_000)
+    for (const size of [{ width: 900, height: 560 }, WALK]) {
+      await page.setViewportSize(size)
+      await page.emulateMedia({ reducedMotion: 'no-preference' })
+      await page.goto(path)
+      await expect(page.locator('html')).toHaveClass(/is-walk/)
+      const boxes = await page.locator('.bz-street .cast-box .who-cap').evaluateAll((els) => els.map((el) => {
+        const r = el.getBoundingClientRect()
+        return { left: r.left, right: r.right, text: el.textContent ?? '' }
+      }))
+      expect(boxes.length).toBe(CAST.length)
+      for (const [i, box] of boxes.entries()) {
+        expect(box.left, `${lang} ${size.width}: ${box.text} starts off the left edge`).toBeGreaterThanOrEqual(-0.5)
+        expect(box.right, `${lang} ${size.width}: ${box.text} runs off the right edge`).toBeLessThanOrEqual(size.width + 0.5)
+        if (i > 0) expect(boxes[i - 1].right, `${lang} ${size.width}: ${boxes[i - 1].text} touches ${box.text}`).toBeLessThanOrEqual(box.left + 0.5)
+      }
+    }
+  })
+}

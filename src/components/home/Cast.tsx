@@ -1,6 +1,8 @@
 import type { CSSProperties } from 'react'
 import { art } from '@/components/home/street/art'
 import { ART_H, ART_W, CAST, type CastMember } from '@/components/home/street/cast'
+import { type ReadingLang, dirOf, langAttr } from '@/lib/content/languages'
+import { HOME_COPY } from '@/lib/home-copy'
 
 /**
  * The people at the gate (M58): seven buttons, each a figure with its caption under it and
@@ -19,6 +21,11 @@ import { ART_H, ART_W, CAST, type CastMember } from '@/components/home/street/ca
  * description reads a hidden element it points at directly). With no script, pointing or
  * focus opens the cloud in CSS; `street/clouds.ts` adds the tap, Escape, one cloud at a
  * time, and keeping a cloud inside the window.
+ *
+ * **The language is on the words and on nothing round them.** The trade and the story take
+ * `lang` and, for Persian, `dir="rtl"`; the name does not, because a name is written as it
+ * is written, and the caption's box, the cloud's position and the figure are drawn and
+ * never flip (D80). The words come from `lib/home-copy.ts`.
  */
 
 const pct = (n: number) => `${(Math.round(n * 1000) / 10).toFixed(1)}%`
@@ -39,20 +46,22 @@ function place(m: CastMember): CSSProperties {
   } as CSSProperties
 }
 
-function Words({ m, cloudId }: { m: CastMember; cloudId: string }) {
+function Words({ m, cloudId, lang }: { m: CastMember; cloudId: string; lang: ReadingLang }) {
+  const words = HOME_COPY[lang].cast[m.id]
+  const text = { lang: langAttr(lang), dir: dirOf(lang) }
   return (
     <>
       <span className="who-cap">
-        <b>{m.name}</b> <span>{m.trade}</span>
+        <b>{m.name}</b> <span {...text}>{words.trade}</span>
       </span>
-      <span className="who-cloud" id={cloudId} aria-hidden="true">
-        {m.story}
+      <span className="who-cloud" id={cloudId} aria-hidden="true" {...text}>
+        {words.story}
       </span>
     </>
   )
 }
 
-export function CastAtGate() {
+export function CastAtGate({ lang }: { lang: ReadingLang }) {
   return (
     <div className="cast-box" data-cast>
       {CAST.map((m) => (
@@ -65,22 +74,22 @@ export function CastAtGate() {
           style={place(m)}
         >
           <span className="who-fig" dangerouslySetInnerHTML={{ __html: art(`cast-${m.id}`) }} />
-          <Words m={m} cloudId={`cloud-${m.id}`} />
+          <Words m={m} cloudId={`cloud-${m.id}`} lang={lang} />
         </button>
       ))}
     </div>
   )
 }
 
-export function CastRow() {
+export function CastRow({ lang }: { lang: ReadingLang }) {
   return (
-    <section className="cast-row" aria-label="The people at the gate">
+    <section className="cast-row" aria-label={HOME_COPY[lang].castLabel}>
       <ul>
         {CAST.map((m) => (
           <li key={m.id}>
             <button type="button" className="who-btn who-tile" data-who={m.id} aria-describedby={`tile-cloud-${m.id}`}>
               <span className="who-fig" dangerouslySetInnerHTML={{ __html: art(`cast-${m.id}-tile`) }} />
-              <Words m={m} cloudId={`tile-cloud-${m.id}`} />
+              <Words m={m} cloudId={`tile-cloud-${m.id}`} lang={lang} />
             </button>
           </li>
         ))}

@@ -60,6 +60,16 @@ export function dirOf(lang: ReadingLang | undefined): 'rtl' | undefined {
   return TRANSLATIONS.find((one) => one.id === lang)?.dir === 'rtl' ? 'rtl' : undefined
 }
 
+/**
+ * The home page's address in `lang`: `/`, `/tr/`, `/fa/`. The home page is the one
+ * page that is translated whole and not module by module, so it has an address in
+ * every language the registry lists, and the menu and the page's own `hreflang`
+ * links ask for it here rather than spelling the prefix.
+ */
+export function homeRoute(lang: ReadingLang): string {
+  return lang === 'en' ? '/' : `/${lang}/`
+}
+
 /** The `lang` attribute for content in `lang`: nothing on the English tree. */
 export function langAttr(lang: ReadingLang): TranslatedLang | undefined {
   return lang === 'en' ? undefined : lang

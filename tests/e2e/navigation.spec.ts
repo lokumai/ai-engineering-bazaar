@@ -1,6 +1,7 @@
 import { existsSync, readdirSync } from 'node:fs'
 import { join } from 'node:path'
 import { expect, test } from '@playwright/test'
+import { TRANSLATED_LANGS, homeRoute } from '@/lib/content/languages'
 import { levelTitlePattern } from './levels'
 import { A0, INDEX_SHEET, SHEETS } from './sheets'
 
@@ -315,8 +316,11 @@ const TRAILED: string[] = (() => {
   walk(root, '/')
   /* `/` heads itself and the trail is its own single crumb, and `/404/` is the
      not-found document served at every unknown address — neither names a page
-     the way the others do. Everything else is compared. */
-  return found.filter((route) => !['/404/', '/_not-found/'].includes(route)).sort()
+     the way the others do. The front door has no trail at all, in any of its
+     languages (`/tr/` and `/fa/` are the same page as `/`, `homeRoute`), so those
+     are left out with it. Everything else is compared. */
+  const doors = TRANSLATED_LANGS.map((lang) => homeRoute(lang))
+  return found.filter((route) => !['/404/', '/_not-found/', ...doors].includes(route)).sort()
 })()
 
 /* It visits every exported route, and since the For Everyone pages (D91) there

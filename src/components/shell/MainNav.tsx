@@ -159,9 +159,13 @@ function levelOf(pathname: string): string | null {
   return null
 }
 
-/** `/` is only current when it is the whole path; everything else owns a tree. */
+/**
+ * `/` is only current when it is the whole path (or the whole path of its
+ * Turkish or Persian reading: `/tr/` and `/fa/` are the same front door);
+ * everything else owns a tree.
+ */
 function isCurrent(destination: Destination, pathname: string): boolean {
-  if (destination.href === '/') return pathname === '/'
+  if (destination.href === '/') return /^\/(?:(?:tr|fa)\/?)?$/.test(pathname)
   // A translated page belongs to the same tree as its English one.
   const path = pathname.replace(/^\/(?:tr|fa)(?=\/)/, '')
   return destination.owns.some((route) => path.startsWith(route))

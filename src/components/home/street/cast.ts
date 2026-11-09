@@ -6,9 +6,9 @@
  * `playground/2026-11-round-4/P-turkish-woman.html` (2026-11-08). She is a poet drawn after
  * Mihrî Hatun of Amasya, with her hair uncovered, a gold circlet and her book of poems.
  *
- * Plain data, safe for the server page and the client motion alike: who each person is,
- * the words a reader reads (the caption and the story, English like the rest of the home
- * page, D80), and where each one stands, in the gate art's own units (`gate.html` is 1000 x
+ * Plain data, safe for the server page and the client motion alike: who each person is (a
+ * name, which is written as it is written in every language) and where each one stands, in
+ * the gate art's own units (`gate.html` is 1000 x
  * 620; the pavement below the arch runs from y 620, and is shown to y 750, see `home.css`).
  * `x` is the middle of the feet, `y` the line they stand on, and `s` the figure's scale
  * against its 220 x 400 drawing.
@@ -22,11 +22,14 @@
 
 export type CastId = 'mihri' | 'dariush' | 'deniz' | 'bit' | 'murat' | 'mei' | 'piri'
 
+/**
+ * What each person says, their trade in the caption and their story in the cloud, is not
+ * here: it is the home page's content, and every language of it lives in
+ * `lib/home-copy.ts` under the person's id.
+ */
 export interface CastMember {
   id: CastId
   name: string
-  trade: string
-  story: string
   x: number
   y: number
   s: number
@@ -42,8 +45,6 @@ export const CAST: readonly CastMember[] = [
   {
     id: 'mihri',
     name: 'Mihrî',
-    trade: 'poet',
-    story: 'Mihrî of Amasya wrote the oldest book of poems by an Ottoman woman that still survives. She said what she meant in plain words.',
     x: 0,
     y: FEET,
     s: ADULT,
@@ -51,8 +52,6 @@ export const CAST: readonly CastMember[] = [
   {
     id: 'dariush',
     name: 'Dariush',
-    trade: 'carpet merchant',
-    story: 'Dariush brought his carpets from Iran, each one tied by hand, knot by knot. He says you only see the pattern when you step back.',
     x: 125,
     y: FEET,
     s: ADULT,
@@ -60,8 +59,6 @@ export const CAST: readonly CastMember[] = [
   {
     id: 'deniz',
     name: 'Deniz',
-    trade: 'simit seller',
-    story: "Deniz sells his father's simit at the gate every morning. He is the first to see who comes in, and the first to call out to them.",
     x: 245,
     y: FEET,
     s: CHILD,
@@ -69,8 +66,6 @@ export const CAST: readonly CastMember[] = [
   {
     id: 'bit',
     name: 'Bit',
-    trade: 'AI robot',
-    story: 'Bit was built to answer questions. In the bazaar it found more questions than it could answer, so it went inside to learn.',
     x: 500,
     y: FEET + 6,
     s: ROBOT,
@@ -78,8 +73,6 @@ export const CAST: readonly CastMember[] = [
   {
     id: 'murat',
     name: 'Murat',
-    trade: 'Janissary',
-    story: 'Murat guards the gate. He has watched every kind of trader pass through it, and he lets in anyone who comes to learn.',
     x: 768,
     y: FEET,
     s: ADULT,
@@ -87,8 +80,6 @@ export const CAST: readonly CastMember[] = [
   {
     id: 'mei',
     name: 'Mei',
-    trade: 'silk trader',
-    story: 'Mei carried her silk along the long road from the east. She writes down every bolt she sells, because a trader who forgets loses money.',
     x: 880,
     y: FEET,
     s: ADULT,
@@ -96,8 +87,6 @@ export const CAST: readonly CastMember[] = [
   {
     id: 'piri',
     name: 'Piri',
-    trade: 'map-maker',
-    story: 'Piri draws maps for sailors. Where he is not sure of a coast, he writes so on the map, because a wrong map is worse than no map.',
     x: 995,
     y: FEET,
     s: ADULT,

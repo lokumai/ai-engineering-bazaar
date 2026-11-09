@@ -50,6 +50,13 @@ Buna **manager-worker** ya da **orchestrator-worker** dendiğini de duyacaksın.
 
 **Koordinasyon.** Kim neyi, hangi sırayla yapıyor? Bir işin bittiğini kimse nereden biliyor? İki agent aynı işi iki kez yapabilir. Bir agent hiç gelmeyecek bir şeyi sonsuza kadar bekleyebilir. Bir müdür sürekli görev dağıtıp hiç durmayabilir. Bunlar, kötü yönetilen bir takımın yaptığı hataların aynısı.
 
+Bu ileri seviye bir konu ve Expert seviyesinde ele alınıyor. Ama sorunu basit bir örnek zaten gösteriyor:
+
+![Birbirini göremeyen iki paralel subagent](../images/parallel-subagent-drawback.webp)  
+*Ana agent bir işi iki parçaya böler ve her parçayı bir yardımcıya verir. Her yardımcı o ana kadarki işi ve kendi parçasını bilir, ama diğer yardımcının ne yaptığını bilmez. Bu yüzden aynı işi iki kez yapabilirler ya da çelişen seçimler yapabilirler. Sonuçlar bir araya getirilene kadar da kimse bunu fark etmez.*
+
+Bu, bir raporun iki yarısını iki iş arkadaşına, birbirleriyle konuşmalarına izin vermeden vermeye benziyor. İkisi de iyi bir yarım yazar, ama yarımlar birbirini tekrar edebilir ya da birbiriyle çelişebilir. Bir agent takımının kırılgan, bazen de güvenilmez olmasının sebeplerinden biri de bu.
+
 **Devir (handover).** Her agent'ın kendi sohbeti, kendi working memory'si var. Peki veri agent'ı işini bitirdiğinde, grafik agent'ı tam olarak ne alıyor? Yalnızca sayıları mı? İlk soruyu da mı? Çok az verirsen sonraki agent, ihtiyaç duyduğu bilgi olmadan çalışır; hiç not almadan bir projeyi devralan bir iş arkadaşı gibi. Her şeyi verirsen maliyeti çok olur ve işi bölerek kaçınmaya çalıştığın karışıklık geri gelir.
 
 Devri yanlış yapmak, bir agent takımının yerini aldığı tek agent'tan *daha kötü* çalışmasının olağan nedenidir.

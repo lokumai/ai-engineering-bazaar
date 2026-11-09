@@ -81,6 +81,15 @@ agents can do the same work twice. One agent can wait forever for something that
 A manager can keep handing out tasks and never stop. These are the same mistakes a badly run team
 makes.
 
+This is an advanced topic, covered later in the Expert level. But one simple example shows the problem:
+
+![Two parallel subagents that cannot see each other](../images/parallel-subagent-drawback.webp)  
+*The main agent splits a job into two parts and gives each part to a helper. Each helper knows the job so far and its own part, but not what the other helper is doing. So they can do the same work twice, or make choices that clash, and nobody notices until the results are put together.*
+
+It is like giving two colleagues two halves of a report without letting them talk to each other. Each
+writes a good half, but the halves may repeat each other or disagree. That is one reason why a team of
+agents can be fragile, and sometimes unreliable.
+
 **Handover.** Each agent has its own chat, its own working memory. So when the data agent
 finishes, what exactly does the chart agent get? Only the numbers? The original question too? If
 you pass too little, the next agent works without information it needs, like a colleague who took

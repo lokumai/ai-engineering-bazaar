@@ -16,7 +16,7 @@ description: >
 authority: state
 writes: agent, every session
 status: active
-covers: "M50 to M85, 2026-11-06 onward, and M41, which part 2 held for PR #57"
+covers: "M50 to M86, 2026-11-06 onward, and M41, which part 2 held for PR #57"
 last_updated: 2026-11-09
 ---
 
@@ -1366,6 +1366,15 @@ and A2A "highly complementary"). Corrected from the draft: the inter-organisatio
 different organisations from talking. Turkish and Persian by Sonnet subagents, technical words kept English;
 the quiz's fifth question rebalanced in each language so the right option is never the longest. Gate: 1,459
 unit tests, build with link and bundle checks, 562 browser tests passed and 10 skipped.
+
+## 🏁 Milestone M86: Why coordination makes multi-agent fragile, with one example — DONE
+
+The author, 2026-11-09: under **Coordination** in Multi-Agent Systems, say it is an advanced topic for
+Advanced Multi-Agent, and show one basic example with his figure: two parallel subagents that cannot see each
+other may duplicate or contradict each other's work.
+
+- [x] The note, the figure (`parallel-subagent-drawback.webp`, 100 KB PNG to 36 KB, SSIM 0.995) and a short
+      paragraph, in both tracks and three languages; the For Everyone version with a two-colleagues analogy.
 
 ---
 

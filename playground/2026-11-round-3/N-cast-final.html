@@ -152,7 +152,7 @@ const CAST = {
   /* the seven at the gate, the author's picks (M49) and the Janissary he asked for (M50) */
   mei:{ name:'Mei', skin:'#F0CFA6', sh:'#D9B183', blush:'#E59A86', lip:'#C8604F', hair:'#1E1A22', hs:'bun',
     brow:'thin', bw:2, eyes:'almond', nose:'small', face:[22,26], lashes:true,
-    ott:{ body:'robe', collar:'cross', wide:true, c1:'#2F8C86', c2:'#F6EEDF', c3:'#A0503C', hem:56, shoe:'#25233F', prop:'silk', run:'flutter', role:'a silk trader' } },
+    ott:{ body:'robe', collar:'cross', wide:true, c1:'#E8B82B', c2:'#F6EEDF', c3:'#A0503C', motif:{d:'#B3262E', w:'#2F8C86'}, hem:56, shoe:'#25233F', prop:'silk', run:'flutter', role:'a silk trader' } },
   leyla:{ name:'Leyla', skin:'#8A5A3C', sh:'#6E452D', blush:'#B5605A', lip:'#7A2F36', hair:'#2A1C18', hs:'puff',
     brow:'arch', bw:2.7, eyes:'wide', nose:'broad', face:[24,26], hoops:true, lashes:true,
     ott:{ body:'robe', c1:'#7A4A86', c2:'#C99A4B', c3:'#B8873B', hem:54, vest:'#B8873B', shoe:'#5C4A32', prop:'spices', run:'level', ground:'sacks', role:'a spice seller' } },
@@ -164,12 +164,12 @@ const CAST = {
     ott:{ body:'robe', c1:'#282864', c2:'#C99A4B', c3:'#A0503C', hem:58, hat:{k:'kolah'}, shoe:'#3A2A22', prop:'carpet', run:'roll', role:'a carpet merchant' } },
   piri:{ name:'Piri', skin:'#C98F62', sh:'#AA7448', blush:'#C77560', lip:'#8E4440', hair:'#BDB8C4', hs:'none',
     brow:'heavy', bw:3.4, eyes:'old', nose:'long', face:[24,27], beard:'long', beardC:'#C9C4D0', lines:true,
-    ott:{ body:'robe', c1:'#282864', c2:'#DDB46A', c3:'#A0503C', hem:60, vest:'#A0503C', shoe:'#3A2A22', hat:{k:'turban', c1:'#F6EEDF', c2:'#A0503C'}, prop:'map', run:'level', role:'a map-maker' } },
+    ott:{ body:'robe', c1:'#4F6F94', c2:'#DDB46A', c3:'#A0503C', hem:60, vest:'#A0503C', shoe:'#3A2A22', hat:{k:'turban', c1:'#F6EEDF', c2:'#A0503C'}, prop:'map', run:'level', role:'a map-maker' } },
   // M50 — the Janissary: the börk with its spoon-holder and its long cloth down the back, a
   // kaftan over a red sash, a yatağan tucked in the sash, a musket on his shoulder, at rest
   murat:{ name:'Murat', skin:'#D6A27A', sh:'#B9845C', blush:'#CC7E68', lip:'#9E4A44', hair:'#2A1C18', hs:'none',
     brow:'heavy', bw:3.6, eyes:'small', nose:'long', face:[24,27], beard:'handlebar', beardC:'#1E1A22',
-    ott:{ body:'robe', c1:'#2E3A78', c2:'#C99A4B', c3:'#A0503C', hem:58, vest:'#A0503C', shoe:'#B8873B', hat:{k:'bork'}, gun:true, blade:true, run:'gun', role:'a Janissary, the gate\'s guard' } },
+    ott:{ body:'robe', c1:'#B01E2E', c2:'#C99A4B', c3:'#A0503C', hem:58, vest:'#A0503C', shoe:'#B8873B', hat:{k:'bork'}, gun:true, blade:true, run:'gun', role:'a Janissary, the gate\'s guard' } },
 };
 const PROP = {
   // M49 — what each person's trade is, in their hand
@@ -343,6 +343,34 @@ function headSVG(c, o, view){
   return s;
 }
 
+// M83 — a Chinese silk robe's embroidery: a coiled dragon down the skirt, ruyi cloud scrolls
+// around it and a row of waves at the hem, in the robe's own flat style; from behind, the
+// dragon in a roundel between the shoulders. `m.d` is the dragon's thread, `m.w` the clouds and waves.
+function dragonSVG(view, m, L, R){
+  let s='';
+  // the waves at the hem: two rows of scallops
+  for(let x=L+8; x<R-14; x+=12) s+=`<path d="M${x},372 q6,-11 12,0" stroke="${m.w}" stroke-width="2.4" fill="none" stroke-linecap="round"/>`;
+  for(let x=L+14; x<R-14; x+=12) s+=`<path d="M${x},360 q6,-11 12,0" stroke="${m.w}" stroke-width="2.4" fill="none" stroke-linecap="round"/>`;
+  // ruyi cloud scrolls beside the dragon
+  const cloud=(x,y,k)=>`<path d="M${x},${y} q${-9*k},0 ${-9*k},${-8} q0,${-7} ${7*k},${-7} q${6*k},0 ${6*k},${5} q0,${4} ${-4*k},${4}" stroke="${m.w}" stroke-width="2.6" fill="none" stroke-linecap="round"/>`;
+  s+=cloud(78,326,1)+cloud(148,296,-1)+cloud(150,338,-1)+cloud(66,346,1);
+  // the dragon: a long body in three bends with scales, four legs with claws, a tail, and a
+  // head with horns, a mane, whiskers and an open mouth
+  s+=`<g transform="translate(-6,2)">`;
+  const body='M108,278 C84,286 82,302 102,309 C124,316 124,332 104,338 C88,344 88,354 108,353';
+  s+=`<path d="${body}" stroke="${m.d}" stroke-width="9" fill="none" stroke-linecap="round"/>`;
+  s+=`<path d="${body}" stroke="#F6EEDF" stroke-width="2" fill="none" stroke-linecap="round" stroke-dasharray="0.1 6"/>`;
+  s+=`<path d="M108,353 Q122,356 126,345 Q118,349 112,343" stroke="${m.d}" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>`;
+  s+=`<g stroke="${m.d}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M82,293 q-9,1 -10,9 M72,302 l-4,2 M72,302 l-1,4 M72,302 l3,3"/><path d="M123,321 q9,-1 10,-9 M133,312 l4,-2 M133,312 l1,-4 M133,312 l-3,-3"/><path d="M86,345 q-9,1 -10,9 M76,354 l-4,2 M76,354 l-1,4 M76,354 l3,3"/><path d="M128,331 q8,3 8,10 M136,341 l4,1 M136,341 l0,4 M136,341 l-3,2"/></g>`;
+  s+=`<g transform="translate(100,274) scale(1.35)"><path d="M12,-4 Q4,-12 -8,-9 Q-17,-6 -17,0 Q-17,4 -10,5 Q-4,8 12,6Z" fill="${m.d}"/><path d="M-17,1 Q-12,10 -3,9 Q-9,5 -17,1Z" fill="${m.d}"/><path d="M-16,3 Q-12,5 -8,4" stroke="#F6EEDF" stroke-width="1" fill="none"/><path d="M2,-9 Q6,-19 16,-21 M8,-14 Q12,-15 14,-11 M-4,-9 Q-2,-16 4,-18" stroke="${m.d}" stroke-width="2.6" fill="none" stroke-linecap="round"/><path d="M12,-4 Q20,-8 22,0 Q18,-1 17,5 Q14,2 12,6" fill="${m.d}"/><path d="M-17,-1 Q-26,-7 -31,-2 Q-24,0 -22,3 M-15,2 Q-23,7 -27,12" stroke="${m.d}" stroke-width="1.8" fill="none" stroke-linecap="round"/><circle cx="-6" cy="-3" r="2" fill="#F6EEDF"/><circle cx="-6" cy="-3" r=".9" fill="#25233F"/></g>`;
+  s+=`</g>`;
+  if(view==='b') {
+    // between the shoulders: a roundel with the dragon coiled in it
+    s+=`<circle cx="110" cy="192" r="15" fill="none" stroke="${m.d}" stroke-width="3"/><circle cx="110" cy="192" r="10" fill="none" stroke="${m.w}" stroke-width="1.8"/><path d="M110,184 C101,185 101,196 110,197 C118,197 118,190 112,190" stroke="${m.d}" stroke-width="4.6" fill="none" stroke-linecap="round"/><circle cx="110" cy="184" r="2.6" fill="${m.d}"/>`;
+  }
+  return s;
+}
+
 function torsoSVG(c, o, view){
   const b=o.body, cl='cp'+(uid++); let s='';
   const neck=`<path d="M101,130 L119,130 L120,154 Q110,160 100,154Z" fill="${c.sh}"/>`;
@@ -350,6 +378,7 @@ function torsoSVG(c, o, view){
     const hw=o.hem||57, L=110-hw, R=110+hw, q=hw/4.5;
     s+=`<path d="M78,150 Q110,141 142,150 L150,238 L${R},382 Q110,391 ${L},382 L70,238Z" fill="${o.c1}"/>`;
     s+=`<path d="M${L+3},378 Q110,387 ${R-3},378" stroke="${o.c2}" stroke-width="6" fill="none"/>`;
+    if(o.motif) s+=dragonSVG(view, o.motif, L, R);
     if(view==='f' && o.collar==='cross'){
       // M49 — the right lapel crosses over the left to the armpit
       s+=`<path d="M98,147 L118,147 L148,214 L138,220Z" fill="${o.c2}"/><path d="M100,147 L140,218" stroke="${o.c3}" stroke-width="2.4"/><path d="M96,148 Q110,158 124,148" stroke="${o.c2}" stroke-width="5" fill="none"/>`;

@@ -8,7 +8,7 @@ description: >
   (M64 to M69), the search filters (M70) and their Filters disclosure (M71), the gate stories (M72),
   Advanced Agent Servers (M73), vendor logos (M74), course call-out cards, Mermaid themes and Mihrî
   (M75), the For Everyone versions (M76 to M79), shared headings and logos (M80), and diagram
-  backgrounds and copy (M81), and Agentic UI (M82); and M41, the content bundle for the mobile reader. Each milestone carries its deliverables and acceptance
+  backgrounds and copy (M81), Agentic UI (M82), and the cast's colours (M83); and M41, the content bundle for the mobile reader. Each milestone carries its deliverables and acceptance
   criteria as `- [ ]` checkboxes, ticked as the work lands, and closes with a dated report; the loop
   that governs that is below, in this file.
   NOT here: why a choice was made (BRAINSTORM.md), or any rule that outlives the milestone
@@ -16,7 +16,7 @@ description: >
 authority: state
 writes: agent, every session
 status: active
-covers: "M50 to M82, 2026-11-06 onward, and M41, which part 2 held for PR #57"
+covers: "M50 to M83, 2026-11-06 onward, and M41, which part 2 held for PR #57"
 last_updated: 2026-11-09
 ---
 
@@ -1315,3 +1315,21 @@ to bind; the corpus always writes `)**X**` or `) X`, so no page shows it today.
 
 > **← Part 2: [`PROGRESS_2.md`](PROGRESS_2.md)** — M16 to M49. **← Part 1: [`PROGRESS_1.md`](PROGRESS_1.md)**
 > — M1 to M15. The loop is at the top of this file.
+
+## 🏁 Milestone M83: The cast's colours told apart, and Mei's dragon — DONE
+
+The author, 2026-11-09: Murat, Mei, Dariush and Piri wore clothes too alike (Dariush and Piri the
+same blue; Murat blue; Mei teal like Deniz). Changed at the source,
+`playground/2026-11-round-3/N-cast-final.html`, and the six art files re-captured with
+`node scripts/capture-cast.mjs`, so the playground and the site agree. D93 holds: Janissary red, imperial
+yellow silk, an indigo Persian blue against a slate scholar's blue.
+
+- [x] Murat's robe `#2E3A78` to `#B01E2E` (Janissary red); Mei's robe `#2F8C86` to `#E8B82B` (imperial
+      yellow); Piri's robe `#282864` to `#4F6F94` (slate blue); Dariush keeps `#282864`.
+- [x] Mei's embroidery: a coiled dragon down the skirt, ruyi cloud scrolls and a row of waves at the hem,
+      and from behind a dragon roundel between the shoulders (`dragonSVG` in the playground page).
+- [x] Nothing else moved: re-capturing before the edit gave a byte-identical tree; after it, Dariush,
+      Deniz, Bit and Mihrî are byte-identical, Murat's and Piri's four files differ only in that hex, and
+      Mei's differ by that hex plus the inserted dragon.
+- [x] Gate: typecheck; 1,459 unit and corpus tests; build, link check and bundle check; 562 browser tests
+      passed and 10 skipped. Screenshots in `playground/2026-11-round-4/shots-cast-colours/`.

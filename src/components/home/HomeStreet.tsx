@@ -197,7 +197,7 @@ function at(props: Record<string, string | number>): CSSProperties {
  * The reader is asked how they would like to read, and the five doors open into
  * the track they pick: For Engineers at `/sheets/<level>/`, For Everyone at
  * `/everyone/sheets/<level>/`. Two stalls stand side by side under two signs
- * that are buttons, the Sipahi beside the first and the Bazargan beside the
+ * that are buttons, the Sipahi beside the first and the Bezirgân beside the
  * second. Every door is rendered For Engineers, with the other address beside it
  * in `data-href-all`, so with no choice and no script the doors open For
  * Engineers and a link checker reads an address that always exists;
@@ -372,7 +372,8 @@ export function HomeStreet({ lang, displayClass }: { lang: ReadingLang; displayC
         </section>
 
         <section className="end">
-          <nav className="doors" aria-label={copy.doorsLabel}>
+          {/* A menu of levels, so its name stays English on every address (D113). */}
+          <nav className="doors" aria-label="Levels">
             {doors.map((door) => (
               <Link
                 key={door.slug}

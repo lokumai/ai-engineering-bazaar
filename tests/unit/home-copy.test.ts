@@ -99,8 +99,14 @@ describe('the home page copy table', () => {
     for (const person of CAST) {
       for (const [lang, row] of OTHERS) {
         const story = row.get(`cast.${person.id}.story`) ?? ''
-        expect(story, `${lang}: ${person.id}'s story does not name them as written`).toContain(person.name)
+        const named = new RegExp(`(^|[^\\p{L}])${person.name}([^\\p{L}]|$)`, 'u')
+        expect(story, `${lang}: ${person.id}'s story does not name them as written`).toMatch(named)
       }
     }
+  })
+
+  it.each(OTHERS)('%s keeps the tellers named as written', (lang, row) => {
+    const tellers = [...row].filter(([at]) => at.includes('teller') && at.endsWith('story')).map(([, text]) => text).join(' ')
+    for (const name of ['Sipahi', 'Bezirgân']) expect(tellers, `${lang} renamed ${name}`).toContain(name)
   })
 })

@@ -99,7 +99,6 @@ export interface HomeCopy {
   /** Said on a sign once it is chosen, beside a tick. */
   chosen: string
   /** The accessible name of the five doors. */
-  doorsLabel: string
   /**
    * The line under the doors, in two halves that wrap a track's name:
    * `<lead>For Engineers<tail>`. The name is substituted by `street/track.ts`
@@ -174,7 +173,6 @@ const EN: HomeCopy = {
     },
   },
   chosen: 'Chosen',
-  doorsLabel: 'Levels',
   opens: { lead: 'These doors open ', tail: '.' },
   other: { lead: 'Open them ', tail: ' instead' },
   castLabel: 'The people at the gate',
@@ -226,11 +224,11 @@ const TR: HomeCopy = {
       body:
         'LLM\'ler yalnızca eğitim verilerinde yeterince sık geçen şeyleri bilir. En yeni AI mühendisliği '
         + 'konuları henüz orada yok, bu yüzden bir model bunları iyi öğretemez. Buradaki her modülü, bu işi '
-        + 'mesleği olarak yapan AI mühendisleri yazıyor.',
+        + 'meslek olarak yapan AI mühendisleri yazıyor.',
     },
     sieve: {
       title: 'Yalnızca temel olanı anlatıyoruz.',
-      sub: 'AI mühendisliği için bir kopya kâğıdı, ders kitabı değil.',
+      sub: 'AI mühendisliği için hızlı bir başvuru kartı, ders kitabı değil.',
       body:
         'En önemli konuları burada öğren, ayrıntıları sonra kendin öğrenirsin. En çok işe yarayan '
         + 'fikirleri anlatıyoruz, gerisini anlatmıyoruz.',
@@ -238,7 +236,7 @@ const TR: HomeCopy = {
     lantern: {
       title: 'İşin çoğunu resimler yapıyor.',
       body:
-        'Her modülde resimler, diyagramlar ve kod var. Çoğu zaman meme\'ler de çıkar, bazen biraz brainrot '
+        'Her modülde resimler, diyagramlar ve kod var. Çoğu zaman meme\'ler de çıkar, bazen biraz brain rot '
         + 'bile, çünkü iyi bir meme bir fikri tek bakışta anlatabilir.',
     },
     signpost: {
@@ -274,7 +272,6 @@ const TR: HomeCopy = {
     },
   },
   chosen: 'Seçildi',
-  doorsLabel: 'Seviyeler',
   opens: { lead: 'Kapılar ', tail: ' yoluna açılıyor.' },
   other: { lead: 'Bunun yerine ', tail: ' yolunu aç' },
   castLabel: 'Kapıdaki insanlar',
@@ -297,7 +294,7 @@ const TR: HomeCopy = {
     },
     murat: {
       trade: 'Yeniçeri',
-      story: 'Murat kapıyı bekler. Buradan geçen her çeşit tüccarı görmüştür, öğrenmeye gelen herkesi içeri alır.',
+      story: 'Murat kapıyı bekler. Buradan geçen her çeşit tüccarı görmüş, öğrenmeye gelen herkesi içeri alır.',
     },
     mei: {
       trade: 'ipek tüccarı',
@@ -305,7 +302,7 @@ const TR: HomeCopy = {
     },
     piri: {
       trade: 'haritacı',
-      story: 'Piri denizciler için harita çizer. Bir kıyıdan emin olmadığı yere bunu haritaya yazar, çünkü yanlış harita, haritasız kalmaktan beterdir.',
+      story: 'Piri denizciler için harita çizer. Bir kıyıdan emin olmadığında bunu haritaya yazar, çünkü yanlış harita, haritasız kalmaktan beterdir.',
     },
   },
 }
@@ -329,8 +326,8 @@ const FA: HomeCopy = {
         + 'هر ماژولِ اینجا رو مهندس‌های AI نوشتن که کارشون ساختن همین چیزهاست.',
     },
     sieve: {
-      title: 'فقط چیزای ضروری رو می‌گیم.',
-      sub: 'یه cheatsheet برای مهندسی AI، نه یه کتاب درسی.',
+      title: 'فقط چیزای ضروری رو یاد می‌دیم.',
+      sub: 'یه برگه‌ی خلاصه برای مهندسی AI، نه یه کتاب درسی.',
       body:
         'مهم‌ترین موضوع‌ها رو همین‌جا یاد بگیر و جزئیات رو بعداً خودت یاد می‌گیری. '
         + 'ما ایده‌هایی رو یاد می‌دیم که از همه مهم‌ترن، و چیز دیگه‌ای نه.',
@@ -373,7 +370,6 @@ const FA: HomeCopy = {
     },
   },
   chosen: 'انتخاب شد',
-  doorsLabel: 'سطح‌ها',
   opens: { lead: 'این درها به مسیر ', tail: ' باز می‌شن.' },
   other: { lead: 'به‌جاش مسیر ', tail: ' رو باز کن' },
   castLabel: 'آدم‌های دم دروازه',

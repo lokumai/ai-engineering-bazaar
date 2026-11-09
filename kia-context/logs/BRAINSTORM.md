@@ -9,7 +9,7 @@ description: >
 authority: reasoning
 writes: agent, when a decision is taken
 status: active
-covers: "D97 to D115 so far, and D89, which part 2 held for PR #57 — 2026-11-06 onward"
+covers: "D97 to D116 so far, and D89, which part 2 held for PR #57 — 2026-11-06 onward"
 last_updated: 2026-11-09
 ---
 
@@ -513,6 +513,113 @@ rejected: the colours in `about.css` (a surface may hold no colour; they are the
 `components/about/palette.ts` and written into the page as custom properties, the `diagram-themes.ts`
 mechanism); rendering STORY.md through the module pipeline, which is built for modules; three.js, which no
 picked scene needs (1B6 is flat SVG).
+
+### D116 · Caravan is C4, Shadow Play, with one entry per trend (format 2), shown on sample data until the author's trends land — 2026-11-09
+
+**The design, picked by the author** from round 5 (`playground/2026-11-round-5/C1-caravan-designs.html`):
+*"I love C4 the shadow play!! it is very turkish!!"* A Karagöz screen: painted leather puppets on rods
+cross a lamplit cloth, and each trend is a prop that glows when reached. **His three changes, already in
+that file:** four moving characters in all (the leader on horseback, the driver with the lantern, two
+camels); the caravan walks a lower road and the props, their names and the year posts stand on an upper
+band, so nothing moving covers a stop; and the caravan starts at the far left, so the road ahead is open.
+**Kept from the mockup:** the strip (one bar a month, a draggable thumb, a slider to the keyboard), the
+year bar with the place beside it ("2023 · The oasis"), a stop that grows and opens a card on hover, focus
+or tap while the rest dim, Enter to keep, Escape to close, Tab and the arrows to walk the stops, wheel,
+drag and strip to travel, and reduced motion moving at once with nothing walking. **Filtering is by year
+only**, with no category chips. **Two defects of the mockup fixed:** its copy of the bar still showed an
+old `Curriculum` link (the page sits in the site's own bar, so it is gone), and in 2024 a stop's name sat
+over the year's medallion (a label now slides sideways, the shorter way, until it clears every post; a
+browser test walks the whole road and holds it). **Rejected:** C1 The Road, C2 Dunes in 3D, C3 The Map
+Table and C5 The Handscroll of round 5 v2, and the five chart designs of v1 (The Route, Lanes, Pulse,
+Night Caravan, Stall Row), by the author's pick.
+
+**The content format, format 2 of C2** (`C2-caravan-node-formats.html`, N2, the merchant's tag). The
+author: *"I need only 2. because if something deserves a module and it is new, it can be already found in
+emerging level. so caravan can act like a quick overview of whats trending."* One entry per trend: a
+title, a span of months (`end` null while open), ONE paragraph on what it was, and links grouped the way a
+module's References are, in one YAML file. **How it differs from C2's N2:** N2 drew one source link and
+"one or two plain sentences, up to 35 words"; here the links are grouped like References (articles,
+videos, tools, repositories, modules), as the author asked, and the text is ONE paragraph with **no word
+cap** (this milestone's call: the build refuses a second paragraph, and the author's own register keeps it
+short; a cap would be a number nobody chose). C2's merchant's `goods` field is dropped: a prop's colours
+come from its place on the road, so the author has nothing to fill in for the art. **Rejected:** N1 the milestone stone (a name and one link, too
+little to say what the trend was); N3 the caravanserai sign (a "why it mattered" sentence, a typed
+intensity and a module, the start of a page); N4 the ledger page (N3 plus typed sources and what else was
+on the road: a module's worth of writing per trend); N5 the postcard (the picture people shared, the most
+work to source well); and one markdown file per trend (the structure outweighs one paragraph, and a
+subject that needs a page is an Emerging module).
+
+**The pipeline's defaults, the author's ("I have made all the decisions needed"):** one stop per trend,
+spanning its start to its end month (C2's G3); about 16 to 48 trends in the end; a trend ends when people
+stop calling it new, which answers the round-5 note's question of a trend that became ordinary practice;
+a model release may date a trend's start and is never a trend; **strength is measured by the pipeline from
+evidence and never typed by the author** (C2's H3; H1, the editor's rubric, is rejected by this, and with
+it the round-5 note's `adjust` overrides; H2, how widely it was carried, survives as the method's
+two-family rule); English first, Turkish and Persian later under the modules' rules; agents research,
+measure and propose, and the author writes every sentence (`mini-courses/STORY.md`: *"No AI was allowed to
+write our content."*).
+
+**What this milestone chose, where the author had not:**
+- **The measured strength lives in its own file**, `mini-courses/caravan/strength.yaml`, which only the
+  pipeline writes, so the author's file holds only his fields and a quarterly run never edits it. The
+  pipeline's evidence (frozen queries, counts, the verified record of each link) is committed beside them
+  as `evidence/<id>.yaml`, read by nothing that ships, so a level can be recomputed. **Rejected:** the
+  round-5 note's three-file ledger with a separate `sources.yaml` (in format 2 a link's title sits in the
+  trend; its verification record is evidence); a `status: proposed` entry an agent may add to
+  `trends.yaml` (an agent would then write in the author's file).
+- **Until a real trend exists the page draws a placeholder sample from `src/`**
+  (`components/caravan/sample-trends.ts`), and `trends.yaml` ships empty. **Rejected:** sample trends in
+  `mini-courses/` (anything there is the author's content and is published as his, which is what
+  STORY.md's rule forbids), and a page with nothing on its road (the author could not judge the design).
+  The sample's external links carry no address (a sample source would be an unverified claim, MANIFESTO
+  rule 13); its module links are real, read from the curriculum, and a name that stops resolving is
+  dropped rather than failing the build. The first real trend replaces it whole, never mixed with it.
+- **The sample's sentences are agent-written, an approved exemption.** Twenty-two placeholder trends,
+  cut from the round-5 mockup, are shown on the live page while it is illustrative and not ready, which is
+  what the author asked the page to be. They are the one place on the site where words an agent wrote
+  are shown, labelled on the notice and on every trend, and they go with `sample-trends.ts` when the first
+  real trends land (M92). They are not content and are not in `mini-courses/`.
+- **The page opens with the notice the author asked for** (*"mention the above is illustrative and is
+  not ready"*): "Illustrative: the trends below are sample data and this page is not ready yet.", and
+  every trend says "Sample data, not checked". With real trends it says only that the page is not ready.
+- **The trail stays, above the notice.** Dropping it, as the home page does, was tried and refused by
+  `navigation.spec.ts`: every page but the front door carries a trail (D79), so the notice is the first
+  thing of the page's own content, directly under it.
+- **The phone width is the language's touch floor (767px), not the mockup's 720px**, which is no
+  breakpoint the language declares (`styling-references.test.ts` refuses one); the scene and the
+  stylesheet change at the same width.
+
+**After two reviews of PR #98** (2026-11-09):
+- **The stage fits the window.** The mockup's fixed 470 px stage put the caravan and the strip below the
+  fold on a laptop (1280x720). The stage is now as tall as the window leaves under it, between 300 and
+  470 px, the scene's heights and art scale with it while its pace across the road does not, and the year
+  bar and the place share the head's row. MEASURED at 1280x720: the stage ends at 643 px and the strip at
+  707 px of 720. **Rejected:** only shortening the head (still 120 px short at 720), and a smaller fixed
+  stage (it would waste the height a taller window has).
+- **The wheel's pace is the road's**: the whole road takes 3,000 px of wheel, against about 12,000 px when
+  one wheel pixel moved the picture one pixel; vertical wheel, Shift and a wheel, and a sideways swipe all
+  travel, and at either end the wheel scrolls the page.
+- **The card and the strip use the language's chrome**: the card is the code slab and the strip is the
+  bar, both dark in both themes by the language's own rules, so the mockup's night card and night strip
+  colours were not transcribed and no DESIGN.md deviation is needed. **Rejected:** transcribing them with
+  a deviation, which adds colours the language does not have for no visible gain. The theatre's own
+  colours stay page-scoped art in `palette.ts`, as About's (D115) are.
+- **A focus ring on the leather, the card or the strip is the lamp's colour**: the language's focus colour
+  is 2.56:1 on the night card and under 3:1 on the strip.
+- **The year bar marks the current year with `aria-current`**, not `aria-pressed` (it is a position, not a
+  toggle), and the place is announced only when a reader picks a year, never each time the road crosses
+  a January.
+- **The page says when the author's trends are not measured** ("Not measured yet: ..."), rather than
+  drawing a flat road as if nothing had been strong.
+
+**Caravan in the mobile bundle, later.** Not part of M91, which left `out/api/` byte-identical to
+`main`'s. When it joins, it is an additive v1 change (ARCHITECTURE §13): one document per language,
+`api/v1/caravan/<lang>.json`, from a static route handler with a strict schema in `schema.ts`, carrying
+the first and last month and, per trend, its `id`, `title` and `text` as `inlines`, `start`, `end`, its
+links by group (a module as a link target the way a module document carries one) and its measured
+strength by month, plus the month totals the land is drawn from, so the reader derives nothing; and an
+optional `caravan` field on the index naming each language's document, listed in `files` with its hash.
+Renaming or retyping any of it afterwards would be `api/v2/`, so the shape settles on the web first.
 
 ## Open questions
 

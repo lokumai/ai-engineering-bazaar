@@ -1,0 +1,1209 @@
+<!doctype html>
+<!--
+  Caravan, round 5: five designs for the page (C1 to C5) over one shared behaviour.
+
+  Every design hands its nodes to one controller (Timeline in the script), so all five
+  hover, focus, pin, filter and scroll the same way and differ only in what they draw:
+    hover or focus  -> the node grows, the card shows, the rest dims
+    click, tap, Enter -> the card stays (its links work); Escape or a click elsewhere lets go
+    Left/Right (and Up/Down) -> the next node in time; Home/End; Tab walks every node
+    wheel or trackpad -> sideways while the timeline can move; the scrubber below drags
+  One card element for the whole page, one element per node, so the load test (#C1&load,
+  ~200 nodes) costs the same per node as the sample.
+
+  The data is SAMPLE AND UNVERIFIED: widely known events, written short, with no
+  numbers or quotes, dates approximate. No layout depends on any one of them.
+  Theme: the bar's toggle, or #C1&dark. Built from /tmp/caravan-src by build.mjs.
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Caravan, five designs</title>
+<style>
+/* -- tokens: src/design/bazaar.css, both themes, under shorter names -------- */
+:root {
+  --ground:#fdfbf7; --raised:#ffffff; --sunken:#e6dac6; --line:#d8cbb4; --line2:#c3b299;
+  --ink:#20242e; --title:#1b1b47; --muted:#6a6558; --faint:#948d7d;
+  --bar:#282864; --on-bar:#fff; --on-bar-dim:#c9c6e4; --bar-hover:rgba(255,255,255,.10);
+  --chip:#fdfbf7; --on-chip:#1b1b47; --field:rgba(255,255,255,.08); --field-line:rgba(255,255,255,.25);
+  --primary:#282864; --on-primary:#fff; --focus:#a0503c; --ok:#2f8c86; --caution:#b8873b; --ornament:#c8a078;
+  --c1:#2f8c86; --c2:#282864; --c3:#7a4a86; --c4:#b8873b; --c5:#a0503c;
+  --band-a:#2f8c86; --band-b:#c8a078; --band-c:#a0503c;
+  --slab:#1d1f27; --slab-raised:#262933; --slab-ink:#e7e3d8; --slab-muted:#9aa0ad; --slab-line:#33363f; --slab-line2:#444854;
+  --sans:"Avenir Next", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --mono:ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  --ease:cubic-bezier(.22,.61,.36,1);
+  --logo-filter:none;
+  /* The six categories: five glazes and the muted ink, each with a shape. */
+  --k-models:var(--c2); --k-agents:var(--c1); --k-tools:var(--c4); --k-protocols:var(--c3); --k-research:var(--c5); --k-industry:var(--muted);
+  color-scheme:light;
+}
+:root.dark {
+  --ground:#1d1f27; --raised:#262933; --sunken:#181a21; --line:#33363f; --line2:#444854;
+  --ink:#e7e3d8; --title:#e9e6e0; --muted:#9aa0ad; --faint:#606571;
+  --primary:#848bd0; --on-primary:#1d1f27; --focus:#ad5b47;
+  --c2:#676daf; --c3:#91609d; --c5:#ad5b47; --band-c:#ad5b47;
+  --k-models:#848bd0; --logo-filter:invert(1);
+  color-scheme:dark;
+}
+* { box-sizing:border-box }
+html { overflow-x:clip }
+body { margin:0; background:var(--ground); color:var(--ink); font:16px/1.68 var(--sans); overflow-x:clip; -webkit-font-smoothing:antialiased }
+a { color:var(--primary) }
+button { font:inherit; color:inherit }
+:focus-visible { outline:2px solid var(--focus); outline-offset:2px }
+.sr { position:absolute; width:1px; height:1px; overflow:hidden; clip-path:inset(50%); white-space:nowrap }
+[data-cat] { --k:var(--k-models) }
+[data-cat="agents"] { --k:var(--k-agents) } [data-cat="tools"] { --k:var(--k-tools) } [data-cat="protocols"] { --k:var(--k-protocols) }
+[data-cat="research"] { --k:var(--k-research) } [data-cat="industry"] { --k:var(--k-industry) }
+.shp { width:12px; height:12px; flex:none; fill:var(--k) }
+
+/* -- the playground strip: not part of the design --------------------------- */
+.pg { background:#20242e; color:#fdfbf7; font:13.5px/1.5 var(--sans); padding:10px 22px 12px }
+.pg-row { display:flex; align-items:center; flex-wrap:wrap; gap:8px 14px }
+.pg b.tag { background:#b8873b; color:#20201c; padding:1px 8px; border-radius:3px; font-weight:700 }
+.pg-tabs { display:flex; flex-wrap:wrap; gap:4px }
+.pg-tabs button { border:1px solid #444854; background:#262933; color:#e7e3d8; border-radius:5px; padding:4px 10px; cursor:pointer; font-size:13px }
+.pg-tabs button[aria-pressed="true"] { background:#fdfbf7; color:#1b1b47; border-color:#fdfbf7; font-weight:600 }
+.pg-desc { margin:7px 0 0; color:#c9c6e4; max-width:110ch }
+.pg-desc b { color:#fff }
+.pg label { display:inline-flex; align-items:center; gap:6px; color:#c9c6e4; cursor:pointer }
+.pg .warn { color:#ddb46a }
+
+/* -- the bar (01's shell, simplified) -------------------------------------- */
+.top { background:var(--bar); color:var(--on-bar); position:sticky; top:0; z-index:40 }
+.top-in { display:flex; align-items:center; gap:16px; height:58px; padding:0 22px }
+.brand { display:flex; align-items:center; gap:10px; color:var(--on-bar); font:600 16px/1 var(--sans); text-decoration:none; flex:none }
+.brand img { width:32px; height:32px }
+.mainnav { display:flex; gap:2px; margin-left:4px; min-width:0; overflow-x:auto; scrollbar-width:none }
+.mainnav a { color:var(--on-bar-dim); padding:7px 11px; border-radius:5px; font:500 14.5px/1 var(--sans); text-decoration:none; display:inline-flex; align-items:center; height:32px; white-space:nowrap }
+.mainnav a:hover { background:var(--bar-hover); color:var(--on-bar) }
+.mainnav a[aria-current] { background:var(--chip); color:var(--on-chip); font-weight:600 }
+.sp { flex:1 }
+.srch { display:flex; align-items:center; gap:8px; height:33px; padding:0 11px; border:1px solid var(--field-line); border-radius:5px; background:var(--field); color:var(--on-bar-dim); font-size:14px; min-width:180px }
+.ib { width:33px; height:33px; flex:none; border:1px solid var(--field-line); border-radius:5px; background:var(--field); color:var(--on-bar); display:grid; place-items:center; cursor:pointer }
+.ib:hover { background:var(--bar-hover) }
+.band { height:18px; background-color:var(--bar);
+  background-image:linear-gradient(45deg,var(--band-a) 25%,transparent 25% 75%,var(--band-a) 75%),linear-gradient(45deg,var(--band-b) 25%,transparent 25% 75%,var(--band-b) 75%),linear-gradient(45deg,var(--band-c) 25%,transparent 25% 75%,var(--band-c) 75%);
+  background-size:18px 18px,18px 18px,54px 18px; background-position:0 0,9px 9px,27px 0; border-bottom:2px solid var(--ornament); position:sticky; top:58px; z-index:39 }
+@media (max-width:720px) {
+  .pg { padding:8px 12px } .pg-row { flex-wrap:nowrap; overflow-x:auto; scrollbar-width:none } .pg-tabs { flex-wrap:nowrap } .pg-tabs button { white-space:nowrap }
+  .pg-row > b.tag, .pg-row > label, .pg-row > #nodeCount, .pg-desc { display:none }
+}
+@media (max-width:900px) { .hide-s { display:none } .brand-w { position:absolute; width:1px; height:1px; overflow:hidden; clip-path:inset(50%) } .top-in { gap:10px; padding:0 12px } .mainnav a { padding:7px 8px } }
+
+/* -- the page head --------------------------------------------------------- */
+.cv-head { padding:22px clamp(16px,3.4vw,56px) 0; display:flex; align-items:flex-end; justify-content:space-between; gap:12px 24px; flex-wrap:wrap }
+.cv-head h1 { font:600 38px/1.16 var(--sans); letter-spacing:-.015em; color:var(--title); margin:0 0 6px }
+.cv-head p { margin:0; color:var(--muted); font-size:16px; max-width:62ch }
+.sample { display:inline-flex; align-items:center; gap:8px; border:1px dashed var(--line2); border-radius:4px; padding:5px 10px; font:600 12.5px/1.2 var(--sans); color:var(--muted); background:var(--raised); white-space:nowrap }
+.sample svg { width:13px; height:13px; fill:none; stroke:currentColor; stroke-width:1.6 }
+@media (max-width:720px) { .cv-head { padding-top:20px } .cv-head h1 { font-size:30px } }
+
+/* -- the toolbar ------------------------------------------------------------ */
+.cv-tools { display:flex; flex-wrap:wrap; align-items:center; gap:10px 20px; padding:18px clamp(16px,3.4vw,56px) 14px }
+.tg { display:flex; align-items:center; gap:4px; min-width:0 }
+.tg[aria-label="Year"] { border:1px solid var(--line); border-radius:7px; padding:3px; background:var(--raised) }
+.seg { border:0; background:none; padding:6px 12px; border-radius:5px; font:600 14.5px/1 var(--sans); color:var(--muted); cursor:pointer; font-variant-numeric:tabular-nums }
+.seg:hover { background:var(--sunken); color:var(--ink) }
+.seg[aria-pressed="true"] { background:var(--primary); color:var(--on-primary) }
+.tg-cats { flex-wrap:wrap; gap:6px }
+.chip { display:inline-flex; align-items:center; gap:7px; border:1px solid var(--line); background:var(--raised); border-radius:4px; padding:5px 10px; font:600 12.5px/1 var(--sans); color:var(--ink); cursor:pointer; height:30px }
+.chip:hover { border-color:var(--line2); background:var(--sunken) }
+.chip[aria-pressed="true"] { border-color:var(--ink); box-shadow:inset 0 0 0 1px var(--ink) }
+@media (max-width:720px) {
+  .cv-tools { gap:10px; padding:14px 16px 12px }
+  .tg[aria-label="Year"] { width:100%; justify-content:space-between }
+  .seg { flex:1; padding:9px 0; min-height:40px }
+  .tg-cats { flex-wrap:nowrap; overflow-x:auto; width:100%; scrollbar-width:none; padding-bottom:2px }
+  .chip { flex:none; height:36px }
+}
+
+/* -- the card --------------------------------------------------------------- */
+.cv-card { position:fixed; z-index:30; width:340px; max-width:calc(100vw - 32px); background:var(--raised); border:1px solid var(--line2);
+  border-radius:8px; padding:14px 16px 12px; box-shadow:0 12px 28px rgba(40,30,10,.13); font-size:14px; line-height:1.5; color:var(--ink);
+  border-top:3px solid var(--k); animation:cardIn 160ms var(--ease) }
+.cv-card[hidden] { display:none }
+@keyframes cardIn { from { opacity:0; transform:translateY(4px) } }
+.cc-top { display:flex; align-items:center; gap:10px; color:var(--muted); font-size:13.5px; margin-bottom:3px }
+.cc-org { display:inline-flex; align-items:center; gap:6px; color:var(--ink); font-weight:600 }
+.cc-when { margin-left:auto; font-variant-numeric:tabular-nums }
+.cc-title { font:600 18.5px/1.3 var(--sans); color:var(--title); margin:0 0 4px; letter-spacing:-.005em }
+.cc-line { margin:0 0 10px }
+.cc-meta { display:flex; align-items:center; justify-content:space-between; gap:10px; font-size:12.5px; font-weight:600; color:var(--muted); margin-bottom:10px }
+.cc-cat { display:inline-flex; align-items:center; gap:6px; color:var(--ink) }
+.cc-heat { display:inline-flex; align-items:center; gap:8px }
+.heat { display:inline-flex; gap:2px }
+.heat i { width:8px; height:8px; border-radius:2px; background:var(--sunken); box-shadow:inset 0 0 0 1px var(--line2) }
+.heat i.on { background:var(--ink); box-shadow:none }
+.heat-w { font-variant-numeric:tabular-nums }
+.cc-more { display:grid; gap:2px; border-top:1px solid var(--line); padding-top:8px }
+.cc-more a { display:grid; grid-template-columns:118px 1fr; gap:0 10px; padding:4px 6px; margin:0 -6px; border-radius:5px; color:var(--ink); text-decoration:none; font-size:13.5px }
+.cc-more a:hover { background:var(--sunken) }
+.cc-k { color:var(--muted); font-size:12.5px; padding-top:1px }
+.cc-lt { text-decoration:underline; text-decoration-color:var(--ornament); text-underline-offset:2px; font-weight:500 }
+.cc-site { grid-column:2; color:var(--muted); font-size:12.5px }
+.cc-sample { margin:8px 0 0; font-size:12px; color:var(--muted); font-style:italic }
+.cc-close { position:absolute; top:10px; right:10px; border:1px solid var(--line2); background:var(--raised); border-radius:5px; font-size:12.5px; padding:3px 8px; cursor:pointer; color:var(--muted) }
+.cc-close kbd { font:11px var(--mono); color:var(--faint); margin-left:3px }
+.cv-card.is-pinned .cc-top { padding-right:84px }
+.cv-card:not(.is-pinned) { pointer-events:auto }
+.cv-card.is-sheet { left:8px !important; right:8px; bottom:8px; top:auto !important; width:auto; max-width:none; border-radius:10px }
+.logo { width:18px; height:18px; flex:none; object-fit:contain; vertical-align:middle }
+.logo.mono { filter:var(--logo-filter) }
+.logo.mgram { display:inline-grid; place-items:center; border-radius:4px; background:var(--sunken); color:var(--title); font:700 11px/1 var(--sans); box-shadow:inset 0 0 0 1px var(--line2) }
+.cv-card.is-night { --raised:#1d1f27; --ink:#e7e3d8; --title:#f4efe5; --muted:#a8acb8; --line:#33363f; --line2:#444854; --sunken:#262933; --logo-filter:invert(1);
+  --k-models:#a3aae6; --k-protocols:#bb93c6; --k-research:#df8c72; --k-industry:#a8acb8; box-shadow:0 14px 36px rgba(0,0,0,.45) }
+.cv-card.is-night .heat i.on { background:#ddb46a }
+
+/* -- the scrubber ----------------------------------------------------------- */
+.scrub { position:relative; height:52px; margin:12px clamp(16px,3.4vw,56px) 0; border:1px solid var(--line); border-radius:7px; background:var(--raised); cursor:pointer; touch-action:none; user-select:none }
+.scrub-plain { height:30px }
+.scrub-art { position:absolute; inset:0; width:100%; height:100% }
+.scrub-area { fill:var(--sunken) } .scrub-line { fill:none; stroke:var(--line2); stroke-width:1.5 }
+.scrub-years span { position:absolute; top:0; bottom:0; border-left:1px solid var(--line); padding:3px 0 0 6px; font:600 12px/1 var(--sans); color:var(--muted); font-variant-numeric:tabular-nums }
+.scrub-plain .scrub-years span { padding-top:8px }
+.scrub-years span:first-child { border-left:0 }
+.scrub-thumb { position:absolute; top:3px; bottom:3px; left:0; border:2px solid var(--ink); border-radius:5px; background:color-mix(in srgb, var(--ink) 7%, transparent); cursor:grab }
+.scrub.is-drag .scrub-thumb { cursor:grabbing; background:color-mix(in srgb, var(--ink) 13%, transparent) }
+.scrub-thumb:focus-visible { outline:2px solid var(--focus); outline-offset:2px }
+.scrub.is-night { background:#14152f; border-color:#2f3060 }
+.scrub.is-night .scrub-area { fill:#26275c } .scrub.is-night .scrub-line { stroke:#ddb46a; stroke-opacity:.6 }
+.scrub.is-night .scrub-years span { color:#b8b0cf; border-color:#2f3060 }
+.scrub.is-night .scrub-thumb { border-color:#ddb46a; background:rgba(221,180,106,.10) }
+@media (max-width:720px) { .scrub { margin:10px 16px 0; height:44px } }
+
+/* -- nodes, the part every design shares ------------------------------------ */
+.nd { position:absolute; left:0; top:0; border:0; padding:0; background:none; cursor:pointer; outline:none; transition:opacity 180ms var(--ease) }
+.nd-mark { display:grid; place-items:center; transition:transform 180ms var(--ease) }
+.nd:focus-visible .nd-mark { outline:2px solid var(--focus); outline-offset:3px; border-radius:50% }
+.has-active .nd:not(.is-active) { opacity:.22 }
+.nd.is-out { opacity:.1 !important; pointer-events:none }
+.has-active .dimmable { opacity:.4 }
+.dimmable { transition:opacity 180ms var(--ease) }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { transition:none !important; animation:none !important; scroll-behavior:auto !important }
+}
+
+/* -- the stage: full bleed, scrolling inside itself ------------------------- */
+.stage-wrap { position:relative }
+.sc { overflow-x:auto; overflow-y:hidden; overscroll-behavior-x:contain; scrollbar-width:none; outline:none }
+.sc::-webkit-scrollbar { display:none }
+.track { position:relative }
+.track > svg { position:absolute; left:0; top:0 }
+.ax-base { stroke:var(--line2); stroke-width:1 }
+.ax-t { stroke:var(--line2) }
+.ax-m { font:500 12.5px var(--sans); fill:var(--muted); text-anchor:middle }
+.ax-m.jan { font-weight:700; fill:var(--ink) }
+
+/* the node's mark and its lifted label (C1, C3, C4) */
+.nd { width:0; height:0 }
+.nd .nd-mark { position:absolute; width:calc(var(--s, 16px) + 8px); height:calc(var(--s, 16px) + 8px); left:0; top:0; transform:translate(-50%,-50%) }
+.nd .nd-mark .shp { width:var(--s, 16px); height:var(--s, 16px); stroke:var(--ground); stroke-width:2; paint-order:stroke; overflow:visible }
+.nd.is-active .nd-mark { transform:translate(-50%,-50%) scale(1.6) }
+.nd-lab { position:absolute; left:0; bottom:var(--lift); transform:translateX(-50%); white-space:nowrap; font:600 13.5px/1.2 var(--sans); color:var(--title);
+  background:var(--raised); box-shadow:0 0 0 1px var(--line); padding:3px 8px; border-radius:4px; pointer-events:none; opacity:0; transition:opacity 150ms var(--ease) }
+.nd-lab::after { content:""; position:absolute; left:50%; top:100%; width:1px; height:calc(var(--lift) - 30px); background:var(--line2) }
+.nd-lab.rest, .nd.is-active .nd-lab { opacity:1 }
+.nd.is-active .nd-lab { z-index:3; box-shadow:0 0 0 1px var(--ink) }
+.nd.is-active { z-index:5 }
+.has-active .nd:not(.is-active) .nd-lab { opacity:0 }
+.has-active .nd:not(.is-active) .nd-lab.rest { opacity:.5 }
+
+/* ---------------------------------------------------------------- C1 Route */
+.d-C1 .sc { border-block:1px solid var(--line) }
+.yr-big { font:600 46px/1 var(--sans); letter-spacing:-.02em; fill:var(--line); }
+.yr-rule { stroke:var(--line); stroke-dasharray:3 5 }
+.hill-back { fill:color-mix(in srgb, var(--sunken) 42%, var(--ground)) }
+.hill { fill:var(--sunken); stroke:var(--line2); stroke-width:1 }
+.trail { fill:none; stroke:var(--title); stroke-opacity:.55; stroke-width:2.2; stroke-dasharray:1.5 7; stroke-linecap:round }
+.has-active .trail { stroke-opacity:.25 }
+:root.dark .hill-back { fill:#1a1c23 } :root.dark .hill { fill:#22242d } :root.dark .yr-big { fill:#2b2e37 }
+:root.dark .trail { stroke:var(--ornament); stroke-opacity:.6 }
+@media (max-width:720px) { .yr-big { font-size:34px } }
+
+/* ---------------------------------------------------------------- C2 Lanes */
+.lanes { display:flex; border-block:1px solid var(--line); background:var(--raised) }
+.lane-heads { flex:none; width:156px; border-right:1px solid var(--line2); background:var(--ground) }
+.lh-top { border-bottom:1px solid var(--line) }
+.lh { display:flex; align-items:flex-start; gap:8px; padding:15px 14px 0 22px; border-bottom:1px solid var(--line); font:600 14.5px/1.2 var(--sans); color:var(--ink) }
+.lh .shp { width:13px; height:13px; margin-top:1px }
+.lh-n { margin-left:auto; font:500 12.5px/1.3 var(--sans); color:var(--muted); font-variant-numeric:tabular-nums }
+.sc-lanes { flex:1; min-width:0 }
+.g-year { stroke:var(--line2) } .g-month { stroke:var(--line); stroke-opacity:.6 } .g-lane { stroke:var(--line) }
+.g-m { font:500 12.5px var(--sans); fill:var(--muted) } .g-y { font:700 14.5px var(--sans); fill:var(--title) }
+.g-now { stroke:var(--focus); stroke-width:1.5; stroke-dasharray:4 3 } .g-nowt { font:600 12.5px var(--sans); fill:var(--focus) }
+.pill { position:absolute; width:auto; height:26px; display:flex; align-items:center; gap:6px; padding:0 9px 0 8px; background:var(--raised); border:1px solid var(--line);
+  border-left:3px solid var(--k); border-radius:4px; font:600 12.5px/1 var(--sans); color:var(--ink); white-space:nowrap; overflow:hidden; transition:opacity 160ms var(--ease), box-shadow 160ms var(--ease) }
+.pill span { overflow:hidden; text-overflow:ellipsis }
+.pill:hover, .pill.is-active { max-width:none !important; z-index:6; border-color:var(--ink); border-left-color:var(--k); box-shadow:0 6px 16px rgba(40,30,10,.14); height:30px; margin-top:-2px; font-size:13.5px }
+.pill:focus-visible { outline:2px solid var(--focus); outline-offset:2px }
+.lh { transition:opacity 180ms var(--ease) }
+.d-C2.has-active .lh { opacity:.4 }
+.d-C2[data-active-cat="models"] .lh[data-cat="models"],
+.d-C2[data-active-cat="agents"] .lh[data-cat="agents"],
+.d-C2[data-active-cat="tools"] .lh[data-cat="tools"],
+.d-C2[data-active-cat="protocols"] .lh[data-cat="protocols"],
+.d-C2[data-active-cat="research"] .lh[data-cat="research"],
+.d-C2[data-active-cat="industry"] .lh[data-cat="industry"] { opacity:1 }
+/* the phone changelog */
+.vl { padding:0 16px 40px }
+.vl-year h2 { font:600 25px/1.28 var(--sans); letter-spacing:-.012em; color:var(--title); margin:22px 0 6px; display:flex; align-items:center; gap:12px; scroll-margin-top:90px }
+.vl-year h2::after { content:""; flex:1; height:2px; background:repeating-linear-gradient(90deg,var(--ornament) 0 6px,transparent 6px 12px) }
+.vl-month { display:grid; grid-template-columns:76px 1fr; gap:10px; padding:10px 0; border-bottom:1px solid var(--line) }
+.vl-m { font:600 13.5px/1.6 var(--sans); color:var(--muted); padding-top:6px }
+.vl ul { list-style:none; margin:0; padding:0; display:grid; gap:2px }
+.vrow { position:relative; display:grid; grid-template-columns:18px 1fr auto 14px; align-items:center; gap:8px; width:100%; min-height:44px; padding:6px 6px; border-radius:5px; text-align:left; scroll-margin:200px 0 120px }
+.vrow .nd-mark { position:static; width:18px; height:18px; transform:none !important }
+.vrow .nd-mark .shp { width:13px; height:13px }
+.vr-t { font:600 15px/1.3 var(--sans); color:var(--ink) }
+.vr-c { font:500 12.5px var(--sans); color:var(--muted) }
+.vr-chev { width:12px; height:12px; fill:none; stroke:var(--muted); stroke-width:1.6; transition:transform 160ms var(--ease) }
+.vrow.is-active, .vrow:hover { background:var(--sunken) }
+.vrow:focus-visible { outline:2px solid var(--focus); outline-offset:1px }
+.vrow[aria-expanded="true"] .vr-chev { transform:rotate(180deg) }
+.vr-more { display:none; padding:8px 8px 12px 32px; font-size:14px; line-height:1.5 }
+.vrow[aria-expanded="true"] + .vr-more { display:block }
+.vr-more .cc-title { display:none } .vr-more .cc-top { font-size:12.5px }
+.d-C2 .vl .nd { opacity:1 !important }
+.d-C2 .vl li:has(.is-out) { display:none }
+.d-C2:has(.vl) ~ .scrub { display:none }
+@media (max-width:720px) { main[data-design="C2"] .cv-tools { position:sticky; top:78px; z-index:20; background:var(--ground); border-bottom:1px solid var(--line) } }
+
+/* ---------------------------------------------------------------- C3 Pulse */
+.d-C3 .sc { border-block:1px solid var(--line); background:var(--raised) }
+.yb { fill:var(--sunken); fill-opacity:.35 } .yb-t { font:700 14.5px var(--sans); fill:var(--title) }
+.pg-grid { stroke:var(--line); stroke-dasharray:2 5 }
+.p-area { fill:color-mix(in srgb, var(--primary) 9%, transparent) }
+.p-line { fill:none; stroke:var(--title); stroke-width:2; stroke-linejoin:round }
+.p-dot { fill:var(--raised); stroke:var(--title); stroke-width:1.5 }
+.stem { stroke:var(--line2); stroke-width:1 }
+.d-C3 .nd .nd-mark .shp { stroke:var(--raised) }
+.xhair { position:absolute; left:0; top:36px; bottom:52px; width:0; border-left:1px dashed var(--ink); opacity:0; pointer-events:none; transition:opacity 120ms }
+.xh-read { position:absolute; bottom:6px; left:8px; white-space:nowrap; font:600 12.5px/1 var(--sans); color:var(--on-primary); background:var(--primary); padding:5px 8px; border-radius:4px; font-variant-numeric:tabular-nums }
+.p-key { margin:8px clamp(16px,3.4vw,56px) 0; font-size:13.5px; color:var(--muted) }
+.has-active .p-line, .has-active .p-area { opacity:.55 }
+
+/* ---------------------------------------------------------------- C4 Night */
+.d-C4 { background:#12132e; padding-bottom:14px; border-block:1px solid #2f3060 }
+.n-sky { fill:#12132e }
+.n-star { fill:#e7e3d8; fill-opacity:.55 } .n-star.big { fill-opacity:.85 }
+.n-far { fill:#1b1c48 } .n-near { fill:#25265e } .n-floor { fill:#0e0f26 }
+.n-route { fill:none; stroke:#ddb46a; stroke-width:2.2; stroke-dasharray:1.5 8; stroke-linecap:round; stroke-opacity:.8 }
+.n-m { font:500 12.5px var(--sans); fill:#9a94c4; text-anchor:middle } .n-m.jan { fill:#f4efe5; font-weight:700 }
+.n-yline { stroke:#ddb46a; stroke-opacity:.16; stroke-dasharray:2 6 }
+.n-stone { fill:#3a3b78; stroke:#ddb46a; stroke-opacity:.5 }
+.n-year { font:600 30px/1 var(--sans); fill:#ddb46a; text-anchor:middle; letter-spacing:-.01em }
+.moon { position:absolute; right:clamp(16px,6vw,90px); top:22px; width:54px; height:54px; pointer-events:none }
+.d-C4 .nd-lab { color:#f4efe5; background:#1d1e4a; box-shadow:0 0 0 1px #3d3e80 }
+.d-C4 .nd-lab::after { background:#6a68a8 }
+.d-C4 .nd.is-active .nd-lab { background:#2a2b66; box-shadow:0 0 0 1px #ddb46a }
+.d-C4 [data-cat] { --k-models:#a3aae6; --k-protocols:#bb93c6; --k-research:#df8c72; --k-industry:#b8b0cf; --k-agents:#63B2AB; --k-tools:#DDB46A }
+.serai .nd-mark { width:var(--w); height:var(--hh); transform:translate(-50%,-100%); transform-origin:50% 100%; border-radius:0 }
+.serai.is-active .nd-mark { transform:translate(-50%,-100%) scale(1.35) }
+.serai .nd-mark > svg:first-child { display:block; overflow:visible }
+.s-body { fill:#2d2e70; stroke:#ddb46a; stroke-width:1.5; stroke-opacity:.85 }
+.s-door { fill:#ddb46a; fill-opacity:.85 }
+.serai .sign { position:absolute; left:50%; top:-17px; width:13px; height:13px; transform:translateX(-50%); stroke:#12132e; stroke-width:2; paint-order:stroke }
+.lamp .nd-mark { width:22px; height:22px }
+.lamp .nd-mark .shp { width:11px; height:11px; stroke:#12132e }
+.lamp .nd-mark::before { content:""; position:absolute; inset:2px; border-radius:50%; background:radial-gradient(circle, rgba(221,180,106,.35), transparent 70%) }
+.serai:focus-visible .nd-mark { outline-color:#ddb46a; border-radius:4px; outline-offset:4px }
+.lamp:focus-visible .nd-mark { outline-color:#ddb46a }
+.caravan { position:absolute; left:0; top:0; overflow:visible; pointer-events:none; z-index:4 }
+.caravan .camel-body path:first-child, .caravan rect:not(.pack) { fill:#07081a }
+.caravan .tail { fill:none; stroke:#07081a; stroke-width:1.6; stroke-linecap:round }
+.caravan.back { scale:-1 1 }
+.caravan.walking .legs-a { animation:stride 520ms ease-in-out infinite alternate }
+.caravan.walking .legs-b { animation:stride 520ms ease-in-out infinite alternate-reverse }
+.caravan.walking .camel-body { animation:bob 260ms ease-in-out infinite alternate }
+.legs-a, .legs-b { transform-box:fill-box; transform-origin:50% 0 }
+@keyframes stride { from { transform:skewX(-14deg) } to { transform:skewX(14deg) } }
+@keyframes bob { to { transform:translateY(.8px) } }
+.d-C4.has-active .n-route { stroke-opacity:.4 }
+.d-C4 .scrub { margin-top:12px }
+
+/* ---------------------------------------------------------------- C5 Stalls */
+.sc-stalls { scroll-snap-type:x proximity; scroll-padding-inline:56px }
+.d-C5 .track { padding:20px 0 0 }
+.stalls { display:flex; align-items:flex-end; gap:18px; padding:0 56px }
+.stall { flex:none; display:flex; flex-direction:column; scroll-snap-align:start; transition:opacity 180ms var(--ease) }
+/* the roof: an arch scaled to the stall, as tall as the season was hot */
+.st-roof { height:var(--roof); background:color-mix(in srgb, var(--sunken) 55%, var(--ground)); border:1px solid var(--line2); border-bottom:0; border-radius:50% 50% 0 0 / min(64px, var(--roof)) min(64px, var(--roof)) 0 0;
+  margin:0 14px; display:flex; align-items:flex-end; justify-content:center; padding-bottom:8px }
+.st-h, .st-list { background:var(--raised); border-inline:1px solid var(--line) }
+.st-h { display:flex; align-items:center; justify-content:space-between; gap:8px; padding:11px 14px 9px; border-top:1px solid var(--line2); border-bottom:1px dashed var(--line2); border-radius:4px 4px 0 0 }
+.st-h h3 { margin:0; font:600 16px/1.2 var(--sans); color:var(--title) }
+.st-h h3 span { color:var(--muted); font-weight:500 }
+.st-heat { display:flex; align-items:center; gap:6px; font:600 12px var(--sans); color:var(--muted) } .st-heat .heat-w { display:none }
+.st-list { list-style:none; margin:0; padding:6px 6px 10px; display:grid; gap:1px; align-content:start; min-height:96px }
+.st-none { color:var(--faint); font-size:13.5px; padding:6px 8px }
+.row { position:relative; width:100%; height:auto; display:grid; grid-template-columns:18px 1fr auto; align-items:start; gap:8px; padding:6px 8px; border-radius:5px; text-align:left; transition:opacity 160ms var(--ease), background 120ms }
+.row .nd-mark { position:static; width:18px; height:18px; transform:none; margin-top:1px }
+.row .nd-mark .shp { width:12px; height:12px }
+.row.is-active .nd-mark { transform:scale(1.4) }
+.r-t { font:600 14px/1.3 var(--sans); color:var(--ink); overflow:hidden; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical }
+.r-m { font:500 12.5px/1.5 var(--sans); color:var(--muted) }
+.row.is-active, .row:hover { background:var(--sunken) }
+.row:focus-visible { outline:2px solid var(--focus); outline-offset:1px }
+.has-active .stall:not(:has(.is-active)) { opacity:.4 }
+.has-active .stall:has(.is-active) .row:not(.is-active) { opacity:.5 }
+.street { position:relative; height:36px; border-top:2px solid var(--line2) }
+.street span { position:absolute; top:0; height:30px; border-left:1px solid var(--line2); padding:6px 10px; font:700 14.5px/1 var(--sans); color:var(--title) }
+@media (max-width:720px) { .stalls { padding:0 16px; gap:14px } .sc-stalls { scroll-padding-inline:16px } }
+
+</style>
+</head>
+<body>
+<div class="pg">
+  <div class="pg-row"><b class="tag">Caravan C1 to C5</b><div class="pg-tabs" role="group" aria-label="Design"></div>
+    <label><input type="checkbox" id="loadBox"> Load test, three filler nodes a month</label><span id="nodeCount"></span></div>
+  <p class="pg-desc" id="pgDesc"></p>
+  <p class="pg-desc">Hover or Tab to a node; click, tap or Enter keeps it open; arrows walk in time; the strip under the timeline drags. <span class="warn">Sample data, not checked.</span></p>
+</div>
+<header class="top">
+  <div class="top-in">
+    <a class="brand" href="#" onclick="return false"><img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB3aWR0aD0iMTI4IiBoZWlnaHQ9IjEyOCIgdmlld0JveD0iMCAwIDEyOCAxMjgiPjxpbWFnZSB3aWR0aD0iMTI4IiBoZWlnaHQ9IjEyOCIgeGxpbms6aHJlZj0iZGF0YTppbWFnZS93ZWJwO2Jhc2U2NCxVa2xHUmd3WkFBQlhSVUpRVmxBNFdBb0FBQUFRQUFBQWZ3QUFmd0FBUVV4UVNMZ0ZBQUFCc0lYdG55RkoxaGYvZjQ1dHo2eDNQR3ZidG0zYnZEdTJiZHUyYmR2MkdVOW5SUHd1V3RVWkZYZDdFUkVUd0JPMUJndFZzd2F3eG1wbEJoTjNuUUdFeGtOOXpPQ2dGLzlxNEs4ZnVtMTNnTVpEVmN6aDBIZHE2TzFmZmU2Sms0RW1WTU1jOW5tSHBEYmxIRnRKK3ZXTGpuVndxMEp3MlBOVnJYTFUwRG0yU2RKM2I1b1BibjB2T096ODNLMVMxTWhUbTZSL3ZIUi9vTEYrRmh5V1BHT2pGTE5HbjZLVVhyUVBFRHowSzRjWmoveExhck42bTF0SjM3aGhkOEN0SHpsTXVPRTNVcHZWK3h3bERYejJtcGxnVGVnekRuYmg5NlUyYTR4VGxQU25GKzhQdVBVUk44SjVYNWRpVWdkempKSStkdlZjc05BbnpPSFVyMG94cWF1NWxmUzNGeDBJMWhjY2p2aXdGSk02SGFPa3R5N0MrZ0hyM3lHbHBNN25OdXZYdTJPbEJXc2UyYTRjVmVZT2ZXdGNjY1pibEtPS2pUb01MOHM1VGdOWjViYjVPcHJTM3BSYmxhVFNBczNQbE1xNnVyakZXNVJyNXV5cnJMS3VLZTdBd3FMT3dLdlc2bkthd2pZVWQwOWhJVXo1blZKWmR4Ukd3M1BWbG5WdGFjWUhGY3U2cmJDQS9WeXByS2NXTis1WHBkMVUzUFMvSzVkMVpYR3ovMWZhVXdvemxtOHI3ZVhGclZWcEw2UEJMQlMwT3BmMlhKc1lBR3RDR1lHRm0wdTdDVmkyY2hyZ1ZzYjBmNVoyN1M0UGZubEwvTnVIYmxnRWJ0MEQrNkZTU2RMZnQybm8vN3hrSFppSHJnVytvbGlXMU1hY2M0eFMrOXBWZ0hjck1QRlhTbVhscktGeksyMy8xRzFUTUErZG1ydFJ1YXdSNXlqcGg4Y0JidDBKcy83ZVI2UWNXK2tMMTgwRXQyNkVjZkFIcFQ0aUtXWHBUeTg1QUt5eE1Rc05USGtrWnZYYkdLWDAwcFdBMjVnRWg0a1AvRnA5T2JmU2pzL2V2eE9ZOWM1aHhoVS9sR0pma2hRbGJYcmJRZUNoSjhFREUyNyt2ZFFtOWUwY1d5bS81ekR3SGhod3dZK2ttTlRmYzVUMGhrWDRhS3pCTHZ1cUZMTXFHTFArZERJMklqZlk0MHRTU3Fwa3Ezd3VQcHdIMlAvVkc5VW0xVFBxUHpQRFVHWnd3c2NsSlZVMTZXZ0dCNGVUUGlrcFp0VzF6UmNPY2pqNFBWS0txbTZyaXdCbjRSdWxGRlhoVnBlQmNmUWZsYUtxbkhROEZ0WnRWYXRxcjhkNXZ3WlU2Nml6WU1vL2NxNVdxNHRoMlZiVksrbzgyRFZXTEdzL1dLbUtTYXRnNTRHcXJZY2xXK3FWdFcwNXJNdzErOTljbUwrcFpscUo4U1hGV2tsYVErQnJGY3ZhRitPTEZaTTJFTWIvWEtsV1dYa1Y3QktWYTZXcy9XQzlxcjRXMXRWdGRkMnl0TEp1a2xiRFRnUEtGVnNKOC85ZnI2eTBPeXpaVXJPQlhXRG5nWnB0WFFxN3REV0x1OEx1dVdaYUNXdFU3Nnk4SjZ5cjJwYUZzTFppTVg4bkdJY3AxU3BGbllSem1tSmhLUmFTVytsK0hFNVVLa3hLc1lRby9mVmlIRGlpc0pRLy9EWXB4YTdGcklFWExjWUJEbEl1YWtDWGM4NW5wWlM2bEpMMDVnM2dETjZ2ckFGdFhPNXc4bWVsbUxxU292VEJROEVEUSs2bVZFNUsrdWZabUFjNDcvdFNURjFJVWZyNmFlREcwTTU3dEtPUTNFcHYzd2tEUEREKytwOUlNWTFWYnFXZlhHbVlNYnlGaFQ5UmlybDd1WlYrZVFFNFF6cE11dUduVWt4amtWdnB0N2RNQW1mRWdUbXZrTlNtamtYcG40OU54NDFoZzhQazYzOGd4ZFN6S1AzcjhabmdqTmJnbURmL1QwcXhReWxwMjB1WGdqUGk0REQraXU5S0tmWWtTbHVlc1FROE1QcGdzUFN1SDBncDVtN2tLTDFsTlRTQjBRYUg1dEp2U0RtT0ttYmxONjJESnRCYmQyak8rSVNrTm85ZGJxVnZuZ1FlNkdWd3NMTStJYVU0a2h3bHZlTkE4RUR2UXdPYy9JRWRVa3hqRktYZjNlUzQwZXZnd0pFZmxuTE1RNlJXeXU4K0dOd1kyK0FCVmovdFQxS0t1WGRSMnY2VVdlQ01aWENEa3o0dEtiYXh6ZEtXMSs4SFpuVFFEV2JkOGpWSk1mY21acVczcjRPR01YZURJOS93UHczK3djTzdnaGtkdFFZNDRlM2JwWmhHRjdQMHJuM0JBMTMwQUV1dWVjM2JuM1NVZ1JzZERnMnc1dlVicFJUemlGS1czbnNJbU5GVmQ0WnVqSzY3dzRycnZ5RXA1bUZ5bEQ1NEZKalJaV3NhYnp4UW9qbUVVOTRmcFRaTFNxMzAxV1BCakhxR0Jsai91aWpsS09rdmR4cm1WTllOOW43eFh5WDkrUEg1NEZUWUhHWWRkTm82QjZmUzVneHVBdlVPN2haNElsdFdVRGdnTGhNQUFQQkNBSjBCS29BQWdBQStNUlNIUXFJaEREM0hNaEFCZ2xtQU5MZ0RzY3Z3M21xVmgvQWYxWDllOGhTWW51cC9wK2ovMWEvcGoyQVAwKy8ydlZVOHczN1BmdHY3di81QWU2SC9BZW9CL2ZmOHo2elAvVDlobjl5ZllBL1lEMDRmMmkrRFArMy83ajl1UGdJL212K0cvL0hzQWYvVDFBT0VBL2tINEFlQkg5OThDL3gzNkIvYWYzRHp4OE5mWFJxUjlxK0hYZWI4anRRWDJQNXhQMGZZcjdGL3FQUUw5d3Z1M2YwYWp2aGYyQVAxaDlIdjluNFUvbm5zQi96Lys1LzlIN3F2cGcvd1BIajljZXdML04vN1gveC9YcDlvZm9wZnJDNTVlRUI0K3FVc0lUSVI5c216YytnMEd4SSt5Y00vZUo5ZzZETjNwVDZyK3JBK3RSUHZJdnFKamR0UkFBWHFYVDdhWlRtTDUyZGJDTktOY3VqY09vMjQzLy8vL0NVQXBFUW5OdDlUbFZkNy9FVGVXSXplYzlPMGxKRytaaGpLWVlNdXU3M3JNY21aVkdsL3RaeU4xT1JPdThhNW1kUmZwME1qK0VpTGMvQ0dEa1ZRRzRtTEYvc3F5M0lrNmRyMkNWV1hPZStZVk9YOEJJTFZlTTl0QnRjTGF5SFlmb3A2OFl5c3ZKMldIV0tQbWR1Q09nS0YwQnEwcXZNb2UzS21lcTBYUTFWNHptY0FQTTRaREZhU1ZuUFRaTEtuNzN3RzFVb0tiWVRBQ3ZtU1pOZWV6MGxSVzFlV1p5TjB0U1Vab3E1V28vWVZMWURUZ2FvVEQwcjZBWWNWVE5QM3Q4SlN5YnJ5ZnZFKzlqdEpmTmJ0ZlVUWmpVVGxHdFRSVE1HL2Y2NmZPVDhHem43RWdhLzQyUkdXTUVETWkwMzl2MWRKdkFkTzRYaHhqS09oSkhyL3BsRStRZ0FBL3YrUHZDKy93Q0R2Zk85UVRPOFBBSHp5VFRQdkxJQXZQVGRxSmZNcDRRN2trR01EKzlHdHFycFArMFZWbHJGNGphejRNNERKbDBnWi9nK2U3RnpXM1VMVUhmaHNVcWpZN0N4VktBRW5nQy9nWm9FcWpLUEladGQ0czQ1OGdmKzV1SFJCRnZDR3JadXM3UGtKbGFVeGo4eUxIK3lUbkZ0OUpBTWI0dm5XK2w3K01KZnhrdmtpVlgzWVRJNTVvbGFoQjhyNjl6SWJVMVExTm1ialdaNkhKVk1OT0RUZFU4ekRBVEUrUzJ0Lzd5cEFDRi80dUpzZDJ0bkkwYUJ1NWE3SktlWi9ZblBpL3c4OVh2ckVtZXVuWEs2aExtZnptUHoyaUdYNEw1VjhRTVVCMG9uOWY5UXhOdnJtS3Jac3lzZjVyb0pOQk1LZzA5cTlWU1hXN1VDSzltaVVSaHlkRisvaXVIYVlrcVkrOGtSLzNjKzM4aWMyQTVtVXpJd0kvRXFFaEZxZ3AxZm5ZSzZUdlR2ZXFRd2JwV09IZ3BUUjEwcEFUZVprYm5aOEFEVm8ydGd2ajh2ZzBPNVdmR2Z3VUh1ZmR6Q1RZM3VnNFpZaHlWWWZyZXVuTUxEd3QzRUtSSy9ZdHp1UHZYU2VkU2tteHdhQlhVUjR6bXNWb3NuMnhxVDZ2TzdzdW5EY1hZdTNMRlNBUm5VVDNqNGtuRUNkNHNYQWdBelMyUUlnNjdldmdRaVdDdG1jWWtwcWpVQjlEVXZsOERLam9YNm1Nd3I3alNvRHJqaVFaVUtONDE2TGd3MDY5L1l4SXlIdjFmQWlSZjBQelg4WnhmdDhSZG80dVM1UHVlV1NlT09ra3gxdDRJU1FrblhBQ3F6dnRzaUNKOGVxak1VS2ZrbjJjTmVNT0tJZ3luby9NNXVZTVZKenBiS0labmVmY0VYeHVHbE9QeWVHMDlqRTM5NlpSUlpjc2FGUXhiemNLa05TenBhSlc2SWhtanB2L25Ddkw5N1MydHlPRVlQU0E0SkF1Ulh4K285dlFKeThESmx1SHRCUzQzS2xVTmwrUjl2eC9JRy83dzROVGdIOXN0dXl4NGNsS3dGS0dJOHRNSkUwUHZzTlQ1WGM1ZWdUeERWdHIxVVpVS29icWk0SDBpWW1ZdWx0VWJxSkdFT1NjU0FoVWVqNFA4WFI4Z3ozU2FoQi9uWkk5WHJMTEcrSi83cisrcHM3ZGlQbzhqKzFhRjg5MTZzS0VMcHZSb1ljb0RoQncvQTlGQmZSTjY2VGxIb1NOdnlUMnhVRmtwcG1QTVgyazR5STNiQms2SlFKekNkcXJTMHI0SVJjRlc3eVdCV2tMdEtnSnRtL1dYYkFWNUNSWlR3b0lHNDg4MVBwK0E0QTA3amkvRGNabXJMVHRTTURlWllqVWZkUFFoZ1poVW0wbzZqa3NTY2M5bXY0L3lyd1dMT0U3UTlHTkNRSU1kNjM2dldDSDE4RFRMOGQzSGNCdVEweXFlSEc5bVVxZTJ4ZTZIeDVnS2FKQVpGclAwTVNJVTRMSksrc2dWUGdUazkwNlAxOXlSNThDVnpyWmt0TkRrcFM3OVk3MUtsNkdKRVIwemk5SlpzL0Q0RnVacGJ1T0FFSnM5K3I5RVdlMDMya0JiR2I4TklmQ2RTUXU4N240UFlBLy9yOS82VXZOUmVhRFgybGJkMlVtKzZuVHdxVVE3S3pwbGlUWFVQUkhBS2lsRTRkaXhPM1RrR2hCaHNBcWFGeWNXblRGck5mT1FUTjc5RS9mQ3ArRmh4QmpSdC9wSDVhd1FxQzl6S0VhcFNpNGdPbEF0aTl0SHNrQnF1ZkZTeEhmc0Zrc1N3WnNrdXkxT3FWMmxSVkpWd2lQQkFvRHNhbmY1ZWxITHkwVGJnWnUxaDFQMGpyaXZYQk01b3g4RGlJRmF4MkVRbk9uVEJtTGVrdjcwMGRyamZCcDcrME1nSWpMQnB4d1FyS3YxOU9Zc3ViWEZuVEMvbjR5aWdhNllzaWlXcHNQYnk0NWtmVVpwRng5TFZjbVJyOWo5OWROekg4OTRUM2RVd3BFSmpSbk9JSXRJR1Q5dVg4cGFmUUVjWDdCL2EyNXRxdjlxTzFBdkRKaE1QNGJQTEdwVk82S2hMZjQza0szdjZGRnBDRlA1OS9mUE5uK1ZmckczdkdMOVdZeHQ5VUJhVlNBdUVUcU5ySlRYWjVpVFhpNmpHVU15ZWJSM1RMY28rbVdzdU9IVUxKZEtYSE9TQ1ZNVnhKTllnd0UxcS9NcjdXckNCN3NmOXVsUXU5ZGFmdGJOMDdNdzRud25CVllZcWJJYjdMYTFvQi9zR1J2YmVORFRvYmtvN1dCVkNyT0pKT1NQMG5HdUhLQUEwaDJQVlI1N0R0SXNiRUVtZmZuZHNCbDJwczFEZng3Tkd2Y1plSnJuQzMvTUgrNEVrSURiOFZuSU9TUURQUWQ3TnErYTZzOVAwaFJSa3MwbjhDSk53dWMvb3dpYmdqVHlmOER1Z0lSTGJqNUZQK3hLQXY3WW1TcTluaEQ2VElpNUwrZmdnc003YlFNOTFpOUFqbjI2UGp2dWdvdjNWVk1lT21hZkd4R040d2N3VGlPb0dhbC9tSjhTL3NzTWJ0QlMwa2ZkZlpYaVdtYzh3QTFGOWo1VnlwSU1LTU1icWx3a21jN3E5MndTV0VtRlhiQ0F4UU9TWTlYS1FqbGE1NTMxTVluODVKYkg0MG1XWi8zMHJVMVBJbFJFR3RLaUpQOEx0dHJzY09KTEFWY1ZNNkhkYVpyekdSVUR3MVBVa0MyT0ZHOURUVCs2MlNJSnpOSUVYR1dXTytKR2s2NHk0cW8rZ2dJMkc2d0hmVnQ4ZWxpYmd0bUlTa3prRzFzWldpZWlVOTNTQ0UwdWxKNlNsSjBpZFk1YVg5c3JyZHU1d1hZYndIaXpJMkZTZVRONU9Nd21SSlN4UlhnWEMxUWh1b0ZZSVYycC9iVDJtSUJuUzNCRWZ1Tzc2VlRTL0JGUURpNTVsMEVKZE1QMmkzU1dYcHRDVGpUT0hXamZpVTRNbTQ4R2tINDBpcjhUZit0SitwMXdaM2hGZEtvSlcwOGNrR0ptWkNpaVpnemMzbWlEUEdsNE8weXBMaDFXMHVsZkRHb1VkbEoveFNKUU1rVnF4ZEV5KzZ6WTdsL0YxdUhYYXpoWlRmcXZPdXBUbTNuK1FmLzBmYW4vRDNHanhGTUlsQzNhM0IrdFFPcnZOcWN5WFpnVGhMcitlcU11UVFVbDhSZFJ6WWhEdG14UFJqeEZxaEFNQnl0RzFiREhNT2l1ODlmRWtKbi9FRkdURjhVL3V2RXYrazNpek1XUncvYkJPZTdXSjI3VWlVMm5oNGhLUjhOaWgrbHRwUU1VL0ZUdGJUZllWQTJHci90aEJQUVgwZllKYWM3SjU4RWZVeUFaUzFpRmN1SnorZ0RKc2VmaUtkT2liSHFkaHQrQVc2SXdLUGN4RHZieXRONkxYUjlEZHdWV3R2TDQ5TkV4U1hiL3NzbU9LcTN6b29rWm9GOHRvMzRCdXYrbnkxVGV2NGZ2NXZPWWNvbU1MNm4rVW43SC9VZ3dKT3B1RHNIQS9jRThNTnFBNjNDVmpVRmdxNTdnVjJlS2FUdnVlWVhCbWMzVHRTdldzR0JnSkEyV2NxNTFKMThNbWJVZmFwK0NMeXB0K0xjbzlaaGIzZ2E5QU1HOFhBa0lmcWZsa01QYlRlcmM2UDJkbHg3MUFNUDk0T2hNOHp4TlY5TnZEZW8rL29WWmlTZlB1bzEvRkczdUVvTlJKNDFUZnVraGpqZ29sVHVqYzU1R2RpeDhZbEhiblB3eHZrcnpWaVVBVk45NS9vSWpybklZRVpuZDd6UHpjN2lyeWFNbnBTNzFzdk5tekxJUTRldlg1bm1wdUlrM1dSZHBrTlo1blVyZ2JWNE5jUyszUVRnVlFWdW4xcFN5VjdqMVN3cDI4TnVCZTdZbmJtUGFoN0piSUVnaFM0SE5RY2VTNkF0cWsyMktvd3pyTkdnUkN5R29UYk0yekc3Vlcyc21XQkdLVXZhOUIrc0ZiVVpIQmY1dlFPazFIYngycXF4SEt2cnRuMGNlZnNSdE5OTlYzTXBuR3hqLzVpakpYY0UzVzNmNzZ2V1E3TndTcDIvMW1id25nTEl3MUQvellveE9maExhQVYyT25FRFBOVTBlQjMra3lpT2RPdUVraGo0QjFnbCtRL2lWOVlzblR5LzhnQ0tObkJ5dGFBTFhNRFlWRi9jRjdvbkVmK0h2MytWM0RKNkJnUFY5N1Y4Lzl0ZlRITGxhcEdTeDZpbTdvOHNEWGEvNDRsUWdJa0RFSUlkUVAxbWsrRTdMazBlN2NVT0RoMERUSUJpZDhqcVlvQnhpbi9CUEpEVnQ0YlpMejNVcWxWNlZUQkEraW0zL21TK2NkTHNtUHZ3K3NIWVZDMEhTSHpTMUdFRnpiWTlKTWdGRHJEdFVWSmY2eXdmcyt1b2FZalc1K3E0MTg5cjdPci84Y3RKZElRLzZuTXZ0cG5ZWUJmUUQ2NDMyeHpBT2ZWaFZ1dllrajVoSTVUdkgwcGNRVTVGd0hqMzRINW1IUTNVSkc5YTNnM3JSc0E4OVZ0amxCa3RtWnFDajVOR3V6M0djQ2JsNWpSaExZMmpIY2dEVUxFZjJGTXJKbGZPR09jMENOMk1INnJ4dEQ0VEVXdjFJZmlXY0R6OXc2dGlUKzlsei9oN3crMStpbGpQMjJ1ZllwNTVyWXRXKzlsR0toWTJFTXh3eUJPcUNsVHFsQ01ZemJldVJ1S3c5QTRFYkQzNmdlQ3hlM3dLUGlZdUFWSnM0UXVKVk54ZDF5d0xwVjByZDNObkZFbDJVMzI2WkJzZG1sVUtYMGJTSUdPMjZFWnQzMVN2Sk5YTjF3QUM3bkdMQW5lc1NKTVZqalpDeXM4c3UxSm9ub0I1TEJjekpBblU2V21QM0xUZjM3bzB4RHJUWHRrZFVLRWhvNGcwS2R0LzdLMGVyY3RmMUFFMk1xZS9pQjFYZmtnN0ZuUjNNc2NKdEFHN1FJa21GTW1ZOFVaYjhURWcrbi9RYW95eFZLMVhDallabnFhS3l5ektXZVBBSWtHUS9ueDVEUHFvNHpYZCtxOFpZL1BRclltbGFoOE9NNjFDK1hxa2QyMVQ4SjZ2R2haYWFwL0FvZ2ErTSthdVpka1I3SU9qU3pQcXdxNG9NL3VZc1RmdnJkS293Mnc2dGx0NHlaMlZoWml4VHNpSmpwVVI5NzFlRU42NzVqTkNNaTY3clNNamo1K28zMHZHVVJMNllhcFNvd0xrTmZkUFBnUU1Raklna3F5aXErenN3NEhGUmM2SXh0MU5SMTJycSswb1JRRHVnU3ZLM2JpT2dEL0dFTlR1cHFFdkY2WUVzRkVMWUhYMmJSYXpMc3kxUE4xSUdPY2k1WVk3NUxWZUE5Q1NWZ05VSE9SZkk0eHpzT3E5VlZ4REdWRkJFd21tbHZaNWc1dENFeFhpS1hPZ1VJOU9RQ3gwVUdtVHBMbmRMQ2hRWEdKU1dNQTFtV09lWWFTK2RjWDl2YkZEQkp1NGFiNEx1T3hOTWpzMzVsK1VjYkJiblRZOG1uSUV3V1Nnc2lRWWZpdzRzY3pLdGV6VlczT29ObGpHcjQ5dWRXb2RNdG8vT3pyWG4vSlZuSFdwemVEVW9NOWgwUS9EbER3REJDV1NueUp2b0tRdGtubjhpdTd1cjBqK21EZkJJS2pjVndqempqWHZPNW54VXZac2phUkxzeHhmZWp3bUh5dHA3RnJkWHkvM3dHZ2Y4amVSejg2OU94dDZma3hDdXlEQXFMQzZlbGpTRFF3ZEd1VEFMWEV5Y3l0OG12elpsRENFb1Fmd1hZUlViTDExcmwzMndzZ2l4WDZQUWFrUUpzTEY3VTFHVVhoRzhBbGJVcWhlQlZ0bGdoMUc5azR2TXg1NmNaenNjL09LeUJsOTVUREk0clJOcnREYUhrZDRIeVRjZlRpaVZydjZ4QjdSY1IyTU1PN1grNTN0WVlZaDEyYkwyQmJmbU0wMEZ4anJmbnpCTW5FNGplbDMzNTZRencwZnN5Slg0dHVnNG5tSytYTDRLcHNLQWVray9KTE1SZjN2M3BYeml0eDBpNU9TTnFxV3U4Z3QzdWtPT2pYOTk2Y1dSMng0ektsWEVxOHNscVA4L2pzazFLY3JmdWJFYmk4c3ZCVHRzbGM4U3IwNXg5R3huajRxcXpZSEE3akZ6NW5UTzhodlV6V3NSMUxhVEtzNC90ejFQQ0wxV2QwbkMzdm5mMmYrZHQzVC84aGRhWGh1cjJSOEcwU3BUTEFXaWNIVVJ2cUtoY0tPem0rODMvRlJ3Qk0xQUltcm9lbnJRTWg4bnNOWUczbWtVTDdQZW42YlZydFZuNmI2WThtZEhWM3lzRjNzSi9FdkNvQXRqMFdvT2t3SVl5MGRNSzNTdlhUZFhJYm9LYklncEN6MEJKeHdSRE5vZitocldORmFLZ3FvcHNSVFJHTjNZdzQzZUJaZ3pycU15REtFenRUeGhrWjNjSUs3SGNycHhISCtaSE5iSURQb0JmTFdoY1lIcGNBZWJIbTVkbU9MZEFIWmtTWmR2Z2ZVUUpOLzZlVVRlK3NDSmVlTFVLZlpTOGlIcTJWcSsyV0hLa3NncHBHMEdZSHpIRUcvd2diK2ZocXhUS1JZdjFkVm4xVG4ralhzNXlic2tqRDVxVm92ZE1aNW16OCtTR3U0THZDWk5oRW42cHdEcDV2NURJZThrUi9EK1E5dUhYek1lMWpUaTdCOVJKcnNQWENFSzJHQ0gxTndqbjhpSWtXY21DV054SDkyTnQreWZpNER3b1hkNnJtMDBkTVl4NmdoYkRQT0YwTnlyT0Z4dytKaURkT1JaaS9wUkdYenNhalBvWmdEbUZ4ZzRjU0lKMWwxSlJHcXNhSmN6d0ZJOXhOUitPZi9mdTYvUEJMRFJZWHVFVVd1TmVub21pekNmaGMxSzJhU0l0UUs1Sm1CVk1qR055dzBDZndBQ2VPd2tFOTJkNTg4RVBScXVCQW1wWmpGUTJQZU4rT1RBSUQ2cUFBY0xIVUFmODlKSGs1bHo1VzNKVDg4TnN5V3JlUjU3WWZ2T3FzK1RUeHp3bTVUallmdjZrS29HNnJUTXFUZTFiRUkrV1diZE80eWxpTk1Yc0VRT2NKb08rdDZwTlhWVEdtenhVNXNiVkVMMGF6b1ptaGhFKzFMMmdzVXVXL0c2OHJmZ0J4UW1IVEpKMzlTWU1BK1QwYXFrRmhiMCtXYVJmT3ZFZTcwNmZocWdFSXQvOXRvZURJbjhQZjExd0E0aUJRa0tPSTU0QzZmL2dZZmZLL1ZpNkcrNkNJa2IrZmRKanQ0NW5MTGNtQm83VFMwRC9idUNVWEIxekVvNWZ1ck0vdW9kcmJ0S3ZqTmxMN1p3dEFFVnM4K01oeFpBbUR5blN1c3VIeHRBbWVQK1NXRGFFQk9EMmVDdmo1VS81eFJRL3FEU2Q1ZDAzTDI0NDZtLzlXOFgva0xWU0FVeHVGdGxxYzZBYU94TG9EM0g2V2FIcXU1L0Y0ZkVQbTI2bGNEa1pZbmQ1aXNwTERIQktmL3lkaEdWd20wSmdyem9kZW9BQW9YMjdxbmpJVVVUMzF4WkVsTVh5ZFVHSU9DOGFJT1IrUDg3Q1g0YVEvdEFSeS9sNkMrREFSWmIxYm9BQUFBQUFBIi8+PC9zdmc+Cg==" alt="" width="32" height="32"><span class="brand-w">AI Engineering Bazaar</span></a>
+    <nav class="mainnav" aria-label="Main">
+      <a href="#" onclick="return false">Home</a>
+      <a href="#" onclick="return false" class="hide-s">Curriculum</a>
+      <a href="#" onclick="return false">Catalog</a>
+      <a href="#" onclick="return false">Progress</a>
+      <a href="#" onclick="return false" aria-current="page">Caravan</a>
+    </nav>
+    <div class="sp"></div>
+    <div class="srch hide-s"><svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><circle cx="6.5" cy="6.5" r="4.5"/><path d="M10 10l4.5 4.5"/></svg>Search</div>
+    <button class="ib" id="themeBtn" type="button" aria-label="Dark theme" aria-pressed="false"><svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><circle cx="8" cy="8" r="3.4"/><path d="M8 1v1.6M8 13.4V15M1 8h1.6M13.4 8H15"/></svg></button>
+  </div>
+</header>
+<div class="band" aria-hidden="true"></div>
+
+<main id="main">
+  <div class="cv-head">
+    <div><h1>Caravan</h1><p>What was trending in AI engineering, month by month, since ChatGPT.</p></div>
+    <span class="sample"><svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6.2"/><path d="M8 4.6v4.2M8 10.8v.6"/></svg>Sample data, not checked</span>
+  </div>
+  <div class="cv-tools" id="tools"></div>
+  <section class="stage-wrap" id="wrap" aria-label="Timeline"></section>
+  <div id="scrub"></div>
+  <div style="height:40px"></div>
+</main>
+<div class="cv-card" id="card" hidden></div>
+<script>
+const LOGOS = {"openai":{"name":"OpenAI","mono":true,"src":"data:image/svg+xml;base64,PHN2ZyBmaWxsPSIjMDAwMDAwIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjEuNjggMS43NSAxNi42NSAxNi41IiB3aWR0aD0iMjAiIGhlaWdodD0iMjAiPjxwYXRoIGQ9Ik0xMS4yNDggMTguMjVxLS44MjUgMC0xLjU2OC0uMzE0YTQuMyA0LjMgMCAwIDEtMS4zMi0uODc0IDQgNCAwIDAgMS0xLjMwNC4yMTQgNCA0IDAgMCAxLTIuMDQ2LS41NDQgNC4yNyA0LjI3IDAgMCAxLTEuNTE4LTEuNDg1IDQgNCAwIDAgMS0uNTYtMi4wOTVxMC0uNDguMTMxLTEuMDRBNC40IDQuNCAwIDAgMSAyLjA0IDEwLjcxYTQuMDcgNC4wNyAwIDAgMSAuMDE3LTMuNCA0LjIgNC4yIDAgMCAxIDEuMDU2LTEuNDE4IDMuOCAzLjggMCAwIDEgMS42LS44NDIgMy45IDMuOSAwIDAgMSAuNzYtMS42ODNxLjU5My0uNzU5IDEuNDUxLTEuMTg4YTQuMDQgNC4wNCAwIDAgMSAxLjgzMi0uNDI5cS44MjUgMCAxLjU2Ny4zMTMuNzQyLjMxNCAxLjMyLjg3NWE0IDQgMCAwIDEgMS4zMDQtLjIxNXExLjEwNiAwIDIuMDQ2LjU0NWE0LjE0IDQuMTQgMCAwIDEgMS41MDEgMS40ODVxLjU3OC45NDEuNTc4IDIuMDk1IDAgLjQ4LS4xMzIgMS4wNC42Ni42MSAxLjAyMyAxLjQxOS4zNjMuNzkyLjM2MyAxLjY2NiAwIC44OTItLjM4IDEuNzE3YTQuMyA0LjMgMCAwIDEtMS4wNzIgMS40MzUgMy44IDMuOCAwIDAgMS0xLjU4NC44MjUgMy44IDMuOCAwIDAgMS0uNzc1IDEuNjgzIDQuMDYgNC4wNiAwIDAgMS0xLjQzNiAxLjE4OCA0LjA0IDQuMDQgMCAwIDEtMS44MzIuNDI5bS00LjA3Ni0yLjA2MnEuODI1IDAgMS40MzUtLjM0N2wzLjEwMy0xLjc4MmEuMzYuMzYgMCAwIDAgLjE2NC0uMzEzdi0xLjQyTDcuODgxIDE0LjYyYS42Ny42NyAwIDAgMS0uNzI2IDBsLTMuMTE4LTEuNzk4YS41LjUgMCAwIDEtLjAxNy4xMTV2LjE5OHEwIC44NDEuMzk2IDEuNTUxLjQxMy42OTMgMS4xMzkgMS4wODlhMy4yIDMuMiAwIDAgMCAxLjYxNy40MTJtLjE2NS0yLjY5YS40LjQgMCAwIDAgLjE4MS4wNXEuMDgzIDAgLjE2NS0uMDVsMS4yMzgtLjcxLTMuOTc3LTIuMzFhLjcuNyAwIDAgMS0uMzYzLS42NDN2LTMuNThxLS44MjUuMzYyLTEuMzIgMS4xMjJhMi45IDIuOSAwIDAgMC0uNDk1IDEuNjVxMCAuODA5LjQxMyAxLjU1LjQxMi43NDMgMS4wNzIgMS4xMjN6bTMuOTEgMy42NjNxLjg3NSAwIDEuNTg1LS4zOTZhMi45NiAyLjk2IDAgMCAwIDEuNTM0LTIuNjR2LTMuNTY0YS4zMi4zMiAwIDAgMC0uMTY1LS4yOTdsLTEuMjU0LS43MjZ2NC42MDRhLjcuNyAwIDAgMS0uMzYzLjY0M2wtMy4xMTkgMS43OTlhMyAzIDAgMCAwIDEuNzgzLjU3N20uNjI3LTYuMDM5VjguODc4TDEwLjAxIDcuODIyIDguMTI5IDguODc4djIuMjQ0bDEuODgxIDEuMDU2ek03LjA1NyA1Ljg1OWEuNy43IDAgMCAxIC4zNjMtLjY0NGwzLjExOS0xLjc5OGEzIDMgMCAwIDAtMS43ODItLjU3OHEtLjg3NCAwLTEuNTg0LjM5NkEyLjk2IDIuOTYgMCAwIDAgNi4wNSA0LjMyNGEzLjA3IDMuMDcgMCAwIDAtLjM5NiAxLjU1MXYzLjU0N3EwIC4xOTkuMTY1LjMxNGwxLjIzNy43MjZ6bTguMzgzIDcuODg3cS44MjUtLjM2NCAxLjMwMy0xLjEyMy40OTUtLjc1OC40OTUtMS42NWEzLjE1IDMuMTUgMCAwIDAtLjQxMi0xLjU1cS0uNDEzLS43NDMtMS4wNzMtMS4xMjNsLTMuMDg2LTEuNzgycS0uMDk5LS4wNjUtLjE4MS0uMDQ5YS4zLjMgMCAwIDAtLjE2NS4wNWwtMS4yMzguNjkyIDMuOTkzIDIuMzI3YS42LjYgMCAwIDEgLjI2NC4yNjQuNjQuNjQgMCAwIDEgLjEuMzYzem0tMy4zMTctOC4zODJhLjYzLjYzIDAgMCAxIC43MjYgMGwzLjEzNSAxLjgzMXYtLjI5N3EwLS43OTItLjM5Ni0xLjUwMWEyLjg2IDIuODYgMCAwIDAtMS4xMDUtMS4xNTVxLS43MS0uNDMtMS42NS0uNDMtLjgyNSAwLTEuNDM2LjM0N0w4LjI5NCA1Ljk0MWEuMzYuMzYgMCAwIDAtLjE2NS4zMTR2MS40MTh6Ii8+PC9zdmc+"},"anthropic":{"name":"Anthropic","mono":true,"src":"data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIGZpbGw9IiMwMDAwMDAiIHJvbGU9ImltZyIgdmlld0JveD0iMCAwIDI0IDI0IiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjxwYXRoIGQ9Ik0xNy4zMDQxIDMuNTQxaC0zLjY3MThsNi42OTYgMTYuOTE4SDI0Wm0tMTAuNjA4MiAwTDAgMjAuNDU5aDMuNzQ0MmwxLjM2OTMtMy41NTI3aDcuMDA1MmwxLjM2OTMgMy41NTI4aDMuNzQ0MkwxMC41MzYzIDMuNTQwOVptLS4zNzEyIDEwLjIyMzIgMi4yOTE0LTUuOTQ1NiAyLjI5MTQgNS45NDU2WiIvPjwvc3ZnPg=="},"claude":{"name":"Anthropic","mono":false,"src":"data:image/svg+xml;base64,PHN2ZyByb2xlPSJpbWciIHZpZXdCb3g9IjAgMCAyNCAyNCIgd2lkdGg9IjIwIiBoZWlnaHQ9IjIwIiBmaWxsPSIjRDk3NzU3IiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjxwYXRoIGQ9Im00LjcxNDQgMTUuOTU1NSA0LjcxNzQtMi42NDcxLjA3OS0uMjMwNy0uMDc5LS4xMjc1aC0uMjMwN2wtLjc4OTMtLjA0ODYtMi42OTU2LS4wNzI5LTIuMzM3NS0uMDk3MS0yLjI2NDYtLjEyMTQtLjU3MDctLjEyMTUtLjUzNDMtLjcwNDIuMDU0Ni0uMzUyMi40Nzk3LS4zMjE4LjY4Ni4wNjA4IDEuNTE3OS4xMDMyIDIuMjc2Ny4xNTc4IDEuNjUxNC4wOTcyIDIuNDQ2OC4yNTVoLjM4ODZsLjA1NDYtLjE1NzktLjEzMzYtLjA5NzEtLjEwMzItLjA5NzJMNi45NzMgOS44MzU2bC0yLjU1LTEuNjg3OS0xLjMzNTYtLjk3MTQtLjcyMjUtLjQ5MTgtLjM2NDMtLjQ2MTQtLjE1NzgtMS4wMDc4LjY1NTctLjcyMjUuODgwMy4wNjA3LjIyNDYuMDYwNy44OTI1LjY4NiAxLjkwNjQgMS40NzU0IDIuNDg5MyAxLjgzMzYuMzY0My4zMDM1LjE0NTctLjEwMzIuMDE4Mi0uMDcyOC0uMTY0LS4yNzMzLTEuMzUzOS0yLjQ0NjctMS40NDUtMi40ODkzLS42NDM1LTEuMDMyLS4xNy0uNjE5NGMtLjA2MDctLjI1NS0uMTAzMi0uNDY3NC0uMTAzMi0uNzI4NUw2LjI4Ny4xMzM1IDYuNjk5NyAwbC45OTU3LjEzMzYuNDE5LjM2NDIuNjE5MiAxLjQxNDcgMS4wMDE4IDIuMjI4MiAxLjU1NDMgMy4wMjk2LjQ1NTMuODk4NS4yNDI5LjgzMTguMDkxLjI1NWguMTU3OXYtLjE0NTdsLjEyNzUtMS43MDYuMjM2OC0yLjA5NDcuMjMwNy0yLjY5NTcuMDc4OS0uNzU4OS4zNzY0LS45MTA3Ljc0NjgtLjQ5MTguNTgyOC4yNzkzLjQ3OTcuNjg2LS4wNjY4LjQ0MzMtLjI4NTMgMS44NTE3LS41NTg2IDIuOTAyMS0uMzY0MyAxLjk0MjloLjIxMjVsLjI0MjktLjI0MjkuOTgzNS0xLjMwNTMgMS42NTE0LTIuMDY0My43Mjg2LS44MTk2Ljg1LS45MDQ2LjU0NjQtLjQzMTFoMS4wMzIxbC43NTkgMS4xMjkzLS4zNCAxLjE2NTctMS4wNjI1IDEuMzQ3OC0uODgwNCAxLjE0MTQtMS4yNjI4IDEuNy0uNzg5MyAxLjM2LjA3MjkuMTA5My4xODgyLS4wMTgzIDIuODUzNS0uNjA3IDEuNTQyMS0uMjc5NCAxLjgzOTYtLjMxNTcuODMxOC4zODg2LjA5MS4zOTQ2LS4zMjc4LjgwNzUtMS45NjcuNDg1Ny0yLjMwNzIuNDYxNC0zLjQzNjQuODEzNi0uMDQyNS4wMzA0LjA0ODYuMDYwNyAxLjU0ODIuMTQ1Ny42NjE4LjAzNjRoMS42MjFsMy4wMTc1LjIyNDcuNzg5Mi41MjIuNDczNi42Mzc2LS4wNzkuNDg1Ny0xLjIxNDIuNjE5My0xLjYzOTMtLjM4ODYtMy44MjUtLjkxMDctMS4zMTEzLS4zMjc5aC0uMTgyMnYuMTA5M2wxLjA5MjkgMS4wNjg2IDIuMDAzNSAxLjgwOTIgMi41MDc1IDIuMzMxNC4xMjc1LjU3NjgtLjMyMTguNDU1NC0uMzQtLjA0ODYtMi4yMDM5LTEuNjU3NS0uODUtLjc0NjgtMS45MjQ2LTEuNjIxaC0uMTI3NXYuMTdsLjQ0MzIuNjQ5NiAyLjM0MzYgMy41MjE0LjEyMTQgMS4wODA3LS4xNy4zNTIxLS42MDcxLjIxMjUtLjY2NzktLjEyMTQtMS4zNzIxLTEuOTI0NkwxNC4zOCAxNy45NTlsLTEuMTQxNC0xLjk0MjgtLjEzOTcuMDc5LS42NzQgNy4yNTUyLS4zMTU2LjM3MDMtLjcyODYuMjc5My0uNjA3MS0uNDYxNC0uMzIxOC0uNzQ2OC4zMjE4LTEuNDc1My4zODg2LTEuOTI0Ni4zMTU3LTEuNTMuMjg1My0xLjkwMDQuMTctLjYzMTQtLjAxMjEtLjA0MjUtLjEzOTcuMDE4Mi0xLjQzMjggMS45NjcyLTIuMTc5NiAyLjk0NDYtMS43MjQzIDEuODQ1Ni0uNDEyOC4xNjQtLjcxNjQtLjM3MDQuMDY2Ny0uNjYxOC40MDA4LS41ODg5IDIuMzg2LTMuMDM1NyAxLjQzODktMS44ODIuOTI5LTEuMDg2OC0uMDA2Mi0uMTU3OWgtLjA1NDZsLTYuMzM4NSA0LjExNjQtMS4xMjkzLjE0NTctLjQ4NTctLjQ1NTQuMDYwOC0uNzQ2Ny4yMzA3LS4yNDI5IDEuOTA2NC0xLjMxMTRaIi8+PC9zdmc+"},"meta":{"name":"Meta","mono":false,"src":"data:image/svg+xml;base64,PHN2ZyByb2xlPSJpbWciIHZpZXdCb3g9IjAgMCAyNCAyNCIgd2lkdGg9IjIwIiBoZWlnaHQ9IjIwIiBmaWxsPSIjMDQ2N0RGIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjxwYXRoIGQ9Ik02LjkxNSA0LjAzYy0xLjk2OCAwLTMuNjgzIDEuMjgtNC44NzEgMy4xMTNDLjcwNCA5LjIwOCAwIDExLjg4MyAwIDE0LjQ0OWMwIC43MDYuMDcgMS4zNjkuMjEgMS45NzNhNi42MjQgNi42MjQgMCAwIDAgLjI2NS44NiA1LjI5NyA1LjI5NyAwIDAgMCAuMzcxLjc2MWMuNjk2IDEuMTU5IDEuODE4IDEuOTI3IDMuNTkzIDEuOTI3IDEuNDk3IDAgMi42MzMtLjY3MSAzLjk2NS0yLjQ0NC43Ni0xLjAxMiAxLjE0NC0xLjYyNiAyLjY2My00LjMybC43NTYtMS4zMzkuMTg2LS4zMjVjLjA2MS4xLjEyMS4xOTYuMTgzLjNsMi4xNTIgMy41OTVjLjcyNCAxLjIxIDEuNjY1IDIuNTU2IDIuNDcgMy4zMTQgMS4wNDYuOTg3IDEuOTkyIDEuMjIgMy4wNiAxLjIyIDEuMDc1IDAgMS44NzYtLjM1NSAyLjQ1NS0uODQzYTMuNzQzIDMuNzQzIDAgMCAwIC44MS0uOTczYy41NDItLjkzOS44NjEtMi4xMjcuODYxLTMuNzQ1IDAtMi43Mi0uNjgxLTUuMzU3LTIuMDg0LTcuNDUtMS4yODItMS45MTItMi45NTctMi45My00LjcxNi0yLjkzLTEuMDQ3IDAtMi4wODguNDY3LTMuMDUzIDEuMzA4LS42NTIuNTctMS4yNTcgMS4yOS0xLjgyIDIuMDUtLjY5LS44NzUtMS4zMzUtMS41NDctMS45NTgtMi4wNTYtMS4xODItLjk2Ni0yLjMxNS0xLjMwMy0zLjQ1NC0xLjMwM3ptMTAuMTYgMi4wNTNjMS4xNDcgMCAyLjE4OC43NTggMi45OTIgMS45OTkgMS4xMzIgMS43NDggMS42NDcgNC4xOTUgMS42NDcgNi40IDAgMS41NDgtLjM2OCAyLjktMS44MzkgMi45LS41OCAwLTEuMDI3LS4yMy0xLjY2NC0xLjAwNC0uNDk2LS42MDEtMS4zNDMtMS44NzgtMi44MzItNC4zNThsLS42MTctMS4wMjhhNDQuOTA4IDQ0LjkwOCAwIDAgMC0xLjI1NS0xLjk4Yy4wNy0uMTA5LjE0MS0uMjI0LjIxMS0uMzI3IDEuMTItMS42NjcgMi4xMTgtMi42MDIgMy4zNTgtMi42MDJ6bS0xMC4yMDEuNTUzYzEuMjY1IDAgMi4wNTguNzkxIDIuNjc1IDEuNDQ2LjMwNy4zMjcuNzM3Ljg3MSAxLjIzNCAxLjU3OWwtMS4wMiAxLjU2NmMtLjc1NyAxLjE2My0xLjg4MiAzLjAxNy0yLjgzNyA0LjMzOC0xLjE5MSAxLjY0OS0xLjgxIDEuODE3LTIuNDg2IDEuODE3LS41MjQgMC0xLjAzOC0uMjM3LTEuMzgzLS43OTQtLjI2My0uNDI2LS40NjQtMS4xMy0uNDY0LTIuMDQ2IDAtMi4yMjEuNjMtNC41MzUgMS42Ni02LjA4OC40NTQtLjY4Ny45NjQtMS4yMjYgMS41MzMtMS41MzNhMi4yNjQgMi4yNjQgMCAwIDEgMS4wODgtLjI4NXoiLz48L3N2Zz4="},"gemini":{"name":"Google","mono":false,"src":"data:image/svg+xml;base64,PHN2ZyByb2xlPSJpbWciIHZpZXdCb3g9IjAgMCAyNCAyNCIgd2lkdGg9IjIwIiBoZWlnaHQ9IjIwIiBmaWxsPSIjOEU3NUIyIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjxwYXRoIGQ9Ik0xMS4wNCAxOS4zMlExMiAyMS41MSAxMiAyNHEwLTIuNDkuOTMtNC42OC45Ni0yLjE5IDIuNTgtMy44MXQzLjgxLTIuNTVRMjEuNTEgMTIgMjQgMTJxLTIuNDkgMC00LjY4LS45M2ExMi4zIDEyLjMgMCAwIDEtMy44MS0yLjU4IDEyLjMgMTIuMyAwIDAgMS0yLjU4LTMuODFRMTIgMi40OSAxMiAwcTAgMi40OS0uOTYgNC42OC0uOTMgMi4xOS0yLjU1IDMuODFhMTIuMyAxMi4zIDAgMCAxLTMuODEgMi41OFEyLjQ5IDEyIDAgMTJxMi40OSAwIDQuNjguOTYgMi4xOS45MyAzLjgxIDIuNTV0Mi41NSAzLjgxIi8+PC9zdmc+"},"google":{"name":"Google","mono":false,"src":"data:image/svg+xml;base64,PHN2ZyByb2xlPSJpbWciIHZpZXdCb3g9IjAgMCAyNCAyNCIgd2lkdGg9IjIwIiBoZWlnaHQ9IjIwIiBmaWxsPSIjNDI4NUY0IiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjxwYXRoIGQ9Ik0xMi40OCAxMC45MnYzLjI4aDcuODRjLS4yNCAxLjg0LS44NTMgMy4xODctMS43ODcgNC4xMzMtMS4xNDcgMS4xNDctMi45MzMgMi40LTYuMDUzIDIuNC00LjgyNyAwLTguNi0zLjg5My04LjYtOC43MnMzLjc3My04LjcyIDguNi04LjcyYzIuNiAwIDQuNTA3IDEuMDI3IDUuOTA3IDIuMzQ3bDIuMzA3LTIuMzA3QzE4Ljc0NyAxLjQ0IDE2LjEzMyAwIDEyLjQ4IDAgNS44NjcgMCAuMzA3IDUuMzg3LjMwNyAxMnM1LjU2IDEyIDEyLjE3MyAxMmMzLjU3MyAwIDYuMjY3LTEuMTczIDguMzczLTMuMzYgMi4xNi0yLjE2IDIuODQtNS4yMTMgMi44NC03LjY2NyAwLS43Ni0uMDUzLTEuNDY3LS4xNzMtMi4wNTNIMTIuNDh6Ii8+PC9zdmc+"},"deepseek":{"name":"DeepSeek","mono":false,"src":"data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIGZpbGw9IiM1Nzg2RkUiIHJvbGU9ImltZyIgdmlld0JveD0iMCAwIDI0IDI0IiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjxwYXRoIGQ9Ik0yMy43NDggNC42NTFjLS4yNTQtLjEyNC0uMzY0LjExMy0uNTEyLjIzMy0uMDUxLjA0LS4wOTQuMDktLjEzNy4xMzctLjM3Mi4zOTctLjgwNi42NTctMS4zNzMuNjI2LS44MjktLjA0Ni0xLjUzNy4yMTQtMi4xNjMuODQ4LS4xMzMtLjc4Mi0uNTc1LTEuMjQ4LTEuMjQ3LTEuNTQ4LS4zNTItLjE1NS0uNzA4LS4zMTEtLjk1NS0uNjUtLjE3Mi0uMjQtLjIxOS0uNTA5LS4zMDUtLjc3NC0uMDU1LS4xNi0uMTEtLjMyMy0uMjkzLS4zNS0uMi0uMDMxLS4yNzguMTM2LS4zNTYuMjc2LS4zMTMuNTcyLS40MzQgMS4yMDItLjQyMiAxLjg0LjAyNyAxLjQzNi42MzMgMi41OCAxLjgzOCAzLjM5My4xMzcuMDk0LjE3Mi4xODcuMTI5LjMyMy0uMDgyLjI4LS4xOC41NTMtLjI2Ni44MzMtLjA1NS4xNzktLjEzNy4yMTgtLjMyOC4xNGE1LjUgNS41IDAgMCAxLTEuNzM3LTEuMTc5Yy0uODU3LS44MjgtMS42MzEtMS43NDMtMi41OTctMi40NmExMiAxMiAwIDAgMC0uNjg5LS40N2MtLjk4NS0uOTU3LjEzLTEuNzQzLjM4Ny0xLjgzNi4yNy0uMDk4LjA5NC0uNDMzLS43NzgtLjQyOC0uODcyLjAwMy0xLjY3LjI5NS0yLjY4Ny42ODVhMyAzIDAgMCAxLS40NjUuMTM2IDkuNiA5LjYgMCAwIDAtMi44ODMtLjEwMWMtMS44ODUuMjEtMy4zOSAxLjEtNC40OTcgMi42MjJDLjA4MiA4Ljc3Ni0uMjMxIDEwLjg1NC4xNTIgMTMuMDJjLjQwMyAyLjI4NCAxLjU2OCA0LjE3NSAzLjM2IDUuNjUzIDEuODU3IDEuNTMzIDMuOTk3IDIuMjg0IDYuNDM4IDIuMTQgMS40ODItLjA4NSAzLjEzMi0uMjg0IDQuOTk0LTEuODYuNDcuMjM0Ljk2Mi4zMjggMS43OC4zOTguNjI5LjA1OCAxLjIzNS0uMDMxIDEuNzA1LS4xMjkuNzM1LS4xNTUuNjg0LS44MzYuNDE4LS45NjEtMi4xNTUtMS4wMDQtMS42ODItLjU5NS0yLjExMi0uOTI2IDEuMDk1LTEuMjk1IDIuNzY4LTMuNTk4IDMuMjg0LTYuNzMzLjA1LS4zNDYuMTE1LS44MzQuMTA4LTEuMTE0LS4wMDQtLjE3MS4wMzUtLjIzOC4yMy0uMjU3YTQuMiA0LjIgMCAwIDAgMS41NDUtLjQ3NWMxLjM5Ny0uNzYzIDEuOTYtMi4wMTYgMi4wOTMtMy41MTcuMDItLjIzLS4wMDQtLjQ2Ny0uMjQ3LS41ODhNMTEuNTggMTguMTY4Yy0yLjA4OC0xLjY0Mi0zLjEwMS0yLjE4My0zLjUyLTIuMTYtLjM5LjAyNC0uMzIuNDcyLS4yMzQuNzYzLjA5LjI4OC4yMDcuNDg3LjM3MS43NC4xMTQuMTY3LjE5Mi40MTYtLjExMy42MDMtLjY3My40MTYtMS44NDItLjE0LTEuODk3LS4xNjgtMS4zNjEtLjgwMS0yLjUtMS44Ni0zLjMwMS0zLjMwNi0uNzc1LTEuMzkzLTEuMjI1LTIuODg4LTEuMjk5LTQuNDgyLS4wMi0uMzg1LjA5NC0uNTIyLjQ3Ny0uNTkyYTQuNyA0LjcgMCAwIDEgMS41My0uMDM4YzIuMTMxLjMxMSAzLjk0NiAxLjI2NCA1LjQ2NyAyLjc3NC44NjguODYgMS41MjUgMS44ODcgMi4yMDIgMi44OS43MiAxLjA2NiAxLjQ5NCAyLjA4MiAyLjQ4IDIuOTE1LjM0OC4yOTEuNjI2LjUxMy44OTIuNjc3LS44MDIuMDktMi4xNC4xMDktMy4wNTUtLjYxNXptMS4wMDEtNi40NGEuMzA2LjMwNiAwIDAgMSAuNDE1LS4yODcuMy4zIDAgMCAxIC4xMTMuMDc0LjMuMyAwIDAgMSAuMDg2LjIxNGMwIC4xNy0uMTM2LjMwNy0uMzA4LjMwN2EuMzAzLjMwMyAwIDAgMS0uMzA2LS4zMDdtMy4xMSAxLjU5NmMtLjIuMDgxLS40LjE1MS0uNTkxLjE2YTEuMjUgMS4yNSAwIDAgMS0uNzk4LS4yNTRjLS4yNzQtLjIzLS40Ny0uMzU4LS41NTEtLjc1OGExLjcgMS43IDAgMCAxIC4wMTUtLjU4OGMuMDctLjMyNy0uMDA3LS41MzctLjIzOC0uNzI3LS4xODgtLjE1Ni0uNDI2LS4xOTktLjY4OS0uMTk5YS42LjYgMCAwIDEtLjI1NC0uMDc4LjI1My4yNTMgMCAwIDEtLjExNC0uMzU4IDEgMSAwIDAgMSAuMTkyLS4yMWMuMzU2LS4yMDIuNzY3LS4xMzYgMS4xNDYuMDE2LjM1Mi4xNDQuNjE4LjQwOCAxLjAwMS43ODIuMzkyLjQ1MS40NjIuNTc2LjY4NS45MTUuMTc2LjI2NC4zMzYuNTM2LjQ0Ni44NDguMDY2LjE5NC0uMDIuMzUzLS4yNS40NSIvPjwvc3ZnPg=="},"mcp":{"name":"Model Context Protocol","mono":true,"src":"data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIGZpbGw9IiMwMDAwMDAiIHJvbGU9ImltZyIgdmlld0JveD0iMCAwIDI0IDI0IiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjxwYXRoIGQ9Ik0xMy44NSAwYTQuMTYgNC4xNiAwIDAgMC0yLjk1IDEuMjE3TDEuNDU2IDEwLjY2YS44MzUuODM1IDAgMCAwIDAgMS4xOC44MzUuODM1IDAgMCAwIDEuMTggMGw5LjQ0Mi05LjQ0MmEyLjQ5IDIuNDkgMCAwIDEgMy41NDEgMCAyLjQ5IDIuNDkgMCAwIDEgMCAzLjU0MUw4LjU5IDEyLjk3bC0uMS4xYS44MzUuODM1IDAgMCAwIDAgMS4xOC44MzUuODM1IDAgMCAwIDEuMTggMGwuMS0uMDk4IDcuMDMtNy4wMzRhMi40OSAyLjQ5IDAgMCAxIDMuNTQyIDBsLjA0OS4wNWEyLjQ5IDIuNDkgMCAwIDEgMCAzLjU0bC04LjU0IDguNTRhMS45NiAxLjk2IDAgMCAwIDAgMi43NTVsMS43NTMgMS43NTNhLjgzNS44MzUgMCAwIDAgMS4xOCAwIC44MzUuODM1IDAgMCAwIDAtMS4xOGwtMS43NTMtMS43NTNhLjI2Ni4yNjYgMCAwIDEgMC0uMzk0bDguNTQtOC41NGE0LjE4NSA0LjE4NSAwIDAgMCAwLTUuOWwtLjA1LS4wNWE0LjE2IDQuMTYgMCAwIDAtMi45NS0xLjIxOGMtLjIgMC0uNDAxLjAyLS42LjA0OGE0LjE3IDQuMTcgMCAwIDAtMS4xNy0zLjU1MkE0LjE2IDQuMTYgMCAwIDAgMTMuODUgMG0wIDMuMzMzYS44NC44NCAwIDAgMC0uNTkuMjQ1TDYuMjc1IDEwLjU2YTQuMTg2IDQuMTg2IDAgMCAwIDAgNS45MDIgNC4xODYgNC4xODYgMCAwIDAgNS45MDIgMEwxOS4xNiA5LjQ4YS44MzUuODM1IDAgMCAwIDAtMS4xOC44MzUuODM1IDAgMCAwLTEuMTggMGwtNi45ODUgNi45ODRhMi40OSAyLjQ5IDAgMCAxLTMuNTQgMCAyLjQ5IDIuNDkgMCAwIDEgMC0zLjU0bDYuOTgzLTYuOTg1YS44MzUuODM1IDAgMCAwIDAtMS4xOC44NC44NCAwIDAgMC0uNTktLjI0NSIvPjwvc3ZnPg=="},"nvidia":{"name":"NVIDIA","mono":false,"src":"data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIGZpbGw9IiM3NkI5MDAiIHJvbGU9ImltZyIgdmlld0JveD0iMCAwIDI0IDI0IiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjxwYXRoIGQ9Ik04Ljk0OCA4Ljc5OHYtMS40M2E2LjcgNi43IDAgMCAxIC40MjQtLjAxOGMzLjkyMi0uMTI0IDYuNDkzIDMuMzc0IDYuNDkzIDMuMzc0cy0yLjc3NCAzLjg1MS01Ljc1IDMuODUxYy0uMzk4IDAtLjc4Ny0uMDYyLTEuMTU4LS4xODV2LTQuMzQ2YzEuNTI4LjE4NSAxLjgzNy44NTcgMi43NDcgMi4zODVsMi4wNC0xLjcxNHMtMS40OTItMS45NTItNC0xLjk1MmE2LjAxNiA2LjAxNiAwIDAgMC0uNzk2LjAzNW0wLTQuNzM1djIuMTM4bC40MjQtLjAyN2M1LjQ1LS4xODUgOS4wMSA0LjQ3IDkuMDEgNC40N3MtNC4wOCA0Ljk2NC04LjMzIDQuOTY0Yy0uMzcgMC0uNzMzLS4wMzUtMS4wOTUtLjA5N3YxLjMyNWMuMy4wMzUuNjEuMDYyLjkxLjA2MiAzLjk1NyAwIDYuODItMi4wMjMgOS41OTMtNC40MDguNDU5LjM3MSAyLjM0IDEuMjYzIDIuNzMgMS42NTItMi42MzMgMi4yMDgtOC43NzIgMy45ODQtMTIuMjUzIDMuOTg0LS4zMzUgMC0uNjUzLS4wMTgtLjk3MS0uMDUzdjEuODY0SDI0VjQuMDYzem0wIDEwLjMyNnYxLjEzMWMtMy42NTctLjY1NC00LjY3My00LjQ2LTQuNjczLTQuNDZzMS43NTgtMS45NDQgNC42NzMtMi4yNjJ2MS4yMzdIOC45NGMtMS41MjgtLjE4Ni0yLjczIDEuMjQ1LTIuNzMgMS4yNDVzLjY4IDIuNDEyIDIuNzM5IDMuMTFNMi40NTYgMTAuOXMyLjE2NC0zLjE5NyA2LjUtMy41MzNWNi4yMDFDNC4xNTMgNi41OSAwIDEwLjY1MyAwIDEwLjY1M3MyLjM1IDYuODAyIDguOTQ4IDcuNDJ2LTEuMjM3Yy00Ljg0LS42LTYuNDkyLTUuOTM2LTYuNDkyLTUuOTM2eiIvPjwvc3ZnPg=="},"microsoft":{"name":"Microsoft","mono":false,"src":"data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgdmlld0JveD0iMCAwIDIzIDIzIj48cGF0aCBmaWxsPSIjZjM1MzI1IiBkPSJNMSAxaDEwdjEwSDF6Ii8+PHBhdGggZmlsbD0iIzgxYmMwNiIgZD0iTTEyIDFoMTB2MTBIMTJ6Ii8+PHBhdGggZmlsbD0iIzA1YTZmMCIgZD0iTTEgMTJoMTB2MTBIMXoiLz48cGF0aCBmaWxsPSIjZmZiYTA4IiBkPSJNMTIgMTJoMTB2MTBIMTJ6Ii8+PC9zdmc+"},"openclaw":{"name":"OpenClaw","mono":false,"src":"data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMjAgMTIwIiBmaWxsPSJub25lIiByb2xlPSJpbWciIGFyaWEtbGFiZWxsZWRieT0idGl0bGUiIHdpZHRoPSIyMCIgaGVpZ2h0PSIyMCI+CiAgPGRlZnM+CiAgICA8bGluZWFyR3JhZGllbnQgaWQ9ImxvYnN0ZXItZ3JhZGllbnQiIHgxPSIwJSIgeTE9IjAlIiB4Mj0iMTAwJSIgeTI9IjEwMCUiPgogICAgICA8c3RvcCBvZmZzZXQ9IjAlIiBzdG9wLWNvbG9yPSIjZmY0ZDRkIi8+CiAgICAgIDxzdG9wIG9mZnNldD0iMTAwJSIgc3RvcC1jb2xvcj0iIzk5MWIxYiIvPgogICAgPC9saW5lYXJHcmFkaWVudD4KICA8L2RlZnM+CiAgCiAgPHBhdGggZD0iTTYwIDEwIEMzMCAxMCAxNSAzNSAxNSA1NSBDMTUgNzUgMzAgOTUgNDUgMTAwIEw0NSAxMTAgTDU1IDExMCBMNTUgMTAwIEM1NSAxMDAgNjAgMTAyIDY1IDEwMCBMNjUgMTEwIEw3NSAxMTAgTDc1IDEwMCBDOTAgOTUgMTA1IDc1IDEwNSA1NSBDMTA1IDM1IDkwIDEwIDYwIDEwWiIgZmlsbD0idXJsKCNsb2JzdGVyLWdyYWRpZW50KSIvPgogIAogIDxwYXRoIGQ9Ik0yMCA0NSBDNSA0MCAwIDUwIDUgNjAgQzEwIDcwIDIwIDY1IDI1IDU1IEMyOCA0OCAyNSA0NSAyMCA0NVoiIGZpbGw9InVybCgjbG9ic3Rlci1ncmFkaWVudCkiLz4KICAKICA8cGF0aCBkPSJNMTAwIDQ1IEMxMTUgNDAgMTIwIDUwIDExNSA2MCBDMTEwIDcwIDEwMCA2NSA5NSA1NSBDOTIgNDggOTUgNDUgMTAwIDQ1WiIgZmlsbD0idXJsKCNsb2JzdGVyLWdyYWRpZW50KSIvPgogIAogIDxwYXRoIGQ9Ik00NSAxNSBRMzUgNSAzMCA4IiBzdHJva2U9IiNmZjRkNGQiIHN0cm9rZS13aWR0aD0iMyIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+CiAgPHBhdGggZD0iTTc1IDE1IFE4NSA1IDkwIDgiIHN0cm9rZT0iI2ZmNGQ0ZCIgc3Ryb2tlLXdpZHRoPSIzIiBzdHJva2UtbGluZWNhcD0icm91bmQiLz4KICAKICA8Y2lyY2xlIGN4PSI0NSIgY3k9IjM1IiByPSI2IiBmaWxsPSIjMTgxQTFGIi8+CiAgPGNpcmNsZSBjeD0iNzUiIGN5PSIzNSIgcj0iNiIgZmlsbD0iIzE4MUExRiIvPgogIDxjaXJjbGUgY3g9IjQ2IiBjeT0iMzQiIHI9IjIuNSIgZmlsbD0iI0RERTJFOSIgb3BhY2l0eT0iMC44MiIvPgogIDxjaXJjbGUgY3g9Ijc2IiBjeT0iMzQiIHI9IjIuNSIgZmlsbD0iI0RERTJFOSIgb3BhY2l0eT0iMC44MiIvPgo8L3N2Zz4="},"langchain":{"name":"LangChain","mono":false,"src":"data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzkiIGhlaWdodD0iMjAiIHZpZXdCb3g9IjAgMCA0OTEuOSAyNTAiIHJvbGU9ImltZyIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iNDkxLjkiIGhlaWdodD0iMjUwIiByeD0iMTI1IiBmaWxsPSIjZmZmIi8+PHBhdGggZmlsbD0iIzFjM2MzYyIgZD0iTTM5My41Miw3NS4yYzkuNjYsOS42Niw5LjY2LDI1LjM4LDAsMzUuMDRsLTIxLjY0LDIxLjI5LS4yMi0xLjIyYy0xLjU4LTguNzUtNS43NC0xNi42OS0xMi4wMi0yMi45Ny00LjczLTQuNzItMTAuMzItOC4yMS0xNi42Mi0xMC4zNy0zLjkxLDMuOTMtNi4wNiw5LjA4LTYuMDYsMTQuNSwwLDEuMS4xLDIuMjQuMywzLjM4LDMuNDcsMS4yNSw2LjU0LDMuMTgsOS4xMiw1Ljc2LDkuNjYsOS42Niw5LjY2LDI1LjM4LDAsMzUuMDRsLTE4Ljg0LDE4Ljg0Yy00LjgzLDQuODMtMTEuMTcsNy4yNC0xNy41Miw3LjI0cy0xMi42OS0yLjQxLTE3LjUyLTcuMjRjLTkuNjYtOS42Ni05LjY2LTI1LjM4LDAtMzUuMDRsMjEuNjQtMjEuMjguMjIsMS4yMmMxLjU3LDguNzMsNS43MywxNi42NywxMi4wMywyMi45Niw0Ljc0LDQuNzQsOS45OSw3Ljg5LDE2LjI4LDEwLjA0bDEuMTYtMS4xNmMzLjUyLTMuNTIsNS40NS04LjIsNS40NS0xMy4xOSwwLTEuMTEtLjEtMi4yMi0uMjktMy4zMS0zLjYzLTEuMi02LjYyLTIuOTEtOS4zNC01LjYzLTMuOTItMy45Mi02LjM2LTguOTMtNy4wNC0xNC40OC0uMDUtLjQtLjA4LS43OS0uMTItMS4xOS0uNTQtNy4yMywyLjA3LTE0LjI5LDcuMTYtMTkuMzdsMTguODQtMTguODRjNC42Ny00LjY3LDEwLjg5LTcuMjUsMTcuNTItNy4yNXMxMi44NSwyLjU3LDE3LjUyLDcuMjVaTTQ5MS45LDEyNWMwLDY4LjkzLTU2LjA4LDEyNS0xMjUsMTI1SDEyNUM1Ni4wOCwyNTAsMCwxOTMuOTMsMCwxMjVTNTYuMDgsMCwxMjUsMGgyNDEuOUM0MzUuODIsMCw0OTEuOSw1Ni4wOCw0OTEuOSwxMjVaTTI0MC45LDE4Ny42OWMxLjk3LTIuMzktNy4xMy05LjEyLTguOTktMTEuNTktMy43OC00LjEtMy44LTEwLTYuMzUtMTQuNzktNi4yNC0xNC40Ni0xMy40MS0yOC44MS0yMy40NC00MS4wNS0xMC42LTEzLjM5LTIzLjY4LTI0LjQ3LTM1LjE3LTM3LjA0LTguNTMtOC43Ny0xMC44MS0yMS4yNi0xOC4zNC0zMC42OS0xMC4zOC0xNS4zMy00My4yLTE5LjUxLTQ4LjAxLDIuMTQuMDIuNjgtLjE5LDEuMTEtLjc4LDEuNTQtMi42NiwxLjkzLTUuMDMsNC4xNC03LjAyLDYuODEtNC44Nyw2Ljc4LTUuNjIsMTguMjguNDYsMjQuMzcuMi0zLjIxLjMxLTYuMjQsMi44NS04LjU0LDQuNyw0LjAzLDExLjgsNS40NiwxNy4yNSwyLjQ1LDEyLjA0LDE3LjE5LDkuMDQsNDAuOTcsMTguNiw1OS40OSwyLjY0LDQuMzgsNS4zLDguODUsOC42OSwxMi42OSwyLjc1LDQuMjgsMTIuMjUsOS4zMywxMi44MSwxMy4yOS4xLDYuOC0uNywxNC4yMywzLjc2LDE5LjkyLDIuMSw0LjI2LTMuMDYsOC41NC03LjIyLDguMDEtNS40Ljc0LTExLjk5LTMuNjMtMTYuNzItLjk0LTEuNjcsMS44MS00Ljk0LS4xOS02LjM4LDIuMzItLjUsMS4zLTMuMiwzLjEzLTEuNTksNC4zOCwxLjc5LTEuMzYsMy40NS0yLjc4LDUuODYtMS45Ny0uMzYsMS45NiwxLjE5LDIuMjQsMi40MiwyLjgxLS4wNCwxLjMzLS44MiwyLjY5LjIsMy44MiwxLjE5LTEuMiwxLjktMi45LDMuNzktMy40LDYuMjgsOC4zNywxMi42Ny04LjQ3LDI2LjI2LS44OS0yLjc2LS4xNC01LjIxLjIxLTcuMDcsMi40OC0uNDYuNTEtLjg1LDEuMTEtLjA0LDEuNzcsNy4zMy00LjczLDcuMjksMS42MiwxMi4wNS0uMzMsMy42Ni0xLjkxLDcuMy00LjMsMTEuNjUtMy42Mi00LjIzLDEuMjItNC40LDQuNjItNi44OCw3LjQ5LS40Mi40NC0uNjIuOTQtLjEzLDEuNjcsOC43OC0uNzQsOS41LTMuNjYsMTYuNTktNy4yNCw1LjI5LTMuMjMsMTAuNTYsNC42LDE1LjE0LjE0LDEuMDEtLjk3LDIuMzktLjY0LDMuNjQtLjc3LTEuNi04LjUzLTE5LjE5LDEuNTYtMTguOTEtOS44OCw1LjY2LTMuODUsNC4zNi0xMS4yMiw0Ljc0LTE3LjE3LDYuNTEsMy42MSwxMy43NSw1LjcxLDIwLjEzLDkuMTYsMy4yMiw1LjIsOC4yNywxMi4wNywxNSwxMS42Mi4xOC0uNTIuMzQtLjk4LjUzLTEuNTEsMi4wNC4zNSw0LjY2LDEuNyw1Ljc4LS44OCwzLjA1LDMuMTksNy41MywzLjAzLDExLjUyLDIuMjEsMi45NS0yLjQtNS41NS01LjgyLTYuNjktOC4yOVpNNDE5LjUxLDkyLjcyYzAtMTEuNjQtNC41Mi0yMi41Ny0xMi43My0zMC43OC04LjIxLTguMjEtMTkuMTQtMTIuNzMtMzAuNzktMTIuNzNzLTIyLjU4LDQuNTItMzAuNzksMTIuNzNsLTE4Ljg0LDE4Ljg0Yy00LjQsNC40LTcuNzQsOS41Ny05LjkzLDE1LjM2bC0uMTMuMzMtLjM0LjFjLTYuODQsMi4xMS0xMi44Nyw1LjczLTE3LjkyLDEwLjc4bC0xOC44NCwxOC44NGMtMTYuOTcsMTYuOTgtMTYuOTcsNDQuNiwwLDYxLjU3LDguMjEsOC4yMSwxOS4xNCwxMi43MywzMC43OCwxMi43M2gwYzExLjY0LDAsMjIuNTgtNC41MiwzMC43OS0xMi43M2wxOC44NC0xOC44NGM0LjM4LTQuMzgsNy43LTkuNTMsOS44OS0xNS4zMWwuMTMtLjMzLjM0LS4xMWM2LjcyLTIuMDYsMTIuOTItNS44LDE3Ljk1LTEwLjgybDE4Ljg0LTE4Ljg0YzguMjEtOC4yMSwxMi43My0xOS4xNCwxMi43My0zMC43OVpNMTcyLjM4LDE3My42Yy0xLjYyLDYuMzItMi4xNSwxNy4wOS0xMC4zNywxNy40LS42OCwzLjY1LDIuNTMsNS4wMiw1LjQ0LDMuODUsMi44OS0xLjMzLDQuMjYsMS4wNSw1LjIzLDMuNDIsNC40Ni42NSwxMS4wNi0xLjQ5LDExLjMxLTYuNzctNi42Ni0zLjg0LTguNzItMTEuMTQtMTEuNjItMTcuOVoiLz48L3N2Zz4="},"huggingface":{"name":"Hugging Face","mono":false,"src":"data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA5NSA4OCIgd2lkdGg9IjIyIiBoZWlnaHQ9IjIwIiBmaWxsPSJub25lIj4KCTxwYXRoIGZpbGw9IiNGRkQyMUUiIGQ9Ik00Ny4yMSA3Ni41YTM0Ljc1IDM0Ljc1IDAgMSAwIDAtNjkuNSAzNC43NSAzNC43NSAwIDAgMCAwIDY5LjVaIiAvPgoJPHBhdGgKCQlmaWxsPSIjRkY5RDBCIgoJCWQ9Ik04MS45NiA0MS43NWEzNC43NSAzNC43NSAwIDEgMC02OS41IDAgMzQuNzUgMzQuNzUgMCAwIDAgNjkuNSAwWm0tNzMuNSAwYTM4Ljc1IDM4Ljc1IDAgMSAxIDc3LjUgMCAzOC43NSAzOC43NSAwIDAgMS03Ny41IDBaIgoJLz4KCTxwYXRoCgkJZmlsbD0iIzNBM0I0NSIKCQlkPSJNNTguNSAzMi4zYzEuMjguNDQgMS43OCAzLjA2IDMuMDcgMi4zOGE1IDUgMCAxIDAtNi43Ni0yLjA3Yy42MSAxLjE1IDIuNTUtLjcyIDMuNy0uMzJaTTM0Ljk1IDMyLjNjLTEuMjguNDQtMS43OSAzLjA2LTMuMDcgMi4zOGE1IDUgMCAxIDEgNi43Ni0yLjA3Yy0uNjEgMS4xNS0yLjU2LS43Mi0zLjctLjMyWiIKCS8+Cgk8cGF0aAoJCWZpbGw9IiNGRjMyM0QiCgkJZD0iTTQ2Ljk2IDU2LjI5YzkuODMgMCAxMy04Ljc2IDEzLTEzLjI2IDAtMi4zNC0xLjU3LTEuNi00LjA5LS4zNi0yLjMzIDEuMTUtNS40NiAyLjc0LTguOSAyLjc0LTcuMTkgMC0xMy02Ljg4LTEzLTIuMzhzMy4xNiAxMy4yNiAxMyAxMy4yNloiCgkvPgoJPHBhdGgKCQlmaWxsPSIjM0EzQjQ1IgoJCWZpbGwtcnVsZT0iZXZlbm9kZCIKCQlkPSJNMzkuNDMgNTRhOC43IDguNyAwIDAgMSA1LjMtNC40OWMuNC0uMTIuODEuNTcgMS4yNCAxLjI4LjQuNjguODIgMS4zNyAxLjI0IDEuMzcuNDUgMCAuOS0uNjggMS4zMy0xLjM1LjQ1LS43Ljg5LTEuMzggMS4zMi0xLjI1YTguNjEgOC42MSAwIDAgMSA1IDQuMTdjMy43My0yLjk0IDUuMS03Ljc0IDUuMS0xMC43IDAtMi4zNC0xLjU3LTEuNi00LjA5LS4zNmwtLjE0LjA3Yy0yLjMxIDEuMTUtNS4zOSAyLjY3LTguNzcgMi42N3MtNi40NS0xLjUyLTguNzctMi42N2MtMi42LTEuMjktNC4yMy0yLjEtNC4yMy4yOSAwIDMuMDUgMS40NiA4LjA2IDUuNDcgMTAuOTdaIgoJCWNsaXAtcnVsZT0iZXZlbm9kZCIKCS8+Cgk8cGF0aAoJCWZpbGw9IiNGRjlEMEIiCgkJZD0iTTcwLjcxIDM3YTMuMjUgMy4yNSAwIDEgMCAwLTYuNSAzLjI1IDMuMjUgMCAwIDAgMCA2LjVaTTI0LjIxIDM3YTMuMjUgMy4yNSAwIDEgMCAwLTYuNSAzLjI1IDMuMjUgMCAwIDAgMCA2LjVaTTE3LjUyIDQ4Yy0xLjYyIDAtMy4wNi42Ni00LjA3IDEuODdhNS45NyA1Ljk3IDAgMCAwLTEuMzMgMy43NiA3LjEgNy4xIDAgMCAwLTEuOTQtLjNjLTEuNTUgMC0yLjk1LjU5LTMuOTQgMS42NmE1LjggNS44IDAgMCAwLS44IDcgNS4zIDUuMyAwIDAgMC0xLjc5IDIuODJjLS4yNC45LS40OCAyLjguOCA0Ljc0YTUuMjIgNS4yMiAwIDAgMC0uMzcgNS4wMmMxLjAyIDIuMzIgMy41NyA0LjE0IDguNTIgNi4xIDMuMDcgMS4yMiA1Ljg5IDIgNS45MSAyLjAxYTQ0LjMzIDQ0LjMzIDAgMCAwIDEwLjkzIDEuNmM1Ljg2IDAgMTAuMDUtMS44IDEyLjQ2LTUuMzQgMy44OC01LjY5IDMuMzMtMTAuOS0xLjctMTUuOTItMi43Ny0yLjc4LTQuNjItNi44Ny01LTcuNzctLjc4LTIuNjYtMi44NC01LjYyLTYuMjUtNS42MmE1LjcgNS43IDAgMCAwLTQuNiAyLjQ2Yy0xLTEuMjYtMS45OC0yLjI1LTIuODYtMi44MkE3LjQgNy40IDAgMCAwIDE3LjUyIDQ4Wm0wIDRjLjUxIDAgMS4xNC4yMiAxLjgyLjY1IDIuMTQgMS4zNiA2LjI1IDguNDMgNy43NiAxMS4xOC41LjkyIDEuMzcgMS4zMSAyLjE0IDEuMzEgMS41NSAwIDIuNzUtMS41My4xNS0zLjQ4LTMuOTItMi45My0yLjU1LTcuNzItLjY4LTguMDEuMDgtLjAyLjE3LS4wMi4yNC0uMDIgMS43IDAgMi40NSAyLjkzIDIuNDUgMi45M3MyLjIgNS41MiA1Ljk4IDkuM2MzLjc3IDMuNzcgMy45NyA2LjggMS4yMiAxMC44My0xLjg4IDIuNzUtNS40NyAzLjU4LTkuMTYgMy41OC0zLjgxIDAtNy43My0uOS05LjkyLTEuNDYtLjExLS4wMy0xMy40NS0zLjgtMTEuNzYtNyAuMjgtLjU0Ljc1LS43NiAxLjM0LS43NiAyLjM4IDAgNi43IDMuNTQgOC41NyAzLjU0LjQxIDAgLjctLjE3LjgzLS42Ljc5LTIuODUtMTIuMDYtNC4wNS0xMC45OC04LjE3LjItLjczLjcxLTEuMDIgMS40NC0xLjAyIDMuMTQgMCAxMC4yIDUuNTMgMTEuNjggNS41My4xMSAwIC4yLS4wMy4yNC0uMS43NC0xLjIuMzMtMi4wNC00LjktNS4yLTUuMjEtMy4xNi04Ljg4LTUuMDYtNi44LTcuMzMuMjQtLjI2LjU4LS4zOCAxLS4zOCAzLjE3IDAgMTAuNjYgNi44MiAxMC42NiA2LjgyczIuMDIgMi4xIDMuMjUgMi4xYy4yOCAwIC41Mi0uMS42OC0uMzguODYtMS40Ni04LjA2LTguMjItOC41Ni0xMS4wMS0uMzQtMS45LjI0LTIuODUgMS4zMS0yLjg1WiIKCS8+Cgk8cGF0aAoJCWZpbGw9IiNGRkQyMUUiCgkJZD0iTTM4LjYgNzYuNjljMi43NS00LjA0IDIuNTUtNy4wNy0xLjIyLTEwLjg0LTMuNzgtMy43Ny01Ljk4LTkuMy01Ljk4LTkuM3MtLjgyLTMuMi0yLjY5LTIuOWMtMS44Ny4zLTMuMjQgNS4wOC42OCA4LjAxIDMuOTEgMi45My0uNzggNC45Mi0yLjI5IDIuMTctMS41LTIuNzUtNS42Mi05LjgyLTcuNzYtMTEuMTgtMi4xMy0xLjM1LTMuNjMtLjYtMy4xMyAyLjIuNSAyLjc5IDkuNDMgOS41NSA4LjU2IDExLS44NyAxLjQ3LTMuOTMtMS43MS0zLjkzLTEuNzFzLTkuNTctOC43MS0xMS42Ni02LjQ0Yy0yLjA4IDIuMjcgMS41OSA0LjE3IDYuOCA3LjMzIDUuMjMgMy4xNiA1LjY0IDQgNC45IDUuMi0uNzUgMS4yLTEyLjI4LTguNTMtMTMuMzYtNC40LTEuMDggNC4xMSAxMS43NyA1LjMgMTAuOTggOC4xNS0uOCAyLjg1LTkuMDYtNS4zOC0xMC43NC0yLjE4LTEuNyAzLjIxIDExLjY1IDYuOTggMTEuNzYgNy4wMSA0LjMgMS4xMiAxNS4yNSAzLjQ5IDE5LjA4LTIuMTJaIgoJLz4KCTxwYXRoCgkJZmlsbD0iI0ZGOUQwQiIKCQlkPSJNNzcuNCA0OGMxLjYyIDAgMy4wNy42NiA0LjA3IDEuODdhNS45NyA1Ljk3IDAgMCAxIDEuMzMgMy43NiA3LjEgNy4xIDAgMCAxIDEuOTUtLjNjMS41NSAwIDIuOTUuNTkgMy45NCAxLjY2YTUuOCA1LjggMCAwIDEgLjggNyA1LjMgNS4zIDAgMCAxIDEuNzggMi44MmMuMjQuOS40OCAyLjgtLjggNC43NGE1LjIyIDUuMjIgMCAwIDEgLjM3IDUuMDJjLTEuMDIgMi4zMi0zLjU3IDQuMTQtOC41MSA2LjEtMy4wOCAxLjIyLTUuOSAyLTUuOTIgMi4wMWE0NC4zMyA0NC4zMyAwIDAgMS0xMC45MyAxLjZjLTUuODYgMC0xMC4wNS0xLjgtMTIuNDYtNS4zNC0zLjg4LTUuNjktMy4zMy0xMC45IDEuNy0xNS45MiAyLjc4LTIuNzggNC42My02Ljg3IDUuMDEtNy43Ny43OC0yLjY2IDIuODMtNS42MiA2LjI0LTUuNjJhNS43IDUuNyAwIDAgMSA0LjYgMi40NmMxLTEuMjYgMS45OC0yLjI1IDIuODctMi44MkE3LjQgNy40IDAgMCAxIDc3LjQgNDhabTAgNGMtLjUxIDAtMS4xMy4yMi0xLjgyLjY1LTIuMTMgMS4zNi02LjI1IDguNDMtNy43NiAxMS4xOGEyLjQzIDIuNDMgMCAwIDEtMi4xNCAxLjMxYy0xLjU0IDAtMi43NS0xLjUzLS4xNC0zLjQ4IDMuOTEtMi45MyAyLjU0LTcuNzIuNjctOC4wMWExLjU0IDEuNTQgMCAwIDAtLjI0LS4wMmMtMS43IDAtMi40NSAyLjkzLTIuNDUgMi45M3MtMi4yIDUuNTItNS45NyA5LjNjLTMuNzggMy43Ny0zLjk4IDYuOC0xLjIyIDEwLjgzIDEuODcgMi43NSA1LjQ3IDMuNTggOS4xNSAzLjU4IDMuODIgMCA3LjczLS45IDkuOTMtMS40Ni4xLS4wMyAxMy40NS0zLjggMTEuNzYtNy0uMjktLjU0LS43NS0uNzYtMS4zNC0uNzYtMi4zOCAwLTYuNzEgMy41NC04LjU3IDMuNTQtLjQyIDAtLjcxLS4xNy0uODMtLjYtLjgtMi44NSAxMi4wNS00LjA1IDEwLjk3LTguMTctLjE5LS43My0uNy0xLjAyLTEuNDQtMS4wMi0zLjE0IDAtMTAuMiA1LjUzLTExLjY4IDUuNTMtLjEgMC0uMTktLjAzLS4yMy0uMS0uNzQtMS4yLS4zNC0yLjA0IDQuODgtNS4yIDUuMjMtMy4xNiA4LjktNS4wNiA2LjgtNy4zMy0uMjMtLjI2LS41Ny0uMzgtLjk4LS4zOC0zLjE4IDAtMTAuNjcgNi44Mi0xMC42NyA2Ljgycy0yLjAyIDIuMS0zLjI0IDIuMWEuNzQuNzQgMCAwIDEtLjY4LS4zOGMtLjg3LTEuNDYgOC4wNS04LjIyIDguNTUtMTEuMDEuMzQtMS45LS4yNC0yLjg1LTEuMzEtMi44NVoiCgkvPgoJPHBhdGgKCQlmaWxsPSIjRkZEMjFFIgoJCWQ9Ik01Ni4zMyA3Ni42OWMtMi43NS00LjA0LTIuNTYtNy4wNyAxLjIyLTEwLjg0IDMuNzctMy43NyA1Ljk3LTkuMyA1Ljk3LTkuM3MuODItMy4yIDIuNy0yLjljMS44Ni4zIDMuMjMgNS4wOC0uNjggOC4wMS0zLjkyIDIuOTMuNzggNC45MiAyLjI4IDIuMTcgMS41MS0yLjc1IDUuNjMtOS44MiA3Ljc2LTExLjE4IDIuMTMtMS4zNSAzLjY0LS42IDMuMTMgMi4yLS41IDIuNzktOS40MiA5LjU1LTguNTUgMTEgLjg2IDEuNDcgMy45Mi0xLjcxIDMuOTItMS43MXM5LjU4LTguNzEgMTEuNjYtNi40NGMyLjA4IDIuMjctMS41OCA0LjE3LTYuOCA3LjMzLTUuMjMgMy4xNi01LjYzIDQtNC45IDUuMi43NSAxLjIgMTIuMjgtOC41MyAxMy4zNi00LjQgMS4wOCA0LjExLTExLjc2IDUuMy0xMC45NyA4LjE1LjggMi44NSA5LjA1LTUuMzggMTAuNzQtMi4xOCAxLjY5IDMuMjEtMTEuNjUgNi45OC0xMS43NiA3LjAxLTQuMzEgMS4xMi0xNS4yNiAzLjQ5LTE5LjA4LTIuMTJaIgoJLz4KPC9zdmc+"}};
+/* ==========================================================================
+   Shared by both Caravan playgrounds: the sample data, the six categories with
+   their shapes, the card, the controller that every design hands its nodes to,
+   and the scrubber. A design only lays nodes out; how they are hovered,
+   focused, pinned, filtered and scrolled to is decided once, here, so the five
+   designs behave the same and differ only in what they draw.
+   ========================================================================== */
+
+/* -- sample data ------------------------------------------------------------
+   SAMPLE AND UNVERIFIED. Widely known events, written short and without
+   numbers or quotes; dates are approximate and the link titles are plausible
+   rather than checked. No layout below depends on any one of them. */
+const SAMPLE = [
+  ['2022-11','ChatGPT launches','A chat window on a language model opens to everyone, and talking to a model becomes something anyone can try.','industry','announcement','openai',5,'Introducing ChatGPT','OpenAI blog','LLM Fundamentals'],
+  ['2022-12','Prompt tips everywhere','Threads of prompt tricks spread, and the phrase prompt engineer starts to appear in job posts.','research','social',null,2,'Prompt engineering threads','Social posts','Prompt Engineering'],
+  ['2023-01','LangChain draws a crowd','A library for chaining model calls with tools and documents climbs the GitHub trending page.','tools','github','langchain',3,'langchain-ai/langchain','GitHub','RAG & Embeddings'],
+  ['2023-02','A search chatbot misbehaves','Long conversations with a new search chatbot turn strange, make the news, and lead to limits on turns.','industry','news','microsoft',3,'Coverage of the new Bing chat','News','Security'],
+  ['2023-02','LLaMA shared with researchers','Meta shares a family of models with researchers, and the weights soon circulate widely.','models','announcement','meta',4,'Introducing LLaMA','Meta AI blog','Training LLMs'],
+  ['2023-03','GPT-4','A large step in reasoning and exam results, with image input announced.','models','announcement','openai',5,'GPT-4','OpenAI research','LLM Fundamentals'],
+  ['2023-03','Claude opens to businesses','Anthropic makes its assistant available through an API and a chat product.','models','announcement','anthropic',3,'Introducing Claude','Anthropic news','LLM Fundamentals'],
+  ['2023-03','ChatGPT plugins','Models start calling outside services from inside a chat.','tools','announcement','openai',3,'ChatGPT plugins','OpenAI blog','Tool Calling'],
+  ['2023-04','AutoGPT and BabyAGI','Loops that let a model choose its own next task top GitHub trends.','agents','github',null,4,'Significant-Gravitas/AutoGPT','GitHub','AI Agents'],
+  ['2023-05','Chat with your documents','Vector databases and document chat apps spread as the usual way to add private data.','research','social',null,2,'Retrieval-augmented generation posts','Blogs','RAG & Embeddings'],
+  ['2023-06','Function calling in the API','Models return structured calls to functions a developer describes.','tools','announcement','openai',4,'Function calling and other API updates','OpenAI blog','Tool Calling'],
+  ['2023-07','Llama 2, licensed for business','Open weights that companies may use, and a wave of fine-tunes follows.','models','announcement','meta',4,'Meta and Microsoft introduce Llama 2','Meta news','Training LLMs'],
+  ['2023-07','Claude 2','A longer context window makes whole documents something you can paste in.','models','announcement','claude',2,'Claude 2','Anthropic news','Context Engineering'],
+  ['2023-09','Mistral 7B','A small open model from a new European lab draws attention for how well it performs.','models','announcement',null,3,'Mistral 7B','Mistral AI news','Training LLMs'],
+  ['2023-11','GPTs and the Assistants API','A developer day brings custom assistants and a hosted agent API.','tools','announcement','openai',4,'New models and developer products','OpenAI blog','AI Agents'],
+  ['2023-11','A boardroom crisis','Leadership changes at OpenAI over a few days dominate the news.','industry','news','openai',5,'Coverage of the OpenAI board','News',null],
+  ['2023-12','Gemini','Google presents a model family built to take text, images and audio from the start.','models','announcement','gemini',4,'Introducing Gemini','Google blog','LLM Fundamentals'],
+  ['2023-12','Mixture of experts goes open','An open mixture-of-experts model makes the architecture a common topic.','research','paper',null,3,'Mixtral of experts','Mistral AI news','Advanced LLM'],
+  ['2024-02','Sora preview','Video generated from text, shown in previews.','models','announcement','openai',4,'Sora','OpenAI research',null],
+  ['2024-02','Very long context','Context windows grow large enough to hold whole codebases and books.','models','announcement','gemini',3,'Gemini 1.5','Google blog','Context Engineering'],
+  ['2024-03','Claude 3 family','Three model sizes, with the largest near the top of many leaderboards.','models','announcement','claude',4,'Introducing the Claude 3 family','Anthropic news','LLM Fundamentals'],
+  ['2024-03','Devin, an agent that codes','A demo of an agent that plans and writes code in its own environment spreads widely.','agents','announcement',null,5,'Introducing Devin','Cognition blog','Code Agents'],
+  ['2024-04','Llama 3','A new generation of open weights becomes the default base for many projects.','models','announcement','meta',3,'Introducing Meta Llama 3','Meta AI blog','Training LLMs'],
+  ['2024-05','GPT-4o','One model for text, voice and images, shown with real-time voice demos.','models','announcement','openai',4,'Hello GPT-4o','OpenAI blog','LLM Fundamentals'],
+  ['2024-06','Claude 3.5 Sonnet and Artifacts','A faster model, and a side panel where generated code and pages run.','models','announcement','claude',4,'Claude 3.5 Sonnet','Anthropic news','Agentic UI'],
+  ['2024-06','Chips at the centre','Demand for AI chips makes NVIDIA one of the most valuable companies in the world.','industry','news','nvidia',4,'Coverage of NVIDIA','News','Inference Providers'],
+  ['2024-07','Open weights at frontier size','A very large open-weight Llama release narrows the gap to closed models.','models','announcement','meta',3,'Introducing Llama 3.1','Meta AI blog','Training LLMs'],
+  ['2024-08','Editors with a model inside','Coding in an editor with a model beside you becomes a common setup.','tools','social',null,3,'AI code editor posts','Social posts','Code Agents'],
+  ['2024-09','Models that think first','Reasoning models spend longer before they answer, and test-time compute becomes a topic.','research','announcement','openai',5,'Learning to reason with LLMs','OpenAI research','Advanced LLM'],
+  ['2024-10','Computer use','A model works a desktop by reading screenshots and moving the pointer.','agents','announcement','claude',4,'Introducing computer use','Anthropic news','AI Agents'],
+  ['2024-11','Model Context Protocol','An open standard for connecting models to tools and data sources.','protocols','announcement','mcp',5,'Introducing the Model Context Protocol','Anthropic news','Protocols Reference'],
+  ['2024-12','Gemini 2.0 and agent prototypes','A new model generation arrives with research prototypes of agents.','models','announcement','gemini',3,'Introducing Gemini 2.0','Google blog','AI Agents'],
+  ['2025-01','DeepSeek-R1','An open reasoning model with a published method shakes assumptions about cost.','models','paper','deepseek',5,'DeepSeek-R1','arXiv','Advanced Post-training'],
+  ['2025-02','Vibe coding','A name for building software by describing it to a model spreads quickly.','agents','social',null,4,'Vibe coding posts','Social posts','Code Agents'],
+  ['2025-02','A coding agent in the terminal','A research preview of a coding agent that works from the command line.','agents','announcement','claude',4,'Claude Code','Anthropic news','Code Agents'],
+  ['2025-03','Manus','A general agent demo draws long waiting lists.','agents','social',null,3,'Manus','Social posts','Agents in Practice'],
+  ['2025-03','MCP adopted widely','Other major labs adopt the protocol, and MCP servers multiply on GitHub.','protocols','github','mcp',4,'modelcontextprotocol/servers','GitHub','Protocols Reference'],
+  ['2025-04','Agent2Agent','A protocol for agents from different vendors to talk to each other.','protocols','announcement','google',3,'Announcing the Agent2Agent protocol','Google developers blog','Multi-Agent Systems'],
+  ['2025-04','Llama 4','A new open-weight family, received more quietly than the ones before.','models','announcement','meta',2,'The Llama 4 herd','Meta AI blog',null],
+  ['2025-05','Claude 4','New models aimed at long coding and agent work.','models','announcement','claude',4,'Introducing Claude 4','Anthropic news','Code Agents'],
+  ['2025-05','Coding agents in the cloud','Agents that take a task, work in a sandbox and open a pull request.','agents','announcement','openai',3,'Introducing Codex','OpenAI blog','Code Agents'],
+  ['2025-06','Context engineering','The craft moves from wording a prompt to deciding what goes into the context.','research','social',null,4,'Context engineering posts','Blogs','Context Engineering'],
+  ['2025-08','GPT-5','A new flagship model, released to all ChatGPT users.','models','announcement','openai',5,'Introducing GPT-5','OpenAI blog','LLM Fundamentals'],
+  ['2025-09','Claude Sonnet 4.5','A model presented for long-running agents and coding.','models','announcement','claude',3,'Introducing Claude Sonnet 4.5','Anthropic news','Harness Engineering'],
+  ['2025-10','Agent Skills','Folders of instructions and scripts that an agent loads when a task needs them.','tools','announcement','claude',3,'Introducing Agent Skills','Anthropic news','Harness Engineering'],
+  ['2025-11','Gemini 3','A new Gemini generation tops several leaderboards.','models','announcement','gemini',4,'Gemini 3','Google blog',null],
+  ['2025-11','Claude Opus 4.5','A larger model aimed at coding and agents.','models','announcement','claude',3,'Introducing Claude Opus 4.5','Anthropic news','Code Agents'],
+  ['2025-12','MCP moves to a foundation','The protocol is handed to a neutral foundation for agent standards.','protocols','announcement','mcp',3,'Agentic AI Foundation','Linux Foundation news','Protocols Reference'],
+  ['2026-01','Personal agents on GitHub','A self-hosted personal agent that lives in chat apps tops GitHub trends.','agents','github','openclaw',5,'openclaw/openclaw','GitHub','Personal Agents'],
+  ['2026-02','Harness engineering','Attention moves from the model to the loop, tools and checks around it.','research','social',null,3,'Harness engineering posts','Blogs','Harness Engineering'],
+  ['2026-04','Small models on laptops','Open models small enough for a laptop become a common first choice.','models','github','huggingface',2,'Trending models','Hugging Face',null],
+  ['2026-05','Loop engineering','Agents run for hours on one task, with checks between rounds.','agents','social',null,3,'Loop engineering posts','Blogs','Loop Engineering'],
+  ['2026-07','Injection through the inbox','Prompt injection through tools and email becomes a regular headline.','industry','news',null,3,'Coverage of agent security','News','Security'],
+  ['2026-09','Agents that draw interface','Agents answer with interface instead of a wall of text.','tools','social',null,2,'Generative UI posts','Blogs','Agentic UI'],
+]
+
+const ORG_FALLBACK = { // a monogram for a company with no mark in the repository
+  '2023-09|Mistral 7B': 'Mistral AI', '2023-12|Mixture of experts goes open': 'Mistral AI',
+  '2024-03|Devin, an agent that codes': 'Cognition', '2025-03|Manus': 'Manus',
+  '2024-08|Editors with a model inside': 'Cursor',
+}
+
+const CATS = {
+  models:    { word: 'Models',    shape: 'circle'  },
+  agents:    { word: 'Agents',    shape: 'diamond' },
+  tools:     { word: 'Tools',     shape: 'square'  },
+  protocols: { word: 'Protocols', shape: 'hex'     },
+  research:  { word: 'Research',  shape: 'tri'     },
+  industry:  { word: 'Industry',  shape: 'arch'    },
+}
+const CAT_KEYS = Object.keys(CATS)
+const SRC = { announcement: 'Company announcement', paper: 'Paper', github: 'GitHub trend', news: 'News', social: 'Social and blogs' }
+
+const SHAPE_PATH = {
+  circle:  '<circle cx="8" cy="8" r="6"/>',
+  diamond: '<path d="M8 1.2 14.8 8 8 14.8 1.2 8Z"/>',
+  square:  '<rect x="2.2" y="2.2" width="11.6" height="11.6" rx="2"/>',
+  hex:     '<path d="M8 1.3 13.8 4.65v6.7L8 14.7 2.2 11.35v-6.7Z"/>',
+  tri:     '<path d="M8 1.6 14.8 13.8H1.2Z"/>',
+  arch:    '<path d="M2.6 14.4V7.6a5.4 5.4 0 0 1 10.8 0v6.8Z"/>',
+}
+const shapeSVG = (cat, cls = '') =>
+  `<svg class="shp ${cls}" viewBox="0 0 16 16" aria-hidden="true" data-cat="${cat}">${SHAPE_PATH[CATS[cat].shape]}</svg>`
+
+const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']
+const MONTHS_LONG = ['January','February','March','April','May','June','July','August','September','October','November','December']
+const FIRST = { y: 2022, m: 11 }, LAST = { y: 2026, m: 11 }
+const MONTH_LIST = (() => { const a = []; let y = FIRST.y, m = FIRST.m
+  while (y < LAST.y || (y === LAST.y && m <= LAST.m)) { a.push({ y, m, key: `${y}-${String(m).padStart(2,'0')}` }); if (++m > 12) { m = 1; y++ } }
+  return a })()
+const YEARS = [...new Set(MONTH_LIST.map(o => o.y))]
+const monthIndex = (key) => MONTH_LIST.findIndex(o => o.key === key)
+const monthLabel = (key, long) => { const [y, m] = key.split('-').map(Number); return `${(long ? MONTHS_LONG : MONTHS)[m-1]} ${y}` }
+
+/* Seasons by the northern calendar: December opens the next year's winter. */
+function seasonOf(key) {
+  const [y, m] = key.split('-').map(Number)
+  if (m === 12) return { name: 'Winter', y: y + 1, id: `${y+1}-0` }
+  if (m <= 2) return { name: 'Winter', y, id: `${y}-0` }
+  if (m <= 5) return { name: 'Spring', y, id: `${y}-1` }
+  if (m <= 8) return { name: 'Summer', y, id: `${y}-2` }
+  return { name: 'Autumn', y, id: `${y}-3` }
+}
+
+function buildData(load) {
+  const evs = SAMPLE.map(([d,t,s,c,src,org,h,lt,lsite,mod], i) => ({
+    id: 'e' + i, d, t, s, c, src, org, h, link: { title: lt, site: lsite }, mod,
+    orgName: org ? LOGOS[org].name : (ORG_FALLBACK[`${d}|${t}`] || null), filler: false,
+  }))
+  if (load) {
+    // The load test: three filler nodes a month, so the page carries ~200.
+    let seed = 7; const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647
+    MONTH_LIST.forEach((mo, mi) => { for (let k = 0; k < 3; k++) {
+      const c = CAT_KEYS[Math.floor(rnd() * 6)]
+      evs.push({ id: `f${mi}-${k}`, d: mo.key, t: `Filler ${mo.key} ${k + 1}`, s: 'A filler node for the load test, not an event.',
+        c, src: 'news', org: null, orgName: null, h: 1 + Math.floor(rnd() * 2), link: { title: 'Filler', site: 'Load test' }, mod: null, filler: true })
+    }})
+  }
+  evs.sort((a, b) => a.d < b.d ? -1 : a.d > b.d ? 1 : (b.h - a.h))
+  evs.forEach((e, i) => { e.i = i; e.mi = monthIndex(e.d) })
+  // Heat per month from the sample only, so the load test does not reshape the land.
+  const heat = MONTH_LIST.map(() => 0)
+  evs.forEach(e => { if (!e.filler) heat[e.mi] += e.h })
+  return { evs, heat, hmax: Math.max(...heat) }
+}
+
+/* -- small helpers ---------------------------------------------------------- */
+const $ = (s, r = document) => r.querySelector(s)
+const $$ = (s, r = document) => [...r.querySelectorAll(s)]
+const h = (tag, attrs = {}, html = '') => { const el = document.createElement(tag)
+  for (const [k, v] of Object.entries(attrs)) { if (v == null || v === false) continue; if (k === 'class') el.className = v; else if (k === 'style') el.style.cssText = v; else el.setAttribute(k, v === true ? '' : v) }
+  if (html) el.innerHTML = html; return el }
+const esc = (s) => String(s).replace(/[&<>"]/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;' }[c]))
+const reduced = () => matchMedia('(prefers-reduced-motion: reduce)').matches
+const isPhone = () => innerWidth < 720
+
+/* Catmull-Rom through evenly spaced values, sampled every `step` px: the
+   rolling line every "ups and downs" design draws its land or its pulse from. */
+function curve(xs, ys, step = 4) {
+  const pts = []
+  const n = xs.length
+  for (let i = 0; i < n - 1; i++) {
+    const p0 = ys[Math.max(0, i - 1)], p1 = ys[i], p2 = ys[i + 1], p3 = ys[Math.min(n - 1, i + 2)]
+    const x1 = xs[i], x2 = xs[i + 1], seg = Math.max(1, Math.round((x2 - x1) / step))
+    for (let s = 0; s < seg; s++) { const t = s / seg
+      let y = 0.5 * (2*p1 + (-p0 + p2)*t + (2*p0 - 5*p1 + 4*p2 - p3)*t*t + (-p0 + 3*p1 - 3*p2 + p3)*t*t*t)
+      y = Math.max(Math.min(p1, p2) - 6, Math.min(Math.max(p1, p2) + 6, y))
+      pts.push([x1 + (x2 - x1) * t, y]) }
+  }
+  pts.push([xs[n - 1], ys[n - 1]])
+  const at = (x) => { if (x <= pts[0][0]) return pts[0][1]; for (let i = 1; i < pts.length; i++) if (pts[i][0] >= x) {
+      const [ax, ay] = pts[i - 1], [bx, by] = pts[i]; return ay + (by - ay) * ((x - ax) / ((bx - ax) || 1)) } return pts[pts.length - 1][1] }
+  const d = 'M' + pts.map(p => p[0].toFixed(1) + ' ' + p[1].toFixed(1)).join('L')
+  return { pts, at, d }
+}
+const smooth3 = (a) => a.map((v, i) => (a[Math.max(0, i - 1)] + 2 * v + a[Math.min(a.length - 1, i + 1)]) / 4)
+
+/* Labels that never overlap: each takes the lowest free row over its span. */
+function rowPlacer(rows) {
+  const ends = Array(rows).fill(-1e9)
+  return (x, w) => { for (let r = 0; r < rows; r++) if (ends[r] < x - w / 2 - 12) { ends[r] = x + w / 2; return r } return -1 }
+}
+/* Measured with the font the page actually got, since Avenir Next is often absent. */
+const textW = (() => { let ctx; return (s, px = 13.5, wt = 600) => { ctx ||= document.createElement('canvas').getContext('2d')
+  ctx.font = `${wt} ${px}px ${getComputedStyle(document.body).fontFamily}`; return ctx.measureText(s).width + 18 } })()
+
+/* -- the logo slot ---------------------------------------------------------- */
+function logoHTML(ev, cls = '') {
+  if (ev.org && LOGOS[ev.org]) { const L = LOGOS[ev.org]
+    return `<img class="logo ${L.mono ? 'mono' : ''} ${cls}" src="${L.src}" alt="" width="20" height="20">` }
+  if (ev.orgName) return `<span class="logo mgram ${cls}" aria-hidden="true">${esc(ev.orgName.slice(0, 1))}</span>`
+  return ''
+}
+const heatHTML = (n) => `<span class="heat" role="img" aria-label="Heat ${n} of 5">${[1,2,3,4,5].map(i => `<i${i <= n ? ' class="on"' : ''}></i>`).join('')}</span><span class="heat-w">Heat ${n} of 5</span>`
+
+/* -- the card: one element for the whole page -------------------------------
+   Reused for every node rather than built per node, which keeps the page at
+   one element per node however many there are. */
+function cardHTML(ev, pinned) {
+  const org = ev.orgName ? `<span class="cc-org">${logoHTML(ev)}${esc(ev.orgName)}</span>` : ''
+  return `
+    <div class="cc-top">${org}<span class="cc-when">${monthLabel(ev.d, true)}</span></div>
+    <h3 class="cc-title">${esc(ev.t)}</h3>
+    <p class="cc-line">${esc(ev.s)}</p>
+    <div class="cc-meta"><span class="cc-cat">${shapeSVG(ev.c)}${CATS[ev.c].word}</span><span class="cc-heat">${heatHTML(ev.h)}</span></div>
+    <div class="cc-more">
+      <a class="cc-src" href="#" onclick="return false"><span class="cc-k">${SRC[ev.src]}</span><span class="cc-lt">${esc(ev.link.title)}</span><span class="cc-site">${esc(ev.link.site)}</span></a>
+      ${ev.mod ? `<a class="cc-mod" href="#" onclick="return false"><span class="cc-k">In the course</span><span class="cc-lt">${esc(ev.mod)}</span></a>` : ''}
+    </div>
+    <p class="cc-sample">Sample data, not checked</p>
+    ${pinned ? '<button class="cc-close" type="button" aria-label="Close">Close <kbd>Esc</kbd></button>' : ''}`
+}
+
+/* ==========================================================================
+   THE CONTROLLER. Hover and focus PREVIEW a node (it grows, the card shows,
+   the rest dims); a click, a tap or Enter PINS it (the card stays and its
+   links work); Escape or a click elsewhere lets go. Arrow keys walk the
+   visible nodes in time order and Tab walks every one; whichever way a node
+   is reached, it is scrolled into view and the same thing happens.
+   ========================================================================== */
+class Timeline {
+  constructor({ root, scroller, items, yearPos, axis = 'x', mode = 'card', card, night = false, onActive, lanes, prefer }) {
+    Object.assign(this, { root, scroller, items, yearPos, axis, mode, card, night, onActive, lanes, prefer })
+    this.active = null; this.pinned = null; this.filter = null; this.timer = 0
+    this.card.classList.toggle('is-night', !!night)
+    const ac = this.ac = new AbortController(), sig = { signal: ac.signal }
+    items.forEach((it, k) => { it.k = k; const el = it.el
+      el.addEventListener('pointerenter', (e) => { if (e.pointerType !== 'touch') this.preview(it) }, sig)
+      el.addEventListener('pointerleave', (e) => { if (e.pointerType !== 'touch') this.release() }, sig)
+      el.addEventListener('focus', () => { this.preview(it, true) }, sig)
+      el.addEventListener('blur', () => this.release(), sig)
+      el.addEventListener('click', (e) => { e.preventDefault(); this.togglePin(it) }, sig)
+      el.addEventListener('keydown', (e) => this.key(e, it), sig)
+    })
+    this.card.addEventListener('pointerenter', () => clearTimeout(this.timer), sig)
+    this.card.addEventListener('pointerleave', () => this.release(), sig)
+    this.card.addEventListener('click', (e) => { if (e.target.closest('.cc-close')) this.unpin(true) }, sig)
+    document.addEventListener('pointerdown', (e) => {
+      if (!this.pinned) return
+      if (e.target.closest('.nd, .cv-card, .cv-tools, .scrub')) return
+      this.unpin()
+    }, sig)
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && (this.pinned || this.active)) { const back = this.pinned; this.unpin(); if (back) back.el.focus({ preventScroll: true }) } }, sig)
+    const onScroll = () => { if (this.raf) return; this.raf = requestAnimationFrame(() => { this.raf = 0; this.place(); this.onScroll && this.onScroll() }) }
+    ;(axis === 'x' ? scroller : window).addEventListener('scroll', onScroll, { passive: true, signal: ac.signal })
+    window.addEventListener('resize', onScroll, sig)
+    if (axis === 'x') scroller.addEventListener('wheel', (e) => this.wheel(e), { passive: false, signal: ac.signal })
+  }
+  destroy() { this.ac.abort(); this.card.hidden = true; this.card.className = 'cv-card' }
+  visible() { return this.items.filter(it => !it.el.classList.contains('is-out')) }
+
+  preview(it, viaFocus) {
+    clearTimeout(this.timer)
+    if (viaFocus) this.reveal(it)
+    this.setActive(it)
+  }
+  release() {
+    clearTimeout(this.timer)
+    this.timer = setTimeout(() => {
+      const f = document.activeElement
+      const focused = this.items.find(it => it.el === f)
+      if (this.card.matches(':hover')) return
+      const hovered = this.items.find(it => it.el.matches(':hover'))
+      this.setActive(hovered || focused || this.pinned || null)
+    }, 90)
+  }
+  togglePin(it) {
+    if (this.pinned === it) { this.unpin(); this.setActive(it); return }
+    if (this.pinned) this.pinned.el.setAttribute('aria-expanded', 'false')
+    this.pinned = it; it.el.setAttribute('aria-expanded', 'true')
+    this.setActive(it, true)
+  }
+  unpin(refocus) {
+    const was = this.pinned
+    if (was) was.el.setAttribute('aria-expanded', 'false')
+    this.pinned = null
+    this.setActive(null)
+    if (refocus && was) was.el.focus({ preventScroll: true })
+  }
+  setActive(it, force) {
+    if (this.active === it && !force) { this.place(); return }
+    if (this.active) this.active.el.classList.remove('is-active')
+    this.active = it
+    this.root.classList.toggle('has-active', !!it)
+    if (it) { it.el.classList.add('is-active'); this.root.dataset.activeCat = it.ev.c; this.root.dataset.activeMonth = it.ev.mi }
+    else { delete this.root.dataset.activeCat; delete this.root.dataset.activeMonth }
+    this.onActive && this.onActive(it)
+    if (this.mode === 'inline') { this.items.forEach(x => x.el.setAttribute('aria-expanded', x === this.pinned ? 'true' : 'false')); this.card.hidden = true; return }
+    if (!it) { this.card.hidden = true; return }
+    const pinned = this.pinned === it
+    this.card.innerHTML = cardHTML(it.ev, pinned)
+    this.card.classList.toggle('is-pinned', pinned)
+    this.card.dataset.cat = it.ev.c
+    this.card.hidden = false
+    this.place()
+  }
+  /* The card sits above the node, or below when there is no room, inside the
+     window's 16px gutters; on a phone it is a sheet along the bottom edge. */
+  place() {
+    if (!this.active || this.mode === 'inline' || this.card.hidden) return
+    const c = this.card, r = this.active.el.getBoundingClientRect()
+    const vr = (this.axis === 'x' ? this.scroller : document.documentElement).getBoundingClientRect()
+    const off = this.axis === 'x' && (r.right < vr.left - 4 || r.left > vr.right + 4)
+    c.style.visibility = off ? 'hidden' : ''
+    if (isPhone()) { c.classList.add('is-sheet'); c.style.left = c.style.top = ''; return }
+    c.classList.remove('is-sheet')
+    const W = c.offsetWidth, H = c.offsetHeight, g = 16, gap = 14
+    const band = document.querySelector('.band'), ceil = (band ? band.getBoundingClientRect().bottom : 0) + 8
+    // The anchor is the mark and its label together, so the card never hides the label.
+    const parts = (this.prefer === 'side' ? [this.active.el] : [this.active.el.querySelector('.nd-mark') || this.active.el, this.active.el.querySelector('.nd-lab')]).filter(Boolean).map(e => e.getBoundingClientRect()).filter(q => q.width)
+    const a = { left: Math.min(...parts.map(q => q.left)), right: Math.max(...parts.map(q => q.right)), top: Math.min(...parts.map(q => q.top)), bottom: Math.max(...parts.map(q => q.bottom)) }
+    a.width = a.right - a.left; a.height = a.bottom - a.top
+    let left = a.left + a.width / 2 - W / 2
+    left = Math.max(g, Math.min(innerWidth - W - g, left))
+    let top = a.top - H - gap
+    if (top < ceil) top = a.bottom + gap
+    if (this.prefer === 'side' || top + H > innerHeight - g) {
+      // beside the node, when asked or when neither above nor below fits
+      top = Math.max(ceil, Math.min(innerHeight - H - g, a.top + a.height / 2 - H / 2))
+      left = a.right + gap + W < innerWidth - g ? a.right + gap : a.left - gap - W
+      left = Math.max(g, left)
+    }
+    c.style.left = left + 'px'; c.style.top = top + 'px'
+  }
+  reveal(it) {
+    if (this.axis !== 'x') { it.el.scrollIntoView({ block: 'nearest', behavior: reduced() ? 'auto' : 'smooth' }); return }
+    const s = this.scroller, sr = s.getBoundingClientRect(), r = it.el.getBoundingClientRect(), m = Math.min(140, sr.width * 0.18)
+    if (r.left < sr.left + m || r.right > sr.right - m) {
+      s.scrollTo({ left: s.scrollLeft + (r.left + r.width / 2) - (sr.left + sr.width / 2), behavior: reduced() ? 'auto' : 'smooth' })
+    }
+    const pr = s.getBoundingClientRect() // and keep the stage itself in the window
+    if (pr.top < 60 || pr.bottom > innerHeight) s.scrollIntoView({ block: 'nearest' })
+  }
+  key(e, it) {
+    const vis = this.visible(), k = vis.indexOf(it)
+    let to = null
+    if (e.key === 'ArrowRight' || (e.key === 'ArrowDown' && !this.lanes)) to = vis[k + 1]
+    else if (e.key === 'ArrowLeft' || (e.key === 'ArrowUp' && !this.lanes)) to = vis[k - 1]
+    else if ((e.key === 'ArrowDown' || e.key === 'ArrowUp') && this.lanes) to = this.lanes(it, e.key === 'ArrowDown' ? 1 : -1, vis)
+    else if (e.key === 'Home') to = vis[0]
+    else if (e.key === 'End') to = vis[vis.length - 1]
+    else if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); this.togglePin(it); return }
+    else return
+    e.preventDefault()
+    if (to) { if (this.pinned && this.pinned !== to) { this.pinned.el.setAttribute('aria-expanded', 'false'); this.pinned = null } to.el.focus({ preventScroll: true }) }
+  }
+  /* A vertical wheel or trackpad moves the timeline sideways while it can
+     still move; at either end the page takes the wheel back. */
+  wheel(e) {
+    const s = this.scroller
+    if (Math.abs(e.deltaX) > Math.abs(e.deltaY) || e.shiftKey) return
+    const dy = e.deltaY * (e.deltaMode === 1 ? 32 : e.deltaMode === 2 ? s.clientWidth : 1)
+    const max = s.scrollWidth - s.clientWidth
+    if ((dy < 0 && s.scrollLeft <= 0) || (dy > 0 && s.scrollLeft >= max - 1)) return
+    e.preventDefault()
+    s.scrollLeft += dy
+  }
+  setFilter(cat) {
+    this.filter = cat
+    this.root.classList.toggle('is-filtered', !!cat)
+    this.items.forEach(it => { const out = !!cat && it.ev.c !== cat
+      it.el.classList.toggle('is-out', out); it.el.tabIndex = out ? -1 : 0
+      if (out) it.el.setAttribute('aria-hidden', 'true'); else it.el.removeAttribute('aria-hidden') })
+    if (this.active && this.active.el.classList.contains('is-out')) this.unpin()
+  }
+  jumpYear(y) {
+    const x = this.yearPos(y)
+    if (this.axis === 'x') this.scroller.scrollTo({ left: Math.max(0, x), behavior: reduced() ? 'auto' : 'smooth' })
+    else window.scrollTo({ top: x, behavior: reduced() ? 'auto' : 'smooth' })
+  }
+  currentYear() {
+    if (this.axis === 'x') { const s = this.scroller, probe = s.scrollLeft + Math.min(s.clientWidth * 0.3, 260)
+      let cur = YEARS[0]; for (const y of YEARS) if (this.yearPos(y) <= probe) cur = y
+      if (s.scrollLeft >= s.scrollWidth - s.clientWidth - 2) cur = YEARS[YEARS.length - 1]
+      return cur }
+    let cur = YEARS[0]; for (const y of YEARS) if (this.yearPos(y) <= scrollY + 200) cur = y; return cur
+  }
+}
+
+/* ==========================================================================
+   THE SCRUBBER: the whole four years in one strip, with the window you are
+   looking at as a thumb you can drag. In `spark` mode it carries the month's
+   heat as a small profile; in `plain` mode it is a scrollbar with year ticks.
+   It is a slider to the keyboard: arrows step a month, Page keys a year.
+   ========================================================================== */
+function Scrubber({ el, scroller, monthX, heat, hmax, yearPos, mode = 'spark', night = false }) {
+  el.className = `scrub scrub-${mode}${night ? ' is-night' : ''}`
+  el.innerHTML = `<svg class="scrub-art" aria-hidden="true"></svg><div class="scrub-years" aria-hidden="true"></div>
+    <div class="scrub-thumb" role="slider" tabindex="0" aria-label="Position in time" aria-valuemin="0" aria-valuemax="100"></div>`
+  const art = $('.scrub-art', el), yrs = $('.scrub-years', el), th = $('.scrub-thumb', el)
+  const ac = new AbortController(), sig = { signal: ac.signal }
+  let W = 1
+  function draw() {
+    W = el.clientWidth; const H = el.clientHeight, sw = scroller.scrollWidth || 1
+    art.setAttribute('viewBox', `0 0 ${W} ${H}`)
+    if (mode === 'spark') {
+      const xs = MONTH_LIST.map((_, i) => monthX(i) / sw * W), base = H - 7
+      const ys = heat.map(v => base - (v / hmax) * (H - 16))
+      const c = curve(xs, ys, 3)
+      art.innerHTML = `<path class="scrub-area" d="${c.d}L${xs[xs.length-1]} ${base}L${xs[0]} ${base}Z"/><path class="scrub-line" d="${c.d}"/>`
+    } else art.innerHTML = ''
+    yrs.innerHTML = YEARS.map(y => { const x = yearPos(y) / sw * W; return `<span style="left:${x}px">${y}</span>` }).join('')
+    update()
+  }
+  function update() {
+    const sw = scroller.scrollWidth || 1, vw = scroller.clientWidth
+    const left = scroller.scrollLeft / sw * W, w = Math.max(28, vw / sw * W)
+    th.style.transform = `translateX(${Math.min(W - w, left)}px)`; th.style.width = w + 'px'
+    const max = sw - vw, pct = max > 0 ? Math.round(scroller.scrollLeft / max * 100) : 0
+    th.setAttribute('aria-valuenow', pct)
+    const mi = Math.round((scroller.scrollLeft + vw * 0.3) / sw * MONTH_LIST.length)
+    const mo = MONTH_LIST[Math.max(0, Math.min(MONTH_LIST.length - 1, mi))]
+    th.setAttribute('aria-valuetext', monthLabel(mo.key, true))
+  }
+  let drag = null
+  el.addEventListener('pointerdown', (e) => {
+    const r = el.getBoundingClientRect(), x = e.clientX - r.left
+    const sw = scroller.scrollWidth, vw = scroller.clientWidth
+    const thL = scroller.scrollLeft / sw * W, thW = vw / sw * W
+    if (x < thL || x > thL + thW) scroller.scrollLeft = x / W * sw - vw / 2
+    drag = { x0: e.clientX, s0: scroller.scrollLeft }
+    el.setPointerCapture(e.pointerId); el.classList.add('is-drag'); e.preventDefault(); th.focus({ preventScroll: true })
+  }, sig)
+  el.addEventListener('pointermove', (e) => { if (!drag) return; scroller.scrollLeft = drag.s0 + (e.clientX - drag.x0) / W * scroller.scrollWidth }, sig)
+  const end = () => { drag = null; el.classList.remove('is-drag') }
+  el.addEventListener('pointerup', end, sig); el.addEventListener('pointercancel', end, sig)
+  th.addEventListener('keydown', (e) => {
+    const mw = scroller.scrollWidth / MONTH_LIST.length, step = { ArrowRight: mw, ArrowLeft: -mw, PageDown: mw * 12, PageUp: -mw * 12 }[e.key]
+    if (step) { e.preventDefault(); scroller.scrollBy({ left: step, behavior: reduced() ? 'auto' : 'smooth' }) }
+    if (e.key === 'Home') { e.preventDefault(); scroller.scrollLeft = 0 }
+    if (e.key === 'End') { e.preventDefault(); scroller.scrollLeft = scroller.scrollWidth }
+  }, sig)
+  scroller.addEventListener('scroll', () => requestAnimationFrame(update), { passive: true, signal: ac.signal })
+  window.addEventListener('resize', draw, sig)
+  requestAnimationFrame(draw)
+  return { draw, update, destroy: () => { ac.abort(); el.innerHTML = '' } }
+}
+
+/* -- the toolbar: a year to jump to, a category to show --------------------- */
+function Toolbar(el, { onYear, onCat }) {
+  el.innerHTML = `
+    <div class="tg" role="group" aria-label="Year">${YEARS.map(y => `<button type="button" class="seg" data-year="${y}" aria-pressed="false">${y}</button>`).join('')}</div>
+    <div class="tg tg-cats" role="group" aria-label="Show">
+      <button type="button" class="chip" data-cat="" aria-pressed="true">All</button>
+      ${CAT_KEYS.map(c => `<button type="button" class="chip" data-cat="${c}" aria-pressed="false">${shapeSVG(c)}${CATS[c].word}</button>`).join('')}
+    </div>`
+  el.onclick = (e) => {
+    const y = e.target.closest('[data-year]'), c = e.target.closest('[data-cat]')
+    if (y) onYear(+y.dataset.year)
+    if (c) { const cat = c.dataset.cat, now = $$('.chip', el).find(b => b.getAttribute('aria-pressed') === 'true')
+      const next = now && now.dataset.cat === cat && cat ? '' : cat
+      $$('.chip', el).forEach(b => b.setAttribute('aria-pressed', String(b.dataset.cat === next))); onCat(next || null) }
+  }
+  return { setYear: (y) => $$('.seg', el).forEach(b => b.setAttribute('aria-pressed', String(+b.dataset.year === y))) }
+}
+
+/* -- theme: the bar's toggle, light by default ------------------------------ */
+function wireTheme() {
+  const b = $('#themeBtn'); if (!b) return
+  const set = (d) => { document.documentElement.classList.toggle('dark', d); b.setAttribute('aria-pressed', String(d)) }
+  b.onclick = () => set(!document.documentElement.classList.contains('dark'))
+  if (/[?&#]dark/.test(location.href)) set(true)
+}
+
+/* ==========================================================================
+   C1-caravan-designs: five layouts over one controller. Each render() lays
+   out its nodes and returns them; Timeline (above) makes them behave.
+   ========================================================================== */
+
+/* Spread a month's events evenly across its width. */
+function spread(D, mx, mw) {
+  const by = {}; D.evs.forEach(e => (by[e.mi] ||= []).push(e))
+  const pos = {}
+  for (const [mi, list] of Object.entries(by)) list.forEach((e, k) => { pos[e.id] = mx(+mi) + mw * (k + 1) / (list.length + 1) })
+  return pos
+}
+const ariaFor = (e) => `${monthLabel(e.d, true)}, ${e.t}, ${CATS[e.c].word}, heat ${e.h} of 5`
+function scrollerEl(W, H, cls) {
+  const sc = h('div', { class: 'sc ' + cls, tabindex: '-1' })
+  const tr = h('div', { class: 'track', style: `width:${W}px;height:${H}px` })
+  sc.append(tr); return { sc, tr }
+}
+function monthAxis(mx, mw, y, every = 1) {
+  return MONTH_LIST.map((mo, i) => {
+    const x = mx(i), jan = mo.m === 1 || i === 0
+    const lab = (i % every === 0 || jan) ? `<text x="${x + mw / 2}" y="${y + 20}" class="ax-m${jan ? ' jan' : ''}">${MONTHS[mo.m - 1]}</text>` : ''
+    return `<line x1="${x}" x2="${x}" y1="${y}" y2="${y + (jan ? 9 : 5)}" class="ax-t"/>${lab}`
+  }).join('')
+}
+/* A node: the mark, and a label lifted above it on a leader. */
+function nodeEl(e, x, y, size, lift, rest) {
+  const b = h('button', { type: 'button', class: 'nd', 'data-cat': e.c, 'aria-label': ariaFor(e), 'aria-expanded': 'false', style: `transform:translate(${x}px,${y}px);--s:${size}px;--lift:${lift}px` })
+  b.innerHTML = `<span class="nd-mark">${shapeSVG(e.c)}</span><span class="nd-lab${rest ? ' rest' : ''}">${esc(e.t)}</span>`
+  return b
+}
+
+/* ---------------------------------------------------------------- C1 Route */
+function renderRoute(wrap, D) {
+  const ph = isPhone(), mw = ph ? 84 : 118, pad = ph ? 28 : 64, H = ph ? 380 : 430
+  const W = pad * 2 + MONTH_LIST.length * mw, ground = H - 52, top = ph ? 140 : 150
+  const mx = (i) => pad + i * mw, xs = MONTH_LIST.map((_, i) => mx(i) + mw / 2)
+  const hn = D.heat.map((v, i) => (0.6 * v + 0.4 * smooth3(D.heat)[i]) / D.hmax)
+  const ridgeY = hn.map(v => ground - 34 - v * (ground - 34 - top))
+  const backY = smooth3(smooth3(D.heat)).map((v, i) => ground - 70 - (v / D.hmax) * (ground - top) * 0.55 - 16 * Math.sin(i * 0.9))
+  const ridge = curve([pad - mw, ...xs, W], [ground - 34, ...ridgeY, ground - 34])
+  const back = curve([0, ...xs, W], [ground - 60, ...backY, ground - 60])
+  const { sc, tr } = scrollerEl(W, H, 'sc-route')
+  const yearsSvg = YEARS.map(y => { const i = MONTH_LIST.findIndex(o => o.y === y), x = mx(i)
+    return `<line x1="${x}" x2="${x}" y1="46" y2="${ground}" class="yr-rule"/><text x="${x + 10}" y="${ph ? 44 : 56}" class="yr-big">${y}</text>` }).join('')
+  tr.innerHTML = `<svg class="land" width="${W}" height="${H}" aria-hidden="true">
+    ${yearsSvg}
+    <path class="hill-back" d="${back.d}L${W} ${ground}L0 ${ground}Z"/>
+    <path class="hill" d="${ridge.d}L${W} ${ground}L0 ${ground}Z"/>
+    <path class="trail" d="${ridge.d}"/>
+    <line x1="0" x2="${W}" y1="${ground}" y2="${ground}" class="ax-base"/>
+    ${monthAxis(mx, mw, ground)}
+  </svg>`
+  const pos = spread(D, mx, mw), place = rowPlacer(ph ? 3 : 4), items = []
+  D.evs.forEach(e => {
+    const x = pos[e.id], y = ridge.at(x), size = 12 + e.h * 2
+    let lift = 0
+    if (e.h >= 4 && !e.filler) { const r = place(x, textW(e.t)); if (r >= 0) lift = 30 + r * 26 }
+    const el = nodeEl(e, x, y, size, lift || 30, !!lift)
+    tr.append(el); items.push({ el, ev: e, x })
+  })
+  wrap.append(sc)
+  return { scroller: sc, items, monthX: mx, yearPos: (y) => mx(MONTH_LIST.findIndex(o => o.y === y)) - (ph ? 12 : 24) }
+}
+
+/* ---------------------------------------------------------------- C2 Lanes */
+function renderLanes(wrap, D) {
+  if (isPhone()) return renderChangelog(wrap, D)
+  const mw = 100, pad = 16, headH = 56, rowH = 30
+  const W = pad * 2 + MONTH_LIST.length * mw, mx = (i) => pad + i * mw
+  const lanes = CAT_KEYS.map(c => ({ c, rows: [], list: D.evs.filter(e => e.c === c) }))
+  const pills = []
+  lanes.forEach(L => L.list.forEach(e => {
+    const x = mx(e.mi) + 4, w = Math.min(196, textW(e.t, 12.5) + 34)
+    let r = L.rows.findIndex(end => end < x)
+    if (r < 0) { r = L.rows.length; L.rows.push(0) }
+    L.rows[r] = x + w + 4
+    pills.push({ e, x, w, r, L })
+  }))
+  let y = headH; lanes.forEach(L => { L.y = y; L.h = Math.max(1, L.rows.length) * rowH + 12; y += L.h })
+  const H = y + 8
+  const wrapIn = h('div', { class: 'lanes' })
+  const head = h('div', { class: 'lane-heads', style: `height:${H}px` })
+  head.innerHTML = `<div class="lh-top" style="height:${headH}px"></div>` + lanes.map(L => `<div class="lh" data-cat="${L.c}" style="height:${L.h}px">${shapeSVG(L.c)}<span>${CATS[L.c].word}</span><span class="lh-n">${L.list.length}</span></div>`).join('')
+  const { sc, tr } = scrollerEl(W, H, 'sc-lanes')
+  const grid = MONTH_LIST.map((mo, i) => { const x = mx(i), jan = mo.m === 1 || i === 0
+    return `<line x1="${x}" x2="${x}" y1="${jan ? 4 : 30}" y2="${H}" class="${jan ? 'g-year' : 'g-month'}"/>
+      <text x="${x + 8}" y="47" class="g-m">${MONTHS[mo.m - 1]}</text>${jan ? `<text x="${x + 8}" y="21" class="g-y">${mo.y}</text>` : ''}` }).join('')
+  const sep = lanes.map(L => `<line x1="0" x2="${W}" y1="${L.y}" y2="${L.y}" class="g-lane"/>`).join('')
+  const nowX = mx(MONTH_LIST.length - 1) + 10
+  tr.innerHTML = `<svg class="grid" width="${W}" height="${H}" aria-hidden="true">${grid}${sep}<line x1="${nowX}" x2="${nowX}" y1="30" y2="${H}" class="g-now"/><text x="${nowX + 6}" y="${headH + 16}" class="g-nowt">Now</text></svg>`
+  const items = []
+  pills.forEach(({ e, x, w, r, L }) => {
+    const b = h('button', { type: 'button', class: 'nd pill', 'data-cat': e.c, 'aria-label': ariaFor(e), 'aria-expanded': 'false', style: `left:${x}px;top:${L.y + 8 + r * rowH}px;max-width:${w}px` })
+    b.innerHTML = `${shapeSVG(e.c)}<span>${esc(e.t)}</span>`
+    tr.append(b); items.push({ el: b, ev: e, x, lane: CAT_KEYS.indexOf(e.c) })
+  })
+  items.sort((a, b) => a.ev.i - b.ev.i)
+  // Tab order is time order across lanes, not lane by lane.
+  items.forEach(it => tr.append(it.el))
+  wrapIn.append(head, sc); wrap.append(wrapIn)
+  const lanesNav = (it, dir, vis) => {
+    for (let l = it.lane + dir; l >= 0 && l < 6; l += dir) {
+      const c = vis.filter(v => v.lane === l); if (!c.length) continue
+      return c.reduce((a, b) => Math.abs(b.x - it.x) < Math.abs(a.x - it.x) ? b : a)
+    }
+    return null
+  }
+  return { scroller: sc, items, monthX: mx, scrub: 'plain', lanes: lanesNav, yearPos: (y) => mx(MONTH_LIST.findIndex(o => o.y === y)) - 8 }
+}
+/* On a phone the lanes become the changelog a product team would ship: one
+   column, newest last, a row per event that opens in place. */
+function renderChangelog(wrap, D) {
+  const box = h('div', { class: 'vl' }), items = []
+  YEARS.forEach(y => {
+    const sec = h('section', { class: 'vl-year', 'data-year': y })
+    sec.innerHTML = `<h2>${y}</h2>`
+    MONTH_LIST.filter(o => o.y === y).forEach(mo => {
+      const list = D.evs.filter(e => e.d === mo.key); if (!list.length) return
+      const m = h('div', { class: 'vl-month' })
+      m.innerHTML = `<div class="vl-m">${MONTHS_LONG[mo.m - 1]}</div>`
+      const ul = h('ul')
+      list.forEach(e => {
+        const li = h('li', { 'data-cat': e.c })
+        const b = h('button', { type: 'button', class: 'nd vrow', 'data-cat': e.c, 'aria-expanded': 'false', 'aria-controls': 'm-' + e.id })
+        b.innerHTML = `<span class="nd-mark">${shapeSVG(e.c)}</span><span class="vr-t">${esc(e.t)}</span><span class="vr-c">${CATS[e.c].word}</span><svg class="vr-chev" viewBox="0 0 12 12" aria-hidden="true"><path d="M2.5 4.5 6 8l3.5-3.5"/></svg>`
+        const more = h('div', { class: 'vr-more', id: 'm-' + e.id })
+        more.innerHTML = cardHTML(e, false)
+        li.append(b, more); ul.append(li); items.push({ el: b, ev: e })
+      })
+      m.append(ul); sec.append(m)
+    })
+    box.append(sec)
+  })
+  wrap.append(box)
+  return { scroller: box, items, axis: 'y', mode: 'inline', yearPos: (y) => $(`.vl-year[data-year="${y}"]`, box).getBoundingClientRect().top + scrollY - 200 }
+}
+
+/* ---------------------------------------------------------------- C3 Pulse */
+function renderPulse(wrap, D) {
+  const ph = isPhone(), mw = ph ? 72 : 98, pad = ph ? 28 : 64, H = ph ? 400 : 470
+  const W = pad * 2 + MONTH_LIST.length * mw, bottom = H - 52, top = ph ? 150 : 168
+  const mx = (i) => pad + i * mw, xs = MONTH_LIST.map((_, i) => mx(i) + mw / 2)
+  const ly = D.heat.map(v => bottom - 10 - (v / D.hmax) * (bottom - 10 - top))
+  const line = curve(xs, ly, 3)
+  const { sc, tr } = scrollerEl(W, H, 'sc-pulse')
+  const bands = YEARS.map((y, k) => { const i0 = MONTH_LIST.findIndex(o => o.y === y), n = MONTH_LIST.filter(o => o.y === y).length
+    return `${k % 2 ? `<rect x="${mx(i0)}" y="0" width="${n * mw}" height="${bottom}" class="yb"/>` : ''}<text x="${mx(i0) + 10}" y="24" class="yb-t">${y}</text>` }).join('')
+  const grid = [0.25, 0.5, 0.75, 1].map(f => { const y = bottom - 10 - f * (bottom - 10 - top); return `<line x1="0" x2="${W}" y1="${y}" y2="${y}" class="pg-grid"/>` }).join('')
+  const by = {}; D.evs.forEach(e => (by[e.mi] ||= []).push(e))
+  const stems = [], items = [], place = rowPlacer(ph ? 3 : 4)
+  for (const [miS, list0] of Object.entries(by)) {
+    const list = [...list0].sort((a, b) => a.h - b.h) // the hottest stands at the top of the stem
+    const mi = +miS, x = xs[mi], y0 = ly[mi], step = 19, n = list.length
+    const up = y0 - 22 - (n - 1) * step > 44
+    const ys = list.map((_, k) => up ? y0 - 22 - k * step : y0 + 22 + k * step)
+    stems.push(`<line x1="${x}" x2="${x}" y1="${y0}" y2="${ys[n - 1]}" class="stem"/>`)
+    list.forEach((e, k) => {
+      let lift = 0
+      if (k === n - 1 && up && !e.filler && D.heat[mi] >= D.hmax * 0.4) { const r = place(x, textW(e.t)); if (r >= 0) lift = 30 + r * 26 }
+      const el = nodeEl(e, x, ys[k], 11 + e.h * 1.4, lift || 26, !!lift)
+      items.push({ el, ev: e, x })
+    })
+  }
+  items.sort((a, b) => a.ev.i - b.ev.i).forEach(it => tr.append(it.el))
+  tr.insertAdjacentHTML('afterbegin', `<svg class="pulse" width="${W}" height="${H}" aria-hidden="true">
+    ${bands}${grid}
+    <path class="p-area" d="${line.d}L${xs[xs.length - 1]} ${bottom}L${xs[0]} ${bottom}Z"/>
+    <path class="p-line" d="${line.d}"/>
+    ${stems.join('')}
+    ${xs.map((x, i) => `<circle cx="${x}" cy="${ly[i]}" r="3" class="p-dot"/>`).join('')}
+    <line x1="0" x2="${W}" y1="${bottom}" y2="${bottom}" class="ax-base"/>
+    ${monthAxis(mx, mw, bottom)}
+  </svg>
+  <div class="xhair" aria-hidden="true"><span class="xh-read"></span></div>`)
+  const xh = $('.xhair', tr), read = $('.xh-read', tr)
+  const setX = (mi) => {
+    if (mi == null || mi < 0) { xh.style.opacity = 0; return }
+    const n = D.evs.filter(e => e.mi === mi).length
+    xh.style.opacity = 1; xh.style.transform = `translateX(${xs[mi]}px)`
+    read.textContent = `${monthLabel(MONTH_LIST[mi].key)} · ${n} ${n === 1 ? 'event' : 'events'} · heat ${D.heat[mi]}`
+  }
+  let pinnedMi = null
+  tr.addEventListener('pointermove', (e) => { if (e.pointerType === 'touch') return; const r = tr.getBoundingClientRect(); setX(Math.max(0, Math.min(MONTH_LIST.length - 1, Math.floor((e.clientX - r.left - pad) / mw)))) })
+  tr.addEventListener('pointerleave', () => setX(pinnedMi))
+  wrap.append(sc)
+  wrap.insertAdjacentHTML('beforeend', `<p class="p-key">The line is each month's sample heat: the sum of its events' heat.</p>`)
+  return { scroller: sc, items, monthX: mx, onActive: (it) => { pinnedMi = it ? it.ev.mi : null; setX(pinnedMi) },
+    yearPos: (y) => mx(MONTH_LIST.findIndex(o => o.y === y)) - (ph ? 12 : 24) }
+}
+
+/* ---------------------------------------------------------------- C4 Night */
+const CAMEL = `<g class="camel-body"><path d="M6 20C6 14 10 11 15 11C18 4 27 3 30 10C32 13 34 15 36 16C38 12 39 7 41 5C42 3 45 3 47 4.5L48.4 7.2C46.6 7.6 45 7.6 44.2 8.6C42.6 12 41.6 17 40 21C39 24 37 25 35 25L13 25C9 25 6 23.5 6 20Z"/><path d="M6.4 17.5C3.8 18.5 3.2 21 3.6 24" class="tail"/></g>
+  <g class="legs-a"><rect x="10.5" y="23" width="2.4" height="13" rx="1"/><rect x="33" y="23" width="2.4" height="13" rx="1"/></g>
+  <g class="legs-b"><rect x="15" y="23" width="2.4" height="13" rx="1"/><rect x="37" y="22" width="2.4" height="14" rx="1"/></g>`
+function renderNight(wrap, D) {
+  const ph = isPhone(), mw = ph ? 98 : 134, pad = ph ? 70 : 120, H = ph ? 400 : 452
+  const W = pad * 2 + MONTH_LIST.length * mw, ground = H - 42, top = ph ? 170 : 180
+  const mx = (i) => pad + i * mw, xs = MONTH_LIST.map((_, i) => mx(i) + mw / 2)
+  const hn = D.heat.map((v, i) => (0.6 * v + 0.4 * smooth3(D.heat)[i]) / D.hmax)
+  const ridgeY = hn.map(v => ground - 26 - v * (ground - 26 - top))
+  const ridge = curve([0, ...xs, W], [ground - 30, ...ridgeY, ground - 30])
+  const far = curve([0, ...xs, W], [ground - 90, ...smooth3(smooth3(D.heat)).map((v, i) => ground - 110 - (v / D.hmax) * 90 - 22 * Math.sin(i * 1.3)), ground - 90])
+  let seed = 3; const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647
+  let s1 = '', s2 = ''
+  for (let k = 0; k < W / 16; k++) { const x = rnd() * W, y = 14 + rnd() * (top - 30), r = rnd() < 0.16 ? 1.3 : 0.7
+    const p = `M${x.toFixed(1)} ${y.toFixed(1)}m-${r} 0a${r} ${r} 0 1 0 ${2 * r} 0a${r} ${r} 0 1 0 -${2 * r} 0`; if (r > 1) s2 += p; else s1 += p }
+  const { sc, tr } = scrollerEl(W, H, 'sc-night')
+  const miles = YEARS.map(y => { const i = MONTH_LIST.findIndex(o => o.y === y), x = mx(i), gy = ridge.at(x)
+    return `<line x1="${x}" x2="${x}" y1="30" y2="${gy - 40}" class="n-yline"/>
+      <path d="M${x - 7} ${gy + 2}V${gy - 34}L${x} ${gy - 44}L${x + 7} ${gy - 34}V${gy + 2}Z" class="n-stone"/>
+      <text x="${x}" y="${Math.min(gy - 52, 64)}" class="n-year">${y}</text>` }).join('')
+  tr.innerHTML = `<svg class="night" width="${W}" height="${H}" aria-hidden="true">
+    <rect width="${W}" height="${H}" class="n-sky"/>
+    <path d="${s1}" class="n-star"/><path d="${s2}" class="n-star big"/>
+    <path class="n-far" d="${far.d}L${W} ${H}L0 ${H}Z"/>
+    ${miles}
+    <path class="n-near" d="${ridge.d}L${W} ${H}L0 ${H}Z"/>
+    <path class="n-route" d="${ridge.d}"/>
+    <rect x="0" y="${ground}" width="${W}" height="${H - ground}" class="n-floor"/>
+    ${MONTH_LIST.map((mo, i) => `<text x="${mx(i) + mw / 2}" y="${ground + 26}" class="n-m${mo.m === 1 ? ' jan' : ''}">${MONTHS[mo.m - 1]}</text>`).join('')}
+  </svg>
+  <svg class="caravan" width="160" height="40" viewBox="0 -2 160 40" aria-hidden="true">
+    <g transform="translate(108 0)" class="c1">${CAMEL}<rect x="17" y="9" width="12" height="9" rx="2" class="pack" style="fill:#63B2AB"/></g>
+    <g transform="translate(56 0)" class="c2">${CAMEL}<rect x="17" y="9" width="12" height="9" rx="2" class="pack" style="fill:#C9785F"/></g>
+    <g transform="translate(4 0)" class="c3">${CAMEL}<rect x="17" y="9" width="12" height="9" rx="2" class="pack" style="fill:#DDB46A"/></g>
+  </svg>`
+  const pos = spread(D, mx, mw), place = rowPlacer(ph ? 2 : 3), items = []
+  D.evs.forEach(e => {
+    const x = pos[e.id], y = ridge.at(x), big = e.h >= 3 && !e.filler
+    const w = big ? 18 + e.h * 5 : 0, hh = big ? 22 + e.h * 7 : 0
+    let lift = hh + 30, rest = false
+    if (e.h >= 4 && !e.filler) { const r = place(x, textW(e.t, 13)); if (r >= 0) { lift = hh + 28 + r * 28; rest = true } }
+    const b = h('button', { type: 'button', class: 'nd ' + (big ? 'serai' : 'lamp'), 'data-cat': e.c, 'aria-label': ariaFor(e), 'aria-expanded': 'false',
+      style: `transform:translate(${x}px,${y}px);--lift:${lift}px;--w:${w}px;--hh:${hh}px` })
+    b.innerHTML = big
+      ? `<span class="nd-mark"><svg viewBox="0 0 ${w} ${hh}" width="${w}" height="${hh}" aria-hidden="true">
+          <path d="M1 ${hh}V${w / 2}A${w / 2 - 1} ${w / 2 - 1} 0 0 1 ${w - 1} ${w / 2}V${hh}Z" class="s-body"/>
+          <path d="M${w * 0.3} ${hh}V${w * 0.55}A${w * 0.2} ${w * 0.2} 0 0 1 ${w * 0.7} ${w * 0.55}V${hh}Z" class="s-door"/></svg>${shapeSVG(e.c, 'sign')}</span><span class="nd-lab${rest ? ' rest' : ''}">${esc(e.t)}</span>`
+      : `<span class="nd-mark">${shapeSVG(e.c)}</span><span class="nd-lab">${esc(e.t)}</span>`
+    tr.append(b); items.push({ el: b, ev: e, x })
+  })
+  wrap.append(sc)
+  wrap.insertAdjacentHTML('beforeend', `<svg class="moon" viewBox="0 0 60 60" aria-hidden="true"><circle cx="30" cy="30" r="22" fill="#efe3c2"/><circle cx="41" cy="24" r="20" fill="#12132e"/></svg>`)
+  // The caravan walks to the opened station, or keeps pace with the scroll.
+  const car = $('.caravan', tr)
+  let cx = pad, target = pad, raf = 0, active = null
+  const draw = () => {
+    const y = ridge.at(cx + 132)
+    car.style.transform = `translate(${cx}px,${y - 38}px)`
+    ;['c1', 'c2', 'c3'].forEach((c, k) => { const gx = cx + [108, 56, 4][k] + 24, a = Math.max(-11, Math.min(11, Math.atan2(ridge.at(gx + 10) - ridge.at(gx - 10), 20) * 57.3)), dy = ridge.at(gx) - y
+      $('.' + c, car).setAttribute('transform', `translate(${[108, 56, 4][k]} ${dy.toFixed(1)}) rotate(${a.toFixed(1)} 24 36)`) })
+  }
+  const walk = () => {
+    if (reduced()) { cx = target; draw(); car.classList.remove('walking'); return }
+    cancelAnimationFrame(raf)
+    let last = performance.now()
+    const step = (t) => { const dt = Math.min(48, t - last); last = t
+      const d = target - cx, v = Math.sign(d) * Math.min(Math.abs(d), Math.max(0.35, Math.abs(d) * 0.006) * dt)
+      cx += v; draw()
+      car.classList.toggle('walking', Math.abs(d) > 1); car.classList.toggle('back', d < -1)
+      if (Math.abs(target - cx) > 0.5) raf = requestAnimationFrame(step); else car.classList.remove('walking') }
+    raf = requestAnimationFrame(step)
+  }
+  const follow = () => { if (active) return; target = Math.max(pad - 40, sc.scrollLeft + sc.clientWidth * (ph ? 0.08 : 0.16)); walk() }
+  sc.addEventListener('scroll', follow, { passive: true })
+  draw(); follow()
+  return { scroller: sc, items, monthX: mx, night: true, scrubIn: true,
+    onActive: (it) => { active = it; if (it) { target = it.x - 150 - (it.el.classList.contains('serai') ? 30 : 10); walk() } else follow() },
+    yearPos: (y) => mx(MONTH_LIST.findIndex(o => o.y === y)) - (ph ? 30 : 60) }
+}
+
+/* ---------------------------------------------------------------- C5 Stalls */
+function renderStalls(wrap, D) {
+  const ph = isPhone(), sw = ph ? Math.min(300, Math.round(innerWidth * 0.76)) : 262, gap = ph ? 14 : 18, pad = ph ? 16 : 56
+  const seasons = []
+  MONTH_LIST.forEach((mo, i) => { const s = seasonOf(mo.key), last = seasons[seasons.length - 1]
+    if (!last || last.id !== s.id) seasons.push({ ...s, months: [i] }); else last.months.push(i) })
+  seasons.forEach(s => { s.evs = D.evs.filter(e => s.months.includes(e.mi)); s.heat = s.months.reduce((a, i) => a + D.heat[i], 0) })
+  const smax = Math.max(...seasons.map(s => s.heat))
+  const sx = (k) => pad + k * (sw + gap)
+  const W = sx(seasons.length) - gap + pad
+  const { sc, tr } = scrollerEl(W, 10, 'sc-stalls')
+  tr.style.height = ''
+  const row = h('div', { class: 'stalls' }), items = []
+  seasons.forEach((s, k) => {
+    const lvl = Math.max(1, Math.ceil(s.heat / smax * 5))
+    const roof = Math.round(22 + (s.heat / smax) * (ph ? 96 : 128))
+    const st = h('section', { class: 'stall', 'aria-label': `${s.name} ${s.y}`, style: `width:${sw}px;--roof:${roof}px` })
+    st.innerHTML = `<div class="st-roof" aria-hidden="true"><span class="st-heat">${heatHTML(lvl)}</span></div><header class="st-h"><h3>${s.name} <span>${s.y}</span></h3></header>`
+    const ul = h('ul', { class: 'st-list' })
+    if (!s.evs.length) ul.innerHTML = '<li class="st-none">Nothing recorded</li>'
+    s.evs.forEach(e => {
+      const li = h('li')
+      const b = h('button', { type: 'button', class: 'nd row', 'data-cat': e.c, 'aria-label': ariaFor(e), 'aria-expanded': 'false' })
+      b.innerHTML = `<span class="nd-mark">${shapeSVG(e.c)}</span><span class="r-t">${esc(e.t)}</span><span class="r-m">${MONTHS[+e.d.slice(5) - 1]}</span>`
+      li.append(b); ul.append(li); items.push({ el: b, ev: e })
+    })
+    st.append(ul); row.append(st)
+  })
+  const street = h('div', { class: 'street', 'aria-hidden': 'true' })
+  street.innerHTML = YEARS.map(y => { const ks = seasons.map((s, k) => s.y === y ? k : -1).filter(k => k >= 0); if (!ks.length) return ''
+    return `<span style="left:${sx(ks[0])}px;width:${sx(ks[ks.length - 1]) + sw - sx(ks[0])}px">${y}</span>` }).join('')
+  tr.append(row, street)
+  wrap.append(sc)
+  const monthX = (i) => { const k = seasons.findIndex(s => s.months.includes(i)), s = seasons[k]; return sx(k) + sw * (s.months.indexOf(i) / s.months.length) }
+  return { scroller: sc, items, monthX, prefer: 'side', yearPos: (y) => sx(seasons.findIndex(s => s.y === y)) - pad }
+}
+
+/* ---------------------------------------------------------------- mounting */
+const DESIGNS = {
+  C1: { name: 'The Route', render: renderRoute, line: 'A caravan trail over hills that rise with each month\'s heat, its stations on the trail. The brief\'s shape, drawn as a landscape: the calmest to read and the one most like the site.' },
+  C2: { name: 'Lanes', render: renderLanes, line: 'The industry standard: six category lanes on a month grid, like a roadmap or a Gantt band, with a plain scrollbar. Best for reading by topic; on a phone it becomes a vertical changelog.' },
+  C3: { name: 'Pulse', render: renderPulse, line: 'A market-strength line of each month\'s heat with that month\'s events pinned on a stem, and a crosshair that reads out the month. Reads like a trends chart.' },
+  C4: { name: 'Night Caravan', render: renderNight, line: 'The bold one: camels walk a moonlit route between caravanserais. A station\'s size is its heat, and the caravan walks to whichever one you open.' },
+  C5: { name: 'Stall Row', render: renderStalls, line: 'One arch-topped stall per season, its height the season\'s heat, so the row reads as a skyline. Each stall lists its events; fewer, fuller stops.' },
+}
+let current = null
+const state = { code: 'C1', load: false }
+function readHash() { const m = location.hash.match(/C[1-5]/); state.code = m ? m[0] : 'C1'; state.load = /load/.test(location.hash) }
+function mount() {
+  readHash()
+  if (current) { current.tl.destroy(); current.scrub && current.scrub.destroy() }
+  const D = buildData(state.load), wrap = $('#wrap'), scrubEl = $('#scrub')
+  wrap.innerHTML = ''; wrap.className = 'stage-wrap d-' + state.code
+  $('#main').dataset.design = state.code
+  $$('.pg-tabs button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.code === state.code)))
+  const d = DESIGNS[state.code]
+  $('#pgDesc').innerHTML = `<b>${state.code} ${d.name}.</b> ${d.line}`
+  $('#loadBox').checked = state.load
+  $('#nodeCount').textContent = `${D.evs.length} nodes`
+  const r = d.render(wrap, D)
+  const tl = new Timeline({ root: wrap, scroller: r.scroller, items: r.items, yearPos: r.yearPos, axis: r.axis || 'x', mode: r.mode || 'card', card: $('#card'), night: r.night, lanes: r.lanes, onActive: r.onActive, prefer: r.prefer })
+  const bar = Toolbar($('#tools'), { onYear: (y) => tl.jumpYear(y), onCat: (c) => tl.setFilter(c) })
+  let scrub = null
+  if ((r.axis || 'x') === 'x') {
+    scrubEl.hidden = false
+    if (r.scrubIn) wrap.append(scrubEl); else $('#wrap').after(scrubEl)
+    scrub = Scrubber({ el: scrubEl, scroller: r.scroller, monthX: r.monthX, heat: D.heat, hmax: D.hmax, yearPos: r.yearPos, mode: r.scrub || 'spark', night: r.night })
+  } else { scrubEl.hidden = true; $('#wrap').after(scrubEl) }
+  tl.onScroll = () => bar.setYear(tl.currentYear())
+  bar.setYear(tl.currentYear())
+  current = { tl, scrub, phone: isPhone(), w: innerWidth }
+}
+document.addEventListener('DOMContentLoaded', () => {
+  wireTheme()
+  $('.pg-tabs').innerHTML = Object.entries(DESIGNS).map(([k, d]) => `<button type="button" data-code="${k}" aria-pressed="false">${k} ${d.name}</button>`).join('')
+  $('.pg-tabs').onclick = (e) => { const b = e.target.closest('[data-code]'); if (b) location.hash = b.dataset.code + (state.load ? '&load' : '') }
+  $('#loadBox').onchange = (e) => { location.hash = state.code + (e.target.checked ? '&load' : '') }
+  addEventListener('hashchange', mount)
+  let t = 0; addEventListener('resize', () => { clearTimeout(t); t = setTimeout(() => { if (current && (current.phone !== isPhone() || Math.abs(current.w - innerWidth) > 40)) mount() }, 180) })
+  mount()
+})
+
+</script>
+</body>
+</html>

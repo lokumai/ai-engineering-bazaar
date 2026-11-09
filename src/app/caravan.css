@@ -1,0 +1,758 @@
+/* ===========================================================================
+   M91, D116 — CARAVAN: C4, SHADOW PLAY.
+
+   Reference: `playground/2026-11-round-5/C1-caravan-designs.html#C4` (its
+   `.cv-head`, `.cv-tools`, `.stage`, `.stop`, `.cv-card.is-night`,
+   `.scrub.is-night` and `.st-shadow` rules) and the screenshots
+   `shots-C1-v2/C4b-*`, with the author's three changes already in that file.
+
+   What this sheet does and does not do:
+
+   - Everything is scoped under `.bz-caravan`. The scene's own vocabulary
+     (`cv-*`) is shared with `components/caravan/scene/`, which builds those
+     nodes and finds them by it.
+   - **Every colour is a custom property, and none is written here.** The
+     theatre's cloth, leather and lamp are its art, stated once in
+     `components/caravan/palette.ts` and written into the page as
+     `--caravan-*` (About's `palette.ts` pattern, M90); below, each is declared
+     with the language's nearest token as its default, so the page keeps a
+     colour if that style were ever missing. The puppets' paint is in their SVG
+     (`scene/art.ts`), as the street's is.
+   - **The chrome is the language's.** The card is the code slab (dark in both
+     themes by the language's own rule) and the strip is the bar, both read
+     from their tokens; the mockup's night card and night strip colours were
+     not transcribed, so no deviation from the language is needed.
+   - **No shadow.** The mockup framed the cloth and outlined the labels with
+     `box-shadow`; here the frame is two borders and the label a border, and a
+     lit stop's glow is an SVG filter carried by the art.
+   - **No transform or opacity transition.** A stop dims and grows at once; the
+     motion is the island's, frame by frame, and the CSS animations (the
+     puppets on their rods, the flags, the lantern) stop under reduced motion.
+   - **The list of trends is the page without a script**: the journey is shown
+     only once the page's inline script, or the island, marks `<html>`.
+   =========================================================================== */
+
+@layer components {
+  .bz-caravan {
+    --caravan-frame: var(--color-bar);
+    --caravan-wood: var(--color-bar);
+    --caravan-gilt: var(--color-ornament);
+    --caravan-cloth-a: var(--color-surface);
+    --caravan-cloth-b: var(--color-surface);
+    --caravan-cloth-c: var(--color-surface-sunken);
+    --caravan-weave: transparent;
+    --caravan-lamp: transparent;
+    --caravan-valance: var(--color-band-c);
+    --caravan-valance-deep: var(--color-band-c);
+    --caravan-hide: var(--color-on-surface);
+    --caravan-hill: transparent;
+    --caravan-hill-edge: var(--color-line);
+    --caravan-land: var(--color-band-a);
+    --caravan-lamp-lit: var(--color-caution);
+    --caravan-focus: var(--color-caution);
+    --cv-f: 1;
+  }
+
+  /* The scene runs edge to edge, so the page's main has no side padding and each
+     part keeps the mockup's own gutter, which reaches 16px at a phone's width.
+     The trail takes the same gutter, so it starts where the page does. */
+  .bz-main:has(> .bz-caravan) {
+    --cv-gutter: clamp(16px, 3.4vw, 56px);
+    padding: 16px 0 64px;
+  }
+
+  .bz-main:has(> .bz-caravan) > .bz-crumb {
+    margin-inline: var(--cv-gutter);
+  }
+
+  /* -- the notice, first on the page ------------------------------------- */
+  .cv-notice {
+    display: flex;
+    align-items: flex-start;
+    gap: 9px;
+    margin: 0 var(--cv-gutter) 14px;
+    padding: 8px 13px;
+    border: 1px dashed var(--color-line-strong);
+    border-radius: var(--radius-sm);
+    background: var(--color-surface-raised);
+    color: var(--color-on-surface);
+    font-size: var(--text-meta);
+    line-height: 1.45;
+  }
+
+  .cv-notice svg {
+    flex: none;
+    width: 15px;
+    height: 15px;
+    margin-top: 2px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.6;
+  }
+
+  .cv-notice b {
+    color: var(--color-on-surface-title);
+    font-weight: 600;
+  }
+
+  /* -- the head ------------------------------------------------------------ */
+  /* The head and the tools share one row, so the stage and the strip fit a
+     laptop's window under them (the mockup gave the tools a row of their own). */
+  .cv-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 12px 24px;
+    padding: 0 var(--cv-gutter) 16px;
+  }
+
+  .cv-head .bz-display {
+    margin: 0 0 6px;
+  }
+
+  .cv-lead {
+    max-width: var(--layout-measure);
+    margin: 0;
+    color: var(--color-on-surface-muted);
+    font-size: var(--text-lead);
+  }
+
+  /* -- the journey and its tools, only where a script runs and drew them ---- */
+  html:not([data-cv-script]) .cv-scripted,
+  .bz-caravan[data-cv-failed] .cv-scripted {
+    display: none;
+  }
+
+  .cv-tools {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 8px;
+  }
+
+  .cv-years {
+    display: flex;
+    gap: 4px;
+    min-width: 0;
+    padding: 3px;
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-lg);
+    background: var(--color-surface-raised);
+  }
+
+  .cv-year {
+    padding: 6px 12px;
+    border: 0;
+    border-radius: var(--radius-base);
+    background: none;
+    color: var(--color-on-surface-muted);
+    font: 600 var(--text-control) / 1 var(--font-sans);
+    font-variant-numeric: tabular-nums;
+    cursor: pointer;
+  }
+
+  .cv-year:hover {
+    background: var(--color-surface-sunken);
+    color: var(--color-on-surface);
+  }
+
+  .cv-year[aria-current="true"] {
+    background: var(--color-primary);
+    color: var(--color-on-primary);
+  }
+
+  .cv-year:focus-visible {
+    outline: 2px solid var(--color-focus);
+    outline-offset: 2px;
+  }
+
+  .cv-place {
+    margin: 0;
+    color: var(--color-on-surface-title);
+    font: 600 var(--text-body) / 1.2 var(--font-sans);
+  }
+
+  /* -- the stage: the theatre ---------------------------------------------- */
+  /* The scene sets the exact height from the window (`scene/index.ts`); this
+     is the nearest guess before it runs, so the page barely moves when it does. */
+  .cv-stage {
+    position: relative;
+    height: clamp(300px, calc(100svh - 360px), 470px);
+    overflow: hidden;
+    border-block: 1px solid var(--caravan-frame);
+    background: var(--caravan-frame);
+    touch-action: pan-y;
+    user-select: none;
+    -webkit-user-select: none;
+    cursor: grab;
+  }
+
+  .cv-stage.is-drag {
+    cursor: grabbing;
+  }
+
+  .cv-screen,
+  .cv-lamp-light {
+    position: absolute;
+    inset: 26px 18px 0;
+  }
+
+  .cv-screen {
+    border: 6px solid var(--caravan-wood);
+    border-bottom: 0;
+    background: radial-gradient(ellipse 60% 70% at 50% 58%, var(--caravan-cloth-a), var(--caravan-cloth-b) 55%, var(--caravan-cloth-c) 100%);
+  }
+
+  .cv-screen::before,
+  .cv-screen::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+  }
+
+  .cv-screen::before {
+    border: 3px solid var(--caravan-gilt);
+    border-bottom: 0;
+  }
+
+  .cv-screen::after {
+    background: repeating-linear-gradient(90deg, var(--caravan-weave) 0 2px, transparent 2px 5px);
+  }
+
+  .cv-layers,
+  .cv-caravan {
+    position: absolute;
+    inset: 0;
+    clip-path: inset(32px 24px 0);
+  }
+
+  .cv-layer {
+    position: absolute;
+    inset: 0;
+    will-change: transform;
+  }
+
+  .cv-layer > svg {
+    position: absolute;
+    top: 0;
+    overflow: visible;
+  }
+
+  .cv-caravan {
+    z-index: 4;
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+    pointer-events: none;
+  }
+
+  .cv-lamp-light {
+    z-index: 5;
+    background: radial-gradient(ellipse 70% 80% at 50% 55%, transparent 40%, var(--caravan-lamp));
+    mix-blend-mode: multiply;
+    pointer-events: none;
+  }
+
+  .cv-valance {
+    position: absolute;
+    top: 0;
+    right: 0;
+    left: 0;
+    z-index: 5;
+    height: 34px;
+    background:
+      radial-gradient(circle at 18px -4px, var(--caravan-valance) 20px, transparent 21px) 0 0 / 36px 34px repeat-x,
+      linear-gradient(var(--caravan-valance-deep), var(--caravan-valance)) 0 0 / 100% 12px no-repeat;
+    pointer-events: none;
+  }
+
+  .cv-ledge {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 5;
+    height: 16px;
+    border-top: 3px solid var(--caravan-gilt);
+    background: var(--caravan-wood);
+  }
+
+  /* -- the art: hills, the two levels, the posts, the leather -------------- */
+  .cv-hill {
+    fill: var(--caravan-hill);
+    stroke: var(--caravan-hill-edge);
+    stroke-width: 2;
+  }
+
+  .cv-landmark {
+    opacity: 0.35;
+  }
+
+  .cv-land {
+    fill: var(--caravan-land);
+    stroke: var(--caravan-hide);
+    stroke-width: 3;
+  }
+
+  .cv-high-road,
+  .cv-low-road {
+    fill: none;
+    stroke: var(--caravan-hide);
+    stroke-linecap: round;
+  }
+
+  .cv-high-road {
+    stroke-width: 5;
+    stroke-dasharray: 2 9;
+    opacity: 0.35;
+  }
+
+  .cv-low-road {
+    stroke-width: 4;
+    stroke-dasharray: 2 10;
+    opacity: 0.5;
+  }
+
+  .cv-post {
+    color: var(--caravan-hide);
+  }
+
+  .cv-post-year {
+    fill: var(--caravan-hide);
+    font: 700 15px var(--font-sans);
+    text-anchor: middle;
+  }
+
+  /* The leather: every filled shape gets a dark hide edge and a translucent dye. */
+  .cv-road g *:not([stroke]):not(text),
+  .cv-caravan *:not([stroke]) {
+    stroke: var(--caravan-hide);
+    stroke-width: 1.6;
+    paint-order: stroke;
+    fill-opacity: 0.88;
+  }
+
+  .cv-road > svg,
+  .cv-caravan {
+    filter: saturate(1.35) contrast(1.05);
+  }
+
+  .cv-rod {
+    fill: none;
+    stroke: var(--caravan-frame);
+    stroke-width: 2.2;
+    opacity: 0.85;
+  }
+
+  .cv-puppet {
+    --cv-delay: 0s;
+    transform-box: fill-box;
+    transform-origin: 50% 100%;
+    animation: cv-wobble 1.3s ease-in-out infinite alternate;
+    animation-delay: var(--cv-delay);
+  }
+
+  .cv-caravan.is-walking .cv-puppet {
+    animation-duration: 0.42s;
+  }
+
+  .cv-legs-a,
+  .cv-legs-b,
+  .cv-lg1,
+  .cv-lg2 {
+    transform-box: fill-box;
+    transform-origin: 50% 0;
+  }
+
+  .cv-caravan.is-walking .cv-legs-a { animation: cv-stride 620ms ease-in-out infinite alternate; }
+  .cv-caravan.is-walking .cv-legs-b { animation: cv-stride 620ms ease-in-out infinite alternate-reverse; }
+  .cv-caravan.is-walking .cv-lg1 { animation: cv-step 420ms ease-in-out infinite alternate; }
+  .cv-caravan.is-walking .cv-lg2 { animation: cv-step 420ms ease-in-out infinite alternate-reverse; }
+
+  .cv-caravan.is-walking .cv-body,
+  .cv-caravan.is-walking .cv-person {
+    animation: cv-bob 310ms ease-in-out infinite alternate;
+  }
+
+  .cv-flag {
+    transform-box: fill-box;
+    transform-origin: 0 50%;
+    animation: cv-flutter 1.6s ease-in-out infinite alternate;
+  }
+
+  .cv-glow {
+    animation: cv-glow 1.8s ease-in-out infinite alternate;
+  }
+
+  /* -- a stop's prop, lit and dimmed ---------------------------------------- */
+  .cv-stopg {
+    transform-box: fill-box;
+    transform-origin: 50% 100%;
+  }
+
+  .cv-stage.has-lit .cv-stopg:not(.is-lit) {
+    opacity: 0.25;
+  }
+
+  .cv-stopg.is-lit {
+    transform: scale(1.07);
+    filter: url(#cv-glow) brightness(1.15);
+  }
+
+  .cv-stopg.is-lit .cv-lamp {
+    fill: var(--caravan-lamp-lit);
+  }
+
+  /* -- the stops: real buttons over the picture ----------------------------- */
+  .cv-stops {
+    position: absolute;
+    inset: 0;
+    z-index: 6;
+    pointer-events: none;
+  }
+
+  .cv-stop {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 0;
+    height: 0;
+    padding: 0;
+    border: 0;
+    background: none;
+    outline: none;
+    pointer-events: none;
+  }
+
+  .cv-stop.is-active {
+    z-index: 3;
+  }
+
+  .cv-stop.is-off {
+    opacity: 0;
+  }
+
+  .cv-stop.is-off .cv-stop-hit,
+  .cv-stop.is-off .cv-stop-lab {
+    pointer-events: none;
+  }
+
+  .cv-stop-hit {
+    position: absolute;
+    top: -6px;
+    left: calc(-46px * var(--cv-f));
+    width: calc(92px * var(--cv-f));
+    height: calc(88px * var(--cv-f));
+    border-radius: var(--radius-xl);
+    pointer-events: auto;
+    cursor: pointer;
+  }
+
+  .cv-stop-lab {
+    --cv-dx: 0px;
+    --cv-scale: 1;
+    position: absolute;
+    bottom: 6px;
+    left: 0;
+    padding: 3px 8px;
+    border: 1px solid var(--caravan-gilt);
+    border-radius: var(--radius-sm);
+    background: var(--caravan-hide);
+    color: var(--caravan-cloth-a);
+    font: 600 var(--text-meta) / 1.2 var(--font-sans);
+    white-space: nowrap;
+    transform: translateX(calc(-50% + var(--cv-dx))) scale(var(--cv-scale));
+    transform-origin: 50% 100%;
+    pointer-events: auto;
+    cursor: pointer;
+  }
+
+  .cv-stop.is-label-hidden:not(.is-active):not(:focus-visible) .cv-stop-lab {
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .cv-stop.is-active .cv-stop-lab {
+    --cv-scale: 1.12;
+    outline: 2px solid var(--caravan-cloth-a);
+  }
+
+  /* The ring sits on the leather, inside the label, in the lamp's colour: the
+     language's focus colour on the lit cloth or the night card is under 3:1. */
+  .cv-stop:focus-visible .cv-stop-lab {
+    outline: 2px solid var(--caravan-focus);
+    outline-offset: -2px;
+  }
+
+  .cv-stage.has-active .cv-stop:not(.is-active) {
+    opacity: 0.3;
+  }
+
+  .cv-stage.has-active .cv-stop:not(.is-active) .cv-stop-lab {
+    pointer-events: auto;
+  }
+
+  /* -- the strip: the whole road, one bar a month -------------------------- */
+  .cv-scrub {
+    position: relative;
+    height: 52px;
+    margin: 12px var(--cv-gutter) 0;
+    border: 1px solid var(--color-bar-field-line);
+    border-radius: var(--radius-lg);
+    background: var(--color-bar);
+    touch-action: none;
+    user-select: none;
+    -webkit-user-select: none;
+    cursor: pointer;
+  }
+
+  .cv-scrub-art {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+
+  .cv-scrub-bars rect { fill: var(--color-bar-hover); }
+  .cv-scrub-dots circle { fill: var(--color-ornament); }
+
+  .cv-scrub-line {
+    fill: none;
+    stroke: var(--color-ornament);
+    stroke-width: 1.5;
+    stroke-linejoin: round;
+  }
+
+  .cv-scrub-years span {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    padding: 3px 0 0 6px;
+    border-left: 1px solid var(--color-bar-field-line);
+    color: var(--color-on-bar-dim);
+    font: 600 var(--text-label) / 1 var(--font-sans);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .cv-scrub-years span:first-child,
+  .cv-scrub-years span.is-narrow {
+    border-left: 0;
+  }
+
+  .cv-scrub-thumb {
+    position: absolute;
+    top: 3px;
+    bottom: 3px;
+    left: 0;
+    border: 2px solid var(--color-ornament);
+    border-radius: var(--radius-base);
+    background: transparent;
+    cursor: grab;
+  }
+
+  .cv-scrub.is-drag .cv-scrub-thumb {
+    cursor: grabbing;
+  }
+
+  .cv-scrub-thumb:focus-visible {
+    outline: 2px solid var(--caravan-focus);
+    outline-offset: 2px;
+  }
+
+  .cv-unmeasured {
+    margin: 8px var(--cv-gutter) 0;
+    color: var(--color-on-surface-muted);
+    font-size: var(--text-meta);
+  }
+
+  /* -- the list: every trend, and the card's source ------------------------ */
+  .cv-list {
+    padding: 8px var(--cv-gutter) 0;
+  }
+
+  .cv-entries {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 320px), 1fr));
+    gap: 14px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .cv-entry {
+    height: 100%;
+    padding: 14px 16px 12px;
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-xl);
+    background: var(--color-surface-raised);
+    color: var(--color-on-surface);
+    font-size: var(--text-item);
+    line-height: 1.5;
+  }
+
+  .cv-entry-when {
+    margin: 0 0 3px;
+    color: var(--color-on-surface-muted);
+    font-size: var(--text-meta);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .cv-entry-title {
+    margin: 0 0 4px;
+    color: var(--color-on-surface-title);
+    font: 600 var(--text-subsection) / var(--text-subsection--line-height) var(--font-sans);
+  }
+
+  .cv-entry-text {
+    margin: 0 0 10px;
+  }
+
+  .cv-entry-links {
+    display: grid;
+    gap: 4px;
+    padding-top: 8px;
+    border-top: 1px solid var(--color-line);
+  }
+
+  .cv-entry-group {
+    display: grid;
+    grid-template-columns: 124px minmax(0, 1fr);
+    gap: 0 10px;
+  }
+
+  .cv-entry-group h4 {
+    margin: 0;
+    padding-top: 1px;
+    color: var(--color-on-surface-muted);
+    font: 500 var(--text-mark) / 1.5 var(--font-sans);
+  }
+
+  .cv-entry-group ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    font-size: var(--text-meta);
+  }
+
+  .cv-entry-placeholder {
+    color: var(--color-on-surface-muted);
+  }
+
+  .cv-entry-sample {
+    margin: 8px 0 0;
+    color: var(--color-on-surface-muted);
+    font-size: var(--text-label);
+    font-style: italic;
+  }
+
+  /* -- the card: one for the page, the entry copied in, at night ----------- */
+  .cv-card {
+    position: fixed;
+    z-index: 30;
+    width: 340px;
+    max-width: calc(100vw - 32px);
+    border: 1px solid var(--color-slab-line-raised);
+    border-top: 3px solid var(--caravan-gilt);
+    border-radius: var(--radius-xl);
+    background: var(--color-slab-surface);
+  }
+
+  .cv-card[hidden] {
+    display: none;
+  }
+
+  .cv-card .cv-entry {
+    border: 0;
+    background: none;
+    color: var(--color-slab-on-surface);
+  }
+
+  .cv-card .cv-entry-title { color: var(--color-slab-on-surface); }
+
+  .cv-card .cv-entry-when,
+  .cv-card .cv-entry-group h4,
+  .cv-card .cv-entry-placeholder,
+  .cv-card .cv-entry-sample {
+    color: var(--color-slab-on-surface-muted);
+  }
+
+  .cv-card .cv-entry-links { border-top-color: var(--color-slab-line-raised); }
+
+  .cv-card .bz-link {
+    color: var(--color-slab-on-surface);
+    text-decoration-color: var(--caravan-gilt);
+  }
+
+  .cv-card.is-pinned .cv-entry-when {
+    padding-right: 84px;
+  }
+
+  .cv-card-close {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    padding: 3px 8px;
+    border: 1px solid var(--color-slab-line-raised);
+    border-radius: var(--radius-base);
+    background: var(--color-slab-surface-raised);
+    color: var(--color-slab-on-surface-muted);
+    font-size: var(--text-mark);
+    cursor: pointer;
+  }
+
+  .cv-card-close kbd {
+    margin-left: 3px;
+    font: var(--text-mark) var(--font-mono);
+  }
+
+  .cv-card :focus-visible {
+    outline: 2px solid var(--caravan-focus);
+    outline-offset: 2px;
+  }
+
+  .cv-card.is-sheet {
+    top: auto;
+    right: 8px;
+    bottom: 8px;
+    left: 8px;
+    width: auto;
+    max-width: none;
+    max-height: 70vh;
+    overflow: auto;
+    border-radius: var(--radius-pill);
+  }
+
+  /* -- a phone: at the language's touch floor, not the mockup's 720px, which
+     is no breakpoint the language declares (`scene/model.ts` agrees) -------- */
+  @media (max-width: 767px) {
+    .cv-tools { width: 100%; align-items: stretch; }
+    .cv-years { width: 100%; justify-content: space-between; }
+    .cv-year { flex: 1; min-height: 40px; padding: 9px 0; }
+    .cv-place { font-size: var(--text-control); }
+    .cv-stage { height: clamp(300px, calc(100svh - 460px), 400px); }
+    .cv-scrub { height: 44px; margin-top: 10px; }
+    .cv-entry-group { grid-template-columns: 108px minmax(0, 1fr); }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .cv-puppet,
+    .cv-flag,
+    .cv-glow,
+    .cv-caravan .cv-legs-a,
+    .cv-caravan .cv-legs-b,
+    .cv-caravan .cv-lg1,
+    .cv-caravan .cv-lg2,
+    .cv-caravan .cv-body,
+    .cv-caravan .cv-person {
+      animation: none;
+    }
+  }
+
+  @keyframes cv-wobble { from { transform: rotate(-2.2deg); } to { transform: rotate(2.2deg); } }
+  @keyframes cv-stride { from { transform: rotate(-13deg); } to { transform: rotate(13deg); } }
+  @keyframes cv-step { from { transform: rotate(-22deg); } to { transform: rotate(22deg); } }
+  @keyframes cv-bob { to { transform: translateY(-1.4px); } }
+  @keyframes cv-flutter { to { transform: skewY(5deg) scaleX(0.92); } }
+  @keyframes cv-glow { to { opacity: 0.5; } }
+}

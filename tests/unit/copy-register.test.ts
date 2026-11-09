@@ -76,6 +76,10 @@ const ROOTS: readonly string[] = [
   // the copy the page adds round it: its name, the scenes' labels and the words drawn in them.
   'components/about',
   'app/about',
+  // M91 — Caravan. Its trends are the author's (or, until they land, a labelled sample); what is
+  // scanned is the copy the page adds round them: the notice, the controls and the card.
+  'components/caravan',
+  'app/caravan',
 ]
 
 function walk(target: string): string[] {

@@ -18,7 +18,7 @@ description: >
 authority: state
 writes: agent, every session
 status: active
-covers: "M50 to M90, 2026-11-06 onward, and M41, which part 2 held for PR #57"
+covers: "M50 to M92, 2026-11-06 onward, and M41, which part 2 held for PR #57"
 last_updated: 2026-11-09
 ---
 
@@ -594,17 +594,20 @@ protocols reference moved into Ecosystem, and four draft modules scaffolded for 
 - [x] The full gate and the browser suite on the branch, shipped with M47 and the round-3 playground
       as PR #66 (2026-11-06), ahead of M51.
 
-## 🏁 Milestone M62: Caravan, the trends timeline — ADDRESS LIVE, TIMELINE LATER
+## 🏁 Milestone M62: Caravan, the trends timeline — ADDRESS LIVE; THE TIMELINE BUILT AS M91
 
 Issue #40's comment: a timeline of what was trending each month or season since ChatGPT (late
 2022), with expandable nodes, high-level only, on a page of its own and not in the modules'
 markdown, kept up over time. Named **Caravan** by the author (2026-11-06); the decision is posted
 on issue #40 so it is not lost. Nothing is built until the author takes it up.
 
-- [ ] A playground round when the author wants it: the timeline's design at desktop and phone
+- [x] A playground round when the author wants it: the timeline's design at desktop and phone
       width; the pipeline that collects each trend's seed (which paper, article, feature or news,
       from sources such as Google, YouTube, Medium and LinkedIn, and existing trackers on GitHub);
-      what one node holds (a word limit and a source link); and how often it is updated.
+      what one node holds (~~a word limit and~~ a source link; the author chose ONE paragraph and
+      no word limit, D116); and how often it is updated.
+      **Done in round 5 and built as M91** (D116): C4 Shadow Play, format 2, the pipeline as the
+      `caravan-trends` skill, quarterly.
 - [x] **The address and its place in the bar** (the author, 2026-11-09: *"add it to navbar right to
       the Progress page, but when people reach it, it should show under maintenance (it should be
       clickable and forwardable but the content should show under maintenance)"*). `/caravan/`
@@ -1485,6 +1488,80 @@ heading, text and object swapping sides from stall to stall.
       `## Why C#`, takes only an `Our motto:` line as the motto, and refuses `###`. **Report:** new and
       tightened checks in `about.spec.ts`, `colour-not-alone.spec.ts`, `accessibility.spec.ts` and
       `story.test.ts`, each seen failing once against a broken build or input (the PR says how).
+
+
+## 🏁 Milestone M91: Caravan built, C4 Shadow Play on sample data, its format and its pipeline (D116) — DONE, PR #98
+
+The author's picks from round 5: C4 Shadow Play (*"I love C4 the shadow play!! it is very turkish!!"*),
+with his three changes; content format 2 (*"I need only 2 ... caravan can act like a quick overview of
+whats trending"*); and the pipeline's defaults. On the page: *"mention the above is illustrative and is
+not ready."* Why each choice was made, and what was rejected: **D116**.
+
+- [x] **The round-5 Caravan files committed**: `C1-caravan-designs.html` (the spec), `C1-caravan-designs-v1.html`,
+      `C2-caravan-node-formats.html` and `caravan-pipeline/` (the draft skill, the design note and its source
+      tests, kept as the record of the round).
+- [x] **Format and validation.** `mini-courses/caravan/trends.yaml` ships with no trends and a comment
+      showing the shape; `strength.yaml` is the pipeline's and is absent until it measures.
+      `src/lib/content/caravan-file.ts` holds both to the rules in ARCHITECTURE §14 at build time.
+      `tests/unit/content/caravan-file.test.ts` runs every rule against made-up YAML, and each of ten
+      rules, removed one at a time, turns it red.
+- [x] **The page.** `/caravan/` in `PageShell`: the notice, the head, the journey (year bar and place,
+      the stage, the strip, one card) and the list of every trend as server markup; one island loads
+      `components/caravan/scene/` on demand. Sample data from `components/caravan/sample-trends.ts`
+      until the file has a trend. Colours in `components/caravan/palette.ts` as `--caravan-*`
+      (`tests/unit/caravan-palette.test.ts`, which found one dead token, `strip-area`, on its first run).
+      The mockup's `Curriculum` link is gone with its bar; in 2024 the stop's name no longer sits on the
+      medallion. The `data-bar-edge` nav entry is unchanged.
+- [x] **`tests/e2e/caravan.spec.ts`**: the notice first and on screen; every trend's words in the page
+      with scripts blocked and drawn as a stop; the year bar moves the scene; Enter opens a stop and Escape
+      closes it, by key presses after Tab; along the whole road at 1440x900 and 1280x720 no puppet meets a
+      stop, a stop's hit area or a label, and no label meets a year's post; no sideways scroll at 390;
+      instant movement and no animation under reduced motion. Each case was seen failing against a
+      mutation of the code (nine mutations, listed in the report).
+- [x] **The pipeline as a project skill**, `.claude/skills/caravan-trends/SKILL.md`: backfill once from
+      2022-11, then quarterly; collectors per source family, a fresh verifier, a measurer, a proposer and
+      the author's three gates; what a run never does; circuit breakers; how a run is recorded. `.caravan/`
+      run folders are gitignored.
+- [x] **`mini-courses/CLAUDE.md` and `AGENTS.md`**, byte-identical: Writing a Caravan trend.
+- [x] **The mobile bundle unchanged**: `out/api/` byte-identical to a build of `main` (`fc61469`) made in a
+      scratch copy, contentVersion `d01d5a62…` on both; ARCHITECTURE §13 says what Caravan's later v1
+      addition would be.
+- [x] **Two reviews of PR #98, every item fixed**: the stage fitted to the window so the caravan and the
+      strip are in view at 1280x720, 1440x800 and 1440x900; the wheel's pace (3,000 px for the road, the
+      page's at both ends, Shift and sideways swipes); the card's `aria-expanded`, focus into the card and
+      Escape's focus rule; a clean redraw on resize; focus rings at 3:1 in the lamp's colour; `aria-current`
+      and an announcement only on a picked year; the unmeasured note; `measured_through` checked and shape
+      errors naming the trend; no double toggle on Enter; the card and strip on the language's slab and bar;
+      the skill's cut points decided by the author at a gate. The first real trends are M92.
+
+**Report, 2026-11-09.** Gate: typecheck clean; 1,500 unit tests (1,474 before, the 26 new ones the validator, the view model and the palette); the build with its link gate (206 pages, 17,831 internal links) and bundle check; 613 browser tests passed and 10 skipped, on port 3333 because another session's server held 3111. **Mutations, each seen failing:** in the browser, the notice moved under the head, an entry's text dropped, the scene drawing one trend fewer, a dead year bar, a dead Escape, the caravan on the upper band, labels not clearing the posts, a year bar wider than a phone, and reduced motion ignored; in the validator, rules 1 to 6 of `trends.yaml` (rule 2 twice), `z.object` in place of `z.strictObject`, and both `strength.yaml` rules. **Two guards were vacuous at first and are fixed:** at 1280x720 the stage's foot is below the fold, so the walk's wheel turned outside the viewport and the road never moved (the test now scrolls the stage in and requires the walk to reach the road's end); and the too-wide mutation was undone by the rule's own later `min-width: 0`. **Two departures from the brief, both forced by existing rules:** the phone width is 767px, the language's touch floor, not the mockup's 720 (`styling-references.test.ts`); and the trail stays above the notice, because `navigation.spec.ts` requires one on every page but the front door, so the notice is the first thing of the page's own content rather than of `<main>`. Screenshots of the built page at 1440, 1280x720 and 390 (rest, a stop open, later years, reduced motion, the list, dark) are in `playground/2026-11-round-5/shots-caravan-built/` in the main checkout, and match the `C4b-*` references.
+
+**Review fixes, 2026-11-09**, after two Haiku reviews of PR #98, rebased onto `main` with PR #97 merged.
+MEASURED with the stage fitted: at 1280x720 the stage ends at 643 px and the strip at 707 of 720; at
+1440x800 at 723 and 787; at 1440x900 the stage is the full 470 px. Gate: typecheck clean; 1,520 unit
+tests; the build, link gate and bundle check; `out/api/` byte-identical to a build of `main` at
+`ad76978` (only `index.json`'s `publishedAt`, the commit date, differs from the earlier build of
+`fc61469`); 634 browser tests passed and 10 skipped, on port 3333. **Mutations, each seen failing:** the stage not fitted (fails at 1280x720 and
+1440x800), the old 12,000 px wheel pace, the wheel never handing back to the page, a preview not setting
+`aria-expanded`, a pin leaving focus on the stop, Enter toggling twice, Escape always taking focus,
+stale classes after a redraw, the language's focus colour on the leather, every January announced,
+`aria-pressed` again, a dead drag, Page Down by six months; in the validator, both bounds of
+`measured_through` and shape errors without the trend's id; and the unmeasured note missing, or shown on
+the sample. **One guard was vacuous at first**: the sideways-swipe case compared the strip with month 0,
+and the view starts at month 1, so it passed with sideways swipes ignored; it compares with the start
+now. Screenshots replaced in `shots-caravan-built/`, with the caravan mid-road at 1440 and 1280x720.
+
+
+## 🏁 Milestone M92: Caravan's first real trends — WAITING FOR THE AUTHOR
+
+Nothing here starts until the author asks for the backfill. It is written down so the loop has the
+next step, and so the sample does not stay by default.
+
+- [ ] **The backfill**, by `.claude/skills/caravan-trends/`: the leads, Gate A (the author keeps the
+      candidates), the measurements, Gate B (he decides each trend and writes its title and paragraph;
+      he also decides the method's cut points from the first run's evidence), Gate C (the diff).
+- [ ] **The sample removed in the same pull request**: `src/components/caravan/sample-trends.ts` and its
+      import deleted, and the page's notice reworded with the author.
 
 ---
 

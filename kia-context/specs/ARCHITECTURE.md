@@ -11,7 +11,7 @@ description: >
 authority: blueprint
 writes: agent, when explicitly refactoring
 status: active
-covers: the whole system as built on 2026-09-10, with M16 shipped — every route on the design language; the record, channel A and the render step corrected for M24 on 2026-10-11, and the quiz and the end of a module for M25 on 2026-10-12, the Bazaar Street front door for M27 and the Persian pages for M28 the same day, and the progress page slimmed to its circles and its data row for M38 on 2026-11-05, and the account layer, role paths, record of work and two thirds of the test suite removed for M40 the same day, and the two tracks (For Engineers, For Everyone) and their per-track record for M43 the same day; the custom domain (D92), the fifth level, Emerging (first named Emerging Trends), and moved addresses (D94) on 2026-11-06, and the people at the gate (M58), search (M59) and the catalog without its Sources count (M55) the same day; and for M64 to M69 the same night, a planned module that renders the sections it already has (D102), inline vendor logos, and the first For Everyone module; and the search filters and the level bar on a result (M70, D103), folded behind a Filters disclosure (M71, D104), and the stories at the gate kept until everyone has turned (M72), on 2026-11-07; and call-out cards in a module (D106), the reader's choice of Mermaid theme (D107), Mihrî in Leyla's place at the gate and the fifth level titled Emerging (M75), on 2026-11-08; and For Everyone versions of the nineteen other written modules of Fundamentals, Intermediate and Ecosystem, in three languages (M77, M78, D108), the same day; and one heading per shared section (D109), technical terms kept English in translations, and more vendor marks (M80), and each diagram theme on Mermaid's own ground with a copy control (M81), the same day; and the content bundle for the mobile reader, §13 (M41, D89, D111), on 2026-11-09, and Caravan's address in the bar (M62) the same day, and the About page (M90, D115) the same day
+covers: the whole system as built on 2026-09-10, with M16 shipped — every route on the design language; the record, channel A and the render step corrected for M24 on 2026-10-11, and the quiz and the end of a module for M25 on 2026-10-12, the Bazaar Street front door for M27 and the Persian pages for M28 the same day, and the progress page slimmed to its circles and its data row for M38 on 2026-11-05, and the account layer, role paths, record of work and two thirds of the test suite removed for M40 the same day, and the two tracks (For Engineers, For Everyone) and their per-track record for M43 the same day; the custom domain (D92), the fifth level, Emerging (first named Emerging Trends), and moved addresses (D94) on 2026-11-06, and the people at the gate (M58), search (M59) and the catalog without its Sources count (M55) the same day; and for M64 to M69 the same night, a planned module that renders the sections it already has (D102), inline vendor logos, and the first For Everyone module; and the search filters and the level bar on a result (M70, D103), folded behind a Filters disclosure (M71, D104), and the stories at the gate kept until everyone has turned (M72), on 2026-11-07; and call-out cards in a module (D106), the reader's choice of Mermaid theme (D107), Mihrî in Leyla's place at the gate and the fifth level titled Emerging (M75), on 2026-11-08; and For Everyone versions of the nineteen other written modules of Fundamentals, Intermediate and Ecosystem, in three languages (M77, M78, D108), the same day; and one heading per shared section (D109), technical terms kept English in translations, and more vendor marks (M80), and each diagram theme on Mermaid's own ground with a copy control (M81), the same day; and the content bundle for the mobile reader, §13 (M41, D89, D111), on 2026-11-09, and Caravan's address in the bar (M62) the same day, and the About page (M90, D115) the same day, and Caravan's page, its two data files and their validation (§14, M91, D116) that evening
 last_updated: 2026-11-09
 ---
 
@@ -300,6 +300,9 @@ number rather than by title, a number in a filename or frontmatter, a raw `<img>
 literal surviving into a rendered diagram, an image path that does not exist, and a missing Turkish
 sibling. `tests/corpus/translations.test.ts` (M28) holds every translation to the matchers that read
 a body by its words: a translation has a quick check and a summary exactly where its English does.
+
+**Caravan's two files** (`src/lib/content/caravan-file.ts`) are refused on the rules §14 lists, each
+error naming the trend at fault.
 
 **`border-width: var(--stroke-struct)` fails** (`tests/unit/stroke-weights.test.ts`). Chrome
 floors border widths to whole pixels, so the 1.5px weight must be painted as a gradient or a height,
@@ -842,11 +845,69 @@ A new value in a closed set (heading `depth`, table `align`, level `status`, `di
 Removing, renaming or retyping a field means `api/v2/`, and `api/v1/` stays published while the reader's oldest supported version reads it.
 A retired address stays readable through the index's `moved`, copied from `src/lib/content/moved.ts` (D94).
 
+**Caravan is not in the bundle** (§14).
+
 **Checks.**
 `node scripts/check-bundle-out.mjs <dir>` reads a finished export and recomputes every claim the index makes: the file set, each sha256, `contentVersion`, the SVG profile of every diagram, the diagram font, and no field starting with the base path.
 CI runs it after its one build, and after the browser suite has rebuilt `out/` from the same commit it requires the two `api/` trees to be byte-identical, which holds the build's determinism to account.
 The deploy runs it on `_site` before publishing, and after publishing it polls the live `api/v1/index.json` until it serves this build's `contentVersion`, for at most the first response's `max-age` plus a minute.
 It sends no query string, because the Pages edge leaves the query out of its cache key, so a stale entry can only be waited out.
+
+---
+
+## 14. Caravan
+
+`/caravan/` (M62, M91) shows what was trending in AI engineering, month by month since the chatbot
+moment, drawn as a shadow-play journey (C4, D116). It is a page of its own, in the bar after
+Progress, and not a level: `curriculum.yaml` does not list it and no module links to it.
+
+**Its content is two files in `mini-courses/caravan/`, split by who writes them.** `trends.yaml` is
+the author's: `caravan: 1`, `first_month`, and one entry per trend with an `id`, a `title`, a `start`
+and an `end` month (`null` while it is on the road), one paragraph of `text`, and `links` in the five
+References groups (four of `{ title, url }`, and `modules` by name). `strength.yaml` is written only
+by the pipeline (`.claude/skills/caravan-trends/`): `caravan_strength: 1`, the `method` version,
+`measured_through`, and per trend a level from 0 to 5 for each month. It may be absent: then nothing
+is measured. The pipeline's evidence (`evidence/<id>.yaml`) sits beside them and nothing that ships
+reads it.
+
+**`src/lib/content/caravan-file.ts` validates both at build time**, with `z.strictObject` and
+`yaml.safeLoad`, as pure functions given the curriculum's module names and the build's month. It
+refuses, naming the trend: a duplicate id (rule 1); a month that is not `YYYY-MM`, before
+`first_month`, after the build's month, or an end before its start (rule 2); a title on two lines or
+a text of more than one paragraph (rule 3); an em dash (rule 4); a trend with no link, or one URL
+twice (rule 5); a `modules` name that is not a module, or one named twice (rule 6). In
+`strength.yaml` it refuses a `measured_through` before `first_month` or after the build's month (rule 0), a measured
+id that is not a trend (rule 1), and a month outside the trend's span or a hole inside it (rule 2);
+a shape error names the trend's id. The rules are tested against made-up YAML
+(`tests/unit/content/caravan-file.test.ts`).
+
+**The page draws one view model, `caravanView` in `src/lib/content/caravan.ts`**: the road's months
+(from `first_month` to the last measured month, or the build's month before anything is measured,
+stretched to cover every trend), the trends in time order with their period, their link groups (a
+module's title and address read from the curriculum) and their strength, and per month the summed
+strength the land and the strip are drawn from. A month with no level counts as nothing.
+**Until `trends.yaml` holds a trend the page draws a placeholder sample instead**
+(`src/components/caravan/sample-trends.ts`, labelled in its header, on the page's notice and on every
+trend), whose external links have no address. The first real trend replaces it whole, and the sample
+file is deleted in the same change.
+
+**The page is server markup with one island.** Every trend's words are in the list under the scene,
+so the page reads and links with no script; `CaravanScene.tsx` imports `components/caravan/scene/`
+on demand and draws the stage, the stops (real buttons, one per trend), the year bar's travel and the
+strip, and its card shows a copy of a list entry. The journey and the year bar are shown only once a
+script has marked `<html>` (`data-cv-script`), and hidden again if the scene cannot start
+(`data-cv-failed`). **The stage is fitted to the window**: as tall as the window leaves under it once
+the strip has its place, between 300 and 470 px (400 on a phone), with the scene's heights and art
+scaled to it and its pace across the road unchanged, and drawn again when the window's width or height
+changes by more than 40 px. The whole road takes 3,000 px of wheel, and at either end the wheel is the
+page's. When the author's trends carry no measurement the page says so beside the strip. The theatre's
+colours are `components/caravan/palette.ts`, written into the page as `--caravan-*` properties that
+`src/app/caravan.css` defaults to tokens; the card is the language's slab and the strip its bar.
+`tests/e2e/caravan.spec.ts` holds the page to its rules: the notice first under the trail, every
+trend in the page without a script and drawn as a stop, the whole caravan and strip in the window at
+load on a laptop, keyboard, wheel, drag and strip travel, the card's `aria-expanded` and focus, focus
+rings at 3:1, no puppet meeting a stop and no stop's name meeting a year's post along the whole road,
+a clean redraw on resize, no sideways scroll at 390px, and instant movement under reduced motion.
 
 ---
 

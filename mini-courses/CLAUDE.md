@@ -198,9 +198,12 @@ a markdown image or a Mermaid fence. No MDX, no raw HTML.
 | --- | --- |
 | Structure: flows, parts, sequences, states | Mermaid |
 | An illustration, a drawn scene, an annotated picture | SVG drawn by an agent, by hand or exported from HTML/CSS |
-| A photograph, a screenshot, a found image | PNG or JPEG |
-| A short loop that needs motion | GIF or animated WebP, kept short |
+| A photograph, a screenshot, a found image | WebP, at most 1,600 px wide (D112) |
+| A short loop that needs motion | Animated WebP, kept short (convert a GIF) |
 
+- **Convert a raster image to WebP before committing it**: quality 82, or 90, or near-lossless for a
+  screenshot whose small text blurs, with SSIM at least 0.985 against the original resized to 1,600 px;
+  keep the original only when the WebP comes out larger.
 - **Keep the source** of an agent-drawn figure beside it (the SVG, or the HTML/CSS it came from).
 - **One file per language when a figure carries words**: `name.svg`, `name_tr.svg`, `name_fa.svg`.
 - **Motion lives inside the file**, and a frozen frame still makes the point.

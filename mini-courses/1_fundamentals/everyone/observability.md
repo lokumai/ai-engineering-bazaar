@@ -21,7 +21,7 @@ for, and repeat". It does not tell you what actually happened on a given run:
 
 That information exists only in the record of that run. The record is called a **trace**.
 
-![A Trace in Langfuse](../images/smolagents-trace-langfuse.png)  
+![A Trace in Langfuse](../images/smolagents-trace-langfuse.webp)  
 *A real trace of one agent run, in a tool called Langfuse. On the left is every step, AI call and tool call, each with how long it took and how much text went in and out. The whole run took 4 minutes 49 seconds. The final answer on the right says none of this.*
 
 ## Why This Matters to You

@@ -18,7 +18,7 @@ Sohbet izin verilen en büyük boyutu aştığında ne oluyordu? Genellikle en e
 
 Sonra Chroma'daki bir araştırma ekibi şaşırtıcı bir sonuç yayımladı: **sohbet büyüdükçe yapay zekâ görevde kötüleşiyor**, hiçbir şey silinmemiş olsa bile. Farklı şirketlerin 18 modelini test ettiler ve hepsi aynı işi kısa bir sohbette, çok uzun bir sohbete göre belirgin biçimde daha iyi yaptı.
 
-![Aynı modelle iki kavanoz](../images/context-pollution-jars.jpeg)  
+![Aynı modelle iki kavanoz](../images/context-pollution-jars.webp)  
 *Modelin ihtiyaç duyduğu üç şey iki kavanozda da var. Sağdaki kavanozda hâlâ orada ve okunabilir, ama kaybolmuş durumda. Kavanozdaki diğer her şey aynı dikkat için yarışıyor.*
 
 İnsanlar buna **context rot** (context çürümesi) ya da **context pollution** (context kirlenmesi) diyor. Sebebi **attention** (dikkat): modelin, yazmak üzere olduğu kelime için sohbetin hangi kısımlarının önemli olduğuna karar verme biçimi. Dikkat sabit bir bütçedir ve sohbetteki her şeye paylaştırılır. İnsanlar da böyle çalışır.
@@ -29,7 +29,7 @@ Sekiz saattir süren bir toplantıyı düşün. İlk saatteki talimat hâlâ not
 
 Bir örnek verelim. Bir kitap yazmak için uzun bir oturum başlatıyorsun ve en başta açık, akademik bir üslup istiyorsun. Bir süre yapay zekâ buna uyuyor. Çok sonra üslup yavaş yavaş sohbet havasına dönüyor ve yapay zekâ bir şeyler uydurmaya başlıyor. Hiçbir şey silinmedi. Talimat hâlâ orada. Ama ondan sonra eklenen her şeyle dikkat için yarışmak zorunda kaldı ve kaybetti.
 
-![İğne, dikkat dağıtıcı ve saman yığını](../images/distractor_irrelevance.png)  
+![İğne, dikkat dağıtıcı ve saman yığını](../images/distractor_irrelevance.webp)  
 *Soru, sınıf arkadaşının tavsiyesini istiyor. "İğne" buna cevap veriyor. "Dikkat dağıtıcı" neredeyse aynı cümle, ama bir profesör hakkında. Tek bir dikkat dağıtıcı bile modeli kötüleştirmeye yetiyor.*
 
 Bu tür testin adını sık sık duyacaksın: **needle in a haystack** (samanlıkta iğne). Çok miktarda metnin içine işe yarar tek bir cümle saklarsın ve yapay zekânın onu hâlâ bulup kullanabildiğini kontrol edersin.
@@ -40,7 +40,7 @@ Context engineering tek bir soruya cevap verir: **sohbete ne girmeli, ne dışar
 
 Sohbetin yeri sınırlı ve girebilecek şey her zaman daha fazla: dokümanlar, önceki mesajlar, araç sonuçları, notlar. Context engineering, gerçekte neyin gireceğini seçmektir; böylece mümkün olduğunca çoğu işe yarar, mümkün olduğunca azı gürültü olur.
 
-![Prompt engineering ve context engineering yan yana](../images/prompt-vs-context-eng.png)  
+![Prompt engineering ve context engineering yan yana](../images/prompt-vs-context-eng.webp)  
 *Solda tek bir mesaj ve tek bir karar var: bu prompt engineering. Sağda sohbete girebilecek her şey ve gerçekte neyin gireceğine dair bir karar var. Bu karar context engineering.*
 
 Terim, Andrej Karpathy'nin 2025 ortasındaki bir yazısından sonra popüler oldu. Anthropic'in [Effective context engineering for AI agents](https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents) yazısı en kapsamlı rehber.
@@ -53,7 +53,7 @@ Sohbet uzayınca onu kendi özetiyle değiştir. Kocaman bir konuşma, kısa bir
 
 Bugün çoğu yapay zekâ aracı, sohbet sınırına yaklaştığında bunu kendi kendine yapıyor. Claude Code'da `/compact` yazarak sen de başlatabilirsin.
 
-![Compaction öncesi ve sonrası bir pencere](../images/compaction-before-after.png)  
+![Compaction öncesi ve sonrası bir pencere](../images/compaction-before-after.webp)  
 *Nelerin kaldığına ve nelerin gittiğine dikkat et. Uzun araç sonuçları yerin çoğunu kaplıyor ve onlar gidiyor. Özet kararları tutuyor. Birkaç yeni dosya kalıyor, çünkü agent'ın onlara yakında yine ihtiyacı olacak.*
 
 Bedeli gerçek. Tutanak, ihtiyacın olan bir şeyi dışarıda bırakabilir; ya kazara ya da özeti yazan kişi onu önemsiz bulduğu için.
@@ -64,7 +64,7 @@ Agent her şeyi sohbette tutmak yerine önemli bilgileri bir deftere, yani bilgi
 
 Birçok yapay zekâ ürünü buna **long-term memory** diyor; [Memory](../1_fundamentals/memory_tr.md) modülündeki fikrin aynısı. Genellikle üç türde tutulur:
 
-![Üç tür long-term memory](../images/semantic-episodic-procedural.png)  
+![Üç tür long-term memory](../images/semantic-episodic-procedural.webp)  
 *Semantic memory (senin hakkındaki bilgiler) zamanla yavaş yavaş birikir. Episodic memory (geçmişteki eylemlere dair notlar), agent'ın aynı hatayı tekrarlamasını engeller. Procedural memory (talimatlar) ona işleri nasıl yapacağını söyler. Agent bu üçünü farklı zamanlarda yazar ve okur.*
 
 Aynı uyarı burada da geçerli: neyin yazılmaya değer olduğuna birinin karar vermesi gerekiyor ve bu karar bazen yanlış oluyor.
@@ -75,7 +75,7 @@ Bir agent'a koca bir projenin ne hakkında olduğunu sorduğunu ve cevap vermek 
 
 Çözüm: agent, kendi boş sohbetiyle bir yardımcı gönderiyor. Buna **subagent** deniyor. Yardımcı 300 dosyayı okuyor ve tek bir cümleyle dönüyor. Ana agent'ın sohbeti bir cümle kazanıyor ve masası temiz kalıyor. Bu, bir asistanı arşive göndermeye benziyor: bütün arşivle değil, cevapla dönüyor.
 
-![Kendi pencereleri olan iki subagent](../images/subagent.png)  
+![Kendi pencereleri olan iki subagent](../images/subagent.webp)  
 *Her kutu ayrı bir sohbet. Boş başlıyor ve iş bitince atılıyor. Ana agent yardımcının adımlarını hiç görmüyor ve amaç da bu: o adımlar ana agent'ın sohbetini hiç doldurmuyor.*
 
 Modern agent'lar yardımcıları art arda ya da aynı anda gönderiyor. Böylece ana agent planı aklında tutmakta özgür kalıyor.
@@ -104,7 +104,7 @@ Bir de ikinci bir etki var ve o daha önemli. Agent listeyi her yeniden okuyup y
 
 Bazı bilgiler değerlidir ve nadiren değişir; şirketinin iç sistemlerinin nasıl çalıştığı gibi. Bunları her sohbete yapıştırma. Agent'ın arayabileceği bir doküman klasörüne koy ve ihtiyaç duyduğunda orada aramasına izin ver.
 
-![Agent'ın gezdiği bir bilgi tabanı](../images/explorable-knowledge-base.png)  
+![Agent'ın gezdiği bir bilgi tabanı](../images/explorable-knowledge-base.webp)  
 *Bilgi tabanı sohbetin dışında duruyor ve zamanla büyüyor. Agent yalnızca bir sorunun ihtiyaç duyduğu sayfayı okuyor; geri kalanı kullanılana kadar hiçbir şeye mal olmuyor.*
 
 Yaygın bir örnek: bir model yalnızca eğitim verisinde olanı bilir ve bu veri **knowledge cutoff** (bilgi kesim tarihi) denen bir tarihte biter. Bu yüzden bir yazılım kütüphanesi için, o tarihten sonra değişmiş bir kod yazarken güncel dokümantasyona ihtiyaç duyar. Ona bunu vermenin birkaç standart yolu var: bir web sitesindeki kısa bir rehber dosya (`llms.txt`), araç olarak sunulan dokümantasyon (**MCP**) ve birçok kütüphanenin dokümantasyonunu tek yerde toplayan ![](../images/logos/context7.svg)[Context7](https://context7.com/) gibi servisler.

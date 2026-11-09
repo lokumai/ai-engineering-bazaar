@@ -30,7 +30,7 @@ The last of those three, when the agent stops, is the most important part of the
 
 Back to the car. The engine is the prompt, the body is the context, and the track and barriers are the harness. Until now, the driver was a human. Loop engineering is the AI driving. It is the difference between a car and a car that drives itself. Everything that follows is about how much of the steering you are willing to give to the AI.
 
-![Four years of job titles](./images/loop-unemployment.jpeg)  
+![Four years of job titles](./images/loop-unemployment.webp)  
 *The joke works because each panel is a real job that existed. The arrows are the whole argument. In 2026, the human points at agents. By 2026.5, the human points at one agent, and that agent points at the others. The panel after that asks the honest question: where does this go? In the last two panels, the thing that gets automated is not the coding. It is the supervising.*
 
 ## Loops Happen at Five Levels
@@ -104,7 +104,7 @@ done
 
 That really is most of the idea. The loop keeps prompting until the job is done. Each fresh session starts with a fresh context window. Because of this, context rot never gets a chance to build up. Context rot is the problem from [Context Engineering](context_engineering.md) where a model gets worse at its task as its context grows. The state lives on disk, in the plan and the code, not in a context window.
 
-![Ralph Wiggum](./images/ralph.png)  
+![Ralph Wiggum](./images/ralph.webp)  
 *The name comes from the Simpsons character. The joke is friendly, and it does not look down on the technique. The technique works exactly because it is too simple to be clever. It keeps going after setbacks that would stop something more sophisticated.*
 
 The one rule that matters most is this: **Ralph does one task per loop.** It does not take the whole backlog on every iteration, only one item from it. Each pass does this:

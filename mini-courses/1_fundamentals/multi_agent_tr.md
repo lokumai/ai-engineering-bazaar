@@ -17,7 +17,7 @@ Bu aslında iki ayrı iş. Önce SQL yazıp çalıştırman, sonra da bir grafik
 
 ## Temel Multi-agent Mimarileri
 
-![Tek agent, network ve supervisor mimarileri](./images/multiagents.png)  
+![Tek agent, network ve supervisor mimarileri](./images/multiagents.webp)  
 *Solda: tool'larıyla birlikte tek bir agent. [AI Agents](agents_tr.md) modülü tam olarak burada bitmişti. Ortada: her agent'ın diğer her agent'la konuşabildiği bir network. Sağda: bir supervisor. İsteği o alır, işi worker'lara devreder ve worker'lar yalnızca supervisor ile konuşur.*
 
 **Supervisor.** Bir agent isteği alır ve ardından sırasıyla şunları yapar:

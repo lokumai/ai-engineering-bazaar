@@ -17,7 +17,7 @@
 
 ![](../images/logos/claude.svg)**[Claude Design](https://claude.ai/design)** از Anthropic، که آوریل 2026 راه افتاد، نمونه‌ی اولیه، اسلاید و سند یه‌صفحه‌ای رو به شکل کد واقعی و کارا می‌سازه. می‌تونه یه پروژه‌ی موجود رو هم بخونه، قانون‌های طراحی‌ای رو که از قبل توشه پیدا کنه، و برای هر چیزی که بعداً می‌خوای ازشون پیروی کنه.
 
-![template‌های Claude Design](../images/claude-design-types.png)  
+![template‌های Claude Design](../images/claude-design-types.webp)  
 *Claude Design با یه درخواست و یه template شروع می‌شه: اپ موبایل، اسلاید، سند، wireframe و چیزهای دیگه. منوی "Design system" قبل از این‌که چیزی کشیده بشه، یه سری تصمیم طراحی رو انتخاب می‌کنه.*
 
 ![تنظیم یه prototype توی Claude Design](../images/claude-design-ui.webp)  
@@ -31,7 +31,7 @@
 
 یه AI که یه صفحه می‌سازه باید همه‌ی این تصمیم‌ها رو بگیره. نمی‌تونه مال تو رو بدونه، پس چیزهایی درمیاره که منطقی به نظر میان، و هر بار یه جور دیگه. راه‌حل همونیه که برای دستورها بود: تصمیم‌ها رو توی یه فایل بنویس و بذار AI بخونه.
 
-![یه design system کنار صفحه‌ای که ازش ساخته شده](../images/example-design-system.png)  
+![یه design system کنار صفحه‌ای که ازش ساخته شده](../images/example-design-system.webp)  
 *یه design system توی Google Stitch (سمت چپ): رنگ‌هاش با کد دقیقشون، سه تا سبک متن، دکمه‌ها و آیکون‌ها. سمت راست یه fitness dashboard‌ه که ازش ساخته شده. هر صفحه‌ی بعدی که بخوای، مثلاً "workout details screen" که پایینش پیشنهاد شده، همون تصمیم‌ها رو دوباره استفاده می‌کنه.*
 
 ## DESIGN.md

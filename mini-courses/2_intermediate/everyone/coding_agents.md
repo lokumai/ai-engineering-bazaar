@@ -33,7 +33,7 @@ Stop and think about this for a moment. These agents do not only *use* what exis
 what does not exist. One story people shared was about someone whose printer had no driver for their
 computer. They asked a coding agent, and it wrote a working driver.
 
-![Code is the universal interface](../images/code-is-universal.png)  
+![Code is the universal interface](../images/code-is-universal.webp)  
 *The top row is the old way: one agent for each kind of work, and each needs its own tools built for it. The bottom row shows why coding agents took their place. Code can reach the web, the calendar, the bank and almost anything else.*
 
 So code is not one skill among many. **It is the skill that can replace the others.** That is why a
@@ -70,7 +70,7 @@ another AI product, and another. Without a standard, you build it again for each
 The ![](../images/logos/modelcontextprotocol-mono.svg)**Model Context Protocol** (MCP) solves this. Think of a universal charger plug that fits every
 phone. A tool built once in the MCP standard works in every AI agent that supports MCP.
 
-![Before and after MCP](../images/mcp-unified-before-after.png)  
+![Before and after MCP](../images/mcp-unified-before-after.webp)  
 *On the left, every service needs its own connection, built separately for each AI. On the right, each service is connected once, in the MCP standard, and every AI can use it.*
 
 What you get from it:
@@ -97,7 +97,7 @@ At the start, the agent reads only the title on each binder, one short line each
 cost almost nothing. Only when a task needs one does the agent open that binder and read the full
 instructions. This idea has a name you should remember: **progressive disclosure**.
 
-![Skills and the context window](../images/skill-and-context-window.png)  
+![Skills and the context window](../images/skill-and-context-window.webp)  
 *The thin band at the top is all twenty skills while they are not in use: one short line each. When a PDF task arrives, the agent opens the PDF skill and follows its instructions. The other nineteen never fill the chat.*
 
 Why skills, instead of one huge set of instructions? Because of context engineering: everything the
@@ -157,7 +157,7 @@ Look back: AGENTS.md, slash commands, subagents, skills, hooks, plugins, memory 
 of them are **plain text files in folders**. You can open them in any editor, read them, and share
 them. That is not laziness. It is the one format that both people and AI handle well.
 
-![One agent, three extension points](../images/mcp-skill-subagent.png)  
+![One agent, three extension points](../images/mcp-skill-subagent.webp)  
 *Three different problems, three answers. Skills (left) change how the agent behaves. MCP servers (right) let it reach other systems. Subagents (bottom) do expensive work in a separate chat.*
 
 You do not have to write code to use these ideas. Claude Cowork, for people who do not code, uses

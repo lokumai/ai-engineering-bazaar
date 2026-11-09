@@ -10,7 +10,7 @@ LLM'ler deterministik değildir. Prompt'la ne yaparsan yap, context'e ne koyarsa
 
 Yani nazikçe istemek, ne kadar sık tekrarlarsan tekrarla, hiçbir garanti vermez. Diyelim ki agent'ın asla main'e push atmaması gerekiyor. Talimatlarına "lütfen main'e push atma" yazabilirsin. Bu çoğu zaman işe yarar. Ama bu kural için "çoğu zaman" yeterli değildir. İhtiyacın olan şey mekanik bir şeydir: modelin ne yaptığından bağımsız olarak her çalışmada aynı davranan bir düzen. Bu düzen, model ne yapmaya karar verirse versin yerinde durmalıdır.
 
-![Prompt, Context ve Harness Tek Çizimde](./images/car-analogy.png)  
+![Prompt, Context ve Harness Tek Çizimde](./images/car-analogy.webp)  
 *Motor prompt'tur: güç üreten parça. Araba context'tir: motorun etrafına kurulmuş, gücün neye yarayacağını belirleyen gövde. Pist ve bariyerler ise harness'tir. Dikkat et, bariyerler direksiyon çevirmez ve asıl nokta da budur. Arabayı doğru yöne sokmazlar. Yanlış yöne gitmeyi imkânsız hale getirirler.*
 
 Bu analoji, [Harness Engineering: What It Is and How It Complements Context Engineering](https://medium.com/@amirkiarafiei/harness-engineering-what-it-is-and-how-it-complements-context-engineering-6545b40bfc84) yazısından alındı. Sonraki iki modül de bu analojiyi tekrar kullanıyor, bu yüzden akılda tutmaya değer.
@@ -27,14 +27,14 @@ Philipp Schmid'in [The importance of Agent Harness in 2026](https://www.philschm
 
 Bir noktayı netleştirmek gerekiyor, çünkü insanlar "harness" kelimesini gelişigüzel kullanıyor. Harness **dış** katmandır: prompt ve context çalışmanı içinde barındırır, ama o çalışmanın yerini almaz ve diğer iki katmanla yarışmaz.
 
-![Prompt, Context ve Harness Üç Katman Olarak](./images/onion-model.png)  
+![Prompt, Context ve Harness Üç Katman Olarak](./images/onion-model.webp)  
 *Her halka, içindeki halkayı barındırır. Bu yüzden bunlar asla birbirinin alternatifi değildir. Bir harness seçtiğinde, context hakkındaki bazı kararları çoktan vermiş olursun. Çünkü harness, context window'u sıkıştırır (compaction), subagent'ları başlatır ve system prompt'u yazar. Context engineering'i harness engineering'in yerine yapamazsın. Onu, seçtiğin harness'in içinde yaparsın.*
 
 ## Dört Disiplin, Dört Soru
 
 2026'ya gelindiğinde bu çalışma dört ayrı alana bölünmüştü ve her alan farklı bir soru soruyor.
 
-![Söylemek, Görmek ve Dünyayı İnşa Etmek](./images/prompt-vs-context-vs-harness.jpeg)  
+![Söylemek, Görmek ve Dünyayı İnşa Etmek](./images/prompt-vs-context-vs-harness.webp)  
 *Şekli alttan yukarıya doğru oku. Her katman, altındakini içine alır. En alttaki katman olan söylemek, tek bir turun sözlerini kapsar; ortadaki katman olan görmek ise bütün context window'u kapsar. Dünyayı inşa etmek ise agent'ın ulaşabildiği her şeyi ve onu durduran her şeyi kapsar. İnsanın rolü de yukarı çıktıkça değişir. En altta insan robotla konuşur. En üstte ise robotun çalışacağı yeri insan kurar.*
 
 - **Prompt engineering**: Ne sormalıyım ve bunu nasıl sormalıyım?
@@ -127,7 +127,7 @@ Sadece okumakla kalmayıp kendi harness'ini kurmak istiyorsan, [How to Build a C
 
 İnsanları şaşırtan bulgu şu: Bir model al, onu tek bir benchmark üzerinde çalıştır ve harness dışında hiçbir şeyi değiştirme. Bu durumda skorlar ciddi ölçüde değişiyor.
 
-![DeepSeek V4 Flash, Sekiz Harness'te](./images/harness-comparison.png)  
+![DeepSeek V4 Flash, Sekiz Harness'te](./images/harness-comparison.webp)  
 *Tek bir model, tek bir görev kümesi, sekiz harness. Skorlar 30 üzerinden 14 ile 20 arasında değişiyor. En alttaki ve en üstteki çubukta aynı model ağırlıkları düşünme işini yapıyor. Ayrıca kazananın ötesine de bak. Kaynak maliyeti ve hızı da ölçmüş. Buradaki en hızlı harness, aynı zamanda başarı başına en pahalı olandı, çünkü prompt cache'ini neredeyse hiç yeniden kullanmıyordu.*
 
 Bu grafik, Composio'nun [Finding the Best Harness for DeepSeek V4 Flash](https://composio.dev/content/best-agent-harness-deepseek-v4-flash) yazısından alındı. Yazarda model şu sekiz harness'te denenmiş:

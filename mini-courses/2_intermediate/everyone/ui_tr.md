@@ -106,7 +106,7 @@ Liste ortak olduğu için birçok agent ürünü onu konuşuyor. LangChain ve Cr
 
 AG-UI, ortak üç protocol'den biridir ve her biri agent'ı farklı bir tarafa bağlar.
 
-![Agent protocol stack: MCP, A2A ve AG-UI](../images/ag-ui-mcp.png)  
+![Agent protocol stack: MCP, A2A ve AG-UI](../images/ag-ui-mcp.webp)  
 *Agent ortada duruyor. MCP ve A2A sola uzanır: tool'lara ve diğer agent'lara. AG-UI ise sağa uzanır: uygulamayı kullanan insanlara.*
 
 | Protocol | Agent'ı neye bağlar |

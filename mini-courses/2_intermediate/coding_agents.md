@@ -20,7 +20,7 @@ A coding agent needs no tool. It can install a Python imaging library and write 
 
 Stop and think about this part for a moment. These agents do not only *use* what exists. They also *build* what does not exist. One story that people shared was about someone whose printer had no Linux driver. So they asked a coding agent to write one. The details may have changed as people retold the story, but the general idea is true: a model that can write and run code has a way to reach almost anything a computer can do.
 
-![Code is the universal interface](./images/code-is-universal.png)  
+![Code is the universal interface](./images/code-is-universal.webp)  
 *The top row is the old way: one agent for each domain, and each agent needs its own tools built for it. The bottom row shows why coding agents took their place. Code can reach the web, the calendar, the bank and the airline. So an agent that writes code covers all four, and nobody has to write four sets of tools.*
 
 So coding is not only one skill among many. It is the skill that can replace the others. That is why a coding agent helps with work that has nothing to do with software. Look back at the examples above: every one of them was a non-coding task.
@@ -70,7 +70,7 @@ Say you write tools for your LangChain agent, so that it can work with your Jira
 
 The ![](./images/logos/modelcontextprotocol-mono.svg)**Model Context Protocol** makes this one job instead of four. You describe tools in one standard way. Then any agent that speaks the protocol can use them.
 
-![Before and after MCP](./images/mcp-unified-before-after.png)  
+![Before and after MCP](./images/mcp-unified-before-after.webp)  
 *On the left, every service needs its own integration, written for the model that it talks to. So the work multiplies with the number of models. On the right, the API of each service has not changed at all. What changed is how the model reaches them: through one interface that the model already speaks. So you integrate each service once, not once for each agent.*
 
 What you get from it:
@@ -113,7 +113,7 @@ The mechanism is the important part. It has a name that you should remember: **p
 
 At startup, the agent loads only the `name` and the `description` of each installed skill. That is one or two lines for each skill, so twenty skills cost almost nothing. The agent reads the full instructions only when it decides that a skill applies to the task it is working on.
 
-![Skills and the context window](./images/skill-and-context-window.png)  
+![Skills and the context window](./images/skill-and-context-window.webp)  
 *The grey band at the top is the full cost of all twenty skills while they are not in use: one short line each. When the PDF task arrives, the agent reads `SKILL.md` with an ordinary Bash call. Then it follows a reference inside that file to a second file. Notice that the skill enters the context as a tool result. So this is not a new mechanism. It is the tool loop from Tool Calling, used to read instructions instead of data.*
 
 So why do skills exist, instead of one very large system prompt? The reason is context engineering. Everything the agent might need is available. Only what it actually needs is in the window.
@@ -210,7 +210,7 @@ Almost every one of them is **markdown in a folder**. They are not a database. T
 
 That is not laziness. It is the one format that both you and the model handle well. You can read and edit it without special tools. Models are unusually good at markdown and at moving around a filesystem, because a very large share of their training data is exactly that. So, in the end, the extension mechanism for a coding agent is the thing that it was already best at.
 
-![One agent, three extension points](./images/mcp-skill-subagent.png)  
+![One agent, three extension points](./images/mcp-skill-subagent.webp)  
 *These are three different problems, so it helps to name which is which. The skills on the left are instructions that the agent reads to change how it behaves. The MCP servers on the right are tools that let it reach systems it could not reach otherwise. The subagents below are extra context windows. So each extension gives the agent one of three things: something to know (a skill), something it can do (an MCP server), or a separate place to think (a subagent).*
 
 ## Where this fits in the series

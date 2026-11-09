@@ -125,7 +125,7 @@ Kotlin ve Go'dan Rust ve .NET'e kadar birçok dilde client SDK'ları da var. Pro
 
 AG-UI, üç protocol'den biridir ve her biri agent'ın farklı bir tarafını kapsar.
 
-![Agent protocol stack: MCP, A2A ve AG-UI](./images/ag-ui-mcp.png)  
+![Agent protocol stack: MCP, A2A ve AG-UI](./images/ag-ui-mcp.webp)  
 *Agent ortada duruyor. MCP ve A2A sola uzanır: tool'lara ve diğer agent'lara. AG-UI ise sağa uzanır: ekranın önündeki kullanıcılara.*
 
 | Protocol | Agent'ı neye bağlar | Kimden geliyor |

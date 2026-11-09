@@ -12,7 +12,7 @@ LLM'e jailbreak yapmak, modelin üretmek üzere tasarlanmadığı bir çıktıy�
 
 Tanım bu kadar. Model belirli şeyleri reddetmek üzere eğitilmiştir ve biri bu reddi aşan bir soru sorma yolu bulur. Geleneksel anlamda hiçbir şey hack'lenmez: kimse bir sunucuya girmez, kimse bir parolayı çalmaz. Biri sadece isteği farklı kelimelerle kurar.
 
-![Bir reddetme, ardından önüne jailbreak eklenmiş aynı soru](./images/jb-exmaple-1.png)  
+![Bir reddetme, ardından önüne jailbreak eklenmiş aynı soru](./images/jb-exmaple-1.webp)  
 *İki yarıdaki soru birebir aynı. Tek değişen, önündeki metin. Asıl rahatsız edici kısım da tam olarak bu. Güvenlik davranışı kilitli bir kapı değildir. Modelin sahip olduğu bir alışkanlıktır ve doğru kelimelerle modeli o alışkanlığı bırakmaya ikna edebilirsin. Ayrıca ikinci yarıda modelin bir kural çiğnediğini düşünmediğine dikkat et. İçeriden bakıldığında model yalnızca cevap veriyor.*
 
 Örnekteki prompt meşhur olanıdır ve insanlar buna genellikle **DAN** der. Bu, "do anything now" ifadesinin kısaltmasıdır. Modele kısıtlaması olmayan bir karakter oynadığını söylersin, sonra da o karaktere soru sorarsın. Prompt eski ve çoğunlukla yamalanmış durumda, bu yüzden onu burada gösterebiliyoruz. Bu örneği seçmemizin asıl sebebi ise saldırganların aynı kalıbı bugün de kullanması: modelden, kuralları olmayan bir karakteri oynamasını istiyorlar.
@@ -26,7 +26,7 @@ Saldırılar iki türe ayrılır ve bu ayrım, saldırganın neyi görebildiğiy
 
 Bu farkı saldırıların görünüşünde doğrudan görebilirsin.
 
-![Token düzeyinde ve prompt düzeyinde jailbreak'ler](./images/jb-example-2.png)  
+![Token düzeyinde ve prompt düzeyinde jailbreak'ler](./images/jb-example-2.webp)  
 *Üstteki, bir bilgisayarın bulduğu şeydir. Alttaki ise bir insanın yazdığı. Üstteki anlamsız metin rastgele değildir. Token'lar üzerinde yapılmış bir aramanın çıktısıdır ve bu yüzden genellikle white box erişimi gerektirir. Alttaki hikâye ise hiçbir erişim gerektirmez, sadece bir fikir yeter. Bu yüzden karşılaştığın saldırılar çoğunlukla prompt düzeyindekilerdir. Bir filtre anlamsız bir soneki kolayca fark edebilir. Ama içeriden bilgiyle hisse alım satımı (insider trading) hakkında yaratıcı bir hikâye isteği sıradan bir istek gibi görünür, çünkü gerçekten öyledir.*
 
 Pratik sonuç şu: white box saldırıları daha güçlüdür. Ama birinin *senin* ürününe karşı kullandığı saldırı neredeyse her zaman black box olur, çünkü ürünün internette duran bir metin kutusudur.

@@ -20,7 +20,7 @@ Herkes dolu bir pencereyi aşmanın yollarını ararken, Chroma ekibi [Context R
 
 Ekip 18 modeli test etti. Aralarında GPT-4.1, Claude 4 ve Gemini 2.5 de vardı ve hepsinde aynı örüntü görüldü. Aynı modele aynı işi verdiğinde, context'inde 800K token yerine 25K token olduğunda işi belirgin biçimde daha iyi yapıyor. Bu etkinin nedeni pencerenin taşması değil, pencerede zaten ne olduğu.
 
-![İki kavanoz, aynı model](./images/context-pollution-jars.jpeg)  
+![İki kavanoz, aynı model](./images/context-pollution-jars.webp)  
 *Modelin ihtiyaç duyduğu üç şey iki kavanozda da var. Sağdakinde hâlâ duruyor, hâlâ okunabiliyor, ama kaybolmuş durumda. Kavanozdaki diğer her şey aynı dikkat için yarışıyor.*
 
 İnsanlar buna iki ad veriyor: **context rot** ve **context pollution**. Drew Breunig'in [How Long Contexts Fail](https://www.dbreunig.com/2025/06/22/how-contexts-fail-and-how-to-fix-them.html) yazısı bir adım daha ileri gidiyor. Bu etkinin ortaya çıkmasının dört belirli yolunu adlandırıyor: zehirlenme (poisoning), dikkat dağılması (distraction), karışıklık (confusion) ve çatışma (clash).
@@ -31,7 +31,7 @@ Burada sık yapılan bir hataya dikkat et: mesele pencerenin "dolması" değil. 
 
 Pratikte nasıl hissettirdiğine bir bakalım. Bir kitap yazmak için uzun bir oturum başlattığını düşün. Başta modele açık ve akademik bir tonla yazmasını söylüyorsun ve bir süre öyle yazıyor. 800K'yı biraz geçtikten sonra ise ton muğlak ve sohbet havasında bir şeye kayar, model de şeyler uydurmaya başlar. Hiçbir şey silinmedi ve pencere hiç taşmadı. Talimat hâlâ orada duruyor, ama dikkatten aldığı pay sonradan eklediğin her şeyle yarışmak zorunda kaldı ve kaybetti. Model haritayı kaybetti, yani başta verdiğin hedefi artık takip etmiyor.
 
-![İğne, dikkat dağıtıcı ve samanlık](./images/distractor_irrelevance.png)  
+![İğne, dikkat dağıtıcı ve samanlık](./images/distractor_irrelevance.webp)  
 *Soru, sınıf arkadaşının tavsiyesini istiyor ve iğne bu tavsiyenin kendisi. Dikkat dağıtıcı ise aynı cümle, ama bu kez bir hocayla ilgili. Chroma, tek bir dikkat dağıtıcının bile zarar verdiğini buldu. Ayrıca iğne soruya ne kadar az benziyorsa, samanlık büyüdükçe performansın o kadar hızlı çöktüğünü de gördüler.*
 
 Bu testin adını sürekli duyacaksın: **needle in a haystack** (samanlıkta iğne). Yukarıdaki örnek bunun daha zor sürümü. Kolay sürümde metnin içine tam bir ifade gizlenir ve modelden onu geri istersin; modeller bu işi neredeyse kusursuz yapar. Chroma'nın katkısı ise bulmak için *akıl yürütmen* gereken bir şeyi gizlemek ve yanına neredeyse doğru görünen yanlış cümleler koymak oldu.
@@ -44,7 +44,7 @@ Context engineering tek bir soruya cevap verir: **context'e neler girmeli, neler
 
 Pencere sınırlı olduğu için bir yerde karar verilmesi gerekiyor. Pencereye girebilecek şeylerin evreni sürekli büyürken, context engineering bunların hangilerinin gerçekten içeri gireceğini seçme sanatı ve bilimidir. Amaç, gerçek sinyal taşıyan token'ların mümkün olduğunca çok, gürültü olanların ise mümkün olduğunca az olduğu bir context kurmaktır; böylece context çürümez.
 
-![Prompt engineering ve context engineering yan yana](./images/prompt-vs-context-eng.png)  
+![Prompt engineering ve context engineering yan yana](./images/prompt-vs-context-eng.webp)  
 *Solda tek bir etkileşim turu ve tek bir karar var: bu, [Prompt Engineering](prompt_engineering_tr.md) konusu. Sağda ise pencereye girebilecek şeylerin evreni ve bunların hangilerinin gerçekten gireceğine dair bir karar var. Bu karar her turda yeniden verilir.*
 
 Terim, 2025'in ortasında [Andrej Karpathy'nin bu konudaki paylaşımından](https://x.com/karpathy/status/1937902205765607626) sonra yaygınlaştı. Anthropic'in [Effective context engineering for AI agents](https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents) yazısı konuyu en eksiksiz biçimde ele aldı. Anthropic bunu şöyle tanımlıyor: "the set of strategies for curating and maintaining the optimal set of tokens during LLM inference". Philipp Schmid'in [The New Skill in AI is Not Prompting, It's Context Engineering](https://www.philschmid.de/context-engineering) yazısı aynı fikri bir iş tanımı gibi anlatıyor: doğru bilgiyi ve araçları, doğru biçimde, doğru anda modele vermek. LangChain teknikleri dört fiile ayırıyor: write (yazmak), select (seçmek), compress (sıkıştırmak) ve isolate (izole etmek). Bu sınıflandırmayı [Context Engineering](https://www.langchain.com/blog/context-engineering-for-agents) yazısında ve Lance Martin'in [Context Engineering for Agents](https://rlancemartin.github.io/2025/06/23/context_engineering/) yazısında bulabilirsin.
@@ -57,7 +57,7 @@ Bu tekniklerin en basiti, context uzadığında onu kendi özetiyle değiştirme
 
 Çoğu agent bunu artık limite yaklaşınca kendiliğinden yapıyor. Bazıları ise bunu seni başlatmana da izin veriyor. Claude Code'da `/compact` yazarsan işlem hemen gerçekleşir.
 
-![Compaction öncesi ve sonrasında bir pencere](./images/compaction-before-after.png)  
+![Compaction öncesi ve sonrasında bir pencere](./images/compaction-before-after.webp)  
 *Neyin tutulup neyin atıldığına dikkat et. Araç (tool) sonuçları pencerenin büyük kısmını oluşturuyor ve bunlar gidiyor. Özet kararları tutuyor. Agent'ın hemen yeniden okuyacağı birkaç dosya da korunuyor. En alttaki ayrılmış blok, agent'ın kendi özetini yazması için bırakılan alan. Böylece agent, pencere dolmuşken yazacak yer bulamayacağı bir durumda hiç kalmaz.*
 
 Bunun bedeli gerçek ve açıkça söylenmeye değer. Özet, kimsenin bir daha ihtiyaç duymayacağı bir terminal komutunun 40,000 token'lık çıktısını atar ve asıl amaç da budur. Ama senin ihtiyacın olan bir şeyi de atabilir. Bu kazayla olabilir, ya da özeti yazan şey bir ayrıntının önemsiz olduğuna karar verip yanılmış olabilir. Tam da bu yüzden Anthropic'in compaction hakkındaki kendi rehberi, mimari kararları, çözülmemiş hataları ve uygulama ayrıntılarını korumayı öneriyor.
@@ -74,7 +74,7 @@ Buradaki uyarı aynıdır ve kökü de aynıdır. Neyin saklanmaya değer olduğ
 
 [Memory](../1_fundamentals/memory_tr.md) belleği parametrik, çalışma (working) ve uzun vadeli olmak üzere üçe ayırmıştı. Bu bölümde uzun vadeli olanına bakıyoruz. Pratikte bu bellek genellikle üç türe ayrılır:
 
-![Uzun vadeli belleğin üç türü](./images/semantic-episodic-procedural.png)  
+![Uzun vadeli belleğin üç türü](./images/semantic-episodic-procedural.webp)  
 *Bu ayrım önemli, çünkü agent üçünü farklı zamanlarda yazar ve okur. Senin hakkındaki bilgiler zamanla sessizce birikir. Geçmiş eylemler, agent'ın aynı hatayı tekrarlamasını engeller. Talimat katmanı ise [LLM Tool Calling](../1_fundamentals/tools_tr.md) bölümündeki system prompt'un başka bir adla anılmasından ibaret.*
 
 ## Context Isolation
@@ -85,7 +85,7 @@ Kodlama agent'ının sana, bir milyon satırlık bir deponun hangi mimariyi kull
 
 Çözüm, okuma işini hiç bu context'te yapmamaktır. Ana agent, kendi boş context'i olan ikinci bir agent'ı çağırır ve bu ikinci agent bir **subagent**'tır. Subagent 800K token'lık taramayı yapar, sonuç dışında her şeyi atar ve o tek cümleyi geri verir. Böylece ana agent'ın context'ine yalnızca bir cümle eklenmiş olur.
 
-![Kendi pencereleri olan iki subagent](./images/subagent.png)  
+![Kendi pencereleri olan iki subagent](./images/subagent.webp)  
 *Her kutu ayrı bir context. Boş olarak başlar ve iş bitince atılır. Ana agent ara adımları hiç görmez, bütün mesele de bu: o adımlar ana agent'ın penceresine hiç girmediği için onu dolduramaz ve cevaplarını kötüleştiremez.*
 
 **Nasıl çalışır?** Subagent, temiz bir context'e sahip yeni bir agent. Ana agent, diğer herhangi bir aracı çağırdığı gibi onu çağırır. Örneğin şuna benzer bir çağrı yapar: `Task("find out what architecture this repo uses")`. [LLM Tool Calling](../1_fundamentals/tools_tr.md) açısından bakınca ortada yeni bir şey yok: bir araç çağrıldı ve bir araç sonucu geri geldi. Subagent kendi döngüsünü çalıştırır, her ara adımı gizler ve son cevabı bu araç sonucu olarak geri döndürür. Anthropic, bu özetlerin genellikle 1,000 ile 2,000 token civarında olduğunu bildiriyor.
@@ -129,7 +129,7 @@ Recitation (tekrar) kelimesini aklında tut; bu modülün sonunda yeniden karş�
 
 Bazı bilgiler gerçekten değerlidir ve sık sık değişmez; örneğin şirketinin iç API'sinin nasıl çalıştığı gibi. Bunları her prompt'a yapıştırmak yerine agent'ın gidip bakabileceği bir yere koy: okuyup arayabileceği bir markdown dosyaları klasörüne.
 
-![Agent'ın keşfettiği bir bilgi tabanı](./images/explorable-knowledge-base.png)  
+![Agent'ın keşfettiği bir bilgi tabanı](./images/explorable-knowledge-base.webp)  
 *Bilgi tabanı context window'un dışında durur ve her etkileşimle büyür. Agent yalnızca sorunun ihtiyaç duyduğu sayfayı okur; bildiği geri kalan her şey kullanılana kadar hiçbir maliyet çıkarmaz.*
 
 Agent dokümantasyona ihtiyaç duyduğuna karar verdiğinde onu çeker. Yalnızca önemli kısmı okur ve context'inde o kadarını öğrenmiş olur. Bu çekme işi [Retrieval-Augmented Generation (RAG)](../1_fundamentals/rag_tr.md) gibi tam bir RAG ile yapılabilir, ya da agent sadece dosyaları açar. Hangisi olursa olsun alternatif, tüm API referansını pencereye dökmek ve bunun bedelini her turda ödemektir.

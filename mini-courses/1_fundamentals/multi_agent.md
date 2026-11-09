@@ -33,7 +33,7 @@ only gone from one loop to several loops.
 
 ## Basic Multi-agent Architectures
 
-![Single agent, network and supervisor architectures](./images/multiagents.png)  
+![Single agent, network and supervisor architectures](./images/multiagents.webp)  
 *Left: one agent with its tools. This is where [AI Agents](agents.md) ended. Middle: a network, where every agent can talk to every other agent. Right: a supervisor. It receives the request and delegates the work to workers, and the workers only talk to the supervisor.*
 
 **Supervisor.** One agent receives the request. Then, in this order, it:

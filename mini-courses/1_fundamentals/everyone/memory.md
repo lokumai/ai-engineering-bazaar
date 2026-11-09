@@ -67,7 +67,7 @@ conversation going, you hand them **the printout of the whole chat** with every 
 They read it all from the top, and then they answer. That is exactly what an AI app does. It
 keeps every message in a growing stack, and it sends the whole stack again, every single time.
 
-![The stack that is working memory](../images/llm-context.jpeg)  
+![The stack that is working memory](../images/llm-context.webp)  
 *This stack is working memory. You write a message, and the AI writes one back. Nothing is removed. In the second round, the AI reads everything from the first round again, because the app sends the whole stack every time.*
 
 ```mermaid
@@ -81,7 +81,7 @@ graph TD
 This is also why a very long chat costs more: every new message makes the app
 send everything again.
 
-![Short-Term vs Long-Term Memory](../images/short-vs-long-memory.png)  
+![Short-Term vs Long-Term Memory](../images/short-vs-long-memory.webp)  
 *Working (short-term) memory is the growing stack of your messages and the AI's replies. Long-term memory is a separate store: parts of the chat are saved there and brought back later, even in a new chat. The labels "Checkpointer" and "Store" come from one software framework. Others use different names for the same idea.*
 
 ## Long-term Memory

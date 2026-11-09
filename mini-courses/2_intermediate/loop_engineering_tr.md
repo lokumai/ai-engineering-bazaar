@@ -19,7 +19,7 @@ Asıl tasarım kararı işte bu son unsurdur. Loop engineering de tek bir soru s
 
 Arabaya geri dönelim: motor prompt'tur, gövde context'tir, pist ve engeller de harness'tir. Şimdiye kadar sürücü bir insandı, loop engineering'de ise sürücü AI'dır. Bu, sürücüsü insan olan bir araba ile kendi kendine giden bir araba arasındaki farktır. Bundan sonra anlatılan her şey, direksiyonun ne kadarını AI'a bırakmaya razı olduğunla ilgili.
 
-![Dört yılın iş unvanları](./images/loop-unemployment.jpeg)  
+![Dört yılın iş unvanları](./images/loop-unemployment.webp)  
 *Şaka işe yarıyor, çünkü her panelde gerçekten var olmuş bir iş anlatılıyor. Şakanın asıl söylediği şey, okların kimden kime gittiğinde saklı. Ok 2026'da insandan agent'lara gidiyor; 2026.5'te insan tek bir agent'a işaret ediyor ve o agent diğerlerine işaret ediyor. Sonraki panel ise dürüst bir soru soruyor: bu nereye gidiyor? Son iki panelde otomatikleşen şey kodlama değil, denetleme.*
 
 ## Döngüler Beş Seviyede Oluşur
@@ -93,7 +93,7 @@ done
 
 Fikrin büyük kısmı gerçekten bu: döngü, iş bitene kadar prompt göndermeye devam eder. Her yeni oturum taze bir context penceresiyle başladığı için context rot birikme fırsatı bulamaz. Context rot, [Context Engineering](context_engineering_tr.md) modülünde gördüğün sorundur: context büyüdükçe model görevini giderek daha kötü yapar. Durum context penceresinde değil, planda ve kodda, yani diskte yaşar.
 
-![Ralph Wiggum](./images/ralph.png)  
+![Ralph Wiggum](./images/ralph.webp)  
 *Ad, Simpsons'taki bir karakterden geliyor ama şaka dostane ve tekniğe tepeden bakmıyor. Teknik, tam da zekice olmayacak kadar basit olduğu için işe yarıyor. Daha sofistike bir sistemi durduracak aksiliklerin ardından bile devam ediyor.*
 
 En önemli kural şu: **Ralph her döngüde tek bir görev yapar.** Her turda bütün backlog'u almaz, yalnızca içinden tek bir madde seçer. Her geçiş ise şu adımları izler:

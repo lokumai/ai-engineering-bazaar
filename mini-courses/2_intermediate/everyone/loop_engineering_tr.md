@@ -18,7 +18,7 @@ Sonuncusu, yani **ne zaman duracağı**, en önemli tasarım kararı. Çok erken
 
 Arabaya dönelim. Motor prompt, gövde context, pist ve bariyerler ise harness. Şimdiye kadar arabayı bir insan sürdü. Loop engineering ile arabayı yapay zekâ sürüyor.
 
-![Dört yıllık iş unvanları](../images/loop-unemployment.jpeg)  
+![Dört yıllık iş unvanları](../images/loop-unemployment.webp)  
 *Her panel bir iş unvanıyla ilgili bir şaka, sonuncusu ise geleceğe dair bir tahmin. Oklara bak: önce insan agent'ları gösteriyor, sonra insan tek bir agent'ı gösteriyor ve o agent diğerlerini gösteriyor.*
 
 ## Döngüler Beş Seviyede Oluşur
@@ -74,7 +74,7 @@ done
 
 Kod sana bir şey ifade etmiyorsa şöyle oku: "sonsuza kadar: agent'ı aynı talimatlarla başlat". Her başlangıç yeni, boş bir sohbet alıyor. Yani agent, uzun bir sohbetin yol açtığı [context rot](context_engineering_tr.md) sorunu yüzünden hiç yorulmuyor ya da karışmıyor.
 
-![Ralph Wiggum](../images/ralph.png)  
+![Ralph Wiggum](../images/ralph.webp)  
 *Ad, Simpsonlar karakterinden geliyor. Şaka dostça: teknik, akıllı olamayacak kadar basit olduğu için işe yarıyor ve daha akıllı bir şeyi durduracak aksiliklerden sonra da devam ediyor.*
 
 En önemli kural şu: **her turda tek görev.** Her tur:

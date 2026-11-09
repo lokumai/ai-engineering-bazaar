@@ -68,12 +68,12 @@ OpenClaw o kadar hızlı büyüdü ki mühendislik buna yetişemedi. İlk kurulu
 - **Kendi sandbox'ı olan subagent'lar.** Bu, [Context Engineering](context_engineering_tr.md) bölümünde anlatılan görev devrinin ta kendisi ve beş backend arasından seçim yapabilirsin: local, Docker, SSH, Singularity veya Modal.
 - **Aynı kanallar**, bir de görsel algılamayla web'de gezinme; ayrıca Nous Portal üzerinden 300'den fazla modele erişim sağlıyor.
 
-![Hermes ve OpenClaw yan yana](./images/hermes-vs-openclaw-archi.png)  
+![Hermes ve OpenClaw yan yana](./images/hermes-vs-openclaw-archi.webp)  
 *Asıl argüman şekillerin kendisinde. Hermes, kendini kullanıcıya geri bağlayan bir daire olarak çizilmiş; hatırladığı şeyler ve yazdığı skill'ler bir sonraki turu besliyor. Bu, kendini geliştirme iddiasının diyagrama dökülmüş hali. OpenClaw'da ise hiç döngü yok, her şey bir gateway'e bağlanıyor. Gateway, gelen her mesajı onu işlemesi gereken parçaya ileten merkezi bir noktadır. Birincisi daha iyi olmakla, ikincisi işi doğru yere taşımakla ilgili.*
 
 Composio'nun [OpenClaw vs Hermes Agent: The best agent harness in 2026](https://composio.dev/content/openclaw-vs-hermes-agent) yazısı farkı olabildiğince net anlatıyor. Sorun birçok kanal genelinde orkestrasyon ise ve hazır skill'lerden oluşan bir marketplace'e ihtiyacın varsa OpenClaw'ı kullan. Sorun, kendiliğinden daha iyi olması gereken tekrarlayan bir işse Hermes'i kullan. Firecrawl'ün [OpenClaw vs Hermes Agent: Which one should you actually run?](https://www.firecrawl.dev/blog/openclaw-vs-hermes) yazısı aynı karşılaştırmayı yapıyor ve benchmark sonuçlarını da ekliyor.
 
-![Her birinin amacı](./images/hermes-and-openclaw.png)  
+![Her birinin amacı](./images/hermes-and-openclaw.webp)  
 *Ortadaki gri kapsül asıl noktadır. İki sütunu fiil olarak oku: soldaki her şey agent'ın kendini değiştirmesi, sağdaki her şey ise agent'ın işi etrafta taşıması. Yani soru hangi aracın daha iyi olduğu değil, bu iki sorundan hangisiyle gerçekten karşılaştığındır.*
 
 Bunun, [Harness Engineering](harness_engineering_tr.md) bölümündeki harness tartışmasının yeni bir yerde tekrarı olduğuna dikkat et. İki araç da aynı modelleri çalıştırıyor; dolayısıyla onları birbirinden ayıran her şey (hafıza tasarımı, skill yönetimi ve sandbox'lama) aslında harness'tır.

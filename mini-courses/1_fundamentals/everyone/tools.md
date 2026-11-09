@@ -23,7 +23,7 @@ work tells you what such an assistant can really do, and what it could do by mis
 
 ## What is a Tool?
 
-![An LLM reaching out through tools](../images/tools.jpg)  
+![An LLM reaching out through tools](../images/tools.webp)  
 *Tools are how a model reaches outside its own head. It searches the web, does maths or runs code, and then comes back with an answer.*
 
 A **tool** is a small program that someone wrote. It has a name, a short description, and some
@@ -42,7 +42,7 @@ the result and answers you. **The AI asks; the computer does the work.**
 
 A tool call adds two new kinds of message to the chat. This picture shows the whole flow:
 
-![The context of a single tool call](../images/context-tool-call.jpeg)  
+![The context of a single tool call](../images/context-tool-call.webp)  
 *One tool call, in order. The system prompt lists the tool before anyone speaks. Then you ask, and the AI writes a Tool Call. The computer runs it and writes the Tool Result. Then the AI reads that result and writes the answer.*
 
 Follow the four arrows, because it matters who writes each message:

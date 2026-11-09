@@ -28,12 +28,12 @@ Muhtemelen aklına şöyle bir itiraz gelmiştir: ağırlıklar donmuşsa ve mod
 
 Bu ağın içinde nöronlar var ve prompt, hangilerinin ateşleneceğine karar veriyor. Bazıları güçlü bir şekilde devreye giriyor, bazıları zayıf kalıyor, bazıları da hiç devreye girmiyor. Kelimeleri değiştirdiğinde bu örüntü değişiyor ve örüntü değiştiğinde çıktı da değişiyor.
 
-![Hangi nöronların yandığı](./images/neurons-activation.jpeg)  
+![Hangi nöronların yandığı](./images/neurons-activation.webp)  
 *Ağırlıklar iki durumda da aynı. Prompt yalnızca hangilerinin kullanılacağına karar veriyor. Aynı model, aritmetik soruyu kendisinin bir bölümüyle, resim sorusunu başka bir bölümüyle yanıtlamasının sebebi bu.*
 
 Bir DJ mikserini düşün. Ses seviyesi, bas ve eko için birer düğmesi var ama DJ donanımı hiç değiştirmez. DJ düğmeleri çevirir, dinler ve odanın doğru ses çıkarana kadar tekrar çevirir. Senin prompt'un ise bu düğmelerin bir ayarıdır. Prompt engineering de bu iş için gereken ağ bölümlerini açacak metni yazmak demek.
 
-![Düğmeleri çevirmek](./images/prompt-mixer.jpeg)  
+![Düğmeleri çevirmek](./images/prompt-mixer.webp)  
 *Her düğme bu modülde anlatılan bir şeye karşılık gelir. Ama hiçbiri dokunabileceğin bir panelde değil. Düğmeleri oynatan tek şey prompt metni.*
 
 Ama düğmelerin üzerinde etiket yok ve sana erişilebilir de değiller; onları hareket ettirmenin tek yolu metin. İşte bu yüzden prompt engineering teorik bir konu değil, deneysel bir iş. Aynı sebeple kimse, senin görevin için doğru prompt'u önceden veremez.
@@ -82,7 +82,7 @@ Basit olan şu:
 - **Warnings**: modelin yapmasını şimdiden beklediğin hatalar.
 - **Context**: senin durumunu anlatan, yabancı birinin sana yardım edebilmesi için bilmesi gereken her şey.
 
-![Basit bir prompt'un yapısı](./images/prompt-1.jpg)  
+![Basit bir prompt'un yapısı](./images/prompt-1.webp)  
 *Bağlam dökümü en uzun ve en az cilalı kısım, ve bu bir sorun değil. Hiçbir şablon bu kısmı senin yerine yazamaz.*
 
 Ayrıntılı olanı şu:
@@ -103,7 +103,7 @@ Ayrıntılı olanı şu:
 - **Output Format**: tam biçim, gerekiyorsa tablo sütunları dahil.
 - **Stop Conditions**: modelin ne zaman bittiğini nasıl anlayacağı.
 
-![Ayrıntılı bir prompt'un yapısı](./images/prompt-2.png)  
+![Ayrıntılı bir prompt'un yapısı](./images/prompt-2.webp)  
 *Stop conditions, insanların en sık unuttuğu bölüm. Bu bölüm yoksa "bitti" senin tanımın olmaz, modelin tahmini olur.*
 
 Bugünkü modellerin bu şablonlardan birine sıkı sıkıya uymanı gerektirmediği gibi, çoğu zaman da uymayacaksın. Şablonlar, "açık bir prompt yaz" gibi muğlak bir öğütten somut bir şey çıkarmak için burada.
@@ -296,7 +296,7 @@ Role prompting, görevi vermeden önce modele bir iş, bir persona ya da bir kar
 
 > **NOT, system prompt nedir?** System prompt, context'in en üstünde bir kez yer alır ve konuşmanın tamamında modelin nasıl davranacağını tanımlar. Onu kullanıcı değil, modelin ya da agent'ın geliştiricisi yazar ve genellikle uzun olur. Araçlar da burada, şemaları ve açıklamalarıyla birlikte kayıtlıdır ([LLM Tool Calling](../1_fundamentals/tools_tr.md)). Gerçek system prompt'ları görmek istersen, [system prompt leaks](https://github.com/asgeirtj/system_prompts_leaks) ChatGPT, Claude, Gemini, Grok ve diğerlerinin system prompt'larını kelimesi kelimesine topluyor.
 
-![System prompt'un içi](./images/system-prompt-context.jpeg)  
+![System prompt'un içi](./images/system-prompt-context.webp)  
 *Bu şekil [LLM Temelleri](../1_fundamentals/llms_tr.md) modülündeki şeklin aynısı. Rol, kimlik ve talimatların yazıldığı yer burası. Bu kutudaki her şey, kullanıcı tek kelime etmeden önce yazılmış olur.*
 
 Bu yüzden role prompting burada anlatılıyor: bir rol işini en iyi system prompt'ta yapar. Tekniğin kendisine dair örnekler göründükleri kadar basit:

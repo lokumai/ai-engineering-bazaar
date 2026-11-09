@@ -22,7 +22,7 @@ Bu modül, arayüzü düzgün biçimde üreten iki araçtan ve bu sorunun çöz�
 
 ![](./images/logos/claude.svg)**[Claude Design](https://claude.ai/design)**, Anthropic Labs'ten geliyor, Nisan 2026'da yayına girdi ve aynı işi bu kez diğer yönden yapıyor. Prototipleri, sunumları, tek sayfalık özetleri ve etkileşimli parçaları gerçek HTML, CSS ve JavaScript olarak üretiyor. Onu ilginç kılan iki özellik var. Birincisi, mevcut bir **codebase**'i girdi olarak alabiliyor, kodun içindeki design system'i bulup sonraki her isteğinde o design system'i uyguluyor. İkincisi ise işi doğrudan Claude Code'a aktarıyor, böylece prototip ile gerçek repository arasındaki boşluk kapanıyor.
 
-![Claude Design şablonları](./images/claude-design-types.png)  
+![Claude Design şablonları](./images/claude-design-types.webp)  
 *Claude Design tek bir istek ve bir şablonla başlıyor: mobil uygulama, slaytlar, doküman, wireframe ve daha fazlası. "Design system" menüsü, daha hiçbir şey çizilmeden bir dizi tasarım kararını seçiyor.*
 
 ![Claude Design'da bir prototipi ayarlamak](./images/claude-design-ui.webp)  
@@ -46,7 +46,7 @@ Bir ekran üreten agent, ekranı kurarken bu kararların hepsini kendisi vermek 
 
 Çözüm, talimatlar için zaten işe yarayan yöntemin aynısı: kararları repository içindeki bir dosyaya yaz, sonra agent'ın o dosyayı okumasını sağla.
 
-![Bir design system ve ondan yapılmış bir ekran](./images/example-design-system.png)  
+![Bir design system ve ondan yapılmış bir ekran](./images/example-design-system.webp)  
 *Google Stitch'te bir design system (solda): kesin kodlarıyla renkleri, üç yazı stili, butonlar ve ikonlar. Sağda ondan üretilmiş bir fitness dashboard'u var. İstediğin her yeni ekran, örneğin altta önerilen "workout details screen", aynı kararları yeniden kullanıyor.*
 
 ## DESIGN.md

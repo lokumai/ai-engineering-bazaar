@@ -22,7 +22,7 @@ So asking nicely does not get you a guarantee, no matter how often you ask. Say 
 
 Designing that wiring is **harness engineering**.
 
-![Prompt, context and harness on one drawing](./images/car-analogy.png)  
+![Prompt, context and harness on one drawing](./images/car-analogy.webp)  
 *The engine is the prompt: the thing that makes power. The car is the context: the body that is built around the engine, and that decides what the power can do. The track and the barriers are the harness. Notice that the barriers do not steer, and that is the point. They do not make the car go the right way. They make it impossible to go the wrong way.*
 
 The analogy is from [Harness Engineering: What It Is and How It Complements Context Engineering](https://medium.com/@amirkiarafiei/harness-engineering-what-it-is-and-how-it-complements-context-engineering-6545b40bfc84). The next two modules use it again, so it is worth remembering.
@@ -39,14 +39,14 @@ Philipp Schmid's [The importance of Agent Harness in 2026](https://www.philschmi
 
 One thing needs to be clear, because people use the word "harness" loosely. The harness is the **outer** layer. It does not compete with the other two layers. It contains your prompt and context work, and it does not replace that work.
 
-![Prompt, context and harness as three layers](./images/onion-model.png)  
+![Prompt, context and harness as three layers](./images/onion-model.webp)  
 *Each ring contains the one inside it. That is why these are never alternatives. When you choose a harness, you have already decided some things about your context. The reason is that the harness compacts the context window, spawns the subagents and writes the system prompt. You cannot do context engineering "instead of" harness engineering. You do it inside the harness that you picked.*
 
 ## Four Disciplines, Four Questions
 
 By 2026 this work has divided into four jobs, and each job asks a different question.
 
-![What to say, what to see, and the world to build](./images/prompt-vs-context-vs-harness.jpeg)  
+![What to say, what to see, and the world to build](./images/prompt-vs-context-vs-harness.webp)  
 *Read it from the bottom to the top. Each layer takes in the one below it. The bottom layer, saying, covers the words of one turn, and the middle layer, seeing, covers the whole context window. Building the world is everything that the agent can reach, and everything that stops it. The human's job also changes on the way up. At the bottom, the human talks to the robot. At the top, the human builds the place where the robot works.*
 
 - **Prompt engineering**: what should I ask, and how should I ask it?
@@ -143,7 +143,7 @@ Here is the finding that surprises people.
 
 Take one model, run it on one benchmark, and change nothing except the harness. The scores move a lot.
 
-![DeepSeek V4 Flash across eight harnesses](./images/harness-comparison.png)  
+![DeepSeek V4 Flash across eight harnesses](./images/harness-comparison.webp)  
 *One model, one task set, eight harnesses, and the scores go from 14 to 20 out of 30. In the bottom bar and in the top bar, the same weights do the thinking. Also read past the winner. The source measured cost and speed too. The fastest harness here was also the most expensive per success, because it almost never reused its prompt cache.*
 
 That chart is from Composio's [Finding the Best Harness for DeepSeek V4 Flash](https://composio.dev/content/best-agent-harness-deepseek-v4-flash). It ran the model through eight harnesses:

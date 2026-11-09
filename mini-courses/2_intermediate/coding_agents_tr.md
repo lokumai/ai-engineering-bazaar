@@ -10,7 +10,7 @@ Code agent'ın ise bir tool'a ihtiyacı yoktur; Python'un bir görüntü kütüp
 
 Bu kısmı bir an durup düşün: bu agent'lar yalnızca var olanı *kullanmakla* kalmaz, olmayanı da *üretebilir*. İnsanların paylaştığı hikâyelerden birinde, bir kişinin yazıcısı için Linux sürücüsü (driver) yoktu. Bu yüzden ona bir code agent'tan sürücüyü yazmasını istediler. Hikâye anlatıldıkça ayrıntılar değişmiş olabilir, ama genel fikir doğrudur: kod yazıp çalıştırabilen bir model, bilgisayarın yapabildiği neredeyse her şeye ulaşmanın bir yolunu bulur.
 
-![Kod evrensel arayüzdür](./images/code-is-universal.png)  
+![Kod evrensel arayüzdür](./images/code-is-universal.webp)  
 *Üst sıra eski yöntemdir: her alan için ayrı bir agent vardır ve her agent'ın kendine özel tool'lara ihtiyacı vardır. Alt sıra ise code agent'ların neden bu yerini aldığını gösterir. Kod web'e, takvime, bankaya ve havayolu şirketine ulaşabilir. Yani kod yazan bir agent dördünü de kapsar ve kimsenin dört ayrı tool seti yazmasına gerek kalmaz.*
 
 Yani kodlama, birçok beceriden yalnızca biri değildir; diğer becerilerin yerini alabilen temel beceri odur. Bu yüzden bir code agent, yazılımla ilgisi olmayan işlerde de işe yarar. Yukarıdaki örneklerin hepsi, kod yazmakla ilgisi olmayan işlerdi.
@@ -60,7 +60,7 @@ Diyelim ki LangChain agent'ının Jira ile çalışabilmesi için ona tool'lar y
 
 ![](./images/logos/modelcontextprotocol-mono.svg)**Model Context Protocol**, bu işi dört ayrı iş olmaktan çıkarıp tek bir işe indirir: tool'ları tek bir standart yolla tanımlarsın ve protokolü konuşan her agent bu tool'ları kullanabilir.
 
-![MCP öncesi ve sonrası](./images/mcp-unified-before-after.png)  
+![MCP öncesi ve sonrası](./images/mcp-unified-before-after.webp)  
 *Solda her servisin, onunla konuşan modele göre yazılmış ayrı bir entegrasyona ihtiyacı var. Bu yüzden iş, model sayısıyla birlikte çoğalır. Sağda ise her servisin API'si hiç değişmiyor. Değişen, modelin onlara nasıl ulaştığı: modelin zaten konuştuğu tek bir arayüz üzerinden. Bu yüzden her servisi her agent için değil, yalnızca bir kez entegre edersin.*
 
 Bunun sana kazandırdıkları:
@@ -103,7 +103,7 @@ Asıl önemli olan ise mekanizmadır; hatırlaman gereken bir adı var: **kademe
 
 Başlangıçta agent, kurulu her skill'in yalnızca `name` ve `description` alanını yükler. Bu her skill için bir ya da iki satır eder, yani yirmi skill bile neredeyse hiç yer kaplamaz. Agent tam talimatları ancak bir skill'in üzerinde çalıştığı göreve uyduğuna karar verdiğinde okur.
 
-![Skill'ler ve context window](./images/skill-and-context-window.png)  
+![Skill'ler ve context window](./images/skill-and-context-window.webp)  
 *Üstteki gri şerit, kullanılmadıkları sürece yirmi skill'in tam maliyetini gösterir: her biri için tek kısa bir satır. PDF görevi geldiğinde agent `SKILL.md` dosyasını sıradan bir Bash çağrısıyla okur. Sonra bu dosyanın içindeki bir referansı izleyerek ikinci bir dosyaya geçer. Dikkat et, skill context'e bir tool sonucu olarak girer. Yani bu yeni bir mekanizma değil. Veri yerine talimat okumak için kullanılan, LLM Tool Calling modülündeki tool döngüsüdür.*
 
 Peki neden tek ve çok büyük bir sistem prompt'u yerine skill'ler var? Nedeni context engineering'dir: agent'ın ihtiyaç duyabileceği her şey erişilebilir durumdadır, ama pencerede yalnızca gerçekten ihtiyaç duyduğu şey bulunur.
@@ -200,7 +200,7 @@ Neredeyse hepsi bir klasörde duran **markdown dosyasıdır**. Veritabanı deği
 
 Bu tembellik değildir; hem senin hem de modelin iyi kullandığı tek format budur. Bu dosyaları özel bir tool'a ihtiyaç duymadan okuyup düzenleyebilirsin. Modeller markdown'da ve dosya sisteminde gezinmede olağanüstü iyidir, çünkü eğitim verilerinin çok büyük bir kısmı tam olarak bu. Sonuçta, bir code agent'ı genişletme mekanizması, agent'ın zaten en iyi olduğu şeydir.
 
-![Bir agent, üç genişletme noktası](./images/mcp-skill-subagent.png)  
+![Bir agent, üç genişletme noktası](./images/mcp-skill-subagent.webp)  
 *Bunlar üç ayrı sorun olduğu için hangisinin hangisi olduğunu adlandırmak işe yarar. Solda duran skill'ler, agent'ın davranışını değiştirmek için okuduğu talimatlardır. Sağdaki MCP server'lar, agent'ın başka türlü ulaşamayacağı sistemlere erişmesini sağlayan tool'lardır. Aşağıdaki subagent'lar ise ekstra context window'lardır. Yani her genişletme agent'a üç şeyden birini verir: bilmesi gereken bir şey (skill), yapabileceği bir şey (MCP server) ya da düşünmek için ayrı bir yer (subagent).*
 
 ## Bu serinin neresindeyiz

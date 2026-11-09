@@ -39,7 +39,7 @@ Peki bir sohbet neden kesintisiz bir konuşma gibi geliyor? Çünkü bunu uygula
 
 Cevap verdiği anda her şeyi unutan biriyle konuştuğunu düşün. Konuşmayı sürdürmek için her yeni mesajda ona **sohbetin tamamının çıktısını** verirsin. O da hepsini baştan okur ve sonra cevap verir. Bir yapay zekâ uygulamasının yaptığı tam olarak bu. Her mesajı büyüyen bir yığında tutar ve yığının tamamını her seferinde yeniden gönderir.
 
-![Working memory olan mesaj yığını](../images/llm-context.jpeg)  
+![Working memory olan mesaj yığını](../images/llm-context.webp)  
 *Bu yığın, working memory'dir. Sen bir mesaj yazarsın, yapay zekâ da sana bir mesaj yazar. Hiçbir şey silinmez. İkinci turda yapay zekâ birinci turdaki her şeyi yeniden okur, çünkü uygulama yığının tamamını her seferinde gönderir.*
 
 ```mermaid
@@ -52,7 +52,7 @@ graph TD
 
 Çok uzun bir sohbetin daha pahalıya gelmesinin nedeni de bu: her yeni mesajda uygulama her şeyi yeniden gönderiyor.
 
-![Short-term ve long-term memory](../images/short-vs-long-memory.png)  
+![Short-term ve long-term memory](../images/short-vs-long-memory.webp)  
 *Working (short-term) memory, senin mesajlarından ve yapay zekânın cevaplarından oluşan büyüyen yığındır. Long-term memory ayrı bir depodur: sohbetin parçaları oraya kaydedilir ve daha sonra, yeni bir sohbette bile geri getirilir. "Checkpointer" ve "Store" etiketleri tek bir yazılım framework'ünden geliyor. Başkaları aynı fikir için farklı isimler kullanıyor.*
 
 ## Long-term Memory

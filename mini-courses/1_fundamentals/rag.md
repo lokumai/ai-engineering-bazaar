@@ -46,7 +46,7 @@ the desk in front of you is easy and exact.
 
 RAG is choosing which pages to put on the desk.
 
-![The naive RAG flow](./images/rag.png)  
+![The naive RAG flow](./images/rag.webp)  
 *The basic "naive" RAG flow. The query goes to two places at the same time. One path goes through an embedding model, to search the vector store index. The other path goes straight to the LLM, together with the context that the search returned.*
 
 ## What RAG Does
@@ -89,7 +89,7 @@ a city, where close addresses mean nearby places. We measure how close two finge
 
 The classic picture of this uses four words:
 
-![King, queen, man and woman as vectors in space](./images/vector-king-queen.png)  
+![King, queen, man and woman as vectors in space](./images/vector-king-queen.webp)  
 *Four words become four vectors, and those vectors become positions in space. "king" lands near "queen", and "man" lands near "woman". Now look at the two arrows. They are parallel, so the step from king to queen is the same move as the step from man to woman. In this way, the meaning of the words has turned into distances and directions in space.*
 
 Look at that parallel for a second. It shows that the numbers are more than a lookup table, which
@@ -162,7 +162,7 @@ Then you pass those to the LLM.
 5. Put that text into the context, together with the question.
 6. The LLM answers from what it can now see.
 
-![RAG offline and online](./images/rag-offline-online.png)  
+![RAG offline and online](./images/rag-offline-online.webp)  
 *The offline half runs once and again whenever the documents change; the online half runs for every question. The picture adds one step the lists leave out: a reranker reads the 20 closest chunks and keeps the best 3, so the context holds only what answers the question.*
 
 ```mermaid

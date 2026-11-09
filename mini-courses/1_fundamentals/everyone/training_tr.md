@@ -12,7 +12,7 @@ Yeni bir modeli boş bir beyin gibi düşün. Başlangıçta hiçbir şey bilmez
 
 Eğitim, modele metin göstermen ve her seferinde sayılarını çok küçük bir miktar düzeltmen demektir. Bunu tekrar tekrar yaparsın; sonunda modelin tahminleri rastgele olmaktan çıkar ve doğru olmaya başlar.
 
-![Eğitilmemiş bir ağ ile eğitilmiş bir ağ yan yana](../images/training-network.jpg)  
+![Eğitilmemiş bir ağ ile eğitilmiş bir ağ yan yana](../images/training-network.webp)  
 *Aynı ağ, eğitimden önce ve sonra. Metin "The students opened their". Rastgele sayılarla (solda) "Sun" tahmin ediyor. Eğitilmiş sayılarla (sağda) "Laptops" tahmin ediyor. Ağın şekli değişmedi. Yalnızca içindeki sayılar değişti.*
 
 Eğitimin yaptığı bundan ibaret. Modelin içine, açıp okuyabileceğin kurallar ya da bilgiler yazmaz. Yalnızca sayıları değiştirir. Bilgi milyarlarca sayının arasına yayılır. İnsanların eğitim için **interneti bir modelin içine sıkıştırmak** demesinin nedeni bu.
@@ -42,7 +42,7 @@ Pre-training okula gitmekse, fine-tuning okuldan sonra bir meslek öğrenmektir.
 
 Aradaki farkın en net göründüğü yer, her adımın kullandığı veri:
 
-![Pre-training ile fine-tuning karşılaştırması](../images/pretrain-vs-finetune.png)  
+![Pre-training ile fine-tuning karşılaştırması](../images/pretrain-vs-finetune.webp)  
 *Pre-training, dev bir sıradan metin yığınını okur ve kimsenin bunları etiketlemesi gerekmez. Modele metni anlamak ve tamamlamak gibi genel yetenekler kazandırır. Fine-tuning ise insanların yazdığı çiftleri okur: bir soru ve onun alması gereken cevap. Modele tek bir özel yetenek ekler.*
 
 - **Pre-training**, tüm internetten sıradan metin okur. Kimse onun için cevap yazmaz, çünkü metindeki bir sonraki kelime zaten cevabın kendisidir.

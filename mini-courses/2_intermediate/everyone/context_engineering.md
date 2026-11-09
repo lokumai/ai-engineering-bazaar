@@ -39,7 +39,7 @@ worse at the task**, even when nothing has been deleted. They tested 18 models f
 companies, and all of them did the same job noticeably better with a short chat than with a very
 long one.
 
-![Two jars, same model](../images/context-pollution-jars.jpeg)  
+![Two jars, same model](../images/context-pollution-jars.webp)  
 *The three things the model needs are in both jars. On the right they are still there and still readable, but lost. Everything else in the jar is competing for the same attention.*
 
 People call this **context rot** or **context pollution**. The reason is **attention**: the way
@@ -57,7 +57,7 @@ academic tone. For a while, the AI follows it. Much later, the tone slowly turns
 starts to invent things. Nothing was deleted. The instruction is still there. But it had to
 compete for attention with everything added after it, and it lost.
 
-![A needle, a distractor and a haystack](../images/distractor_irrelevance.png)  
+![A needle, a distractor and a haystack](../images/distractor_irrelevance.webp)  
 *The question asks for the classmate's advice. The "needle" answers it. The "distractor" is almost the same sentence, but about a professor. One distractor is enough to make the model worse.*
 
 You will hear the name of this kind of test often: **needle in a haystack**. You hide one useful
@@ -72,7 +72,7 @@ The chat has limited room, and there is always more that could go in: documents,
 messages, tool results, notes. Context engineering is choosing what actually goes in, so that as
 much as possible is useful and as little as possible is noise.
 
-![Prompt engineering next to context engineering](../images/prompt-vs-context-eng.png)  
+![Prompt engineering next to context engineering](../images/prompt-vs-context-eng.webp)  
 *On the left is one message and one decision: that is prompt engineering. On the right is everything that could go into the chat, and a decision about what actually goes in. That decision is context engineering.*
 
 The term became popular after a post by Andrej Karpathy in mid-2025. Anthropic's
@@ -90,7 +90,7 @@ replacing the recording of a long meeting with its minutes.
 Most AI tools now do this by themselves when the chat gets close to its limit. In Claude Code you
 can also start it yourself by typing `/compact`.
 
-![A window before and after compaction](../images/compaction-before-after.png)  
+![A window before and after compaction](../images/compaction-before-after.webp)  
 *Notice what is kept and what is not. The long tool results take most of the room, and they go. The summary keeps the decisions. The few recent files stay, because the agent will need them again soon.*
 
 The cost is real. Minutes can leave out something you needed, either by accident or because
@@ -105,7 +105,7 @@ lost.
 Many AI products call this **long-term memory**, the same idea as in
 [Memory](../1_fundamentals/memory.md). It is usually kept in three kinds:
 
-![Three kinds of long-term memory](../images/semantic-episodic-procedural.png)  
+![Three kinds of long-term memory](../images/semantic-episodic-procedural.webp)  
 *Semantic memory (facts about you) builds up slowly. Episodic memory (notes about past actions) stops the agent from repeating a mistake. Procedural memory (instructions) tells it how to do things. The agent writes and reads the three at different times.*
 
 The same warning applies: someone has to decide what is worth writing down, and that decision is
@@ -122,7 +122,7 @@ reads the 300 files and comes back with one sentence. The main agent's chat gain
 and its desk stays clean. It is like sending an assistant to the archive: they come back with the
 answer, not with the whole archive.
 
-![Two subagents with their own windows](../images/subagent.png)  
+![Two subagents with their own windows](../images/subagent.webp)  
 *Each box is a separate chat. It starts empty and is thrown away when the work is done. The main agent never sees the helper's steps, and that is the point: those steps never fill its chat.*
 
 Modern agents send helpers one after another or several at once, which leaves the main agent free
@@ -160,7 +160,7 @@ Some information is valuable and rarely changes, such as how your company's inte
 Do not paste it into every chat. Put it in a folder of documents the agent can search, and let it
 look things up when it needs to.
 
-![A knowledge base the agent explores](../images/explorable-knowledge-base.png)  
+![A knowledge base the agent explores](../images/explorable-knowledge-base.webp)  
 *The knowledge base lives outside the chat and grows over time. The agent reads only the page a question needs, so the rest costs nothing until it is used.*
 
 A common example: a model only knows what was in its training data, which stops at a date called

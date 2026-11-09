@@ -33,7 +33,7 @@ Bu ayrım önemli: LLM'ler **üretim sırasında** (generation) durumsuzdur (sta
 
 Peki neden yine de sürekli bir konuşma gibi hissettiriyor? Cevap şu: bu sürekliliği aslında biz taklit ediyoruz. Şu ana kadar değiş tokuş edilen her mesajın büyüyen bir yığınını (stack) tutarız. Sen bir mesaj gönderdiğinde ya da LLM bir cevap ürettiğinde yeni bir şey olur ve biz bunu her seferinde yığına ekleriz. Bir sonraki çağrıda ise bütün yığını baştan modele geri göndeririz.
 
-![Working memory olarak yığın](./images/llm-context.jpeg)  
+![Working memory olarak yığın](./images/llm-context.webp)  
 *Bu yığın working memory'dir: sen bir mesaj yazarsın, model de bir mesajla karşılık verir. Hiçbir şey asla çıkarılmaz, bu yüzden ikinci turda model birinci turdaki her şeyi yeniden okur. Çünkü her çağrıda bu bütün yığını modele yeniden gönderiyoruz.*
 
 Her çağrının yalnızca en yeni mesajı değil, *bütün* yığını gönderdiğine dikkat et. Bunun nedeni, LLM'in önceki çağrıdan kendi başına hiçbir şey hatırlamamasıdır. Yani buradaki "bellek" aslında yalnızca şudur: modele her seferinde her şeyi baştan gösteriyoruz.
@@ -46,7 +46,7 @@ graph TD
     A -->|yanıtı yığına ekler| A
 ```
 
-![Kısa Süreli ve Long-term Memory](./images/short-vs-long-memory.png)  
+![Kısa Süreli ve Long-term Memory](./images/short-vs-long-memory.webp)  
 *Short-term (working) memory, büyüyen Human ve AI mesajlarından oluşan bir yığından başka bir şey değildir. Long-term memory ise ayrı bir depodur. Yığın bu depoya kaydedilir ve oturumlar arasında oradan geri alınır. "Checkpointer" ve "Store" etiketleri LangGraph framework'ünden gelir. Diğer framework'ler aynı fikre farklı adlar verir.*
 
 ## Long-term Memory

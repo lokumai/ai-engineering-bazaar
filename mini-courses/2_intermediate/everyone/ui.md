@@ -147,7 +147,7 @@ partners.
 
 AG-UI is one of three shared protocols, and each one connects the agent to a different side.
 
-![The agent protocol stack: MCP, A2A and AG-UI](../images/ag-ui-mcp.png)  
+![The agent protocol stack: MCP, A2A and AG-UI](../images/ag-ui-mcp.webp)  
 *The agent sits in the middle. MCP and A2A reach left, to its tools and to other agents. AG-UI reaches right, to the people using the app.*
 
 | Protocol | Connects the agent to |

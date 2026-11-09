@@ -10,7 +10,7 @@ Bu adım, bir sohbet botunu senin için çalışan bir asistana çeviren adımd�
 
 ## Tool Nedir?
 
-![Tool'lar aracılığıyla dışarıya uzanan bir LLM](../images/tools.jpg)  
+![Tool'lar aracılığıyla dışarıya uzanan bir LLM](../images/tools.webp)  
 *Tool'lar, bir modelin kendi kafasının dışına uzanma yoludur. İnternette arar, hesap yapar ya da kod çalıştırır, sonra bir cevapla geri döner.*
 
 **Tool**, birinin yazdığı küçük bir programdır. Bir adı, kısa bir açıklaması ve ihtiyaç duyduğu bazı bilgiler vardır; örneğin bir şehir adı ya da bir e-posta adresi.
@@ -23,7 +23,7 @@ Bu adım, bir sohbet botunu senin için çalışan bir asistana çeviren adımd�
 
 Bir tool çağrısı sohbete iki yeni tür mesaj ekler. Bu resim bütün akışı gösteriyor:
 
-![Tek bir tool çağrısının context'i](../images/context-tool-call.jpeg)  
+![Tek bir tool çağrısının context'i](../images/context-tool-call.webp)  
 *Tek bir tool çağrısı, sırasıyla. System prompt, daha kimse konuşmadan önce tool'u listeler. Sonra sen soruyorsun ve yapay zekâ bir Tool Call yazıyor. Bilgisayar onu çalıştırıp Tool Result'ı yazıyor. Sonra yapay zekâ o sonucu okuyup cevabı yazıyor.*
 
 Dört oku takip et, çünkü her mesajı kimin yazdığı önemli:

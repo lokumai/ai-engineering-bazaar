@@ -18,7 +18,7 @@ Everything so far has been building to this. The definition is smaller than you 
 That is the whole thing. Read it twice. Most of the confusion about agents comes from expecting
 something bigger.
 
-![An LLM in a loop with an objective](./images/agent-wrapper-meme.jpg)  
+![An LLM in a loop with an objective](./images/agent-wrapper-meme.webp)  
 *Both ends of the curve arrive at the same answer. The people in the middle go looking for an architecture instead.*
 
 ## Single Turn, and Multi Turn
@@ -34,14 +34,14 @@ tool. It keeps going until it has what it needs. It writes a final answer only a
 It is the same model in both cases. Nothing was added to it. The whole difference is in how many
 times you call it, and in what you send it each time.
 
-![Is this an agent?](./images/agent-multi-step-example.jpg)  
+![Is this an agent?](./images/agent-multi-step-example.webp)  
 *Yes. That really is the definition. The joke is that people expect it to be more.*
 
 ## One Pass Through the Loop
 
 [Tool Calling](tools.md) showed a single tool call. An agent turn is exactly that, repeated:
 
-![The context of an agent](./images/agent-context.jpeg)  
+![The context of an agent](./images/agent-context.webp)  
 *One pass: you ask, and the model thinks. The model asks for a tool. The host runs the tool and writes the result back. Then the model answers. On the next pass, the whole message stack goes to the model again, and it is now two messages longer.*
 
 ```mermaid
@@ -68,7 +68,7 @@ middle are **fixed workflows**, which people sometimes call state machines. In a
 *you* wrote the steps and their order, and the model only fills in each step. At the other end is a
 real agent. There, the model chooses the steps, the tools, and when to stop.
 
-![Three points on the autonomy spectrum](./images/llm-tool-agent-compare.png)  
+![Three points on the autonomy spectrum](./images/llm-tool-agent-compare.webp)  
 *The same model sits in all three panels. Two things change: how many times it is called, and who picks the next step. You pick it in the first two panels. The model itself picks it in the third.*
 
 Most production systems are not at the far end, and that is usually the right choice. Less
@@ -186,7 +186,7 @@ Other frameworks solve the same problem in different ways:
 ![](./images/logos/crewai.svg)[crewAI](https://github.com/crewAIInc/crewAI) and ![](./images/logos/autogen.svg)[AutoGen](https://github.com/microsoft/autogen).
 [Agent Frameworks](../4_ecosystem/agent_frameworks.md) compares them.
 
-![LLM as brain, agent as body](./images/agent-analogy.png)  
+![LLM as brain, agent as body](./images/agent-analogy.webp)  
 *The LLM is the brain, the agent is the body around it, and the tools are its hands.*
 
 ## Where this fits in the series

@@ -28,7 +28,7 @@ random number, so every answer is random too.
 Training means that you show the model text and correct its numbers by a tiny amount each
 time. You do this again and again, until its guesses stop being random and start being right.
 
-![An untrained network next to a trained one](../images/training-network.jpg)  
+![An untrained network next to a trained one](../images/training-network.webp)  
 *The same network before and after training. The text is "The students opened their". With random numbers (left) it guesses "Sun". With trained numbers (right) it guesses "Laptops". The shape did not change. Only the numbers inside it changed.*
 
 That is all training does. It does not write rules or facts into the model in a form you can
@@ -67,7 +67,7 @@ already speaks the language and knows the world. Now you teach them one specific
 
 The clearest difference is in the data that each step uses:
 
-![Pre-training versus fine-tuning](../images/pretrain-vs-finetune.png)  
+![Pre-training versus fine-tuning](../images/pretrain-vs-finetune.webp)  
 *Pre-training reads a huge pile of ordinary text, and nobody has to label it. It gives the model general abilities, like understanding and completing text. Fine-tuning reads pairs that people wrote: a question, and the answer it should get. It adds one specific ability.*
 
 - **Pre-training** reads ordinary text from the whole internet. Nobody writes answers for it,

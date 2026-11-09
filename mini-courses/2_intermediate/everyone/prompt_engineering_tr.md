@@ -30,12 +30,12 @@ Model sabitse ve hiçbir şey hatırlamıyorsa, aynı soruyu iki farklı şekild
 
 Çünkü iki farklı ifade, iki farklı girdi demektir. Modelin içinde bir ağ var ve senin kelimelerin bu ağın hangi bölümlerinin devreye gireceğine karar veriyor. Kelimeleri değiştirdiğinde, sorun üzerinde çalışan bölümler de değişiyor.
 
-![Hangi nöronlar yanıyor](../images/neurons-activation.jpeg)  
+![Hangi nöronlar yanıyor](../images/neurons-activation.webp)  
 *İki durumda da modelin sayıları aynı. Prompt yalnızca hangilerinin kullanılacağına karar veriyor. Bu yüzden aynı model bir matematik sorusunu kendinin bir bölümüyle, bir resim sorusunu başka bir bölümüyle cevaplıyor.*
 
 Bir DJ mikserini düşün. Üzerinde ses, bas ve yankı düğmeleri var. DJ makineyi hiç değiştirmez. Düğmeleri çevirir, dinler ve salonun sesi oturana kadar tekrar çevirir. Senin prompt'un, bu düğmelerin belirli bir ayarıdır.
 
-![Düğmeleri çevirmek](../images/prompt-mixer.jpeg)  
+![Düğmeleri çevirmek](../images/prompt-mixer.webp)  
 *Buradaki her düğme, bu modülün anlattığı bir şey. Hiçbiri dokunabileceğin bir panelde değil: onları oynatan tek şey prompt'un metni.*
 
 Ama düğmelerin üzerinde etiket yok ve onları yalnızca kelimelerle oynatabiliyorsun. Prompt yazmanın deneme yanılma olmasının ve kimsenin sana işin için tek doğru prompt'u verememesinin sebebi bu.
@@ -76,7 +76,7 @@ Basit olanı:
 - **Warnings (uyarılar)**: yapay zekânın yapmasını beklediğin hatalar.
 - **Context (bağlam)**: sana yardım edecek bir yabancının bilmesi gereken, durumunla ilgili her şey.
 
-![Basit bir prompt'un yapısı](../images/prompt-1.jpg)  
+![Basit bir prompt'un yapısı](../images/prompt-1.webp)  
 *Context kısmı en uzun ve en az cilalı kısım, ve bu sorun değil. Hiçbir şablonun senin yerine yazamayacağı kısım bu.*
 
 Ayrıntılı olanı:
@@ -97,7 +97,7 @@ Ayrıntılı olanı:
 - **Output format (çıktı biçimi)**: gerekiyorsa tablo sütunları dahil, tam olarak istediğin şekil.
 - **Stop conditions (bitiş koşulları)**: yapay zekânın işin bittiğini nasıl anlayacağı.
 
-![Ayrıntılı bir prompt'un yapısı](../images/prompt-2.png)  
+![Ayrıntılı bir prompt'un yapısı](../images/prompt-2.webp)  
 *İnsanların en çok unuttuğu kısım bitiş koşulları. Onsuz "bitti" kararı, senin tanımın değil yapay zekânın tahmini olur.*
 
 İki şablonu da harfiyen uygulaman gerekmiyor. Onlar, "net bir prompt yaz" tavsiyesinin belirsiz kalmaması için burada.
@@ -243,7 +243,7 @@ Bugün "adım adım düşün" cümlesini neredeyse hiç kendin yazmıyorsun. Cha
 
 > **NOT: system prompt nedir?** System prompt, sohbetin en üstünde bir kez yer alır ve yapay zekânın bütün konuşma boyunca nasıl davranacağını belirler. Onu kullanıcı değil, ürünü yapan şirket ya da geliştirici yazar ve genellikle uzundur. Yapay zekânın kullanabileceği araçları da burada sıralar ([Tool Calling](../1_fundamentals/tools_tr.md)).
 
-![System prompt'un içi](../images/system-prompt-context.jpeg)  
+![System prompt'un içi](../images/system-prompt-context.webp)  
 *LLM Temelleri'ndeki şeklin aynısı. Rol, kimlik ve talimatların bulunduğu bölüme girer. Bu kutudaki her şey, kullanıcı daha tek kelime etmeden önce yazılmıştır.*
 
 Rol çoğunlukla system prompt'ta en iyi sonucu verir. Tekniğin kendisi basit:

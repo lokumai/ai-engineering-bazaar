@@ -185,7 +185,7 @@ frameworks, and builds its own front-end components on it. The source is on GitH
 
 AG-UI is one of three protocols, and each one covers a different side of the agent.
 
-![The agent protocol stack: MCP, A2A and AG-UI](./images/ag-ui-mcp.png)  
+![The agent protocol stack: MCP, A2A and AG-UI](./images/ag-ui-mcp.webp)  
 *The agent sits in the middle. MCP and A2A reach left, to its tools and to other agents. AG-UI reaches right, to the users in front of the screen.*
 
 | Protocol | Connects the agent to | Comes from |

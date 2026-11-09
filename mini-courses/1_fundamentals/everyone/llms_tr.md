@@ -50,14 +50,14 @@ Normal bir sohbette üç tür mesaj vardır:
 - **Yapay zekânın mesajı**: onun cevabı.
 - **System prompt**: sohbetin en üstündeki gizli talimatlar. Bunları ürünü yapan şirket (OpenAI, Anthropic ya da bir geliştirici) yazar. Sen görmezsin, ama yapay zekâ her seferinde önce bunları okur. Yapay zekâya nasıl davranacağını ve hangi araçları (tool) kullanabileceğini söylerler.
 
-![Düz bir LLM sohbetinin context'i](../images/llm-context.jpeg)  
+![Düz bir LLM sohbetinin context'i](../images/llm-context.webp)  
 *Düz bir sohbetin iki turu: senin iki mesajın ve yapay zekânın iki cevabı. Hiçbir şey silinmez. Bu yüzden ikinci turda yapay zekâ, birinci turdaki her şeyi de okur.*
 
 Senden bir mesaj ve yapay zekânın ona verdiği cevaba birlikte bir **tur (turn)** denir. Yukarıdaki şekilde iki tur var.
 
 System prompt kısa bir cümle değildir. Çoğu zaman uzundur ve içinde davranış kurallarının yanı sıra yapay zekânın kullanmasına izin verilen **tool**'ların bir listesi de bulunur:
 
-![System prompt'un içi](../images/system-prompt-context.jpeg)  
+![System prompt'un içi](../images/system-prompt-context.webp)  
 *Bir system prompt'un içi: davranış kuralları, tool listesi ve bazen sabit bir referans metin. Hepsi sohbetin en üstünde durur ve sen daha bir şey söylemeden önce orada olur.*
 
 Merak edersen, insanlar birçok yapay zekâ ürününün gerçek ve sızdırılmış system prompt'larını [system_prompts_leaks](https://github.com/asgeirtj/system_prompts_leaks) adresinde toplamış.

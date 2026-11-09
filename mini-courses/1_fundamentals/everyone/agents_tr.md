@@ -6,7 +6,7 @@
 
 Her şey bundan ibaret. Agent'lar hakkındaki kafa karışıklığının çoğu, daha büyük bir şey beklemekten geliyor.
 
-![Bir hedefle döngüye alınmış bir LLM](../images/agent-wrapper-meme.jpg)  
+![Bir hedefle döngüye alınmış bir LLM](../images/agent-wrapper-meme.webp)  
 *IQ eğrisinin iki ucu da aynı basit şeyi söylüyor. Ortadaki kişi karmaşık bir diyagram çiziyor.*
 
 ## Bu Senin İçin Neden Önemli
@@ -23,14 +23,14 @@ Her şey bundan ibaret. Agent'lar hakkındaki kafa karışıklığının çoğu,
 
 İki durumda da model aynı. Modele hiçbir şey eklenmedi. Tek fark, modelin kaç kez çağrıldığı ve her seferinde ona neyin gösterildiği.
 
-![Bu bir agent mı?](../images/agent-multi-step-example.jpg)  
+![Bu bir agent mı?](../images/agent-multi-step-example.webp)  
 *Evet. Tanım gerçekten bu. Şaka şu ki insanlar bundan daha fazlasını bekliyor.*
 
 ## Döngünün tek bir geçişi
 
 [Tool Calling](tools_tr.md) modülü tek bir tool çağrısını gösterdi. Bir agent, bunun tekrarlanmasıdır:
 
-![Bir agent'ın context'i](../images/agent-context.jpeg)  
+![Bir agent'ın context'i](../images/agent-context.webp)  
 *Tek bir tur: sen soruyorsun ve yapay zekâ düşünüyor. Bir tool istiyor. Bilgisayar tool'u çalıştırıp sonucu geri yazıyor. Sonra yapay zekâ cevap veriyor. Sonraki turda sohbetin tamamı yapay zekâya yeniden gidiyor ve artık daha uzun.*
 
 ```mermaid
@@ -53,7 +53,7 @@ graph TD
 - **Workflow:** adımları ve sırasını *sen* yazdın, tıpkı bir şirket prosedürü gibi. Yapay zekâ yalnızca her adımı doldurur.
 - **Agent:** adımları, tool'ları ve ne zaman duracağını yapay zekâ seçer.
 
-![Özerklik ölçeğinde üç nokta](../images/llm-tool-agent-compare.png)  
+![Özerklik ölçeğinde üç nokta](../images/llm-tool-agent-compare.webp)  
 *Üç panelde de aynı model duruyor. İki şey değişiyor: modelin kaç kez çağrıldığı ve bir sonraki adımı kimin seçtiği. İlk iki panelde onu sen seçiyorsun. Üçüncüde yapay zekâ seçiyor.*
 
 Gerçek ürünlerin çoğu uç noktaya kadar gitmez ve bu çoğu zaman doğru seçimdir. Daha az serbestlik, işlerin ters gitmesi için daha az yol demektir. Bir yapay zekâ ürünü seçerken, onun bu ölçeğin neresinde durduğunu sormak haklı bir sorudur.
@@ -101,7 +101,7 @@ System prompt ona söylüyor. Döngüdeki her çağrıdan önce program, system 
 
 Tek bir hedef altı tur ve yapay zekâya beş çağrı sürdü. Düz bir LLM'e bunların hepsi için tek bir çağrı yapılırdı, bu yüzden yalnızca tahmin edebilirdi.
 
-![Beyin olarak LLM, beden olarak agent](../images/agent-analogy.png)  
+![Beyin olarak LLM, beden olarak agent](../images/agent-analogy.webp)  
 *LLM beyin, agent onun etrafındaki beden, tool'lar da elleridir.*
 
 ## Artık Bildiğin Terimler

@@ -62,7 +62,7 @@ LLM یه شبکه‌ی عصبیه با تعداد خیلی زیادی **paramete
 
 هر بار که از سیستم استفاده می‌کنی، این پیام‌ها روی هم جمع می‌شن:
 
-![Context در یک چت ساده با LLM](./images/llm-context.jpeg)  
+![Context در یک چت ساده با LLM](./images/llm-context.webp)  
 *دو نوبت از یه چت ساده: دو تا Human Message و دو تا AI Message. هیچ پیامی پاک نمی‌شه، واسه همین مدل توی نوبت دوم، کل نوبت اول رو هم دوباره می‌خونه.*
 
 به یه HumanMessage و AIMessage‌ای که جوابشه، روی هم می‌گن یه **turn** (نوبت). توی یه چت ساده با LLM، بین این دو تا هیچ‌چیز دیگه‌ای نیست: prompt رو می‌فرستی و جوابت رو می‌گیری. شکل بالا دو تا نوبت رو نشون می‌ده.
@@ -71,7 +71,7 @@ LLM یه شبکه‌ی عصبیه با تعداد خیلی زیادی **paramete
 
 SystemMessage رو بد نیست یه کم دقیق‌تر ببینیم، چون فقط یه تیکه متن ساده نیست. معمولاً هم دستورهای رفتاری توشه *و* هم **tool schema‌ها**، یعنی فهرست tool‌هایی که مدل اجازه داره صداشون بزنه، با اسم و argument‌هاشون:
 
-![محتوای یک system prompt](./images/system-prompt-context.jpeg)  
+![محتوای یک system prompt](./images/system-prompt-context.webp)  
 *توی یه system prompt این‌ها هست: دستورهای رفتاری، tool schema‌ها و گاهی هم یه تیکه متن مرجع ثابت. همه‌ش هم بالای بالای context می‌شینه.*
 
 توی API، tool schema‌ها یه فیلد جدان و جزو متن system حساب نمی‌شن، ولی وقتی به مدل می‌رسن، همه با هم یه بلوکن که اول کار میاد. پس بی‌راه نیست اگه توی ذهنت این دو تا رو یه‌جا تصور کنی.
@@ -86,7 +86,7 @@ system prompt‌های واقعی خیلی از محصولات لو رفته و 
 
 یه نوبت توی agent شلوغ‌تره. بعد از HumanMessage تو، مدل تصمیم می‌گیره که برای جواب دادن به tool احتیاج داره یا نه. اگه داشته باشه، ToolCall و ToolResult هم به context اضافه می‌شن و تازه بعد از اون مدل جواب نهایی رو می‌نویسه. با این همه، کل این‌ها هنوز **یه نوبت** حساب می‌شه: یه HumanMessage، هر چند تا پیام tool که لازم شد، و یه AIMessage آخر کار.
 
-![Context یک agent](./images/agent-context.jpeg)  
+![Context یک agent](./images/agent-context.webp)  
 *یه نوبت از کار یه agent: تو prompt می‌دی، AI فکر می‌کنه، یه tool صدا می‌زنه و بعد جواب می‌ده. دقت کن هر پیام رو کی نوشته: فکر کردن، Tool Call و جواب کار LLM‌ه، ولی Tool Result از host machine میاد که function رو اجرا می‌کنه.*
 
 کل کار agent‌ها روی همین تقسیم کار بنا شده، و توی [Tool Calling](tools_fa.md) و [AI Agents](agents_fa.md) دوباره سراغش میایم.

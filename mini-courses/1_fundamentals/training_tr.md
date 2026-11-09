@@ -16,7 +16,7 @@ da rastgeledir.
 Training, modele metin vermek ve o sayıları küçük miktarlarla değiştirmek demektir. Bunu tekrar
 tekrar yaparsın, tahminler rastgele olmaktan çıkıp doğru olmaya başlayana kadar.
 
-![Eğitilmemiş ve Eğitilmiş Ağ](./images/training-network.jpg)  
+![Eğitilmemiş ve Eğitilmiş Ağ](./images/training-network.webp)  
 *Aynı ağ, eğitimden önce ve sonra. Girdi "The students opened their". Soldaki rastgele ağırlıklar "Sun" üretiyor, sağdaki öğrenilmiş ağırlıklar ise "Laptops". Ağın yapısı değişmedi. Değişen yalnızca içindeki sayılar.*
 
 İşin püf noktası şu: training, açıp okuyabileceğin kurallar ya da gerçekler eklemez, yalnızca
@@ -58,7 +58,7 @@ küçük ve göreve özel oluyor, böylece model belirli bir işte iyi hale geli
 
 Farkı görmenin en net yolu, her adımın hangi veriyle beslendiğine bakmak:
 
-![Pre-training ve Fine-tuning Karşılaştırması](./images/pretrain-vs-finetune.png)  
+![Pre-training ve Fine-tuning Karşılaştırması](./images/pretrain-vs-finetune.webp)  
 *Pre-training, insan müdahalesi olmadan etiketsiz bir metin yığınını alır. Bu, metni tamamlama ve anlama gibi genel yetenekler kazandırır. Fine-tuning ise bir insanın yazdığı çiftleri alır: bir prompt ve modelin vermesi gereken yanıt. Bu da sınıflandırma ya da soru cevaplama gibi belirli yetenekler ekler.*
 
 Kısaca, ikisi şöyle özetlenir:

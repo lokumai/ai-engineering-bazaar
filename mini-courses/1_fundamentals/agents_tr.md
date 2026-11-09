@@ -6,7 +6,7 @@
 
 Tanım bu kadar, yine de bunu iki kez okumakta fayda var. Agent'lar hakkındaki karışıklığın çoğu, insanın bundan daha büyük bir şey beklemesinden doğuyor.
 
-![Bir hedefle döngüye girmiş bir LLM](./images/agent-wrapper-meme.jpg)  
+![Bir hedefle döngüye girmiş bir LLM](./images/agent-wrapper-meme.webp)  
 *Eğrinin iki ucu da aynı cevaba varıyor. Ortadakiler ise bunun yerine bir mimari aramaya koyuluyor.*
 
 ## Single Turn ve Multi Turn
@@ -17,14 +17,14 @@ Bir **agent ise çok turludur.** Aynı modeli tekrar tekrar çağırırsın ve h
 
 İki durumda da model aynıdır ve modele hiçbir şey eklenmedi. Aradaki fark, onu kaç kez çağırdığında ve her seferinde ona ne gönderdiğinde yatıyor.
 
-![Bu bir agent mı?](./images/agent-multi-step-example.jpg)  
+![Bu bir agent mı?](./images/agent-multi-step-example.webp)  
 *Evet, tanım tam olarak bu. Espri şurada: insanlar bunun daha büyük bir şey olmasını bekliyor.*
 
 ## Döngünün tek bir geçişi
 
 [LLM Tool Calling](tools_tr.md) modülünde tek bir tool çağrısını görmüştük. Bir agent turu ise tam olarak bu çağrının tekrar tekrar yapılmasından ibarettir:
 
-![Bir agent'ın context'i](./images/agent-context.jpeg)  
+![Bir agent'ın context'i](./images/agent-context.webp)  
 *Tek bir geçiş şöyle işliyor: sen soruyorsun, model düşünüyor ve bir tool istiyor. Host tool'u çalıştırıp sonucu geri yazar, ardından model cevap verir. Bir sonraki geçişte bütün mesaj yığını (message stack) modele yeniden gönderilir ve artık iki mesaj daha uzundur.*
 
 ```mermaid
@@ -45,7 +45,7 @@ graph TD
 
 Bir ucunda düz bir LLM çağrısı var. Her kararı sen verirsin ve model yalnızca metin yazar. Ortada ise **sabit iş akışları** (fixed workflows) var, bunlara bazen durum makinesi (state machine) de denir. Sabit bir iş akışında adımları ve sırasını *sen* yazarsın, model de her adımı yalnızca doldurur. Diğer ucunda gerçek bir agent var ve orada adımları, tool'ları ve ne zaman duracağını model seçer.
 
-![Özerklik spektrumunda üç nokta](./images/llm-tool-agent-compare.png)  
+![Özerklik spektrumunda üç nokta](./images/llm-tool-agent-compare.webp)  
 *Üç panelde de aynı model var. Değişen iki şey var: modelin kaç kez çağrıldığı ve bir sonraki adımı kimin seçtiği. İlk iki panelde adımı sen seçiyorsun. Üçüncüde ise adımı model seçiyor.*
 
 Üretimdeki sistemlerin çoğu spektrumun en uç noktasında durmaz ve bu genellikle doğru bir tercihtir. Daha az özerklik, işlerin ters gidebileceği daha az yol demek. LangChain'in [what is an agent](https://www.langchain.com/blog/what-is-an-agent) yazısı bu spektrumu iyi özetliyor ve modele ne kadar özgürlük vereceğine karar vermeden önce okumaya değer.
@@ -137,7 +137,7 @@ Bunların hepsini `CodeAgent` yapıyor, döngünün kendisi ise `agent.run`.
 
 Aynı sorunu farklı yollarla çözen başka framework'ler de var: ![](./images/logos/langchain.svg)[LangChain](https://github.com/langchain-ai/langchain), ![](./images/logos/crewai.svg)[crewAI](https://github.com/crewAIInc/crewAI) ve ![](./images/logos/autogen.svg)[AutoGen](https://github.com/microsoft/autogen). [Agent Framework'leri](../4_ecosystem/agent_frameworks_tr.md) bunları karşılaştırıyor.
 
-![LLM beyin, agent gövde](./images/agent-analogy.png)  
+![LLM beyin, agent gövde](./images/agent-analogy.webp)  
 *LLM beyin, agent onu çevreleyen gövde, tool'lar ise ellerdir.*
 
 ## Bu serinin neresindeyiz

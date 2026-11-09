@@ -41,7 +41,7 @@ from one loop to several.
 
 ## Basic Multi-agent Architectures
 
-![Single agent, network and supervisor architectures](../images/multiagents.png)  
+![Single agent, network and supervisor architectures](../images/multiagents.webp)  
 *Left: one agent with its tools. Middle: a network, where every agent can talk to every other agent. Right: a supervisor, who receives the request and hands work to the others. The others talk only to the supervisor.*
 
 **Supervisor: a müdür and the team.** One agent receives the request, like a manager. It decides

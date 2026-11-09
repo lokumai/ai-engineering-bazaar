@@ -43,7 +43,7 @@ This is an important distinction: LLMs are stateless **during generation**. (Tra
 
 So why does it feel like a continuous conversation? Because *we* fake it. We keep a growing stack of every message exchanged so far. Something new happens each time you send a message or the LLM generates a reply. Every time, we add that new message to the stack. Then, on the next call, we send the **entire stack** back to the LLM.
 
-![The stack that is working memory](./images/llm-context.jpeg)  
+![The stack that is working memory](./images/llm-context.webp)  
 *This stack is working memory. You write a message, and the model writes one back. Nothing is ever removed. On the second turn, the model reads everything from the first turn again. This is because we send this whole container on every single call.*
 
 Notice that every call sends the *whole* stack, not only the newest message. This is because the LLM remembers nothing from the previous call on its own. So "memory" here is really only this: we show it everything again, every single time.
@@ -56,7 +56,7 @@ graph TD
     A -->|appends response to the stack| A
 ```
 
-![Short-Term vs Long-Term Memory](./images/short-vs-long-memory.png)  
+![Short-Term vs Long-Term Memory](./images/short-vs-long-memory.webp)  
 *Short-term (working) memory is just this growing stack of Human and AI messages. Long-term memory is a separate store. The stack is saved into this store and retrieved from it, across sessions. The labels "Checkpointer" and "Store" come from the LangGraph framework. Other frameworks use different names for the same idea.*
 
 ## Long-term Memory

@@ -54,10 +54,10 @@ Bu dosya değiştirilebilir de. O dosyaya yazabilen her şey, agent'ının kim o
 
 OpenClaw o kadar hızlı büyüdü ki mühendisliği yetişemedi: ağır bir kurulum ve yavaş bir hafıza. Birçok insan, aynı fikri daha dikkatli kuran Nous Research'ün ![](../images/logos/hermes-agent-mono.svg)**Hermes Agent**'ına geçti: hızlı ve aranabilir hafıza, kendi yazdığı skill'ler, sade dille zamanlama ("her pazartesi sabahı bana şunu hatırlat...") ve kendi güvenli alanlarında çalışan yardımcılar.
 
-![Hermes ve OpenClaw yan yana çizilmiş](../images/hermes-vs-openclaw-archi.png)  
+![Hermes ve OpenClaw yan yana çizilmiş](../images/hermes-vs-openclaw-archi.webp)  
 *Hermes, kullanıcıya geri dönen kapalı bir daire olarak çizilmiş: hatırladıkları ve yazdığı skill'ler bir sonraki konuşmayı besliyor. "Seninle birlikte büyüyor" fikri, bir şema olarak çizilmiş hâliyle.*
 
-![Her biri ne işe yarıyor](../images/hermes-and-openclaw.png)  
+![Her biri ne işe yarıyor](../images/hermes-and-openclaw.webp)  
 *İki sütunu fiiller olarak oku. Solda agent kendini değiştiriyor. Sağda agent işi araçlar ve insanlar arasında taşıyor. Soru hangi aracın daha iyi olduğu değil, senin hangi işin olduğu.*
 
 İkisi de aynı yapay zekâ modellerini çalıştırıyor. Onları ayıran şey hafıza, skill'ler ve güvenlik tasarımı: yine [Harness Engineering](harness_engineering_tr.md) modülündeki harness tartışması.

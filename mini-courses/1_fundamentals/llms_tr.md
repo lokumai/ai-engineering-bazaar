@@ -62,7 +62,7 @@ Normal bir sohbet üç tür mesajdan oluşur:
 
 Bu mesajlar, sistemi her kullandığında üst üste yığılır:
 
-![Düz LLM sohbetinin context'i](./images/llm-context.jpeg)  
+![Düz LLM sohbetinin context'i](./images/llm-context.webp)  
 *İki turn'lük düz bir sohbet: iki HumanMessage ve iki AIMessage. Hiçbir şey silinmez. Bu yüzden ikinci turn'de model birinci turn'deki her şeyi de okur.*
 
 Bir HumanMessage ile onu yanıtlayan AIMessage'a birlikte bir **turn** denir. Düz bir LLM sohbetinde bu ikisinin arasında başka bir şey yoktur: prompt'u gönderirsin, yanıtı alırsın. Yukarıdaki şekilde iki turn var.
@@ -71,7 +71,7 @@ Bu yığının birkaç adı var ve hangisinin kullanıldığı kimin konuştuğu
 
 SystemMessage'a daha yakından bakmak gerekiyor, çünkü o tek bir düz metin değil. Normalde hem davranış talimatlarını *hem de* **tool schema'larını** taşır. Tool schema'ları, modelin çağırmasına izin verilen tool'ların listesidir ve her birinin adını ile argümanlarını içerir:
 
-![System prompt'un içi](./images/system-prompt-context.jpeg)  
+![System prompt'un içi](./images/system-prompt-context.webp)  
 *Bir system prompt'un içinde davranış talimatları, tool schema'ları ve bazen sabit bir referans metin bloğu bulunur. Hepsi context'in en üstünde yer alır.*
 
 API'de tool schema'ları system metninin parçası değildir, ayrı bir alan olarak gelir. Ancak model bunları başta tek bir blok halinde alır. Bu yüzden onları birlikte hayal etmek makul.
@@ -86,7 +86,7 @@ Burada hatırlaman gereken kısım şu: **ToolCall'u LLM üretir, ToolResult'u i
 
 Bir agent turn'ünün içi daha kalabalıktır. HumanMessage'ından sonra model, sana cevap verebilmek için bir tool'a ihtiyacı olup olmadığına karar verir. İhtiyacı varsa ToolCall ve ToolResult de context'e eklenir. Model son cevabı ancak bundan sonra yazar. Bütün bunlar yine **tek bir turn**: bir HumanMessage, varsa tool mesajları ve en sonda bir AIMessage.
 
-![Bir agent'ın context'i](./images/agent-context.jpeg)  
+![Bir agent'ın context'i](./images/agent-context.webp)  
 *Bir agent'ın tek turn'ü: sen prompt'u yazarsın, AI düşünür, bir tool'u çağırır ve sonra cevap verir. Kimin neyi yazdığına bak. LLM düşünceyi, Tool Call'u ve cevabı üretir. Tool Result ise fonksiyonu çalıştıran host makineden gelir.*
 
 Agent'ların nasıl işlediğinin temeli tam olarak bu ayrımdır. Bunu [LLM Tool Calling](tools_tr.md) ve [AI Agents](agents_tr.md) modüllerinde yeniden ele alacağız.

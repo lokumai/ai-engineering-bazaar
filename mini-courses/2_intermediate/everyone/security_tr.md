@@ -14,7 +14,7 @@ Sana ulaşma ihtimali en yüksek saldırı, bir chatbot'a bir şeyler yazan bir 
 
 Olağan anlamda hiçbir şey hacklenmiyor. Kimse bir sunucuya girmiyor. Biri, reddi aşan bir soru sorma yolu buluyor. Saldırgan yapay zekâyı ikna ediyor; içeri girmiyor.
 
-![Bir ret ve aynı sorunun önüne bir jailbreak konmuş hâli](../images/jb-exmaple-1.png)  
+![Bir ret ve aynı sorunun önüne bir jailbreak konmuş hâli](../images/jb-exmaple-1.webp)  
 *İki yarıda da soru aynı. Tek değişiklik, sorunun önündeki metin. Güvenlik davranışı kilitli bir kapı değil; modelin bir alışkanlığı ve doğru kelimeler onu bu alışkanlıktan vazgeçirebiliyor.*
 
 Ünlü örneğin adı **DAN**, yani "do anything now" (şimdi her şeyi yap). Yapay zekâya kuralı olmayan bir karakteri oynadığını söylüyorsun, sonra karaktere soruyorsun.
@@ -26,7 +26,7 @@ Saldırılar, saldırganın neyi görebildiğine göre iki türe ayrılıyor:
 - **Black box**: saldırganın elinde yalnızca senin elindekiler var, yani bir sohbet kutusu. Girdiler deniyor ve çıktıları okuyor.
 - **White box**: saldırganın elinde modelin kendisi var ve hangi kelimenin modeli nereye ittiğini tam olarak hesaplayabiliyor.
 
-![Token seviyesinde ve prompt seviyesinde jailbreak'ler](../images/jb-example-2.png)  
+![Token seviyesinde ve prompt seviyesinde jailbreak'ler](../images/jb-example-2.webp)  
 *Üstteki, bir bilgisayarın hesaplayarak bulduğu şey; anlamsız görünüyor ve genellikle modelin kendisini gerektiriyor. Alttaki, bir insanın yazdığı şey.*
 
 White box saldırılar daha güçlü. Ama şirketinin asistanına yapılan saldırı neredeyse her zaman black box, çünkü asistanın internette duran bir sohbet kutusu.

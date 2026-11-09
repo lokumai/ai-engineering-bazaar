@@ -19,7 +19,7 @@ This is the mechanism underneath every agent. So it is worth the effort to under
 
 ## What is a Tool?
 
-![An LLM reaching out through tools](./images/tools.jpg)  
+![An LLM reaching out through tools](./images/tools.webp)  
 *Tools are how a model reaches outside its own head. It searches the web, does maths or runs code, and then comes back with an answer.*
 
 A **tool** is a function that you write. It is an ordinary Python function with a name, some inputs
@@ -35,7 +35,7 @@ function. Then it gives the return value back.
 [LLM Fundamentals](llms.md) introduced the context as a stack of messages. A tool call adds two new
 kinds of message to that stack. This picture shows the whole flow:
 
-![The context of a single tool call](./images/context-tool-call.jpeg)  
+![The context of a single tool call](./images/context-tool-call.webp)  
 *One tool call, in order. The system prompt declares the tool before anyone speaks. Then you ask, and the LLM writes a Tool Call. The host machine runs it and writes the Tool Result. Then the LLM reads that result and writes the answer.*
 
 Follow the four arrows, because it matters who writes each message:

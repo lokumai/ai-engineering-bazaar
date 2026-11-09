@@ -48,7 +48,7 @@ That network contains neurons, and the prompt decides which ones fire. Some acti
 some activate weakly, and some do not activate at all. When you change the words, you change that
 pattern. When the pattern changes, the output changes.
 
-![Which neurons light up](./images/neurons-activation.jpeg)  
+![Which neurons light up](./images/neurons-activation.webp)  
 *The weights are identical in both cases. A prompt only decides which of them get used. That is why the same model answers an arithmetic question with one part of itself and a painting question with another part.*
 
 Think of a DJ mixer. It has one knob each for volume, bass and echo. The DJ never changes the
@@ -56,7 +56,7 @@ hardware. They move the knobs, listen, and move them again until the room sounds
 prompt is one setting of those knobs. Prompt engineering is writing the text that turns up the
 parts of the network you need for this job.
 
-![Turning the knobs](./images/prompt-mixer.jpeg)  
+![Turning the knobs](./images/prompt-mixer.webp)  
 *Every knob here is something this module covers. None of them is on a panel that you can touch: the prompt text is the only thing that moves them.*
 
 But the knobs have no labels, and you cannot reach them. Text is the only way to move them. That
@@ -127,7 +127,7 @@ The simple one:
 - **Warnings**: the mistakes that you already expect the model to make.
 - **Context**: everything about your situation that a stranger would need to know to help you.
 
-![The anatomy of a simple prompt](./images/prompt-1.jpg)  
+![The anatomy of a simple prompt](./images/prompt-1.webp)  
 *The context dump is the longest part and the least polished part, and that is fine. It is the part that no template can write for you.*
 
 The more detailed one:
@@ -148,7 +148,7 @@ The more detailed one:
 - **Output Format**: the exact shape, including the table columns when you need them.
 - **Stop Conditions**: how the model knows it is finished.
 
-![The anatomy of a detailed prompt](./images/prompt-2.png)  
+![The anatomy of a detailed prompt](./images/prompt-2.webp)  
 *Stop conditions are the slot that people forget. Without one, "done" is the model's guess and not your definition.*
 
 Today's models do not need you to follow either template strictly, and most of the time you will
@@ -392,7 +392,7 @@ Role prompting is giving the model a job, a persona or a character before you gi
 > real system prompts, [system prompt leaks](https://github.com/asgeirtj/system_prompts_leaks)
 > collects them word for word from ChatGPT, Claude, Gemini, Grok and others.
 
-![Inside the system prompt](./images/system-prompt-context.jpeg)  
+![Inside the system prompt](./images/system-prompt-context.webp)  
 *This is the same figure as in [LLM Fundamentals](../1_fundamentals/llms.md). A role goes in the identity and the instructions. Everything in this box is written before the user says anything.*
 
 That is why role prompting belongs here: a role does its best work in the system prompt. The

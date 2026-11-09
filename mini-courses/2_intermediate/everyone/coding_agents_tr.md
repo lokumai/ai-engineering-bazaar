@@ -14,7 +14,7 @@ Bir code agent'ın hazır araca ihtiyacı yok. Dönüştürmeyi yapan birkaç sa
 
 Bir an durup bunu düşün. Bu agent'lar yalnızca var olanı *kullanmıyor*. Var olmayanı *inşa ediyor*. İnsanların paylaştığı bir hikâye, yazıcısının bilgisayarı için sürücüsü olmayan birinin anlatısıydı. Bir code agent'a sormuş ve agent çalışan bir sürücü yazmıştı.
 
-![Kod, evrensel arayüz](../images/code-is-universal.png)  
+![Kod, evrensel arayüz](../images/code-is-universal.webp)  
 *Üst satır eski yöntem: her iş türü için ayrı bir agent var ve her birinin kendi araçlarının ayrıca yapılması gerekiyor. Alt satır, code agent'ların neden onların yerini aldığını gösteriyor. Kod web'e, takvime, bankaya ve neredeyse her şeye ulaşabilir.*
 
 Yani kod, birçok beceriden biri değil. **Diğerlerinin yerini alabilen beceri o.** Bir code agent'ın yazılımla ilgisi olmayan işlerde de yardım edebilmesinin sebebi bu.
@@ -39,7 +39,7 @@ Yapay zekâyı şirketinin Jira'sına bağlayan bir araç yaptığını düşün
 
 ![](../images/logos/modelcontextprotocol-mono.svg)**Model Context Protocol** (MCP) bunu çözüyor. Her telefona uyan evrensel bir şarj fişini düşün. MCP standardında bir kez yapılan bir araç, MCP'yi destekleyen her yapay zekâ agent'ında çalışıyor.
 
-![MCP öncesi ve sonrası](../images/mcp-unified-before-after.png)  
+![MCP öncesi ve sonrası](../images/mcp-unified-before-after.webp)  
 *Solda her servisin, her yapay zekâ için ayrı ayrı yapılmış kendi bağlantısı var. Sağda her servis MCP standardında bir kez bağlanıyor ve her yapay zekâ onu kullanabiliyor.*
 
 Bundan elde ettiklerin:
@@ -59,7 +59,7 @@ Bilmen gereken bir bedel: bağlı her MCP server, kullanılmasa bile sohbette bi
 
 Başlangıçta agent her dosyanın yalnızca üzerindeki başlığı, yani birer kısa satırı okuyor. Yani yirmi skill neredeyse hiçbir şeye mal olmuyor. Agent, bir iş birine ihtiyaç duyduğunda o dosyayı açıyor ve talimatların tamamını okuyor. Bu fikrin hatırlaman gereken bir adı var: **progressive disclosure** (kademeli açılım).
 
-![Skill'ler ve context window](../images/skill-and-context-window.png)  
+![Skill'ler ve context window](../images/skill-and-context-window.webp)  
 *En üstteki ince şerit, kullanılmadıkları sürece yirmi skill'in hepsi: her biri bir kısa satır. Bir PDF işi geldiğinde agent PDF skill'ini açıyor ve talimatlarını izliyor. Diğer ondokuz tanesi sohbeti hiç doldurmuyor.*
 
 Neden tek bir kocaman talimat seti yerine skill'ler? Çünkü context engineering: agent'ın ihtiyaç duyabileceği her şey elinin altında, ama sohbette yalnızca şu an ihtiyaç duyduğu şey var.
@@ -103,7 +103,7 @@ Büyük bir işte hemen inşa etmeye başlamak yanlış ilk adım. **Plan mode**
 
 Geriye bak: AGENTS.md, slash command'lar, subagent'lar, skill'ler, hook'lar, plugin'ler, memory ve planlar. Neredeyse hepsi **klasörlerdeki sade metin dosyaları**. Hepsini herhangi bir editörde açıp okuyabilir ve paylaşabilirsin. Bu tembellik değil. Hem insanların hem yapay zekânın iyi işlediği tek format bu.
 
-![Tek agent, üç genişletme noktası](../images/mcp-skill-subagent.png)  
+![Tek agent, üç genişletme noktası](../images/mcp-skill-subagent.webp)  
 *Üç farklı problem, üç cevap. Skill'ler (solda) agent'ın nasıl davrandığını değiştiriyor. MCP server'lar (sağda) onun başka sistemlere ulaşmasını sağlıyor. Subagent'lar (altta) pahalı işi ayrı bir sohbette yapıyor.*
 
 Bu fikirleri kullanmak için kod yazman gerekmiyor. Kod yazmayan insanlar için hazırlanan Claude Cowork da aynı skill'leri ve plugin'leri kullanıyor.

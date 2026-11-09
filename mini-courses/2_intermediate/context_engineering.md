@@ -47,7 +47,7 @@ all of them. Give the same model the same job, and it does the job noticeably be
 tokens in its context than with 800K. It is not because the window overflowed. It is because of
 what was already in it.
 
-![Two jars, same model](./images/context-pollution-jars.jpeg)  
+![Two jars, same model](./images/context-pollution-jars.webp)  
 *The three things the model needs are in both jars. On the right they are still there, still readable, and still lost. Everything else in the jar is competing for the same attention.*
 
 People use two names for this effect: **context rot** and **context pollution**. Drew Breunig's [How Long Contexts Fail](https://www.dbreunig.com/2025/06/22/how-contexts-fail-and-how-to-fix-them.html) goes one step further. It names four specific ways that it happens: poisoning, distraction, confusion and clash.
@@ -71,7 +71,7 @@ things. Nothing was deleted, and the window never overflowed. The instruction is
 its share of the attention had to compete with everything you added after it, and it lost. The
 model has lost the map, which means it no longer keeps track of the goal you set at the start.
 
-![A needle, a distractor and a haystack](./images/distractor_irrelevance.png)  
+![A needle, a distractor and a haystack](./images/distractor_irrelevance.webp)  
 *The question asks for the classmate's advice. The needle answers it. The distractor is the same sentence, but about a professor. Chroma found that one distractor is enough to hurt. They also found that the less the needle looks like the question, the faster performance collapses as the haystack grows.*
 
 You will hear the name of that test all the time: **needle in a haystack**. The version above is
@@ -91,7 +91,7 @@ that could go into the window. Context engineering is the art and science of cho
 actually go in. The goal is to have as many tokens as possible that carry real signal, and as few as
 possible that are noise, so that the context does not rot.
 
-![Prompt engineering next to context engineering](./images/prompt-vs-context-eng.png)  
+![Prompt engineering next to context engineering](./images/prompt-vs-context-eng.webp)  
 *On the left is one turn and one decision: that is [Prompt Engineering](prompt_engineering.md). On the right is a universe of things that could go in the window, and a decision about what actually goes in. That decision is made again on every single turn.*
 
 The term became popular after a [post by Andrej Karpathy](https://x.com/karpathy/status/1937902205765607626)
@@ -117,7 +117,7 @@ still broken, here is where we were".
 Most agents now do this on their own when they get close to the limit. Some also let you start it
 yourself. In Claude Code, you type `/compact` and it happens immediately.
 
-![A window before and after compaction](./images/compaction-before-after.png)  
+![A window before and after compaction](./images/compaction-before-after.webp)  
 *Notice what is kept and what is not. The tool results are most of the window, and they go. The summary keeps the decisions. The few recent files are kept, because the agent will read them again immediately. The reserved block at the bottom is space the agent holds for its own summarising. This way, it is never caught with a full window and no room to write.*
 
 The cost is real, and it is worth saying plainly. A summary throws away the 40,000-token output of
@@ -149,7 +149,7 @@ Losing something valuable this way is common, not rare.
 [Memory](../1_fundamentals/memory.md) divided memory into parametric, working and long-term. This
 is the long-term one. In practice, it is usually organised into three kinds:
 
-![Three kinds of long-term memory](./images/semantic-episodic-procedural.png)  
+![Three kinds of long-term memory](./images/semantic-episodic-procedural.webp)  
 *The split matters because the agent writes and reads the three at different times. Facts about you collect quietly over time. Past actions are what stop an agent from repeating a mistake. And the instructions layer is just the system prompt from [Tool Calling](../1_fundamentals/tools.md) under another name.*
 
 ## Context Isolation
@@ -168,7 +168,7 @@ has an empty context of its own. This second agent is a **subagent**. The subage
 800K-token crawl. It throws away everything except the conclusion, and it hands back the sentence.
 The main agent's context gains one sentence.
 
-![Two subagents with their own windows](./images/subagent.png)  
+![Two subagents with their own windows](./images/subagent.webp)  
 *Each box is a separate context. It starts empty, and it is thrown away when the work is done. The main agent never sees the intermediate steps, and that is the whole point: because those steps never reach its window, they cannot fill it and make its answers worse.*
 
 **How it works.** A subagent is a new agent with a clean context. The main agent calls it in the
@@ -231,7 +231,7 @@ Some information is really valuable and does not change often, such as how your 
 API works. Do not paste it into every prompt. Put it in a place where the agent can go and look: a
 folder of markdown files that it can read and search.
 
-![A knowledge base the agent explores](./images/explorable-knowledge-base.png)  
+![A knowledge base the agent explores](./images/explorable-knowledge-base.webp)  
 *The knowledge base lives outside the window and grows with every interaction. The agent reads only the page a question needs, so the rest of what it knows costs nothing until it is used.*
 
 Then, when the agent decides it needs your documentation, it retrieves it. It reads the part that

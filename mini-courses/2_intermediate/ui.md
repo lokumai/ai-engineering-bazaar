@@ -197,6 +197,9 @@ AG-UI is one of three protocols, and each one covers a different side of the age
 They do not compete. A real product often uses all three: the agent calls tools over MCP, hands a
 part of the work to another agent over A2A, and streams everything it does to the user over AG-UI.
 
+Do not confuse the three. Each connects a different side, and you have met the other two already: MCP in
+[Code Agents](coding_agents.md) and A2A in [Multi-Agent Systems](../1_fundamentals/multi_agent.md).
+
 ## Beyond Streaming
 
 Streaming is the base. The rest of the agentic UI definition builds on it, and the Expert module

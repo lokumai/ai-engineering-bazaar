@@ -156,7 +156,9 @@ AG-UI is one of three shared protocols, and each one connects the agent to a dif
 | **A2A** | other agents |
 | **AG-UI** | the people using the app |
 
-They work together. A real product often uses all three at once.
+They work together. A real product often uses all three at once. Do not mix them up: you met MCP in
+[Code Agents](coding_agents.md) and A2A in [Multi-Agent Systems](../1_fundamentals/multi_agent.md),
+and AG-UI is the third, the one that faces the people.
 
 ## Beyond Streaming
 

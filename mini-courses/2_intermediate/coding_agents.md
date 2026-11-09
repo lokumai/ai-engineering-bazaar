@@ -97,6 +97,12 @@ To see which servers already exist, look at [awesome-mcp-servers](https://github
 
 > **NOTE:** each connected server uses part of the context window. Its tool names and descriptions load into every session. Ten servers that you never call still cost you. Remove the ones you do not use, for the reasons given in [Context Engineering](context_engineering.md).
 
+![MCP and A2A, side by side](./images/a2a-interorganization.webp)  
+*A reminder from [Multi-Agent Systems](../1_fundamentals/multi_agent.md): MCP runs down from each agent to its own tools and apps, and A2A runs across, between agents.*
+
+Do not confuse MCP with A2A. **MCP connects an agent to tools**; **A2A connects an agent to other agents**,
+often across companies.
+
 ## Subagents
 
 [Context Engineering](context_engineering.md) explained why subagents exist. A subagent gives expensive work a fresh context window. So the main window receives a conclusion instead of the whole investigation.

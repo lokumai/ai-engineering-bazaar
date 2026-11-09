@@ -49,6 +49,11 @@ Bundan elde ettiklerin:
 
 Bilmen gereken bir bedel: bağlı her MCP server, kullanılmasa bile sohbette biraz yer kaplıyor. Bu yüzden yalnızca ihtiyacın olanları bağla.
 
+![MCP ve A2A, yan yana](../images/a2a-interorganization.webp)  
+*[Multi-Agent Systems](../1_fundamentals/multi_agent_tr.md) modülünden bir hatırlatma: MCP her agent'ı kendi tool'larına ve uygulamalarına bağlar, A2A ise agent'ları birbirine.*
+
+MCP ile A2A'yı karıştırma. **MCP, bir agent'ı tool'lara bağlar**; **A2A ise bir agent'ı başka agent'lara bağlar**, çoğu zaman şirketler arasında. İkisi birbirinden farklı iki fiş.
+
 ## Subagent'lar
 
 [Context Engineering](context_engineering_tr.md) modülü, temiz sohbetli yardımcıların neden işe yaradığını anlatmıştı. Bir code agent'ta kendi yardımcılarını da tanımlayabilirsin: bir güvenlik gözden geçiricisi, bir test yazarı, bir çevirmen. Her birinin kendi sabit talimatları var ve her seferinde temiz bir masayla başlıyor.

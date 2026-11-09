@@ -108,6 +108,40 @@ These names will come up later in the course:
 - **Subagents:** an agent sends short-lived helpers to do one task each, like sending an intern to
   find something out. The helper comes back with only the result.
 
+## Agent2Agent Protocol (A2A)
+
+This is only a short introduction; the details come later, in the
+[Protocols Reference](../4_ecosystem/protocols_reference.md).
+
+So far, every agent in a team was built with the same software kit, the same **framework**. That is
+how they understand each other. Agents built with different kits are like colleagues who speak
+different languages: they cannot work together, even if each one is good at its job.
+
+**A2A**, the **Agent2Agent Protocol**, is a shared language for agents. Google created it, and it is
+now an open standard, so agents built by any company with any kit can talk to each other.
+
+![A client agent delegating to remote agents over A2A](../images/a2a-flow.webp)  
+*You talk to one agent. It hands parts of the job to three other agents, each made by a different company, and every handover uses A2A, the shared language.*
+
+How does it work? Each agent publishes an **Agent Card**. Think of it as the agent's CV or business
+card: who it is, what it can do, and how to reach it. Another agent reads the card, sees that this
+agent can help, and hands it a task.
+
+**Do most teams need it?** No. Inside one project, people simply build all their agents with one kit,
+and they already understand each other. A2A matters when agents belong to different organisations.
+
+An example. Company A sells flights and has a flight-booking agent. Company B sells hotel rooms and has
+a hotel-booking agent. Company A wants one assistant that books both. Its own agent handles the flight,
+but for the hotel it needs company B's agent, and the two were built by different companies with
+different kits. If company B publishes an Agent Card, company A's agent can find it and ask it to book
+the hotel.
+
+![A2A across an organisational boundary](../images/a2a-interorganization.webp)  
+*Two companies, each with its own agent, built with its own AI model and its own kit. Each agent reaches its own company's systems with MCP. Between the two companies, A2A lets the agents talk.*
+
+This is rare. It happens mostly in large companies, or between teams of one company, such as an HR
+agent and a finance agent built separately. But it is good to know the name.
+
 ## When a Single Agent Might be Better
 
 More agents is not an upgrade. It is a trade. You get shorter instructions and clearer jobs. You
@@ -124,6 +158,8 @@ information has to pass from one agent to the next.
 - **Handover** (context transfer): deciding what each agent is given.
 - **Shared and isolated context**: one desk for everyone, or a desk for each.
 - **Subagent**: a short-lived helper that returns only its result.
+- **A2A** (Agent2Agent Protocol): a shared language that lets agents from different companies and kits work together.
+- **Agent Card**: an agent's CV: who it is, what it can do, and how to reach it.
 
 ## Summary
 
@@ -148,5 +184,14 @@ between a supervisor and a network?
 
 ### 📄 Articles
 
+- [Announcing the Agent2Agent Protocol (A2A)](https://developers.googleblog.com/en/a2a-a-new-era-of-agent-interoperability/): Google's announcement, April 2025
 - [Multi-agent systems](https://docs.langchain.com/oss/python/langchain/multi-agent): the team shapes, in more depth
 - [What is an agent?](https://www.langchain.com/blog/what-is-an-agent): worth reading again, because a supervisor is a decision about how much the AI decides
+
+### 🛠️ Tools
+
+- [A2A Protocol](https://a2a-protocol.org/latest/): the shared language that lets agents from any company work together
+
+### 🗃️ Repositories
+
+- [a2aproject/A2A](https://github.com/a2aproject/a2a): the protocol's home on GitHub

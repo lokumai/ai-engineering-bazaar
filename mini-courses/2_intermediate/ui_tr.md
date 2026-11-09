@@ -136,6 +136,8 @@ AG-UI, üç protocol'den biridir ve her biri agent'ın farklı bir tarafını ka
 
 Birbirleriyle rekabet etmezler. Gerçek bir üründe çoğu zaman üçü birden kullanılır: agent tool'ları MCP ile çağırır, işin bir kısmını A2A ile başka bir agent'a devreder ve yaptığı her şeyi AG-UI ile kullanıcıya stream eder.
 
+Üçünü birbirine karıştırma. Her biri agent'ın farklı bir tarafını bağlar ve diğer ikisiyle zaten tanıştın: MCP'yi [Code Agent'lar](coding_agents_tr.md) modülünde, A2A'yı [Multi-Agent Systems](../1_fundamentals/multi_agent_tr.md) modülünde.
+
 ## Streaming'in Ötesi
 
 Streaming temeldir. Agentic UI tanımının geri kalanı onun üstüne kurulur ve Expert modül [İleri Seviye Agentic UI](../3_expert/advanced_ui_tr.md) bunu anlatacak:

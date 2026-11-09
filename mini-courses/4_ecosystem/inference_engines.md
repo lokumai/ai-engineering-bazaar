@@ -70,6 +70,19 @@ And batching connects to [Context Engineering](../2_intermediate/context_enginee
 
 An engine gives you an API and nothing to look at. ![](./images/logos/open-webui-mono.svg)**[Open WebUI](https://github.com/open-webui/open-webui)** is the interface that people put in front of an engine. It is a chat UI that talks to Ollama, or to anything that uses the same API shape as OpenAI. It has accounts, conversation history and model switching. Some teams want a private ChatGPT on their own hardware. For them, that is the whole stack, in two pieces: the engine and Open WebUI.
 
+## Key Terms
+
+- **Inference engine**: the program that loads the weights and turns your tokens into the next token.
+- **Attention state**: the data the engine caches between turns, which must stay in GPU memory for a long context.
+- **Inference provider**: a company that runs an engine for you and charges you per token.
+- **Crossover point**: the volume above which a rented GPU costs less than buying the same work by the token.
+- **Self-hosting**: running the model on your own infrastructure, which is a real operational job.
+- **Wrapper**: a tool, such as Ollama or LM Studio, that hides the engine and gets a model running in minutes.
+- **Serving engine**: an engine for a GPU server with real users, such as vLLM.
+- **Batching**: running many requests together, so the GPU reads the weights once for the whole group.
+- **Throughput**: how much work a server completes, measured with many concurrent users.
+- **Continuous batching**: the engine adds new requests as older ones finish, so the GPU never runs out of work.
+
 ## Where this fits in the series
 
 ```mermaid

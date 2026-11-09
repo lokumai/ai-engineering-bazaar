@@ -219,6 +219,23 @@ That is not laziness. It is the one format that both you and the model handle we
 ![One agent, three extension points](./images/mcp-skill-subagent.webp)  
 *These are three different problems, so it helps to name which is which. The skills on the left are instructions that the agent reads to change how it behaves. The MCP servers on the right are tools that let it reach systems it could not reach otherwise. The subagents below are extra context windows. So each extension gives the agent one of three things: something to know (a skill), something it can do (an MCP server), or a separate place to think (a subagent).*
 
+## Key Terms
+
+- **AGENTS.md**: a plain markdown file for the facts that stay true across the whole repository, such as build and test commands.
+- **CLAUDE.md**: the file that Claude Code reads. It can import AGENTS.md with `@AGENTS.md`.
+- **Slash command**: a prompt that you write once and run by typing `/name`. Custom commands have merged into skills.
+- **MCP (Model Context Protocol)**: a standard way to describe tools, so any agent that speaks the protocol can use them.
+- **MCP server**: a package of tools that an agent connects to as a client.
+- **A2A**: connects an agent to other agents, often across companies. MCP connects an agent to tools.
+- **Subagent**: a helper with its own system prompt, tool list and clean context window, which returns a conclusion.
+- **Skill**: a folder of instructions that the agent reads when a task needs it, at `.claude/skills/<name>/SKILL.md`.
+- **Progressive disclosure**: the agent loads each skill's name and description at startup, and the full instructions only when needed.
+- **Hook**: a shell command at a fixed point in the agent's lifecycle. It runs whether or not the model wants it to.
+- **Plugin**: a package of commands, skills, subagents, hooks and MCP servers that you install in one step.
+- **Auto memory**: notes that the agent writes from the corrections you give it. The first 200 lines or 25KB load into every session.
+- **Plan mode**: a read-only mode where the agent explores and writes a plan, and edits only after you approve it.
+- **Reasoning effort**: the setting that `/effort` changes, to control how much the model reasons.
+
 ## Where this fits in the series
 
 ```mermaid

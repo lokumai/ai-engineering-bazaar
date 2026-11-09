@@ -216,6 +216,23 @@ Tek cümleyle özetlersek: **fine-tuning modelin *bildiğini* değiştirir, RAG 
 
 Bir nokta daha var ve o da şu: bu ikisinden birini seçmek zorunda değilsin. Modelin nasıl davranması gerektiği için fine-tuning yapabilir, neyi bilmesi gerektiği için de RAG kullanabilirsin. Bu kombinasyon production ortamlarında oldukça yaygındır.
 
+## Temel Terimler
+
+- **Context window**: modelin tek seferde işleyebildiği metnin sınırı. Modelin çalışma masasıdır.
+- **Fine-tuning**: modelin kendisini değiştiren eğitim. Verinin belirli bir gündeki hâlini yakalar ve sonra değişmez.
+- **Retrieval-Augmented Generation (RAG)**: verini modelin dışında tutma yöntemi. Her soru için yalnızca ilgili parçaları getirip context'e koyar, sonra cevabı üretir.
+- **Retrieval**: soruyu cevaplayan chunk'ları bulan arama adımı.
+- **Chunk**: bir dokümanın küçük bir parçası. Bir fonksiyon, paragraf ya da sözleşme maddesi olabilir.
+- **Embedding**: bir metni anlatan sayı listesi, yani bir vector. Benzer anlamlar benzer sayılar üretir.
+- **Encoder model**: metni embedding'lere çeviren model.
+- **Cosine similarity**: iki embedding'in ne kadar yakın olduğunu ölçen skor. Yüksek skor, çok benzer olduklarını gösterir.
+- **Vector database**: her embedding'i özgün metniyle birlikte saklar ve bir sorgu vector'üne en yakın eşleşmeleri döndürür.
+- **Test set**: sorulardan oluşan bir liste. Her soru için, bir insanın alakalı diye işaretlediği chunk'ları içerir.
+- **Recall@k**: alakalı chunk'ların hepsinden, ilk k sonuçta yer alanların oranı.
+- **Precision@k**: ilk k chunk'ın ne kadarının alakalı olduğunun oranı.
+- **MRR (mean reciprocal rank)**: 1'in, ilk alakalı chunk'ın sırasına bölümünün tüm sorular üzerinden ortalaması.
+- **nDCG@k**: alakalı chunk'ları listenin üstünde ve doğru sırada tutan bir skor. 1.0, en iyi sıralama demektir.
+
 ## Bu serinin neresindeyiz
 
 ```mermaid

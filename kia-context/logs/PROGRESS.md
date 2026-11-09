@@ -19,7 +19,7 @@ description: >
 authority: state
 writes: agent, every session
 status: active
-covers: "M50 to M93, 2026-11-06 onward, and M41, which part 2 held for PR #57"
+covers: "M50 to M94, 2026-11-06 onward, and M41, which part 2 held for PR #57"
 last_updated: 2026-11-10
 ---
 
@@ -1704,6 +1704,25 @@ skipped, on port 3111.
   mutation passed; the case now turns anchoring off, which is Safari's behaviour, and the mutation fails.
 
 Screenshots re-shot in the same folder.
+
+## 🏁 Milestone M94: Key Terms at the end of every written For Engineers module (D118) — DONE
+
+A reader's feedback (2026-11-10): *"Kavram sayısının çok arttığı bölümlerde her bölüm sonuna hızlıca
+bakılabilecek özet bir tablo yararlı olabilir. Hem bölüm tamamlandıktan sonra hem de sonrasında bakıp
+hatırlamak istediğimizde günü kurtarır."* The author: *"as you know in for everyone track, we have
+"Words You Now Know" which tells the keywords learnt. I want the same thing in same shape, but with an
+engineer-suitable tone and language in the for engineers part at the end of each module similar to for
+everyone track ... do it for all modules written, for all languages."*
+
+- [x] **The rule**, in `mini-courses/CLAUDE.md` and `AGENTS.md` (byte-identical): `## Key Terms` /
+      `## Temel Terimler` / `## اصطلاح‌های کلیدی` just before the series map, `- **Term**: one line`,
+      engineer's words, every fact from the module, terms English in Turkish and Persian.
+- [x] **All 21 ready modules, in English, Turkish and Persian** (63 files), written by seven Haiku
+      xhigh agents in parallel, three modules each. Measured: each of the 63 files has the heading
+      exactly once; no tatweel in any Persian file; the diff is insertions only. Term counts run from 8
+      (UI Design) to 15 (LLM Fundamentals).
+- [x] **Gate:** typecheck, `npm test` (1,520), build, link check and bundle check pass; the full
+      browser suite runs in CI.
 
 ---
 

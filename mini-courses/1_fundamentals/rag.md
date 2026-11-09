@@ -319,6 +319,23 @@ In one line: **fine-tuning changes what the model *knows*; RAG changes what the 
 One more point: this is not a choice of one or the other. You can fine-tune a model for how it
 should behave, and use RAG for what it should know. That combination is common in production.
 
+## Key Terms
+
+- **Context window**: the limit on the text a model handles at one time. It is the model's working desk.
+- **Fine-tuning**: training that changes the model itself. Its result is a snapshot of your data on one day.
+- **Retrieval-Augmented Generation (RAG)**: keep your data outside the model. Fetch the relevant parts for each question, then generate the answer from them.
+- **Retrieval**: the search step that finds the chunks that answer a question.
+- **Chunk**: a small piece of a document, such as a function, a paragraph or a contract clause.
+- **Embedding**: a list of numbers, also called a vector, that describes a piece of text. Similar meanings give similar numbers.
+- **Encoder model**: the model that turns text into embeddings.
+- **Cosine similarity**: the score that measures how close two embeddings are. A high score means the two are very similar.
+- **Vector database**: stores each embedding with its original text. It returns the closest matches to a query vector.
+- **Test set**: a list of questions. For each question, it lists the chunks that a person marked as relevant.
+- **Recall@k**: the share of all relevant chunks that appear in the top k results.
+- **Precision@k**: the share of the top k chunks that are relevant.
+- **MRR (mean reciprocal rank)**: the average, over all questions, of 1 divided by the position of the first relevant chunk.
+- **nDCG@k**: a score that rewards relevant chunks near the top. A score of 1.0 means the best order.
+
 ## Where this fits in the series
 
 ```mermaid

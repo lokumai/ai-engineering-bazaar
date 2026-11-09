@@ -88,6 +88,22 @@ Bunu açıkça söylemek gerekiyor, çünkü mühendisler genelde bunu atlar. Pe
 
 Takas da bildiğin türden: şimdi hız kazanırsın, sonra daha az kontrol elde edersin. Platformdan ayrılırsan uygulamayı baştan yazman gerekir. Bu takasın hangi tarafını satın aldığını bilerek karar ver.
 
+## Temel Terimler
+
+- **Agent framework**: agent döngüsünün etrafındaki her şey: yeniden deneme, streaming, tool şemaları ve hafıza.
+- **Agent loop**: bir model çağrısının etrafındaki `while` döngüsü; model hangi tool'u isterse onu çalıştırır.
+- **Tool schema**: bir tool'un standart tarifi; böylece her fonksiyonun JSON'unu elle yazmak gerekmez.
+- **LangGraph**: üç LangChain kütüphanesinin en alttakisi; state, adımlar ve kalıcılık için runtime.
+- **Graph**: agent'ın node'lar (adımlar) ve edge'ler (bundan sonra neyin olabileceği) olarak tarif edilmesi.
+- **State**: adımlar arasında taşınan açık veri; runtime bunu kaydedip bir çalıştırmayı kaldığı yerden sürdürebilir.
+- **LangChain**: bir model, birkaç tool ve middleware ile olağan bir agent veren ana arayüz.
+- **Middleware**: harness işinin ve guardrail'lerin bulunduğu katman.
+- **deepagents**: diğer ikisinin üzerine kurulu en üst seviye; planlama, bir filesystem, subagent'lar ve uzun thread'lerin özetlenmesini içerir.
+- **CodeAct**: JSON tool çağrıları göndermek yerine kod yazıp çalıştırarak hareket eden agent'lar.
+- **AI workflow**: birinin önceden yazdığı bir yolu izler; adımlar sabittir ve bundan sonra ne olacağına kod karar verir.
+- **AI agent**: kendi yolunu kendisi seçer; tool'ları ve sırasını belirler, bu yüzden her çalıştırmada yol farklı olabilir.
+- **MCP server**: n8n'in çalıştırdığı uç nokta; böylece bir coding agent ona bağlanıp workflow kurabilir.
+
 ## Bu serinin neresindeyiz
 
 ```mermaid

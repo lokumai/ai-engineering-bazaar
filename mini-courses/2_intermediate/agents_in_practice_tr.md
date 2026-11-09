@@ -121,6 +121,18 @@ Bir mühendis için Cowork, Claude Code ile aynı mantık, yalnızca bir repo ye
 
 (Cowork'ü **Claude Duet** ile karıştırma. Cowork'te işi sen başlatırsın. Duet'te ise işi Claude başlatır: Duet bulutta kendine ait bir bilgisayarda çalışır, bağladığın uygulamaları takip eder ve her sabah sana bir özetle gelir. Onu [Personal Agent'lar](personal_agents_tr.md) modülü anlatıyor.)
 
+## Temel Terimler
+
+- **Project**: bir kez kurup sonra tekrar tekrar kullandığın bir context.
+- **Claude Code**: terminalinde çalışan kodlama agent'ı.
+- **Steering**: işin kapsamını belirlemek, context özetini yönlendirmek ve ters giden bir oturumu geri sarmak.
+- **Hooks**: kurallarını zorunlu kılan yapılandırma.
+- **Headless mode**: Claude Code'u kendi pipeline'larında çalıştırmak.
+- **Plugin**: bir takımın kurulumunu tek bir paket olarak paylaşmanın yolu.
+- **Claude Cowork**: Claude'un dosyaların, klasörlerin ve uygulamaların üzerinde çalışması. İşi sen başlatırsın.
+- **Agent loop**: Cowork'ün Claude Code ile ortak yapısı: araçlar, context ve bir plan.
+- **Claude Duet**: bulutta kendi bilgisayarında çalışan, bağladığın uygulamaları izleyen ve her sabah bir özet getiren agent. İşi Claude başlatır.
+
 ## Bu serinin neresindeyiz
 
 ```mermaid

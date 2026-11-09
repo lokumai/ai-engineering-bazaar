@@ -75,6 +75,21 @@ So the newest tool in this module is **an agent that reads the traces**. LangSmi
 
 This is the direction the whole series is moving in. At the end of [Loop Engineering](../2_intermediate/loop_engineering.md), an agent designs the loop that other agents run in. In this module, an agent checks what other agents produced. Also notice why any of this is necessary. The reason is the same fact that [Harness Engineering](../2_intermediate/harness_engineering.md) starts from. These systems are non-deterministic, which means the same input can give a different result on each run. Their input is natural language, and a person can type almost anything, which means your tests cannot cover every possible input. So most of their failures appear in production, not in your tests.
 
+## Key Terms
+
+- **Trace**: the whole tree of one request. It holds every model call, tool call and subagent.
+- **LangSmith**: LangChain's own tool. It gives tracing, datasets, evaluators and annotation in one place.
+- **Langfuse**: the open-source tool, and the usual choice when traces must stay on your own infrastructure.
+- **Latitude**: an open-source tool that focuses on monitoring in production.
+- **Improvement loop**: the cycle that traces start: collect, enrich, find the pattern, change something, and check offline, then repeat.
+- **Evaluator**: a scorer that rates traces.
+- **Annotation**: a note from a person that attaches to a trace.
+- **Dataset**: an offline set made of real traces. You check a change against it.
+- **Regression test**: a test that replays the traces in the dataset.
+- **Failure mode**: a type of failure, such as a slightly wrong argument or four passes over the same file.
+- **Agent that reads traces**: an agent that finds usage patterns and failure modes, without anyone saying in advance what to look for. LangSmith's Insights Agent is one example.
+- **Non-deterministic**: the same input can give a different result on each run.
+
 ## Where this fits in the series
 
 ```mermaid

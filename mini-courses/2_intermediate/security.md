@@ -144,6 +144,22 @@ And it works just as easily in the other direction. ![](./images/logos/cloudflar
 
 > **NOTE:** here are a few papers, if you want to see how the attacks are actually built. Read [Great, Now Write an Article About That: The Crescendo Multi-Turn LLM Jailbreak Attack](https://www.usenix.org/conference/usenixsecurity25/presentation/russinovich) first, because it is the important one. It uses only benign, human-readable questions, and it escalates gradually over several turns. It reached 56% success on GPT-4 and 83% on Gemini Pro. [DeepInception](https://arxiv.org/abs/2311.03191) puts the request inside imagined scenes, one scene inside another. [FlipAttack](https://arxiv.org/abs/2410.02832) hides a harmful prompt by flipping the text, and then it asks the model to flip the text back. It reaches about 98% success on GPT-4o in a single query. [Sugar-Coated Poison](https://arxiv.org/abs/2504.05652) makes the model generate a lot of harmless content first, and that makes the model less strict about what follows. And our own [BreakFun](https://arxiv.org/abs/2510.17904) turns the model's skill with structured data into the attack surface. It uses crafted schemas to reach an 89% average success rate across 13 models.
 
+## Key Terms
+
+- **Jailbreaking**: getting an LLM to produce output that it was built not to produce.
+- **Black box**: the attacker has only a text box, so they guess the rest from the outputs.
+- **White box**: the attacker has the model itself, weights included, so they can search for the tokens that push the model to an answer.
+- **Prompt injection**: instructions placed in the input to override the instructions that are already there.
+- **System prompt**: instructions that outrank a user message by design, but are still text in the same stream.
+- **Prompt leaking**: getting the model to reveal what it was told, such as its system prompt and internal rules.
+- **Indirect prompt injection**: an attacker hides instructions in a document, web page or email that the agent reads.
+- **Guardrail**: a check that runs outside the model, on the input or on the output.
+- **Guard model**: a model built only to judge safety, which returns a verdict instead of a reply.
+- **Red teaming**: attacking your own system on purpose, because you cannot defend against attacks you have not tried.
+- **Attack success rate**: the figure a red-teaming tool reports after it scores each attack and response.
+- **Penetration testing**: testing a system by attacking it, mostly by reading, reasoning and running commands.
+- **Skill**: a `SKILL.md` file that gives a coding agent an expert's method for one job.
+
 ## Where this fits in the series
 
 ```mermaid

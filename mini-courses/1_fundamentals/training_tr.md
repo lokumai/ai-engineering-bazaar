@@ -247,6 +247,20 @@ Hugging Face ayrıca bu modellerle çalışmak için herkesin kullandığı küt
 parçalar için de yardımcı kütüphaneler var: yukarıdaki LoRA eğitimi için `peft`, modele verdiğin
 veri için ise `datasets`.
 
+## Temel Terimler
+
+- **Parameters**: ağın içindeki sayılar. Bu sayılara weights da denir.
+- **Training**: modele metin verip parametreleri küçük miktarlarla değiştirme işi. Tahminler doğru olana kadar tekrarlanır.
+- **Pre-training**: en büyük ilk adım. Tüm parametreleri etiketsiz internet metniyle günceller ve milyonlarca dolara mal olur.
+- **Fine-tuning**: pre-training'den geçmiş bir modelin eğitimine, küçük ve göreve özel bir veri setiyle devam etmek. Veri seti girdi ve çıktı çiftlerinden oluşur.
+- **Base model**: fine-tuning'e başlanan, pre-training'den geçmiş genel amaçlı model.
+- **Full fine-tuning**: tüm parametreleri güncelleyen fine-tuning. Büyük bir modelde hâlâ çok fazla GPU belleği gerektirir.
+- **PEFT**: modelin neredeyse tamamını dondurup az sayıda yeni parametreyi eğiten yöntem. Bu parametreler genellikle %1'in altındadır.
+- **LoRA**: en yaygın PEFT tekniği. Neredeyse herkesin kullandığı ucuz bir fine-tuning yöntemi.
+- **Unsloth**: fine-tuning'in bellek ve zaman ihtiyacını azaltan açık kaynaklı bir kütüphane. Hazır notebook'lar ve önceden quantize edilmiş modeller de sunar.
+- **Hugging Face**: açık modellerin merkezi kaydı ve bu modelleri yükleyen kütüphanelerin yayıncısı.
+- **transformers**: Hugging Face kütüphanesi. Bir modeli adıyla yükler ve birkaç satır kodla çalıştırır.
+
 ## Bu serinin neresindeyiz
 
 ```mermaid

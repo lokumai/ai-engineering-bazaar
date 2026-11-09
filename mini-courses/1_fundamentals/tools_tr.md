@@ -234,6 +234,21 @@ graph TD
     E --> F
 ```
 
+## Temel Terimler
+
+- **Tool**: senin yazdığın bir fonksiyon. Model onun çalıştırılmasını ister, çalıştıran ise host'tur.
+- **Context**: modelin okuduğu mesaj yığını. Her tool call bu yığına iki mesaj ekler.
+- **Tool call**: modelin host'tan bir tool'u çalıştırmasını istediği mesaj. Model yalnızca ister, kendisi yapmaz.
+- **Host**: fonksiyonlarını çalıştıran makine, yani dizüstü bilgisayarın ya da sunucun.
+- **Tool result**: host fonksiyonu çalıştırdıktan sonra, dönüş değeriyle birlikte yazdığı mesaj.
+- **Tool schema**: bir tool'un JSON ile yazılmış tanımı: adı, ne yaptığı ve argümanları.
+- **@tool decorator**: framework'ün şemayı fonksiyonun adından, docstring'inden ve type hint'lerinden üretmesini sağlayan dekoratör.
+- **Tool call ID**: tool result'u kendi tool call'ına bağlayan `id`.
+- **Arguments**: bir tool call'ın girdileri. Model bunları JSON içeren bir string olarak yazar, JSON nesnesi olarak değil.
+- **API wrapper**: zaten var olan bir API'nin üzerine yalnızca küçük bir katman ekleyen tool.
+- **Credentials**: tool'a verdiğin kimlik bilgileri. Bir tool, sahip olduğu kimlik bilgileri kadar güçlüdür.
+- **MCP**: tool'ları paketlemenin standart bir yolu. Paketlenen bir tool her agent'ta çalışır.
+
 ## Bu serinin neresindeyiz
 
 ```mermaid

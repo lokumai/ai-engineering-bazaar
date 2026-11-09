@@ -231,6 +231,23 @@ Hiçbir şey çekilmedi, pencereye de hiçbir şey eklenmedi. Model talimatı, d
 
 Bu, yapılacaklar listesinin de yaptığı şeydir ve recitation kelimesini hatırlamaya değmesinin nedeni de budur. İki teknik de **önemli olanı, modelin yazmak üzere olduğu yerin hemen yakınında tekrar söyleyerek** çalışır: yapılacaklar listesi planı, düşünce zinciri ise kısıtı tekrar eder. Model, yazmakta olduğu yere yakın duran ve birden fazla kez geçen metne daha fazla dikkat verir. Dolayısıyla model 800K token'da bile bir şeyi önemsemeye devam etsin istiyorsan, o şeyin bir yolla tekrar edilmesi gerekir; kendi haline bırakılırsa silikleşir. Düşünce zincirinin bir context engineering aracı olarak işlemesi budur. Üstelik bu modüldeki en ucuz araç: onu kurman gerekmez, yalnızca açman yeter.
 
+## Temel Terimler
+
+- **Sliding window**: geçmiş pencereyi aştığında en eski context'i atan yöntem.
+- **Context rot**: pencere dolmadan önce bile, context büyüdükçe görev kalitesinin düşmesi. Context pollution olarak da bilinir.
+- **Attention**: modelin pencerendeki her şeye paylaştırdığı sabit bütçe.
+- **Context engineering**: her turda, context'e neyin gireceğine ve neyin dışarıda kalacağına karar vermek.
+- **Compaction**: uzun bir context'i kendi özetiyle değiştirmek.
+- **Offloading**: bilgileri pencerenin dışındaki bir yere, çoğunlukla bir markdown dosyasına yazmak ve gerektiğinde geri okumak.
+- **Subagent**: kendi temiz context penceresi olan ve ana agent'a yalnızca sonucunu döndüren bir agent.
+- **Explicit planning**: adımları, her birinin durumunu gösteren bir TODO listesi olarak yazmak.
+- **Recitation**: hedefi modelin yazdığı yere yakın bir yerde tekrar etmek, mesela bir TODO listesinde.
+- **Knowledge cutoff**: bir modelin eğitim verisinin sona erdiği tarih.
+- **llms.txt**: bir sitenin ne olduğunu ve önemli sayfalarının nerede olduğunu söyleyen, `/llms.txt` adresindeki düz bir markdown dosyası.
+- **MCP**: Model Context Protocol; bir sunucu üzerinden agent'a araç vermenin standart yolu.
+- **Deep agent**: planlama, subagent'lar ve dosya sistemi olan, context engineering'in büyük kısmını kendisi yapan bir agent.
+- **Long-horizon task**: kimse izlemeden saatlerce süren bir görev.
+
 ## Bu serinin neresindeyiz
 
 ```mermaid

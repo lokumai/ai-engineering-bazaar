@@ -98,6 +98,22 @@ This is worth saying plainly, because engineers tend to skip it. For a lot of jo
 
 The trade-off is the usual one. You get speed now and less control later. If you move off the platform, you must build the application again. Know which of those you are buying.
 
+## Key Terms
+
+- **Agent framework**: the code around the agent loop, such as retries, streaming, tool schemas and memory.
+- **Agent loop**: a `while` loop around a model call, which runs whichever tool the model asks for.
+- **Tool schema**: a standard description of a tool, so you do not write its JSON by hand.
+- **LangGraph**: the runtime, and the lowest level of the three LangChain libraries.
+- **Graph**: an agent described as nodes (its steps) and edges (what can happen next).
+- **State**: explicit data that moves between steps, so the runtime can save it and resume from it.
+- **LangChain**: the main interface, which gives an ordinary agent from a model, tools and middleware.
+- **Middleware**: the layer where the harness work and the guardrails live.
+- **deepagents**: the highest level, built on the other two, with planning, a filesystem, subagents and summarisation.
+- **CodeAct**: agents that act by writing and running code, instead of sending JSON tool calls.
+- **AI workflow**: runs a fixed path that somebody wrote down, and code decides what happens next.
+- **AI agent**: decides its own path by picking the tools and their order, so each run can differ.
+- **MCP server**: the endpoint n8n runs, so a coding agent can connect and build workflows.
+
 ## Where this fits in the series
 
 ```mermaid

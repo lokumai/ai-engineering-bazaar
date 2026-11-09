@@ -96,6 +96,18 @@ The row that matters most is the source. When a model answers from its weights, 
 
 A non-parametric answer can be **cited**: the app can show the user the document the model had in front of it. This is one of the main reasons why [RAG](rag.md) usually beats fine-tuning. It is the better way to give a model your own documents.
 
+## Key Terms
+
+- **Parametric memory**: the knowledge that training stores in the model's weights. It is permanent, but imprecise at scale.
+- **Fine-tuning**: training a model on a set of documents. The information then stays in its weights.
+- **Working memory** (short-term memory): all the text inside the context window at this moment.
+- **Context window**: the space that holds working memory. Its size is limited, for example 200K or 1M tokens.
+- **Long-term memory**: a summary or index of past conversations and documents. It is stored outside the model and retrieved when needed.
+- **Stateless**: during generation, the model keeps no state. Each call is new and independent.
+- **Message stack**: the growing stack of every message exchanged so far. The app sends all of it on each call.
+- **RAG**: the method that retrieves stored text back into the context. It is often used for long-term memory.
+- **Non-parametric memory**: knowledge kept as text outside the weights. Working and long-term memory both belong to it.
+- **Citation**: the source document that an answer points to. Only non-parametric memory can provide one.
 
 ## Where this fits in the series
 

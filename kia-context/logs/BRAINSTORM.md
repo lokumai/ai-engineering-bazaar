@@ -9,7 +9,7 @@ description: >
 authority: reasoning
 writes: agent, when a decision is taken
 status: active
-covers: "D97 to D117 so far, and D89, which part 2 held for PR #57 — 2026-11-06 onward"
+covers: "D97 to D118 so far, and D89, which part 2 held for PR #57 — 2026-11-06 onward"
 last_updated: 2026-11-10
 ---
 
@@ -672,6 +672,25 @@ list view twelve at a time, and the line under the title and the "year · place"
 ## Open questions
 
 None open in this part yet. New ones go here, numbered after O5.
+
+### D118 · For Engineers modules end with Key Terms, the twin of Words You Now Know — 2026-11-10
+status: active
+
+A reader asked for a short summary to look back at in modules where concepts pile up. Each written For
+Engineers module now has `## Key Terms` (Turkish `## Temel Terimler`, Persian `## اصطلاح‌های کلیدی`)
+just before the series map: one bullet per core term, `- **Term**: one line`, precise but short, every
+fact from the module itself. The rule lives in `mini-courses/CLAUDE.md`.
+
+- **A heading of its own, not "Words You Now Know".** D109 keeps a shared heading identical across the
+  tracks only when the section is the same; this one is written for engineers, so it gets the name an
+  engineer would search for. Rejected: reusing the For Everyone heading (its plain-words promise does
+  not hold here), and "Glossary" (a glossary is the whole course's, this is one module's).
+- **A bullet list, not a table.** The reader wrote "tablo", but a two-column table of term and line
+  is the same content, and the bullet shape matches For Everyone's, reads on a phone and needs no
+  renderer change. Rejected: a markdown table.
+- **Before the series map, after the content.** The series map and References are navigation, so the
+  recap sits where the reading ends. Rejected: after References (it would follow the links out).
+- **No quiz or test change.** The section restates the module, so it adds no fact a quiz could ask.
 
 ---
 

@@ -176,6 +176,18 @@ repository. It is an agent loop with tools, context and a plan.
 starts it: Duet runs on its own computer in the cloud, watches the apps you connect, and comes to
 you with a brief every morning. [Personal Agents](personal_agents.md) covers it.)
 
+## Key Terms
+
+- **Project**: a context that you set up once and use again.
+- **Claude Code**: the coding agent in your terminal.
+- **Steering**: scoping the work, guiding a summary of the context, and rewinding a session that went wrong.
+- **Hooks**: configuration that enforces your rules.
+- **Headless mode**: running Claude Code in your own pipelines.
+- **Plugin**: the way to share a team setup as one package.
+- **Claude Cowork**: Claude working on your files, folders and apps. You start the work.
+- **Agent loop**: the structure that Cowork shares with Claude Code, made of tools, context and a plan.
+- **Claude Duet**: an agent that runs in the cloud, watches your connected apps, and brings a brief each morning.
+
 ## Where this fits in the series
 
 ```mermaid

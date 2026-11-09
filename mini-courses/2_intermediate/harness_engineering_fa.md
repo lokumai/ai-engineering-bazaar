@@ -170,6 +170,21 @@ harness Claude Code بازه، harness ![](./images/logos/deepseek.svg)[DeepSeek
 
 > **نکته:** این درس در حد اینکه harness چیه و چرا مهمه می‌مونه. [Advanced Harness Engineering](../3_expert/advanced_harness_engineering.md) سراغ profile‌های harness، harness‌هایی که خودشون رو تکامل می‌دن و این سوال می‌ره که چه مقدار از harness داره کم‌کم می‌ره توی خود مدل. مقاله‌ی Böckeler، یعنی [Harness engineering for coding agent users](https://martinfowler.com/articles/harness-engineering.html)، خیلی عمیق‌تر از اون دو تا دسته‌بندی بالا می‌ره و جای خوبیه برای ادامه دادن.
 
+## اصطلاح‌های کلیدی
+
+- **Hook**: یه shell command که به یه نقطه‌ی ثابت از زندگی agent وصله و اجرا می‌شه، چه مدل بخواد چه نخواد.
+- **Non-deterministic**: همون ورودی ممکنه توی اجرای بعدی یه جواب دیگه بده.
+- **Harness engineering**: طراحی اون لایه‌ی مکانیکی دور مدل که باعث می‌شه agent توی هر اجرا یه جور رفتار کنه.
+- **Agent harness**: خود agent، به‌اضافه‌ی لایه‌ی مکانیکی دورش، به‌اضافه‌ی محیطی که توش اجرا می‌شه.
+- **System prompt**: دستورهایی که agent قبل از شروع هر کاری می‌خونه. بیشترشون رو سازنده‌ی agent نوشته.
+- **Tool description**: متنی که مدل موقع تصمیم‌گیری برای صدا زدن یه tool می‌خونه. خودش یه prompt‌ه.
+- **Compaction**: وقتی context window داره پر می‌شه، harness محتوای قدیمی‌تر رو خلاصه می‌کنه تا agent بتونه ادامه بده.
+- **Continuation**: یه hook وقتی مدل زودتر از موعد وایسه جلوش رو می‌گیره و کار اصلی رو توی یه context window تازه دوباره بهش می‌ده.
+- **Guide**: چیزهایی که قبل از اینکه agent دست به کار بشه بهش گفته می‌شه، مثل system prompt، AGENTS.md، توضیح tool‌ها و برنامه‌ی تأییدشده.
+- **Sensor**: چیزی که بهش می‌گه کار چطور پیش رفته، مثل تست‌ها، linter‌ها، type check‌ها و خطاهای build.
+- **Computational check**: یه guide یا sensor که کد معمولی روی CPU اجراش می‌کنه. قطعیه و سریعه.
+- **Inferential check**: یه guide یا sensor که یه مدل اجراش می‌کنه. می‌تونه معنا رو بسنجه، ولی کندتره، گرون‌تره و نتیجه‌ش ممکنه از یه اجرا تا اجرای بعد فرق کنه.
+
 ## کجای این مجموعه هستیم
 
 ```mermaid

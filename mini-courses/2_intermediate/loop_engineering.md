@@ -160,6 +160,21 @@ Each new layer let the agent work for longer before a person had to step in. One
 
 None of the layers replaced the one before it. They stacked. That is why the whole series has been one drawing, with more parts added to it.
 
+## Key Terms
+
+- **Loop engineering**: designing loops that repeat automatically until the agent meets a defined goal.
+- **Stop condition**: the rule that decides when a loop stops. It is the most important part of the design.
+- **LLM loop**: the loop inside the model, which generates text one token at a time.
+- **Autoregressive**: a model that appends each token it generates to its input, then generates the next token.
+- **Agent loop**: the model calls a tool, reads the result, and repeats until it decides that the task is done.
+- **Verification loop**: a grader checks the work against criteria, and sends the feedback to the agent when the work is not good enough.
+- **Rubric**: a written list of what a good result looks like. A model call grades the work against it.
+- **Event-driven loop**: a schedule or a webhook decides when each run starts, and the stop condition is time-based.
+- **Autonomous loop**: a loop that keeps prompting the agent until the work meets the acceptance criteria.
+- **Acceptance criteria**: the checks that the work must pass, such as a passing test suite or a Lighthouse score above 90.
+- **Ralph loop**: a script that prompts the agent again and again, with one task per loop and a fresh context each time.
+- **Context rot**: a model gets worse at its task as its context grows.
+
 ## Where this fits in the series
 
 ```mermaid

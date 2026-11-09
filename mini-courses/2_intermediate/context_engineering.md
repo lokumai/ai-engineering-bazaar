@@ -402,6 +402,23 @@ at 800K tokens, something has to repeat it. Left alone, it fades. That is chain 
 as a context engineering tool. It is also the cheapest tool in this module: you do not build it,
 you turn it on.
 
+## Key Terms
+
+- **Sliding window**: the method that drops the oldest context when the history exceeds the window.
+- **Context rot**: the drop in task quality as the context grows, even before the window is full, also called context pollution.
+- **Attention**: the fixed budget that the model divides across everything in its window.
+- **Context engineering**: deciding what goes into the context and what stays out, on every turn.
+- **Compaction**: replacing a long context with a summary of itself.
+- **Offloading**: writing facts to a place outside the window, usually a markdown file, and reading them back when needed.
+- **Subagent**: an agent with its own clean context window, which returns only its conclusion to the main agent.
+- **Explicit planning**: writing the steps as a to-do list, with a state on each item.
+- **Recitation**: repeating the goal close to where the model writes, for example in a to-do list.
+- **Knowledge cutoff**: the date when the training data of a model ends.
+- **llms.txt**: a plain markdown file at `/llms.txt` that says what a site is and where its important pages are.
+- **MCP**: the Model Context Protocol, a standard way to give an agent tools through a server.
+- **Deep agent**: an agent with planning, subagents and a filesystem, which does most of the context engineering for you.
+- **Long-horizon task**: a task that runs for hours with no one watching the agent.
+
 ## Where this fits in the series
 
 ```mermaid

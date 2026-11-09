@@ -1597,9 +1597,10 @@ color change similar to the ones in catalog".* Why each choice was made, and wha
       region. A filter or a search goes back to page 1; a new page puts focus on the list's heading. The
       controls are the catalog's classes (`bz-filters`, `bz-chip`, `bz-viewtoggle`, its view icons, its
       count and empty state). Without a script every trend is listed and no control is shown.
-- [x] **Hover as the catalog's**: a card takes the catalog card's strong edge, a row the catalog table
-      row's sunken fill. The shadow and 2px lift first built for the author's first request were removed on
-      his second, with the DESIGN.md deviation and the test exemption they needed; nothing moves.
+- [x] **Hover as the catalog's**: a card takes the catalog card's strong edge (`.bz-catcard:hover`), a
+      row the sunken fill the language gives the rows of the catalog's Table view (`.bz-row:hover` in
+      `bazaar.css`). No shadow or lift was shipped: the author withdrew that request before the pull
+      request, so nothing was recorded for it in DESIGN.md or the tests. Nothing moves.
 - [x] **Tests.** `tests/e2e/caravan.spec.ts`: the whole caravan and strip in the window at 1280x720,
       1440x800 and 1440x900 with the leader at least 13.5% of the window's height and every rod pinned to
       its puppet and showing 20 px or more below the cloth; the head is the title and the year bar and no
@@ -1608,8 +1609,8 @@ color change similar to the ones in catalog".* Why each choice was made, and wha
       across the pages; a year keeps exactly the trends its span touches and goes back to page 1; the
       search reads the text in any case, and an empty result says so and clears; Cards and List with
       `aria-pressed`, keeping the page; hover changes a card's or a row's colour, and nothing moves or casts
-      a shadow. `tests/unit/caravan-browse.test.ts`: the filter, the pages, the count, and the first-paint
-      CSS agreeing with the page size.
+      a shadow. `tests/unit/caravan-browse.test.ts`: the filter, the pages and the count. (Extended after
+      review, below.)
 
 **Report, 2026-11-10.** MEASURED on the built export, against a build of `main` (`c567a08`) made in a
 scratch clone; the leader is its painted leather without the rod:
@@ -1638,6 +1639,71 @@ instead of 300 and the walk case expects more than 50 label-and-post comparisons
 Screenshots of the built page at 1440, 1280x720 and 390 (rest, walking, a year, Cards, a hovered card,
 List, page 2, the pager, a search, and dark) are in `playground/2026-11-round-5/shots-caravan-round2/` in
 the main checkout.
+
+**Review fixes, 2026-11-10**, after two Haiku reviews of PR #100:
+- The page's `description` no longer carries the removed sentence.
+- Every stop's name is kept on the cloth (`stops.ts` slides it in from either frame, 28 px from the
+  stage's edge); at 1280x720 "Open weights spread" had run over the right frame. The walk case checks
+  it at every step, and now runs at 1440x800 as well.
+- The controls and the paging wait for the list's own island (`data-cv-browse`), so a page whose
+  islands failed to load lists every trend with no dead control (D117); the first-paint cap of twelve
+  is gone, with its unit test.
+- The search lowercases with `toLowerCase`, not `toLocaleLowerCase`, so a Turkish-locale browser
+  finds "Interview".
+- A `#trend-<id>` address that does not decode is ignored; one on page 2 or later opens that page and
+  scrolls the trend into view.
+- The count's live region speaks once the count holds still for 500 ms.
+- The hover comments say where each rule comes from (the card's from `catalog.css`, the row's from the
+  language's `.bz-row:hover`, which the catalog's Table rows carry).
+- The scene's year group is named "Journey year", apart from the list's "Year".
+- List view has one rule under the filter bar, not two, and the filter bar takes the catalog's 20 px
+  padding.
+- A scene that throws on its first draw removes its listeners and reports failure.
+- The empty result names only the filters that are set.
+- The phone's caravan starts 28 px in, as the desktop's does: at 390 its rear camel had started 10 px
+  under the frame, which the new phone case found.
+
+New tests:
+- Unit: 12, 13, 24 and 25 trends, `pageCount(12)`, a search of spaces, and the Turkish I.
+- Browser:
+  - the islands never loading;
+  - the count said once per settled search;
+  - a link to a trend on page 2, with scroll anchoring off, as in Safari, and an address that does not
+    decode;
+  - the pager absent with one page;
+  - no two groups sharing a name;
+  - the caravan, its rods and every label in the window at 390.
+
+The walk's label-and-post floor is now each size's MEASURED count less a fifth: 105, 86 and 83
+comparisons at 1280x720, 1440x800 and 1440x900, so floors of 84, 68 and 66.
+
+Gate: typecheck clean; 1,530 unit tests; the build with its link gate (207 pages, 18,079 internal links)
+and bundle check; `out/api/` byte-identical to the `main` build except `index.json`'s `publishedAt`,
+the commit date. The caravan, responsive, accessibility, navigation and layout specs: 159 passed and 2
+skipped, on port 3111.
+
+**Mutations, each seen failing:**
+- `toLocaleLowerCase` again;
+- the query not split into words;
+- a page count of `floor + 1`;
+- labels not kept on the cloth (four cases);
+- the controls keyed on the early `data-cv-script` mark;
+- no announcement delay;
+- the hash not guarded;
+- no scroll after paging;
+- the hash never opening its page;
+- the pager drawn for one page;
+- both year groups named "Year";
+- the posts hidden (the walk's floor);
+- the phone caravan back at 16 px.
+
+**Two survivors were rewritten:**
+- A whitespace mutation that dropped the empty-word filter was equivalent (an empty word matches every
+  text), so the query's splitting was broken instead.
+- With scroll anchoring on, Chrome keeps the browser's own jump to the address in place, so the scroll
+  mutation passed; the case now turns anchoring off, which is Safari's behaviour, and the mutation fails.
+
+Screenshots re-shot in the same folder.
 
 ---
 

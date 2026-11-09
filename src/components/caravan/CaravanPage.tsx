@@ -74,7 +74,7 @@ export function CaravanPage({ view }: { view: CaravanView }) {
       <header className="cv-head">
         <h1 className="bz-display">Caravan</h1>
         <div className="cv-tools cv-scripted">
-          <div className="cv-years" role="group" aria-label="Year">
+          <div className="cv-years" role="group" aria-label="Journey year">
             {years.map((year) => (
               <button key={year} type="button" className="cv-year" data-cv-year={year} aria-current={year === firstYear ? 'true' : undefined}>
                 {year}

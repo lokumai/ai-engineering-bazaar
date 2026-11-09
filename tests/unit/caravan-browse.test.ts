@@ -1,6 +1,4 @@
-import { readFileSync } from 'node:fs'
-import { join } from 'node:path'
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 import { clampPage, countLabel, filterTrends, PAGE_SIZE, pageButtons, pageCount, pageOf } from '@/components/caravan/browse'
 
 /**
@@ -32,6 +30,26 @@ describe('filterTrends', () => {
     expect(filterTrends(list, { year: null, query: 'agents weights' })).toEqual([])
   })
 
+  it('treats a search of spaces as no search', () => {
+    expect(filterTrends(list, { year: null, query: '   \t ' })).toHaveLength(3)
+    expect(filterTrends(list, { year: 2023, query: '  ' }).map((t) => t.title)).toEqual(['Open weights', 'Retrieval'])
+  })
+
+  it('finds "Interview" when the browser lowercases the Turkish way', () => {
+    // A Turkish locale lowercases I to a dotless ı. The search must not depend on the locale, so
+    // `toLocaleLowerCase` is made to behave as it does under `tr` here, and the search still finds it.
+    const turkish = vi.spyOn(String.prototype, 'toLocaleLowerCase').mockImplementation(function (this: string) {
+      return this.replace(/I/g, 'ı').replace(/İ/g, 'i').toLowerCase()
+    })
+    try {
+      const talks = [trend('Interview season', 'Labs gave Interviews.', [2024])]
+      expect(filterTrends(talks, { year: null, query: 'interview' })).toHaveLength(1)
+      expect(filterTrends(talks, { year: null, query: 'INTERVIEW' })).toHaveLength(1)
+    } finally {
+      turkish.mockRestore()
+    }
+  })
+
   it('applies the year and the search together, in the list order', () => {
     expect(filterTrends(list, { year: 2023, query: 'chat' }).map((t) => t.title)).toEqual(['Retrieval'])
     expect(filterTrends(list, { year: 2026, query: 'chat' })).toEqual([])
@@ -46,6 +64,20 @@ describe('the pages', () => {
     expect(pageOf(found, 1)).toEqual(found.slice(0, PAGE_SIZE))
     expect(pageOf(found, 3)).toEqual(found.slice(PAGE_SIZE * 2))
     expect(pageCount(0)).toBe(1)
+  })
+
+  it('starts a second page at the thirteenth trend, and a third at the twenty-fifth', () => {
+    expect(pageCount(12)).toBe(1)
+    expect(pageCount(13)).toBe(2)
+    expect(pageCount(24)).toBe(2)
+    expect(pageCount(25)).toBe(3)
+    expect(pageOf(many(12), 1)).toHaveLength(12)
+    expect(pageOf(many(12), 2), 'a page past the last shows the last').toEqual(many(12))
+    expect(pageOf(many(13), 2)).toHaveLength(1)
+    expect(pageOf(many(24), 2)).toHaveLength(12)
+    expect(countLabel(2, 13)).toBe('Showing 13–13 of 13')
+    expect(countLabel(2, 24)).toBe('Showing 13–24 of 24')
+    expect(countLabel(1, 12)).toBe('Showing 1–12 of 12')
   })
 
   it('keeps a page number inside the pages there are', () => {
@@ -69,14 +101,5 @@ describe('the pages', () => {
     expect(pageButtons(9, 9)).toEqual([1, null, 8, 9])
     // A gap of one page is drawn as that page, never as an ellipsis standing for one number.
     expect(pageButtons(4, 9)).toEqual([1, 2, 3, 4, 5, null, 9])
-  })
-})
-
-describe('the first paint agrees with the page size', () => {
-  it('caravan.css hides from entry PAGE_SIZE + 1 before the list is taken over', () => {
-    const css = readFileSync(join(import.meta.dirname, '../../src/app/caravan.css'), 'utf8').replace(/\/\*[\s\S]*?\*\//g, '')
-    const found = [...css.matchAll(/\.cv-entries > li:nth-child\(n \+ (\d+)\)/g)].map((m) => Number(m[1]))
-    expect(found, 'caravan.css no longer hides the later pages before the island runs').toHaveLength(1)
-    expect(found[0]).toBe(PAGE_SIZE + 1)
   })
 })

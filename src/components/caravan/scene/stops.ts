@@ -46,6 +46,8 @@ interface Item {
 }
 
 const GAP = 6
+/** How far inside the stage a label keeps: the cloth starts 24 px in (`caravan.css`), and 4 px more. */
+const EDGE = 28
 
 export class Stops {
   private active: Item | null = null
@@ -178,16 +180,29 @@ export class Stops {
     if (this.active) this.placeCard()
   }
 
-  /** The shortest sideways slide that keeps a label off every obstacle; 0 when it already is. */
+  /**
+   * The shortest sideways slide that keeps a label on the cloth and off every obstacle.
+   *
+   * On the cloth: a stop near either edge has its label slid in until it clears the frame (`EDGE`),
+   * so a name is never cut by the frame or the window (M93's review: at 1280x720 a label ran over
+   * the right frame). Inside that, the shortest slide that clears every post; when none does, the
+   * label stays on the cloth and may meet a post rather than leave it.
+   */
   private clear(it: Item, obstacles: readonly Box[]): number {
+    const W = this.layer.clientWidth
+    const lo = EDGE - (it.sx - it.w / 2)
+    const hi = Math.max(lo, W - EDGE - (it.sx + it.w / 2))
+    const fit = (dx: number) => clamp(dx, lo, hi)
     const meets = (dx: number) => {
       const r = this.box(it, dx)
       return obstacles.some((o) => r.l < o.r + GAP && r.r > o.l - GAP && r.t < o.b && r.b > o.t)
     }
-    if (!meets(0)) return 0
+    const start = fit(0)
+    if (!meets(start)) return start
     const candidates = obstacles.flatMap((o) => [o.r + GAP - (it.sx - it.w / 2), o.l - GAP - (it.sx + it.w / 2)])
+      .map(fit)
       .sort((a, b) => Math.abs(a) - Math.abs(b))
-    return candidates.find((dx) => !meets(dx)) ?? 0
+    return candidates.find((dx) => !meets(dx)) ?? start
   }
 
   private preview(it: Item): void {

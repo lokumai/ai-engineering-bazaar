@@ -658,6 +658,14 @@ list view twelve at a time, and the line under the title and the "year · place"
   the current level. The view's state is `aria-pressed`, where the catalog uses a hidden `Showing`
   because its view is stamped on `<html>` before React runs; here React owns it. A card takes the catalog
   card's hover (the strong edge) and a row the catalog table row's (the sunken fill).
+- **The controls and the paging wait for the list's own island** (`data-cv-browse`), after a review of
+  PR #100. The first version showed them, and showed only the first page, as soon as the page's inline
+  script had marked `<html>`, so the list would not shrink when the island started. **Rejected,** that
+  first version: a page whose script ran but whose island did not (a chunk that failed to load, a
+  hydration error) showed dead controls and left every trend after the twelfth out of reach. Now such a
+  page lists every trend; the cost is that the list shortens to one page when the island starts, below
+  the scene and out of view on load. The count's live region speaks once the count holds still for half
+  a second, not on every key of a search.
 - **The place stays in the live region.** The row on screen is gone, on his word; a reader who picks a
   year still hears where the caravan is, so the places in `places.ts` stay.
 

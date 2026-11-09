@@ -911,15 +911,18 @@ its bar.
 **The list is browsed in the browser** (`TrendBrowser.tsx`, its rules in `browse.ts`, D117): a search
 of the title and the text, a year filter (a trend is under every year its span touches), a Cards and a
 List view, and twelve to a page after filtering, with Previous, Next, page numbers and a count in a
-live region; the controls are the catalog's own classes. Every entry stays in the page on every page,
-hidden or not, because the scene's card copies it; without a script none is hidden and no control is
-shown, and before the island runs `caravan.css` shows only the first page. The choices are not kept in
-the address. `tests/e2e/caravan.spec.ts` holds the page to its rules: the notice first under the
-trail, every trend in the page without a script and drawn as a stop, the whole caravan and strip in the
-window at load on a laptop with the puppets close and their rods showing below the cloth, the head
-without a place row, keyboard, wheel, drag and strip travel, the card's `aria-expanded` and focus, focus
-rings at 3:1, no puppet meeting a stop and no stop's name meeting a year's post along the whole road, a
-clean redraw on resize, no sideways scroll at 390px, instant movement under reduced motion, and the
+live region that speaks once the count holds still; the controls are the catalog's own classes. Every
+entry stays in the page on every page, hidden or not, because the scene's card copies it. The controls
+and the paging wait for the list's own island to mark it (`data-cv-browse`), so with no script, or with
+a script whose islands failed to load, every trend is listed and no control is shown. A
+`#trend-<id>` address opens the page that trend is on. Every stop's name is kept on the cloth. The
+choices are not kept in the address. `tests/e2e/caravan.spec.ts` holds the page to its rules: the
+notice first under the trail, every trend in the page without a script and drawn as a stop, the whole
+caravan and strip in the window at load on a laptop and a phone with the puppets close and their rods
+showing below the cloth, the head without a place row and no two groups of controls sharing a name,
+keyboard, wheel, drag and strip travel, the card's `aria-expanded` and focus, focus rings at 3:1, no
+puppet meeting a stop and no stop's name meeting a year's post or leaving the cloth along the whole
+road, a clean redraw on resize, no sideways scroll at 390px, instant movement under reduced motion, and the
 list's search, year, views, pages and hover.
 
 ---

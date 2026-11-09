@@ -126,7 +126,22 @@ export function initCaravan(root: HTMLElement, data: SceneData): (() => void) | 
     }, 200)
   }, { signal: ac.signal })
 
-  mount()
+  // A scene that throws while it is first drawn takes its listeners and its half-drawn stage with it
+  // and reports failure, so the island hides the journey (`data-cv-failed`) and leaves the list.
+  try {
+    mount()
+  } catch {
+    ac.abort()
+    window.clearTimeout(timer)
+    try {
+      unmount()
+    } catch {
+      current = null
+    }
+    stage.innerHTML = ''
+    stage.style.height = ''
+    return null
+  }
   root.dataset.cvReady = ''
   // A web font that arrives after the first fit can move the head; fit again once fonts settle.
   const fittedAt = stage.getBoundingClientRect().top + window.scrollY

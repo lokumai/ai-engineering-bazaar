@@ -69,7 +69,7 @@ interface Proportions {
 }
 
 const DESK: Proportions = { month: 260, amp: 56, puppet: 0.72, prop: 0.7, post: 0.8, landmark: 0.5, band: 46, ledge: 30, walk: 14, walkRise: 10, left: 28, ridge: 220, wide: 1100, most: 1.6 }
-const PHONE: Proportions = { month: 150, amp: 40, puppet: 0.5, prop: 0.5, post: 0.6, landmark: 0.36, band: 34, ledge: 22, walk: 12, walkRise: 8, left: 16, ridge: 150, wide: 340, most: 1.15 }
+const PHONE: Proportions = { month: 150, amp: 40, puppet: 0.5, prop: 0.5, post: 0.6, landmark: 0.36, band: 34, ledge: 22, walk: 12, walkRise: 8, left: 28, ridge: 150, wide: 340, most: 1.15 }
 
 /** What the stage keeps clear in pixels, whatever the zoom: the valance and a label over the tallest prop. */
 const TOP = 36
@@ -95,8 +95,9 @@ export function mountShadowPlay(stage: HTMLElement, months: readonly string[], n
   const p = ph ? PHONE : DESK
   const NM = months.length
   /* The stage's height is fitted to the window (`index.ts`), and the scene is drawn at the zoom
-     `g` that fits it (`zoomFor`): the art, the bands and the pace across the road all scale with
-     it, so a larger caravan meets props spaced for its size. Positions are measured from the
+     `g` that fits it (`zoomFor`): the art and the bands scale with it, and so does the pace across
+     the road above zoom 1 (`Math.max(1, g)`), so a larger caravan meets props spaced for its size
+     while a smaller one keeps the first build's pace. Positions are measured from the
      foot of the stage up, so a stage taller than the zoom needs has more sky, never a gap. */
   const H = stage.clientHeight
   const g = zoomFor(H, stage.clientWidth, ph)

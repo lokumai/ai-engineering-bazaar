@@ -183,6 +183,16 @@ test('the head is the title and the year bar, and a year\'s place is only announ
   }))
   expect(head.children).toEqual(['h1.bz-display', 'div.cv-tools'])
   expect(head.text, 'the head says more than the title and the years').toBe(`Caravan ${head.years}`)
+  // Two groups of year buttons, the journey's and the list's filter: a screen reader tells them
+  // apart by name, so no two groups on the page share one.
+  await page.locator('.cv-list[data-cv-browse]').waitFor({ state: 'attached' })
+  const groups = await page.getByRole('group').evaluateAll((nodes) => nodes.map((n) => {
+    const by = n.getAttribute('aria-labelledby')
+    return (by ? document.getElementById(by)?.textContent : n.getAttribute('aria-label'))?.trim().replace(/:$/, '') ?? ''
+  }))
+  const named = groups.filter((name) => name !== '')
+  expect(named.length).toBeGreaterThan(1)
+  expect(new Set(named).size, `two groups share a name: ${named.join(', ')}`).toBe(named.length)
   await page.locator('[data-cv-year]').last().click()
   await expect(page.locator('[data-cv-announce]')).toHaveText(/^\d{4} · \S/)
   const shown = await page.evaluate(() => [...document.querySelectorAll('main *')]
@@ -320,7 +330,7 @@ function boxes(page: Page) {
 
 const meet = (a: Rect, b: Rect) => a.l < b.r && a.r > b.l && a.t < b.b && a.b > b.t
 
-for (const viewport of [{ width: 1440, height: 900 }, { width: 1280, height: 720 }]) {
+for (const viewport of [{ width: 1440, height: 900 }, { width: 1440, height: 800 }, { width: 1280, height: 720 }]) {
   test(`along the whole road, no puppet meets a stop and no stop's name meets a year's post — ${viewport.width}x${viewport.height}`, async ({ page }) => {
     test.slow()
     await page.setViewportSize(viewport)
@@ -349,6 +359,10 @@ for (const viewport of [{ width: 1440, height: 900 }, { width: 1280, height: 720
         }
       }
       for (const label of now.labels) {
+        // On the cloth, which starts 24 px inside the stage: never over the frame or past the window.
+        if (label.l < stage.x + 24 - 0.5 || label.r > stage.x + stage.width - 24 + 0.5) {
+          clashes.add(`${label.what} leaves the cloth (${Math.round(label.l)}–${Math.round(label.r)}) at month ${now.thumb}`)
+        }
         for (const post of now.posts) {
           labelPostPairs += 1
           if (meet(label, post)) clashes.add(`${label.what} meets ${post.what} at month ${now.thumb}`)
@@ -362,9 +376,11 @@ for (const viewport of [{ width: 1440, height: 900 }, { width: 1280, height: 720
     expect(reached, 'the walk did not reach the end of the road').toBe(end)
     expect(samples, 'the walk took too few steps to see every stop pass').toBeGreaterThan(60)
     expect(puppetPairs, 'no puppet was compared with a stop').toBeGreaterThan(2000)
-    // 50, not the first build's 100: since M93 a month is up to 340 px, not 260, so fewer labels
-    // and posts are on the stage at once. Still far from none, which is what this guards.
-    expect(labelPostPairs, 'no label was compared with a year\'s post').toBeGreaterThan(50)
+    // MEASURED in M93 on the sample: 105 label-and-post comparisons at 1280x720, 86 at 1440x800 and
+    // 83 at 1440x900 (a month is wider at a larger zoom, so fewer posts share the stage with a label).
+    // The floor is each count less a fifth, so a walk that stops comparing fails.
+    const floor = ({ '1280x720': 84, '1440x800': 68, '1440x900': 66 } as Record<string, number>)[`${viewport.width}x${viewport.height}`]
+    expect(labelPostPairs, `${labelPostPairs} label-and-post comparisons, under ${floor}`).toBeGreaterThanOrEqual(floor)
     expect([...clashes]).toEqual([])
   })
 }
@@ -473,6 +489,35 @@ test('no sideways scroll at a phone width, at rest, with a stop open, and at the
   expect(await width()).toBeLessThanOrEqual(390)
 })
 
+test('at a phone width the whole caravan, its rods, every shown label and the strip are in the window at load', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 })
+  await open(page)
+  await expect.poll(async () => page.evaluate(() => {
+    const stage = document.querySelector('.cv-stage')!.getBoundingClientRect()
+    const strip = document.querySelector('.cv-scrub')!.getBoundingClientRect()
+    const cloth = document.querySelector('.cv-screen')!.getBoundingClientRect()
+    const bad: string[] = []
+    if (stage.left < 0 || stage.right > innerWidth) bad.push(`the stage spans ${stage.left}–${stage.right}`)
+    if (strip.bottom > innerHeight) bad.push(`the strip ends at ${strip.bottom}`)
+    const members = [...document.querySelectorAll('.cv-member')]
+    if (members.length < 4) bad.push(`${members.length} puppets`)
+    members.forEach((member, i) => {
+      const parts = [...member.querySelectorAll('.cv-puppet > :not(.cv-rod)')].map((el) => el.getBoundingClientRect())
+      const body = { l: Math.min(...parts.map((r) => r.left)), t: Math.min(...parts.map((r) => r.top)), b: Math.max(...parts.map((r) => r.bottom)) }
+      if (body.l < stage.left + 24 || body.t < stage.top + 32) bad.push(`puppet ${i} at ${Math.round(body.l)},${Math.round(body.t)}`)
+      // The first build drew the leader at 7.6% of an 844 px window; the zoom draws it at 9.5%.
+      if (i === 0 && body.b - body.t < innerHeight * 0.085) bad.push(`the leader is ${Math.round(body.b - body.t)} px tall`)
+      const rod = member.querySelector('.cv-rod')!.getBoundingClientRect()
+      if (Math.min(rod.bottom, stage.bottom) - cloth.bottom < 20) bad.push(`puppet ${i}'s rod barely shows below the cloth`)
+    })
+    for (const stop of document.querySelectorAll('.cv-stop:not(.is-off):not(.is-label-hidden) .cv-stop-lab')) {
+      const r = stop.getBoundingClientRect()
+      if (r.left < stage.left + 24 - 0.5 || r.right > stage.right - 24 + 0.5) bad.push(`"${stop.textContent}" leaves the cloth`)
+    }
+    return bad
+  }), { timeout: 5000 }).toEqual([])
+})
+
 test('under reduced motion the journey moves at once and nothing walks', async ({ page }) => {
   await page.emulateMedia({ reducedMotion: 'reduce' })
   await open(page)
@@ -508,7 +553,8 @@ async function openList(page: Page): Promise<{ total: number; size: number }> {
   return { total, size: (await shownTitles(page)).length }
 }
 
-const count = (page: Page) => page.locator('.cv-list .bz-filter-count[role="status"]')
+/** The count on screen; the live region that says it is `[data-cv-count]`. */
+const count = (page: Page) => page.locator('.cv-list .bz-filter-count')
 
 test('without a script every trend is listed and none of the controls are shown', async ({ browser }) => {
   const context = await browser.newContext({ javaScriptEnabled: false })
@@ -520,6 +566,84 @@ test('without a script every trend is listed and none of the controls are shown'
   await expect(bare.locator('.cv-filters')).toBeHidden()
   await expect(bare.locator('.cv-pages')).toBeHidden()
   await context.close()
+})
+
+test('when the page\'s inline script runs but its islands never load, every trend is listed and no control is shown', async ({ page }) => {
+  // The inline script marks `<html>` before paint; a chunk that fails to load leaves the islands
+  // unrun. The list must not trust the first mark: dead controls and trends 13 and on out of reach.
+  // Scripts only: the stylesheet is served from the same folder and must still load.
+  await page.route('**/_next/static/chunks/**/*.js', (route) => route.abort())
+  await page.goto(ROUTE)
+  await expect(page.locator('html[data-cv-script]')).toHaveCount(1)
+  const all = await page.locator('.cv-entries > li').count()
+  expect(all, 'the page lists no trend, so this checks nothing').toBeGreaterThan(0)
+  await expect(page.locator('.cv-entries > li:visible')).toHaveCount(all)
+  await expect(page.locator('.cv-filters')).toBeHidden()
+  await expect(page.locator('.cv-pages')).toBeHidden()
+})
+
+test('the count is announced once the search settles, not on every key', async ({ page }) => {
+  await openList(page)
+  const status = page.locator('.cv-list [role="status"][data-cv-count]')
+  await expect(status).toHaveText(await count(page).textContent() ?? '')
+  await status.evaluate((el) => {
+    const w = window as unknown as { cvSaid: string[] }
+    w.cvSaid = []
+    new MutationObserver(() => w.cvSaid.push(el.textContent ?? '')).observe(el, { childList: true, characterData: true, subtree: true })
+  })
+  // Five keys, a tenth of a second apart: each one changes the count on screen.
+  await page.getByRole('searchbox', { name: 'Search:' }).pressSequentially('agent', { delay: 100 })
+  await page.waitForTimeout(900)
+  const said = await page.evaluate(() => (window as unknown as { cvSaid: string[] }).cvSaid)
+  expect(said.length, `the live region spoke ${said.length} times: ${said.join(' | ')}`).toBe(1)
+  await expect(status).toHaveText((await count(page).textContent())!)
+})
+
+test('a link to a trend on a later page opens that page and brings the trend into view', async ({ page }) => {
+  await openList(page)
+  const ids = await page.locator('.cv-entries > li .cv-entry').evaluateAll((nodes) => nodes.map((n) => n.id))
+  test.skip(ids.length <= 12, 'every trend is on the first page')
+  // The first trend of page 2: before the list is paged it is the thirteenth, under twelve others.
+  const id = ids[12]
+  const errors: string[] = []
+  page.on('pageerror', (error) => errors.push(error.message))
+  // Chrome keeps the browser's own jump to the address in place while the entries above it are
+  // hidden (scroll anchoring); Safari has no scroll anchoring. Turned off here, as in Safari, so
+  // the case sees whether the list itself brings the trend back into view.
+  await page.addInitScript(() => {
+    document.addEventListener('DOMContentLoaded', () => {
+      const style = document.createElement('style')
+      style.textContent = '* { overflow-anchor: none !important; }'
+      document.head.append(style)
+    })
+  })
+  await page.goto('about:blank')
+  await page.goto(`${ROUTE}#${id}`)
+  await page.locator('.cv-list[data-cv-browse]').waitFor({ state: 'attached' })
+  await expect(page.getByRole('button', { name: 'Page 2', exact: true })).toHaveAttribute('aria-current', 'page')
+  await expect(page.locator(`#${id}`)).toBeVisible()
+  await expect.poll(() => page.locator(`#${id}`).evaluate((el) => {
+    const top = el.getBoundingClientRect().top
+    return top >= 0 && top < innerHeight / 3
+  }), { message: 'the trend is not near the top of the window' }).toBe(true)
+  // An address that does not decode is ignored rather than breaking the list.
+  await page.goto('about:blank')
+  await page.goto(`${ROUTE}#trend-50%`)
+  await page.locator('.cv-list[data-cv-browse]').waitFor({ state: 'attached' })
+  await expect(count(page)).toHaveText(`Showing 1–12 of ${ids.length}`)
+  expect(errors).toEqual([])
+})
+
+test('the pager is shown only when there is more than one page', async ({ page }) => {
+  const { total } = await openList(page)
+  await expect(page.locator('.cv-pages')).toHaveCount(total > 12 ? 1 : 0)
+  // A search for one trend's whole title leaves one page.
+  const title = (await page.locator('.cv-entries > li .cv-entry-title').first().textContent())!
+  await page.getByRole('searchbox', { name: 'Search:' }).fill(title)
+  const shown = (await shownTitles(page)).length
+  expect(shown, 'the search for a whole title found nothing').toBeGreaterThan(0)
+  expect(shown).toBeLessThanOrEqual(12)
+  await expect(page.locator('.cv-pages')).toHaveCount(0)
 })
 
 test('twelve trends to a page, Previous and Next disabled at the ends, the count, and focus at the heading', async ({ page }) => {
@@ -660,9 +784,11 @@ async function hoverOf(page: Page) {
   return { rest, hover: await read() }
 }
 
-test('a card and a row change colour under the pointer, as the catalog\'s do, and neither moves', async ({ page }) => {
+test('a card and a row change colour under the pointer, and neither moves', async ({ page }) => {
   // M93, the author: "no need for shadow or 2px lift. but at least each card should get color
-  // change or border color change similar to the ones in catalog".
+  // change or border color change similar to the ones in catalog". The card takes the catalog
+  // card's strong edge (`.bz-catcard:hover`); the row takes the sunken fill the language gives the
+  // rows of the catalog's Table view (`.bz-row:hover` in `bazaar.css`).
   await openList(page)
   for (const view of ['Cards', 'List']) {
     await page.locator('.cv-list .bz-viewbtn', { hasText: view }).click()

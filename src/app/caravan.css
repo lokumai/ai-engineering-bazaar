@@ -336,9 +336,12 @@
     filter: saturate(1.35) contrast(1.05);
   }
 
-  /* A rod is a stick: a dark edge under a light core, a fixed width whatever
-     the zoom, so it reads on the lit cloth and on the dark ledge (M93). The
-     selectors carry `.cv-caravan` to outrank the leather rule above. */
+  /* A rod is a stick: a light core (`--caravan-rod`) inside an edge of the
+     leather's colour (`--caravan-hide`), a fixed width whatever the zoom, so it
+     reads on the lit cloth and on the ledge below it (M93). Both are the
+     theatre's palette, which is the same in the site's two themes, so the rods
+     look the same in dark. The selectors carry `.cv-caravan` to outrank the
+     leather rule above. */
   .cv-caravan .cv-rod,
   .cv-caravan .cv-rod-core {
     fill: none;
@@ -607,23 +610,24 @@
      (`TrendBrowser.tsx`). The filter bar, its chips, the view toggle, the
      count and the empty state are the catalog's own classes from
      `catalog.css`; the two sizes that sheet reads from the catalog's root are
-     given here for this one, and nothing below restyles a chip. */
+     given here for this one, with the catalog's values, and nothing below
+     restyles a chip. */
   .cv-list {
-    --bz-filter-pad: 16px;
+    --bz-filter-pad: 20px;
     --bz-control: 33px;
   }
 
-  /* The controls work only with a script; without one every trend is listed. */
-  html:not([data-cv-script]) .cv-js {
+  /* The controls are shown only once the list's own island has run and set
+     `data-cv-browse`: not on the page's early `data-cv-script` mark, which a
+     page whose island failed to load also carries, and where the controls
+     would be dead. Without the island every trend is listed. */
+  .cv-list:not([data-cv-browse]) .cv-js {
     display: none;
   }
 
-  /* Where a script will run, the first page only, until the island takes the
-     list over and hides the rest itself: so the list never shrinks under the
-     reader. 13 is `PAGE_SIZE` + 1 (`components/caravan/browse.ts`), which
-     `tests/unit/caravan-browse.test.ts` holds. */
-  html[data-cv-script] .cv-list:not([data-cv-browse]) .cv-entries > li:nth-child(n + 13) {
-    display: none;
+  /* An entry a `#trend-<id>` address scrolls to clears the site's sticky bar. */
+  .cv-entry {
+    scroll-margin-top: calc(var(--layout-bar) + var(--layout-band) + 12px);
   }
 
   .cv-filters {
@@ -695,10 +699,11 @@
   }
 
   /* -- List: the same entries as rows -------------------------------------- */
+  /* No rule of its own on top: the filter bar's hairline above is the list's
+     first rule, and a second one there drew a double line. */
   .cv-list[data-cv-view="list"] .cv-entries {
     grid-template-columns: minmax(0, 1fr);
     gap: 0;
-    border-top: 1px solid var(--color-line);
   }
 
   .cv-list[data-cv-view="list"] .cv-entry {
@@ -734,9 +739,12 @@
   /* -- under the pointer, as the catalog's do ------------------------------
      The author: "no need for shadow or 2px lift. but at least each card
      should get color change or border color change similar to the ones in
-     catalog". So a card takes the catalog card's hover (`.bz-catcard:hover`,
-     the strong edge) and a row the catalog table row's (`.bz-row:hover`, the
-     sunken fill), with the same tokens. Nothing moves and nothing eases. */
+     catalog". So a card takes the catalog card's hover (`.bz-catcard:hover`
+     in `catalog.css`, the strong edge). A row takes the hover of the rows in
+     the catalog's Table view: those are `.bz-row` (`components/sheet/
+     ModuleRow.tsx`), whose hover the language itself declares
+     (`.bz-row:hover` in `src/design/bazaar.css`, the sunken fill). The same
+     tokens, and nothing moves or eases. */
   .cv-list[data-cv-view="cards"] .cv-entry:hover {
     border-color: var(--color-line-strong);
   }

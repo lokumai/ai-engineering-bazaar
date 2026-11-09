@@ -10,7 +10,7 @@
  * its start to the road's end.
  */
 
-/** Trends on one page. `caravan.css` repeats it once, as `nth-child(n + 13)`, for the first paint. */
+/** Trends on one page. */
 export const PAGE_SIZE = 12
 
 export interface Browsable {
@@ -26,13 +26,17 @@ export interface Choice {
   query: string
 }
 
-/** The trends a choice keeps, in their order: in the year, and with every word of the search in the title or the text. */
+/**
+ * The trends a choice keeps, in their order: in the year, and with every word of the search in the
+ * title or the text. `toLowerCase`, never `toLocaleLowerCase`: in a browser set to Turkish the
+ * latter turns "Interview" into "ınterview", with a dotless i, and a search for "interview" misses.
+ */
 export function filterTrends<T extends Browsable>(trends: readonly T[], choice: Choice): T[] {
-  const words = choice.query.toLocaleLowerCase().split(/\s+/).filter((word) => word !== '')
+  const words = choice.query.toLowerCase().split(/\s+/).filter((word) => word !== '')
   return trends.filter((trend) => {
     if (choice.year !== null && !trend.years.includes(choice.year)) return false
     if (words.length === 0) return true
-    const haystack = `${trend.title}\n${trend.text}`.toLocaleLowerCase()
+    const haystack = `${trend.title}\n${trend.text}`.toLowerCase()
     return words.every((word) => haystack.includes(word))
   })
 }

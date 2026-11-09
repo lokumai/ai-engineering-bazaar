@@ -77,13 +77,13 @@ AgentRouter کیف پولت دستشه و هر call‌ی که ازش رد می�
 ## اصطلاح‌های کلیدی
 
 - **Inference provider**: شرکتی که مدل رو روی سخت‌افزار خودش اجرا می‌کنه و دسترسی بهش رو به ازای هر token اجاره می‌ده.
-- **Gateway** (router): یه در جلوی کلی provider‌ها، با یه key و یه شکل API.
+- **Gateway (router)**: یه در جلوی کلی provider‌ها، با یه key و یه شکل API.
 - **Failover**: وقتی یه provider قطع می‌شه، درخواست رو به یه provider دیگه می‌فرستی.
 - **Prompt caching**: provider یه system prompt طولانی و ثابت رو cache می‌کنه، پس هر بار تکرارش فقط کسری از قیمت رو ازت می‌گیره.
 - **Batch endpoint**: یه endpoint مخصوص کارهای batch، که با تخفیف ارائه می‌شه.
 - **Rate limit**: سقف تعداد درخواست و token توی هر دقیقه.
 - **Time to first token**: مدت زمان تا رسیدن اولین token؛ همون چیزیه که توی چت موقع منتظر موندن حس می‌کنی.
-- **Output limit**: سقف طول یه جواب. این محدودیت از context window جداست.
+- **Output limit**: سقف طول یه جواب، که از context window جداست.
 - **Data policy**: این‌که provider prompt‌هات رو نگه می‌داره یا نه، تا کِی، و اجازه داره باهاشون مدل train کنه یا نه.
 - **Quantization**: سطح precision که فروشنده باهاش مدل رو serve می‌کنه؛ هرچی فشرده‌سازی شدیدتر باشه، کیفیت بیشتری از دست می‌ره.
 - **Free tier**: ظرفیت رایگان با سقف روزانه؛ کندتره و rate limit‌های سخت‌گیرانه‌تری داره.

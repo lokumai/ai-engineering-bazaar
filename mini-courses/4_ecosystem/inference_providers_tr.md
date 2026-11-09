@@ -77,13 +77,13 @@ Aşağıdaki iki yolun da günlük sınırları olan bir ücretsiz katmanı var 
 ## Temel Terimler
 
 - **Inference provider**: modeli kendi donanımında çalıştıran ve token başına erişimini sana kiralayan şirket.
-- **Gateway** (router): birçok provider'ın önünde duran, tek key ve tek API şekli sunan katman.
+- **Gateway (router)**: birçok provider'ın önünde duran, tek key ve tek API şekli sunan katman.
 - **Failover**: bir provider kesintiye uğradığında isteği başka bir provider'a göndermek.
 - **Prompt caching**: uzun ve değişmeyen bir system prompt'u provider'ın önbelleğe alması, böylece her tekrar fiyatın küçük bir kısmıyla ücretlendirilir.
 - **Batch endpoint**: batch işler için sunulan, indirimli bir provider endpoint'i.
 - **Rate limit**: dakikada gönderebileceğin istek ve token sayısının üst sınırı.
 - **Time to first token**: ilk token gelene kadar geçen süre; bir sohbette insanın beklerken hissettiği süre budur.
-- **Output limit**: tek bir cevabın uzunluğuna konan üst sınır. Bu sınır context window'dan ayrıdır.
+- **Output limit**: tek bir cevabın uzunluğuna konan, context window'dan ayrı üst sınır.
 - **Data policy**: provider'ın prompt'larını saklayıp saklamadığı, ne kadar süre sakladığı ve bunlarla model eğitip eğitmediği.
 - **Quantization**: bir satıcının modeli sunduğu hassasiyet (precision) düzeyi; daha agresif ayarlar kaliteden ödün verir.
 - **Free tier**: günlük sınırları olan ücretsiz kapasite; ücretli katmandan daha yavaştır ve daha sıkı rate limit'lere sahiptir.

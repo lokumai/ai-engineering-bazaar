@@ -328,18 +328,18 @@ Bu, mikser benzetmesine geri dönüyor. "Bir güvenlik uzmanı gibi davran" dedi
 ## Temel Terimler
 
 - **Prompt engineering**: modelin beklediğin çıktıya ulaşmasını sağlayan bir girdi yazmak.
-- **Context**: modelin bir sonraki token'ı tahmin etmek için okuduğu girdi. Prompt'un kendisi bu context'tir.
+- **Context**: modelin bir sonraki token'ı tahmin etmek için okuduğu girdidir ve prompt'un kendisi bu context'tir.
 - **Prompt template**: Goal, Output Format, Warnings ve Context gibi adlandırılmış parçalardan oluşan bir şablon.
 - **In-context learning (ICL)**: model, ağırlıklarında olmayan bir şeyi context'indeki bilgiden öğrenir.
 - **Few-shot prompting**: asıl görevden önce modele görevin birkaç doğru örneğini göstermek.
 - **Zero-shot**: hiç örnek içermeyen bir prompt.
 - **Prompt structure**: modele hangi metnin talimat, hangisinin veri, hangisinin hedef ve hangisinin çıktı tarifi olduğunu gösteren bölümler.
-- **Prompt injection**: talimatlarınla prompt'a yapıştırılan metin arasındaki aynı karışıklık, ama bu metin düşmanca olduğunda.
-- **Chain of thought**: modelin nihai cevaptan önce ara adımları yazması; bu, cevabı daha iyi yapar.
+- **Prompt injection**: prompt'a yapıştırılan düşmanca bir metindeki talimatın, modelce senin talimatın sanılması.
+- **Chain of thought**: modelin nihai cevaptan önce ara adımları yazması, bu da cevabı daha iyi yapar.
 - **Autoregressive**: modelin yazdığı her token'ın, bir sonraki token için okuduğu girdinin parçası olması.
-- **Effort**: modelin cevap vermeden önce ne kadar düşüneceğini belirleyen ayar; `low`'dan `max`'a kadar.
+- **Reasoning effort**: modelin cevap vermeden önce ne kadar düşüneceğini belirleyen, `low`'dan `max`'a kadar uzanan ayar.
 - **Role prompting**: görevden önce modele bir iş, bir persona ya da bir karakter vermek.
-- **System prompt**: context'in en üstündeki talimatlar. Geliştirici yazar ve tüm konuşma boyunca modelin davranışını belirler.
+- **System prompt**: context'in en üstündeki, geliştiricinin yazdığı ve tüm konuşma boyunca modelin davranışını belirleyen talimatlar.
 
 ## Bu serinin neresindeyiz
 

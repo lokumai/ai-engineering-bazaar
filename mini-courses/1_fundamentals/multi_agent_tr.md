@@ -169,19 +169,19 @@ Tek bir prompt hâlâ rahatça sığıyorsa ve tool listesi kolay yönetilebiliy
 ## Temel Terimler
 
 - **Agent**: tek bir döngü, tek bir system prompt ve tek bir tool seti.
-- **Multi-agent system**: işi birden fazla agent arasında bölen bir sistem. Her agent'ın kısa bir prompt'u ve tek bir işi vardır.
+- **Multi-agent system**: işi birden fazla agent arasında bölen, her agent'ın kısa bir prompt'u ve tek bir işi olan bir sistem.
 - **Supervisor**: isteği alan, işi devreden, sonuçları toplayan ve kullanıcıya yanıt veren agent.
-- **Worker**: supervisor'ın iş devrettiği agent. Yalnızca kendi supervisor'ı ile konuşur.
-- **Network**: patronun olmadığı bir tasarım. Her agent işi diğer herhangi bir agent'a devredebilir. Swarm olarak da anılır.
+- **Worker**: supervisor'ın iş devrettiği bir agent'tır ve yalnızca kendi supervisor'ı ile konuşur.
+- **Network**: patronun olmadığı, her agent'ın işi diğer herhangi bir agent'a devredebildiği bir tasarım ve swarm olarak da anılır.
 - **Coordination**: kimin ne yapacağına, işlerin hangi sırayla yapılacağına ve bir adımın bittiğinin nasıl anlaşılacağına karar vermek.
 - **Deadlock**: agent'ların birbirini sonsuza kadar beklediği bir durum.
-- **Subagent**: bir agent'ın başlattığı, kısa ömürlü bir yardımcı. Kendi izole context'i vardır ve ana agent yalnızca sonuçlarını tutar.
+- **Subagent**: bir agent'ın başlattığı, kendi izole context'i olan kısa ömürlü bir yardımcıdır ve ana agent yalnızca sonuçlarını tutar.
 - **Context transfer**: bir agent'ın bir sonrakine aktardığı bilgi.
-- **Shared context**: bütün agent'lar her şeyi görür. Devirde hiçbir şey kaybolmaz, ama context hızla büyür.
-- **Isolated context**: her agent yalnızca kendisine gelen bilgiyi görür. Ucuz ve odaklıdır, ama devirde atlanan her şey kaybolur.
+- **Shared context**: bütün agent'lar her şeyi gördüğü için devirde hiçbir şey kaybolmaz, ama context hızla büyür.
+- **Isolated context**: her agent yalnızca kendisine gelen bilgiyi gördüğü için bu yapı ucuz ve odaklıdır, ama devirde atlanan her şey kaybolur.
 - **Agent2Agent Protocol (A2A)**: hangi framework ile yazılmış olursa olsun agent'ların birbiriyle konuşmasını sağlayan açık bir standart.
-- **Agent Card**: bir agent'ın kendisi hakkında yayınladığı tanıtım kartı: adı, skill'leri, adresi ve authentication bilgisi. Agent bu kartı `/.well-known/agent-card.json` adresinde sunar.
-- **Inter-organisation barrier**: farklı şirketlere ya da framework'lere ait agent'ların birbiriyle konuşamadığı durumdaki engel.
+- **Agent Card**: bir agent'ın adı, skill'leri, adresi ve authentication bilgisini içeren ve `/.well-known/agent-card.json` adresinde sunulan tanıtım kartı.
+- **Inter-organisation barrier**: farklı şirketlere ya da framework'lere ait agent'ların birbiriyle konuşamamasından doğan engel.
 
 ## Bu serinin neresindeyiz
 

@@ -98,16 +98,16 @@ A non-parametric answer can be **cited**: the app can show the user the document
 
 ## Key Terms
 
-- **Parametric memory**: the knowledge that training stores in the model's weights. It is permanent, but imprecise at scale.
-- **Fine-tuning**: training a model on a set of documents. The information then stays in its weights.
-- **Working memory** (short-term memory): all the text inside the context window at this moment.
-- **Context window**: the space that holds working memory. Its size is limited, for example 200K or 1M tokens.
-- **Long-term memory**: a summary or index of past conversations and documents. It is stored outside the model and retrieved when needed.
-- **Stateless**: during generation, the model keeps no state. Each call is new and independent.
-- **Message stack**: the growing stack of every message exchanged so far. The app sends all of it on each call.
-- **RAG**: the method that retrieves stored text back into the context. It is often used for long-term memory.
-- **Non-parametric memory**: knowledge kept as text outside the weights. Working and long-term memory both belong to it.
-- **Citation**: the source document that an answer points to. Only non-parametric memory can provide one.
+- **Parametric memory**: the knowledge that training stores in the model's weights, which is permanent but imprecise at scale.
+- **Fine-tuning**: training a model on a set of documents, so that the information stays in its weights.
+- **Working memory (short-term memory)**: all the text inside the context window at this moment.
+- **Context window**: the space that holds working memory, which has a limited size, for example 200K or 1M tokens.
+- **Long-term memory**: a summary or index of past conversations and documents, stored outside the model and retrieved when needed.
+- **Stateless**: during generation, the model keeps no state, so each call is new and independent.
+- **Message stack**: the growing stack of every message exchanged so far, which the app sends in full on each call.
+- **RAG**: the method that retrieves stored text back into the context, often for long-term memory.
+- **Non-parametric memory**: knowledge kept as text outside the weights, and both working memory and long-term memory belong to it.
+- **Citation**: the source document that an answer points to, which only non-parametric memory can provide.
 
 ## Where this fits in the series
 

@@ -88,16 +88,16 @@ working memory و long-term memory یه چیز مشترک دارن: توی هر 
 
 ## اصطلاح‌های کلیدی
 
-- **Parametric memory**: چیزی که training توی weight‌های مدل ذخیره می‌کنه. دائمیه، ولی وقتی حجمش بالا بره دقیق نیست.
-- **Fine-tuning**: یه مدل رو روی یه مجموعه سند train می‌کنی. اطلاعات بعدش توی weight‌های مدل می‌مونه.
-- **Working memory** (short-term memory): کل متنی که همین الان توی context window مدله.
-- **Context window**: جایی که working memory توشه. حجمش محدوده، مثلاً 200K یا 1M token.
-- **Long-term memory**: خلاصه یا index از گفتگوها و سندهای قبلی. بیرون از مدل ذخیره می‌شه و وقتی لازم شد برمی‌گرده.
-- **Stateless**: موقع generation، LLM هیچ state‌ای نگه نمی‌داره. هر call جدا و مستقله.
-- **Message stack**: stack از همه‌ی پیام‌هایی که تا حالا رد و بدل شدن. هر call کل stack رو دوباره می‌فرسته.
-- **RAG**: روشی که متن ذخیره‌شده رو دوباره توی context برمی‌گردونه. برای long-term memory معمولاً ازش استفاده می‌کنیم.
-- **Non-parametric memory**: دانشی که بیرون از weight‌ها و به شکل متن نگه داشته می‌شه. working memory و long-term memory هر دو توی این دسته‌ان.
-- **Citation**: سندی که یه جواب بهش استناد می‌کنه. فقط non-parametric memory می‌تونه همچین سندی رو نشون بده.
+- **Parametric memory**: چیزی که training توی weight‌های مدل ذخیره می‌کنه، که دائمیه ولی وقتی حجمش بالا بره دقیق نیست.
+- **Fine-tuning**: یه مدل رو روی یه مجموعه سند train می‌کنی تا اطلاعات بعدش توی weight‌های مدل بمونه.
+- **Working memory (short-term memory)**: کل متنی که همین الان توی context window مدل هست.
+- **Context window**: جایی که working memory توشه و حجمش محدوده، مثلاً 200K یا 1M token.
+- **Long-term memory**: خلاصه یا index از گفتگوها و سندهای قبلی که بیرون از مدل ذخیره می‌شه و وقتی لازم شد برمی‌گرده.
+- **Stateless**: موقع generation، LLM هیچ state‌ای نگه نمی‌داره و هر call جدا و مستقله.
+- **Message stack**: stack از همه‌ی پیام‌هایی که تا حالا رد و بدل شدن؛ هر call کل stack رو دوباره می‌فرسته.
+- **RAG**: روشی که متن ذخیره‌شده رو دوباره توی context برمی‌گردونه و معمولاً برای long-term memory ازش استفاده می‌کنیم.
+- **Non-parametric memory**: دانشی که بیرون از weight‌ها و به شکل متن نگه داشته می‌شه؛ working memory و long-term memory هر دو توی همین دسته‌ان.
+- **Citation**: سندی که یه جواب بهش استناد می‌کنه و فقط non-parametric memory می‌تونه همچین سندی رو نشون بده.
 
 ## کجای این مجموعه هستیم
 

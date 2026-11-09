@@ -192,16 +192,16 @@ Other frameworks solve the same problem in different ways:
 ## Key Terms
 
 - **Agent**: a loop in which an LLM calls tools until it reaches its goal.
-- **Agent loop** (observe, decide, act): one model call, one tool run and one result, repeated until the loop ends.
-- **Single-turn LLM**: a model call with one input and one output. Then the call is finished.
-- **Multi-turn agent**: the same model, called again and again. It can ask for a tool each time.
-- **Termination condition**: the absence of a tool call. When the model calls no tool, the loop breaks.
+- **Agent loop (observe, decide, act)**: one model call, one tool run and one result, repeated until the loop ends.
+- **Single-turn LLM**: a model call with one input and one output, after which the work is done.
+- **Multi-turn agent**: the same model, called again and again, and able to ask for a tool each time.
+- **Termination condition**: the absence of a tool call, which breaks the loop.
 - **Autonomy**: how much of the deciding you hand over to the model: the steps, the tools and when to stop.
-- **Fixed workflow** (state machine): steps and their order that you write. The model fills in each step.
-- **Host**: the machine, such as your laptop or server, that runs the loop and the tools. None of this runs inside the LLM.
-- **Message stack**: the list of messages that the loop keeps and grows. It is the agent's memory.
+- **Fixed workflow (state machine)**: steps and their order that you write, with the model filling in each step.
+- **Host**: the machine, such as your laptop or server, that runs the loop and the tools rather than the LLM.
+- **Message stack**: the list of messages that the loop keeps and grows, which is the agent's memory.
 - **Framework**: code, such as smolagents or LangChain, that writes the loop's boilerplate once.
-- **System prompt**: the instructions that the host rebuilds and sends before every call. It holds the agent's role and the tools.
+- **System prompt**: the instructions that the host rebuilds and sends before every call, holding the agent's role and the tools.
 
 ## Where this fits in the series
 

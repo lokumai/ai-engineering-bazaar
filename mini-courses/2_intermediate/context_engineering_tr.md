@@ -234,18 +234,21 @@ Bu, yapılacaklar listesinin de yaptığı şeydir ve recitation kelimesini hat�
 ## Temel Terimler
 
 - **Sliding window**: geçmiş pencereyi aştığında en eski context'i atan yöntem.
-- **Context rot**: pencere dolmadan önce bile, context büyüdükçe görev kalitesinin düşmesi. Context pollution olarak da bilinir.
-- **Attention**: modelin pencerendeki her şeye paylaştırdığı sabit bütçe.
+- **Context rot**: pencere dolmadan önce bile, context büyüdükçe görev kalitesinin düşmesi; buna context pollution da denir.
+- **Attention**: modelin, bir sonraki token için girdinin hangi parçalarının önemli olduğunu seçtiği, pencereye paylaştırılan sabit bütçeli mekanizma.
+- **Needle in a haystack**: uzun bir metnin içine tek bir bilgi gizleyip modelden onu bulmasını isteyen test.
 - **Context engineering**: her turda, context'e neyin gireceğine ve neyin dışarıda kalacağına karar vermek.
 - **Compaction**: uzun bir context'i kendi özetiyle değiştirmek.
 - **Offloading**: bilgileri pencerenin dışındaki bir yere, çoğunlukla bir markdown dosyasına yazmak ve gerektiğinde geri okumak.
+- **Long-term memory**: saklanmaya değer şeylerin bir indeksi; context özetlendikten sonra bile agent bunların içinde arama yapabilir.
 - **Subagent**: kendi temiz context penceresi olan ve ana agent'a yalnızca sonucunu döndüren bir agent.
 - **Explicit planning**: adımları, her birinin durumunu gösteren bir TODO listesi olarak yazmak.
 - **Recitation**: hedefi modelin yazdığı yere yakın bir yerde tekrar etmek, mesela bir TODO listesinde.
 - **Knowledge cutoff**: bir modelin eğitim verisinin sona erdiği tarih.
 - **llms.txt**: bir sitenin ne olduğunu ve önemli sayfalarının nerede olduğunu söyleyen, `/llms.txt` adresindeki düz bir markdown dosyası.
-- **MCP**: Model Context Protocol; bir sunucu üzerinden agent'a araç vermenin standart yolu.
+- **MCP**: Model Context Protocol; bir sunucu üzerinden agent'a araç vermenin bir yolu.
 - **Deep agent**: planlama, subagent'lar ve dosya sistemi olan, context engineering'in büyük kısmını kendisi yapan bir agent.
+- **Time horizon**: bir modelin yaklaşık yarısında başarıyla tamamladığı görevleri bir insanın ne kadar sürede yapacağı.
 - **Long-horizon task**: kimse izlemeden saatlerce süren bir görev.
 
 ## Bu serinin neresindeyiz

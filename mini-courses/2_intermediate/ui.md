@@ -214,11 +214,11 @@ Streaming is the base. The rest of the agentic UI definition builds on it, and t
 - **Agentic UI**: a user interface that humans and AI agents use together in the same application.
 - **Streaming**: sending each piece of the agent's work to the screen as soon as it exists.
 - **Event**: a small, typed message that says what happened in the run.
-- **Tool call**: the agent's request to run a tool. Its start, arguments, end and result arrive as separate events.
+- **Tool call**: the agent's request to run a tool, with its start, arguments, end and result arriving as separate events.
 - **Decoupling**: two parts that can change separately, because they agree on a contract.
-- **MCP**: the protocol that connects an agent to tools and data. It comes from Anthropic.
+- **MCP**: the protocol from Anthropic that connects an agent to tools and data.
 - **AG-UI**: the Agent–User Interaction Protocol, one shared set of events that connects an agent to user-facing applications.
-- **A2A**: the protocol that connects an agent to other agents. It comes from Google.
+- **A2A**: the protocol from Google that connects an agent to other agents.
 - **Human in the loop**: the agent pauses and asks the user to approve a step before it runs it.
 - **Shared state**: the screen and the agent read and write the same application state.
 - **Generative UI**: an interface that the agent generates itself, shown next to components that a developer built.

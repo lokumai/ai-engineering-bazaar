@@ -139,9 +139,9 @@ Bu mekanizma ters yönde de aynı kolaylıkla çalışır. ![](./images/logos/cl
 - **Jailbreaking**: modelin üretmek üzere tasarlanmadığı bir çıktıyı ürettirmek.
 - **Black box**: saldırganın yalnızca bir metin kutusu vardır; girdi gönderir, çıktıyı okur ve geri kalanını tahmin eder.
 - **White box**: saldırganın ağırlıklar dahil modelin kendisine sahip olduğu saldırı türü; bu sayede modeli belirli bir cevaba iten token'ları arayabilir.
-- **Prompt injection**: zaten var olan talimatların yerini almak için girdinin içine yerleştirilen talimatlar.
+- **Prompt injection**: zaten var olan talimatları geçersiz kılmak için girdiye yerleştirilen talimatlar.
 - **System prompt**: tasarım gereği kullanıcı mesajından daha yüksek önceliğe sahip talimat; ama model onu yine aynı metin akışının parçası olarak okur.
-- **Prompt leaking**: modeli, kendisine ne söylendiğini, yani sistem prompt'unu, örneklerini ve iç kurallarını açıklamaya yöneltmek.
+- **Prompt leaking**: modeli, kendisine ne söylendiğini, yani system prompt'unu, örneklerini ve iç kurallarını açıklamaya yöneltmek.
 - **Indirect prompt injection**: saldırganın bir doküman, web sayfası ya da e-postaya gizlediği, agent'ın okuduğu talimatlar.
 - **Guardrail**: modelin dışında, girişte ya da çıkışta çalışan bir kontrol.
 - **Guard model**: yalnızca güvenliği yargılamak için yapılmış bir model; cevap yerine bir karar döndürür.

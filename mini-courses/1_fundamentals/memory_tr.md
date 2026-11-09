@@ -88,16 +88,16 @@ Parametrik olmayan bir cevaba ise **kaynak gösterilebilir**: uygulama, modelin 
 
 ## Temel Terimler
 
-- **Parametric memory**: eğitimin modelin ağırlıklarına yazdığı bilgi. Kalıcıdır, ama büyük ölçekte bulanıklaşır.
-- **Fine-tuning**: modeli bir doküman kümesi üzerinde eğitmek. Bilgi bundan sonra modelin ağırlıklarında kalır.
-- **Working memory** (short-term memory): LLM'in tam şu anda context window'unda duran bütün metin.
-- **Context window**: working memory'nin yer aldığı alan. Boyutu sınırlıdır, örneğin 200K ya da 1M token.
-- **Long-term memory**: geçmiş konuşmaların ve dokümanların özeti ya da indeksi. Modelin dışında saklanır ve gerektiğinde geri getirilir.
-- **Stateless**: üretim sırasında LLM hiçbir durum (state) tutmaz. Her çağrı yeni ve bağımsızdır.
-- **Message stack**: şu ana kadar değiş tokuş edilen bütün mesajların büyüyen yığını. Uygulama her çağrıda tamamını gönderir.
-- **RAG**: saklanan metni tekrar context'e getiren yöntem. Çoğu zaman long-term memory için kullanılır.
-- **Non-parametric memory**: ağırlıkların dışında, metin olarak tutulan bilgi. Working memory ve long-term memory bu gruba girer.
-- **Citation**: bir cevabın dayandığı kaynak doküman. Bunu yalnızca non-parametric memory sağlayabilir.
+- **Parametric memory**: eğitimin modelin ağırlıklarına yazdığı, kalıcı ama büyük ölçekte bulanıklaşan bilgi.
+- **Fine-tuning**: modeli bir doküman kümesi üzerinde eğitmek, böylece bilgi modelin ağırlıklarında kalır.
+- **Working memory (short-term memory)**: LLM'in tam şu anda context window'unda duran bütün metin.
+- **Context window**: working memory'nin yer aldığı, boyutu sınırlı (örneğin 200K ya da 1M token) alan.
+- **Long-term memory**: geçmiş konuşmaların ve dokümanların özeti ya da indeksi, modelin dışında saklanan ve gerektiğinde geri getirilen bilgi.
+- **Stateless**: üretim sırasında LLM hiçbir durum (state) tutmaz, bu yüzden her çağrı yeni ve bağımsızdır.
+- **Message stack**: uygulamanın her çağrıda tamamını gönderdiği, şu ana kadar değiş tokuş edilen bütün mesajların büyüyen yığını.
+- **RAG**: saklanan metni tekrar context'e getiren yöntem, çoğu zaman long-term memory için kullanılır.
+- **Non-parametric memory**: ağırlıkların dışında, metin olarak tutulan bilgi ve bu gruba working memory ile long-term memory de girer.
+- **Citation**: bir cevabın dayandığı kaynak doküman; bunu yalnızca non-parametric memory sağlayabilir.
 
 ## Bu serinin neresindeyiz
 

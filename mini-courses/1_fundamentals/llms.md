@@ -302,19 +302,20 @@ These are worth reading, to see how much effort goes into production prompts:
 
 - **LLM**: a model that takes text as input and gives text as output.
 - **Prompt**: the text you send to the model.
-- **Parameters**: the numbers inside the network. Their count sets the size of the model.
-- **Context window**: the maximum amount of text the model handles at one time. Input and output count together.
-- **HumanMessage**: your request, as one message in the context. People call it the prompt.
+- **Parameters**: the numbers inside the network, whose count sets the size of the model.
+- **Hyperparameter**: a setting that changes how the model generates its reply, not one of its parameters.
+- **Context window**: the maximum amount of text the model handles at one time, where input and output count together.
+- **HumanMessage**: your request, as one message in the context, which people call the prompt.
 - **AIMessage**: the model's reply, as one message in the context.
-- **SystemMessage**: default instructions from the vendor or developer. It goes once, at the top of the context.
-- **Turn**: one HumanMessage and the AIMessage that answers it. An agent turn also holds the tool messages.
+- **SystemMessage**: default instructions from the vendor or developer, placed once at the top of the context.
+- **Turn**: one HumanMessage and the AIMessage that answers it; an agent turn also holds the tool messages.
 - **Tool schema**: the list of tools the model may call, with each tool's name and arguments.
-- **ToolCall**: the model's request to run one of your functions. The LLM generates it.
-- **ToolResult**: the output of that function. The host machine generates it, not the LLM.
-- **Temperature**: a hyperparameter that sets creativity, usually from 0.0 to 1.0. Low values give predictable answers.
-- **Max output tokens**: the cap on the length of the reply. It controls cost.
+- **ToolCall**: the model's request to run one of your functions, which the LLM generates.
+- **ToolResult**: the output of that function, which the host machine generates, not the LLM.
+- **Temperature**: a hyperparameter, usually from 0.0 to 1.0, that sets creativity; low values give predictable answers.
+- **Max output tokens**: the cap on the length of the reply, which controls cost.
 - **Inference**: running a model on a context to produce its reply, in the cloud or on your own computer.
-- **Quantization**: compresses each 16-bit weight to 4 bits. The model then needs about four times less memory.
+- **Quantization**: compresses each 16-bit weight to 4 bits, so the model needs about four times less memory.
 
 ## Where this fits in the series
 

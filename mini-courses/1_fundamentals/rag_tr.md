@@ -218,20 +218,21 @@ Bir nokta daha var ve o da şu: bu ikisinden birini seçmek zorunda değilsin. M
 
 ## Temel Terimler
 
-- **Context window**: modelin tek seferde işleyebildiği metnin sınırı. Modelin çalışma masasıdır.
-- **Fine-tuning**: modelin kendisini değiştiren eğitim. Verinin belirli bir gündeki hâlini yakalar ve sonra değişmez.
-- **Retrieval-Augmented Generation (RAG)**: verini modelin dışında tutma yöntemi. Her soru için yalnızca ilgili parçaları getirip context'e koyar, sonra cevabı üretir.
+- **Context window**: modelin tek seferde işleyebildiği metnin sınırı; modelin çalışma masasıdır.
+- **Fine-tuning**: modelin kendisini değiştiren eğitim; sonucu verinin belirli bir gündeki anlık görüntüsüdür ve sonradan kendiliğinden güncellenmez.
+- **Retrieval-Augmented Generation (RAG)**: verini modelin dışında tutan bir yöntem; her soru için yalnızca ilgili parçaları getirip context'e koyar ve cevabı onlardan üretir.
 - **Retrieval**: soruyu cevaplayan chunk'ları bulan arama adımı.
-- **Chunk**: bir dokümanın küçük bir parçası. Bir fonksiyon, paragraf ya da sözleşme maddesi olabilir.
-- **Embedding**: bir metni anlatan sayı listesi, yani bir vector. Benzer anlamlar benzer sayılar üretir.
+- **Reranker**: en yakın chunk'ları (örneğin 20 tane) okuyup yalnızca en iyilerini (örneğin 3 tane) tutan adım.
+- **Chunk**: bir dokümanın küçük bir parçası; bir fonksiyon, paragraf ya da sözleşme maddesi olabilir.
+- **Embedding**: bir metni anlatan sayı listesi, yani bir vector; benzer anlamlar benzer sayılar üretir.
 - **Encoder model**: metni embedding'lere çeviren model.
-- **Cosine similarity**: iki embedding'in ne kadar yakın olduğunu ölçen skor. Yüksek skor, çok benzer olduklarını gösterir.
+- **Cosine similarity**: iki embedding'in ne kadar yakın olduğunu ölçen skor; yüksek skor, çok benzer olduklarını gösterir.
 - **Vector database**: her embedding'i özgün metniyle birlikte saklar ve bir sorgu vector'üne en yakın eşleşmeleri döndürür.
-- **Test set**: sorulardan oluşan bir liste. Her soru için, bir insanın alakalı diye işaretlediği chunk'ları içerir.
+- **Test set**: sorulardan oluşan bir liste; her soru için, bir insanın alakalı diye işaretlediği chunk'ları içerir.
 - **Recall@k**: alakalı chunk'ların hepsinden, ilk k sonuçta yer alanların oranı.
 - **Precision@k**: ilk k chunk'ın ne kadarının alakalı olduğunun oranı.
-- **MRR (mean reciprocal rank)**: 1'in, ilk alakalı chunk'ın sırasına bölümünün tüm sorular üzerinden ortalaması.
-- **nDCG@k**: alakalı chunk'ları listenin üstünde ve doğru sırada tutan bir skor. 1.0, en iyi sıralama demektir.
+- **MRR (mean reciprocal rank)**: her soru için ilk alakalı chunk'ın sırasının tersini (1 bölü sıra) alıp bu değerlerin tüm sorular üzerinden ortalamasını alan skor.
+- **nDCG@k**: alakalı chunk'ları listenin üstünde ve doğru sırada tutan bir skor; 1.0, en iyi sıralama demektir.
 
 ## Bu serinin neresindeyiz
 

@@ -83,7 +83,7 @@ Bunların hiçbiri bir ekran görüntüsünde görünmez, bu yüzden onları ken
 - **Handoff**: tasarımcıların işini geliştiricilere teslim ettikleri an.
 - **Codebase**: bir aracın girdi olarak alıp içindeki design system'i bulabildiği mevcut kod.
 - **Design system**: bir kez verip bir daha vermek zorunda kalmadığın kararların toplamı; renkler, tip ölçeği, boşluk adımları, köşe yuvarlaklığı ve bir düğmenin her durumdaki görünümü gibi.
-- **DESIGN.md**: repository'nin köküne konan ve bir tasarımın token'larını ile niyetini tutan dosya.
+- **DESIGN.md**: repository'nin köküne konan, bir tasarımın token'larını ve niyetini tutan dosya.
 - **Tokens**: hex kodları, tip ölçeği, boşluk adımları, köşe yarıçapları ve bileşen durumları gibi tam değerler.
 - **Intent**: tasarımın nasıl bir his vermeye çalıştığını, neyden bilerek kaçındığını ve nedenini kelimelerle anlatan kısım.
 - **Accessibility**: klavyeyle ya da ekran okuyucuyla çalışanlar dahil, herkesin ekranı kullanabilmesi.

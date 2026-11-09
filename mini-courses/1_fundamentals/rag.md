@@ -321,20 +321,21 @@ should behave, and use RAG for what it should know. That combination is common i
 
 ## Key Terms
 
-- **Context window**: the limit on the text a model handles at one time. It is the model's working desk.
-- **Fine-tuning**: training that changes the model itself. Its result is a snapshot of your data on one day.
-- **Retrieval-Augmented Generation (RAG)**: keep your data outside the model. Fetch the relevant parts for each question, then generate the answer from them.
+- **Context window**: the limit on the text a model handles at one time, which is the model's working desk.
+- **Fine-tuning**: training that changes the model itself, and whose result is a snapshot of your data on one day.
+- **Retrieval-Augmented Generation (RAG)**: a method that keeps your data outside the model, fetches the relevant parts for each question, and generates the answer from them.
 - **Retrieval**: the search step that finds the chunks that answer a question.
+- **Reranker**: a step that reads the closest chunks, for example 20, and keeps only the best few, for example 3.
 - **Chunk**: a small piece of a document, such as a function, a paragraph or a contract clause.
-- **Embedding**: a list of numbers, also called a vector, that describes a piece of text. Similar meanings give similar numbers.
+- **Embedding**: a list of numbers, also called a vector, that describes a piece of text, where similar meanings give similar numbers.
 - **Encoder model**: the model that turns text into embeddings.
-- **Cosine similarity**: the score that measures how close two embeddings are. A high score means the two are very similar.
-- **Vector database**: stores each embedding with its original text. It returns the closest matches to a query vector.
-- **Test set**: a list of questions. For each question, it lists the chunks that a person marked as relevant.
+- **Cosine similarity**: the score that measures how close two embeddings are, where a high score means the two are very similar.
+- **Vector database**: stores each embedding with its original text, and returns the closest matches to a query vector.
+- **Test set**: a list of questions, where each question lists the chunks that a person marked as relevant.
 - **Recall@k**: the share of all relevant chunks that appear in the top k results.
 - **Precision@k**: the share of the top k chunks that are relevant.
 - **MRR (mean reciprocal rank)**: the average, over all questions, of 1 divided by the position of the first relevant chunk.
-- **nDCG@k**: a score that rewards relevant chunks near the top. A score of 1.0 means the best order.
+- **nDCG@k**: a score that rewards relevant chunks near the top, where 1.0 means the best order.
 
 ## Where this fits in the series
 

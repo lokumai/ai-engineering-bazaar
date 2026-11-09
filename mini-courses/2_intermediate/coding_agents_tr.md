@@ -211,17 +211,17 @@ Bu tembellik değildir; hem senin hem de modelin iyi kullandığı tek format bu
 ## Temel Terimler
 
 - **AGENTS.md**: repository'deki düz bir markdown dosyası; build ve test komutları gibi, projenin tamamında geçerli kalan bilgileri tutar.
-- **CLAUDE.md**: Claude Code'un okuduğu dosya. İçine `@AGENTS.md` yazarak AGENTS.md'yi içe aktarabilir.
-- **Slash command**: bir kez yazıp `/isim` yazarak çalıştırdığın prompt. Özel komutlar artık skill'lerle birleşti.
+- **CLAUDE.md**: Claude Code'un okuduğu dosya; içine `@AGENTS.md` yazarak AGENTS.md'yi içe aktarabilir.
+- **Slash command**: bir kez yazıp `/isim` yazarak çalıştırdığın prompt; özel komutlar artık skill'lerle birleşti.
 - **MCP (Model Context Protocol)**: araçları standart bir biçimde tanımlama yolu; bu protokolü konuşan her agent bu araçları kullanabilir.
 - **MCP server**: bir agent'ın client olarak bağlandığı, araçlardan oluşan paket.
-- **A2A**: bir agent'ı başka agent'lara bağlar, çoğu zaman farklı şirketler arasında. MCP ise bir agent'ı araçlara bağlar.
+- **A2A**: bir agent'ı başka agent'lara bağlar, çoğu zaman farklı şirketler arasında; MCP ise bir agent'ı araçlara bağlar.
 - **Subagent**: kendi system prompt'u, araç listesi ve temiz context penceresi olan bir yardımcı; bir sonuç döndürür.
 - **Skill**: bir görev gerektirdiğinde agent'ın okuduğu talimat klasörü; `.claude/skills/<isim>/SKILL.md` konumunda durur.
 - **Progressive disclosure**: agent başlangıçta her skill'in yalnızca adını ve açıklamasını yükler; tam talimatları ihtiyaç duyulunca okur.
-- **Hook**: agent'ın yaşam döngüsündeki sabit bir noktaya bağlı shell komutu. Model istese de istemese de çalışır.
+- **Hook**: agent'ın yaşam döngüsündeki sabit bir noktaya bağlı, model istese de istemese de çalışan bir shell komutu.
 - **Plugin**: komutlar, skill'ler, subagent'lar, hook'lar ve MCP server'lardan oluşan, tek adımda kurulan bir paket.
-- **Auto memory**: agent'ın sana verdiğin düzeltmelerden yazdığı notlar. İlk 200 satır veya 25KB her oturuma yüklenir.
+- **Auto memory**: agent'ın sana verdiğin düzeltmelerden yazdığı notlar; bunların ilk 200 satırı veya 25KB'ı her oturuma yüklenir.
 - **Plan mode**: agent'ın yalnızca okuyup plan yazdığı, sen onaylayana kadar düzenleme yapmadığı salt okunur bir mod.
 - **Reasoning effort**: `/effort` ile değiştirilen ve modelin ne kadar akıl yürüteceğini belirleyen ayar.
 

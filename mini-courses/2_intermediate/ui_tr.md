@@ -151,7 +151,7 @@ Streaming temeldir. Agentic UI tanımının geri kalanı onun üstüne kurulur v
 - **Agentic UI**: bir insanın ve çalışan bir agent'ın aynı uygulamada birlikte kullandığı kullanıcı arayüzü.
 - **Streaming**: agent'ın işinin, oluştuğu anda ekrana parça parça gönderilmesi.
 - **Event**: az önce ne olduğunu söyleyen küçük ve tipli bir mesaj.
-- **Tool call**: agent'ın bir tool'u çalıştırma isteği. Başlangıcı, argümanları, bitişi ve sonucu ayrı event'ler olarak gelir.
+- **Tool call**: agent'ın bir tool'u çalıştırma isteği; başlangıcı, argümanları, bitişi ve sonucu ayrı event'ler olarak gelir.
 - **Decoupling**: bir sözleşme üzerinde anlaştıkları için birbirinden bağımsız değişebilen iki parça.
 - **MCP**: agent'ı tool'lara ve veriye bağlayan protocol; Anthropic'ten.
 - **AG-UI**: Agent–User Interaction Protocol; agent'ı kullanıcıya dönük uygulamalara bağlayan, ortak tek bir event kümesi.

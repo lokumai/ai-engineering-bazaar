@@ -87,13 +87,13 @@ Here is one warning about free tiers, because this problem catches people at exa
 ## Key Terms
 
 - **Inference provider**: a company that runs a model on its own hardware and sells you access to it per token.
-- **Gateway** (router): one key and one API shape in front of many providers.
+- **Gateway (router)**: one key and one API shape in front of many providers.
 - **Failover**: sending a request to another provider when one has an outage.
 - **Prompt caching**: the provider stores a long, unchanged system prompt, so each repeat costs a fraction of the price.
 - **Batch endpoint**: a provider endpoint for batch work, at a discount.
 - **Rate limit**: the cap on requests and tokens per minute.
 - **Time to first token**: the wait before the first token arrives, which a person feels in a chat.
-- **Output limit**: the cap on the length of one answer. It is separate from the context window.
+- **Output limit**: the cap on the length of one answer, separate from the context window.
 - **Data policy**: whether the provider keeps your prompts, for how long, and whether it trains on them.
 - **Quantization**: the precision at which a seller serves a model, where more aggressive settings cost quality.
 - **Free tier**: free capacity with daily limits, which is slower and has stricter rate limits than the paid tier.

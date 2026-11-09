@@ -157,7 +157,7 @@ And it works just as easily in the other direction. ![](./images/logos/cloudflar
 - **Guard model**: a model built only to judge safety, which returns a verdict instead of a reply.
 - **Red teaming**: attacking your own system on purpose, because you cannot defend against attacks you have not tried.
 - **Attack success rate**: the figure a red-teaming tool reports after it scores each attack and response.
-- **Penetration testing**: testing a system by attacking it, mostly by reading, reasoning and running commands.
+- **Penetration testing**: probing a system for weaknesses, mostly by reading, reasoning and running commands, which a coding agent already does.
 - **Skill**: a `SKILL.md` file that gives a coding agent an expert's method for one job.
 
 ## Where this fits in the series

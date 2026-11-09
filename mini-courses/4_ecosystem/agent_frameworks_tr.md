@@ -46,7 +46,7 @@ Bunların hiçbiri yanlış değil; hepsi farklı takaslar (trade-off) yapıyor 
 
 - ![](./images/logos/agno.svg)**[Agno](https://github.com/agno-agi/agno)** tek bir agent'ın ötesine, tüm platforma bakar. Agent'ları bir script olarak değil, bir sistem olarak kurmana, çalıştırmana ve yönetmene yardım eder.
 - ![](./images/logos/crewai.svg)**[CrewAI](https://github.com/crewAIInc/crewAI)** her şeyi roller etrafında düzenler. Her biri ayrı bir işi olan bir agent ekibi (crew) tarif edersin ve onların birlikte çalışmasını sağlarsın. Bu yapı, [Multi-Agent Systems](../1_fundamentals/multi_agent_tr.md) modülündeki çoklu agent yapılarına iyi oturur.
-- ![](./images/logos/huggingface.svg)**[smolagents](https://github.com/huggingface/smolagents)**, Hugging Face'in küçük olanıdır ve bu küçüklük bilerek seçilmiş bir tercih. JSON tool çağrıları göndermek yerine kod yazıp çalıştırarak iş yapan agent'lar için yalın bir kütüphane. Bu, [Loop Engineering](../2_intermediate/loop_engineering_tr.md) modülünde anlatılan CodeAct fikrinin kütüphane olarak paketlenmiş hali. Bir döngüyü kullanmaktan çok anlamak istiyorsan, okumak için de en iyi seçenek.
+- ![](./images/logos/huggingface.svg)**[smolagents](https://github.com/huggingface/smolagents)**, Hugging Face'in küçük olanıdır ve bu küçüklük bilerek seçilmiş bir tercih. JSON tool çağrıları göndermek yerine kod yazıp çalıştırarak iş yapan agent'lar için yalın bir kütüphane. Bu, [İleri Seviye Loop Engineering](../3_expert/advanced_loop_engineering_tr.md) modülünde anlatılan CodeAct fikrinin kütüphane olarak paketlenmiş hali. Bir döngüyü kullanmaktan çok anlamak istiyorsan, okumak için de en iyi seçenek.
 - ![](./images/logos/pydantic.svg)**[Pydantic AI](https://github.com/pydantic/pydantic-ai)** Pydantic'in iyi yaptığı şeyi, yani tipleri getiriyor. Her model ve her arayüz baştan sona tiplenmiş. Bu yüzden hatalı bir tool çağrısı gizemli bir hataya değil, açık bir validation hatasına dönüşür.
 
 ## Projen TypeScript İse
@@ -93,7 +93,7 @@ Takas da bildiğin türden: şimdi hız kazanırsın, sonra daha az kontrol elde
 - **Agent framework**: agent döngüsünün etrafındaki her şey: yeniden deneme, streaming, tool şemaları ve hafıza.
 - **Agent loop**: bir model çağrısının etrafındaki `while` döngüsü; model hangi tool'u isterse onu çalıştırır.
 - **Tool schema**: bir tool'un standart tarifi; böylece her fonksiyonun JSON'unu elle yazmak gerekmez.
-- **LangGraph**: üç LangChain kütüphanesinin en alttakisi; state, adımlar ve kalıcılık için runtime.
+- **LangGraph**: runtime ve üç LangChain kütüphanesinin en alttakisi.
 - **Graph**: agent'ın node'lar (adımlar) ve edge'ler (bundan sonra neyin olabileceği) olarak tarif edilmesi.
 - **State**: adımlar arasında taşınan açık veri; runtime bunu kaydedip bir çalıştırmayı kaldığı yerden sürdürebilir.
 - **LangChain**: bir model, birkaç tool ve middleware ile olağan bir agent veren ana arayüz.

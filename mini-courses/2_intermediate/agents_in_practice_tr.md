@@ -125,13 +125,8 @@ Bir mühendis için Cowork, Claude Code ile aynı mantık, yalnızca bir repo ye
 
 - **Project**: bir kez kurup sonra tekrar tekrar kullandığın bir context.
 - **Claude Code**: terminalinde çalışan kodlama agent'ı.
-- **Steering**: işin kapsamını belirlemek, context özetini yönlendirmek ve ters giden bir oturumu geri sarmak.
-- **Hooks**: kurallarını zorunlu kılan yapılandırma.
-- **Headless mode**: Claude Code'u kendi pipeline'larında çalıştırmak.
-- **Plugin**: bir takımın kurulumunu tek bir paket olarak paylaşmanın yolu.
-- **Claude Cowork**: Claude'un dosyaların, klasörlerin ve uygulamaların üzerinde çalışması. İşi sen başlatırsın.
-- **Agent loop**: Cowork'ün Claude Code ile ortak yapısı: araçlar, context ve bir plan.
-- **Claude Duet**: bulutta kendi bilgisayarında çalışan, bağladığın uygulamaları izleyen ve her sabah bir özet getiren agent. İşi Claude başlatır.
+- **Claude Cowork**: Claude'un dosyaların, klasörlerin ve uygulamaların üzerinde çalışması; işi sen başlatırsın.
+- **Claude Duet**: bulutta kendi bilgisayarında çalışan, bağladığın uygulamaları izleyen ve her sabah bir özet getiren agent; işi Claude başlatır.
 
 ## Bu serinin neresindeyiz
 

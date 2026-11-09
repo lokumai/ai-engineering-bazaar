@@ -288,13 +288,13 @@ also companion libraries for the parts around it, such as `peft` for the LoRA tr
 
 - **Parameters**: the numbers inside the network, also called weights.
 - **Training**: changing the parameters by small amounts, using text, until the guesses are right.
-- **Pre-training**: the largest step. It updates all parameters on unlabelled internet text, and it costs millions of dollars.
+- **Pre-training**: the largest step, which updates all parameters on unlabelled internet text and, for a large model, costs millions of dollars.
 - **Fine-tuning**: continued training of a pre-trained model, on a small, task-specific set of input and output pairs.
 - **Base model**: the general-purpose, pre-trained model that fine-tuning starts from.
-- **Full fine-tuning**: fine-tuning that updates every parameter. For a large model, it still needs a lot of GPU memory.
+- **Full fine-tuning**: fine-tuning that updates every parameter, which still needs a lot of GPU memory for a large model.
 - **PEFT**: fine-tuning that freezes almost the whole model and trains a few new parameters, often under 1%.
 - **LoRA**: Low-Rank Adaptation, the most common PEFT technique.
-- **Unsloth**: an open-source library that cuts the memory and time of fine-tuning. It also ships ready-made notebooks and pre-quantized models.
+- **Unsloth**: an open-source library that cuts the memory and time of fine-tuning and also ships ready-made notebooks and pre-quantized models.
 - **Hugging Face**: the central registry of open models, and the publisher of the libraries that load them.
 - **transformers**: the Hugging Face library that loads a model by name and runs it in a few lines of code.
 

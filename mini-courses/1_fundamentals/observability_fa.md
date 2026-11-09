@@ -68,16 +68,16 @@ graph LR
 ## اصطلاح‌های کلیدی
 
 - **Trace**: کل درخت یه request، یعنی هر model call، هر tool call و هر subagent.
-- **LangSmith**: ابزار خود LangChain. tracing، dataset، evaluator و annotation رو یه‌جا بهت می‌ده.
-- **Langfuse**: ابزار متن‌باز. وقتی trace‌ها باید روی زیرساخت خودت بمونن، معمولاً همین رو انتخاب می‌کنن.
+- **LangSmith**: ابزار خود LangChain که tracing، dataset، evaluator و annotation رو یه‌جا بهت می‌ده.
+- **Langfuse**: ابزار متن‌باز که وقتی trace‌ها باید روی زیرساخت خودت بمونن، معمولاً همین رو انتخاب می‌کنن.
 - **Latitude**: ابزار متن‌باز که تمرکزش روی monitoring توی production‌ه.
 - **Improvement loop**: چرخه‌ای که trace‌ها راه می‌ندازن: جمع کن، تکمیل کن، الگو رو پیدا کن، یه چیزی رو عوض کن، offline امتحانش کن و دوباره از اول شروع کن.
 - **Evaluator**: چیزی که به trace‌ها نمره می‌ده.
 - **Annotation**: یادداشتی که یه آدم روی trace می‌ذاره.
-- **Dataset**: یه مجموعه‌ی offline از trace‌های واقعی. تغییرت رو باهاش امتحان می‌کنی.
+- **Dataset**: یه مجموعه‌ی offline از trace‌های واقعی که تغییرت رو باهاش امتحان می‌کنی.
 - **Regression test**: تستی که trace‌های dataset رو دوباره اجرا می‌کنه.
 - **Failure mode**: یه نوع خطا، مثل یه آرگومان کمی غلط یا چهار بار رفتن سراغ همون فایل.
-- **Agent that reads traces**: agentی که trace‌ها رو می‌خونه و بدون این‌که کسی قبلش گفته باشه دنبال چی بگرده، الگوهای استفاده و failure mode‌ها رو پیدا می‌کنه. Insights Agent توی LangSmith یکی از همین‌هاست.
+- **Agent that reads traces**: agent‌ی که trace‌ها رو می‌خونه و بدون این‌که کسی قبلش گفته باشه دنبال چی بگرده، الگوهای استفاده و failure mode‌ها رو پیدا می‌کنه، مثل Insights Agent توی LangSmith.
 - **Non-deterministic**: یه ورودی ممکنه توی هر اجرا یه نتیجه‌ی متفاوت بده.
 
 ## کجای این مجموعه هستیم

@@ -166,18 +166,19 @@ Harness'leri karşılaştırmak istersen düzenli olarak güncellenen iki liste 
 
 ## Temel Terimler
 
-- **Hook**: agent'ın yaşamındaki sabit bir noktaya bağlı bir shell komutu. Model isteyip istemediğine bakmadan çalışır.
+- **Hook**: agent'ın yaşam döngüsündeki sabit bir noktaya bağlı, model istesin istemesin çalışan bir shell komutu.
 - **Non-deterministic**: aynı girdi, bir sonraki çalışmada farklı bir cevap verebilir.
 - **Harness engineering**: modelin etrafındaki mekanik düzeni tasarlamak; böylece agent her çalışmada aynı şekilde davranır.
 - **Agent harness**: agent'ın kendisi, etrafındaki mekanik düzenek ve içinde çalıştığı ortam.
-- **System prompt**: agent'ın herhangi bir işe başlamadan önce okuduğu talimatlar. Çoğunu sağlayıcı yazar.
-- **Tool description**: modelin bir tool'u çağırıp çağırmayacağına karar verirken okuduğu metin. Bir prompt'tur.
+- **System prompt**: agent'ın herhangi bir işe başlamadan önce okuduğu, çoğunu sağlayıcının yazdığı talimatlar.
+- **Tool description**: modelin bir tool'u çağırıp çağırmayacağına karar verirken okuduğu, yani bir prompt olan metin.
 - **Compaction**: context window neredeyse dolduğunda, harness eski içeriği özetler ki agent çalışmaya devam edebilsin.
 - **Continuation**: bir hook, erken duran modeli yakalar ve orijinal görevi temiz bir context window'da geri verir.
+- **Middleware**: model ne karar verirse versin, sabit noktalarda çalışan kod.
 - **Guide**: agent harekete geçmeden önce ona söylenenler; system prompt, AGENTS.md, tool açıklamaları ve onaylanmış plan gibi.
 - **Sensor**: işin nasıl gittiğini agent'a söyleyen şey; testler, linter'lar, tip kontrolleri ve build hataları gibi.
-- **Computational check**: sıradan kodun CPU üzerinde çalıştırdığı bir guide veya sensor. Deterministiktir ve hızlıdır.
-- **Inferential check**: bir modelin çalıştırdığı bir guide veya sensor. Anlamı değerlendirebilir, ama daha yavaştır, daha pahalıdır ve sonuçları bir çalıştırmadan diğerine değişebilir.
+- **Computational check**: sıradan kodun CPU üzerinde çalıştırdığı, deterministik ve hızlı bir guide veya sensor.
+- **Inferential check**: bir modelin çalıştırdığı bir guide veya sensor; anlamı değerlendirebilir, ama daha yavaştır, daha pahalıdır ve sonuçları bir çalıştırmadan diğerine değişebilir.
 
 ## Bu serinin neresindeyiz
 

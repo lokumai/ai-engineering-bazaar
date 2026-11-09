@@ -144,17 +144,20 @@ Hiçbir katman kendinden öncekinin yerini almadı; hepsi üst üste yığıldı
 ## Temel Terimler
 
 - **Loop engineering**: agent tanımlı bir hedefe ulaşana kadar kendiliğinden tekrar eden döngüler tasarlama pratiği.
-- **Stop condition**: bir döngünün ne zaman duracağını belirleyen kural. Tasarımın en önemli parçasıdır.
+- **Stop condition**: bir döngünün ne zaman duracağını belirleyen, tasarımın en önemli parçası olan kural.
 - **LLM loop**: modelin kendi içindeki döngü; metni token token üretir.
 - **Autoregressive**: her ürettiği token'ı girdinin sonuna ekleyip bir sonrakini üreten model.
 - **Agent loop**: model bir tool çağırır, sonucu okur ve işin bittiğine karar verene kadar devam eder.
 - **Verification loop**: bir değerlendirici işi kriterlere göre kontrol eder ve iş yeterince iyi değilse geri bildirimi agent'a gönderir.
-- **Rubric**: iyi bir sonucun nasıl görünmesi gerektiğini yazılı olarak anlatan liste. Bir model çağrısı işi bu listeye göre puanlar.
+- **Rubric**: iyi bir sonucun nasıl görünmesi gerektiğini yazılı olarak anlatan ve bir model çağrısının işi puanlamak için kullandığı liste.
 - **Event-driven loop**: bir zamanlama ya da bir webhook, her çalışmanın ne zaman başlayacağına karar verir; durma koşulu zamana dayanır.
 - **Autonomous loop**: iş acceptance criteria'yı karşılayana kadar agent'a tekrar tekrar prompt gönderen döngü.
 - **Acceptance criteria**: işin geçmesi gereken kontroller; örneğin geçen bir test paketi ya da 90'ın üzerinde bir Lighthouse skoru.
 - **Ralph loop**: agent'a tekrar tekrar prompt gönderen bir betik; her döngüde tek bir görev yapılır ve her seferinde context temiz başlar.
 - **Context rot**: modelin context'i büyüdükçe görevini giderek daha kötü yapması.
+- **Agent teams**: ortak bir görev listesini paylaşan, bir lead'in koordine ettiği birkaç tam agent oturumu.
+- **Dynamic workflows**: agent'ın yazdığı, düzinelerce hatta yüzlerce subagent'ı çalıştıran ve planı kodda tutan bir betik.
+- **Recursive language models**: kodla kendini çağıran tek bir model; böylece penceresinin alabileceğinden daha fazla metni işleyebilir.
 
 ## Bu serinin neresindeyiz
 

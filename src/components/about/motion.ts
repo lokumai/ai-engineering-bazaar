@@ -5,6 +5,7 @@ import { createEngraving } from './scenes/engraving-motion'
 import { createHaystack } from './scenes/haystack-canvas'
 import type { SceneHandle } from './scenes/scene'
 import { createSeal } from './scenes/seal-motion'
+import { createTreaty } from './scenes/treaty-motion'
 
 /**
  * The About page's motion: F1, "Procession", on B2, "Dusk to dawn" (D115), ported from
@@ -36,6 +37,7 @@ const RM = '(prefers-reduced-motion: reduce)'
 const WIDE = '(min-width: 900px)'
 
 const SCENES: Record<string, (scene: HTMLElement) => SceneHandle> = {
+  treaty: createTreaty,
   haystack: createHaystack,
   seal: createSeal,
   brainrot: createBrainrot,

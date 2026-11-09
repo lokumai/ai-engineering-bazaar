@@ -1,7 +1,7 @@
 /**
  * M90, D115 — the About page's own colours: the grounds of "Dusk to dawn" (B2) and the inks that sit
  * on them, transcribed from `playground/2026-11-round-5/R0-about-design.html`, plus the few colours
- * the CSS-drawn scene (3E) needs.
+ * the HTML parts of two scenes need (1B6's bubbles and tally, and 3E, drawn in CSS).
  *
  * **Why a module and not `about.css`.** A surface stylesheet may not hold a colour
  * (`tests/unit/design/surface-stylesheets.test.ts`), and the language may not hold one its mockup
@@ -48,6 +48,15 @@ const PROPERTIES: Readonly<Record<string, string>> = {
   /* the ground's own texture: the edge of the lamp's reach, and the shade under the sheet in 3E */
   vignette: 'rgba(4, 4, 12, 0.55)',
   shade: 'rgba(0, 0, 0, 0.55)',
+
+  /* 1B6, the treaty: the speech bubbles, the highlighted answer and the page tally */
+  bubble: '#f6eedf',
+  'bubble-ink': '#1b1b47',
+  'bubble-edge': 'rgba(27, 27, 71, 0.18)',
+  yes: '#ddb46a',
+  'yes-ink': '#241a0e',
+  tally: '#ddb46a',
+  'tally-shade': 'rgba(0, 0, 0, 0.8)',
 
   /* 3E, the seal: the desk's pool, the sheet, the reed and the wax */
   'desk-a': '#2b2347',

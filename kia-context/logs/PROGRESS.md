@@ -1434,7 +1434,7 @@ by its block but hung off the window's bottom. Fix in `ReadingOptions.tsx` and `
 bundle unchanged. The new test failed 6 of 8 cases on the unfixed build (all four code cases, the two diagram
 cases near the window's bottom) and passes 8 of 8 after.
 
-## 🏁 Milestone M90: About, the story of the Bazaar — IN PROGRESS
+## 🏁 Milestone M90: About, the story of the Bazaar — DONE (D115), PR #97
 
 The author, 2026-11-09: a new page named **About** that tells why the project exists, in five stalls
 and a motto, *"Imperfect Human Art with Soul. Not a Curriculum."* The text is his and final; it lives
@@ -1454,8 +1454,8 @@ heading, text and object swapping sides from stall to stall.
       `mini-courses/STORY.md` (`lib/content/story.ts`), the page `components/about/AboutStory.tsx`, one
       island (`AboutMotion.tsx`) that imports `gsap` on demand (`motion.ts`), `src/app/about.css`, the
       palette in `components/about/palette.ts`; linked from the footer; crumb `About the Bazaar`.
-      **Report:** MEASURED on the build: `out/api/v1/` byte-identical to the build before it (contentVersion
-      `d01d5a62…` both times), the link gate and the bundle check pass; 390 px `scrollWidth` 390; with the
+      **Report:** MEASURED on the build: `out/api/v1/` unchanged but for `publishedAt`, which is the HEAD
+      commit's time (contentVersion `d01d5a62…` both times), the link gate and the bundle check pass; 390 px `scrollWidth` 390; with the
       script blocked and under reduced motion every heading and paragraph is visible and nothing pins.
 - [x] **Its tests**: `tests/unit/content/story.test.ts` (one stall per `##`, in order, the motto from the
       closing line, any story), `tests/unit/about-palette.test.ts` (the palette and the stylesheet name the
@@ -1464,8 +1464,16 @@ heading, text and object swapping sides from stall to stall.
       the copy register. **Report:** each e2e assertion seen failing once under an injected defect
       (swapped stalls, hidden text, a 460 px body, the scene above the text, a border, a fill, a clip,
       a painted canvas corner).
-- [ ] **Stall 1's scene**: the author's pick among the three three.js alternatives to 1B replaces
-      `PendingScene` (`components/about/scenes/`), with no box.
+- [x] **Stall 1's scene**: the author picked **1B6, "Down the table, revised"** (D115), built as
+      `components/about/scenes/TreatyScene.tsx` from `treaty.ts`, where one pure `frame(t)` both writes
+      the still into the page and moves it (`treaty-motion.ts`); it replaces `PendingScene`, which now
+      only holds the place of a `##` section the art has not reached. **Report:** MEASURED on the build:
+      the still (reduced motion and no script) shows page 412 of 412, the yes page and the raised cup;
+      at 390 the hall stays inside the window (`scrollWidth` 390); the about, responsive, accessibility,
+      navigation, layout, colour-not-alone, site-footer and containment specs pass (184 passed, 8 skipped),
+      and the copy register passes with no new exemption. Bit's bubble in stall 4 was moved left
+      (x 390 to 574 of 600): its longest line, "humour.exe not found", now ends 20 units inside it,
+      measured with `getBBox()` for all three of its lines.
 
 ---
 

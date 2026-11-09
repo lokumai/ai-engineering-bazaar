@@ -476,9 +476,14 @@ turning dark), the feel is **F1, Procession** (Fraunces headings, the site sans 
 and played by the scroll, a gold gate arch round the title and the motto, a diamond rail of stalls), and the
 headings are set at about 30 px at 1440 and run the width of the text column, so each takes one or two lines.
 The scenes: **2A** needle in the haystack (canvas, scroll driven), **3E** the seal (CSS 3D), **4E** brainrot
-(SVG), **5A** Nietzsche engraved (SVG), with R5's hand-drawn underline under the motto. **Stall 1 is pending**:
-he liked **1B** "The treaty" and asked for three three.js alternatives to it; the page holds a plain
-"Drawing in progress" slot that his pick replaces as one component.
+(SVG), **5A** Nietzsche engraved (SVG), with R5's hand-drawn underline under the motto. **Stall 1 is 1B6,
+"Down the table, revised"** (`R1b-treaty-alternatives.html`), picked after he liked 1B "The treaty" and asked
+for alternatives to it: the Hall of Mirrors in 1919, five diplomats passing the treaty down a short green
+table to a woman in the spirit of Hürrem Sultan (fair, auburn braids, a small gold crown, a crimson kaftan, no
+head covering) who asked "Is the coffee ready?" and holds out an empty Turkish coffee cup; she falls asleep;
+page 412 says yes and she raises a steaming cup. It is the 1919 treaty of the story's own first paragraph,
+told as a joke about a one-word answer. Its bubble lines and article titles are the scene's words, art like
+4E's meme captions, so they live in the scene (`treaty.ts`), not in STORY.md.
 
 **No scene in a box.** The author, on 1B: *"the fact that each animation is in a box is bad. in the final
 version I want no box."* It holds for every stall: a slot only sizes its scene (no border, fill, shadow or clip),
@@ -492,12 +497,13 @@ order, and the motto from the closing line. **Linked from the footer, not the ba
 (`MainNav.tsx`, `data-bar-edge`), and a page about the project sits with the repository and the licence.
 
 **Rejected:** backgrounds B1 (lamplit night) and B3 (inked paper); feels F2 (manuscript, inertia scroll) and
-F3 (chapters, one stall per wheel turn, which hijacks the wheel); for stall 1 the options 1A, 1C, 1D, 1E and so
-far 1B itself as drawn; 2B to 2E, 3A to 3D, 4A to 4D, 5B to 5E; F1's headings at their drawn size. Also
+F3 (chapters, one stall per wheel turn, which hijacks the wheel); for stall 1 the options 1A, 1C, 1D and 1E,
+1B as first drawn, its alternatives 1B1 to 1B5 (three in three.js, two earlier Versailles drafts), and the
+other questions the woman could have asked (Q1 the umbrella, Q3 the tomato, Q4 the meeting, Q5 Friday); 2B to 2E, 3A to 3D, 4A to 4D, 5B to 5E; F1's headings at their drawn size. Also
 rejected: the colours in `about.css` (a surface may hold no colour; they are the page's art, stated once in
 `components/about/palette.ts` and written into the page as custom properties, the `diagram-themes.ts`
 mechanism); rendering STORY.md through the module pipeline, which is built for modules; three.js, which no
-picked scene needs yet.
+picked scene needs (1B6 is flat SVG).
 
 ## Open questions
 

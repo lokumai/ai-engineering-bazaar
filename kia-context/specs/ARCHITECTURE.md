@@ -534,7 +534,8 @@ Progress, with its content under maintenance until the timeline is built.
 `mini-courses/STORY.md`: `src/lib/content/story.ts` reads the file at build time (`node:fs`, so the route
 reads it and passes strings down), one stall per `##` section in order and the motto from the closing
 line. The page is `src/components/about/AboutStory.tsx`, server-rendered complete: every word, and each
-stall's scene as a still picture (SVG or CSS; a scene belongs to a stall by position). Its colours are the
+stall's scene as a still picture (SVG or CSS; a scene belongs to a stall by position; stall 1's is
+written from the same pure `frame(t)` that animates it, `scenes/treaty.ts`). Its colours are the
 page's art, in `components/about/palette.ts`, written into the page as `--about-*` properties that
 `src/app/about.css` reads. One island, `AboutMotion.tsx`, imports `gsap` on demand (`motion.ts`): on a wide
 screen each stall pins and plays under the scroll and the ground changes colour; below 900px stalls rise

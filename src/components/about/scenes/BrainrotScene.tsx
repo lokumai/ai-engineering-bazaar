@@ -14,6 +14,10 @@ import { rng } from './haystack-geometry'
  * Un-boxed (D115): the playground's slot was a lit square with a hairline, and the two figures were
  * cut off by its bottom edge. Here there is no square, and the scene fades out at the bottom
  * (`about.css`), so the reader and Bit stand in the ground instead of being sliced by a frame.
+ *
+ * Bit's bubble sits further left than the playground drew it (x 390 to 574 of 600, not 422 to 588):
+ * its longest line, "humour.exe not found", reached the art's right edge there and was cut by the
+ * scene's side fade. The tail still points at Bit's head.
  */
 
 const INK = '#2A2740'
@@ -314,10 +318,10 @@ export function BrainrotScene({ hand, display }: { hand: string; display: string
           ?
         </text>
         <g data-b="bubble">
-          <rect x="422" y="312" width="166" height="42" rx="10" fill="#14153A" stroke="rgba(143,227,218,.5)" strokeWidth="1.2" />
+          <rect x="390" y="312" width="184" height="42" rx="10" fill="#14153A" stroke="rgba(143,227,218,.5)" strokeWidth="1.2" />
           <path d="M446 354L458 354L448 368Z" fill="#14153A" stroke="rgba(143,227,218,.5)" strokeWidth="1.2" strokeLinejoin="round" />
           <rect x="447" y="350" width="10" height="5" fill="#14153A" />
-          <text data-b="btext" x="436" y="338" fontFamily="ui-monospace, SF Mono, Menlo, Consolas, monospace" fontSize="12.5" fill={GLOW}>
+          <text data-b="btext" x="404" y="338" fontFamily="ui-monospace, SF Mono, Menlo, Consolas, monospace" fontSize="12.5" fill={GLOW}>
             parsing joke... 0%
           </text>
         </g>

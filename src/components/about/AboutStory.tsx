@@ -8,6 +8,7 @@ import { EngravingScene } from './scenes/EngravingScene'
 import { HaystackScene } from './scenes/HaystackScene'
 import { PendingScene } from './scenes/PendingScene'
 import { SealScene } from './scenes/SealScene'
+import { TreatyScene } from './scenes/TreatyScene'
 
 /**
  * M90, D115 — the About page: the story of the Bazaar in five stalls and a motto.
@@ -21,7 +22,7 @@ import { SealScene } from './scenes/SealScene'
  * per `##` section, in file order, and the motto from the closing line. The page writes only its own
  * name and the labels a reader never sees. A scene belongs to a stall by POSITION, the way a module's
  * number is its place in the curriculum: `SCENES[i]` is drawn beside the i-th section, and a section
- * the art has not reached yet gets the pending slot.
+ * the art has not reached yet (a sixth `##`, say) gets the pending slot until it is drawn.
  *
  * This component is the whole page as the server renders it, and it is complete: every word is in the
  * markup and every scene is a still picture, so with no script, or under `prefers-reduced-motion`,
@@ -40,7 +41,7 @@ export interface AboutFonts {
 
 function scenes(fonts: AboutFonts): ReactNode[] {
   return [
-    <PendingScene key="1" />,
+    <TreatyScene key="1" display={fonts.display} displayClass={fonts.displayClass} />,
     <HaystackScene key="2" />,
     <SealScene key="3" />,
     <BrainrotScene key="4" hand={fonts.hand} display={fonts.display} />,

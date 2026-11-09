@@ -69,6 +69,13 @@
     --about-dawn-gold: var(--color-caution);
     --about-vignette: transparent;
     --about-shade: transparent;
+    --about-bubble: var(--color-surface);
+    --about-bubble-ink: var(--color-on-surface-title);
+    --about-bubble-edge: var(--color-line);
+    --about-yes: var(--color-caution);
+    --about-yes-ink: var(--color-on-caution);
+    --about-tally: var(--color-caution);
+    --about-tally-shade: transparent;
     --about-desk-a: var(--color-bar);
     --about-desk-b: var(--color-bar);
     --about-paper-a: var(--color-surface);
@@ -505,6 +512,83 @@
     font-size: 15px;
   }
 
+  /* 1B6, the treaty: a wide, short hall, so the drawing is larger than the slot and
+     fades out in an ellipse that keeps both ends of the table; its bubbles and tally
+     float on it (the playground's `.vs .stage`, `.bubble` and `.tally`) */
+  .bz-about .t-stage {
+    position: absolute;
+    inset: -8% -20% -32% -20%;
+  }
+
+  .bz-about .t-stage svg {
+    position: absolute;
+    inset: 0;
+    display: block;
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+    -webkit-mask-image: radial-gradient(ellipse 50% 40% at 50% 50%, black 72%, color-mix(in srgb, black 50%, transparent) 87%, transparent 100%);
+    mask-image: radial-gradient(ellipse 50% 40% at 50% 50%, black 72%, color-mix(in srgb, black 50%, transparent) 87%, transparent 100%);
+  }
+
+  .bz-about .t-bubble {
+    position: absolute;
+    z-index: 2;
+    max-width: 92%;
+    padding: 0.55em 0.95em;
+    border: 1px solid var(--about-bubble-edge);
+    border-radius: var(--radius-pill);
+    background: var(--about-bubble);
+    color: var(--about-bubble-ink);
+    font-weight: 600;
+    font-size: clamp(13px, 1.25vw, 17px);
+    line-height: 1.25;
+    white-space: nowrap;
+    transform: translate(-50%, calc(-100% - 14px));
+    pointer-events: none;
+  }
+
+  .bz-about .t-bubble::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    bottom: -9px;
+    margin-left: -9px;
+    border: 9px solid transparent;
+    border-bottom: 0;
+    border-top-color: var(--about-bubble);
+  }
+
+  .bz-about .t-yes {
+    padding: 0 0.3em;
+    border-radius: var(--radius-xs);
+    background: var(--about-yes);
+    color: var(--about-yes-ink);
+    font-weight: 700;
+  }
+
+  .bz-about .t-tally {
+    position: absolute;
+    z-index: 2;
+    left: 50%;
+    top: 25%;
+    color: var(--about-tally);
+    font-weight: 600;
+    font-size: clamp(11px, 1vw, 13px);
+    line-height: 1;
+    letter-spacing: 0.14em;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+    text-shadow: 0 1px 8px var(--about-tally-shade);
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+  }
+
+  .bz-about .t-tally b {
+    color: var(--about-title);
+    font-weight: 700;
+  }
+
   /* 2A, the haystack: the beam ran off the square's top; every edge fades instead */
   .bz-about .scene-haystack {
     -webkit-mask-image:
@@ -521,11 +605,11 @@
   .bz-about .scene-brainrot {
     -webkit-mask-image:
       linear-gradient(to bottom, black 82%, transparent 100%),
-      linear-gradient(to right, transparent 0, black 7%, black 93%, transparent 100%);
+      linear-gradient(to right, transparent 0, black 5%, black 96%, transparent 100%);
     -webkit-mask-composite: source-in;
     mask-image:
       linear-gradient(to bottom, black 82%, transparent 100%),
-      linear-gradient(to right, transparent 0, black 7%, black 93%, transparent 100%);
+      linear-gradient(to right, transparent 0, black 5%, black 96%, transparent 100%);
     mask-composite: intersect;
   }
 
@@ -786,6 +870,11 @@
 
     .bz-about .motto-q {
       font-size: clamp(28px, 8vw, 36px);
+    }
+
+    /* the hall stays inside the window, so she is not cut off at its edge (R1b's own phone rule) */
+    .bz-about .t-stage {
+      inset: -2% -8% -8% -8%;
     }
   }
 

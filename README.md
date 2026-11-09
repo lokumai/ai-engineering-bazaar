@@ -71,4 +71,5 @@ There are no accounts and no server: your progress stays in your browser, and yo
 
 [MIT](LICENSE).
 
-![A brass tray of Turkish delight held up in a sunlit stone bazaar](assets/footer-lokum.jpeg)
+![A brass tray of Turkish delight held up in a sunlit stone bazaar](assets/footer-lokum.jpeg)  
+*"Buyrun, MIT ikramımız olsun."* (Help yourself: the MIT licence is our treat.)

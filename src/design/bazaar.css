@@ -1729,6 +1729,25 @@
     box-shadow: var(--shadow-menu);
   }
 
+  /* The panel in the top layer (`ReadingOptions.tsx` makes it a popover while it is open):
+     a fixed box placed in the window's coordinates, so no block's `overflow` can cut it
+     and the script keeps it inside the window. The popover's own reset is undone where the
+     class above sets the same property, and `display: grid` above would otherwise outrank
+     the browser's hiding of a popover that is not shown. */
+  .bz-optmenu-panel[popover] {
+    position: fixed;
+    inset: auto;
+    top: var(--bz-menu-y, 0);
+    left: var(--bz-menu-x, 0);
+    margin: 0;
+    max-height: var(--bz-menu-max, none);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    color: var(--color-on-surface);
+  }
+
+  .bz-optmenu-panel[popover]:not(:popover-open) { display: none; }
+
   .bz-optmenu-item {
     display: flex;
     align-items: center;

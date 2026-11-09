@@ -1424,5 +1424,19 @@ running views, the cast line-up and the phone row.
 
 ---
 
+## 🏁 Milestone M89: A block's option menu is never clipped and never leaves the window (D114) — DONE
+
+- [x] The diagram theme menu and the code palette menu open in the top layer, wholly inside the window at 1440 and
+      390 px, with the block near the top or the bottom of it.
+- [x] A browser test holds a block to 96 px and asserts every option is the topmost element at its centre and
+      inside the window, and that the page gains no sideways scroll.
+
+**Report, 2026-11-09.** Cause: `.bz-slab { overflow: hidden }` cut a code block's menu; a diagram's menu was not cut
+by its block but hung off the window's bottom. Fix in `ReadingOptions.tsx` and `bazaar.css`; build markup and the
+bundle unchanged. The new test failed 6 of 8 cases on the unfixed build (all four code cases, the two diagram
+cases near the window's bottom) and passes 8 of 8 after.
+
+---
+
 > **← Part 2: [`PROGRESS_2.md`](PROGRESS_2.md)** — M16 to M49. **← Part 1: [`PROGRESS_1.md`](PROGRESS_1.md)**
 > — M1 to M15. The loop is at the top of this file.

@@ -451,6 +451,21 @@ language and redirecting from `/`, because a shared link would then open in diff
 different people and the page would jump after it loads; a "this page is also in Türkçe" banner, which the
 author did not ask for.
 
+### D114 · A block's menu is a popover in the top layer, placed in the window — 2026-11-09
+
+**Reported by the author:** on a short block the theme menu showed only its top options and the rest was
+hidden. **MEASURED** (hit test at each option's centre, 1440 and 390 px): a code block's three-option menu on a
+95 px block had one option answering, because `.bz-slab` is `overflow: hidden`; a diagram's ten-option menu
+(440 px) on a 185 px figure was **not** clipped by the block, its tools strip sits outside the scroller, but ran
+off the bottom of the window when the figure sat low in it. **Done:** while open, the panel is a
+`popover="manual"` shown in the top layer, `place()` in `ReadingOptions.tsx` puts it below the button, above it
+when there is no room, slid up if neither fits, and scrolling inside itself only when the window is shorter than
+the menu; the language reads three custom properties (`bazaar.css`). **Rejected:** removing the slab's
+`overflow: hidden`, which loses the head's corner rounding and still hangs off the window; CSS anchor
+positioning, which Firefox does not ship; a `popover` attribute in the emitted markup, because the tool strip is
+in the published bundle (`blocks.ts`) and a behaviour is not content (the bundle's contentVersion is unchanged).
+A browser without the Popover API keeps the in-block panel.
+
 ## Open questions
 
 None open in this part yet. New ones go here, numbered after O5.

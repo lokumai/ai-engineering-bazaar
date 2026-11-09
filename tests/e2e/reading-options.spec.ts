@@ -192,6 +192,88 @@ test('a palette menu closes on Escape and hands focus back', async ({ page }) =>
   await expect(menu.locator('summary')).toBeFocused()
 })
 
+/**
+ * A menu is above everything and inside the window, however short its block is.
+ *
+ * The panel (172 x 440px for the diagram themes) hangs from a button in the block's corner,
+ * and a code slab is `overflow: hidden`, so on a block shorter than the menu the browser cut
+ * it: MEASURED on a 95px block, one option answered a hit test and the rest were the slab's
+ * own ground. A diagram's panel was not cut, but it hung off the bottom of the window when the
+ * figure sat low in it. The rule is the same for both and for any content, so it is asked of
+ * a block of each kind held to 96px, wherever it sits in the window, on the desktop
+ * and on a phone: every option is the topmost element at its own centre, lies wholly inside the
+ * window, and the page grew no sideways scroll.
+ */
+const BLOCKS = [
+  { subject: 'figures', block: '[data-hl-prose] .bz-diagram' },
+  { subject: 'code', block: '[data-hl-prose] .bz-slab' },
+] as const
+const WINDOWS = [
+  { name: '1440', width: 1440, height: 900 },
+  { name: '390', width: 390, height: 844 },
+] as const
+
+for (const { subject, block } of BLOCKS) {
+  for (const size of WINDOWS) {
+    for (const place of ['top', 'bottom'] as const) {
+      test(`every ${subject} menu option is on top and inside the ${size.name}px window, with its block near the ${place}`, async ({ page }) => {
+        await page.setViewportSize({ width: size.width, height: size.height })
+        await page.goto(SHORT.path)
+        await figuresReady(page)
+
+        // The first block of this kind, held to two lines' height: the one a menu outgrows. Done
+        // here and not looked for, so the test stays true whatever the corpus holds.
+        const target = page.locator(block).first()
+        await target.evaluate((node) => {
+          ;(node as HTMLElement).style.height = '96px'
+        })
+        const menu = target.locator(`[data-hl-options="${subject}"]`)
+
+        // Put the block's button near the top of the window, or near its bottom edge.
+        await target.evaluate((node, where) => {
+          const top = node.getBoundingClientRect().top + window.scrollY
+          window.scrollTo(0, where === 'top' ? top - 70 : top - (window.innerHeight - 90))
+        }, place)
+        await menu.locator('summary').click()
+        const options = menu.locator('.bz-optmenu-item')
+        expect(await options.count(), 'the menu has options').toBeGreaterThan(1)
+
+        const panel = await menu.locator('.bz-optmenu-panel').boundingBox()
+        const frame = await target.boundingBox()
+        expect(panel!.height, 'the menu is not taller than the block, so this proves nothing').toBeGreaterThan(frame!.height)
+
+        const verdicts = await options.evaluateAll((all) =>
+          all.map((option) => {
+            const box = option.getBoundingClientRect()
+            const hit = document.elementFromPoint(box.left + box.width / 2, box.top + box.height / 2)
+            return {
+              name: option.textContent?.trim() ?? '',
+              onTop: hit !== null && (hit === option || option.contains(hit)),
+              inside:
+                box.left >= 0 &&
+                box.top >= 0 &&
+                box.right <= document.documentElement.clientWidth &&
+                box.bottom <= window.innerHeight,
+            }
+          }),
+        )
+        expect(verdicts.filter((v) => !v.onTop).map((v) => v.name), 'options hidden under something else').toEqual([])
+        expect(verdicts.filter((v) => !v.inside).map((v) => v.name), 'options outside the window').toEqual([])
+
+        const sideways = await page.evaluate(
+          () => document.documentElement.scrollWidth - document.documentElement.clientWidth,
+        )
+        expect(sideways, 'the open menu scrolled the page sideways').toBeLessThanOrEqual(0)
+
+        // It is still the same menu to work: a choice closes it and hands focus back.
+        await options.nth(1).click()
+        await expect(menu).not.toHaveAttribute('open', '')
+        await expect(menu.locator('summary')).toBeFocused()
+      })
+    }
+  }
+}
+
 test('the expanded figure opens fitted inside the window, zooms, drags and closes', async ({ page }) => {
   await page.goto(SHORT.path)
   await figuresReady(page)

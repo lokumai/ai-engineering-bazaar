@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import { Fragment } from 'react'
 import { categoryLabels } from '@/lib/content/chrome'
+import { ABOUT_ROUTE } from '@/lib/route-labels'
 import { AFFILIATION, LICENCE_LABEL, LICENCE_URL, REPO_URL } from '@/lib/site'
 import { SheetLabel } from './SheetLabel'
 
@@ -84,6 +85,13 @@ export function SiteFooter({ sheet, revision, readout }: SiteFooterProps) {
             width where the six fit, `min-h-8` is 32px and §5.2's 72px total is
             unchanged. */}
         <div className="flex min-h-8 flex-wrap items-center gap-x-3 text-meta text-on-surface-muted">
+          {/* M90, D115 — why the Bazaar exists. In the footer and not the bar: the phone bar is full
+              (`MainNav.tsx`, `data-bar-edge`), and a page about the project is the footer's kind of
+              link, next to the repository and the licence. */}
+          <Link className="bz-link" href={ABOUT_ROUTE}>
+            About
+          </Link>
+          <Dot />
           <a className="bz-link" href={REPO_URL}>
             Repository
           </a>

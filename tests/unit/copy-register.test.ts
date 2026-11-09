@@ -72,6 +72,10 @@ const ROOTS: readonly string[] = [
   'components/catalog',
   'components/curriculum',
   'lib/catalog',
+  // M90 — the About page. Its story is the author's and comes from STORY.md; what is scanned here is
+  // the copy the page adds round it: its name, the scenes' labels and the words drawn in them.
+  'components/about',
+  'app/about',
 ]
 
 function walk(target: string): string[] {
@@ -276,6 +280,15 @@ const ALLOWED: ReadonlyArray<{ text: RegExp; ban: string; why: string }> = [
       + 'one state where a name is expected — a chip, a row, a key, a band. Prose that explains '
       + 'the state it has already named is the case the ban is not about, and rewording it to '
       + 'avoid the phrase would make the sentence worse to read for no gain in consistency.',
+  },
+  {
+    text: /^(?:ME: ONE QUICK|MY ATTENTION SPAN:)$/,
+    ban: '*',
+    why: 'M90, D115 — two meme captions drawn inside the About page\'s stall 4 scene (4E, the author\'s '
+      + 'pick), in the format a meme is written in: "me: one quick question / the AI:" and "attention '
+      + 'is all you need / my attention span:". The voice is a reader\'s, quoted, not the site '
+      + 'speaking to one, and the joke is the point of the stall ("AI cannot enjoy a good '
+      + 'brainrot"). Exempt by the whole caption, so the same words anywhere else are still caught.',
   },
   {
     text: /(?:^|\s)hl-/,

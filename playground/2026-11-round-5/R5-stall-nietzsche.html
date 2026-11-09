@@ -1,0 +1,963 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Stall 5, Nietzsche</title>
+<meta name="description" content="Round 5, the About page: five drawings for the last stall (why strive for the nearly impossible), with 5A the author's Nietzsche portrait, and the motto that closes the page.">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT@0,9..144,400..800,0..100;1,9..144,400..700,0..100&display=swap">
+<style>
+/* The few colours every drawing on this page is driven from. The final page re-themes them here. */
+:root{
+  --about-ground:#0e0f22;      /* the deep indigo-black the stall sits on */
+  --about-ground-2:#17183a;    /* its lifted tone, for the slot's own sky */
+  --about-hair:#2b2c52;        /* the hairline that tells a raised surface apart */
+  --about-ink:#ece4d4;         /* type on the ground */
+  --about-muted:#a9a7c6;
+  --about-gold:#ddb46a;
+  --about-gold-deep:#c8a078;
+  --about-rose:#c9785f;        /* lokum rose */
+  --about-crimson:#a0503c;
+  --about-teal:#63b2ab;
+  --about-sand:#f6eedf;
+  --about-indigo:#282864;
+  --about-plate-ink:#1d1b35;   /* the engraving's ink */
+  --slot:min(44vw, 560px);
+  --sans:"Avenir Next", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --display:"Fraunces", "Iowan Old Style", Georgia, serif;
+}
+*{box-sizing:border-box}
+html{overflow-x:clip; background:var(--about-ground)}
+body{margin:0; background:var(--about-ground); color:var(--about-ink); font-family:var(--sans);
+  font-size:17px; line-height:1.6; -webkit-font-smoothing:antialiased; overflow-x:clip}
+body::before{content:""; position:fixed; inset:0; pointer-events:none; z-index:0;
+  background:radial-gradient(1200px 700px at 70% 10%, rgba(40,40,100,.45), transparent 70%),
+             radial-gradient(900px 600px at 10% 90%, rgba(122,74,134,.16), transparent 70%)}
+main{position:relative; z-index:1}
+
+.intro{max-width:1180px; margin:0 auto; padding:72px 24px 24px}
+.eyebrow{font-size:12.5px; letter-spacing:.16em; text-transform:uppercase; color:var(--about-gold-deep); font-weight:600}
+.intro h1{font-family:var(--display); font-weight:600; font-size:44px; line-height:1.1; margin:12px 0 14px; color:var(--about-sand)}
+.intro p{max-width:720px; color:var(--about-muted); margin:0}
+
+.opt{max-width:1240px; margin:0 auto; padding:56px 24px 72px; min-height:100vh; display:flex; flex-direction:column; justify-content:center; border-top:1px solid var(--about-hair)}
+.opt-label{display:flex; flex-wrap:wrap; align-items:baseline; gap:8px 16px; margin-bottom:40px}
+.opt-label .code{font-family:var(--display); font-size:22px; font-weight:700; color:var(--about-gold)}
+.opt-label .name{font-weight:650; color:var(--about-sand); font-size:17px}
+.opt-label .line{color:var(--about-muted); font-size:15px; flex:1 1 380px}
+.opt-label .tag{font-size:11.5px; letter-spacing:.12em; text-transform:uppercase; color:var(--about-teal); border:1px solid rgba(99,178,171,.45); border-radius:999px; padding:2px 9px}
+.replay{font:inherit; font-size:14px; font-weight:600; color:var(--about-sand); background:transparent; border:1px solid var(--about-hair);
+  border-radius:999px; padding:6px 16px; cursor:pointer; transition:border-color .2s, background .2s}
+.replay:hover{border-color:var(--about-gold-deep); background:rgba(221,180,106,.08)}
+.replay:focus-visible{outline:2px solid var(--about-gold); outline-offset:3px}
+
+.stall{display:grid; grid-template-columns:minmax(0,1fr) var(--slot); gap:clamp(32px, 6vw, 96px); align-items:center}
+.stall-text .num{display:flex; align-items:center; gap:14px; font-family:var(--display); color:var(--about-gold-deep); font-size:15px; letter-spacing:.2em}
+.stall-text .num::after{content:""; height:1px; width:64px; background:currentColor; opacity:.6}
+.stall-text h2{font-family:var(--display); font-weight:560; font-variation-settings:"SOFT" 50, "opsz" 96; font-size:clamp(28px, 3.1vw, 44px); line-height:1.14; color:var(--about-sand); margin:22px 0 22px; max-width:15em; text-wrap:balance}
+.stall-text p{font-family:var(--display); font-style:italic; font-weight:400; font-size:clamp(18px, 1.6vw, 22px); line-height:1.55; color:#cfc8dc; max-width:28em; margin:0}
+
+.slot{width:var(--slot); aspect-ratio:1; position:relative; border-radius:6px; overflow:hidden;
+  background:radial-gradient(120% 90% at 50% 20%, var(--about-ground-2), var(--about-ground) 75%);
+  border:1px solid var(--about-hair)}
+.slot svg, .slot canvas{position:absolute; inset:0; width:100%; height:100%; display:block}
+
+/* ---------- the closing ---------- */
+.motto{min-height:100vh; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:96px 24px 120px; border-top:1px solid var(--about-hair); position:relative}
+.motto .eyebrow{margin-bottom:28px}
+.motto-text{font-family:var(--display); color:var(--about-sand); margin:0; max-width:min(92vw, 1100px)}
+.motto-a{display:block; font-weight:560; font-variation-settings:"SOFT" 60, "opsz" 144; font-size:clamp(34px, 5.4vw, 76px); line-height:1.08}
+.motto-b{display:block; font-style:italic; font-weight:400; color:var(--about-gold); font-size:clamp(24px, 3.2vw, 44px); margin-top:.5em}
+.motto .w{display:inline-block}
+.motto-line{display:block; width:min(560px, 80vw); height:40px; margin:22px auto 0; overflow:visible}
+.motto .note{max-width:620px; margin:56px auto 0; color:var(--about-muted); font-size:14.5px}
+.motto .replay{margin-top:28px}
+
+@media (max-width: 760px){
+  .intro{padding-top:48px}
+  .intro h1{font-size:34px}
+  .opt{min-height:auto; padding:48px 16px 56px}
+  .opt-label{margin-bottom:28px}
+  .stall{grid-template-columns:minmax(0,1fr); gap:28px}
+  .slot{width:100%; max-width:440px; margin:0 auto}
+  .stall-text h2{margin:16px 0}
+}
+@media (prefers-reduced-motion: reduce){ *{scroll-behavior:auto !important} }
+</style>
+</head>
+<body>
+<main>
+
+<header class="intro">
+  <div class="eyebrow">About page, round 5 &middot; stall 5 of 5</div>
+  <h1>Why strive for the nearly impossible</h1>
+  <p>Five drawings for the last stall. 5A is the author's idea; 5B to 5E are proposals. Each one sits as the stall will: its text on one side, its drawing in the square slot on the other. It plays when it reaches the screen, and Replay plays it again. The motto that closes the page is at the bottom.</p>
+</header>
+
+<!-- ======================================================= 5A -->
+<section class="opt" id="opt-a" data-opt="a">
+  <div class="opt-label">
+    <span class="code">5A</span><span class="name">Nietzsche, engraved</span><span class="tag">2D &middot; SVG</span>
+    <span class="line">The author's idea: an original portrait of Nietzsche, inked line by line on an engraving plate, his gaze lifting as the light crosses his face.</span>
+    <button class="replay" type="button">Replay</button>
+  </div>
+  <div class="stall">
+    <div class="stall-text">
+      <div class="num">V</div>
+      <h2>Why spend so much human effort on something a prompt could generate in seconds?</h2>
+      <p>Because, as Nietzsche once suggested, striving for something that feels nearly impossible is exactly what makes it worth pursuing.</p>
+    </div>
+    <div class="slot" id="slot-a">
+      <svg id="nz" viewBox="0 0 400 400" role="img" aria-label="An engraved portrait of Friedrich Nietzsche: high forehead, swept-back hair, heavy brows and the great drooping moustache.">
+        <defs>
+          <radialGradient id="nz-paper" cx="42%" cy="36%" r="70%">
+            <stop offset="0" stop-color="#f6eedf"/><stop offset=".6" stop-color="#e9dcc4"/><stop offset="1" stop-color="#c9b48f"/>
+          </radialGradient>
+          <radialGradient id="nz-light" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(150 150) scale(210)">
+            <stop offset="0" stop-color="#1d1b35" stop-opacity="0"/><stop offset=".55" stop-color="#1d1b35" stop-opacity=".05"/><stop offset="1" stop-color="#1d1b35" stop-opacity=".42"/>
+          </radialGradient>
+          <linearGradient id="nz-skin" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0" stop-color="#1d1b35" stop-opacity=".02"/><stop offset=".55" stop-color="#1d1b35" stop-opacity=".07"/><stop offset="1" stop-color="#1d1b35" stop-opacity=".22"/>
+          </linearGradient>
+          <clipPath id="nz-med"><ellipse cx="200" cy="192" rx="150" ry="172"/></clipPath>
+          <clipPath id="nz-face"><path id="nz-face-p" d="M141,170 C138,140 152,104 200,100 C250,104 264,140 262,170 C268,202 266,238 256,270 C248,298 230,322 202,333 C178,325 160,302 152,274 C144,246 140,208 141,170 Z"/></clipPath>
+          <clipPath id="nz-stache-c"><path d="M200,247 C192,242 178,241 168,246 C152,253 140,268 133,288 C129,298 127,306 130,313 C134,308 138,304 143,301 C151,297 161,297 171,299 C183,301 194,299 200,295 C206,299 217,301 229,299 C239,297 249,297 257,301 C262,304 266,308 270,313 C273,306 271,298 267,288 C260,268 248,253 232,246 C222,241 208,242 200,247 Z"/></clipPath>
+          <clipPath id="nz-shade"><path d="M236,140 C248,172 248,228 236,264 C228,286 216,308 204,322 L204,345 L295,345 L295,120 Z"/></clipPath>
+          <clipPath id="nz-sock"><ellipse cx="173" cy="175" rx="23" ry="12"/><ellipse cx="228" cy="175" rx="23" ry="12"/></clipPath>
+          <clipPath id="nz-noseR"><path d="M205,168 C208,190 211,212 213,229 L220,236 L214,242 L206,240 C204,214 202,190 200,168 Z"/></clipPath>
+          <clipPath id="nz-neck"><path d="M168,326 C180,334 222,334 234,326 L240,360 L160,360 Z"/></clipPath>
+          <clipPath id="nz-eyeL"><path d="M157,180 C164,174 179,173 189,179 C181,186 166,186 159,182 Z"/></clipPath>
+          <clipPath id="nz-eyeR"><path d="M211,179 C221,173 236,174 243,180 C234,186 220,186 212,181 Z"/></clipPath>
+          <path id="nz-arc" d="M46,372 Q200,412 354,372"/>
+        </defs>
+
+        <g id="nz-plate">
+          <ellipse cx="200" cy="192" rx="150" ry="172" fill="url(#nz-paper)"/>
+        </g>
+        <ellipse class="nz-ring" cx="200" cy="192" rx="158" ry="180" fill="none" stroke="var(--about-gold-deep)" stroke-width="1.4" pathLength="1"/>
+        <ellipse class="nz-ring" cx="200" cy="192" rx="163" ry="185" fill="none" stroke="var(--about-gold-deep)" stroke-width=".6" stroke-opacity=".6" pathLength="1"/>
+
+        <g clip-path="url(#nz-med)">
+          <g id="nz-portrait" transform="translate(16 10) scale(.92)">
+            <!-- tones, which fade in under the line -->
+            <g id="nz-tones" opacity="0">
+              <path d="M164,350 C120,356 76,372 50,420 L350,420 C324,372 280,356 236,350 L232,366 L214,386 L200,400 L186,386 L168,366 Z" fill="var(--about-plate-ink)" opacity=".9"/>
+              <path d="M170,318 C170,332 168,344 164,352 L236,352 C232,344 230,332 230,318 Z" fill="var(--about-plate-ink)" opacity=".1"/>
+              <use href="#nz-face-p" fill="url(#nz-skin)"/>
+              <path id="nz-hair-fill" fill="var(--about-plate-ink)" opacity=".76"/>
+              <path d="M260,184 C274,176 284,192 280,210 C277,226 268,238 256,236 Z" fill="var(--about-plate-ink)" opacity=".14"/>
+              <path d="M164,350 L184,334 L200,354 L216,334 L236,350 L232,366 L200,373 L168,366 Z" fill="#f6eedf"/>
+              <path d="M188,357 L200,367 L212,357 L215,388 L200,400 L185,388 Z" fill="var(--about-plate-ink)"/>
+              <g class="ft">
+                <path d="M200,247 C192,242 178,241 168,246 C152,253 140,268 133,288 C129,298 127,306 130,313 C134,308 138,304 143,301 C151,297 161,297 171,299 C183,301 194,299 200,295 C206,299 217,301 229,299 C239,297 249,297 257,301 C262,304 266,308 270,313 C273,306 271,298 267,288 C260,268 248,253 232,246 C222,241 208,242 200,247 Z" fill="var(--about-plate-ink)" opacity=".86"/>
+                <path d="M146,168 C152,151 172,147 195,156 C196,160 195,163 193,165 C177,160 161,162 151,173 C148,173 145,171 146,168 Z" fill="var(--about-plate-ink)" opacity=".92"/>
+                <path d="M252,168 C246,151 226,147 206,156 C205,160 206,163 208,165 C222,160 238,162 248,173 C251,173 253,171 252,168 Z" fill="var(--about-plate-ink)" opacity=".92"/>
+                <ellipse cx="188" cy="240" rx="3.6" ry="2" fill="var(--about-plate-ink)"/>
+                <ellipse cx="205" cy="240" rx="3" ry="1.8" fill="var(--about-plate-ink)"/>
+                <path d="M186,305 C194,311 206,311 214,305 C208,309 192,309 186,305 Z" fill="var(--about-plate-ink)" opacity=".5"/>
+              </g>
+            </g>
+            <!-- hatching, generated -->
+            <g id="nz-hatch" fill="none" stroke="var(--about-plate-ink)" stroke-linecap="round"></g>
+            <!-- hair strands, generated -->
+            <g id="nz-hair" fill="none" stroke-linecap="round"></g>
+            <!-- the line -->
+            <g id="nz-lines" fill="none" stroke="var(--about-plate-ink)" stroke-linecap="round" stroke-linejoin="round">
+              <path class="ln" stroke-width="1.25" d="M141,170 C140,208 144,246 152,274 C160,302 178,325 202,333 C230,322 248,298 256,270 C266,238 268,202 262,170"/>
+              <path class="ln" stroke-width="1.3" d="M260,184 C274,176 284,192 280,210 C277,226 268,238 256,236"/>
+              <path class="ln" stroke-width=".9" d="M264,194 C272,194 272,210 266,222"/>
+              <path class="ln" stroke-width=".8" d="M164,128 C180,123 220,123 236,128"/>
+              <path class="ln" stroke-width=".7" d="M168,139 C184,135 212,135 228,139"/>
+              <path class="ln" stroke-width=".9" d="M153,214 C155,228 157,238 160,246"/>
+              <path class="ln" stroke-width=".9" d="M250,212 C246,230 242,244 236,254"/>
+              <path class="ln" stroke-width=".9" d="M168,320 C178,327 202,329 214,320"/>
+              <path class="ln" stroke-width="1.2" d="M170,318 C170,332 168,344 164,352 M230,318 C230,332 232,344 236,352"/>
+              <path class="ln" stroke-width="1.2" d="M164,350 L184,334 L200,354 L216,334 L236,350 L232,366 L200,373 L168,366 Z"/>
+              <path class="ln" stroke-width="1.4" d="M164,350 C120,356 76,372 50,420 M236,350 C280,356 324,372 350,420"/>
+              <path class="ln" stroke-width="1" stroke="#f6eedf" stroke-opacity=".5" d="M168,366 L146,420 M232,366 L254,420 M120,372 C112,388 108,404 106,420 M280,372 C288,388 292,404 294,420"/>
+              <path class="ln" id="nz-hair-out" stroke-width="1.4"/>
+              <path class="ln" id="nz-hair-in" stroke-width="1"/>
+              <g class="ft">
+                <path class="ln" stroke-width="1" d="M196,148 C195,153 195,158 196,162 M203,148 C204,153 204,158 203,162"/>
+                <path class="ln" stroke-width="2.6" d="M157,180 C164,174 179,173 189,179"/>
+                <path class="ln" stroke-width="1" d="M159,182 C167,185.5 180,185.5 188,181"/>
+                <path class="ln" stroke-width="2.6" d="M211,179 C221,173 236,174 243,180"/>
+                <path class="ln" stroke-width="1" d="M212,181 C220,185.5 233,185.5 241,182"/>
+                <path class="ln" stroke-width=".8" d="M161,192 C169,196 181,195 187,191"/>
+                <path class="ln" stroke-width=".8" d="M214,191 C220,196 232,196 240,192"/>
+                <path class="ln" stroke-width="1.5" d="M193,165 C191,188 186,210 181,227 C175,234 180,244 189,243 C193,246 201,246 206,243 C213,244 218,236 212,229"/>
+                <path class="ln" stroke-width=".8" d="M206,168 C208,190 210,210 212,229"/>
+                <path class="ln" stroke-width="1.2" d="M200,247 C192,242 178,241 168,246 C152,253 140,268 133,288 C129,298 127,306 130,313 C134,308 138,304 143,301 C151,297 161,297 171,299 C183,301 194,299 200,295 C206,299 217,301 229,299 C239,297 249,297 257,301 C262,304 266,308 270,313 C273,306 271,298 267,288 C260,268 248,253 232,246 C222,241 208,242 200,247"/>
+              </g>
+            </g>
+            <!-- moustache strands, generated -->
+            <g class="ft"><g id="nz-stache" fill="none" stroke-linecap="round" clip-path="url(#nz-stache-c)"></g></g>
+            <!-- the brows' own hair -->
+            <g class="ft"><g id="nz-brow" fill="none" stroke="var(--about-plate-ink)" stroke-linecap="round"></g></g>
+            <!-- the eyes -->
+            <g class="ft"><g id="nz-eyes" opacity="0">
+              <g clip-path="url(#nz-eyeL)"><rect x="150" y="165" width="45" height="25" fill="#cfc1a6"/><g class="iris"><circle cx="174" cy="180.5" r="5.6" fill="var(--about-plate-ink)"/><circle cx="172.3" cy="178.8" r="1.1" fill="#f6eedf"/></g></g>
+              <g clip-path="url(#nz-eyeR)"><rect x="206" y="165" width="45" height="25" fill="#cfc1a6"/><g class="iris"><circle cx="228" cy="180.5" r="5.6" fill="var(--about-plate-ink)"/><circle cx="226.3" cy="178.8" r="1.1" fill="#f6eedf"/></g></g>
+              <path d="M157,180 C164,174 179,173 189,179 M211,179 C221,173 236,174 243,180" fill="none" stroke="var(--about-plate-ink)" stroke-width="2.8" stroke-linecap="round"/>
+            </g></g>
+          </g>
+          <rect id="nz-sweep" x="0" y="0" width="400" height="400" fill="url(#nz-light)" opacity="0"/>
+        </g>
+        <text id="nz-cap" font-family="Fraunces, Georgia, serif" font-size="9.5" letter-spacing="2.6" fill="var(--about-gold-deep)" opacity="0" text-anchor="middle">
+          <textPath href="#nz-arc" startOffset="50%">FRIEDRICH NIETZSCHE &#183; 1844&#8211;1900</textPath>
+        </text>
+      </svg>
+    </div>
+  </div>
+</section>
+
+<!-- ======================================================= 5B -->
+<section class="opt" id="opt-b" data-opt="b">
+  <div class="opt-label">
+    <span class="code">5B</span><span class="name">The rope over the abyss</span><span class="tag">2D &middot; SVG</span>
+    <span class="line">Zarathustra's tightrope walker crosses between two towers in front of the moon, one careful step at a time; the rope behind him turns gold.</span>
+    <button class="replay" type="button">Replay</button>
+  </div>
+  <div class="stall">
+    <div class="stall-text">
+      <div class="num">V</div>
+      <h2>Why spend so much human effort on something a prompt could generate in seconds?</h2>
+      <p>Because, as Nietzsche once suggested, striving for something that feels nearly impossible is exactly what makes it worth pursuing.</p>
+    </div>
+    <div class="slot" id="slot-b">
+      <svg id="rope" viewBox="0 0 400 400" role="img" aria-label="A tightrope walker with a long balancing pole crossing a rope between two towers, high above a town at night, in front of a full moon."></svg>
+    </div>
+  </div>
+</section>
+
+<!-- ======================================================= 5C -->
+<section class="opt" id="opt-c" data-opt="c">
+  <div class="opt-label">
+    <span class="code">5C</span><span class="name">The summit</span><span class="tag">3D &middot; three.js</span>
+    <span class="line">A mountain in 3D turns slowly while a lantern climbs its trail to the snow at the peak; the path behind it stays lit.</span>
+    <button class="replay" type="button">Replay</button>
+  </div>
+  <div class="stall">
+    <div class="stall-text">
+      <div class="num">V</div>
+      <h2>Why spend so much human effort on something a prompt could generate in seconds?</h2>
+      <p>Because, as Nietzsche once suggested, striving for something that feels nearly impossible is exactly what makes it worth pursuing.</p>
+    </div>
+    <div class="slot" id="slot-c" role="img" aria-label="A three-dimensional mountain at night with a gold trail spiralling up to its snowy peak and a lantern climbing it."></div>
+  </div>
+</section>
+
+<!-- ======================================================= 5D -->
+<section class="opt" id="opt-d" data-opt="d">
+  <div class="opt-label">
+    <span class="code">5D</span><span class="name">The stone uphill</span><span class="tag">2D &middot; SVG</span>
+    <span class="line">Sisyphus leans into his stone on a slope that never ends, towards a light at the top; his footsteps glow behind him.</span>
+    <button class="replay" type="button">Replay</button>
+  </div>
+  <div class="stall">
+    <div class="stall-text">
+      <div class="num">V</div>
+      <h2>Why spend so much human effort on something a prompt could generate in seconds?</h2>
+      <p>Because, as Nietzsche once suggested, striving for something that feels nearly impossible is exactly what makes it worth pursuing.</p>
+    </div>
+    <div class="slot" id="slot-d">
+      <svg id="sis" viewBox="68 108 234 234" role="img" aria-label="Sisyphus in a red tunic pushing a great round stone up a steep slope towards a warm light at the top."></svg>
+    </div>
+  </div>
+</section>
+
+<!-- ======================================================= 5E -->
+<section class="opt" id="opt-e" data-opt="e">
+  <div class="opt-label">
+    <span class="code">5E</span><span class="name">The hand-cut stone</span><span class="tag">3D &middot; three.js</span>
+    <span class="line">A rough stone turns in 3D and takes its shape one chisel strike at a time, until its cut faces catch the light.</span>
+    <button class="replay" type="button">Replay</button>
+  </div>
+  <div class="stall">
+    <div class="stall-text">
+      <div class="num">V</div>
+      <h2>Why spend so much human effort on something a prompt could generate in seconds?</h2>
+      <p>Because, as Nietzsche once suggested, striving for something that feels nearly impossible is exactly what makes it worth pursuing.</p>
+    </div>
+    <div class="slot" id="slot-e" role="img" aria-label="A rough stone in three dimensions being cut by a chisel into a faceted shape with gold edges."></div>
+  </div>
+</section>
+
+<!-- ======================================================= the closing -->
+<section class="motto" id="motto">
+  <div class="eyebrow">Our motto</div>
+  <p class="motto-text">
+    <span class="motto-a"><span class="w">Imperfect</span> <span class="w">Human</span> <span class="w">Art</span> <span class="w">with</span> <span class="w">Soul.</span></span>
+    <span class="motto-b"><span class="w">Not</span> <span class="w">a</span> <span class="w">Curriculum.</span></span>
+  </p>
+  <svg class="motto-line" viewBox="0 0 560 40" aria-hidden="true">
+    <path id="motto-stroke" d="M8,24 C60,18 110,27 168,21 C230,15 268,28 330,22 C392,16 440,26 494,19 C516,16 534,18 552,22" fill="none" stroke="var(--about-gold-deep)" stroke-width="2.2" stroke-linecap="round" pathLength="1"/>
+    <circle id="motto-dot" cx="552" cy="22" r="3.2" fill="var(--about-gold)"/>
+  </svg>
+  <button class="replay" type="button" id="motto-replay">Replay</button>
+  <p class="note">The closing every option leads into: the last stall's drawing ends, the ground stays dark, and the motto arrives a word at a time with one hand-drawn line under it, a little uneven on purpose.</p>
+</section>
+
+</main>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+(function(){
+"use strict";
+const REDUCED = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+const NS = 'http://www.w3.org/2000/svg';
+const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+function el(tag, attrs, parent){ const e=document.createElementNS(NS, tag); for(const k in attrs) e.setAttribute(k, attrs[k]); if(parent) parent.appendChild(e); return e; }
+// a seeded random, so every load draws the same strands and stars
+function rng(seed){ let s=seed>>>0; return ()=>{ s=(s*1664525+1013904223)>>>0; return s/4294967296; }; }
+const lerp=(a,b,t)=>a+(b-a)*t, clamp=(x,a,b)=>Math.max(a,Math.min(b,x));
+const ease=t=>t<.5?2*t*t:1-Math.pow(-2*t+2,2)/2;
+
+gsap.registerPlugin(ScrollTrigger);
+
+/* Each drawing is a controller: play() resumes it, pause() stops its clock, replay() starts it over,
+   still() leaves one meaningful frame. The observer below pauses whatever is off screen. */
+const controllers = {};
+
+/* ============================================================== 5A — the engraving */
+controllers.a = (function(){
+  const svg = document.getElementById('nz'), R = rng(18441015);
+  const ink = css('--about-plate-ink'), paper = '#f6eedf';
+  // the head is turned a little to the viewer's left: every feature of the face shifts by FX
+  const FX=-12;
+  svg.querySelectorAll('.ft').forEach(g=>g.setAttribute('transform',`translate(${FX} 0)`));
+  // hair: an outer and an inner outline around the skull, strands between them, swept back.
+  // The hairline recedes at the temples, as his did, and the crown carries a little height.
+  const cx=198, cy=176;
+  const a0=Math.PI*1.075, a1=Math.PI*1.925;
+  const recede=a=>1+0.10*Math.exp(-Math.pow((a-Math.PI*1.27)/0.1,2))+0.10*Math.exp(-Math.pow((a-Math.PI*1.73)/0.1,2));
+  const inR=a=>[64*recede(a), 74*recede(a)];
+  const outR=a=>{ const k=1+0.025*Math.sin(a*11); return [83*k, (116+8*Math.exp(-Math.pow((a-Math.PI*1.5)/0.35,2)))*k]; };
+  const P=(r,a)=>[cx+r[0]*Math.cos(a), cy+r[1]*Math.sin(a)];
+  let outer='', inner='';
+  for(let i=0;i<=48;i++){ const a=lerp(a0,a1,i/48); const o=P(outR(a),a), n=P(inR(a),a);
+    outer += (i?' L':'M')+o[0].toFixed(1)+','+o[1].toFixed(1); inner = ' L'+n[0].toFixed(1)+','+n[1].toFixed(1)+inner; }
+  document.getElementById('nz-hair-fill').setAttribute('d', outer+inner+' Z');
+  document.getElementById('nz-hair-out').setAttribute('d', outer);
+  let inD=''; for(let i=5;i<=43;i++){ const a=lerp(a0,a1,i/48); const n=P(inR(a),a); inD+=(i>5?' L':'M')+n[0].toFixed(1)+','+n[1].toFixed(1); }
+  document.getElementById('nz-hair-in').setAttribute('d', inD);
+  const hair = document.getElementById('nz-hair');
+  for(let i=0;i<96;i++){
+    const t=i/95, a=lerp(a0+0.03,a1-0.03,t)+(R()-.5)*0.03;
+    const ri=inR(a), ro=outR(a);
+    const s=P([ri[0]+R()*2, ri[1]+R()*2],a);
+    // each strand rises from the hairline and lies back over the crown, towards the far side
+    const ae = a + (t<.5?-1:1)*(0.06+R()*0.12);
+    const e=P([ro[0]-1-R()*5, ro[1]-2-R()*7],ae);
+    const mid=P([(ri[0]+ro[0])/2,(ri[1]+ro[1])/2],a);
+    const lit = t<0.55 && i%2===1;
+    el('path',{d:`M${s[0].toFixed(1)},${s[1].toFixed(1)} Q${(mid[0]+(t-.5)*-8).toFixed(1)},${(mid[1]-10).toFixed(1)} ${e[0].toFixed(1)},${e[1].toFixed(1)}`,
+      stroke: lit? paper : ink, 'stroke-width': lit? (.6+R()*.5) : (0.6+R()*.7), 'stroke-opacity': lit? (.25+R()*.3) : .85, class:'hs', pathLength:1}, hair);
+  }
+  // the moustache: strands fanning from under the nose and falling over the mouth
+  const st = document.getElementById('nz-stache');
+  for(let i=0;i<72;i++){
+    const s=(i/71)*2-1, m=Math.abs(s);
+    const x0=200+s*26+(R()-.5)*3, y0=246+m*3;
+    const x1=200+s*70+(R()-.5)*5, y1=297+m*m*15+(R()-.5)*3;
+    const qx=200+s*60, qy=258+m*4;
+    const lit = s<0.15 && i%2===1;
+    el('path',{d:`M${x0.toFixed(1)},${y0.toFixed(1)} Q${qx.toFixed(1)},${qy.toFixed(1)} ${x1.toFixed(1)},${y1.toFixed(1)}`,
+      stroke: lit? paper : ink, 'stroke-width': lit? (0.7+R()*.4) : (0.8+R()*.5), 'stroke-opacity': lit? (.32+R()*.25) : .9, class:'ms', pathLength:1}, st);
+  }
+  // the brows' hair, short strokes lying outward
+  const br = document.getElementById('nz-brow');
+  [[148,195,-1],[251,206,1]].forEach(([xa,xb,dir])=>{
+    for(let i=0;i<18;i++){ const t=i/17, x=lerp(xb,xa,t), y=159 - Math.sin(t*Math.PI)*7 + t*8;
+      el('path',{d:`M${x.toFixed(1)},${(y+4).toFixed(1)} q${(dir*-6).toFixed(1)},${(-3-R()*2).toFixed(1)} ${(dir*-10-R()*3*dir).toFixed(1)},${(1+R()*3).toFixed(1)}`, 'stroke-width':.9, class:'bs', pathLength:1}, br);
+    }
+  });
+  // hatching: parallel lines inside a clip, one family per shadow
+  const hatch = document.getElementById('nz-hatch');
+  function family(clip, ang, gap, x0,y0,x1,y1, w, op, parent){
+    const g = el('g',{'clip-path':`url(#${clip})`}, parent||hatch);
+    const c=Math.cos(ang*Math.PI/180), s=Math.sin(ang*Math.PI/180), mx=(x0+x1)/2, my=(y0+y1)/2, L=Math.hypot(x1-x0,y1-y0);
+    for(let o=-L/2;o<=L/2;o+=gap){ const px=mx - s*o, py=my + c*o; const bend=(R()-.5)*3;
+      el('path',{d:`M${(px-c*L/2).toFixed(1)},${(py-s*L/2).toFixed(1)} Q${(px - s*bend).toFixed(1)},${(py + c*bend).toFixed(1)} ${(px+c*L/2).toFixed(1)},${(py+s*L/2).toFixed(1)}`,'stroke-width':w,'stroke-opacity':op,class:'ht',pathLength:1}, g); }
+    return g;
+  }
+  const fg = el('g',{'clip-path':'url(#nz-face)'}, hatch);
+  const fgs = el('g',{transform:`translate(${FX} 0)`}, fg);
+  // the shadow side of the face, two crossing families; the sockets and the nose, denser; the neck
+  family('nz-shade', 62, 3.6, 200,120,300,340, .7, .75, fg);
+  family('nz-shade', -20, 5.2, 220,170,300,330, .55, .5, fg);
+  family('nz-sock', 35, 2.2, 140,155,260,235, .65, .85, fgs);
+  family('nz-sock', -40, 2.8, 140,155,260,235, .55, .65, fgs);
+  family('nz-noseR', 70, 2.6, 196,160,226,246, .6, .7, fgs);
+  family('nz-neck', 75, 3, 150,320,250,360, .7, .7);
+  // under the moustache, a band of shadow across the chin
+  family('nz-face', 8, 3.6, 150,306,250,324, .5, .45);
+
+  const lines = svg.querySelectorAll('.ln, .hs, .ms, .bs, .ht, .nz-ring');
+  const irises = svg.querySelectorAll('.iris');
+  let tl, sweep;
+  function build(){
+    if(tl) tl.kill(); if(sweep) sweep.kill();
+    gsap.set(lines,{strokeDasharray:1, strokeDashoffset:1});
+    gsap.set('#nz-tones',{opacity:0}); gsap.set('#nz-eyes',{opacity:0}); gsap.set('#nz-cap',{opacity:0}); gsap.set('#nz-sweep',{opacity:0});
+    gsap.set('#nz-plate',{opacity:0, scale:.96, transformOrigin:'200px 192px'});
+    gsap.set(irises,{x:1.5, y:2.6});
+    tl = gsap.timeline({paused:true});
+    tl.to('#nz-plate',{opacity:1, scale:1, duration:1.4, ease:'power2.out'})
+      .to('.nz-ring',{strokeDashoffset:0, duration:1.8, ease:'power2.inOut', stagger:.2}, 0.1)
+      .to('#nz-lines .ln',{strokeDashoffset:0, duration:1.1, ease:'power1.inOut', stagger:.11}, 0.6)
+      .to('#nz-brow .bs',{strokeDashoffset:0, duration:.35, stagger:.025}, 1.6)
+      .to('#nz-eyes',{opacity:1, duration:.8}, 2.0)
+      .to('#nz-tones',{opacity:1, duration:1.6, ease:'power1.inOut'}, 2.6)
+      .to('#nz-stache .ms',{strokeDashoffset:0, duration:.6, stagger:{each:.025, from:'center'}}, 2.9)
+      .to('#nz-hair .hs',{strokeDashoffset:0, duration:.6, stagger:{each:.018, from:'random'}}, 3.1)
+      .to('#nz-hatch .ht',{strokeDashoffset:0, duration:.5, stagger:{each:.006, from:'start'}}, 3.6)
+      .to('#nz-cap',{opacity:1, duration:1.2}, 5.2)
+      .to(irises,{x:-1.4, y:-0.4, duration:2.4, ease:'power2.inOut'}, 5.4)
+      .to('#nz-sweep',{opacity:1, duration:1.5}, 5.2);
+    // after the drawing, the light keeps travelling across the face
+    sweep = gsap.timeline({repeat:-1, yoyo:true, paused:true})
+      .fromTo('#nz-light',{attr:{gradientTransform:'translate(120 140) scale(210)'}},{attr:{gradientTransform:'translate(285 170) scale(230)'}, duration:7, ease:'sine.inOut'});
+    tl.call(()=>{ if(running) sweep.play(); });
+  }
+  let running=false, started=false;
+  build();
+  return {
+    play(){ running=true; if(!started){ started=true; tl.play(0); } else { tl.resume(); if(tl.progress()===1) sweep.play(); } },
+    pause(){ running=false; tl.pause(); sweep.pause(); },
+    replay(){ build(); started=true; running=true; tl.play(0); },
+    still(){ build(); tl.progress(1); sweep.progress(0.35); }
+  };
+})();
+
+/* ============================================================== 5B — the rope */
+controllers.b = (function(){
+  const svg=document.getElementById('rope'), R=rng(1883);
+  const gold=css('--about-gold'), sand=css('--about-sand');
+  const defs=el('defs',{},svg);
+  defs.innerHTML = `
+    <linearGradient id="rp-sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0b0c1e"/><stop offset=".55" stop-color="#191a44"/><stop offset="1" stop-color="#2a2150"/></linearGradient>
+    <radialGradient id="rp-moon" cx="45%" cy="40%" r="60%"><stop offset="0" stop-color="#f6eedf"/><stop offset=".75" stop-color="#e6dac6"/><stop offset="1" stop-color="#cdbd9f"/></radialGradient>
+    <radialGradient id="rp-halo"><stop offset="0" stop-color="#e6dac6" stop-opacity=".32"/><stop offset="1" stop-color="#e6dac6" stop-opacity="0"/></radialGradient>
+    <radialGradient id="rp-star"><stop offset="0" stop-color="#ffe7b0" stop-opacity="1"/><stop offset=".25" stop-color="#ddb46a" stop-opacity=".55"/><stop offset="1" stop-color="#ddb46a" stop-opacity="0"/></radialGradient>
+    <linearGradient id="rp-mist" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2a2150" stop-opacity="0"/><stop offset="1" stop-color="#3a2a5c" stop-opacity=".85"/></linearGradient>
+    <linearGradient id="rp-stone" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#2b2a56"/><stop offset=".7" stop-color="#1b1b3d"/><stop offset="1" stop-color="#121230"/></linearGradient>`;
+  el('rect',{x:0,y:0,width:400,height:400,fill:'url(#rp-sky)'},svg);
+  const stars=el('g',{},svg); const starEls=[];
+  for(let i=0;i<70;i++){ const c=el('circle',{cx:(R()*400).toFixed(1), cy:(R()*250).toFixed(1), r:(R()*0.9+0.3).toFixed(2), fill:sand, opacity:(R()*.5+.2).toFixed(2)},stars); starEls.push([c, R()*6.28, +c.getAttribute('opacity')]); }
+  el('circle',{cx:204,cy:168,r:118,fill:'url(#rp-halo)'},svg);
+  el('circle',{cx:204,cy:168,r:62,fill:'url(#rp-moon)'},svg);
+  // the moon's seas, faint
+  el('path',{d:'M180,140 c10,-8 26,-6 30,4 c3,9 -9,14 -20,12 c-8,-1 -15,-9 -10,-16 Z M214,176 c9,-4 22,2 20,12 c-2,8 -14,10 -22,5 c-6,-4 -5,-14 2,-17 Z M176,184 c6,-2 12,3 10,8 c-2,4 -9,4 -11,0 c-1,-3 -1,-6 1,-8 Z',fill:'#c9b896',opacity:.45},svg);
+  // the town far below: roofs, a dome, windows
+  const town=el('g',{},svg);
+  el('path',{d:'M0,400 L0,352 L18,352 L18,340 L30,330 L42,340 L42,356 L64,356 L64,344 L84,344 L84,360 L104,360 L112,348 L120,360 L140,360 L140,338 C140,322 172,322 172,338 L172,360 L186,360 L186,330 L190,318 L194,330 L194,362 L214,362 L214,346 L238,346 L238,364 L262,364 L270,352 L278,364 L300,364 L300,350 L322,350 L322,366 L346,366 L346,354 L370,354 L370,368 L400,368 L400,400 Z',fill:'#0c0b1d'},town);
+  [[24,346],[34,348],[70,352],[90,366],[148,348],[162,350],[155,342],[220,354],[230,356],[268,370],[306,358],[314,358],[330,372],[354,362],[380,374],[8,360],[124,368],[196,372],[246,372]].forEach(([x,y])=>el('rect',{x,y,width:2.6,height:3.4,fill:gold,opacity:.75},town));
+  el('rect',{x:0,y:300,width:400,height:100,fill:'url(#rp-mist)'},svg);
+  // the towers
+  function tower(x0,x1,top,peak){
+    const g=el('g',{},svg);
+    el('path',{d:`M${x0},400 L${x0},${top} L${x1},${top} L${x1},400 Z`,fill:'url(#rp-stone)'},g);
+    el('path',{d:`M${x0-6},${top} L${(x0+x1)/2},${peak} L${x1+6},${top} Z`,fill:'#141433'},g);
+    el('path',{d:`M${x0-6},${top} L${(x0+x1)/2},${peak} L${x1+6},${top}`,fill:'none',stroke:gold,'stroke-opacity':.35,'stroke-width':1},g);
+    for(let y=top+14;y<400;y+=13){ el('path',{d:`M${x0},${y} L${x1},${y}`,stroke:'#3b3b7e','stroke-opacity':.5,'stroke-width':.8},g);
+      const off=((y-top)/13)%2?12:24; for(let x=x0+off;x<x1;x+=24) el('path',{d:`M${x},${y} L${x},${y+13}`,stroke:'#3b3b7e','stroke-opacity':.45,'stroke-width':.8},g); }
+    el('path',{d:`M${x0},${top} L${x0},400`,stroke:gold,'stroke-opacity':.25,'stroke-width':1},g);
+    return g;
+  }
+  tower(20,76,180,124); tower(326,382,168,108);
+  // windows, where the rope is tied
+  [[58,186],[328,174]].forEach(([x,y])=>{
+    el('path',{d:`M${x},${y+26} v-16 a8,8 0 0 1 16,0 v16 Z`,fill:gold,opacity:.18},svg);
+    el('path',{d:`M${x+2},${y+26} v-15 a6,6 0 0 1 12,0 v15 Z`,fill:'#ffdf9e',opacity:.75},svg);
+    el('path',{d:`M${x},${y+26} v-16 a8,8 0 0 1 16,0 v16`,fill:'none',stroke:gold,'stroke-opacity':.6,'stroke-width':1},svg); });
+  const A=[72,210], B=[330,198];
+  // the star the walker crosses towards
+  const goal=el('g',{transform:'translate(354 78)'},svg);
+  const goalGlow=el('circle',{r:26,fill:'url(#rp-star)',opacity:.5},goal);
+  el('path',{d:'M0,-9 L2,-2 L9,0 L2,2 L0,9 L-2,2 L-9,0 L-2,-2 Z',fill:'#ffe7b0'},goal);
+  // the rope: gold where he has been, pale where he is going
+  const ropeDone=el('path',{fill:'none',stroke:gold,'stroke-width':1.8,'stroke-linecap':'round'},svg);
+  const ropeAhead=el('path',{fill:'none',stroke:sand,'stroke-opacity':.5,'stroke-width':1.3,'stroke-linecap':'round'},svg);
+  // the walker, drawn about his feet
+  const walker=el('g',{},svg), body=el('g',{},walker);
+  const silh='#0d0d22';
+  const legL=el('path',{fill:'none',stroke:silh,'stroke-width':3.4,'stroke-linecap':'round'},body);
+  const legR=el('path',{fill:'none',stroke:silh,'stroke-width':3.4,'stroke-linecap':'round'},body);
+  el('path',{d:'M0,-20 L-1,-36',stroke:silh,'stroke-width':5.2,'stroke-linecap':'round'},body);
+  el('path',{d:'M-3.6,-20 L3.6,-20 L5,-13 L-5,-13 Z',fill:silh},body);  // a short tunic
+  el('circle',{cx:-1,cy:-41.5,r:4.4,fill:silh},body);
+  const pole=el('g',{transform:'translate(-1 -31)'},body);
+  el('path',{d:'M-58,5 Q0,-5 58,5',fill:'none',stroke:silh,'stroke-width':2,'stroke-linecap':'round'},pole);
+  el('path',{d:'M-58,5 Q0,-5 58,5',fill:'none',stroke:gold,'stroke-opacity':.6,'stroke-width':.7,'stroke-linecap':'round',transform:'translate(0 -1.2)'},pole);
+  el('path',{d:'M0,-3 L-9,1 M0,-3 L9,1',stroke:silh,'stroke-width':2.4,'stroke-linecap':'round'},pole);
+  // a thin rim of gold on the silhouette's lit side
+  el('path',{d:'M3.2,-37 L2.2,-21',stroke:gold,'stroke-opacity':.55,'stroke-width':.8,'stroke-linecap':'round'},body);
+  el('path',{d:'M2.8,-44.5 a4.4,4.4 0 0 1 1.2,4.8',fill:'none',stroke:gold,'stroke-opacity':.6,'stroke-width':.8},body);
+
+  const T=19; let t=0, last=null, raf=0, running=false, phase='walk', hold=0;
+  function frame(time){
+    // progress with a stride rhythm and one long hesitation over the middle of the abyss
+    const p=clamp(t/T,0,1);
+    const hes = Math.exp(-Math.pow((p-0.56)/0.05,2));
+    const x=lerp(A[0],B[0],p), y=lerp(A[1],B[1],p) + 30*Math.sin(Math.PI*p) + 2.5;
+    const lean = 0.07*Math.sin(time*1.3) + 0.04*Math.sin(time*3.1+1) + hes*0.16*Math.sin(time*2.2);
+    const poleTilt = -lean*1.8 + 0.03*Math.sin(time*0.9);
+    const stride = (phase==='walk') ? Math.sin(t*5.4)*(1-hes*0.9) : 0;
+    legL.setAttribute('d',`M0,-20 L${(-3+stride*3).toFixed(2)},${(-1-Math.max(0,stride)*2).toFixed(2)}`);
+    legR.setAttribute('d',`M0,-20 L${(3-stride*3).toFixed(2)},${(-1-Math.max(0,-stride)*2).toFixed(2)}`);
+    body.setAttribute('transform',`rotate(${(lean*57.3).toFixed(2)})`);
+    pole.setAttribute('transform',`translate(-1 -31) rotate(${(poleTilt*57.3).toFixed(2)})`);
+    walker.setAttribute('transform',`translate(${x.toFixed(2)} ${y.toFixed(2)}) scale(1.4)`);
+    const q1=[(A[0]+x)/2, (A[1]+y)/2+3], q2=[(x+B[0])/2,(y+B[1])/2+3];
+    ropeDone.setAttribute('d',`M${A[0]},${A[1]} Q${q1[0].toFixed(1)},${q1[1].toFixed(1)} ${x.toFixed(1)},${y.toFixed(1)}`);
+    ropeAhead.setAttribute('d',`M${x.toFixed(1)},${y.toFixed(1)} Q${q2[0].toFixed(1)},${q2[1].toFixed(1)} ${B[0]},${B[1]}`);
+    for(const [c,ph,o] of starEls) c.setAttribute('opacity',(o*(0.7+0.3*Math.sin(time*1.2+ph))).toFixed(2));
+    const arrive = clamp((p-0.92)/0.08,0,1);
+    goalGlow.setAttribute('opacity',(0.45+0.55*arrive + 0.08*Math.sin(time*2)).toFixed(2));
+    goalGlow.setAttribute('r',(26+arrive*22).toFixed(1));
+    walker.setAttribute('opacity', phase==='fade' ? clamp(1-hold/1.2,0,1).toFixed(2) : 1);
+  }
+  function loop(now){
+    if(last==null) last=now; const dt=Math.min(.05,(now-last)/1000); last=now;
+    const p=t/T; const hes=Math.exp(-Math.pow((p-0.56)/0.05,2));
+    if(phase==='walk'){ t += dt*(1-hes*0.85)*(0.75+0.25*Math.abs(Math.sin(t*2.7))); if(t>=T){ t=T; phase='hold'; hold=0; } }
+    else if(phase==='hold'){ hold+=dt; if(hold>2.2){ phase='fade'; hold=0; } }
+    else { hold+=dt; if(hold>1.4){ phase='walk'; t=0; } }
+    frame(now/1000);
+    raf=requestAnimationFrame(loop);
+  }
+  frame(0);
+  return {
+    play(){ if(running) return; running=true; last=null; raf=requestAnimationFrame(loop); },
+    pause(){ running=false; cancelAnimationFrame(raf); },
+    replay(){ t=0; phase='walk'; if(!running) this.play(); },
+    still(){ t=T*0.47; phase='walk'; frame(0.6); }
+  };
+})();
+
+/* ============================================================== shared three.js helpers */
+function glowTexture(inner, outer){
+  const c=document.createElement('canvas'); c.width=c.height=128; const g=c.getContext('2d');
+  const gr=g.createRadialGradient(64,64,0,64,64,64); gr.addColorStop(0,inner); gr.addColorStop(.3,outer); gr.addColorStop(1,'rgba(0,0,0,0)');
+  g.fillStyle=gr; g.fillRect(0,0,128,128); return new THREE.CanvasTexture(c);
+}
+function makeRenderer(slot){
+  const r=new THREE.WebGLRenderer({antialias:true, alpha:true});
+  r.setPixelRatio(Math.min(window.devicePixelRatio||1, 2));
+  r.setClearColor(0x000000, 0);
+  slot.appendChild(r.domElement);
+  return r;
+}
+
+/* ============================================================== 5C — the summit */
+controllers.c = (function(){
+  if(!window.THREE) return {play(){},pause(){},replay(){},still(){}};
+  const slot=document.getElementById('slot-c');
+  const renderer=makeRenderer(slot), scene=new THREE.Scene();
+  const fogCol=new THREE.Color(css('--about-ground'));
+  scene.fog=new THREE.Fog(fogCol, 13, 22);
+  const camera=new THREE.PerspectiveCamera(36,1,.1,100);
+  const R=rng(5150);
+  // the mountain: a peak, two shoulders, and rock that is rougher the higher it goes
+  function H(x,z){
+    const r=Math.sqrt(x*x+z*z);
+    let h = 4.6*Math.exp(-Math.pow(r/1.55,1.2));
+    h += 1.5*Math.exp(-((x-2.0)**2+(z+1.3)**2)/1.6);
+    h += 1.1*Math.exp(-((x+2.2)**2+(z-1.7)**2)/2.0);
+    h += 0.8*Math.exp(-((x+0.6)**2+(z+2.6)**2)/1.4);
+    const n = Math.sin(x*2.3+z*1.1)*Math.cos(z*2.0-x*.7)*.5 + Math.sin(x*5.1+1.3)*Math.sin(z*4.6)*.25 + Math.sin((x+z)*8.3)*.08;
+    h += n*(0.18 + h*0.09);
+    const edge = clamp((r-4.2)/1.6,0,1);
+    return lerp(h*1.15, -1.2, edge*edge) - 0.35;
+  }
+  const geo=new THREE.PlaneGeometry(14,14,130,130); geo.rotateX(-Math.PI/2);
+  const pos=geo.attributes.position, colors=[];
+  const cLow=new THREE.Color('#1a1a45'), cMid=new THREE.Color('#4d4d99'), cRock=new THREE.Color('#8a6f86'), cHigh=new THREE.Color('#b9a68a'), cSnow=new THREE.Color('#f6eedf');
+  for(let i=0;i<pos.count;i++){ const x=pos.getX(i), z=pos.getZ(i); const h=H(x,z); pos.setY(i,h);
+    let c; if(h<0.4) c=cLow.clone().lerp(cMid, clamp(h/0.4,0,1)*.6);
+    else if(h<1.6) c=cMid.clone().lerp(cRock,(h-0.4)/1.2);
+    else if(h<2.3) c=cRock.clone().lerp(cHigh,(h-1.6)/0.7);
+    else c=cHigh.clone().lerp(cSnow, clamp((h-2.3)/0.45,0,1));
+    colors.push(c.r,c.g,c.b); }
+  geo.setAttribute('color', new THREE.Float32BufferAttribute(colors,3));
+  geo.computeVertexNormals();
+  const mountain=new THREE.Mesh(geo.toNonIndexed(), new THREE.MeshStandardMaterial({vertexColors:true, flatShading:true, roughness:.92, metalness:0}));
+  scene.add(mountain);
+  scene.add(new THREE.HemisphereLight(0x8b8fd8, 0x0e0f22, .55));
+  const sun=new THREE.DirectionalLight(0xffd59a, 1.15); sun.position.set(-6,7,4); scene.add(sun);
+  const rim=new THREE.DirectionalLight(0x63b2ab, .45); rim.position.set(5,3,-6); scene.add(rim);
+  // the stars
+  const sg=new THREE.BufferGeometry(), sp=[];
+  for(let i=0;i<500;i++){ const th=R()*Math.PI*2, ph=R()*Math.PI*.42; const r=40; sp.push(r*Math.cos(th)*Math.sin(ph+.25), r*Math.cos(ph+.25)*.9+2, r*Math.sin(th)*Math.sin(ph+.25)); }
+  sg.setAttribute('position', new THREE.Float32BufferAttribute(sp,3));
+  const starPts=new THREE.Points(sg,new THREE.PointsMaterial({color:0xf6eedf,size:.12,transparent:true,opacity:.8,fog:false}));
+  scene.add(starPts);
+  // the trail: a spiral that winds up to the peak
+  const N=600, pts=[];
+  for(let i=0;i<=N;i++){ const t=i/N; const a=t*Math.PI*2*2.6+0.6; const r=3.1*Math.pow(1-t,0.8)+0.02; const x=r*Math.cos(a), z=r*Math.sin(a); pts.push(new THREE.Vector3(x,H(x,z)+0.05,z)); }
+  const curve=new THREE.CatmullRomCurve3(pts);
+  const TS=900, RS=5;
+  const tube=new THREE.Mesh(new THREE.TubeGeometry(curve,TS,0.022,RS,false), new THREE.MeshBasicMaterial({color:0xddb46a, fog:false}));
+  scene.add(tube);
+  const aheadG=new THREE.BufferGeometry().setFromPoints(curve.getSpacedPoints(260));
+  const ahead=new THREE.Points(aheadG,new THREE.PointsMaterial({color:0xf6eedf,size:.045,transparent:true,opacity:.55}));
+  scene.add(ahead);
+  // the lantern that climbs it
+  const lantern=new THREE.Group();
+  lantern.add(new THREE.Mesh(new THREE.SphereGeometry(.06,12,12), new THREE.MeshBasicMaterial({color:0xfff0c8})));
+  const halo=new THREE.Sprite(new THREE.SpriteMaterial({map:glowTexture('rgba(255,236,190,1)','rgba(221,180,106,.45)'), transparent:true, depthWrite:false, blending:THREE.AdditiveBlending}));
+  halo.scale.set(.9,.9,1); lantern.add(halo);
+  const lamp=new THREE.PointLight(0xffcf80, 1.6, 2.6, 2); lantern.add(lamp);
+  scene.add(lantern);
+  const summit=new THREE.Sprite(new THREE.SpriteMaterial({map:glowTexture('rgba(255,240,205,1)','rgba(221,180,106,.35)'), transparent:true, depthWrite:false, blending:THREE.AdditiveBlending, opacity:0}));
+  summit.position.copy(pts[N]).add(new THREE.Vector3(0,.15,0)); summit.scale.set(2.4,2.4,1); scene.add(summit);
+
+  const CLIMB=24; let t=0, hold=0, phase='climb', last=null, raf=0, running=false, orbit=0.4;
+  function resize(){ const w=slot.clientWidth, h=slot.clientHeight; renderer.setSize(w,h,false); camera.aspect=w/h; camera.updateProjectionMatrix(); }
+  new ResizeObserver(resize).observe(slot); resize();
+  function draw(time){
+    // the climb slows as the mountain steepens
+    const raw=clamp(t/CLIMB,0,1), p=1-Math.pow(1-raw,1.6);
+    const tri=Math.floor(p*TS)*RS*6; tube.geometry.setDrawRange(0, Math.max(0,tri));
+    const at=curve.getPointAt(Math.min(p,0.9999)); lantern.position.copy(at).add(new THREE.Vector3(0,.07,0));
+    halo.material.opacity=.85+.15*Math.sin(time*6);
+    const s=phase==='hold'||phase==='fade' ? clamp(hold/1.2,0,1) : 0;
+    summit.material.opacity = phase==='fade'? clamp(1-hold/1.4,0,1) : s;
+    const d=15.5; camera.position.set(Math.cos(orbit)*d, 6.4, Math.sin(orbit)*d);
+    camera.lookAt(0,1.55,0);
+    renderer.render(scene,camera);
+  }
+  function loop(now){
+    if(last==null) last=now; const dt=Math.min(.05,(now-last)/1000); last=now;
+    orbit += dt*0.07;
+    if(phase==='climb'){ t+=dt; if(t>=CLIMB){ t=CLIMB; phase='hold'; hold=0; } }
+    else if(phase==='hold'){ hold+=dt; if(hold>3){ phase='fade'; hold=0; } }
+    else { hold+=dt; if(hold>1.4){ phase='climb'; t=0; } }
+    draw(now/1000); raf=requestAnimationFrame(loop);
+  }
+  draw(0);
+  return {
+    play(){ if(running) return; running=true; last=null; raf=requestAnimationFrame(loop); },
+    pause(){ running=false; cancelAnimationFrame(raf); },
+    replay(){ t=0; phase='climb'; if(!running) this.play(); },
+    still(){ t=CLIMB*0.62; phase='climb'; orbit=0.9; draw(0); }
+  };
+})();
+
+/* ============================================================== 5D — Sisyphus */
+controllers.d = (function(){
+  const svg=document.getElementById('sis'), R=rng(1942);
+  const gold=css('--about-gold'), sand=css('--about-sand'), crimson=css('--about-crimson');
+  // the slope: y = 360 - 0.6x; d is the uphill direction
+  const K=-0.6, Y0=360, slopeY=x=>Y0+K*x, D=[0.857,-0.514], Nup=[-0.514,-0.857];
+  const defs=el('defs',{},svg);
+  defs.innerHTML=`
+    <linearGradient id="ss-sky" x1="0" y1="1" x2="1" y2="0"><stop offset="0" stop-color="#0b0c1e"/><stop offset=".6" stop-color="#1a1a45"/><stop offset="1" stop-color="#3a2a50"/></linearGradient>
+    <radialGradient id="ss-dawn" gradientUnits="userSpaceOnUse" cx="318" cy="88" r="260"><stop offset="0" stop-color="#ffd99a" stop-opacity=".95"/><stop offset=".18" stop-color="#ddb46a" stop-opacity=".55"/><stop offset=".5" stop-color="#c9785f" stop-opacity=".18"/><stop offset="1" stop-color="#c9785f" stop-opacity="0"/></radialGradient>
+    <linearGradient id="ss-ground" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#25233f"/><stop offset="1" stop-color="#0b0b1a"/></linearGradient>
+    <radialGradient id="ss-stone" cx="72%" cy="26%" r="85%"><stop offset="0" stop-color="#a99a8a"/><stop offset=".45" stop-color="#5d5470"/><stop offset="1" stop-color="#1d1b35"/></radialGradient>
+    <linearGradient id="ss-fade" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#fff" stop-opacity="0"/><stop offset=".55" stop-color="#fff" stop-opacity="1"/></linearGradient>
+    <mask id="ss-mask"><rect x="0" y="0" width="400" height="400" fill="url(#ss-fade)"/></mask>
+    <clipPath id="ss-stone-c"><circle cx="0" cy="0" r="40"/></clipPath>`;
+  el('rect',{width:400,height:400,fill:'url(#ss-sky)'},svg);
+  el('rect',{width:400,height:400,fill:'url(#ss-dawn)'},svg);
+  for(let i=0;i<55;i++){ const x=R()*400, y=R()*300; if(y>slopeY(x)-10) continue; el('circle',{cx:x.toFixed(1),cy:y.toFixed(1),r:(R()*.8+.3).toFixed(2),fill:sand,opacity:(R()*.45+.15).toFixed(2)},svg); }
+  // the hill, with strata that slide downhill as he climbs
+  el('path',{d:`M-20,${slopeY(-20)} L420,${slopeY(420)} L420,420 L-20,420 Z`,fill:'url(#ss-ground)'},svg);
+  const strata=el('g',{fill:'none','stroke-linecap':'round'},svg), dashLines=[];
+  for(let k=1;k<=22;k++){ const off=k*11+R()*4; const a=[-20,slopeY(-20)+off], b=[420,slopeY(420)+off];
+    const dash=`${(20+R()*60).toFixed(0)} ${(10+R()*30).toFixed(0)} ${(6+R()*20).toFixed(0)} ${(14+R()*26).toFixed(0)}`;
+    const ln=el('path',{d:`M${a[0]},${a[1].toFixed(1)} L${b[0]},${b[1].toFixed(1)}`,stroke:k<4?'#4d4d99':'#33325e','stroke-opacity':(0.75-k*0.025).toFixed(2),'stroke-width':k<3?1.3:1,'stroke-dasharray':dash},strata);
+    dashLines.push([ln, R()*100]); }
+  // the lip of the slope, lit from the top
+  el('path',{d:`M-20,${slopeY(-20)} L420,${slopeY(420)}`,stroke:gold,'stroke-opacity':.55,'stroke-width':1.4},svg);
+  const pebbles=el('path',{d:`M-20,${slopeY(-20)+2} L420,${slopeY(420)+2}`,stroke:'#8a7f9e','stroke-width':2.2,'stroke-linecap':'round','stroke-dasharray':'0 23 0 41 0 17','stroke-opacity':.7},svg);
+  // the footsteps he has left, glowing and fading downhill
+  const steps=el('path',{d:`M-20,${slopeY(-20)-1} L420,${slopeY(420)-1}`,stroke:gold,'stroke-width':3,'stroke-linecap':'round','stroke-dasharray':'0 27','mask':'url(#ss-mask)'},svg);
+  // the stone
+  const SC=[205.4,190.1], SR=40;
+  const stoneG=el('g',{transform:`translate(${SC[0]} ${SC[1]})`},svg);
+  el('circle',{r:SR,fill:'url(#ss-stone)'},stoneG);
+  const turn=el('g',{'clip-path':'url(#ss-stone-c)'},stoneG);
+  const marks=el('g',{},turn);
+  // cracks and strata in the stone, which roll with it
+  [['M-40,-14 C-20,-20 0,-8 22,-18 C30,-22 38,-20 46,-24','#1d1b35',1.4],['M-44,10 C-24,4 -4,16 18,8 C30,4 40,10 46,6','#1d1b35',1.1],['M-30,30 C-10,24 6,34 26,28','#1d1b35',1],
+   ['M-8,-46 C-4,-30 -12,-18 -6,-4 C-2,6 -8,14 -4,22','#2b2a56',1],['M12,-38 l8,10 l-4,9','#1d1b35',1],['M-24,-30 l6,6','#e6dac6',.8],['M-30,-20 C-20,-26 -6,-22 4,-28','#e6dac6',.7]].forEach(([d,c,w])=>el('path',{d,stroke:c,'stroke-width':w,fill:'none','stroke-opacity':c==='#e6dac6'?.35:.7},marks));
+  el('circle',{r:SR,fill:'none',stroke:gold,'stroke-opacity':.4,'stroke-width':1.1},stoneG);
+  el('path',{d:'M7,-39.4 A40,40 0 0 1 39.2,-7',fill:'none',stroke:'#ffd99a','stroke-opacity':.75,'stroke-width':1.6,'stroke-linecap':'round'},stoneG);
+  // Sisyphus: drawn from his joints every frame, in profile, facing uphill
+  const fig=el('g',{},svg);
+  const skin='#e8d5ba', skinBack='#a98d72', hairC='#2e2230', rimC=gold;
+  const armBack=el('g',{},fig), legBack=el('g',{},fig);
+  const limb=(g,w,c)=>({th:el('path',{fill:'none',stroke:c,'stroke-width':w,'stroke-linecap':'round','stroke-linejoin':'round'},g)});
+  const AB=limb(armBack,6.2,skinBack), LB=limb(legBack,8,skinBack);
+  const body=el('path',{fill:skin},fig);
+  const tunic=el('path',{fill:crimson},fig);
+  const tunicFold=el('path',{fill:'none',stroke:'#7a3a2c','stroke-width':1.1,'stroke-linecap':'round'},fig);
+  const tunicHem=el('path',{fill:'none',stroke:gold,'stroke-opacity':.7,'stroke-width':1},fig);
+  const LF=limb(fig,8.6,skin);
+  const head=el('g',{},fig);
+  el('ellipse',{rx:8.6,ry:9.4,fill:skin},head);
+  el('path',{d:'M-8.4,1 C-10,-8 -3,-11.5 4,-9.4 C1,-6 -3,-3 -4.5,3 Z',fill:hairC},head);           // hair, at the back of the head
+  el('path',{d:'M2.5,4 C5,9 1,13 -3.5,11.5 C-2,8 0,6 2.5,4 Z',fill:hairC},head);                       // the beard
+  el('path',{d:'M6.5,-6 C9.5,-2 9.6,3 7,7',fill:'none',stroke:rimC,'stroke-opacity':.8,'stroke-width':1.2,'stroke-linecap':'round'},head);
+  const LA=limb(fig,6.8,skin);
+  const hands=el('g',{},fig);
+  const hand1=el('ellipse',{rx:3.8,ry:3.1,fill:skin},hands), hand2=el('ellipse',{rx:3.6,ry:3,fill:skinBack},hands);
+  function knee(hip,foot,L1,L2,dir){ // two-bone reach; the joint bends towards dir
+    const dx=foot[0]-hip[0], dy=foot[1]-hip[1]; let d=Math.hypot(dx,dy); d=Math.min(d,L1+L2-0.01);
+    const a=Math.atan2(dy,dx), c=(L1*L1+d*d-L2*L2)/(2*L1*d); const b=Math.acos(clamp(c,-1,1));
+    const ang=a+dir*b; return [hip[0]+L1*Math.cos(ang), hip[1]+L1*Math.sin(ang)];
+  }
+  const f1=v=>v.toFixed(1);
+  const XF=140, XB=97, PERIOD=2.8; let s=0, ph=0, last=null, raf=0, running=false, roll=0;
+  function footAt(phase){ // stance 62% of the cycle, then the foot lifts and swings forward
+    if(phase<0.62){ const u=phase/0.62; const x=lerp(XF,XB,u); return [x, slopeY(x)-1.5]; }
+    const u=(phase-0.62)/0.38, e=ease(u); const x=lerp(XB,XF,e); return [x, slopeY(x)-1.5-Math.sin(u*Math.PI)*8];
+  }
+  function leg(L,hip,foot,flip){
+    const k=knee(hip,foot,30,30,-1);
+    // the foot lies along the slope, toes uphill
+    L.th.setAttribute('d',`M${f1(hip[0])},${f1(hip[1])} L${f1(k[0])},${f1(k[1])} L${f1(foot[0])},${f1(foot[1])} l${f1(D[0]*9)},${f1(D[1]*9)}`);
+    return k;
+  }
+  function pose(phase, strain){
+    const bob=Math.sin(phase*Math.PI*4)*1.2;
+    const hip=[118+strain*1.2, 250+bob], sh=[152+strain*1.4, 220+bob*.6];
+    const fa=footAt(phase), fb=footAt((phase+0.5)%1);
+    const kF=leg(LF,hip,fa), kB=leg(LB,hip,fb);
+    // the torso as a shape: a broad back that curves, a narrower chest
+    const tx=sh[0]-hip[0], ty=sh[1]-hip[1], tl=Math.hypot(tx,ty), ux=tx/tl, uy=ty/tl, nx=uy, ny=-ux; // n points up-left, the back
+    const P=(p,k)=>[p[0]+nx*k, p[1]+ny*k];
+    const hb=P(hip,6.5), hf=P(hip,-6), sb=P(sh,8), sf=P(sh,-6.5);
+    const midB=P([(hip[0]+sh[0])/2,(hip[1]+sh[1])/2],12.5);
+    body.setAttribute('d',`M${f1(hb[0])},${f1(hb[1])} Q${f1(midB[0])},${f1(midB[1])} ${f1(sb[0])},${f1(sb[1])} Q${f1(sh[0]+ux*7)},${f1(sh[1]+uy*7)} ${f1(sf[0])},${f1(sf[1])} L${f1(hf[0])},${f1(hf[1])} Z`);
+    // the tunic: from under the chest, over the hip, to mid-thigh, hanging plumb
+    const c1=P([hip[0]+ux*30,hip[1]+uy*30],-6.5), c2=P([hip[0]+ux*30,hip[1]+uy*30],10.5);
+    const tB=P(hip,8), tF=P(hip,-7);
+    const hemY=hip[1]+15, hemB=[tB[0]-3, hemY+1], hemF=[tF[0]+9, hemY-2];
+    tunic.setAttribute('d',`M${f1(c2[0])},${f1(c2[1])} L${f1(c1[0])},${f1(c1[1])} L${f1(tF[0])},${f1(tF[1])} L${f1(hemF[0])},${f1(hemF[1])} Q${f1(hip[0]+1)},${f1(hemY+5)} ${f1(hemB[0])},${f1(hemB[1])} L${f1(tB[0])},${f1(tB[1])} Z`);
+    tunicFold.setAttribute('d',`M${f1(hip[0]+ux*20+2)},${f1(hip[1]+uy*20)} Q${f1(hip[0]+2)},${f1(hip[1]+4)} ${f1(hip[0]-1)},${f1(hemY+3)}`);
+    tunicHem.setAttribute('d',`M${f1(hemF[0])},${f1(hemF[1])} Q${f1(hip[0]+1)},${f1(hemY+5)} ${f1(hemB[0])},${f1(hemB[1])}`);
+    // the head, lowered between the arms, the neck pushing forward
+    head.setAttribute('transform',`translate(${f1(sh[0]+8)} ${f1(sh[1]-13+bob*.3)}) rotate(12)`);
+    const h1=[SC[0]-SR*0.72, SC[1]+SR*0.69], h2=[SC[0]-SR*0.6, SC[1]+SR*0.8];
+    const e1=knee(sh,h1,16,15,1), e2=knee(sh,h2,16,15,1);
+    LA.th.setAttribute('d',`M${f1(sh[0])},${f1(sh[1])} L${f1(e1[0])},${f1(e1[1])} L${f1(h1[0])},${f1(h1[1])}`);
+    AB.th.setAttribute('d',`M${f1(sh[0]+nx*3)},${f1(sh[1]+ny*3)} L${f1(e2[0])},${f1(e2[1])} L${f1(h2[0])},${f1(h2[1])}`);
+    hand1.setAttribute('cx',f1(h1[0]+1)); hand1.setAttribute('cy',f1(h1[1]));
+    hand2.setAttribute('cx',f1(h2[0]+1)); hand2.setAttribute('cy',f1(h2[1]));
+  }
+  function frame(){
+    pose(ph, Math.sin(ph*Math.PI*2));
+    const off=s;
+    for(const [ln,o] of dashLines) ln.setAttribute('stroke-dashoffset',(-(off+o)).toFixed(1));
+    pebbles.setAttribute('stroke-dashoffset',(-off).toFixed(1));
+    steps.setAttribute('stroke-dashoffset',(-off+6).toFixed(1));
+    turn.setAttribute('transform',`rotate(${(roll*57.2958).toFixed(2)})`);
+  }
+  // the ground speed matches the stance foot, so his feet do not slide
+  const stanceSpeed=(XF-XB)/0.857/(0.62*PERIOD);
+  function loop(now){
+    if(last==null) last=now; const dt=Math.min(.05,(now-last)/1000); last=now;
+    // the push surges and eases with each stride: heavy, not mechanical
+    const surge=0.55+0.45*Math.pow(Math.sin(ph*Math.PI*2),2);
+    const v=dt*surge; ph=(ph+v/PERIOD)%1; s+=stanceSpeed*v; roll+=stanceSpeed*v/SR;
+    frame(); raf=requestAnimationFrame(loop);
+  }
+  frame();
+  return {
+    play(){ if(running) return; running=true; last=null; raf=requestAnimationFrame(loop); },
+    pause(){ running=false; cancelAnimationFrame(raf); },
+    replay(){ ph=0; s=0; roll=0; if(!running) this.play(); },
+    still(){ ph=0.3; s=40; roll=.8; frame(); }
+  };
+})();
+
+/* ============================================================== 5E — the hand-cut stone */
+controllers.e = (function(){
+  if(!window.THREE) return {play(){},pause(){},replay(){},still(){}};
+  const slot=document.getElementById('slot-e');
+  const renderer=makeRenderer(slot), scene=new THREE.Scene();
+  const camera=new THREE.PerspectiveCamera(32,1,.1,50); camera.position.set(0,.5,8.6); camera.lookAt(0,0,0);
+  let R=rng(2025);
+  // the shape inside the stone: a dodecahedron, its face normals taken from three's own, so the gilt edges match
+  const dodeca=new THREE.DodecahedronGeometry(1,0), dp=dodeca.attributes.position, normals=[];
+  for(let i=0;i<dp.count;i+=3){ const a=new THREE.Vector3().fromBufferAttribute(dp,i), b=new THREE.Vector3().fromBufferAttribute(dp,i+1), c=new THREE.Vector3().fromBufferAttribute(dp,i+2);
+    const n=b.clone().sub(a).cross(c.clone().sub(a)).normalize(); if(!normals.some(m=>m.dot(n)>.999)) normals.push(n); }
+  const inr=a0=>{ let m=0; for(const n of normals) m=Math.max(m,a0.dot(n)); return m; };
+  const INR=new THREE.Vector3().fromBufferAttribute(dp,0).dot(normals[0]);  // the unit dodecahedron's inradius
+  const Hh=1.0;
+  const targetR=u=>Hh/inr(u);
+  // the rough stone around it: lumpy, never inside the cut shape
+  const waves=[]; for(let i=0;i<7;i++) waves.push([new THREE.Vector3(R()-.5,R()-.5,R()-.5).normalize().multiplyScalar(1.5+R()*3.5), R()*6.28, .05+R()*.07]);
+  const crags=[]; for(let i=0;i<9;i++) crags.push([new THREE.Vector3(R()-.5,R()-.5,R()-.5).normalize().multiplyScalar(5+R()*6), R()*6.28, .025+R()*.035]);
+  const roughR=u=>{ let n=0; for(const [k,p,a] of waves) n+=Math.sin(u.dot(k)+p)*a; for(const [k,p,a] of crags) n-=Math.abs(Math.sin(u.dot(k)+p))*a; return Math.max(1.46+n, targetR(u)+0.07); };
+  const geo=new THREE.IcosahedronGeometry(1,11); // non-indexed: every triangle its own, so flat shading cuts facets
+  const pos=geo.attributes.position, cnt=pos.count;
+  const U=[], RR=new Float32Array(cnt), TR=new Float32Array(cnt), cT=new Float32Array(cnt), cC=new Float32Array(cnt);
+  for(let i=0;i<cnt;i++){ const u=new THREE.Vector3().fromBufferAttribute(pos,i).normalize(); U.push(u); RR[i]=roughR(u); TR[i]=targetR(u); }
+  const col=new Float32Array(cnt*3); geo.setAttribute('color',new THREE.BufferAttribute(col,3));
+  const cRough=new THREE.Color('#36313d'), cCut=new THREE.Color('#e8d8ba'), tmp=new THREE.Color();
+  const mat=new THREE.MeshStandardMaterial({vertexColors:true, flatShading:true, roughness:.62, metalness:.08});
+  const stone=new THREE.Mesh(geo,mat);
+  const holder=new THREE.Group(); holder.add(stone); scene.add(holder);
+  const edges=new THREE.LineSegments(new THREE.EdgesGeometry(dodeca), new THREE.LineBasicMaterial({color:0xddb46a, transparent:true, opacity:0}));
+  edges.scale.setScalar(Hh/INR*1.004); holder.add(edges);
+  scene.add(new THREE.HemisphereLight(0x9aa0e0, 0x1a1a45, .42));
+  const key=new THREE.DirectionalLight(0xffd8a0, .95); key.position.set(-3,4,5); scene.add(key);
+  const rim=new THREE.DirectionalLight(0x63b2ab, .7); rim.position.set(4,-1,-4); scene.add(rim);
+  const flash=new THREE.PointLight(0xffd090, 0, 3, 2); scene.add(flash);
+  // the chisel, which lives in the stone's frame so it turns with it
+  const chisel=new THREE.Group();
+  const steel=new THREE.MeshStandardMaterial({color:0xb9bccb, metalness:.8, roughness:.3});
+  const blade=new THREE.Mesh(new THREE.CylinderGeometry(.035,.035,.9,8), steel); blade.position.y=.45+.08; chisel.add(blade);
+  const tip=new THREE.Mesh(new THREE.ConeGeometry(.05,.16,4), steel); tip.rotation.x=Math.PI; tip.position.y=.04; chisel.add(tip);
+  const grip=new THREE.Mesh(new THREE.CylinderGeometry(.075,.065,.55,12), new THREE.MeshStandardMaterial({color:0x8a6328, roughness:.8})); grip.position.y=1.2; chisel.add(grip);
+  const cap=new THREE.Mesh(new THREE.CylinderGeometry(.08,.08,.06,12), new THREE.MeshStandardMaterial({color:0xc99a4b, metalness:.6, roughness:.35})); cap.position.y=1.5; chisel.add(cap);
+  const mallet=new THREE.Group();
+  const wood=new THREE.MeshStandardMaterial({color:0x9c6c34, roughness:.75});
+  const mHead=new THREE.Mesh(new THREE.CylinderGeometry(.17,.17,.46,16), wood); mHead.rotation.z=Math.PI/2; mallet.add(mHead);
+  const band=new THREE.MeshStandardMaterial({color:0xc99a4b, metalness:.6, roughness:.35});
+  [-.18,.18].forEach(x=>{ const b=new THREE.Mesh(new THREE.CylinderGeometry(.175,.175,.04,16), band); b.rotation.z=Math.PI/2; b.position.x=x; mallet.add(b); });
+  const mHandle=new THREE.Mesh(new THREE.CylinderGeometry(.035,.04,1.0,8), new THREE.MeshStandardMaterial({color:0x73501f, roughness:.8})); mHandle.position.set(.0,.62,0); mallet.add(mHandle);
+  mallet.position.y=1.7; chisel.add(mallet);
+  chisel.scale.setScalar(.58);
+  holder.add(chisel);
+  // chips and sparks
+  const chipGeo=new THREE.TetrahedronGeometry(.045), chips=[];
+  for(let i=0;i<40;i++){ const m=new THREE.Mesh(chipGeo,new THREE.MeshStandardMaterial({color:0x8d8496, flatShading:true, transparent:true, opacity:0})); m.visible=false; scene.add(m); chips.push({m,v:new THREE.Vector3(),life:0}); }
+  const spark=new THREE.Sprite(new THREE.SpriteMaterial({map:glowTexture('rgba(255,240,200,1)','rgba(221,180,106,.5)'), transparent:true, depthWrite:false, blending:THREE.AdditiveBlending, opacity:0}));
+  spark.scale.set(.8,.8,1); scene.add(spark);
+
+  function apply(){
+    for(let i=0;i<cnt;i++){ const k=1-Math.pow(1-cC[i],3); const r=lerp(RR[i],TR[i],k);
+      pos.setXYZ(i, U[i].x*r, U[i].y*r, U[i].z*r);
+      tmp.copy(cRough).lerp(cCut, k); col[i*3]=tmp.r; col[i*3+1]=tmp.g; col[i*3+2]=tmp.b; }
+    pos.needsUpdate=true; geo.attributes.color.needsUpdate=true;
+  }
+  const strikeDir=new THREE.Vector3(0,0,1), worldTmp=new THREE.Vector3(), camLocal=new THREE.Vector3();
+  function chooseStrike(){
+    // aim at the roughest region that faces the viewer, so every strike is seen
+    camLocal.copy(camera.position); stone.worldToLocal(camLocal); camLocal.normalize();
+    let best=null, bestScore=-1;
+    for(let k=0;k<26;k++){ const d=new THREE.Vector3(R()-.5,R()-.5,R()-.5).normalize();
+      if(d.dot(camLocal)<0) d.negate(); if(d.dot(camLocal)<0.2) continue;
+      let rough=0; for(let i=0;i<cnt;i+=17){ if(U[i].dot(d)>.86) rough+=1-cT[i]; }
+      // seen from the side the chisel reads; straight on, it would point at the viewer
+      const sc=rough*(1-Math.abs(d.dot(camLocal)-0.5)); if(sc>bestScore){ bestScore=sc; best=d; } }
+    return best||camLocal.clone();
+  }
+  function strike(d){
+    for(let i=0;i<cnt;i++){ const c=U[i].dot(d); if(c>.82){ const w=clamp((c-.82)/.08,0,1); cT[i]=Math.max(cT[i], w); } }
+    const r=lerp(roughR(d),targetR(d),.5);
+    worldTmp.copy(d).multiplyScalar(r); stone.localToWorld(worldTmp);
+    spark.position.copy(worldTmp); spark.material.opacity=1; flash.position.copy(worldTmp); flash.intensity=2.2;
+    const outW=worldTmp.clone().normalize();
+    let n=0; for(const c of chips){ if(c.life>0) continue; c.m.visible=true; c.m.position.copy(worldTmp); c.v.copy(outW).multiplyScalar(1.2+R()*1.4).add(new THREE.Vector3(R()-.5,R()*.6,R()-.5).multiplyScalar(1.6)); c.life=1; c.m.material.opacity=1; if(++n>=8) break; }
+  }
+  const GAP=.56; let clock=0, sinceStrike=0, strikes=0, phase='carve', hold=0, last=null, raf=0, running=false, curDir=strikeDir.clone(), prevDir=strikeDir.clone(), spin=0;
+  const showDir=new THREE.Vector3();
+  const MAXS=42;
+  function reset(){ prevDir.copy(curDir); cT.fill(0); cC.fill(0); strikes=0; sinceStrike=0; phase='carve'; hold=0; edges.material.opacity=0; R=rng(2025); apply(); }
+  function placeChisel(d, back){
+    const r=roughR(d)*(1-0.5)+targetR(d)*0.5;
+    chisel.position.copy(d).multiplyScalar(r+back);
+    chisel.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0), d);
+  }
+  function resize(){ const w=slot.clientWidth, h=slot.clientHeight; renderer.setSize(w,h,false); camera.aspect=w/h; camera.updateProjectionMatrix(); }
+  new ResizeObserver(resize).observe(slot); resize();
+  function step(dt){
+    clock+=dt; spin+=dt*0.32; stone.rotation.set(0.35+Math.sin(clock*.2)*.12, spin, 0.1); edges.rotation.copy(stone.rotation);
+    let moved=false;
+    if(phase==='carve'){
+      sinceStrike+=dt;
+      const u=sinceStrike/GAP;
+      // draw back, then drive in
+      const lift = u<.72 ? Math.sin(u/.72*Math.PI*.5) : Math.pow(1-(u-.72)/.28, 2);
+      mallet.position.y = 1.7 + .05 + lift*.75; mallet.rotation.x = -lift*.55;
+      const back = .03 + (u>.95 ? 0 : .02);
+      if(sinceStrike>=GAP){ strike(curDir); strikes++; sinceStrike=0; prevDir.copy(curDir); curDir=chooseStrike(); if(strikes>=MAXS){ phase='finish'; hold=0; for(let i=0;i<cnt;i++) cT[i]=1; } }
+      // the chisel stays on the cut it made for a moment, then moves to the next one
+      showDir.copy(prevDir).lerp(curDir, ease(clamp((u-.12)/.3,0,1))).normalize();
+      placeChisel(showDir, back);
+      chisel.position.applyEuler(stone.rotation); chisel.quaternion.premultiply(new THREE.Quaternion().setFromEuler(stone.rotation));
+      chisel.visible=true;
+    } else if(phase==='finish'){ hold+=dt; chisel.visible=false; edges.material.opacity=clamp(hold/1.5,0,1)*.9; if(hold>5){ phase='fade'; hold=0; } }
+    else { hold+=dt; edges.material.opacity=clamp(.9-hold,0,1); if(hold>1.1) reset(); }
+    for(let i=0;i<cnt;i++){ if(cC[i]<cT[i]){ cC[i]=Math.min(cT[i], cC[i]+dt*2.4); moved=true; } }
+    if(moved) apply();
+    for(const c of chips){ if(c.life<=0) continue; c.life-=dt*1.3; c.v.y-=dt*4.2; c.m.position.addScaledVector(c.v,dt); c.m.rotation.x+=dt*8; c.m.rotation.y+=dt*6; c.m.material.opacity=Math.max(0,c.life); if(c.life<=0) c.m.visible=false; }
+    spark.material.opacity=Math.max(0,spark.material.opacity-dt*4); flash.intensity=Math.max(0,flash.intensity-dt*9);
+  }
+  function loop(now){ if(last==null) last=now; const dt=Math.min(.05,(now-last)/1000); last=now; step(dt); renderer.render(scene,camera); raf=requestAnimationFrame(loop); }
+  reset(); step(0); renderer.render(scene,camera);
+  return {
+    play(){ if(running) return; running=true; last=null; raf=requestAnimationFrame(loop); },
+    pause(){ running=false; cancelAnimationFrame(raf); },
+    replay(){ reset(); curDir=chooseStrike(); if(!running) this.play(); },
+    still(){ reset(); // half the stone cut, the chisel resting on the line between
+      for(let i=0;i<cnt;i++){ const v=U[i].x*.8+U[i].y*.5+U[i].z*.3; cT[i]=cC[i]= v>-.05?1:0; } apply();
+      spin=-0.5; curDir=new THREE.Vector3(-.3,.5,.8).normalize(); sinceStrike=GAP*.6; step(0); renderer.render(scene,camera); }
+  };
+})();
+
+/* ============================================================== the closing */
+controllers.motto = (function(){
+  const words=document.querySelectorAll('#motto .w'); let tl;
+  function build(){ if(tl) tl.kill();
+    gsap.set(words,{opacity:0, y:28, filter:'blur(6px)'}); gsap.set('#motto-stroke',{strokeDasharray:1, strokeDashoffset:1}); gsap.set('#motto-dot',{opacity:0, scale:0, transformOrigin:'552px 22px'});
+    tl=gsap.timeline({paused:true})
+      .to('#motto .motto-a .w',{opacity:1, y:0, filter:'blur(0px)', duration:1.3, ease:'power3.out', stagger:.22})
+      .to('#motto .motto-b .w',{opacity:1, y:0, filter:'blur(0px)', duration:1.2, ease:'power3.out', stagger:.2}, '+=.5')
+      .to('#motto-stroke',{strokeDashoffset:0, duration:1.8, ease:'power2.inOut'}, '-=.4')
+      .to('#motto-dot',{opacity:1, scale:1, duration:.5, ease:'back.out(3)'}, '-=.15');
+  }
+  build(); let started=false;
+  return { play(){ if(!started){ started=true; tl.play(0);} else tl.resume(); }, pause(){ tl.pause(); }, replay(){ build(); started=true; tl.play(0); }, still(){ build(); tl.progress(1); } };
+})();
+
+/* ============================================================== the text, and the wiring */
+const sections=[...document.querySelectorAll('.opt')];
+const textTl={};
+sections.forEach(sec=>{
+  const k=sec.dataset.opt, h=sec.querySelector('.stall-text h2'), p=sec.querySelector('.stall-text p'), n=sec.querySelector('.stall-text .num'), slot=sec.querySelector('.slot');
+  if(REDUCED){ return; }
+  const tl=gsap.timeline({paused:true})
+    .fromTo(n,{opacity:0, x:-16},{opacity:1, x:0, duration:1, ease:'power2.out'})
+    .fromTo(h,{opacity:0, y:46, filter:'blur(8px)'},{opacity:1, y:0, filter:'blur(0px)', duration:1.6, ease:'power3.out'}, .15)
+    .fromTo(p,{opacity:0, y:30},{opacity:1, y:0, duration:1.4, ease:'power3.out'}, .75);
+  textTl[k]=tl;
+  ScrollTrigger.create({trigger:sec, start:'top 62%', once:true, onEnter:()=>tl.play()});
+  // the slot rides a little behind the scroll: weight, not speed
+  gsap.fromTo(slot,{y:70},{y:-40, ease:'none', scrollTrigger:{trigger:sec, start:'top bottom', end:'bottom top', scrub:1.6}});
+  gsap.set([n,h,p],{opacity:0});
+});
+
+if(REDUCED){
+  Object.values(controllers).forEach(c=>c.still());
+} else {
+  const io=new IntersectionObserver(entries=>{
+    for(const e of entries){ const k=e.target.dataset.ctl; const c=controllers[k]; if(!c) continue; e.isIntersecting? c.play() : c.pause(); }
+  },{threshold:0.25});
+  sections.forEach(sec=>{ const s=sec.querySelector('.slot'); s.dataset.ctl=sec.dataset.opt; io.observe(s); });
+  const m=document.querySelector('.motto-text'); m.dataset.ctl='motto'; io.observe(m);
+}
+
+sections.forEach(sec=>{
+  sec.querySelector('.replay').addEventListener('click',()=>{
+    const k=sec.dataset.opt;
+    if(REDUCED){ controllers[k].still(); return; }
+    if(textTl[k]) textTl[k].restart();
+    controllers[k].replay();
+  });
+});
+document.getElementById('motto-replay').addEventListener('click',()=>{ REDUCED? controllers.motto.still() : controllers.motto.replay(); });
+
+})();
+</script>
+</body>
+</html>

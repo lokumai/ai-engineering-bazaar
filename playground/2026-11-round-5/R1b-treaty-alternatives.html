@@ -1,0 +1,614 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The treaty, three ways</title>
+<meta name="description" content="Round 5, About page, stall 1: three three.js alternatives of 1B The treaty, each with a person who asked a simple question and got a treaty, free-floating on the dark ground with no box.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT@0,9..144,400..800,0..100;1,9..144,400..700,0..100&display=swap">
+<style>
+/* Every colour the scenes use is read from these tokens (three.js and the canvas textures read
+   them with getComputedStyle), so the final page can re-theme all three from here. */
+:root{
+  --ground:#0E0F24; --ground-raised:#15163A;
+  --hairline:rgba(201,198,228,.14);
+  --title:#F3ECDF; --text:#CFCBE6; --muted:#8C8FB8;
+  --indigo:#282864; --cloud:#3B3B7E; --periwinkle:#848BD0;
+  --teal:#63B2AB; --teal-deep:#2F8C86; --plum:#7A4A86; --ochre:#B8873B; --gold:#DDB46A; --sand:#E6DAC6;
+  --cream:#F6EEDF; --parchment:#E9DCC0; --treaty-ink:#3A2A1C; --crimson:#A0503C; --wood:#73501F;
+  --iron:#25233F; --hair:#2B2140;
+  --skin-1:#C98F62; --skin-2:#F0CFA6; --skin-3:#8A5A3C;
+  --bubble:#F6EEDF; --bubble-ink:#1B1B47;
+  --display:"Fraunces", "Iowan Old Style", Georgia, serif;
+  --sans:"Avenir Next", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --slot:min(44vw, 560px);
+}
+*{box-sizing:border-box}
+html{overflow-x:clip; background:var(--ground)}
+body{margin:0; background:var(--ground); color:var(--text); font-family:var(--sans); font-size:17px; line-height:1.55;
+  -webkit-font-smoothing:antialiased; overflow-x:clip}
+:focus-visible{outline:2px solid var(--gold); outline-offset:3px; border-radius:5px}
+
+.intro{max-width:1240px; margin:0 auto; padding:72px 24px 40px}
+.intro .kicker{font-size:13px; letter-spacing:.14em; text-transform:uppercase; color:var(--muted); margin:0 0 12px}
+.intro h1{font-family:var(--display); font-weight:650; font-size:clamp(30px,3.4vw,46px); line-height:1.1; color:var(--title); margin:0 0 14px;
+  font-variation-settings:"SOFT" 60, "opsz" 96}
+.intro p{max-width:44em; margin:0}
+.intro ol{list-style:none; padding:0; margin:28px 0 0; display:flex; flex-wrap:wrap; gap:8px 10px}
+.intro ol a{display:inline-flex; gap:8px; align-items:baseline; text-decoration:none; color:var(--text); font-size:15px;
+  border:1px solid var(--hairline); border-radius:5px; padding:6px 12px}
+.intro ol a:hover{border-color:var(--muted)}
+.intro ol b{font-family:var(--display); color:var(--gold); font-weight:600}
+
+.opt{min-height:100vh; display:flex; flex-direction:column; justify-content:center; max-width:1240px; margin:0 auto; padding:72px 24px;
+  border-top:1px solid var(--hairline)}
+.opt-meta{display:flex; align-items:center; gap:10px 14px; flex-wrap:wrap; margin-bottom:44px; position:relative; z-index:3}
+.code{font-family:var(--display); font-weight:600; color:var(--gold); font-size:15px; letter-spacing:.06em;
+  border:1px solid rgba(221,180,106,.45); padding:1px 9px; border-radius:4px}
+.opt-meta h2{font-family:var(--display); font-weight:600; font-size:22px; line-height:1.2; color:var(--title); margin:0}
+.opt-meta .line{flex-basis:100%; order:5; margin:0; color:var(--muted); font-size:15px; max-width:60em}
+.replay{margin-left:auto; display:inline-flex; align-items:center; gap:8px; background:transparent; color:var(--sand);
+  border:1px solid var(--hairline); border-radius:5px; padding:7px 14px; font:600 14px/1.2 var(--sans); cursor:pointer}
+.replay:hover{border-color:var(--muted); background:rgba(255,255,255,.04)}
+.replay svg{width:16px; height:16px}
+
+.stall{display:grid; grid-template-columns:minmax(0,1fr) var(--slot); gap:clamp(32px,6vw,96px); align-items:center}
+.stall.flip{grid-template-columns:var(--slot) minmax(0,1fr)}
+.stall.flip .scene{order:-1}
+.stall-text{position:relative; z-index:2}
+.stall-text h3{font-family:var(--display); font-weight:600; font-size:clamp(28px,3.1vw,44px); line-height:1.12; color:var(--title);
+  margin:0 0 26px; text-wrap:balance; font-variation-settings:"SOFT" 50, "opsz" 72}
+.stall-text p{font-size:clamp(17px,1.3vw,19px); line-height:1.7; max-width:33em; margin:0}
+
+/* No box: the scene has no frame, fill or edge. Its canvas is larger than the place it holds in the
+   grid and fades into the ground through a radial mask, with fog doing the same inside the 3D. */
+.scene{width:var(--slot); aspect-ratio:1/1; position:relative}
+.stage{position:absolute; inset:-20%; pointer-events:none}
+.stage canvas{position:absolute; inset:0; width:100%; height:100%; display:block;
+  -webkit-mask-image:radial-gradient(closest-side, #000 58%, rgba(0,0,0,.55) 80%, transparent 100%);
+  mask-image:radial-gradient(closest-side, #000 58%, rgba(0,0,0,.55) 80%, transparent 100%)}
+.bubble{position:absolute; left:0; top:0; transform:translate(-50%, calc(-100% - 14px)); background:var(--bubble); color:var(--bubble-ink);
+  font:600 clamp(13px,1.25vw,17px)/1.25 var(--display); padding:.55em .95em; border-radius:1.2em; white-space:nowrap;
+  opacity:0; transition:opacity .35s; box-shadow:0 6px 24px rgba(0,0,0,.35); z-index:2}
+.bubble::after{content:""; position:absolute; left:50%; bottom:-9px; margin-left:-9px; border:9px solid transparent; border-bottom:0; border-top-color:var(--bubble)}
+.bubble.on{opacity:1}
+.fail{position:absolute; inset:20%; display:grid; place-items:center; text-align:center; color:var(--muted)}
+.fail[hidden]{display:none}
+
+@media (max-width:760px){
+  :root{--slot:min(calc(100vw - 32px), 560px)}
+  .intro{padding:48px 16px 24px}
+  .opt{min-height:auto; padding:56px 16px}
+  .opt-meta{margin-bottom:28px}
+  .replay{margin-left:0}
+  .stall, .stall.flip{grid-template-columns:minmax(0,1fr); gap:20px}
+  .stall.flip .scene{order:0}
+  .stage{inset:-12%}
+}
+</style>
+</head>
+<body>
+
+<header class="intro">
+  <p class="kicker">About page, round 5 &middot; R1b</p>
+  <h1>The treaty, three ways</h1>
+  <p>1B, with a person in it. Each one asked a yes-or-no question, got a treaty back, and has to find the answer in it. All three are drawn in three.js and stand on the dark ground with no box.</p>
+  <ol>
+    <li><a href="#o1b1"><b>1B1</b> Still reading</a></li>
+    <li><a href="#o1b2"><b>1B2</b> The magnifier</a></li>
+    <li><a href="#o1b3"><b>1B3</b> Paper rain</a></li>
+  </ol>
+</header>
+
+<template id="stall-copy">
+  <div class="stall-text">
+    <h3>Generation is free, and the internet is drowning in AI slop.</h3>
+    <p>You ask AI a simple question, and instead of giving you a straight answer, it writes the Treaty of Versailles: pages of polite, robotic text that says everything while explaining nothing. Anyone can generate thousands of words in three seconds, but real understanding has never been harder to find.</p>
+  </div>
+</template>
+<template id="replay-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v5h5"/></svg></template>
+
+<section class="opt" id="o1b1" aria-labelledby="h1">
+  <div class="opt-meta">
+    <span class="code">1B1</span><h2 id="h1">Still reading</h2>
+    <button class="replay" type="button">Replay</button>
+    <p class="line">A man in a fez reads the treaty off a scroll that unrolls from his hands and winds away across the floor into the dark; the yes rolls out right past his feet while he looks up, lost.</p>
+  </div>
+  <div class="stall">
+    <div class="copy"></div>
+    <div class="scene" role="img" aria-label="A man in a fez and a teal kaftan holds a scroll whose paper runs down to the floor and winds away into the distance; a glowing yes slides past his feet unnoticed.">
+      <div class="stage"><canvas aria-hidden="true"></canvas>
+        <div class="bubble" data-b="q" aria-hidden="true">Should I take an umbrella?</div>
+        <div class="bubble" data-b="b" aria-hidden="true">Page 3 of 412.</div></div>
+      <div class="fail" hidden>This option needs WebGL, which this browser has turned off.</div>
+    </div>
+  </div>
+</section>
+
+<section class="opt" id="o1b2" aria-labelledby="h2">
+  <div class="opt-meta">
+    <span class="code">1B2</span><h2 id="h2">The magnifier</h2>
+    <button class="replay" type="button">Replay</button>
+    <p class="line">A reader peers at the treaty through a magnifier; the camera rises up the sheet, past a ladder far too short, to the one gold yes high above her head.</p>
+  </div>
+  <div class="stall flip">
+    <div class="copy"></div>
+    <div class="scene" role="img" aria-label="A woman in a plum headscarf and round glasses holds a magnifier up to a treaty that hangs from the dark sky like a towering curtain; high above her, the word yes glows gold.">
+      <div class="stage"><canvas aria-hidden="true"></canvas>
+        <div class="bubble" data-b="q" aria-hidden="true">Should I take an umbrella?</div></div>
+      <div class="fail" hidden>This option needs WebGL, which this browser has turned off.</div>
+    </div>
+  </div>
+</section>
+
+<section class="opt" id="o1b3" aria-labelledby="h3">
+  <div class="opt-meta">
+    <span class="code">1B3</span><h2 id="h3">Paper rain</h2>
+    <button class="replay" type="button">Replay</button>
+    <p class="line">The answer pours down as a storm of treaty pages; the asker shelters under one of them until a single gold page drifts down and lands at his feet.</p>
+  </div>
+  <div class="stall">
+    <div class="copy"></div>
+    <div class="scene" role="img" aria-label="A young man in a cap holds a sheet of paper over his head as treaty pages rain from a dark cloud and pile up around him; a gold page with the word yes lands at his feet.">
+      <div class="stage"><canvas aria-hidden="true"></canvas>
+        <div class="bubble" data-b="q" aria-hidden="true">Should I take an umbrella?</div>
+        <div class="bubble" data-b="b" aria-hidden="true">So&hellip; yes?</div></div>
+      <div class="fail" hidden>This option needs WebGL, which this browser has turned off.</div>
+    </div>
+  </div>
+</section>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+(() => {
+'use strict';
+const root = document.documentElement;
+const tok = n => getComputedStyle(root).getPropertyValue(n).trim();
+const RM = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+const lerp = (a, b, k) => a + (b - a) * k;
+const smooth = k => { k = clamp(k, 0, 1); return k * k * (3 - 2 * k); };
+const win = (t, a, b, ramp = .4) => smooth((t - a) / ramp) * (1 - smooth((t - b) / ramp));   // 0→1 between a and b
+function rng(a) { return () => { a |= 0; a = a + 0x6D2B79F5 | 0; let t = Math.imul(a ^ a >>> 15, 1 | a);
+  t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+
+// ---------------------------------------------------------------- the treaty's prose
+function sentence(r, topic) {
+  const op = ['Moreover,', 'Furthermore,', 'Additionally,', 'It is important to note that', 'It is worth mentioning that',
+    "In today's fast-paced world,", 'Ultimately,', 'As we have seen,', `When it comes to ${topic},`, 'At the end of the day,', 'In many ways,'];
+  const mid = [`${topic} plays a pivotal role in`, 'the question touches on', 'many experts emphasise', 'one must consider',
+    'this invites us to delve into', 'we can explore', 'there are several factors behind', 'a holistic view reveals'];
+  const obj = ['a rich tapestry of perspectives', 'the multifaceted landscape of modern life', 'the complexities of human experience',
+    'both historical and cultural nuances', 'a wide range of considerations', 'the delicate balance of many factors',
+    'the many ways people approach the matter', 'a seamless and robust framework'];
+  const tail = ['', ', each with its own nuances', ', which is a testament to its significance', ', and both sides have merit',
+    ', depending on many factors', ', in a holistic way'];
+  const pick = a => a[Math.floor(r() * a.length)];
+  return `${pick(op)} ${pick(mid)} ${pick(obj)}${pick(tail)}.`;
+}
+const TITLES = ['On the Nature of Precipitation', 'On the Definition of an Umbrella', 'On Clouds, Considered Holistically', 'On the Many Factors Involved',
+  'On Personal Preference', 'On Wind', 'On the Historical Context of Rain', 'On Alternative Coverings', 'On Shared Responsibility',
+  'On Transitional Weather', 'On Further Considerations', 'On Nuance', 'On Forecasts and Their Limits', 'On What Was Not Asked', 'On Hats',
+  'On Puddles', 'On Regional Variation', 'On Drizzle and Mist', 'On Closing Remarks', 'On Final Considerations'];
+const roman = n => { const m = [[50, 'L'], [40, 'XL'], [10, 'X'], [9, 'IX'], [5, 'V'], [4, 'IV'], [1, 'I']]; let s = ''; for (const [v, c] of m) while (n >= v) { s += c; n -= v; } return s; };
+function wrap(g, text, x, y, w, lh) {
+  let line = ''; for (const word of text.split(' ')) { const t = line ? line + ' ' + word : word;
+    if (g.measureText(t).width > w && line) { g.fillText(line, x, y); y += lh; line = word; } else line = t; }
+  if (line) { g.fillText(line, x, y); y += lh; } return y;
+}
+function parchment(g, w, h, r) {
+  g.fillStyle = tok('--parchment'); g.fillRect(0, 0, w, h);
+  for (let i = 0; i < h / 3; i++) { g.fillStyle = `rgba(120,80,40,${(r() * .05).toFixed(3)})`; g.fillRect(0, r() * h, w, 1 + r() * 2); }
+  const e = g.createLinearGradient(0, 0, w, 0); e.addColorStop(0, 'rgba(110,70,30,.28)'); e.addColorStop(.07, 'rgba(110,70,30,0)');
+  e.addColorStop(.93, 'rgba(110,70,30,0)'); e.addColorStop(1, 'rgba(110,70,30,.28)'); g.fillStyle = e; g.fillRect(0, 0, w, h);
+}
+// A sheet of treaty: articles from top to bottom. `scale` sets the type size for the canvas width.
+function treatyCanvas(w, h, seed, { title = false, start = 1, scale = 1 } = {}) {
+  const c = document.createElement('canvas'); c.width = w; c.height = h; const g = c.getContext('2d'), r = rng(seed);
+  parchment(g, w, h, r); const pad = 34 * scale, ink = tok('--treaty-ink'); g.fillStyle = ink; g.textBaseline = 'alphabetic';
+  let y = pad + 20 * scale, n = start;
+  if (title) {
+    g.textAlign = 'center'; g.font = `700 ${46 * scale}px Fraunces, Georgia, serif`; g.fillText('TREATY OF PEACE', w / 2, y + 26 * scale); y += 64 * scale;
+    g.font = `italic 500 ${19 * scale}px Fraunces, Georgia, serif`; y = wrap(g, 'between the Party Who Asked and the Party Who Answers, concerning an umbrella', w / 2, y, w - pad * 3, 26 * scale);
+    g.fillRect(w * .25, y, w * .5, 2.5 * scale); g.fillRect(w * .25, y + 6 * scale, w * .5, 1 * scale); y += 40 * scale;
+  }
+  while (y < h - 80 * scale) {
+    g.textAlign = 'center'; g.font = `700 ${21 * scale}px Fraunces, Georgia, serif`; g.fillText(`ARTICLE ${roman(n)}`, w / 2, y); y += 26 * scale;
+    g.font = `italic 500 ${17 * scale}px Fraunces, Georgia, serif`; g.fillText(TITLES[(n - 1) % TITLES.length], w / 2, y); y += 30 * scale;
+    g.textAlign = 'left'; g.font = `400 ${17 * scale}px Fraunces, Georgia, serif`;
+    const k = 2 + Math.floor(r() * 2);
+    for (let i = 1; i <= k && y < h - 40 * scale; i++) y = wrap(g, `${i}. ${sentence(r, 'rain')} ${sentence(r, 'the umbrella')}`, pad, y, w - pad * 2, 24 * scale) + 10 * scale;
+    y += 18 * scale; n++;
+  }
+  return c;
+}
+// The line that holds the answer, with the yes lit; the second canvas is its glow (an emissive map).
+function yesCanvas(w, h, { lead = 'the short answer is ', tail = ', although', size = 34 } = {}) {
+  const c = document.createElement('canvas'), e = document.createElement('canvas'); c.width = e.width = w; c.height = e.height = h;
+  const g = c.getContext('2d'), ge = e.getContext('2d'); parchment(g, w, h, rng(4)); ge.fillStyle = '#000'; ge.fillRect(0, 0, w, h);
+  g.font = ge.font = `400 ${size}px Fraunces, Georgia, serif`; g.textBaseline = ge.textBaseline = 'middle';
+  const lw = g.measureText(lead).width, yw = g.measureText('yes').width, tw = g.measureText(tail).width, x0 = (w - lw - yw - tw - 24) / 2;
+  g.fillStyle = tok('--treaty-ink'); g.fillText(lead, x0, h / 2); g.fillText(tail, x0 + lw + yw + 24, h / 2);
+  for (const ctx of [g, ge]) { ctx.fillStyle = tok('--gold'); ctx.beginPath(); ctx.roundRect(x0 + lw, h / 2 - size * .72, yw + 24, size * 1.44, size * .25); ctx.fill(); }
+  g.font = `700 ${size}px Fraunces, Georgia, serif`; g.fillStyle = '#241A0E'; g.fillText('yes', x0 + lw + 12, h / 2 + 1);
+  return { map: c, glow: e };
+}
+function radial(size, inner, outer) {
+  const c = document.createElement('canvas'); c.width = c.height = size; const g = c.getContext('2d');
+  const gr = g.createRadialGradient(size / 2, size / 2, 0, size / 2, size / 2, size / 2); gr.addColorStop(0, inner); gr.addColorStop(1, outer);
+  g.fillStyle = gr; g.fillRect(0, 0, size, size); return c;
+}
+
+// ---------------------------------------------------------------- the stage every scene stands on
+function makeStage(p, o) {
+  const T = THREE, cv = p.slot.querySelector('canvas');
+  const R = new T.WebGLRenderer({ canvas: cv, antialias: true, alpha: true });
+  R.setClearColor(0x000000, 0); R.setPixelRatio(Math.min(1.75, window.devicePixelRatio || 1));
+  R.shadowMap.enabled = true; R.shadowMap.type = T.PCFSoftShadowMap;
+  const scene = new T.Scene(), ground = new T.Color(tok('--ground'));
+  scene.fog = new T.Fog(ground, o.fogNear, o.fogFar);
+  const cam = new T.PerspectiveCamera(o.fov || 34, 1, .05, 200);
+  scene.add(new T.HemisphereLight(new T.Color(tok('--sand')), new T.Color(tok('--indigo')), .55));
+  const key = new T.SpotLight(new T.Color(tok('--cream')), 1.25, 40, o.spotAngle || .55, .6, 1.2);
+  key.position.set(...(o.key || [3, 8, 5])); key.target.position.set(...(o.keyTarget || [0, .8, 0])); key.castShadow = true;
+  key.shadow.mapSize.set(1024, 1024); key.shadow.bias = -.0006; key.shadow.camera.near = 1; key.shadow.camera.far = 40;
+  scene.add(key, key.target);
+  const rim = new T.DirectionalLight(new T.Color(tok('--periwinkle')), .55); rim.position.set(-5, 4, -6); scene.add(rim);
+  const catcher = new T.Mesh(new T.PlaneGeometry(60, 60), new T.ShadowMaterial({ opacity: .42 }));
+  catcher.rotation.x = -Math.PI / 2; catcher.receiveShadow = true; scene.add(catcher);
+  const pool = new T.Mesh(new T.CircleGeometry(o.pool || 3.4, 48), new T.MeshBasicMaterial({
+    map: new T.CanvasTexture(radial(256, 'rgba(132,139,208,.30)', 'rgba(132,139,208,0)')), transparent: true, depthWrite: false, fog: false }));
+  pool.rotation.x = -Math.PI / 2; pool.position.set(...(o.poolAt || [0, .002, 0])); scene.add(pool);
+  const bubbles = {}; p.slot.querySelectorAll('.bubble').forEach(b => bubbles[b.dataset.b] = b);
+  const stageEl = p.slot.querySelector('.stage');
+  const S = { T, R, scene, cam, key, stageEl, bubbles, v: new T.Vector3(),
+    resize() { const r = stageEl.getBoundingClientRect(); R.setSize(Math.max(1, r.width), Math.max(1, r.height), false); cam.aspect = 1; cam.updateProjectionMatrix(); this.w = r.width; this.h = r.height; },
+    bubble(name, on, obj, dy = .42) {
+      const b = bubbles[name]; if (!b) return; b.classList.toggle('on', !!on); if (!on) return;
+      obj.getWorldPosition(this.v); this.v.y += dy; this.v.project(cam);
+      b.style.left = ((this.v.x + 1) / 2 * this.w).toFixed(1) + 'px'; b.style.top = ((1 - this.v.y) / 2 * this.h).toFixed(1) + 'px';
+    } };
+  return S;
+}
+// A ribbon of paper along a path: the scroll in 1B1, the hanging sheet in 1B2.
+function ribbon(T, pts, width, segs, { aspect = 4, side = null, lift = null, vSign = 1 } = {}) {
+  const curve = new T.CatmullRomCurve3(pts.map(p => new T.Vector3(...p)), false, 'catmullrom', .5), L = curve.getLength();
+  const pos = [], uv = [], idx = [], up = new T.Vector3(0, 1, 0), sd = new T.Vector3(), tan = new T.Vector3();
+  for (let i = 0; i <= segs; i++) {
+    const u = i / segs, pnt = curve.getPointAt(u); curve.getTangentAt(u, tan);
+    if (side) sd.set(...side); else { sd.crossVectors(tan, up); if (sd.lengthSq() < 1e-5) sd.set(1, 0, 0); sd.normalize(); }
+    for (const k of [-1, 1]) {
+      pos.push(pnt.x + sd.x * k * width / 2, pnt.y + sd.y * k * width / 2 + (lift ? lift(u, k, pnt) : 0), pnt.z + sd.z * k * width / 2);
+      uv.push(k < 0 ? 0 : 1, vSign * u * L / (width * aspect));
+    }
+    if (i < segs) { const a = i * 2; idx.push(a, a + 1, a + 2, a + 1, a + 3, a + 2); }
+  }
+  const geo = new T.BufferGeometry(); geo.setAttribute('position', new T.Float32BufferAttribute(pos, 3));
+  geo.setAttribute('uv', new T.Float32BufferAttribute(uv, 2)); geo.setIndex(idx); geo.computeVertexNormals();
+  return { geo, curve, L };
+}
+
+// ---------------------------------------------------------------- a person, low-poly, in bazaar dress
+function makePerson(T, o) {
+  const M = (c, extra) => new T.MeshStandardMaterial(Object.assign({ color: new T.Color(c), roughness: .78, flatShading: true }, extra || {}));
+  const add = (parent, geo, mat, x = 0, y = 0, z = 0) => { const m = new T.Mesh(geo, mat); m.position.set(x, y, z); m.castShadow = true; m.receiveShadow = true; parent.add(m); return m; };
+  const g = new T.Group(), skin = M(o.skin), robe = M(o.robe), dark = M(tok('--iron')), hair = M(tok('--hair'));
+  const body = new T.Group(); g.add(body);
+  const prof = [[0, 0], [.40, 0], [.37, .25], [.30, .7], [.25, 1.0], [.27, 1.22], [.25, 1.38], [.14, 1.47], [0, 1.48]].map(([x, y]) => new T.Vector2(x, y));
+  add(body, new T.LatheGeometry(prof, 12), robe);
+  if (o.upper) add(body, new T.LatheGeometry([[0, 1.0], [.262, 1.0], [.278, 1.22], [.258, 1.385], [.145, 1.475], [0, 1.485]].map(([x, y]) => new T.Vector2(x, y)), 12), M(o.upper));
+  const trim = M(o.trim);
+  add(body, new T.CylinderGeometry(.405, .412, .06, 12, 1, true), trim, 0, .03, 0);
+  const plk = add(body, new T.BoxGeometry(.06, 1.0, .02), trim, 0, .52, .345); plk.rotation.x = -.15;
+  add(body, new T.CylinderGeometry(.262, .272, .1, 12), M(o.sash), 0, 1.02, 0);
+  for (const s of [-1, 1]) { const sh = add(g, new T.SphereGeometry(.08, 8, 6), dark, s * .12, .035, .3); sh.scale.set(1, .6, 1.5); }
+  add(body, new T.CylinderGeometry(.065, .075, .12, 8), skin, 0, 1.52, 0);
+  const head = new T.Group(); head.position.set(0, 1.62, 0); body.add(head);
+  const skull = add(head, new T.SphereGeometry(.17, 12, 10), skin, 0, .04, 0); skull.scale.set(1, 1.08, 1);
+  const white = M('#FFFDF7', { flatShading: false, roughness: .4 });
+  const eyes = [-1, 1].map(s => { const e = add(head, new T.SphereGeometry(.038, 10, 8), white, s * .062, .05, .13); e.scale.z = .6;
+    add(head, new T.SphereGeometry(.019, 8, 6), dark, s * .062, .05, .158); return e; });
+  const brows = [-1, 1].map(s => { const b = add(head, new T.BoxGeometry(.075, .016, .02), hair, s * .065, .115, .152); b.rotation.z = -s * .25; return b; });
+  add(head, new T.SphereGeometry(.032, 6, 5), skin, 0, .0, .17);
+  const mouth = add(head, new T.SphereGeometry(.03, 8, 6), M('#3A1E24'), 0, -.07, .152); mouth.scale.set(1, 1.2, .5);
+  for (const s of [-1, 1]) { const e = add(head, new T.SphereGeometry(.036, 6, 5), skin, s * .168, .03, 0); e.scale.set(.5, 1, .8); }
+  if (o.hat === 'fez') {
+    add(head, new T.CylinderGeometry(.1, .128, .16, 12), M(o.hatColor), 0, .22, 0);
+    const ts = add(head, new T.CylinderGeometry(.006, .006, .13, 4), M(tok('--gold')), 0, .25, -.09); ts.rotation.x = .9;
+    add(head, new T.SphereGeometry(.018, 6, 5), M(tok('--gold')), 0, .2, -.15);
+    add(head, new T.BoxGeometry(.11, .024, .03), hair, 0, -.035, .162);
+    for (const s of [-1, 1]) add(head, new T.BoxGeometry(.03, .08, .06), hair, s * .16, .07, .03);
+  } else if (o.hat === 'scarf') {
+    const sc = add(head, new T.SphereGeometry(.192, 12, 10, Math.PI / 2 + .95, Math.PI * 2 - 1.9, 0, Math.PI * .78), M(o.hatColor), 0, .05, -.012);
+    sc.scale.set(1, 1.1, 1.04); sc.material.side = T.DoubleSide;
+    add(head, new T.ConeGeometry(.2, .34, 10), M(o.hatColor), 0, -.12, -.1).rotation.x = -.25;
+    const gold = M(tok('--gold'), { flatShading: false, metalness: .6, roughness: .3 });
+    for (const s of [-1, 1]) add(head, new T.TorusGeometry(.044, .007, 6, 18), gold, s * .062, .05, .168);
+    add(head, new T.BoxGeometry(.04, .007, .007), gold, 0, .058, .17);
+  } else if (o.hat === 'cap') {
+    add(head, new T.CylinderGeometry(.178, .18, .08, 14), M(o.hatColor), 0, .17, -.005);
+    add(head, new T.SphereGeometry(.18, 12, 6, 0, Math.PI * 2, 0, Math.PI / 2), M(o.hatColor), 0, .2, -.005).scale.y = .35;
+    add(head, new T.BoxGeometry(.22, .02, .13), M(o.hatColor), 0, .15, .18).rotation.x = .12;
+    for (const s of [-1, 1]) add(head, new T.SphereGeometry(.05, 6, 5), hair, s * .15, .09, -.04);
+  }
+  const arm = s => {
+    add(body, new T.SphereGeometry(.078, 8, 6), robe, s * .27, 1.4, 0);
+    const sh = new T.Group(); sh.position.set(s * .27, 1.4, 0); body.add(sh);
+    add(sh, new T.CylinderGeometry(.066, .058, .3, 8), o.upper ? M(o.upper) : robe, 0, -.15, 0);
+    const el = new T.Group(); el.position.y = -.3; sh.add(el);
+    add(el, new T.CylinderGeometry(.056, .05, .26, 8), o.upper ? M(o.upper) : robe, 0, -.13, 0);
+    add(el, new T.CylinderGeometry(.059, .059, .04, 8), trim, 0, -.24, 0);
+    const hand = add(el, new T.SphereGeometry(.056, 8, 6), skin, 0, -.3, 0); return { sh, el, hand };
+  };
+  return { g, body, head, brows, mouth, eyes, L: arm(-1), R: arm(1) };
+}
+// worried brows rise and tilt, the mouth opens into an O
+function face(P, bewilder, mouthOpen) {
+  P.brows.forEach((b, i) => { const s = i ? 1 : -1; b.position.y = .115 + .035 * bewilder; b.rotation.z = -s * (.25 + .2 * bewilder); });
+  P.mouth.scale.set(1 - .1 * mouthOpen, 1.1 + 1.5 * mouthOpen, .5);
+}
+const paperMat = (T, canvas, extra) => { const tx = new T.CanvasTexture(canvas); tx.anisotropy = 8;
+  return new T.MeshStandardMaterial(Object.assign({ map: tx, roughness: .92, side: T.DoubleSide }, extra || {})); };
+
+const pieces = [];
+function piece(id, p) { p.id = id; p.section = document.getElementById(id); p.slot = p.section.querySelector('.scene'); p.t = 0; p.visible = false; pieces.push(p); return p; }
+function still(p) { p.reset(); const h = 1 / 30; for (let x = 0; x < p.stillAt; x += h) { p.t += h; p.step(h); } p.draw(); }
+
+/* ============================================================ 1B1  Still reading */
+piece('o1b1', {
+  stillAt: 5.9, LOOP: 16, SPEED: .3,
+  init() {
+    const S = this.S = makeStage(this, { fogNear: 6, fogFar: 17, key: [2.5, 7, 6], keyTarget: [.8, .4, 1.4], pool: 3.6, poolAt: [.8, .002, 1.6] }), T = S.T;
+    const P = this.P = makePerson(T, { skin: tok('--skin-1'), robe: tok('--teal-deep'), trim: tok('--gold'), sash: tok('--crimson'), hat: 'fez', hatColor: tok('--crimson') });
+    S.scene.add(P.g);
+    // the roller in his hands
+    this.roll = new T.Group(); this.roll.position.set(0, 1.2, .53); this.roll.rotation.z = Math.PI / 2; P.body.add(this.roll);
+    const rm = new T.Mesh(new T.CylinderGeometry(.075, .075, .64, 16), paperMat(T, treatyCanvas(256, 128, 9, { scale: .5 })));
+    rm.castShadow = true; this.roll.add(rm); this.rollMesh = rm;
+    for (const s of [-1, 1]) { const k = new T.Mesh(new T.CylinderGeometry(.03, .03, .1, 8), new T.MeshStandardMaterial({ color: new T.Color(tok('--wood')), roughness: .6 }));
+      k.position.y = s * .37; this.roll.add(k); const b = new T.Mesh(new T.SphereGeometry(.035, 8, 6), new T.MeshStandardMaterial({ color: new T.Color(tok('--gold')), metalness: .5, roughness: .35 }));
+      b.position.y = s * .43; this.roll.add(b); }
+    // the scroll: from his hands to the floor, toward us, then away into the dark
+    const pts = [[0, 1.13, .6], [0, .6, .78], [0, .03, 1.05], [-.3, 0, 1.8], [-.2, 0, 2.6], [.5, 0, 3.15], [1.6, 0, 3.25], [2.4, 0, 2.6], [2.6, 0, 1.4],
+      [2.8, 0, 0], [3.6, 0, -1.6], [5.2, 0, -3], [7.5, 0, -4.2], [11, 0, -5.5]];
+    this.W = .55;
+    const rb = ribbon(T, pts, this.W, 520, { aspect: 4, vSign: -1, lift: (u, k, p) => p.y < .06 ? .012 + .02 * Math.sin(u * 90) + .018 * Math.abs(k) * (.5 + .5 * Math.sin(u * 37)) : 0 });
+    this.curve = rb.curve; this.L = rb.L;
+    const tc = treatyCanvas(512, 2048, 3, { title: true }); this.tex = new T.CanvasTexture(tc); this.tex.wrapS = this.tex.wrapT = T.RepeatWrapping; this.tex.anisotropy = 8;
+    const scroll = new T.Mesh(rb.geo, new T.MeshStandardMaterial({ map: this.tex, roughness: .9, side: T.DoubleSide }));
+    scroll.receiveShadow = true; scroll.castShadow = true; S.scene.add(scroll);
+    // the line with the yes, riding the paper
+    const yc = yesCanvas(512, 92, { size: 30 });
+    this.yesMat = new T.MeshStandardMaterial({ map: new T.CanvasTexture(yc.map), emissiveMap: new T.CanvasTexture(yc.glow), emissive: new T.Color(tok('--gold')), emissiveIntensity: .9, roughness: .85, side: T.DoubleSide });
+    this.yes = new T.Mesh(new T.PlaneGeometry(this.W * .96, this.W * .96 * 92 / 512), this.yesMat); S.scene.add(this.yes);
+    this.yesLight = new T.PointLight(new T.Color(tok('--gold')), .9, 1.4, 2); S.scene.add(this.yesLight);
+    this.m4 = new T.Matrix4(); this.tan = new T.Vector3(); this.sd = new T.Vector3(); this.nm = new T.Vector3();
+  },
+  resize() { this.S.resize(); },
+  reset() { this.t = 0; },
+  step() { if (this.t > this.LOOP) this.t -= this.LOOP; },
+  draw() {
+    const t = this.t, S = this.S, P = this.P, T = S.T;
+    this.tex.offset.y = (t * this.SPEED) / (this.W * 4);
+    this.rollMesh.rotation.y = -t * this.SPEED / .075;
+    // the yes comes off the roll at 2.2 s and travels with the paper
+    const s = (t - 2.2) * this.SPEED + .05, on = s > 0 && s < this.L - .2;
+    this.yes.visible = on; this.yesLight.visible = on;
+    if (on) {
+      const u = s / this.L, pnt = this.curve.getPointAt(u); this.curve.getTangentAt(u, this.tan);
+      this.sd.crossVectors(this.tan, new T.Vector3(0, 1, 0)); if (this.sd.lengthSq() < 1e-5) this.sd.set(1, 0, 0); this.sd.normalize();
+      this.nm.crossVectors(this.sd, this.tan).normalize(); if (this.nm.y < 0 && pnt.y < .1) this.nm.negate();
+      const lift = pnt.y < .06 ? .012 + .02 * Math.sin(u * 90) + .01 : 0;
+      this.m4.makeBasis(this.sd.clone().negate(), this.tan.clone().negate(), this.nm);
+      this.yes.position.copy(pnt).addScaledVector(this.nm, .012); this.yes.position.y += lift; this.yes.quaternion.setFromRotationMatrix(this.m4);
+      this.yesLight.position.copy(pnt).addScaledVector(this.nm, .28);
+      this.yesMat.emissiveIntensity = .75 + .35 * Math.sin(t * 4);
+    }
+    // the man: asks, reads, looks up lost exactly as the yes slides past, reads on and slumps
+    const look = Math.max(win(t, -1, 2.2, .5), win(t, 5.0, 7.3, .45));
+    P.head.rotation.x = lerp(.44 + .05 * Math.sin(t * 1.3), -.12, look);
+    P.head.rotation.y = lerp(.14 * Math.sin(t * 2.6), .42, look);
+    P.head.rotation.z = lerp(0, -.1, win(t, 5.0, 7.3, .45));
+    face(P, .3 + .7 * look, .25 + .75 * win(t, 5.0, 7.3, .45) + .3 * win(t, 11.5, 12.6, .3));
+    const slump = smooth((t - 7.5) / 6);
+    P.body.rotation.x = .04 + .07 * slump; P.body.position.z = -.04 * slump;
+    for (const [A, s] of [[P.L, -1], [P.R, 1]]) { A.sh.rotation.x = -.92 + .08 * slump; A.sh.rotation.z = s * -.12; A.el.rotation.x = -.72; }
+    // the camera drifts along the paper
+    const c = S.cam; c.position.set(3.7 + .4 * Math.sin(t * .2), 2.25 + .12 * Math.sin(t * .13), 5.4 - .3 * Math.sin(t * .16)); c.lookAt(.95, .72, 1.45);
+    S.bubble('q', t > .2 && t < 2.3, P.head); S.bubble('b', t > 5.4 && t < 7.4, P.head);
+    S.R.render(S.scene, c);
+  }
+});
+
+/* ============================================================ 1B2  The magnifier */
+piece('o1b2', {
+  stillAt: 1.6, LOOP: 17, YES: 15.5,
+  init() {
+    const S = this.S = makeStage(this, { fogNear: 7, fogFar: 30, fov: 38, key: [4, 9, 6], keyTarget: [-.3, 1, 0], spotAngle: .6, pool: 3.2, poolAt: [.2, .002, .2] }), T = S.T;
+    // the treaty hangs from the dark like a curtain, pools on the floor and ends in a curl
+    const pts = [[-1, 36, 0], [-1, 20, 0], [-.98, 8, 0], [-.95, 2.2, 0], [-.86, .6, 0], [-.62, .1, 0], [-.15, 0, 0], [.6, 0, 0], [1.3, .02, 0]];
+    const rb = ribbon(T, pts, 3.4, 420, { aspect: 4, side: [0, 0, 1], vSign: -1, lift: (u, k, p) => p.y < .08 ? .01 + .015 * Math.sin(u * 160 + k) : 0 });
+    const tc = treatyCanvas(768, 3072, 21, { title: true, scale: 1.5 }); const tex = new T.CanvasTexture(tc); tex.wrapS = tex.wrapT = T.RepeatWrapping; tex.anisotropy = 8;
+    this.doc = new T.Mesh(rb.geo, new T.MeshStandardMaterial({ map: tex, roughness: .9, side: T.DoubleSide })); this.doc.receiveShadow = true; this.doc.castShadow = true;
+    S.scene.add(this.doc);
+    const curl = new T.Mesh(new T.CylinderGeometry(.09, .09, 3.4, 16), paperMat(T, treatyCanvas(256, 128, 5, { scale: .5 })));
+    curl.rotation.x = Math.PI / 2; curl.position.set(1.36, .1, 0); curl.castShadow = true; S.scene.add(curl);
+    // the yes, high on the sheet
+    const yc = yesCanvas(512, 92, { size: 30 });
+    this.yesMat = new T.MeshStandardMaterial({ map: new T.CanvasTexture(yc.map), emissiveMap: new T.CanvasTexture(yc.glow), emissive: new T.Color(tok('--gold')), emissiveIntensity: 1, roughness: .85 });
+    const yes = new T.Mesh(new T.PlaneGeometry(2.4, 2.4 * 92 / 512), this.yesMat); yes.rotation.y = Math.PI / 2; yes.position.set(-.985, this.YES, .25); S.scene.add(yes);
+    this.glow = new T.Sprite(new T.SpriteMaterial({ map: new T.CanvasTexture(radial(128, 'rgba(221,180,106,.55)', 'rgba(221,180,106,0)')), depthWrite: false, fog: false, transparent: true }));
+    this.glow.scale.set(2.6, 1.4, 1); this.glow.position.set(-.8, this.YES, .3); S.scene.add(this.glow);
+    const gl = new T.PointLight(new T.Color(tok('--gold')), 1.4, 4, 2); gl.position.set(-.3, this.YES, .3); S.scene.add(gl);
+    // a ladder, far too short
+    const wood = new T.MeshStandardMaterial({ color: new T.Color(tok('--wood')), roughness: .7, flatShading: true }), lad = new T.Group();
+    for (const z of [-.24, .24]) { const r = new T.Mesh(new T.BoxGeometry(.05, 2.3, .05), wood); r.position.set(0, 1.15, z); r.castShadow = true; lad.add(r); }
+    for (let i = 0; i < 6; i++) { const r = new T.Mesh(new T.BoxGeometry(.035, .035, .5), wood); r.position.set(0, .3 + i * .36, 0); r.castShadow = true; lad.add(r); }
+    lad.position.set(-.45, 0, -1.05); lad.rotation.z = .2; S.scene.add(lad);
+    // pages she has already pulled out, on the floor
+    const pm = paperMat(T, treatyCanvas(256, 340, 8, { scale: .5 })), r = rng(6);
+    for (let i = 0; i < 9; i++) { const m = new T.Mesh(new T.PlaneGeometry(.32, .42), pm); m.rotation.x = -Math.PI / 2; m.rotation.z = r() * 6;
+      m.position.set(.4 + r() * 1.6, .006 + i * .002, -.9 + r() * 2.2); m.receiveShadow = true; S.scene.add(m); }
+    // the reader, in profile to us, facing the sheet
+    const P = this.P = makePerson(T, { skin: tok('--skin-2'), robe: tok('--ochre'), upper: tok('--cream'), trim: tok('--plum'), sash: tok('--teal-deep'), hat: 'scarf', hatColor: tok('--plum') });
+    P.g.position.set(.42, 0, .38); P.g.rotation.y = -Math.PI / 2 + .25; S.scene.add(P.g);
+    const mag = this.mag = new T.Group(); P.R.el.add(mag); mag.position.y = -.32;
+    const handle = new T.Mesh(new T.CylinderGeometry(.022, .026, .2, 8), wood); handle.position.y = -.08; mag.add(handle);
+    this.ring = new T.Group(); this.ring.position.y = -.3; mag.add(this.ring);
+    this.ring.add(new T.Mesh(new T.TorusGeometry(.12, .016, 8, 28), new T.MeshStandardMaterial({ color: new T.Color(tok('--gold')), metalness: .6, roughness: .3 })));
+    this.ring.add(new T.Mesh(new T.CircleGeometry(.112, 28), new T.MeshStandardMaterial({ color: 0xcfe6ff, transparent: true, opacity: .22, roughness: .05, metalness: .2, side: T.DoubleSide })));
+  },
+  resize() { this.S.resize(); },
+  reset() { this.t = 0; },
+  step() { if (this.t > this.LOOP) this.t -= this.LOOP; },
+  draw() {
+    const t = this.t, S = this.S, P = this.P;
+    // camera: on her, then a long crane up the sheet to the yes, a hold, and back down
+    const up = smooth((t - 3.6) / 6.4) * (1 - smooth((t - 13) / 3.6));
+    const c = S.cam;
+    c.position.set(lerp(2.9, 6.8, up) + .15 * Math.sin(t * .4), lerp(1.7, this.YES - 1.2, up), lerp(3.4, 8.2, up));
+    c.lookAt(lerp(-.25, -.9, up), lerp(1.3, this.YES, up), lerp(.05, .2, up));
+    // her: peering, then lowering the glass and looking up, and up
+    const lookUp = smooth((t - 4.2) / 1.4) * (1 - smooth((t - 13.6) / 1.2));
+    const sway = Math.sin(t * 1.1);
+    P.R.sh.rotation.x = lerp(-1.5 + .06 * sway, -.35, lookUp); P.R.sh.rotation.z = lerp(.12 * sway, .1, lookUp);
+    P.R.el.rotation.x = lerp(-1.05, -.5, lookUp);
+    this.ring.rotation.x = -(P.R.sh.rotation.x + P.R.el.rotation.x);
+    P.L.sh.rotation.x = lerp(-.25, -.1, lookUp); P.L.sh.rotation.z = lerp(-.1, -.35, lookUp); P.L.el.rotation.x = lerp(-.9, -.2, lookUp);
+    P.head.rotation.x = lerp(.06 + .03 * Math.sin(t * 2), -.82, lookUp); P.head.rotation.y = lerp(.08 * sway, -.15, lookUp);
+    P.body.rotation.x = lerp(.08, -.07, lookUp);
+    face(P, .25 + .75 * lookUp, .2 + .8 * lookUp);
+    this.yesMat.emissiveIntensity = .8 + .4 * Math.sin(t * 3); this.glow.material.opacity = .65 + .35 * Math.sin(t * 3);
+    S.bubble('q', t > .2 && t < 3.3, P.head);
+    S.R.render(S.scene, c);
+  }
+});
+
+/* ============================================================ 1B3  Paper rain */
+piece('o1b3', {
+  stillAt: 14.2, LOOP: 18.5, N: 300, LAND: 12.3,
+  init() {
+    const S = this.S = makeStage(this, { fogNear: 6, fogFar: 15, fov: 36, key: [2.5, 9, 4.5], keyTarget: [0, .5, 0], spotAngle: .5, pool: 3.4 }), T = S.T;
+    const P = this.P = makePerson(T, { skin: tok('--skin-3'), robe: tok('--indigo'), upper: tok('--cream'), trim: tok('--gold'), sash: tok('--crimson'), hat: 'cap', hatColor: tok('--ochre') });
+    S.scene.add(P.g); P.g.rotation.y = .35;
+    // the cloud the answer falls from
+    const cloud = this.cloud = new T.Group(), cm = new T.MeshStandardMaterial({ color: new T.Color(tok('--cloud')), roughness: 1, flatShading: true, emissive: new T.Color(tok('--indigo')), emissiveIntensity: .35 });
+    [[0, 0, 0, .75], [.7, -.1, .1, .6], [-.7, -.05, 0, .62], [.3, .3, -.2, .6], [-.3, .25, .2, .55], [1.25, -.2, -.1, .42], [-1.2, -.2, .1, .45], [0, -.15, .45, .5], [0, -.1, -.5, .5]]
+      .forEach(([x, y, z, r]) => { const m = new T.Mesh(new T.IcosahedronGeometry(r, 1), cm); m.position.set(x, y, z); cloud.add(m); });
+    cloud.position.set(0, 4.35, 0); S.scene.add(cloud);
+    // the pages
+    const pc = treatyCanvas(256, 340, 12, { scale: .5 });
+    this.pages = new T.InstancedMesh(new T.PlaneGeometry(.26, .34), paperMat(T, pc), this.N); this.pages.castShadow = true; this.pages.receiveShadow = true;
+    this.pages.instanceMatrix.setUsage(T.DynamicDrawUsage); S.scene.add(this.pages);
+    const r = rng(17); this.sp = [];
+    for (let i = 0; i < this.N; i++) { const a = r() * Math.PI * 2, rr = Math.sqrt(r()) * 1.5;
+      this.sp.push({ at: 2.1 + (i / this.N) * 14.2 + r() * .05, x: Math.cos(a) * rr, z: Math.sin(a) * rr, v: .85 + r() * .45, ph: r() * 6.28, yaw: r() * 6.28, tilt: (r() - .5) * .5 }); }
+    // the page he shelters under, and the gold one
+    this.cover = new T.Mesh(new T.PlaneGeometry(.5, .66), paperMat(T, treatyCanvas(256, 340, 31, { scale: .5, title: true }))); this.cover.castShadow = true; S.scene.add(this.cover);
+    const gc = document.createElement('canvas'); gc.width = 256; gc.height = 340; const g = gc.getContext('2d');
+    g.fillStyle = tok('--gold'); g.fillRect(0, 0, 256, 340); g.fillStyle = 'rgba(80,50,10,.35)'; for (let y = 40; y < 300; y += 18) if (y < 130 || y > 220) g.fillRect(30, y, 196, 5);
+    g.fillStyle = '#2A1C08'; g.font = '700 84px Fraunces, Georgia, serif'; g.textAlign = 'center'; g.fillText('yes', 128, 200);
+    this.gold = new T.Mesh(new T.PlaneGeometry(.3, .4), paperMat(T, gc, { emissive: new T.Color(tok('--gold')), emissiveIntensity: .5 })); this.gold.castShadow = true; S.scene.add(this.gold);
+    this.goldLight = new T.PointLight(new T.Color(tok('--gold')), 1.2, 1.6, 2); S.scene.add(this.goldLight);
+    this.d = new T.Object3D(); this.hand = new T.Vector3();
+  },
+  resize() { this.S.resize(); },
+  mound(rr, fill) { return .006 + .55 * fill * Math.pow(Math.max(0, 1 - rr / 1.75), 1.4); },
+  reset() { this.t = 0; this.landed = 0; for (const s of this.sp) s.l = null;
+    const d = this.d; d.position.set(0, -20, 0); d.scale.set(0, 0, 0); d.updateMatrix();
+    for (let i = 0; i < this.N; i++) this.pages.setMatrixAt(i, d.matrix); this.pages.instanceMatrix.needsUpdate = true; },
+  step() {
+    if (this.t > this.LOOP) { this.reset(); return; }
+    const t = this.t, d = this.d, sink = t > 17 ? Math.pow((t - 17) / 1.4, 2) * 1.2 : 0;
+    for (let i = 0; i < this.N; i++) {
+      const s = this.sp[i]; if (t < s.at || (s.at > 16.3 && !s.l)) continue;
+      if (s.l) { if (sink) { d.position.set(s.l.x, s.l.y - sink, s.l.z); d.rotation.set(-Math.PI / 2 + s.tilt * .3, 0, s.yaw); d.scale.set(1, 1, 1); d.updateMatrix(); this.pages.setMatrixAt(i, d.matrix); } continue; }
+      const tau = t - s.at, y = 3.95 - s.v * tau, x = s.x + .3 * Math.sin(tau * 2.1 + s.ph), z = s.z + .3 * Math.cos(tau * 1.7 + s.ph);
+      let rr = Math.hypot(x, z), px = x, pz = z; if (rr < .45) { const k = .45 / (rr || .01); px *= k; pz *= k; rr = .45; }
+      const yl = this.mound(rr, this.landed / this.N);
+      if (y <= yl) { s.l = { x: px, y: yl, z: pz }; this.landed++; d.position.set(px, yl, pz); d.rotation.set(-Math.PI / 2 + s.tilt * .3, 0, s.yaw); }
+      else { d.position.set(x, y, z); d.rotation.set(Math.sin(tau * 3 + s.ph) * 1.1, tau * 1.6 + s.yaw, Math.cos(tau * 2.6 + s.ph) * .7); }
+      d.scale.set(1, 1, 1); d.updateMatrix(); this.pages.setMatrixAt(i, d.matrix);
+    }
+    this.pages.instanceMatrix.needsUpdate = true;
+  },
+  draw() {
+    const t = this.t, S = this.S, P = this.P, fill = this.landed / this.N;
+    // him: asks, holds a page over his head, then drops it to stare at the gold one
+    const raise = smooth((t - 2.2) / .7) * (1 - smooth((t - this.LAND - .2) / .6)), stare = smooth((t - this.LAND) / .6);
+    for (const A of [P.L, P.R]) { A.sh.rotation.x = lerp(-.12, -2.75, raise); A.el.rotation.x = lerp(-.25, -.45, raise); }
+    P.L.sh.rotation.z = -lerp(.08, .26, raise); P.R.sh.rotation.z = lerp(.08, .26, raise);
+    P.head.rotation.x = lerp(lerp(-.25 + .1 * Math.sin(t * 1.5), .12 + .15 * Math.sin(t * .9), raise), .62, stare);
+    P.head.rotation.y = lerp(.12 * Math.sin(t * .7), -.25, stare);
+    face(P, lerp(.35 + .3 * raise, 1, stare), lerp(.2 + .3 * raise, .9, stare));
+    P.body.position.y = this.mound(.45, fill) * .6;
+    // the cover page: in his hands overhead, then falling to the pile
+    P.R.hand.getWorldPosition(this.hand);
+    if (t < 2.2) this.cover.visible = false;
+    else { this.cover.visible = true;
+      const k = smooth((t - this.LAND - .2) / .9), y0 = this.hand.y + .05;
+      this.cover.position.set(lerp(-.05, .55, k), lerp(Math.max(1.75, y0), this.mound(.6, fill) + .02, k), lerp(.06, .45, k));
+      this.cover.rotation.set(-Math.PI / 2 + lerp(.15 + .05 * Math.sin(t * 2), .1, k), 0, lerp(.1, 1.2, k));
+      this.cover.scale.setScalar(smooth((t - 2.2) / .4)); if (t > 17) this.cover.position.y -= Math.pow((t - 17) / 1.4, 2) * 1.2; }
+    // the gold page: spirals down from 5 s and lands in front of his feet
+    const gt = t - 5, gk = clamp(gt / (this.LAND - 5), 0, 1);
+    this.gold.visible = this.goldLight.visible = gt > 0;
+    if (gt > 0) { const rad = (1 - gk) * .8, a = gt * 1.5, fx = .05, fz = .78;
+      const gy = lerp(3.95, this.mound(.78, fill) + .03, gk) - (t > 17 ? Math.pow((t - 17) / 1.4, 2) * 1.2 : 0);
+      this.gold.position.set(fx + Math.cos(a) * rad, gy, fz + Math.sin(a) * rad);
+      if (gk < 1) this.gold.rotation.set(-Math.PI / 2 + Math.sin(gt * 2.4) * .8 * (1 - gk), gt * 1.2 * (1 - gk), Math.cos(gt * 1.9) * .5 * (1 - gk));
+      else this.gold.rotation.set(-Math.PI / 2 + .12, 0, -.35);
+      this.gold.material.emissiveIntensity = .45 + .25 * Math.sin(t * 3);
+      this.goldLight.position.set(this.gold.position.x, this.gold.position.y + .3, this.gold.position.z); }
+    this.cloud.position.x = .12 * Math.sin(t * .5); this.cloud.rotation.y = t * .05;
+    // camera: a slow half-orbit, sinking toward the gold page at the end
+    const a = .55 + .32 * Math.sin(t * .14), dist = lerp(5.6, 4.4, stare), c = S.cam;
+    c.position.set(Math.sin(a) * dist, lerp(2.35, 1.85, stare), Math.cos(a) * dist); c.lookAt(0, lerp(1.6, .85, stare), lerp(0, .5, stare));
+    S.bubble('q', t > .2 && t < 2.3, P.head); S.bubble('b', t > this.LAND + .8 && t < 16.8, P.head);
+    S.R.render(S.scene, c);
+  }
+});
+
+/* ============================================================ the page */
+const tpl = document.getElementById('stall-copy'), icon = document.getElementById('replay-icon');
+document.querySelectorAll('.copy').forEach(c => c.replaceWith(tpl.content.firstElementChild.cloneNode(true)));
+document.querySelectorAll('.replay').forEach(b => b.prepend(icon.content.firstElementChild.cloneNode(true)));
+
+function start() {
+  for (const p of pieces) {
+    try { if (!window.THREE) throw new Error('three.js did not load'); p.init(); p.resize(); p.reset(); }
+    catch (e) { console.error(p.id, e); p.broken = true; p.slot.querySelector('.fail').hidden = false; }
+  }
+  const live = pieces.filter(p => !p.broken);
+  if (RM) live.forEach(still);
+  const io = new IntersectionObserver(es => es.forEach(e => { const p = live.find(q => q.slot === e.target); if (p) p.visible = e.isIntersecting; }), { rootMargin: '120px' });
+  live.forEach(p => io.observe(p.slot));
+  const ro = new ResizeObserver(es => es.forEach(e => { const p = live.find(q => q.slot === e.target); if (p) { p.resize(); if (RM) still(p); else p.draw(); } }));
+  live.forEach(p => ro.observe(p.slot));
+  live.forEach(p => p.section.querySelector('.replay').addEventListener('click', () => { if (RM) still(p); else { p.reset(); p.draw(); } }));
+  let last = performance.now();
+  const loop = now => { const dt = Math.min(.05, (now - last) / 1000); last = now;
+    if (!RM) for (const p of live) if (p.visible) { p.t += dt; p.step(dt); p.draw(); }
+    requestAnimationFrame(loop); };
+  requestAnimationFrame(loop);
+  if (!RM && window.gsap && window.ScrollTrigger) {
+    gsap.registerPlugin(ScrollTrigger);
+    document.querySelectorAll('.opt').forEach(sec => {
+      const tl = gsap.timeline({ scrollTrigger: { trigger: sec.querySelector('.stall'), start: 'top 78%' } });
+      tl.from(sec.querySelector('.stage'), { autoAlpha: 0, y: 50, duration: 1.6, ease: 'power3.out' })
+        .from(sec.querySelector('.stall-text h3'), { autoAlpha: 0, y: 46, duration: 1.3, ease: 'power3.out' }, .25)
+        .from(sec.querySelector('.stall-text p'), { autoAlpha: 0, y: 30, duration: 1.3, ease: 'power3.out' }, .5);
+    });
+  }
+}
+// the canvas textures set type, so the faces they draw with load first
+const faces = document.fonts ? Promise.all(['400 20px Fraunces', '500 20px Fraunces', '700 20px Fraunces', 'italic 500 20px Fraunces'].map(f => document.fonts.load(f))).catch(() => {}) : Promise.resolve();
+Promise.race([faces, new Promise(r => setTimeout(r, 2500))]).then(start);
+})();
+</script>
+</body>
+</html>

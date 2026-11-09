@@ -1444,12 +1444,28 @@ heading, text and object swapping sides from stall to stall.
 
 - [x] **`mini-courses/STORY.md`**, verbatim, linked beside MANIFEST and ROADMAP in `README.md` and
       `mini-courses/index.md`.
-- [ ] **Round-5 playground** (`playground/2026-11-round-5/`): three backgrounds and three overall
+- [x] **Round-5 playground** (`playground/2026-11-round-5/`): three backgrounds and three overall
       designs (`R0-about-design.html`), and five animations per stall (`R1` to `R5`), the first of
       each the author's idea (a wojak generating slop, a needle in a haystack, humans for humans, a
       cherub with bow and arrow in the spirit of *Labor of Love*, a portrait of Nietzsche). Each drawn
-      by its own Opus agent.
-- [ ] The author's picks, then the page built at `/about/`.
+      by its own Opus agent. **Report:** the author picked B2 + F1 with smaller, column-wide headings,
+      2A, 3E, 4E and 5A, and no scene in a box (D115); the HTML is committed, the screenshots are not.
+- [x] **The page at `/about/`** (D115): `src/app/about/page.tsx` in `PageShell`, the text from
+      `mini-courses/STORY.md` (`lib/content/story.ts`), the page `components/about/AboutStory.tsx`, one
+      island (`AboutMotion.tsx`) that imports `gsap` on demand (`motion.ts`), `src/app/about.css`, the
+      palette in `components/about/palette.ts`; linked from the footer; crumb `About the Bazaar`.
+      **Report:** MEASURED on the build: `out/api/v1/` byte-identical to the build before it (contentVersion
+      `d01d5a62…` both times), the link gate and the bundle check pass; 390 px `scrollWidth` 390; with the
+      script blocked and under reduced motion every heading and paragraph is visible and nothing pins.
+- [x] **Its tests**: `tests/unit/content/story.test.ts` (one stall per `##`, in order, the motto from the
+      closing line, any story), `tests/unit/about-palette.test.ts` (the palette and the stylesheet name the
+      same properties), `tests/e2e/about.spec.ts` (order, no-JS, reduced motion, 390, no box), `/about/` in
+      the route lists of `navigation.spec.ts` and `layout.spec.ts`, `components/about` and `app/about` in
+      the copy register. **Report:** each e2e assertion seen failing once under an injected defect
+      (swapped stalls, hidden text, a 460 px body, the scene above the text, a border, a fill, a clip,
+      a painted canvas corner).
+- [ ] **Stall 1's scene**: the author's pick among the three three.js alternatives to 1B replaces
+      `PendingScene` (`components/about/scenes/`), with no box.
 
 ---
 

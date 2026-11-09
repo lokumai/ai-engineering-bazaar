@@ -9,7 +9,7 @@ description: >
 authority: reasoning
 writes: agent, when a decision is taken
 status: active
-covers: "D97 to D114 so far, and D89, which part 2 held for PR #57 — 2026-11-06 onward"
+covers: "D97 to D115 so far, and D89, which part 2 held for PR #57 — 2026-11-06 onward"
 last_updated: 2026-11-09
 ---
 
@@ -465,6 +465,39 @@ the menu; the language reads three custom properties (`bazaar.css`). **Rejected:
 positioning, which Firefox does not ship; a `popover` attribute in the emitted markup, because the tool strip is
 in the published bundle (`blocks.ts`) and a behaviour is not content (the bundle's contentVersion is unchanged).
 A browser without the Popover API keeps the in-block panel.
+
+### D115 · About: dusk to dawn, a procession of five stalls, and no scene in a box — 2026-11-09
+
+**Picked by the author** from the round-5 playground (`playground/2026-11-round-5/`, M90): *"I want B2 and F1
+combination, but the chapter headings such as "Generation is free, and the internet is drowning in AI slop"
+should be smaller in font size and also have width identical to the text below them."* So the ground is **B2,
+Dusk to dawn** (deep clay, plum, cobalt, teal and umber per stall, then dawn sand at the motto with the text
+turning dark), the feel is **F1, Procession** (Fraunces headings, the site sans for reading, each stall pinned
+and played by the scroll, a gold gate arch round the title and the motto, a diamond rail of stalls), and the
+headings are set at about 30 px at 1440 and run the width of the text column, so each takes one or two lines.
+The scenes: **2A** needle in the haystack (canvas, scroll driven), **3E** the seal (CSS 3D), **4E** brainrot
+(SVG), **5A** Nietzsche engraved (SVG), with R5's hand-drawn underline under the motto. **Stall 1 is pending**:
+he liked **1B** "The treaty" and asked for three three.js alternatives to it; the page holds a plain
+"Drawing in progress" slot that his pick replaces as one component.
+
+**No scene in a box.** The author, on 1B: *"the fact that each animation is in a box is bad. in the final
+version I want no box."* It holds for every stall: a slot only sizes its scene (no border, fill, shadow or clip),
+art that reached the playground square's edge fades into the ground instead (the haystack's beam, the
+brainrot figures' bodies), the seal's desk is a pool of shade wider than the slot, and the engraving lost its
+cream oval plate and gold rings: the cream fades radially and the bust is masked by a soft ellipse, not
+clipped. `tests/e2e/about.spec.ts` checks it.
+
+**The text is STORY.md's**, read at build time (`src/lib/content/story.ts`): one stall per `##` section, in
+order, and the motto from the closing line. **Linked from the footer, not the bar**: the phone bar is full
+(`MainNav.tsx`, `data-bar-edge`), and a page about the project sits with the repository and the licence.
+
+**Rejected:** backgrounds B1 (lamplit night) and B3 (inked paper); feels F2 (manuscript, inertia scroll) and
+F3 (chapters, one stall per wheel turn, which hijacks the wheel); for stall 1 the options 1A, 1C, 1D, 1E and so
+far 1B itself as drawn; 2B to 2E, 3A to 3D, 4A to 4D, 5B to 5E; F1's headings at their drawn size. Also
+rejected: the colours in `about.css` (a surface may hold no colour; they are the page's art, stated once in
+`components/about/palette.ts` and written into the page as custom properties, the `diagram-themes.ts`
+mechanism); rendering STORY.md through the module pipeline, which is built for modules; three.js, which no
+picked scene needs yet.
 
 ## Open questions
 

@@ -1,7 +1,6 @@
 /**
  * M91, D116 — the Caravan page's own colours: the shadow theatre of C4, transcribed from
- * `playground/2026-11-round-5/C1-caravan-designs.html` (`.st-shadow`, the night card and the night
- * strip).
+ * `playground/2026-11-round-5/C1-caravan-designs.html` (`.st-shadow`).
  *
  * **Why a module and not `caravan.css`.** A surface stylesheet may hold no colour
  * (`tests/unit/design/surface-stylesheets.test.ts`) and the language may hold none its mockup lacks
@@ -11,8 +10,9 @@
  * `caravan.css` with a token of the language as each one's default, so the page keeps a colour if
  * this style were ever missing. `tests/unit/caravan-palette.test.ts` holds the two lists together.
  *
- * The scene and its card are dark in both of the site's themes, as the bar is: a shadow play is
- * watched in the dark. The puppets and the props carry their own colours in `scene/art.ts`.
+ * The scene is the same in both of the site's themes: a shadow play is watched in the dark. The card
+ * and the strip are not here: they are the language's slab and bar (`caravan.css`). The puppets and
+ * the props carry their own colours in `scene/art.ts`.
  */
 
 const PROPERTIES: Readonly<Record<string, string>> = {
@@ -33,21 +33,8 @@ const PROPERTIES: Readonly<Record<string, string>> = {
   'hill-edge': 'rgba(59, 36, 18, 0.3)',
   land: 'rgba(47, 140, 134, 0.55)',
   'lamp-lit': '#ffd88a',
-  /* the card, at night */
-  'card-ground': '#1d1f27',
-  'card-raised': '#262933',
-  'card-ink': '#e7e3d8',
-  'card-title': '#f4efe5',
-  'card-muted': '#a8acb8',
-  'card-line': '#444854',
-  /* the strip, at night */
-  'strip-ground': '#14152f',
-  'strip-line': '#2f3060',
-  'strip-bar': '#2a2b62',
-  'strip-gold': '#ddb46a',
-  'strip-curve': 'rgba(221, 180, 106, 0.6)',
-  'strip-year': '#b8b0cf',
-  'strip-thumb-fill': 'rgba(221, 180, 106, 0.1)',
+  /* the focus ring on the leather, the card and the strip: the lamp, which keeps 3:1 on all three */
+  focus: '#ffd88a',
 }
 
 /** The selector the properties are declared on: the page's own root. */

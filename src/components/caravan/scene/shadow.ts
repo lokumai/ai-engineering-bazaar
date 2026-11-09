@@ -39,19 +39,23 @@ export function mountShadowPlay(stage: HTMLElement, months: readonly string[], n
   const ph = isPhone()
   const NM = months.length
   const MW = ph ? 150 : 260
-  const H = ph ? 400 : 470
-  const amp = ph ? 58 : 80
-  const base = H - (ph ? 114 : 160)
-  const s = ph ? 0.5 : 0.72
-  const k = ph ? 0.5 : 0.7
-  const postScale = ph ? 0.6 : 0.8
+  /* The stage's height is fitted to the window (`index.ts`); every vertical measure, and the art,
+     is the mockup's at its full height times `f`. The pace across the road, `MW`, is not scaled. */
+  const H = stage.clientHeight
+  const f = H / (ph ? 400 : 470)
+  stage.style.setProperty('--cv-f', f.toFixed(3))
+  const amp = (ph ? 58 : 80) * f
+  const base = H - (ph ? 114 : 160) * f
+  const s = (ph ? 0.5 : 0.72) * f
+  const k = (ph ? 0.5 : 0.7) * f
+  const postScale = (ph ? 0.6 : 0.8) * f
   const W = NM * MW
   const pad = 1800
   const viewW = () => stage.clientWidth
   /** The upper band, where the props stand. */
   const ground = (xw: number) => base - heatAt(norm, xw / MW) * amp
   /** The lower road, where the caravan walks. */
-  const walk = (xw: number) => H - (ph ? 26 : 32) - heatAt(norm, xw / MW) * (ph ? 8 : 12)
+  const walk = (xw: number) => H - ((ph ? 26 : 32) + heatAt(norm, xw / MW) * (ph ? 8 : 12)) * f
   const hx = () => (ph ? 16 : 28) + (60 + 272) * s
   const stopTop = (top: number) => top * k - 14
 
@@ -70,7 +74,7 @@ export function mountShadowPlay(stage: HTMLElement, months: readonly string[], n
   const atPar = (month: number, par: number) => (month * MW - vw / 2) * par + vw / 2
   const mid = 0.45
   const landmarks = years.map(({ year, at }, n) =>
-    `<g transform="translate(${atPar(n === 0 ? 0.2 : at, mid).toFixed(0)} ${(base - amp * 0.9).toFixed(0)}) scale(${ph ? 0.36 : 0.5})" class="cv-landmark">${landmarkArt(placeIndex(year, firstYear))}</g>`).join('')
+    `<g transform="translate(${atPar(n === 0 ? 0.2 : at, mid).toFixed(0)} ${(base - amp * 0.9).toFixed(0)}) scale(${((ph ? 0.36 : 0.5) * f).toFixed(3)})" class="cv-landmark">${landmarkArt(placeIndex(year, firstYear))}</g>`).join('')
 
   let seed = 21
   const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647
@@ -87,7 +91,7 @@ export function mountShadowPlay(stage: HTMLElement, months: readonly string[], n
   }
   hill += `L${W * mid + pad} ${H}Z`
 
-  const band = ph ? 34 : 46
+  const band = (ph ? 34 : 46) * f
   let land = ''
   for (let x = -pad; x <= W + pad; x += 8) land += (land ? 'L' : 'M') + `${x} ${ground(x).toFixed(1)}`
   for (let x = W + pad; x >= -pad; x -= 8) land += `L${x} ${(ground(x) + band).toFixed(1)}`
@@ -97,8 +101,8 @@ export function mountShadowPlay(stage: HTMLElement, months: readonly string[], n
   let low = ''
   let lowLand = ''
   for (let x = -pad; x <= W + pad; x += 10) {
-    low += (low ? 'L' : 'M') + `${x} ${(walk(x) + 6).toFixed(1)}`
-    lowLand += (lowLand ? 'L' : 'M') + `${x} ${(walk(x) - 4 - 6 * Math.sin(x / 90)).toFixed(1)}`
+    low += (low ? 'L' : 'M') + `${x} ${(walk(x) + 6 * f).toFixed(1)}`
+    lowLand += (lowLand ? 'L' : 'M') + `${x} ${(walk(x) - (4 + 6 * Math.sin(x / 90)) * f).toFixed(1)}`
   }
   lowLand += `L${W + pad} ${H}L${-pad} ${H}Z`
 
@@ -180,7 +184,7 @@ export function mountShadowPlay(stage: HTMLElement, months: readonly string[], n
     for (const [g, off] of offs) {
       const sx = hx() + off
       const xw = camX + sx
-      const gy = walk(xw) + 4
+      const gy = walk(xw) + 4 * f
       const a = clamp(Math.atan2(walk(xw + 18) - walk(xw - 18), 36) * 57.3, -12, 12)
       g.setAttribute('transform', `translate(${sx.toFixed(1)} ${gy.toFixed(1)}) rotate(${a.toFixed(1)}) scale(${(back ? -s : s).toFixed(3)} ${s.toFixed(3)})`)
     }
@@ -205,6 +209,8 @@ export function mountShadowPlay(stage: HTMLElement, months: readonly string[], n
     },
     destroy() {
       stage.innerHTML = ''
+      stage.classList.remove('has-lit', 'is-drag')
+      stage.style.removeProperty('--cv-f')
     },
   }
 }

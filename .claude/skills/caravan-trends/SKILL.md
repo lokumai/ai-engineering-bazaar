@@ -23,28 +23,16 @@ The second rule is the course's: **verify, do not pass through** (MANIFESTO rule
 link title is copied from a page fetched in this run, and every date says where it came from. A
 wrong date or a mislabelled link is the one unforgivable defect.
 
-## What a trend is (the author's decisions, D116)
+## What a trend is
 
-- **Very high level**: "the chatbot moment", "agents", "context engineering". An idea, a practice or
-  a pattern the field talked about for two months or more.
-- **Never a model release.** A release may be the evidence that dates a trend's start; it is not a
-  trend. The same goes for a launch, a product or a crisis: an event, dropped unless the author keeps
-  it.
-- **It ends when people stop calling it new**, which includes becoming ordinary practice. Until then
-  its `end` is `null`.
-- **One stop per trend**, spanning its start month to its end month. **16 to 48 trends** over the
-  whole road, about one to three a season; more than five candidates in one season means the scope
-  has drifted.
-- **Format 2**: a title, a period, ONE paragraph on what it was, and links grouped the way a module's
-  References are (articles, videos, tools, repositories, modules). No "why it mattered" field, and
-  no page per trend: a trend that deserves a page is an Emerging module, and Caravan is a quick
-  overview of what was trending.
-- **Strength is measured, never typed.** The land's height and the strip's bars come from
-  `strength.yaml`, which only the measurer writes, from evidence, by the method below. The author does
-  not type a level and neither does any agent.
-- **English first.** Turkish and Persian come later, by the rules modules follow
-  (`mini-courses/CLAUDE.md`, Translating a module), from the final English, and they are the
-  author's too.
+The author decided it, and **D116** in `kia-context/logs/BRAINSTORM.md` records it in his words: very
+high level, never a model release (a release may date a trend's start), ended when people stop calling
+it new, one stop per trend, about 16 to 48 trends in the end, format 2, strength measured and never
+typed, English first. How one entry is written is `mini-courses/CLAUDE.md`, Writing a Caravan trend;
+its shape and the rules the build holds it to are `kia-context/specs/ARCHITECTURE.md` §14. This file
+does not restate them: when one of those changes, it changes there. What this procedure adds is the
+working test for scope: more than five candidates in one season, or a list that is mostly releases,
+means the run has drifted (breaker 8).
 
 ## Read first
 
@@ -52,7 +40,8 @@ wrong date or a mislabelled link is the one unforgivable defect.
    breakers apply to every step here, and the breakers below add to them.
 2. `kia-context/specs/MANIFESTO.md` rules 1, 12, 13 and 16; `mini-courses/STORY.md`;
    `mini-courses/CLAUDE.md` (writing rules, the References groups, and Writing a Caravan trend).
-3. `src/lib/content/caravan-file.ts`: the two files' shapes and the rules the build holds them to.
+3. `kia-context/specs/ARCHITECTURE.md` §14 and `src/lib/content/caravan-file.ts`: the two files'
+   shapes and the rules the build holds them to.
 4. The current `mini-courses/caravan/` files and the last Caravan entry in PROGRESS.
 
 ## The files
@@ -65,15 +54,8 @@ wrong date or a mislabelled link is the one unforgivable defect.
 | `.caravan/runs/<run-id>/` | every role | **no** (gitignored) |
 | `kia-context/logs/PROGRESS.md` | the lead, at the end | yes |
 
-`strength.yaml`, as `caravan-file.ts` validates it:
-
-```yaml
-caravan_strength: 1
-method: 1                    # the method's version; new cut points are a new version and a full re-measure
-measured_through: "2026-09"  # the last settled month the run measured
-trends:
-  context_engineering: { "2025-06": 2, "2025-07": 4, "2025-08": 5 }   # every month of the span, 0 to 5
-```
+`strength.yaml`'s shape is in ARCHITECTURE §14: the method's version, the last measured month, and a
+level from 0 to 5 for every month of each measured trend's span.
 
 The run folder:
 
@@ -246,8 +228,12 @@ combined score: 0 below 0.05, then 1, 2, 3, 4 and 5 at 0.05, 0.15, 0.30, 0.50 an
 (company posts, papers, the post that named a trend) date a trend and never enter its level: a
 company posting about its own product measures its marketing.
 
-The cut points are a starting proposal: tune them once on the first small run, then freeze them as
-method 1. Any later change is a new method version, a BRAINSTORM entry and a full re-measure.
+**The cut points are the author's decision, at a gate.** The values above are only the starting
+proposal. On the first run, the measurer computes the combined scores and puts the evidence in
+`REPORT.md` (Needs your decision): how many trend-months each proposed level would hold, and the
+trends whose level moves if a cut point moves by 0.05. The author fixes the cut points at Gate B of
+that run, and they become method 1. No run changes them after that: a change is the author's, at a
+gate, as a new method version with a BRAINSTORM entry and a full re-measure.
 
 **The measurer never types a level.** It writes `proposal/strength.yaml` from the counts with one
 function (to be built: `scripts/lib/caravan-strength.mjs`, below), and the counts, queries and
@@ -267,7 +253,8 @@ families that disagree, manual sources, unverified leads).
 ## Gate B: the author decides each trend
 
 **Stop and wait.** He sets `start` and `end`, chooses the links and the modules, and **writes the
-title and the one paragraph**. If he dictates them in chat, copy his words exactly and copy nothing
+title and the one paragraph**. On the first run he also fixes the method's cut points from the
+evidence in `REPORT.md` (Step 6). If he dictates them in chat, copy his words exactly and copy nothing
 else. A trend he has not written stays out of `trends.yaml`.
 
 ## Step 8: assemble and check (lead)
@@ -360,7 +347,7 @@ there, and read them with `python3 -I` or with scripts kept outside the run fold
 - Add a trend the author did not keep, or call a model release a trend.
 - Delete a trend, a link or a month of evidence (it proposes; the author deletes).
 - Use a link it did not fetch, or a date from a secondary page.
-- Change the method version or its cut points.
+- Change the method version or its cut points: only the author does, at a gate (Step 6).
 - Commit, push or merge without the author's word, or change `src/` or the mobile bundle (apart from
   removing the sample with the first real trend).
 

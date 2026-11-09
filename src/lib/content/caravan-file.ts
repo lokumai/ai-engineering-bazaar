@@ -90,11 +90,27 @@ function fail(file: string, rule: string, detail: string): never {
   throw new Error(`caravan/${file}: ${rule}\n  ${detail}`)
 }
 
+/**
+ * Where an issue is, named the way the author would look for it: `trends[3] ("agents").links`
+ * rather than `trends.3.links`, because a list position is not something he can find in the file.
+ */
+function where(raw: unknown, path: readonly PropertyKey[]): string {
+  if (path.length === 0) return '(root)'
+  const [head, index, ...rest] = path
+  const list = (raw as { trends?: unknown } | null)?.trends
+  if (head === 'trends' && typeof index === 'number' && Array.isArray(list)) {
+    const id = (list[index] as { id?: unknown } | undefined)?.id
+    const named = typeof id === 'string' ? `trends[${index}] ("${id}")` : `trends[${index}]`
+    return [named, ...rest.map(String)].join('.')
+  }
+  return path.map(String).join('.')
+}
+
 function shaped<T>(file: string, schema: z.ZodType<T>, raw: unknown): T {
   const parsed = schema.safeParse(raw)
   if (parsed.success) return parsed.data
   const detail = parsed.error.issues
-    .map((issue) => `  ${issue.path.join('.') || '(root)'}: ${issue.message}`)
+    .map((issue) => `  ${where(raw, issue.path)}: ${issue.message}`)
     .join('\n')
   throw new Error(`Invalid caravan/${file}:\n${detail}`)
 }
@@ -178,10 +194,20 @@ export function parseTrends(raw: unknown, context: TrendsContext): TrendsFile {
 }
 
 /** `strength.yaml`, parsed and held to the trends it measures. */
-export function parseStrength(raw: unknown, trends: TrendsFile): StrengthFile {
+export function parseStrength(raw: unknown, trends: TrendsFile, context: Pick<TrendsContext, 'latest'>): StrengthFile {
   const file = shaped('strength.yaml', RAW_STRENGTH_FILE, raw)
   const at = 'strength.yaml'
   const byId = new Map(trends.trends.map((trend) => [trend.id, trend]))
+
+  // ---- rule 0: the last measured month is on the road ----------------------
+  // Not before the road starts, and not after the build's month: a month that has not happened
+  // cannot have been measured.
+  if (monthsBetween(trends.first_month, file.measured_through) < 0) {
+    fail(at, 'rule 0, measured_through may not be before first_month', `${file.measured_through} is before ${trends.first_month}`)
+  }
+  if (monthsBetween(file.measured_through, context.latest) < 0) {
+    fail(at, 'rule 0, measured_through may not be after this month', `${file.measured_through} is after ${context.latest}`)
+  }
 
   for (const [id, months] of Object.entries(file.trends)) {
     // ---- rule 1: it measures only trends that exist ------------------------
@@ -208,7 +234,7 @@ export function parseStrength(raw: unknown, trends: TrendsFile): StrengthFile {
 export function loadCaravanFiles(context: TrendsContext): { trends: TrendsFile; strength: StrengthFile | null } {
   const trends = parseTrends(yaml.safeLoad(fs.readFileSync(TRENDS_FILE, 'utf8')), context)
   const strength = fs.existsSync(STRENGTH_FILE)
-    ? parseStrength(yaml.safeLoad(fs.readFileSync(STRENGTH_FILE, 'utf8')), trends)
+    ? parseStrength(yaml.safeLoad(fs.readFileSync(STRENGTH_FILE, 'utf8')), trends, context)
     : null
   return { trends, strength }
 }

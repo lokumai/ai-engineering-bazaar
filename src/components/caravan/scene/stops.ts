@@ -5,9 +5,11 @@ import { clamp, isPhone, type Placed } from './model'
  * M91, D116 — the stops: real buttons laid over the picture, one per trend, ported from the round-5
  * mockup's `Stops`.
  *
- * Hover or focus lights a stop, opens its card and dims the rest; a click, a tap or Enter keeps it;
- * Escape lets go and puts focus back on it; Tab and the arrow keys walk the stops in time order, and
- * the caravan walks to the one in focus. A stop's label is hidden where it would overlap another
+ * Hover or focus lights a stop, opens its card and dims the rest, and the stop says so
+ * (`aria-expanded`); a click, a tap or Enter (the button's own click) keeps it and moves focus into
+ * the card, so its links are reachable; Escape lets go, and puts focus back on the stop when focus
+ * was on a stop or in the card; Tab and the arrow keys walk the stops in time order, and the caravan
+ * walks to the one in focus. A stop's label is hidden where it would overlap another
  * label, but its button stays in the tab order and shows its label on focus.
  *
  * **The card is the page's own entry, cloned.** Every trend is rendered by the server as an
@@ -102,9 +104,11 @@ export class Stops {
     }, { signal })
     document.addEventListener('keydown', (e) => {
       if (e.key !== 'Escape' || (!this.pinned && !this.active)) return
-      const back = this.pinned ?? (this.active && this.active.el === document.activeElement ? this.active : null)
+      const where = document.activeElement
+      const fromHere = where !== null && (card.contains(where) || this.items.some((i) => i.el === where))
+      const back = this.pinned ?? this.active
       this.unpin()
-      this.focusBack(back)
+      if (fromHere) this.focusBack(back)
     }, { signal })
   }
 
@@ -196,15 +200,13 @@ export class Stops {
       this.setActive(it)
       return
     }
-    this.pinned?.el.setAttribute('aria-expanded', 'false')
     this.pinned = it
-    it.el.setAttribute('aria-expanded', 'true')
     this.setActive(it, true)
+    this.card.querySelector<HTMLElement>('.cv-entry-title')?.focus({ preventScroll: true })
   }
 
   private unpin(refocus = false): void {
     const was = this.pinned
-    was?.el.setAttribute('aria-expanded', 'false')
     this.pinned = null
     this.setActive(null)
     if (refocus) this.focusBack(was)
@@ -219,10 +221,16 @@ export class Stops {
 
   private setActive(it: Item | null, force = false): void {
     if (this.active === it && !force) return
-    this.active?.el.classList.remove('is-active')
+    if (this.active) {
+      this.active.el.classList.remove('is-active')
+      this.active.el.setAttribute('aria-expanded', 'false')
+    }
     this.active = it
     this.layer.parentElement?.classList.toggle('has-active', it !== null)
-    it?.el.classList.add('is-active')
+    if (it) {
+      it.el.classList.add('is-active')
+      it.el.setAttribute('aria-expanded', 'true')
+    }
     this.onActive(it ? it.x.id : null)
     this.journey.kick()
     if (it === null) {
@@ -241,6 +249,7 @@ export class Stops {
     const copy = entry ? (entry.cloneNode(true) as HTMLElement) : document.createElement('div')
     copy.removeAttribute('id')
     for (const node of copy.querySelectorAll('[id]')) node.removeAttribute('id')
+    copy.querySelector('.cv-entry-title')?.setAttribute('tabindex', '-1')
     const pinned = this.pinned === it
     this.card.classList.toggle('is-pinned', pinned)
     if (pinned) {
@@ -293,24 +302,18 @@ export class Stops {
   private key(e: KeyboardEvent, it: Item): void {
     const k = this.items.indexOf(it)
     const to = ({ ArrowRight: k + 1, ArrowDown: k + 1, ArrowLeft: k - 1, ArrowUp: k - 1, Home: 0, End: this.items.length - 1 } as Record<string, number>)[e.key]
-    if (e.key === 'Enter' || e.key === ' ') {
-      e.preventDefault()
-      this.togglePin(it)
-      return
-    }
+    // Enter and Space are the button's own click, which keeps the stop: no second toggle here.
     if (to === undefined) return
     e.preventDefault()
     const next = this.items[clamp(to, 0, this.items.length - 1)]
-    if (this.pinned && this.pinned !== next) {
-      this.pinned.el.setAttribute('aria-expanded', 'false')
-      this.pinned = null
-    }
+    if (this.pinned && this.pinned !== next) this.pinned = null
     next.el.focus({ preventScroll: true })
   }
 
   destroy(): void {
     this.ac.abort()
     window.clearTimeout(this.timer)
+    this.layer.parentElement?.classList.remove('has-active')
     this.card.hidden = true
     this.card.replaceChildren()
     this.card.className = 'cv-card'

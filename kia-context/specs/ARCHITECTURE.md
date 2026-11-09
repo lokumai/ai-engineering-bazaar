@@ -845,15 +845,7 @@ A new value in a closed set (heading `depth`, table `align`, level `status`, `di
 Removing, renaming or retyping a field means `api/v2/`, and `api/v1/` stays published while the reader's oldest supported version reads it.
 A retired address stays readable through the index's `moved`, copied from `src/lib/content/moved.ts` (D94).
 
-**Caravan is not in the bundle yet** (§14), and M91 left `out/api/` byte-identical to `main`'s.
-When it joins, it is an additive v1 change: one new document per language,
-`api/v1/caravan/<lang>.json`, written by a static route handler and parsed by a new strict schema in
-`schema.ts`, carrying `firstMonth` and `lastMonth`, and per trend its `id`, `title` and `text` as
-`inlines`, `start`, `end`, its links by group (each a title and an address, a module as a link target
-the way a module document carries one) and its measured `strength` by month; plus the month totals
-the land is drawn from, so the reader derives nothing; and an optional `caravan` field on the index
-naming each language's document, listed in `files` with its hash. Renaming or retyping any of it
-afterwards would be `api/v2/`, so the shape settles on the web first.
+**Caravan is not in the bundle** (§14).
 
 **Checks.**
 `node scripts/check-bundle-out.mjs <dir>` reads a finished export and recomputes every claim the index makes: the file set, each sha256, `contentVersion`, the SVG profile of every diagram, the diagram font, and no field starting with the base path.
@@ -884,8 +876,9 @@ refuses, naming the trend: a duplicate id (rule 1); a month that is not `YYYY-MM
 `first_month`, after the build's month, or an end before its start (rule 2); a title on two lines or
 a text of more than one paragraph (rule 3); an em dash (rule 4); a trend with no link, or one URL
 twice (rule 5); a `modules` name that is not a module, or one named twice (rule 6). In
-`strength.yaml` it refuses a measured id that is not a trend (rule 1), and a month outside the
-trend's span or a hole inside it (rule 2). The rules are tested against made-up YAML
+`strength.yaml` it refuses a `measured_through` before `first_month` or after the build's month (rule 0), a measured
+id that is not a trend (rule 1), and a month outside the trend's span or a hole inside it (rule 2);
+a shape error names the trend's id. The rules are tested against made-up YAML
 (`tests/unit/content/caravan-file.test.ts`).
 
 **The page draws one view model, `caravanView` in `src/lib/content/caravan.ts`**: the road's months
@@ -901,13 +894,20 @@ file is deleted in the same change.
 **The page is server markup with one island.** Every trend's words are in the list under the scene,
 so the page reads and links with no script; `CaravanScene.tsx` imports `components/caravan/scene/`
 on demand and draws the stage, the stops (real buttons, one per trend), the year bar's travel and the
-strip, and its card shows a copy of a list entry. The journey is shown only once a script has marked
-`<html>` (`data-cv-script`). The scene's colours are `components/caravan/palette.ts`, written into
-the page as `--caravan-*` properties that `src/app/caravan.css` defaults to tokens.
-`tests/e2e/caravan.spec.ts` holds the page to its rules: the notice first, every trend in the page
-without a script and drawn as a stop, keyboard travel, no puppet meeting a stop and no stop's name
-meeting a year's post along the whole road, no sideways scroll at 390px, and instant movement under
-reduced motion.
+strip, and its card shows a copy of a list entry. The journey and the year bar are shown only once a
+script has marked `<html>` (`data-cv-script`), and hidden again if the scene cannot start
+(`data-cv-failed`). **The stage is fitted to the window**: as tall as the window leaves under it once
+the strip has its place, between 300 and 470 px (400 on a phone), with the scene's heights and art
+scaled to it and its pace across the road unchanged, and drawn again when the window's width or height
+changes by more than 40 px. The whole road takes 3,000 px of wheel, and at either end the wheel is the
+page's. When the author's trends carry no measurement the page says so beside the strip. The theatre's
+colours are `components/caravan/palette.ts`, written into the page as `--caravan-*` properties that
+`src/app/caravan.css` defaults to tokens; the card is the language's slab and the strip its bar.
+`tests/e2e/caravan.spec.ts` holds the page to its rules: the notice first under the trail, every
+trend in the page without a script and drawn as a stop, the whole caravan and strip in the window at
+load on a laptop, keyboard, wheel, drag and strip travel, the card's `aria-expanded` and focus, focus
+rings at 3:1, no puppet meeting a stop and no stop's name meeting a year's post along the whole road,
+a clean redraw on resize, no sideways scroll at 390px, and instant movement under reduced motion.
 
 ---
 

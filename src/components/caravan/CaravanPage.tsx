@@ -14,9 +14,11 @@ import type { SceneData } from './scene/model'
  * stage, the strip, and the one card) and the list of every trend.
  *
  * **Every word of every trend is in this markup**, in the list, so it reads and links without a
- * script; the island draws the picture and its card shows a copy of a list entry. **The journey is
- * shown only where a script runs** (`caravan.css`): without one it is a picture that cannot move.
- * The inline script below sets that mark before first paint, so the journey does not jump in.
+ * script; the island draws the picture and its card shows a copy of a list entry. **The journey and
+ * its tools are shown only where a script runs** (`cv-scripted` in `caravan.css`): without one they
+ * are a picture that cannot move. The inline script below sets that mark before first paint, so the
+ * journey does not jump in, and the island takes it away again (`data-cv-failed`) if the scene
+ * cannot start. The tools share the head's row so the stage and the strip fit a laptop's window.
  *
  * **The mockup's own bar is not reproduced.** Its copy of the navbar still shows an old
  * `Curriculum` link; the page sits in the site's real bar (`PageShell`), so that link is gone.
@@ -55,24 +57,33 @@ export function CaravanPage({ view }: { view: CaravanView }) {
       </p>
 
       <header className="cv-head">
-        <h1 className="bz-display">Caravan</h1>
-        <p className="cv-lead">What the road of AI engineering carried, season by season, since {monthLabel(first, true)}.</p>
-      </header>
-
-      <div className="cv-journey">
-        <div className="cv-tools">
+        <div>
+          <h1 className="bz-display">Caravan</h1>
+          <p className="cv-lead">What the road of AI engineering carried, season by season, since {monthLabel(first, true)}.</p>
+        </div>
+        <div className="cv-tools cv-scripted">
           <div className="cv-years" role="group" aria-label="Year">
             {years.map((year) => (
-              <button key={year} type="button" className="cv-year" data-cv-year={year} aria-pressed={year === firstYear}>
+              <button key={year} type="button" className="cv-year" data-cv-year={year} aria-current={year === firstYear ? 'true' : undefined}>
                 {year}
               </button>
             ))}
           </div>
-          <p className="cv-place" aria-live="polite" data-year={firstYear}>{placeLabel(firstYear, firstYear)}</p>
+          <p className="cv-place" data-year={firstYear}>{placeLabel(firstYear, firstYear)}</p>
         </div>
+      </header>
+
+      <div className="cv-journey cv-scripted">
         <section className="cv-stage" aria-label="The journey" />
         <div className="cv-scrub" />
+        {view.sample || view.measured ? null : (
+          <p className="cv-unmeasured" data-cv-unmeasured="">
+            Not measured yet: how strong each trend was is still to be measured, so the land and the bars are flat.
+          </p>
+        )}
         <div className="cv-card" id="cv-card" role="region" hidden />
+        {/* The place is announced when a reader picks a year, not each time the road crosses one. */}
+        <p className="sr-only" aria-live="polite" data-cv-announce="" />
       </div>
 
       <section className="cv-list" aria-labelledby="cv-list-title">

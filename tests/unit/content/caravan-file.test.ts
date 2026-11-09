@@ -45,6 +45,10 @@ describe('trends.yaml', () => {
     expect(parse(file(ONE.replace('end: "2023-06"', 'end: null'))).trends[0].end).toBeNull()
   })
 
+  it('names the trend a shape error is in, by its id', () => {
+    expect(() => parse(file(ONE + ONE.replace('first_trend', 'second_trend').replace('    title: A Trend\n', '')))).toThrow(/trends\[1\] \("second_trend"\)\.title/)
+  })
+
   it('refuses a field it does not know, rather than dropping it', () => {
     expect(() => parse(file(ONE.replace('    start:', '    strat: "2023-01"\n    start:')))).toThrow(/Invalid caravan\/trends.yaml/)
     expect(() => parse(file(ONE.replace('      articles:', '      podcasts: []\n      articles:')))).toThrow(/podcasts/)
@@ -98,7 +102,7 @@ describe('trends.yaml', () => {
 
 describe('strength.yaml', () => {
   const trends = parse(file(ONE))
-  const strength = (body: string) => parseStrength(yaml.safeLoad(`caravan_strength: 1\nmethod: 1\nmeasured_through: "2023-04"\ntrends:\n${body}`), trends)
+  const strength = (body: string, through = '2023-04') => parseStrength(yaml.safeLoad(`caravan_strength: 1\nmethod: 1\nmeasured_through: "${through}"\ntrends:\n${body}`), trends, context)
   const full = '  first_trend: { "2023-01": 1, "2023-02": 3, "2023-03": 5, "2023-04": 0 }\n'
 
   it('accepts every month of a span up to the last measured one, and no measurement at all', () => {
@@ -121,6 +125,12 @@ describe('strength.yaml', () => {
   })
 
   it('refuses a typed field the method does not have', () => {
-    expect(() => parseStrength(yaml.safeLoad('caravan_strength: 1\nmethod: 1\nmeasured_through: "2023-04"\nlevel: 3\ntrends: {}\n'), trends)).toThrow(/level/)
+    expect(() => parseStrength(yaml.safeLoad('caravan_strength: 1\nmethod: 1\nmeasured_through: "2023-04"\nlevel: 3\ntrends: {}\n'), trends, context)).toThrow(/level/)
+  })
+
+  it('rule 0: refuses a last measured month off the road', () => {
+    expect(() => strength('  {}\n', '2022-10')).toThrow(/rule 0, measured_through may not be before first_month/)
+    expect(() => strength('  {}\n', '2026-07')).toThrow(/rule 0, measured_through may not be after this month/)
+    expect(strength('  {}\n', '2026-06').measured_through).toBe('2026-06')
   })
 })

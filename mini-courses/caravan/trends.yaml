@@ -5,8 +5,9 @@
 # ends when people stop calling it new. Each entry is a quick overview: a
 # subject that deserves a module belongs in the Emerging level instead.
 #
-# Every sentence here is the author's. How strong a trend was is measured, not
-# written: the pipeline (.claude/skills/caravan-trends/) writes it month by
+# Every trend's title and text are the author's. (This comment describes the
+# file's shape and is the site's, not content.) How strong a trend was is
+# measured, not written: the pipeline (.claude/skills/caravan-trends/) writes it month by
 # month into strength.yaml beside this file, and nobody types a level here.
 #
 # `id`     lowercase, digits and underscores; it never changes once published.

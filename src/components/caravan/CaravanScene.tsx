@@ -10,7 +10,8 @@ import type { SceneData } from './scene/model'
  * demand so the first paint carries none of it (the home page's `BazaarStreetMotion.tsx`).
  *
  * The page's inline script sets the same mark before first paint on a full load; this sets it again
- * on a client navigation, where that script does not run.
+ * on a client navigation, where that script does not run. If the scene cannot start, it marks the
+ * page `data-cv-failed`, which hides the journey again and leaves the list.
  *
  * A LAYOUT effect, for the home page's reason: its cleanup must run before React removes the page,
  * so the scene stops before its nodes go.
@@ -22,9 +23,15 @@ export function CaravanScene({ rootId, data }: { rootId: string; data: SceneData
     document.documentElement.setAttribute('data-cv-script', '')
     let stop: (() => void) | null = null
     let gone = false
-    void import('./scene').then(({ initCaravan }) => {
-      if (!gone) stop = initCaravan(root, data)
-    })
+    // A scene that cannot start, or a chunk that fails to load, must not leave an empty stage.
+    const failed = () => { root.dataset.cvFailed = '' }
+    import('./scene')
+      .then(({ initCaravan }) => {
+        if (gone) return
+        stop = initCaravan(root, data)
+        if (stop === null) failed()
+      })
+      .catch(failed)
     return () => {
       gone = true
       stop?.()

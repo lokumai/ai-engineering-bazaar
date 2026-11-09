@@ -9,7 +9,16 @@ import { clamp, reduced } from './model'
  * itself there. Under reduced motion `t` jumps to `target` in the same frame, so nothing walks.
  * At either end of the road the wheel goes back to the page, so the journey never traps a reader
  * who only meant to scroll.
+ *
+ * **The wheel's pace is the road's, not the picture's.** A vertical wheel, Shift and a wheel, and a
+ * sideways swipe on a trackpad all move the caravan (the author: scrolled "left and right by
+ * scrolling or by a scroll bar"), and the whole road takes `WHEEL_ROAD_PX` of wheel, whatever its
+ * length. Moving the picture one pixel per wheel pixel, as the mockup did, made the road about
+ * 12,000 px of wheel, four times a long page. A drag still pulls the picture under the pointer.
  */
+
+/** How much wheel the whole road takes, from its first month to its last. */
+export const WHEEL_ROAD_PX = 3000
 
 export interface Drawable {
   /** Draw at `t`; return true while something still moves on its own (the caravan walking). */
@@ -41,7 +50,7 @@ export class Journey {
       const px = d * (e.deltaMode === 1 ? 32 : e.deltaMode === 2 ? stage.clientWidth : 1)
       if ((px < 0 && this.target <= this.min() + 0.01) || (px > 0 && this.target >= this.max() - 0.01)) return
       e.preventDefault()
-      this.go(this.target + px / this.pxPerMonth())
+      this.go(this.target + px * (this.max() - this.min()) / WHEEL_ROAD_PX)
     }, { passive: false, signal })
 
     // A drag on the picture pulls the road; a short press stays a click on a stop.

@@ -19,7 +19,7 @@ description: >
 authority: state
 writes: agent, every session
 status: active
-covers: "M50 to M96, 2026-11-06 onward, and M41, which part 2 held for PR #57"
+covers: "M50 to M97, 2026-11-06 onward, and M41, which part 2 held for PR #57"
 last_updated: 2026-11-10
 ---
 
@@ -1828,6 +1828,61 @@ document load, and that it needed `experimental.globalNotFound` and left `/tr/` 
       built earlier in this session) in every file except `index.json`'s `publishedAt`, which is the
       commit's time and is left out of `contentVersion`, itself unchanged. The full browser suite:
       662 passed, 10 skipped.
+
+## 🏁 Milestone M97: The site owner, a contact row, a privacy note and a note on third-party marks (D122) — DONE
+
+The author, 2026-11-10: "İŞ ZEKASI YAZILIM DANIŞMANLIK HİZMETLERİ TİCARET ... you can find its info on
+the web. add privacy note and contact section (in footer). add site owner details and short privacy
+note. also third-party marks and images if possible."
+
+- [x] The owner's facts, found and sourced: trade name, MERSİS number, address, email and phone, each
+  read from a page fetched on 2026-11-10. The tax office, the tax number and the KEP address were not
+  published anywhere reachable, so they are not written (D122 has the sources and the gaps).
+- [x] `SITE_OWNER` in `src/lib/site.ts`, the one place the facts are written, with every source URL
+  and the date in its comment; an absent fact has no row anywhere.
+- [x] The footer's third row (`SiteFooter.tsx`): an `<address>` with the registered name and the
+  address on the left, the email, Privacy and Legal on the right.
+- [x] `/legend/` gains `Privacy` (`#privacy`) and `Legal` (`#legal`): the owner's identity, and the
+  note on third-party marks and images. No new route (D122).
+- [x] `tests/e2e/legal.spec.ts`, 26 cases at 1440: the owner named and the two links on 11 routes; both
+  anchors land on a heading below the bar; the Legal section prints every field `SITE_OWNER` holds; the
+  Privacy section cites GitHub; and on the same 11 routes no cookie, no `<form>` and no request to
+  another origin, after a theme toggle.
+
+What was measured:
+- Every claim in the privacy note was checked against the code: no `document.cookie`, no analytics, no
+  `<form>`; the only `fetch` is the search index, same origin; storage is `hl-*` keys for the record, the
+  theme, the track and the reading options; fonts (`next/font/google`) and the star count are fetched at
+  build, and the built HTML has no `src=` that is not the site's own.
+- The note on images says what is true. The author's words said images from articles are credited in
+  their captions; the corpus does not do that (no caption names a source), so the page says that some
+  images come from public sources, belong to their owners, and will be credited or removed on request.
+  The author approved it on 2026-11-10 and asked for warmer, safer words: *"we took images and we forgot
+  to credit ... heartfully we thank authors and we are more than happy to add their credit by email
+  request or remove it"*. The note now thanks the authors, says the images stay their owners' and that
+  the site claims no rights in them, and offers to add a credit or remove the image, as the owner prefers.
+- The mobile bundle did not change: `out/api/` is byte-identical to a build of `origin/main`
+  (contentVersion `d01d5a62…`), and `check-bundle-out` passes.
+- Gate: typecheck clean; 1,530 unit tests; the build with its link gate; browser: `legal`, `navigation`,
+  `layout`, `responsive`, `accessibility`, `site-footer`, `fidelity`, `colour-not-alone`, `health`,
+  `not-found`, `containment`, `about`, `features` and `caravan`, 319 passed and 8 skipped, on port 3111.
+- A screenshot found two defects no test could: the first footer row ended a line on a separator dot
+  and wrapped its links apart (now two groups, so a narrow width wraps between them), and the note's
+  paragraphs ran together (now spaced).
+
+**Mutations, each seen failing:**
+- the owner's name removed from one footer (`/about/`);
+- the Privacy link pointed at `/legend/` (`/tr/`);
+- `id="legal"` renamed in the source;
+- the scroll margin under the sticky bar set to 0 (the Privacy landing);
+- the MERSİS number changed in the Legal section;
+- the GitHub links removed from the Privacy section;
+- a `document.cookie` write (`/profile/`);
+- an image from `example.com` (`/caravan/`);
+- a `<form>` (`/fa/`).
+
+One of these first passed and was a weak mutation, not a weak test: editing `id="legal"` in the built
+HTML was undone when the page hydrated, so the same mutation was made in the source and rebuilt.
 
 ---
 

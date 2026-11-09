@@ -813,6 +813,14 @@ fast-forward, and `gh pr merge --admin` is refused while a check is still runnin
 `repos/.../branches/main/protection` returns 404 for this repository, which is misleading; use
 `gh api repos/.../rulesets`.
 
+**What the site tells a visitor about itself (M97, D122).** The footer's third row names the site's
+owner in law (the company's registered trade name), its address and a contact email, and links `/legend/#privacy`
+and `/legend/#legal`. The facts are one object, `SITE_OWNER` in `src/lib/site.ts`, with each source and the date it
+was read; the footer and the legend's Legal section both read it. The Privacy section promises no
+cookie, no form, no analytics and no request to another origin, which is true because the build fetches
+fonts and the star count itself and the record stays in `localStorage`; `tests/e2e/legal.spec.ts` fails a
+route that breaks any of those, so the note cannot go stale unnoticed.
+
 ---
 
 ## 13. The content bundle

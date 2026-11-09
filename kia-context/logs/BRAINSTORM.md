@@ -9,7 +9,7 @@ description: >
 authority: reasoning
 writes: agent, when a decision is taken
 status: active
-covers: "D97 to D121 so far, and D89, which part 2 held for PR #57 — 2026-11-06 onward"
+covers: "D97 to D122 so far, and D89, which part 2 held for PR #57 — 2026-11-06 onward"
 last_updated: 2026-11-10
 ---
 
@@ -796,6 +796,79 @@ and content instead"*; and *"Assessing is something outside of the website."*
   site, against §6); an LMS (too heavy for one program).
 - **Open, for later:** the email to the manager, the exam questions (separate from the published quick
   quizzes, which readers have seen), the two projects and their rubric, the dates.
+
+### D122 · The owner in the footer, the notes on the legend page, and no cookie banner — 2026-11-10
+
+**The question.** The author asked whether a free course site on GitHub Pages, under the MIT licence,
+needs Turkish legal items, and decided to put the owner's identity and a short privacy note on the site.
+
+**What applies, and what does not, measured from the code.** The site sets no cookies, has no analytics,
+no form and no account, and makes no request to another origin when a page is read (fonts and the star
+count are fetched at build). The reader's record and settings live in `localStorage` and never leave
+the browser. So:
+- **Applies: the identity of the content provider** (Law 5651, Art. 3). The footer already names
+  "LokumAI · Intellica · PIA Group", which are brands; the law asks for the person or company, so the
+  registered name, its MERSİS number, address and a contact now sit on every page.
+- **Applies: a short honest privacy note.** The one thing a visitor does give anyone is an IP address,
+  to the host: GitHub Pages logs and stores it (GitHub's own sentence, on "What is GitHub Pages?").
+- **Does not apply: a cookie banner, e-commerce items, İYS.** No cookie and no tracker means nothing to
+  ask consent for; nothing is sold; no message is sent. **Rejected: a banner.** A banner on a site that
+  sets no cookie would claim something the site does not do, and it would put itself between the reader
+  and the course. `legal.spec.ts` holds the premise: a cookie, a form or a foreign request on any of
+  eleven routes fails the build, which is the moment a banner would become due.
+- **A KVKK clarification text (aydınlatma metni) is not written.** It is owed to a controller that
+  processes personal data, and the note says this site does not; the IP address in a host's log is the
+  host's, and the note points at the host's statement. This is the author's analysis and the repository
+  has no lawyer's opinion; it should be confirmed by the company's own counsel.
+
+**Where the owner's facts came from, all read on 2026-11-10.** The company's own site publishes only a
+brand ("© 2026 Intellica"), an email, a phone and an office, so the registry-backed facts come from the
+company's Legal Entity Identifier record, whose registration authority is MERSİS (the Ministry of
+Trade's central registry, `RA000560`) and which is `FULLY_CORROBORATED` against it:
+- trade name `İŞ ZEKASI YAZILIM DANIŞMANLIK HİZMETLERİ TİCARET ANONİM ŞİRKETİ`, MERSİS no.
+  `0481058685800001`, address `Atatürk Mah Turgut Özal Bulvarı Gardenya 1 İş Merkezi No:42/b, Kat .1
+  Ataşehir İSTANBUL 34758`: https://api.gleif.org/api/v1/lei-records/78900098TSC1PV615354 (also
+  https://lei.bloomberg.com/leis/view/78900098TSC1PV615354) and
+  https://api.gleif.org/api/v1/registration-authorities/RA000560 for what the authority is;
+- email `info@intellica.net` and phone `+90 216 688 45 46`: https://intellica.net/contact, the page the
+  company's own footer links to; the address there ("Gardenya 1 Plaza, Floor 1, Atatürk Mah. Turgut Özal
+  Blv., Ataşehir") is the same office. The two sources do not disagree.
+- The LEI record's own registration status is `LAPSED` (the renewal date was 2026-04-07), which says
+  the identifier was not renewed, not that the company or its registry data changed; the entity status is
+  `ACTIVE`.
+
+**Not found, so not written:** the tax office and tax number, and the KEP address. Neither appears on
+intellica.net (its privacy, terms, contact and Turkish pages), pia-group.net or the registry records
+reachable without a login. The MERSİS number begins with a zero and ends in `00001`, which is the shape
+of a tax number padded to 16 digits, but a tax number inferred from a pattern is a guess, so it is not
+printed. `SITE_OWNER` takes `kep`, `taxOffice` and `taxNumber` when the author supplies them, and the
+Legal section prints a row for whichever are present.
+
+**Where it lives, and what was rejected.**
+- **One object, two readers.** `SITE_OWNER` in `src/lib/site.ts`, read by the footer and by `/legend/`'s
+  Legal section; the sources are in its comment. The tests read the same object, so changing a value
+  needs no test edit.
+- **The sections are on `/legend/`, not on a `/privacy/` route.** They are short; the page already holds
+  "Where your progress is" and the colophon, which describe the same facts; and a new route would need
+  entries in the route lists of `navigation.spec.ts` and `layout.spec.ts`, a crumb name and a place in
+  the build for two paragraphs. The footer links to `#privacy` and `#legal`, ids on the headings
+  themselves, which the existing `main h2[id]` rule already keeps below the sticky bar.
+- **The registered name is printed whole**, not as "A.Ş.": a shortened name is not the registered one.
+  The footer grew a third row for it; on a phone the name and address wrap onto several lines, which was
+  accepted over leaving them out.
+- **The note on images says less than the author's words.** He wrote that images from articles are
+  credited in their captions. The corpus does not do that, so a page claiming it would be false. The
+  note says they belong to their owners, are shown to explain the point, and can be credited or removed
+  if the owner writes. That is a promise made for the company; the author should confirm it.
+- **The licence is untouched.** The README and `LICENSE` say MIT, copyright "2026 lokumai"; the note
+  says the licence covers the project's code and content and not third-party marks or images, and
+  claims nothing more.
+- **GitHub's two pages.** The General Privacy Statement does not mention Pages, so the IP-address
+  sentence cites "What is GitHub Pages?" and the statement is linked beside it for the rest.
+
+## Open questions
+
+None open in this part yet. New ones go here, numbered after O5.
 
 ---
 

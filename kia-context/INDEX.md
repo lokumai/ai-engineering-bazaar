@@ -73,6 +73,7 @@ and the same explanation given in person for the third time. See `genesis/GENESI
 | 2026-11-09 | Caravan built as C4 Shadow Play, on sample data until the author's trends land; its content format and its pipeline skill | M91 (D116) |
 | 2026-11-10 | Caravan's second round: a taller, closer stage with the puppets on long rods, the two head rows removed, and the trends browsed by search, year, Cards or List, twelve to a page | M93 (D117) |
 | 2026-11-10 | Multilingual SEO: `<html lang>` per language on one root layout, absolute hreflang and canonical, a sitemap and robots.txt, planned modules and the sample caravan kept out of search; menus stay English | M96 (D119, D120) |
+| 2026-11-10 | The site owner, a contact row in the footer, and the privacy and legal notes on the legend page | M97 (D122) |
 
 **The harness itself was installed on 2026-09-08**, 107 commits in (`git rev-list --count 4832e2a^`). Everything before that date was
 reconstructed from git and is labelled as inferred inside each file.
@@ -218,7 +219,7 @@ every other file.
 and 2 are `closed` (`PROGRESS_1.md`, `PROGRESS_2.md`, `BRAINSTORM_1.md`, `BRAINSTORM_2.md`) and point
 forward; part 3 is where the next entry goes, and it keeps the bare name (`PROGRESS.md`,
 `BRAINSTORM.md`). The
-numbering runs straight through — `M1…M96`, `D1…D121` — so a citation never has
+numbering runs straight through — `M1…M97`, `D1…D122` — so a citation never has
 to say which part it means, only the number.
 
 The heaviest edges, measured with `grep` on 2026-11-06 rather than estimated (the two `PROGRESS_2.md` rows re-measured 2026-11-07; the two rows into part 3 re-measured 2026-11-09):

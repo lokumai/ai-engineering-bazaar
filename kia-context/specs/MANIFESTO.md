@@ -10,7 +10,7 @@ authority: law
 writes: agent, from what the human decided
 status: active
 covers: the whole product
-last_updated: "2026-11-08"
+last_updated: "2026-11-09"
 ---
 
 # 📜 MANIFESTO — What we are building, and why
@@ -102,6 +102,8 @@ reason, and so does a Persian version of every written one (**D80**). See `genes
    are no accounts at all since 2026-11-05 (D88).
 10. **A reader's progress is theirs.** It lives in their browser by default, they can download it,
     restore it and erase it, and none of it is required to read anything.
+    In the mobile app their progress lives on the device, and erasing it there cannot reach a copy the
+    device has already backed up, which the erase screen says (**D89**).
 11. **Completion is the reader's own claim.** There is no test, no grade and no assessment. Nobody
     else marks a module done, and a reader can undo it at any time.
 12. **Never state a number the project cannot check.** Counts, durations, totals and citations are
@@ -166,8 +168,13 @@ Three questions kill most proposals:
   and copying content out of a file is not permission to remove it.
 - ~~The application is a colleague's work.~~ Superseded 2026-11-05 (D90): the website is the
   author's, code and design and content.
-- **The author's website comes first.** A colleague's change may not alter the website's design,
+- ~~**The author's website comes first.** A colleague's change may not alter the website's design,
   content or behaviour, or anything the author added, unless the author asks for that change. A pull
   request that merges without a conflict is not thereby acceptable: "no conflict" says the edits do not
   overlap, not that the author wants them. Each side builds its own app without disturbing the other's
-  code (D90).
+  code (D90).~~ Superseded 2026-11-09 by the owner (D111): it was read as keeping the two apps apart,
+  and its point was the opposite.
+- **One course, two apps.** The website and the mobile app may differ in design; their logic,
+  behaviour and content are the same. A reader gets the same content and a similar experience in
+  both. Each app is built in its own repository, and the content and the logic come from one place,
+  this one (D111).

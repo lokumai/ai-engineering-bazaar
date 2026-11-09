@@ -8,7 +8,7 @@ description: >
   (M64 to M69), the search filters (M70) and their Filters disclosure (M71), the gate stories (M72),
   Advanced Agent Servers (M73), vendor logos (M74), course call-out cards, Mermaid themes and Mihrî
   (M75), the For Everyone versions (M76 to M79), shared headings and logos (M80), and diagram
-  backgrounds and copy (M81), and Agentic UI (M82). Each milestone carries its deliverables and acceptance
+  backgrounds and copy (M81), and Agentic UI (M82); and M41, the content bundle for the mobile reader. Each milestone carries its deliverables and acceptance
   criteria as `- [ ]` checkboxes, ticked as the work lands, and closes with a dated report; the loop
   that governs that is below, in this file.
   NOT here: why a choice was made (BRAINSTORM.md), or any rule that outlives the milestone
@@ -16,7 +16,7 @@ description: >
 authority: state
 writes: agent, every session
 status: active
-covers: "M50 to M82, 2026-11-06 onward"
+covers: "M50 to M82, 2026-11-06 onward, and M41, which part 2 held for PR #57"
 last_updated: 2026-11-09
 ---
 
@@ -1275,6 +1275,41 @@ generative UI left only as a pointer; the wire spelling explained; a Persian reg
 calques. Kept on purpose: the `topics.txt` edit, which the author asked for, and product screenshots with
 English text in the translated pages. **Gate:** typecheck, 1,234 unit tests, build and link check, 561
 browser tests passed and 10 skipped.
+
+## 🏁 Milestone M41: The content bundle for the mobile reader (D89, D111) — PR #57
+
+*Numbered M41, out of order: part 2 held the number for PR #57 while it was open.* The owner,
+2026-11-09: one course, two apps; the design may differ, the logic, behaviour and content are the same
+(D111). The PR was rebuilt on main after M43 to M82 rather than rebased: the bundle now carries both
+tracks, call-out cards, logos, Mermaid's themes and the moved addresses.
+
+- [x] The bundle under `out/api/` (ARCHITECTURE §13): level and module documents for both tracks and
+      every language, tokens, the index with `tracks`, `diagramThemes` and `moved`, and the finaliser
+      that draws every diagram in `default` and `dark` and hashes everything.
+- [x] `module-render.ts`: the module page and the bundle read one render input (the link map per track
+      and language, the quiz, a planned module's written sections); `ModuleSheet.tsx` and
+      `LevelCatalog.tsx` read it, with no change to what they render.
+- [x] Call-out cards (D106) as a `callout` block, vendor marks (D105) as a `logo` inline with its
+      single-colour flag, WebP figures sized from their headers.
+- [x] The record conformance snapshot answers for both tracks' maps (`everyoneSheets`) and the
+      `diagramTheme` preference.
+- [x] MANIFESTO §7 amended (D111; D90's bullet struck), rule 10 says what a device backup keeps (D89),
+      root and corpus `CLAUDE.md` say where the app's content comes from.
+- [x] Gate, 2026-11-09: typecheck; 1,459 unit and corpus tests; the build, with 186 diagrams drawn
+      (largest glyph move 0.133 px), the bundle check and the link check; 562 browser tests passed and
+      10 skipped; and the browser suite's own build gave a byte-identical `api/` tree.
+- [x] The first sequence diagram (Agentic UI, M82) drawn: its icon symbols and actor names stripped
+      as non-painting, each label's baseline folded into its y against the drawing, and punctuation
+      after a right-to-left phrase kept with it so it is shaped in the same script.
+- [x] Why PR #57's two CI builds disagreed: on a pull request, Playwright's git plugin fetched the
+      base with `--depth=1` before the browser suite's build, which made the checkout shallow at
+      main's head, so every revision read as that commit (CI printed `shallow: true`). Turned off
+      with `captureGitInfo: { diff: false }`; it also gave the browser suite pages with a wrong REV.
+- [ ] CI green on PR #57, and the deploy's wait for the live `contentVersion` seen working once.
+
+Noted, not fixed (outside this PR): a vendor mark followed by a space and then a bold name
+(`![X](logo.svg) **X**`) is dropped by `rehypeKeepLogoWithName`, because the space is taken as the word
+to bind; the corpus always writes `)**X**` or `) X`, so no page shows it today.
 
 ---
 

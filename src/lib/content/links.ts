@@ -100,15 +100,18 @@ function walk(dir: string, target: string): string[] {
 }
 
 /**
- * The route an internal corpus link should point at, or null when the href is
- * not an internal corpus link at all — an absolute URL, a `mailto:`, a bare
- * `#anchor`, an image, anything whose target is not a `.md` file. Those are
- * left exactly as the author wrote them.
+ * The bare route an internal corpus link names, and the fragment it carries,
+ * or null when the href is not an internal corpus link at all: an absolute
+ * URL, a `mailto:`, a bare `#anchor`, an image, anything whose target is not a
+ * `.md` file. Those are left exactly as the author wrote them.
  *
  * `source` is the file the href was written in, relative to `CONTENT_ROOT`
  * (`2_intermediate/harness_engineering.md`). It supplies the directory the
  * link resolves against and it is what the error message names, and taking one
  * path rather than a directory plus a name means the two can never disagree.
+ *
+ * `key` is the target module's slug (`<level>/<module>`, the record key), or
+ * null when the link lands on the catalog, which is no module.
  *
  * **An internal `.md` link the corpus cannot answer for throws.** Until this
  * module, `mkdocs build --strict` was the only thing in the repository that
@@ -119,14 +122,17 @@ function walk(dir: string, target: string): string[] {
  * gate exists here or it exists nowhere. A throw is the stronger form of it:
  * a warning needs a flag to become fatal, and a flag can be turned off.
  */
-export function courseLinkFor(rawHref: string, source: string): string | null {
+export function courseRouteFor(
+  rawHref: string,
+  source: string,
+): { route: string; fragment: string; key: string | null } | null {
   if (!isCourseLink(rawHref)) return null
 
   const target = targetOf(rawHref)
   const fragment = rawHref.slice(target.length)
 
-  const route = routeOf(rawHref, source)
-  if (route === null) {
+  const resolved = routeOf(rawHref, source)
+  if (resolved === null) {
     throw new Error(
       `${source} links to "${rawHref}", which is not a module in mini-courses/. ` +
       'An internal markdown link has to name a file the loader reads, ' +
@@ -134,12 +140,29 @@ export function courseLinkFor(rawHref: string, source: string): string | null {
     )
   }
 
+  return { route: resolved.route, fragment, key: resolved.key }
+}
+
+/**
+ * The URL an internal corpus link should point at: `courseRouteFor`'s route
+ * with the base path applied and the fragment after it, or null for an href
+ * that is not an internal corpus link.
+ *
+ * A caller that rewrites the route (the second language) must call
+ * `courseRouteFor` instead and apply `href()` after its rewrite: the rewrite
+ * matches bare routes, and a string that already carries the base path or a
+ * fragment never matches one. That order is what `rehypeCourseLinks` follows.
+ */
+export function courseLinkFor(rawHref: string, source: string): string | null {
+  const resolved = courseRouteFor(rawHref, source)
+  if (resolved === null) return null
+
   // Every emitted URL goes through `href()`: the site is served from a
   // sub-path on GitHub Pages, and a prose anchor is not a `<Link>`, so the
   // base path is this module's job (see `lib/url.ts`). The trailing slash is
   // not decoration either — `trailingSlash: true` in next.config.mjs makes the
   // slashed form canonical, and the unslashed one costs a redirect.
-  return `${href(route)}${fragment}`
+  return `${href(resolved.route)}${resolved.fragment}`
 }
 
 /** The directory part of a source path, relative to `CONTENT_ROOT`. */
@@ -184,11 +207,14 @@ export function corpusTargetOf(rawHref: string, source: string): CourseModule | 
 }
 
 /**
- * The app-relative route an internal corpus link means, or null if there is
- * none. `corpusTargetOf` does all the work; the one thing it does not answer
- * for is the corpus' own table of contents.
+ * The app-relative route an internal corpus link means, and the module's slug
+ * (the record key) or null for the catalog, or null if there is none.
+ * `corpusTargetOf` does all the work; the one thing it does not answer for is
+ * the corpus' own table of contents.
+ *
+ * The key travels beside the route so no caller ever parses it back out of one.
  */
-function routeOf(rawHref: string, source: string): string | null {
+function routeOf(rawHref: string, source: string): { route: string; key: string | null } | null {
   // `mini-courses/index.md` — the corpus root file, reached as `../index.md`
   // from a category README. It has no module route because it is not a module:
   // it is the corpus' own table of contents, and the page that does that job
@@ -201,8 +227,8 @@ function routeOf(rawHref: string, source: string): string | null {
   // is the class of defect no test can see: a link that works and lands one
   // redirect short of where it meant to.
   const segments = walk(dirOf(source), targetOf(rawHref))
-  if (segments.length === 1 && segments[0] === 'index.md') return INDEX_ROUTE
+  if (segments.length === 1 && segments[0] === 'index.md') return { route: INDEX_ROUTE, key: null }
 
   const module = corpusTargetOf(rawHref, source)
-  return module === null ? null : `/courses/${module.slug}/`
+  return module === null ? null : { route: `/courses/${module.slug}/`, key: module.slug }
 }

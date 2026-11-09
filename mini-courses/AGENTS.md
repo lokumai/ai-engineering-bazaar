@@ -356,9 +356,9 @@ mini-courses/            the authored course, and all this file governs
 src/ tests/ scripts/     the website that renders the course (the root CLAUDE.md)
 ```
 
-The website and the course are both the author's. A colleague builds the mobile reader in its own
-repository; a change he proposes here never alters the course or the website unless the author asks
-(D90). Do not edit the app to accommodate content: the content is plain markdown and the app reads it
+The website and the course are both the author's. The mobile reader is built in its own repository
+and shows the same content: it reads the bundle the website's build makes from these files, so a
+module written here reaches both apps (D111). Do not edit the app to accommodate content: the content is plain markdown and the app reads it
 as authored. Notes under `scratchpad/research/` are raw material for facts and sources; do not copy
 their dense style.
 

@@ -8,11 +8,12 @@ import { unified } from 'unified'
 import { SKIP, visit } from 'unist-util-visit'
 import { toString as hastToString } from 'hast-util-to-string'
 import type { Element, ElementContent, Root, RootContent, Text } from 'hast'
+import { href } from '@/lib/url'
 import { widthForColumns } from '@/lib/figure/width'
 import type { ChecklistItem } from './checklist'
 import { CALLOUT_MARKER, calloutKindOf } from './callout'
 import { DIAGRAM_HEADING, SERIES_HEADINGS } from './lines'
-import { courseLinkFor, isCourseLink, sheetSource } from './links'
+import { courseRouteFor, isCourseLink, sheetSource } from './links'
 import { isSafeHref } from './safe-href'
 import { assertNoRawHex, remapMermaidFills } from './mermaid'
 import { CODE_TOKEN_ROLES, codeThemes, readDesignToken, toHex } from './code-theme'
@@ -43,9 +44,53 @@ export interface RenderedMarkdown {
   checklist: ChecklistItem[]
 }
 
+/**
+ * Where a course link lands, written on its `a` node's `data` for a consumer of
+ * the tree rather than of the HTML (the content bundle). `key` is the module's
+ * slug, the record key; `fragment` is what followed the target in the source
+ * href, `#` included, or `''`; `route` is the address the link lands on,
+ * after the caller's `localiseRoute` and before the base path, so its language
+ * and track prefixes say which page it is.
+ */
+export type CourseTarget =
+  | { kind: 'module'; key: string; fragment: string; route: string }
+  | { kind: 'catalog' }
+
+/**
+ * A caption's figure or table number (`1.2`, or `2` with no sheet) and its
+ * title, kept apart. The HTML joins them into one label; the tree does not, so
+ * a consumer never has to split a string the renderer joined.
+ */
+export interface CaptionData {
+  number: string
+  title: string | null
+}
+
+/**
+ * Hast `data` is never stringified, so what is written here reaches a reader
+ * of the tree and leaves the HTML byte-identical.
+ */
+declare module 'hast' {
+  interface ElementData {
+    courseTarget?: CourseTarget
+    /** Site-relative, no leading slash, no base path: `course-images/<level>/<file>`. */
+    imagePath?: string
+    caption?: CaptionData
+  }
+}
+
+export interface RenderedTree extends RenderedMarkdown {
+  tree: Root
+}
+
 export interface RenderOptions {
   /** Where this category's copied images live. */
   imageBase?: string
+  /**
+   * The same directory relative to the site, `imagePathFor(category)`. When it
+   * is given, every rewritten `img` also carries `data.imagePath`.
+   */
+  imagePath?: string
   /**
    * The sheet (module) number, so figures and tables can be numbered
    * `FIG. 13.2` / `TBL. 13.2` as §6.5 and §6.10 require. Omitted for content
@@ -83,7 +128,9 @@ export interface RenderOptions {
    * page already does, and the other direction is a cycle. So this file applies
    * a mapping it is handed and has no opinion about the second language at all.
    *
-   * Given the resolved route, return the one to use. The default is identity.
+   * Given the bare resolved route (`/courses/<level>/<module>/`, no base path
+   * and no fragment, both of which are applied after it), return the one to
+   * use. The default is identity.
    */
   localiseRoute?: (route: string) => string
 }
@@ -139,9 +186,14 @@ function element(
   return { type: 'element', tagName, properties, children }
 }
 
+/** `13.2` on a numbered sheet, `2` where there is no sheet number. */
+function figureNumber(sheet: number | undefined, index: number): string {
+  return sheet === undefined ? `${index}` : `${sheet}.${index}`
+}
+
 /** `FIG. 13.2` on a numbered sheet, `FIG. 2` where there is no sheet number. */
-function label(prefix: string, sheet: number | undefined, index: number): string {
-  return sheet === undefined ? `${prefix} ${index}` : `${prefix} ${sheet}.${index}`
+function label(prefix: string, number: string): string {
+  return `${prefix} ${number}`
 }
 
 // ---------------------------------------------------------------------------
@@ -416,7 +468,7 @@ function rehypeHeadingAnchors() {
 // §6.9 images
 // ---------------------------------------------------------------------------
 
-function rehypeRewriteImages(imageBase?: string) {
+function rehypeRewriteImages(imageBase?: string, imagePath?: string) {
   return (tree: Root) => {
     if (!imageBase) return
     visit(tree, 'element', (node: Element) => {
@@ -430,6 +482,7 @@ function rehypeRewriteImages(imageBase?: string) {
       const relative = src.replace(/^(\.{1,2}\/)+/, '').replace(/^\//, '')
       const served = relative.replace(/^images\//, '')
       node.properties.src = `${imageBase}/${served}`
+      if (imagePath) node.data = { ...node.data, imagePath: `${imagePath}/${served}` }
       // A vendor's mark (M68) is drawn inline at text height, not as a picture.
       if (served.startsWith('logos/')) node.properties.className = ['bz-logo']
     })
@@ -580,20 +633,24 @@ function applyTableHeaders(table: Element, columns: number): void {
  * strip, in the meta voice, and the strip stays 28px by construction.
  */
 function caption(
+  prefix: string,
   number: string,
   title: string | null,
   extra: { action?: Element; note?: string | null } = {},
 ): Element {
+  const name = label(prefix, number)
   const children: ElementContent[] = [
     element('span', { className: ['bz-caption-label'] }, [
-      text(title ? `${number} — ${title}` : number),
+      text(title ? `${name} — ${title}` : name),
     ]),
   ]
   if (extra.action) children.push(extra.action)
   if (extra.note) {
     children.push(element('p', { className: ['bz-caption-note'] }, [text(extra.note)]))
   }
-  return element('figcaption', { className: ['bz-caption'] }, children)
+  const node = element('figcaption', { className: ['bz-caption'] }, children)
+  node.data = { caption: { number, title: title ? title : null } }
+  return node
 }
 
 function scrollRegion(
@@ -694,7 +751,8 @@ function rehypeFigures(options: RenderOptions) {
         if (!code || !classNames(code).includes('language-mermaid')) return
 
         figures += 1
-        const name = label('FIG.', sheet, figures)
+        const number = figureNumber(sheet, figures)
+        const name = label('FIG.', number)
         const marker = element(
           'div',
           {
@@ -757,7 +815,7 @@ function rehypeFigures(options: RenderOptions) {
                 [icon('expand')],
               ),
             ]),
-            caption(name, section),
+            caption('FIG.', number, section),
           ],
         )
         return [SKIP, index + 1]
@@ -767,11 +825,11 @@ function rehypeFigures(options: RenderOptions) {
       const image = imageParagraph(node)
       if (image) {
         figures += 1
-        const name = label('FIG.', sheet, figures)
+        const number = figureNumber(sheet, figures)
         parent.children[index] = element(
           'figure',
           { className: ['bz-fig', 'bz-image'], 'data-hl-width': 'prose' },
-          [image.image, caption(name, image.label ?? section, { note: image.note })],
+          [image.image, caption('FIG.', number, image.label ?? section, { note: image.note })],
         )
         return [SKIP, index + 1]
       }
@@ -781,7 +839,8 @@ function rehypeFigures(options: RenderOptions) {
         tables += 1
         const columns = columnCount(node)
         applyTableHeaders(node, columns)
-        const name = label('TBL.', sheet, tables)
+        const number = figureNumber(sheet, tables)
+        const name = label('TBL.', number)
         parent.children[index] = element(
           'figure',
           {
@@ -790,7 +849,7 @@ function rehypeFigures(options: RenderOptions) {
             'data-hl-columns': String(columns),
           },
           [
-            caption(name, section),
+            caption('TBL.', number, section),
             scrollRegion('bz-scroller', name.replace('TBL.', 'Table'), [node]),
           ],
         )
@@ -1014,7 +1073,10 @@ function rehypeTaskListMarkers() {
  * is for the reader: the two plugins are the whole of §6.3, translation first
  * and then the mark that says a link leaves the site.
  */
-function rehypeCourseLinks(sheet: number | undefined, localise?: (route: string) => string) {
+function rehypeCourseLinks(
+  sheet: number | undefined,
+  localise?: (route: string) => string,
+) {
   return (tree: Root) => {
     let source: string | null | undefined
 
@@ -1041,11 +1103,33 @@ function rehypeCourseLinks(sheet: number | undefined, localise?: (route: string)
         )
       }
 
-      // `courseLinkFor` answers null only for an href `isCourseLink` has
+      // `courseRouteFor` answers null only for an href `isCourseLink` has
       // already rejected, so this is narrowing rather than a branch: a link it
       // recognises and cannot resolve throws instead.
-      const route = courseLinkFor(value, source)
-      if (route !== null) node.properties.href = localise ? localise(route) : route
+      const resolved = courseRouteFor(value, source)
+      if (resolved === null) return
+
+      // Localise the BARE route, then apply the base path, then the fragment.
+      // The caller's map is a set of bare routes, so a string that already
+      // carries the base path or a fragment never matches it; that order was
+      // the defect which sent every Turkish and Persian cross-reference on the
+      // deployed build back to English. `href()` is applied here and nowhere
+      // else in this plugin: a prose anchor is not a `<Link>`, so the base path
+      // is this module's job (see `lib/url.ts`), and the route keeps its
+      // trailing slash because `trailingSlash: true` makes that form canonical.
+      const { route, fragment, key } = resolved
+      const localised = localise ? localise(route) : route
+      node.properties.href = href(localised) + fragment
+
+      // The same answer for a reader of the tree: the address the link lands
+      // on, so an untranslated neighbour stays English and a module with no
+      // For Everyone page stays in For Engineers, exactly as the href does.
+      node.data = {
+        ...node.data,
+        courseTarget: key === null
+          ? { kind: 'catalog' }
+          : { kind: 'module', key, fragment, route: localised },
+      }
     })
   }
 }
@@ -1177,14 +1261,23 @@ function rehypeCodeBlocks() {
 
 // ---------------------------------------------------------------------------
 
-export async function renderMarkdown(
+/**
+ * The rendered body as a hast tree beside its HTML, for a consumer that needs
+ * what the HTML cannot carry: the metadata the plugins write on `data`
+ * (`CourseTarget`, `imagePath`, `CaptionData`).
+ *
+ * One processor runs once: the tree is parsed and transformed, and the HTML is
+ * that same tree stringified, so the two cannot disagree and there is one
+ * `assertNoRawHex` site. `renderMarkdown` is this with the tree dropped.
+ */
+export async function renderTree(
   markdown: string,
   options: RenderOptions = {},
-): Promise<RenderedMarkdown> {
+): Promise<RenderedTree> {
   const toc: TocEntry[] = []
   const checklist: ChecklistItem[] = []
 
-  const file = await unified()
+  const processor = unified()
     .use(remarkParse)
     .use(remarkGfm)
     .use(remarkRehype)
@@ -1197,7 +1290,7 @@ export async function renderMarkdown(
     .use(rehypeDropSeriesSection)
     .use(rehypeLeadParagraph)
     .use(rehypeSectionMarks)
-    .use(rehypeRewriteImages, options.imageBase)
+    .use(rehypeRewriteImages, options.imageBase, options.imagePath)
     .use(rehypeFigures, options)
     .use(rehypeKeepLogoWithName)
     .use(rehypeBlockquotes, `callout-${options.sheet ?? options.excerptOf ?? 0}${options.excerptOf === undefined ? '' : '-ex'}`)
@@ -1215,10 +1308,18 @@ export async function renderMarkdown(
     .use(rehypePrettyCode, { theme: codeThemes(), keepBackground: false })
     .use(rehypeCodeBlocks)
     .use(rehypeStringify, { allowDangerousHtml: true })
-    .process(markdown)
 
-  const html = String(file)
+  const tree = await processor.run(processor.parse(markdown))
+  const html = processor.stringify(tree)
   assertNoRawHex(html, options.sheet === undefined ? 'prose' : `module ${options.sheet}`)
 
+  return { tree, html, toc, checklist }
+}
+
+export async function renderMarkdown(
+  markdown: string,
+  options: RenderOptions = {},
+): Promise<RenderedMarkdown> {
+  const { html, toc, checklist } = await renderTree(markdown, options)
   return { html, toc, checklist }
 }

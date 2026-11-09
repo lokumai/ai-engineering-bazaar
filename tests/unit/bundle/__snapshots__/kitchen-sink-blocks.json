@@ -1,0 +1,741 @@
+{
+  "blocks": [
+    {
+      "type": "paragraph",
+      "inlines": [
+        {
+          "type": "text",
+          "text": "This opening paragraph is the lead, and the renderer marks it as one."
+        }
+      ],
+      "lead": true
+    },
+    {
+      "type": "heading",
+      "depth": 2,
+      "id": "a-numbered-section",
+      "mark": "I",
+      "inlines": [
+        {
+          "type": "text",
+          "text": "A numbered section"
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "inlines": [
+        {
+          "type": "text",
+          "text": "Ordinary prose, with an "
+        },
+        {
+          "type": "link",
+          "target": {
+            "kind": "external",
+            "url": "https://example.com/paper"
+          },
+          "inlines": [
+            {
+              "type": "text",
+              "text": "external link"
+            }
+          ]
+        },
+        {
+          "type": "text",
+          "text": " and a "
+        },
+        {
+          "type": "link",
+          "target": {
+            "kind": "module",
+            "key": "fundamentals/training",
+            "track": "engineers",
+            "lang": "en"
+          },
+          "inlines": [
+            {
+              "type": "text",
+              "text": "cross-reference"
+            }
+          ]
+        },
+        {
+          "type": "text",
+          "text": " to another sheet."
+        }
+      ]
+    },
+    {
+      "type": "heading",
+      "depth": 3,
+      "id": "a-a-subsection",
+      "inlines": [
+        {
+          "type": "text",
+          "text": "A. A subsection"
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "inlines": [
+        {
+          "type": "text",
+          "text": "A three-column table, whose first body cell becomes a row header:"
+        }
+      ]
+    },
+    {
+      "type": "table",
+      "number": "1.1",
+      "title": "A. A subsection",
+      "rowHeaders": true,
+      "align": [
+        null,
+        null,
+        null
+      ],
+      "head": [
+        {
+          "inlines": [
+            {
+              "type": "text",
+              "text": "Layer"
+            }
+          ]
+        },
+        {
+          "inlines": [
+            {
+              "type": "text",
+              "text": "What it is"
+            }
+          ]
+        },
+        {
+          "inlines": [
+            {
+              "type": "text",
+              "text": "Cost"
+            }
+          ]
+        }
+      ],
+      "rows": [
+        [
+          {
+            "inlines": [
+              {
+                "type": "text",
+                "text": "One"
+              }
+            ]
+          },
+          {
+            "inlines": [
+              {
+                "type": "text",
+                "text": "The first thing"
+              }
+            ]
+          },
+          {
+            "inlines": [
+              {
+                "type": "text",
+                "text": "Low"
+              }
+            ]
+          }
+        ],
+        [
+          {
+            "inlines": [
+              {
+                "type": "text",
+                "text": "Two"
+              }
+            ]
+          },
+          {
+            "inlines": [
+              {
+                "type": "text",
+                "text": "The second thing"
+              }
+            ]
+          },
+          {
+            "inlines": [
+              {
+                "type": "text",
+                "text": "High"
+              }
+            ]
+          }
+        ]
+      ]
+    },
+    {
+      "type": "heading",
+      "depth": 2,
+      "id": "pictures-and-diagrams",
+      "mark": "II",
+      "inlines": [
+        {
+          "type": "text",
+          "text": "Pictures and diagrams"
+        }
+      ]
+    },
+    {
+      "type": "image",
+      "number": "1.1",
+      "title": "A drawn figure",
+      "note": "The caption line, which the renderer puts below the label.",
+      "src": "course-images/fundamentals/example.png",
+      "alt": "A drawn figure",
+      "width": 640,
+      "height": 480
+    },
+    {
+      "type": "diagram",
+      "number": "1.2",
+      "title": "Pictures and diagrams",
+      "svg": {
+        "light": "api/v1/diagrams/b2b09770ed6ae5b74cb5c8197b0feea4.svg",
+        "dark": "api/v1/diagrams/9c6277c931222b572ac1b8e32bdfd91c.svg"
+      }
+    },
+    {
+      "type": "heading",
+      "depth": 2,
+      "id": "code-quotes-and-lists",
+      "mark": "III",
+      "inlines": [
+        {
+          "type": "text",
+          "text": "Code, quotes and lists"
+        }
+      ]
+    },
+    {
+      "type": "code",
+      "language": "python",
+      "lines": [
+        [
+          {
+            "text": "def",
+            "role": "keyword",
+            "bold": true
+          },
+          {
+            "text": " add",
+            "role": "function"
+          },
+          {
+            "text": "(a: int, b: int) -> int:"
+          }
+        ],
+        [
+          {
+            "text": "    return",
+            "role": "keyword",
+            "bold": true
+          },
+          {
+            "text": " a "
+          },
+          {
+            "text": "+",
+            "role": "keyword",
+            "bold": true
+          },
+          {
+            "text": " b"
+          }
+        ]
+      ]
+    },
+    {
+      "type": "code",
+      "language": "output",
+      "lines": [
+        [
+          {
+            "text": "Program output, in an untagged fence."
+          }
+        ]
+      ]
+    },
+    {
+      "type": "quote",
+      "label": "Note",
+      "blocks": [
+        {
+          "type": "paragraph",
+          "inlines": [
+            {
+              "type": "text",
+              "text": "a blockquote whose bold lead-in ends in a colon becomes a label."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "quote",
+      "blocks": [
+        {
+          "type": "paragraph",
+          "inlines": [
+            {
+              "type": "text",
+              "text": "A blockquote with no lead-in stays a plain pull-rule."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "callout",
+      "kind": "tip",
+      "title": [
+        {
+          "type": "strong",
+          "inlines": [
+            {
+              "type": "text",
+              "text": "A call-out's title"
+            }
+          ]
+        }
+      ],
+      "blocks": [
+        {
+          "type": "paragraph",
+          "inlines": [
+            {
+              "type": "text",
+              "text": "A call-out's body, as GitHub writes an alert."
+            }
+          ]
+        }
+      ],
+      "action": {
+        "target": {
+          "kind": "external",
+          "url": "https://example.com/"
+        },
+        "inlines": [
+          {
+            "type": "text",
+            "text": "A call-out's button"
+          }
+        ]
+      }
+    },
+    {
+      "type": "paragraph",
+      "inlines": [
+        {
+          "type": "strong",
+          "inlines": [
+            {
+              "type": "logo",
+              "src": "course-images/fundamentals/logos/vendor.svg",
+              "alt": "Vendor",
+              "mono": false
+            },
+            {
+              "type": "text",
+              "text": "Vendor"
+            }
+          ]
+        },
+        {
+          "type": "text",
+          "text": " names a product with its mark, and "
+        },
+        {
+          "type": "logo",
+          "src": "course-images/fundamentals/logos/mono-mono.svg",
+          "alt": "Mono",
+          "mono": true
+        },
+        {
+          "type": "text",
+          "text": "Mono names one with a single-colour mark."
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "inlines": [
+        {
+          "type": "text",
+          "text": "A checklist, which the record reads by index:"
+        }
+      ]
+    },
+    {
+      "type": "list",
+      "ordered": false,
+      "items": [
+        {
+          "task": {
+            "checked": false
+          },
+          "blocks": [
+            {
+              "type": "paragraph",
+              "inlines": [
+                {
+                  "type": "text",
+                  "text": "The first item, unticked."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "task": {
+            "checked": true
+          },
+          "blocks": [
+            {
+              "type": "paragraph",
+              "inlines": [
+                {
+                  "type": "text",
+                  "text": "The second item, ticked."
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "heading",
+      "depth": 2,
+      "id": "marks-lists-and-rules",
+      "mark": "IV",
+      "inlines": [
+        {
+          "type": "text",
+          "text": "Marks, lists and rules"
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "inlines": [
+        {
+          "type": "text",
+          "text": "A paragraph with "
+        },
+        {
+          "type": "emphasis",
+          "inlines": [
+            {
+              "type": "text",
+              "text": "emphasis"
+            }
+          ]
+        },
+        {
+          "type": "text",
+          "text": ", "
+        },
+        {
+          "type": "strong",
+          "inlines": [
+            {
+              "type": "text",
+              "text": "strong"
+            }
+          ]
+        },
+        {
+          "type": "text",
+          "text": " text, "
+        },
+        {
+          "type": "delete",
+          "inlines": [
+            {
+              "type": "text",
+              "text": "deleted"
+            }
+          ]
+        },
+        {
+          "type": "text",
+          "text": " text and "
+        },
+        {
+          "type": "code",
+          "text": "inline code"
+        },
+        {
+          "type": "text",
+          "text": ","
+        },
+        {
+          "type": "break"
+        },
+        {
+          "type": "text",
+          "text": "and a second line after a hard break."
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "inlines": [
+        {
+          "type": "text",
+          "text": "An ordered list that starts at three:"
+        }
+      ]
+    },
+    {
+      "type": "list",
+      "ordered": true,
+      "start": 3,
+      "items": [
+        {
+          "blocks": [
+            {
+              "type": "paragraph",
+              "inlines": [
+                {
+                  "type": "text",
+                  "text": "The third step."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "blocks": [
+            {
+              "type": "paragraph",
+              "inlines": [
+                {
+                  "type": "text",
+                  "text": "The fourth step."
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "heading",
+      "depth": 4,
+      "id": "a-level-four-heading",
+      "inlines": [
+        {
+          "type": "text",
+          "text": "A level-four heading"
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "inlines": [
+        {
+          "type": "text",
+          "text": "A two-column table, centred on the left and aligned right on the right:"
+        }
+      ]
+    },
+    {
+      "type": "table",
+      "number": "1.2",
+      "title": "A level-four heading",
+      "rowHeaders": false,
+      "align": [
+        "center",
+        "right"
+      ],
+      "head": [
+        {
+          "inlines": [
+            {
+              "type": "text",
+              "text": "Name"
+            }
+          ]
+        },
+        {
+          "inlines": [
+            {
+              "type": "text",
+              "text": "Count"
+            }
+          ]
+        }
+      ],
+      "rows": [
+        [
+          {
+            "inlines": [
+              {
+                "type": "text",
+                "text": "First"
+              }
+            ]
+          },
+          {
+            "inlines": [
+              {
+                "type": "text",
+                "text": "1"
+              }
+            ]
+          }
+        ],
+        [
+          {
+            "inlines": [
+              {
+                "type": "text",
+                "text": "Second"
+              }
+            ]
+          },
+          {
+            "inlines": [
+              {
+                "type": "text",
+                "text": "22"
+              }
+            ]
+          }
+        ]
+      ]
+    },
+    {
+      "type": "paragraph",
+      "inlines": [
+        {
+          "type": "text",
+          "text": "A cross-reference to "
+        },
+        {
+          "type": "link",
+          "target": {
+            "kind": "module",
+            "key": "fundamentals/training",
+            "track": "engineers",
+            "lang": "en",
+            "fragment": "a-part"
+          },
+          "inlines": [
+            {
+              "type": "text",
+              "text": "a part of another sheet"
+            }
+          ]
+        },
+        {
+          "type": "text",
+          "text": ", an anchor link "
+        },
+        {
+          "type": "link",
+          "target": {
+            "kind": "anchor",
+            "id": "a-numbered-section"
+          },
+          "inlines": [
+            {
+              "type": "text",
+              "text": "back to the top"
+            }
+          ]
+        },
+        {
+          "type": "text",
+          "text": ", and a link to "
+        },
+        {
+          "type": "link",
+          "target": {
+            "kind": "catalog"
+          },
+          "inlines": [
+            {
+              "type": "text",
+              "text": "the catalog"
+            }
+          ]
+        },
+        {
+          "type": "text",
+          "text": "."
+        }
+      ]
+    },
+    {
+      "type": "rule"
+    },
+    {
+      "type": "heading",
+      "depth": 2,
+      "id": "summary",
+      "inlines": [
+        {
+          "type": "text",
+          "text": "Summary"
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "inlines": [
+        {
+          "type": "text",
+          "text": "One paragraph of summary, with a "
+        },
+        {
+          "type": "link",
+          "target": {
+            "kind": "module",
+            "key": "fundamentals/rag",
+            "track": "engineers",
+            "lang": "en"
+          },
+          "inlines": [
+            {
+              "type": "text",
+              "text": "second cross-reference"
+            }
+          ]
+        },
+        {
+          "type": "text",
+          "text": "."
+        }
+      ]
+    }
+  ],
+  "diagrams": [
+    {
+      "id": "b2b09770ed6ae5b74cb5c8197b0feea4",
+      "variant": "light",
+      "source": "graph TD\n    A[\"Start\"] --> B{\"Branch?\"}\n    B -->|yes| C[\"Do the thing\"]\n    B -->|no| D[\"Stop\"]\n    classDef fault stroke-width:1px\n    classDef verify stroke-width:1px\n    class D fault\n    class C verify"
+    },
+    {
+      "id": "9c6277c931222b572ac1b8e32bdfd91c",
+      "variant": "dark",
+      "source": "graph TD\n    A[\"Start\"] --> B{\"Branch?\"}\n    B -->|yes| C[\"Do the thing\"]\n    B -->|no| D[\"Stop\"]\n    classDef fault stroke-width:1px\n    classDef verify stroke-width:1px\n    class D fault\n    class C verify"
+    }
+  ]
+}

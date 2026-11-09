@@ -40,6 +40,12 @@ exports[`the whole pipeline, over one fake module > collects the same table of c
   },
   {
     "depth": 2,
+    "id": "marks-lists-and-rules",
+    "mark": "IV",
+    "text": "Marks, lists and rules",
+  },
+  {
+    "depth": 2,
     "id": "summary",
     "text": "Summary",
   },

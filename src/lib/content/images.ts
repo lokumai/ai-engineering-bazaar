@@ -12,5 +12,17 @@ import type { CategorySlug } from './categories'
  * tests around `href()` guarding a function nothing on the site called.
  */
 export function imageBaseFor(category: CategorySlug): string {
-  return href(`/course-images/${category}`)
+  return href(`/${imagePathFor(category)}`)
+}
+
+/**
+ * The same directory relative to the site: no base path and no leading slash.
+ *
+ * The content bundle names an image this way, because a native reader resolves
+ * it against whatever host it fetched the bundle from, and a base path baked in
+ * would tie the bundle to one deploy. `imageBaseFor` is built from it, so the
+ * prefix is written once.
+ */
+export function imagePathFor(category: CategorySlug): string {
+  return `course-images/${category}`
 }

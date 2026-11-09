@@ -11,8 +11,8 @@ description: >
 authority: blueprint
 writes: agent, when explicitly refactoring
 status: active
-covers: the whole system as built on 2026-09-10, with M16 shipped — every route on the design language; the record, channel A and the render step corrected for M24 on 2026-10-11, and the quiz and the end of a module for M25 on 2026-10-12, the Bazaar Street front door for M27 and the Persian pages for M28 the same day, and the progress page slimmed to its circles and its data row for M38 on 2026-11-05, and the account layer, role paths, record of work and two thirds of the test suite removed for M40 the same day, and the two tracks (For Engineers, For Everyone) and their per-track record for M43 the same day; the custom domain (D92), the fifth level, Emerging (first named Emerging Trends), and moved addresses (D94) on 2026-11-06, and the people at the gate (M58), search (M59) and the catalog without its Sources count (M55) the same day; and for M64 to M69 the same night, a planned module that renders the sections it already has (D102), inline vendor logos, and the first For Everyone module; and the search filters and the level bar on a result (M70, D103), folded behind a Filters disclosure (M71, D104), and the stories at the gate kept until everyone has turned (M72), on 2026-11-07; and call-out cards in a module (D106), the reader's choice of Mermaid theme (D107), Mihrî in Leyla's place at the gate and the fifth level titled Emerging (M75), on 2026-11-08; and For Everyone versions of the nineteen other written modules of Fundamentals, Intermediate and Ecosystem, in three languages (M77, M78, D108), the same day; and one heading per shared section (D109), technical terms kept English in translations, and more vendor marks (M80), and each diagram theme on Mermaid's own ground with a copy control (M81), the same day
-last_updated: 2026-11-08
+covers: the whole system as built on 2026-09-10, with M16 shipped — every route on the design language; the record, channel A and the render step corrected for M24 on 2026-10-11, and the quiz and the end of a module for M25 on 2026-10-12, the Bazaar Street front door for M27 and the Persian pages for M28 the same day, and the progress page slimmed to its circles and its data row for M38 on 2026-11-05, and the account layer, role paths, record of work and two thirds of the test suite removed for M40 the same day, and the two tracks (For Engineers, For Everyone) and their per-track record for M43 the same day; the custom domain (D92), the fifth level, Emerging (first named Emerging Trends), and moved addresses (D94) on 2026-11-06, and the people at the gate (M58), search (M59) and the catalog without its Sources count (M55) the same day; and for M64 to M69 the same night, a planned module that renders the sections it already has (D102), inline vendor logos, and the first For Everyone module; and the search filters and the level bar on a result (M70, D103), folded behind a Filters disclosure (M71, D104), and the stories at the gate kept until everyone has turned (M72), on 2026-11-07; and call-out cards in a module (D106), the reader's choice of Mermaid theme (D107), Mihrî in Leyla's place at the gate and the fifth level titled Emerging (M75), on 2026-11-08; and For Everyone versions of the nineteen other written modules of Fundamentals, Intermediate and Ecosystem, in three languages (M77, M78, D108), the same day; and one heading per shared section (D109), technical terms kept English in translations, and more vendor marks (M80), and each diagram theme on Mermaid's own ground with a copy control (M81), the same day; and the content bundle for the mobile reader, §13 (M41, D89, D111), on 2026-11-09
+last_updated: 2026-11-09
 ---
 
 # 🏗️ ARCHITECTURE — How this project is built
@@ -770,6 +770,64 @@ after the upload.
 fast-forward, and `gh pr merge --admin` is refused while a check is still running. Note that
 `repos/.../branches/main/protection` returns 404 for this repository, which is misleading; use
 `gh api repos/.../rulesets`.
+
+---
+
+## 13. The content bundle
+
+Every build also publishes the course as JSON under `out/api/`, for the mobile reader (lokumai/ai-engineering-bazaar-mobile).
+The web and the mobile reader may look different, and their content, logic and behaviour are the same (MANIFESTO §7, **D111**): this section is how the second half of that sentence is enforced.
+The reader renders what it is given and derives nothing: slugging, figure numbering, row headers, link localisation, the track and language a link lands in, and code tokens have all been computed in TypeScript, and the reader maps each node to a widget.
+Why a block tree and not HTML or markdown is **D89**.
+
+**The contract is `src/lib/bundle/schema.ts`, and only there.**
+It is a set of strict zod schemas, so a key the contract does not name fails the build instead of reaching the reader.
+Every route handler parses its document with them before serialising it, and `tests/e2e/bundle.spec.ts` parses the finished export with the same schemas.
+They name fields and formats, never a fact about the content: a language is checked against `src/lib/content/languages.ts` and a track against `src/lib/tracks.ts`, not listed.
+Every path in every field is relative to the site root, with no base path and no leading slash, so one bundle serves from any host.
+`tests/unit/bundle/__snapshots__/bundle-schema.json` shows any change to the contract as a diff.
+
+**Two producer stages, and one writer per file.**
+
+| Published path | Written by |
+|---|---|
+| `api/index.json` (the published majors) | `src/app/api/index.json/route.ts` |
+| `api/v1/tokens.json` | `src/app/api/v1/tokens.json/route.ts`, from `src/lib/bundle/tokens.ts` |
+| `api/v1/levels/<level>.json` | `src/app/api/v1/levels/[file]/route.ts` |
+| `api/v1/modules/<level>/<module>/<lang>.json` | `src/app/api/v1/modules/[level]/[module]/[file]/route.ts`, For Engineers, one per language the module has a page in |
+| `api/v1/modules/<level>/<module>/everyone/<lang>.json` | `src/app/api/v1/modules/[level]/[module]/everyone/[file]/route.ts`, For Everyone, one per language its For Everyone file is written in (§2, D91) |
+| `api/v1/index.draft.json` | `src/app/api/v1/index.draft.json/route.ts`; deleted by the finaliser |
+| `api/v1/index.json`, `api/v1/diagrams/<id>.svg` | `scripts/finalize-bundle.mjs` |
+| `api/v1/record-conformance.json` | `scripts/finalize-bundle.mjs`, copied from `tests/unit/record/__snapshots__/record-conformance.v1.json` |
+| `course-images/<level>/<file>` | the existing `prebuild` |
+
+The route handlers write every document the TypeScript pipeline can produce, and they are static, so `next build` writes each as a plain file, as the search index's route does (D95).
+A module document comes from `src/lib/content/module-render.ts`, the same render input the module page reads: the one map every link out of a page goes through, the quiz (For Engineers only), a planned module's summary and written sections (D102), and the neighbours.
+So the page and the bundle cannot drift (rule 4); a link's track and language are read back off the address that map returned (`src/lib/bundle/address.ts`).
+The index lists each module once with an entry per track, and the record key `<level>/<module>` is the same in both of the record's maps (§5).
+The finaliser is the `postbuild` of `npm run build` and writes what needs a browser or the hash of another file.
+It draws every diagram the draft lists in Playwright's bundled Chromium, twice, in Mermaid's own themes (D107): `light` in the web's default theme and `dark` in `dark`, with the theme stamped on `<html>` as the site stamps a reader's choice, and the index names each variant's theme and the ground Mermaid gives it (`src/lib/bundle/diagrams.ts`).
+Each drawing is flattened into the SVG profile of `scripts/lib/svg-profile.mjs`, with labels set in the one pinned Vazirmatn face that `scripts/lib/diagram-font.mjs` names and the index records by hash.
+Then it hashes every bundle file and image, writes `index.json` and deletes the draft.
+It exits 1, naming the diagram, module, track and language, on any render error, profile violation, moved label or unloaded font, and writes no `index.json`; without Chromium it exits 1 and prints `npx playwright install chromium`.
+The two scripts are plain `.mjs` and import only `node:`, packages and `scripts/lib/`, so neither restates a TypeScript definition.
+
+**Versions.**
+`files` maps every file under `api/v1/` except `index.json` and `record-conformance.json` to the sha256 of its bytes, and `images` does the same for every image and logo a document names.
+`contentVersion` is the sha256 of the index with `contentVersion` and `publishedAt` blanked, through the one canonical serialisation in `scripts/lib/bundle-hash.mjs`.
+It holds no build time, commit hash or commit date, so two builds of one commit, and a commit that changes no content and no render input, give the same value.
+`publishedAt` is the commit date, and the reader orders versions by it.
+Adding a field, a node type, a code-token role, a language or a track is additive and stays in `api/v1/`, because the reader ignores what it does not know and draws a role it has no colour for as plain code.
+A new inline type that carries words carries them in `inlines`, which is what an older reader renders of an inline it does not know.
+A new value in a closed set (heading `depth`, table `align`, level `status`, `dir`, call-out `kind`) is a retyping.
+Removing, renaming or retyping a field means `api/v2/`, and `api/v1/` stays published while the reader's oldest supported version reads it.
+A retired address stays readable through the index's `moved`, copied from `src/lib/content/moved.ts` (D94).
+
+**Checks.**
+`node scripts/check-bundle-out.mjs <dir>` reads a finished export and recomputes every claim the index makes: the file set, each sha256, `contentVersion`, the SVG profile of every diagram, the diagram font, and no field starting with the base path.
+CI runs it after its one build, and after the browser suite has rebuilt `out/` from the same commit it requires the two `api/` trees to be byte-identical, which holds the build's determinism to account.
+The deploy runs it on `_site` before publishing, and after publishing it polls the live `api/v1/index.json` until it serves this build's `contentVersion`, for at most the first response's `max-age` plus a minute.
+It sends no query string, because the Pages edge leaves the query out of its cache key, so a stale entry can only be waited out.
 
 ---
 

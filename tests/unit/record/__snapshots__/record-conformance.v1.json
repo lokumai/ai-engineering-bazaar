@@ -1,0 +1,3894 @@
+{
+  "constants": {
+    "SCHEMA_VERSION": 1,
+    "SOFT_CAP_BYTES": 524288,
+    "ISO_TIME": "^\\d{4}-\\d{2}-\\d{2}(?:[T ][\\d:.+\\-Z]{1,20})?$",
+    "ISO_DAY": "^\\d{4}-\\d{2}-\\d{2}$",
+    "INSTANT_DAY": "^(\\d{4}-\\d{2}-\\d{2})(?:[T ]|$)",
+    "EMPTY_SHEET": {
+      "signedOff": null,
+      "signedRevision": null,
+      "reachedEnd": false,
+      "dwellSeconds": 0,
+      "checklist": {}
+    },
+    "EMPTY_RECORD": {
+      "sheets": {},
+      "everyoneSheets": {},
+      "days": [],
+      "prefs": {
+        "charKeys": true,
+        "railFolded": false,
+        "catalogView": null,
+        "diagramTheme": null,
+        "codePalette": null
+      },
+      "meta": {
+        "lastExport": null,
+        "persisted": null
+      }
+    }
+  },
+  "parse": [
+    {
+      "name": "envelope: canonical",
+      "input": "{\"schema\":1,\"savedAt\":\"2026-03-14T08:00:00.000Z\",\"data\":{\"sheets\":{\"alpha/first\":{\"signedOff\":\"2026-03-14T09:26:53.589Z\",\"signedRevision\":\"a1b2c3d\",\"reachedEnd\":false,\"dwellSeconds\":0,\"checklist\":{}}},\"everyoneSheets\":{},\"days\":[\"2026-03-14\"],\"prefs\":{\"charKeys\":true,\"railFolded\":false,\"catalogView\":null,\"diagramTheme\":null,\"codePalette\":null},\"meta\":{\"lastExport\":null,\"persisted\":null}}}",
+      "expect": {
+        "kind": "ok",
+        "reads": {
+          "signed": {
+            "alpha/first": "2026-03-14T09:26:53.589Z"
+          },
+          "everyoneSigned": {},
+          "days": [
+            "2026-03-14"
+          ]
+        }
+      }
+    },
+    {
+      "name": "envelope: empty",
+      "input": "",
+      "expect": {
+        "kind": "empty"
+      }
+    },
+    {
+      "name": "envelope: whitespace",
+      "input": " \n\t ",
+      "expect": {
+        "kind": "empty"
+      }
+    },
+    {
+      "name": "envelope: broken JSON",
+      "input": "{\"schema\":1,\"savedAt\":\"2026-03-14T08:00:00.000Z\",\"data\":{\"sheets\":{\"alpha/first\":{\"signedOff\":\"2026-03-14T09:26:53.589Z\",\"signedRevision\":\"a1b2c3d\",\"reachedEnd\":false,\"dwellSeconds\":0,\"checklist\":{}}},\"everyoneSheets\":{},\"days\":[\"2026-03-14\"],\"prefs\":{\"charKeys\":true,\"railFolded\":false,\"catalogView\":null,\"diagramTheme\":null,\"codePalette\":null},\"meta\":{\"lastExport\":null,\"persisted\":null}}",
+      "expect": {
+        "kind": "quarantine",
+        "reason": "malformed"
+      }
+    },
+    {
+      "name": "envelope: an array",
+      "input": "[{\"schema\":1,\"savedAt\":\"2026-03-14T08:00:00.000Z\",\"data\":{\"sheets\":{\"alpha/first\":{\"signedOff\":\"2026-03-14T09:26:53.589Z\",\"signedRevision\":\"a1b2c3d\",\"reachedEnd\":false,\"dwellSeconds\":0,\"checklist\":{}}},\"everyoneSheets\":{},\"days\":[\"2026-03-14\"],\"prefs\":{\"charKeys\":true,\"railFolded\":false,\"catalogView\":null,\"diagramTheme\":null,\"codePalette\":null},\"meta\":{\"lastExport\":null,\"persisted\":null}}}]",
+      "expect": {
+        "kind": "empty"
+      }
+    },
+    {
+      "name": "envelope: schema \"1\"",
+      "input": "{\"schema\":\"1\",\"savedAt\":\"2026-03-14T08:00:00.000Z\",\"data\":{\"sheets\":{\"alpha/first\":{\"signedOff\":\"2026-03-14T09:26:53.589Z\",\"signedRevision\":\"a1b2c3d\",\"reachedEnd\":false,\"dwellSeconds\":0,\"checklist\":{}}},\"everyoneSheets\":{},\"days\":[\"2026-03-14\"],\"prefs\":{\"charKeys\":true,\"railFolded\":false,\"catalogView\":null,\"diagramTheme\":null,\"codePalette\":null},\"meta\":{\"lastExport\":null,\"persisted\":null}}}",
+      "expect": {
+        "kind": "quarantine",
+        "reason": "malformed"
+      }
+    },
+    {
+      "name": "envelope: schema 0",
+      "input": "{\"schema\":0,\"savedAt\":\"2026-03-14T08:00:00.000Z\",\"data\":{\"sheets\":{\"alpha/first\":{\"signedOff\":\"2026-03-14T09:26:53.589Z\",\"signedRevision\":\"a1b2c3d\",\"reachedEnd\":false,\"dwellSeconds\":0,\"checklist\":{}}},\"everyoneSheets\":{},\"days\":[\"2026-03-14\"],\"prefs\":{\"charKeys\":true,\"railFolded\":false,\"catalogView\":null,\"diagramTheme\":null,\"codePalette\":null},\"meta\":{\"lastExport\":null,\"persisted\":null}}}",
+      "expect": {
+        "kind": "quarantine",
+        "reason": "malformed"
+      }
+    },
+    {
+      "name": "envelope: schema 1.5",
+      "input": "{\"schema\":1.5,\"savedAt\":\"2026-03-14T08:00:00.000Z\",\"data\":{\"sheets\":{\"alpha/first\":{\"signedOff\":\"2026-03-14T09:26:53.589Z\",\"signedRevision\":\"a1b2c3d\",\"reachedEnd\":false,\"dwellSeconds\":0,\"checklist\":{}}},\"everyoneSheets\":{},\"days\":[\"2026-03-14\"],\"prefs\":{\"charKeys\":true,\"railFolded\":false,\"catalogView\":null,\"diagramTheme\":null,\"codePalette\":null},\"meta\":{\"lastExport\":null,\"persisted\":null}}}",
+      "expect": {
+        "kind": "quarantine",
+        "reason": "malformed"
+      }
+    },
+    {
+      "name": "envelope: schema 1.0",
+      "input": "{\"schema\":1.0,\"savedAt\":\"2026-03-14T08:00:00.000Z\",\"data\":{\"sheets\":{\"alpha/first\":{\"signedOff\":\"2026-03-14T09:26:53.589Z\",\"signedRevision\":\"a1b2c3d\",\"reachedEnd\":false,\"dwellSeconds\":0,\"checklist\":{}}},\"everyoneSheets\":{},\"days\":[\"2026-03-14\"],\"prefs\":{\"charKeys\":true,\"railFolded\":false,\"catalogView\":null,\"diagramTheme\":null,\"codePalette\":null},\"meta\":{\"lastExport\":null,\"persisted\":null}}}",
+      "expect": {
+        "kind": "ok",
+        "reads": {
+          "signed": {
+            "alpha/first": "2026-03-14T09:26:53.589Z"
+          },
+          "everyoneSigned": {},
+          "days": [
+            "2026-03-14"
+          ]
+        }
+      }
+    },
+    {
+      "name": "envelope: schema 2",
+      "input": "{\"schema\":2,\"savedAt\":\"2026-03-14T08:00:00.000Z\",\"data\":{\"sheets\":{\"alpha/first\":{\"signedOff\":\"2026-03-14T09:26:53.589Z\",\"signedRevision\":\"a1b2c3d\",\"reachedEnd\":false,\"dwellSeconds\":0,\"checklist\":{}}},\"everyoneSheets\":{},\"days\":[\"2026-03-14\"],\"prefs\":{\"charKeys\":true,\"railFolded\":false,\"catalogView\":null,\"diagramTheme\":null,\"codePalette\":null},\"meta\":{\"lastExport\":null,\"persisted\":null}}}",
+      "expect": {
+        "kind": "quarantine",
+        "reason": "newer"
+      }
+    },
+    {
+      "name": "envelope: schema 1e400",
+      "input": "{\"schema\":1e400,\"savedAt\":\"2026-03-14T08:00:00.000Z\",\"data\":{\"sheets\":{\"alpha/first\":{\"signedOff\":\"2026-03-14T09:26:53.589Z\",\"signedRevision\":\"a1b2c3d\",\"reachedEnd\":false,\"dwellSeconds\":0,\"checklist\":{}}},\"everyoneSheets\":{},\"days\":[\"2026-03-14\"],\"prefs\":{\"charKeys\":true,\"railFolded\":false,\"catalogView\":null,\"diagramTheme\":null,\"codePalette\":null},\"meta\":{\"lastExport\":null,\"persisted\":null}}}",
+      "expect": {
+        "kind": "quarantine",
+        "reason": "malformed"
+      }
+    },
+    {
+      "name": "envelope: data missing",
+      "input": "{\"schema\":1,\"savedAt\":\"2026-03-14T08:00:00.000Z\"}",
+      "expect": {
+        "kind": "quarantine",
+        "reason": "malformed"
+      }
+    },
+    {
+      "name": "envelope: data an array",
+      "input": "{\"schema\":1,\"savedAt\":\"2026-03-14T08:00:00.000Z\",\"data\":[]}",
+      "expect": {
+        "kind": "quarantine",
+        "reason": "malformed"
+      }
+    },
+    {
+      "name": "envelope: data a string",
+      "input": "{\"schema\":1,\"savedAt\":\"2026-03-14T08:00:00.000Z\",\"data\":\"data\"}",
+      "expect": {
+        "kind": "quarantine",
+        "reason": "malformed"
+      }
+    },
+    {
+      "name": "envelope: an html page around the record carries no record",
+      "input": "<!doctype html><html><body><script id=\"hl-record\" type=\"application/json\">{\"schema\":1,\"savedAt\":\"2026-03-14T08:00:00.000Z\",\"data\":{\"sheets\":{\"alpha/first\":{\"signedOff\":\"2026-03-14T09:26:53.589Z\",\"signedRevision\":\"a1b2c3d\",\"reachedEnd\":false,\"dwellSeconds\":0,\"checklist\":{}}},\"everyoneSheets\":{},\"days\":[\"2026-03-14\"],\"prefs\":{\"charKeys\":true,\"railFolded\":false,\"catalogView\":null,\"diagramTheme\":null,\"codePalette\":null},\"meta\":{\"lastExport\":null,\"persisted\":null}}}</script></body></html>",
+      "expect": {
+        "kind": "empty"
+      }
+    },
+    {
+      "name": "envelope: a leading BOM in bytes",
+      "inputBase64": "77u/eyJzY2hlbWEiOjEsInNhdmVkQXQiOiIyMDI2LTAzLTE0VDA4OjAwOjAwLjAwMFoiLCJkYXRhIjp7InNoZWV0cyI6eyJhbHBoYS9maXJzdCI6eyJzaWduZWRPZmYiOiIyMDI2LTAzLTE0VDA5OjI2OjUzLjU4OVoiLCJzaWduZWRSZXZpc2lvbiI6ImExYjJjM2QiLCJyZWFjaGVkRW5kIjpmYWxzZSwiZHdlbGxTZWNvbmRzIjowLCJjaGVja2xpc3QiOnt9fX0sImV2ZXJ5b25lU2hlZXRzIjp7fSwiZGF5cyI6WyIyMDI2LTAzLTE0Il0sInByZWZzIjp7ImNoYXJLZXlzIjp0cnVlLCJyYWlsRm9sZGVkIjpmYWxzZSwiY2F0YWxvZ1ZpZXciOm51bGwsImRpYWdyYW1UaGVtZSI6bnVsbCwiY29kZVBhbGV0dGUiOm51bGx9LCJtZXRhIjp7Imxhc3RFeHBvcnQiOm51bGwsInBlcnNpc3RlZCI6bnVsbH19fQ==",
+      "expect": {
+        "kind": "ok",
+        "reads": {
+          "signed": {
+            "alpha/first": "2026-03-14T09:26:53.589Z"
+          },
+          "everyoneSigned": {},
+          "days": [
+            "2026-03-14"
+          ]
+        }
+      }
+    },
+    {
+      "name": "envelope: invalid UTF-8 inside a string",
+      "inputBase64": "eyJzY2hlbWEiOjEsInNhdmVkQXQiOiIyMDI2LTAzLTE0VDA4OjAwOjAwLjAwMFoiLCJkYXRhIjp7InNoZWV0cyI6eyJhbHBoYS9maXJzdCI6eyJzaWduZWRPZmYiOiIyMDI2LTAzLTE0VDA5OjI2OjUzLjU4OVoiLCJzaWduZWRSZXZpc2lvbiI6ImExYjJjM2QiLCJyZWFjaGVkRW5kIjpmYWxzZSwiZHdlbGxTZWNvbmRzIjowLCJjaGVja2xpc3QiOnt9fSwiYWxwaGEvc2Vjb25k/yI6eyJzaWduZWRPZmYiOiIyMDI2LTAzLTE0VDA5OjI2OjUzLjU4OVoiLCJzaWduZWRSZXZpc2lvbiI6ImExYjJjM2QiLCJyZWFjaGVkRW5kIjpmYWxzZSwiZHdlbGxTZWNvbmRzIjowLCJjaGVja2xpc3QiOnt9fX0sImV2ZXJ5b25lU2hlZXRzIjp7fSwiZGF5cyI6WyIyMDI2LTAzLTE0Il0sInByZWZzIjp7ImNoYXJLZXlzIjp0cnVlLCJyYWlsRm9sZGVkIjpmYWxzZSwiY2F0YWxvZ1ZpZXciOm51bGwsImRpYWdyYW1UaGVtZSI6bnVsbCwiY29kZVBhbGV0dGUiOm51bGx9LCJtZXRhIjp7Imxhc3RFeHBvcnQiOm51bGwsInBlcnNpc3RlZCI6bnVsbH19fQ==",
+      "expect": {
+        "kind": "ok",
+        "reads": {
+          "signed": {
+            "alpha/first": "2026-03-14T09:26:53.589Z",
+            "alpha/second�": "2026-03-14T09:26:53.589Z"
+          },
+          "everyoneSigned": {},
+          "days": [
+            "2026-03-14"
+          ]
+        }
+      }
+    },
+    {
+      "name": "envelope: invalid UTF-8 between tokens",
+      "inputBase64": "eyJzY2hlbWEiOjEs/yJzYXZlZEF0IjoiMjAyNi0wMy0xNFQwODowMDowMC4wMDBaIiwiZGF0YSI6eyJzaGVldHMiOnsiYWxwaGEvZmlyc3QiOnsic2lnbmVkT2ZmIjoiMjAyNi0wMy0xNFQwOToyNjo1My41ODlaIiwic2lnbmVkUmV2aXNpb24iOiJhMWIyYzNkIiwicmVhY2hlZEVuZCI6ZmFsc2UsImR3ZWxsU2Vjb25kcyI6MCwiY2hlY2tsaXN0Ijp7fX19LCJldmVyeW9uZVNoZWV0cyI6e30sImRheXMiOlsiMjAyNi0wMy0xNCJdLCJwcmVmcyI6eyJjaGFyS2V5cyI6dHJ1ZSwicmFpbEZvbGRlZCI6ZmFsc2UsImNhdGFsb2dWaWV3IjpudWxsLCJkaWFncmFtVGhlbWUiOm51bGwsImNvZGVQYWxldHRlIjpudWxsfSwibWV0YSI6eyJsYXN0RXhwb3J0IjpudWxsLCJwZXJzaXN0ZWQiOm51bGx9fX0=",
+      "expect": {
+        "kind": "quarantine",
+        "reason": "malformed"
+      }
+    },
+    {
+      "name": "sheets: a __proto__ slug",
+      "input": "{\"schema\":1,\"savedAt\":\"2026-03-14T08:00:00.000Z\",\"data\":{\"sheets\":{\"alpha/first\":{\"signedOff\":\"2026-03-14T09:26:53.589Z\",\"signedRevision\":\"a1b2c3d\",\"reachedEnd\":false,\"dwellSeconds\":0,\"checklist\":{}},\"__proto__\":{\"signedOff\":\"2026-03-14T09:26:53.589Z\",\"signedRevision\":\"a1b2c3d\",\"reachedEnd\":false,\"dwellSeconds\":0,\"checklist\":{}}},\"everyoneSheets\":{},\"days\":[\"2026-03-14\"],\"prefs\":{\"charKeys\":true,\"railFolded\":false,\"catalogView\":null,\"diagramTheme\":null,\"codePalette\":null},\"meta\":{\"lastExport\":null,\"persisted\":null}}}",
+      "expect": {
+        "kind": "ok",
+        "reads": {
+          "signed": {
+            "alpha/first": "2026-03-14T09:26:53.589Z"
+          },
+          "everyoneSigned": {},
+          "days": [
+            "2026-03-14"
+          ]
+        }
+      }
+    },
+    {
+      "name": "sheets: a constructor slug",
+      "input": "{\"schema\":1,\"savedAt\":\"2026-03-14T08:00:00.000Z\",\"data\":{\"sheets\":{\"alpha/first\":{\"signedOff\":\"2026-03-14T09:26:53.589Z\",\"signedRevision\":\"a1b2c3d\",\"reachedEnd\":false,\"dwellSeconds\":0,\"checklist\":{}},\"constructor\":{\"signedOff\":\"2026-03-14T09:26:53.589Z\",\"signedRevision\":\"a1b2c3d\",\"reachedEnd\":false,\"dwellSeconds\":0,\"checklist\":{}}},\"everyoneSheets\":{},\"days\":[\"2026-03-14\"],\"prefs\":{\"charKeys\":true,\"railFolded\":false,\"catalogView\":null,\"diagramTheme\":null,\"codePalette\":null},\"meta\":{\"lastExport\":null,\"persisted\":null}}}",
+      "expect": {
+        "kind": "ok",
+        "reads": {
+          "signed": {
+            "alpha/first": "2026-03-14T09:26:53.589Z"
+          },
+          "everyoneSigned": {},
+          "days": [
+            "2026-03-14"
+          ]
+        }
+      }
+    },
+    {
+      "name": "sheets: a prototype slug",
+      "input": "{\"schema\":1,\"savedAt\":\"2026-03-14T08:00:00.000Z\",\"data\":{\"sheets\":{\"alpha/first\":{\"signedOff\":\"2026-03-14T09:26:53.589Z\",\"signedRevision\":\"a1b2c3d\",\"reachedEnd\":false,\"dwellSeconds\":0,\"checklist\":{}},\"prototype\":{\"signedOff\":\"2026-03-14T09:26:53.589Z\",\"signedRevision\":\"a1b2c3d\",\"reachedEnd\":false,\"dwellSeconds\":0,\"checklist\":{}}},\"everyoneSheets\":{},\"days\":[\"2026-03-14\"],\"prefs\":{\"charKeys\":true,\"railFolded\":false,\"catalogView\":null,\"diagramTheme\":null,\"codePalette\":null},\"meta\":{\"lastExport\":null,\"persisted\":null}}}",
+      "expect": {
+        "kind": "ok",
+        "reads": {
+          "signed": {
+            "alpha/first": "2026-03-14T09:26:53.589Z"
+          },
+          "everyoneSigned": {},
+          "days": [
+            "2026-03-14"
+          ]
+        }
+      }
+    },
+    {
+      "name": "sheets: a 201-character slug",
+      "input": "{\"schema\":1,\"savedAt\":\"2026-03-14T08:00:00.000Z\",\"data\":{\"sheets\":{\"alpha/first\":{\"signedOff\":\"2026-03-14T09:26:53.589Z\",\"signedRevision\":\"a1b2c3d\",\"reachedEnd\":false,\"dwellSeconds\":0,\"checklist\":{}},\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\":{\"signedOff\":\"2026-03-14T09:26:53.589Z\",\"signedRevision\":\"a1b2c3d\",\"reachedEnd\":false,\"dwellSeconds\":0,\"checklist\":{}}},\"everyoneSheets\":{},\"days\":[\"2026-03-14\"],\"prefs\":{\"charKeys\":true,\"railFolded\":false,\"catalogView\":null,\"diagramTheme\":null,\"codePalette\":null},\"meta\":{\"lastExport\":null,\"persisted\":null}}}",
+      "expect": {
+        "kind": "ok",
+        "reads": {
+          "signed": {
+            "alpha/first": "2026-03-14T09:26:53.589Z"
+          },
+          "everyoneSigned": {},
+          "days": [
+            "2026-03-14"
+          ]
+        }
+      }
+    },
+    {
+      "name": "sheets: a 200-character slug",
+      "input": "{\"schema\":1,\"savedAt\":\"2026-03-14T08:00:00.000Z\",\"data\":{\"sheets\":{\"alpha/first\":{\"signedOff\":\"2026-03-14T09:26:53.589Z\",\"signedRevision\":\"a1b2c3d\",\"reachedEnd\":false,\"dwellSeconds\":0,\"checklist\":{}},\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\":{\"signedOff\":\"2026-03-14T09:26:53.589Z\",\"signedRevision\":\"a1b2c3d\",\"reachedEnd\":false,\"dwellSeconds\":0,\"checklist\":{}}},\"everyoneSheets\":{},\"days\":[\"2026-03-14\"],\"prefs\":{\"charKeys\":true,\"railFolded\":false,\"catalogView\":null,\"diagramTheme\":null,\"codePalette\":null},\"meta\":{\"lastExport\":null,\"persisted\":null}}}",
+      "expect": {
+        "kind": "ok",
+        "reads": {
+          "signed": {
+            "alpha/first": "2026-03-14T09:26:53.589Z",
+            "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa": "2026-03-14T09:26:53.589Z"
+          },
+          "everyoneSigned": {},
+          "days": [
+            "2026-03-14"
+          ]
+        }
+      }
+    },
+    {
+      "name": "sheets: a slug \"42\"",
+      "input": "{\"schema\":1,\"savedAt\":\"2026-03-14T08:00:00.000Z\",\"data\":{\"sheets\":{\"alpha/first\":{\"signedOff\":\"2026-03-14T09:26:53.589Z\",\"signedRevision\":\"a1b2c3d\",\"reachedEnd\":false,\"dwellSeconds\":0,\"checklist\":{}},\"42\":{\"signedOff\":\"2026-03-14T09:26:53.589Z\",\"signedRevision\":\"a1b2c3d\",\"reachedEnd\":false,\"dwellSeconds\":0,\"checklist\":{}}},\"everyoneSheets\":{},\"days\":[\"2026-03-14\"],\"prefs\":{\"charKeys\":true,\"railFolded\":false,\"catalogView\":null,\"diagramTheme\":null,\"codePalette\":null},\"meta\":{\"lastExport\":null,\"persisted\":null}}}",
+      "expect": {
+        "kind": "ok",
+        "reads": {
+          "signed": {
+            "42": "2026-03-14T09:26:53.589Z",
+            "alpha/first": "2026-03-14T09:26:53.589Z"
+          },
+          "everyoneSigned": {},
+          "days": [
+            "2026-03-14"
+          ]
+        }
+      }
+    },
+    {
+      "name": "sheets: an entry that is not an object",
+      "input": "{\"schema\":1,\"savedAt\":\"2026-03-14T08:00:00.000Z\",\"data\":{\"sheets\":{\"alpha/first\":{\"signedOff\":\"2026-03-14T09:26:53.589Z\",\"signedRevision\":\"a1b2c3d\",\"reachedEnd\":false,\"dwellSeconds\":0,\"checklist\":{}},\"alpha/second\":\"signed\"},\"everyoneSheets\":{},\"days\":[\"2026-03-14\"],\"prefs\":{\"charKeys\":true,\"railFolded\":false,\"catalogView\":null,\"diagramTheme\":null,\"codePalette\":null},\"meta\":{\"lastExport\":null,\"persisted\":null}}}",
+      "expect": {
+        "kind": "ok",
+        "reads": {
+          "signed": {
+            "alpha/first": "2026-03-14T09:26:53.589Z"
+          },
+          "everyoneSigned": {},
+          "days": [
+            "2026-03-14"
+          ]
+        }
+      }
+    },
+    {
+      "name": "sheets: an entry {}",
+      "input": "{\"schema\":1,\"savedAt\":\"2026-03-14T08:00:00.000Z\",\"data\":{\"sheets\":{\"alpha/first\":{\"signedOff\":\"2026-03-14T09:26:53.589Z\",\"signedRevision\":\"a1b2c3d\",\"reachedEnd\":false,\"dwellSeconds\":0,\"checklist\":{}},\"alpha/second\":{}},\"everyoneSheets\":{},\"days\":[\"2026-03-14\"],\"prefs\":{\"charKeys\":true,\"railFolded\":false,\"catalogView\":null,\"diagramTheme\":null,\"codePalette\":null},\"meta\":{\"lastExport\":null,\"persisted\":null}}}",
+      "expect": {
+        "kind": "ok",
+        "reads": {
+          "signed": {
+            "alpha/first": "2026-03-14T09:26:53.589Z"
+          },
+          "everyoneSigned": {},
+          "days": [
+            "2026-03-14"
+          ]
+        }
+      }
+    },
+    {
+      "name": "sheets: an entry with only unknown keys",
+      "input": "{\"schema\":1,\"savedAt\":\"2026-03-14T08:00:00.000Z\",\"data\":{\"sheets\":{\"alpha/first\":{\"signedOff\":\"2026-03-14T09:26:53.589Z\",\"signedRevision\":\"a1b2c3d\",\"reachedEnd\":false,\"dwellSeconds\":0,\"checklist\":{}},\"alpha/second\":{\"colour\":\"red\"}},\"everyoneSheets\":{},\"days\":[\"2026-03-14\"],\"prefs\":{\"charKeys\":true,\"railFolded\":false,\"catalogView\":null,\"diagramTheme\":null,\"codePalette\":null},\"meta\":{\"lastExport\":null,\"persisted\":null}}}",
+      "expect": {
+        "kind": "ok",
+        "reads": {
+          "signed": {
+            "alpha/first": "2026-03-14T09:26:53.589Z"
+          },
+          "everyoneSigned": {},
+          "days": [
+            "2026-03-14"
+          ]
+        }
+      }
+    },
+    {
+      "name": "sheets: an entry whose only field is an invalid signedOff",
+      "input": "{\"schema\":1,\"savedAt\":\"2026-03-14T08:00:00.000Z\",\"data\":{\"sheets\":{\"alpha/first\":{\"signedOff\":\"2026-03-14T09:26:53.589Z\",\"signedRevision\":\"a1b2c3d\",\"reachedEnd\":false,\"dwellSeconds\":0,\"checklist\":{}},\"alpha/second\":{\"signedOff\":\"yesterday\"}},\"everyoneSheets\":{},\"days\":[\"2026-03-14\"],\"prefs\":{\"charKeys\":true,\"railFolded\":false,\"catalogView\":null,\"diagramTheme\":null,\"codePalette\":null},\"meta\":{\"lastExport\":null,\"persisted\":null}}}",
+      "expect": {
+        "kind": "ok",
+        "reads": {
+          "signed": {
+            "alpha/first": "2026-03-14T09:26:53.589Z"
+          },
+          "everyoneSigned": {},
+          "days": [
+            "2026-03-14"
+          ]
+        }
+      }
+    },
+    {
+      "name": "everyoneSheets: missing, as a record written before the tracks",
+      "input": "{\"schema\":1,\"savedAt\":\"2026-03-14T08:00:00.000Z\",\"data\":{\"sheets\":{\"alpha/first\":{\"signedOff\":\"2026-03-14T09:26:53.589Z\",\"signedRevision\":\"a1b2c3d\",\"reachedEnd\":false,\"dwellSeconds\":0,\"checklist\":{}}},\"days\":[\"2026-03-14\"],\"prefs\":{\"charKeys\":true,\"railFolded\":false,\"catalogView\":null,\"diagramTheme\":null,\"codePalette\":null},\"meta\":{\"lastExport\":null,\"persisted\":null}}}",
+      "expect": {
+        "kind": "ok",
+        "reads": {
+          "signed": {
+            "alpha/first": "2026-03-14T09:26:53.589Z"
+          },
+          "everyoneSigned": {},
+          "days": [
+            "2026-03-14"
+          ]
+        }
+      }
+    },
+    {
+      "name": "everyoneSheets: a signed entry",
+      "input": "{\"schema\":1,\"savedAt\":\"2026-03-14T08:00:00.000Z\",\"data\":{\"sheets\":{\"alpha/first\":{\"signedOff\":\"2026-03-14T09:26:53.589Z\",\"signedRevision\":\"a1b2c3d\",\"reachedEnd\":false,\"dwellSeconds\":0,\"checklist\":{}}},\"everyoneSheets\":{\"alpha/first\":{\"signedOff\":\"2026-03-14T09:26:53.589Z\",\"signedRevision\":\"a1b2c3d\",\"reachedEnd\":false,\"dwellSeconds\":0,\"checklist\":{}},\"alpha/second\":{\"signedOff\":\"2026-03-14T09:26:53.589Z\",\"signedRevision\":\"a1b2c3d\",\"reachedEnd\":false,\"dwellSeconds\":0,\"checklist\":{}}},\"days\":[\"2026-03-14\"],\"prefs\":{\"charKeys\":true,\"railFolded\":false,\"catalogView\":null,\"diagramTheme\":null,\"codePalette\":null},\"meta\":{\"lastExport\":null,\"persisted\":null}}}",
+      "expect": {
+        "kind": "ok",
+        "reads": {
+          "signed": {
+            "alpha/first": "2026-03-14T09:26:53.589Z"
+          },
+          "everyoneSigned": {
+            "alpha/first": "2026-03-14T09:26:53.589Z",
+            "alpha/second": "2026-03-14T09:26:53.589Z"
+          },
+          "days": [
+            "2026-03-14"
+          ]
+        }
+      }
+    },
+    {
+      "name": "everyoneSheets: a __proto__ slug",
+      "input": "{\"schema\":1,\"savedAt\":\"2026-03-14T08:00:00.000Z\",\"data\":{\"sheets\":{\"alpha/first\":{\"signedOff\":\"2026-03-14T09:26:53.589Z\",\"signedRevision\":\"a1b2c3d\",\"reachedEnd\":false,\"dwellSeconds\":0,\"checklist\":{}}},\"everyoneSheets\":{\"alpha/first\":{\"signedOff\":\"2026-03-14T09:26:53.589Z\",\"signedRevision\":\"a1b2c3d\",\"reachedEnd\":false,\"dwellSeconds\":0,\"checklist\":{}},\"__proto__\":{\"signedOff\":\"2026-03-14T09:26:53.589Z\",\"signedRevision\":\"a1b2c3d\",\"reachedEnd\":false,\"dwellSeconds\":0,\"checklist\":{}}},\"days\":[\"2026-03-14\"],\"prefs\":{\"charKeys\":true,\"railFolded\":false,\"catalogView\":null,\"diagramTheme\":null,\"codePalette\":null},\"meta\":{\"lastExport\":null,\"persisted\":null}}}",
+      "expect": {
+        "kind": "ok",
+        "reads": {
+          "signed": {
+            "alpha/first": "2026-03-14T09:26:53.589Z"
+          },
+          "everyoneSigned": {
+            "alpha/first": "2026-03-14T09:26:53.589Z"
+          },
+          "days": [
+            "2026-03-14"
+          ]
+        }
+      }
+    },
+    {
+      "name": "everyoneSheets: an entry {}",
+      "input": "{\"schema\":1,\"savedAt\":\"2026-03-14T08:00:00.000Z\",\"data\":{\"sheets\":{\"alpha/first\":{\"signedOff\":\"2026-03-14T09:26:53.589Z\",\"signedRevision\":\"a1b2c3d\",\"reachedEnd\":false,\"dwellSeconds\":0,\"checklist\":{}}},\"everyoneSheets\":{\"alpha/first\":{\"signedOff\":\"2026-03-14T09:26:53.589Z\",\"signedRevision\":\"a1b2c3d\",\"reachedEnd\":false,\"dwellSeconds\":0,\"checklist\":{}},\"alpha/second\":{}},\"days\":[\"2026-03-14\"],\"prefs\":{\"charKeys\":true,\"railFolded\":false,\"catalogView\":null,\"diagramTheme\":null,\"codePalette\":null},\"meta\":{\"lastExport\":null,\"persisted\":null}}}",
+      "expect": {
+        "kind": "ok",
+        "reads": {
+          "signed": {
+            "alpha/first": "2026-03-14T09:26:53.589Z"
+          },
+          "everyoneSigned": {
+            "alpha/first": "2026-03-14T09:26:53.589Z"
+          },
+          "days": [
+            "2026-03-14"
+          ]
+        }
+      }
+    },
+    {
+      "name": "everyoneSheets: an array",
+      "input": "{\"schema\":1,\"savedAt\":\"2026-03-14T08:00:00.000Z\",\"data\":{\"sheets\":{\"alpha/first\":{\"signedOff\":\"2026-03-14T09:26:53.589Z\",\"signedRevision\":\"a1b2c3d\",\"reachedEnd\":false,\"dwellSeconds\":0,\"checklist\":{}}},\"everyoneSheets\":[],\"days\":[\"2026-03-14\"],\"prefs\":{\"charKeys\":true,\"railFolded\":false,\"catalogView\":null,\"diagramTheme\":null,\"codePalette\":null},\"meta\":{\"lastExport\":null,\"persisted\":null}}}",
+      "expect": {
+        "kind": "ok",
+        "reads": {
+          "signed": {
+            "alpha/first": "2026-03-14T09:26:53.589Z"
+          },
+          "everyoneSigned": {},
+          "days": [
+            "2026-03-14"
+          ]
+        }
+      }
+    },
+    {
+      "name": "signedOff: \"2026-03-14T09:26\"",
+      "input": "{\"schema\":1,\"savedAt\":\"2026-03-14T08:00:00.000Z\",\"data\":{\"sheets\":{\"alpha/first\":{\"signedOff\":\"2026-03-14T09:26\",\"signedRevision\":\"a1b2c3d\",\"reachedEnd\":false,\"dwellSeconds\":0,\"checklist\":{}}},\"everyoneSheets\":{},\"days\":[\"2026-03-14\"],\"prefs\":{\"charKeys\":true,\"railFolded\":false,\"catalogView\":null,\"diagramTheme\":null,\"codePalette\":null},\"meta\":{\"lastExport\":null,\"persisted\":null}}}",
+      "expect": {
+        "kind": "ok",
+        "reads": {
+          "signed": {
+            "alpha/first": "2026-03-14T09:26"
+          },
+          "everyoneSigned": {},
+          "days": [
+            "2026-03-14"
+          ]
+        }
+      }
+    },
+    {
+      "name": "signedOff: \"2026-03-14T09:26Z\"",
+      "input": "{\"schema\":1,\"savedAt\":\"2026-03-14T08:00:00.000Z\",\"data\":{\"sheets\":{\"alpha/first\":{\"signedOff\":\"2026-03-14T09:26Z\",\"signedRevision\":\"a1b2c3d\",\"reachedEnd\":false,\"dwellSeconds\":0,\"checklist\":{}}},\"everyoneSheets\":{},\"days\":[\"2026-03-14\"],\"prefs\":{\"charKeys\":true,\"railFolded\":false,\"catalogView\":null,\"diagramTheme\":null,\"codePalette\":null},\"meta\":{\"lastExport\":null,\"persisted\":null}}}",
+      "expect": {
+        "kind": "ok",
+        "reads": {
+          "signed": {
+            "alpha/first": "2026-03-14T09:26Z"
+          },
+          "everyoneSigned": {},
+          "days": [
+            "2026-03-14"
+          ]
+        }
+      }
+    },
+    {
+      "name": "signedOff: \"2026-03-14T09:26+03:00\"",
+      "input": "{\"schema\":1,\"savedAt\":\"2026-03-14T08:00:00.000Z\",\"data\":{\"sheets\":{\"alpha/first\":{\"signedOff\":\"2026-03-14T09:26+03:00\",\"signedRevision\":\"a1b2c3d\",\"reachedEnd\":false,\"dwellSeconds\":0,\"checklist\":{}}},\"everyoneSheets\":{},\"days\":[\"2026-03-14\"],\"prefs\":{\"charKeys\":true,\"railFolded\":false,\"catalogView\":null,\"diagramTheme\":null,\"codePalette\":null},\"meta\":{\"lastExport\":null,\"persisted\":null}}}",
+      "expect": {
+        "kind": "ok",
+        "reads": {
+          "signed": {
+            "alpha/first": "2026-03-14T09:26+03:00"
+          },
+          "everyoneSigned": {},
+          "days": [
+            "2026-03-14"
+          ]
+        }
+      }
+    },
+    {
+      "name": "signedOff: \"2026-03-14T09:26-05:30\"",
+      "input": "{\"schema\":1,\"savedAt\":\"2026-03-14T08:00:00.000Z\",\"data\":{\"sheets\":{\"alpha/first\":{\"signedOff\":\"2026-03-14T09:26-05:30\",\"signedRevision\":\"a1b2c3d\",\"reachedEnd\":false,\"dwellSeconds\":0,\"checklist\":{}}},\"everyoneSheets\":{},\"days\":[\"2026-03-14\"],\"prefs\":{\"charKeys\":true,\"railFolded\":false,\"catalogView\":null,\"diagramTheme\":null,\"codePalette\":null},\"meta\":{\"lastExport\":null,\"persisted\":null}}}",
+      "expect": {
+        "kind": "ok",
+        "reads": {
+          "signed": {
+            "alpha/first": "2026-03-14T09:26-05:30"
+          },
+          "everyoneSigned": {},
+          "days": [
+            "2026-03-14"
+          ]
+        }
+      }
+    },
+    {
+      "name": "signedOff: \"2026-03-14T09:26+0300\"",
+      "input": "{\"schema\":1,\"savedAt\":\"2026-03-14T08:00:00.000Z\",\"data\":{\"sheets\":{\"alpha/first\":{\"signedOff\":\"2026-03-14T09:26+0300\",\"signedRevision\":\"a1b2c3d\",\"reachedEnd\":false,\"dwellSeconds\":0,\"checklist\":{}}},\"everyoneSheets\":{},\"days\":[\"2026-03-14\"],\"prefs\":{\"charKeys\":true,\"railFolded\":false,\"catalogView\":null,\"diagramTheme\":null,\"codePalette\":null},\"meta\":{\"lastExport\":null,\"persisted\":null}}}",
+      "expect": {
+        "kind": "ok",
+        "reads": {
+          "signed": {
+            "alpha/first": "2026-03-14T09:26+0300"
+          },
+          "everyoneSigned": {},
+          "days": [
+            "2026-03-14"
+          ]
+        }
+      }
+    },
+    {
+      "name": "signedOff: \"2026-03-14T09:26:53\"",
+      "input": "{\"schema\":1,\"savedAt\":\"2026-03-14T08:00:00.000Z\",\"data\":{\"sheets\":{\"alpha/first\":{\"signedOff\":\"2026-03-14T09:26:53\",\"signedRevision\":\"a1b2c3d\",\"reachedEnd\":false,\"dwellSeconds\":0,\"checklist\":{}}},\"everyoneSheets\":{},\"days\":[\"2026-03-14\"],\"prefs\":{\"charKeys\":true,\"railFolded\":false,\"catalogView\":null,\"diagramTheme\":null,\"codePalette\":null},\"meta\":{\"lastExport\":null,\"persisted\":null}}}",
+      "expect": {
+        "kind": "ok",
+        "reads": {
+          "signed": {
+            "alpha/first": "2026-03-14T09:26:53"
+          },
+          "everyoneSigned": {},
+          "days": [
+            "2026-03-14"
+          ]
+        }
+      }
+    },
+    {
+      "name": "signedOff: \"2026-03-14T09:26:53Z\"",
+      "input": "{\"schema\":1,\"savedAt\":\"2026-03-14T08:00:00.000Z\",\"data\":{\"sheets\":{\"alpha/first\":{\"signedOff\":\"2026-03-14T09:26:53Z\",\"signedRevision\":\"a1b2c3d\",\"reachedEnd\":false,\"dwellSeconds\":0,\"checklist\":{}}},\"everyoneSheets\":{},\"days\":[\"2026-03-14\"],\"prefs\":{\"charKeys\":true,\"railFolded\":false,\"catalogView\":null,\"diagramTheme\":null,\"codePalette\":null},\"meta\":{\"lastExport\":null,\"persisted\":null}}}",
+      "expect": {
+        "kind": "ok",
+        "reads": {
+          "signed": {
+            "alpha/first": "2026-03-14T09:26:53Z"
+          },
+          "everyoneSigned": {},
+          "days": [
+            "2026-03-14"
+          ]
+        }
+      }
+    },
+    {
+      "name": "signedOff: \"2026-03-14T09:26:53+03:00\"",
+      "input": "{\"schema\":1,\"savedAt\":\"2026-03-14T08:00:00.000Z\",\"data\":{\"sheets\":{\"alpha/first\":{\"signedOff\":\"2026-03-14T09:26:53+03:00\",\"signedRevision\":\"a1b2c3d\",\"reachedEnd\":false,\"dwellSeconds\":0,\"checklist\":{}}},\"everyoneSheets\":{},\"days\":[\"2026-03-14\"],\"prefs\":{\"charKeys\":true,\"railFolded\":false,\"catalogView\":null,\"diagramTheme\":null,\"codePalette\":null},\"meta\":{\"lastExport\":null,\"persisted\":null}}}",
+      "expect": {
+        "kind": "ok",
+        "reads": {
+          "signed": {
+            "alpha/first": "2026-03-14T09:26:53+03:00"
+          },
+          "everyoneSigned": {},
+          "days": [
+            "2026-03-14"
+          ]
+        }
+      }
+    },
+    {
+      "name": "signedOff: \"2026-03-14T09:26:53-05:30\"",
+      "input": "{\"schema\":1,\"savedAt\":\"2026-03-14T08:00:00.000Z\",\"data\":{\"sheets\":{\"alpha/first\":{\"signedOff\":\"2026-03-14T09:26:53-05:30\",\"signedRevision\":\"a1b2c3d\",\"reachedEnd\":false,\"dwellSeconds\":0,\"checklist\":{}}},\"everyoneSheets\":{},\"days\":[\"2026-03-14\"],\"prefs\":{\"charKeys\":true,\"railFolded\":false,\"catalogView\":null,\"diagramTheme\":null,\"codePalette\":null},\"meta\":{\"lastExport\":null,\"persisted\":null}}}",
+      "expect": {
+        "kind": "ok",
+        "reads": {
+          "signed": {
+            "alpha/first": "2026-03-14T09:26:53-05:30"
+          },
+          "everyoneSigned": {},
+          "days": [
+            "2026-03-14"
+          ]
+        }
+      }
+    },
+    {
+      "name": "signedOff: \"2026-03-14T09:26:53+0300\"",
+      "input": "{\"schema\":1,\"savedAt\":\"2026-03-14T08:00:00.000Z\",\"data\":{\"sheets\":{\"alpha/first\":{\"signedOff\":\"2026-03-14T09:26:53+0300\",\"signedRevision\":\"a1b2c3d\",\"reachedEnd\":false,\"dwellSeconds\":0,\"checklist\":{}}},\"everyoneSheets\":{},\"days\":[\"2026-03-14\"],\"prefs\":{\"charKeys\":true,\"railFolded\":false,\"catalogView\":null,\"diagramTheme\":null,\"codePalette\":null},\"meta\":{\"lastExport\":null,\"persisted\":null}}}",
+      "expect": {
+        "kind": "ok",
+        "reads": {
+          "signed": {
+            "alpha/first": "2026-03-14T09:26:53+0300"
+          },
+          "everyoneSigned": {},
+          "days": [
+            "2026-03-14"
+          ]
+        }
+      }
+    },
+    {
+      "name": "signedOff: \"2026-03-14T09:26:53.5\"",
+      "input": "{\"schema\":1,\"savedAt\":\"2026-03-14T08:00:00.000Z\",\"data\":{\"sheets\":{\"alpha/first\":{\"signedOff\":\"2026-03-14T09:26:53.5\",\"signedRevision\":\"a1b2c3d\",\"reachedEnd\":false,\"dwellSeconds\":0,\"checklist\":{}}},\"everyoneSheets\":{},\"days\":[\"2026-03-14\"],\"prefs\":{\"charKeys\":true,\"railFolded\":false,\"catalogView\":null,\"diagramTheme\":null,\"codePalette\":null},\"meta\":{\"lastExport\":null,\"persisted\":null}}}",
+      "expect": {
+        "kind": "ok",
+        "reads": {
+          "signed": {
+            "alpha/first": "2026-03-14T09:26:53.5"
+          },
+          "everyoneSigned": {},
+          "days": [
+            "2026-03-14"
+          ]
+        }
+      }
+    },
+    {
+      "name": "signedOff: \"2026-03-14T09:26:53.5Z\"",
+      "input": "{\"schema\":1,\"savedAt\":\"2026-03-14T08:00:00.000Z\",\"data\":{\"sheets\":{\"alpha/first\":{\"signedOff\":\"2026-03-14T09:26:53.5Z\",\"signedRevision\":\"a1b2c3d\",\"reachedEnd\":false,\"dwellSeconds\":0,\"checklist\":{}}},\"everyoneSheets\":{},\"days\":[\"2026-03-14\"],\"prefs\":{\"charKeys\":true,\"railFolded\":false,\"catalogView\":null,\"diagramTheme\":null,\"codePalette\":null},\"meta\":{\"lastExport\":null,\"persisted\":null}}}",
+      "expect": {
+        "kind": "ok",
+        "reads": {
+          "signed": {
+            "alpha/first": "2026-03-14T09:26:53.5Z"
+          },
+          "everyoneSigned": {},
+          "days": [
+            "2026-03-14"
+          ]
+        }
+      }
+    },
+    {
+      "name": "signedOff: \"2026-03-14T09:26:53.5+03:00\"",
+      "input": "{\"schema\":1,\"savedAt\":\"2026-03-14T08:00:00.000Z\",\"data\":{\"sheets\":{\"alpha/first\":{\"signedOff\":\"2026-03-14T09:26:53.5+03:00\",\"signedRevision\":\"a1b2c3d\",\"reachedEnd\":false,\"dwellSeconds\":0,\"checklist\":{}}},\"everyoneSheets\":{},\"days\":[\"2026-03-14\"],\"prefs\":{\"charKeys\":true,\"railFolded\":false,\"catalogView\":null,\"diagramTheme\":null,\"codePalette\":null},\"meta\":{\"lastExport\":null,\"persisted\":null}}}",
+      "expect": {
+        "kind": "ok",
+        "reads": {
+          "signed": {
+            "alpha/first": "2026-03-14T09:26:53.5+03:00"
+          },
+          "everyoneSigned": {},
+          "days": [
+            "2026-03-14"
+          ]
+        }
+      }
+    },
+    {
+      "name": "signedOff: \"2026-03-14T09:26:53.5-05:30\"",
+      "input": "{\"schema\":1,\"savedAt\":\"2026-03-14T08:00:00.000Z\",\"data\":{\"sheets\":{\"alpha/first\":{\"signedOff\":\"2026-03-14T09:26:53.5-05:30\",\"signedRevision\":\"a1b2c3d\",\"reachedEnd\":false,\"dwellSeconds\":0,\"checklist\":{}}},\"everyoneSheets\":{},\"days\":[\"2026-03-14\"],\"prefs\":{\"charKeys\":true,\"railFolded\":false,\"catalogView\":null,\"diagramTheme\":null,\"codePalette\":null},\"meta\":{\"lastExport\":null,\"persisted\":null}}}",
+      "expect": {
+        "kind": "ok",
+        "reads": {
+          "signed": {
+            "alpha/first": "2026-03-14T09:26:53.5-05:30"
+          },
+          "everyoneSigned": {},
+          "days": [
+            "2026-03-14"
+          ]
+        }
+      }
+    },
+    {
+      "name": "signedOff: \"2026-03-14T09:26:53.5+0300\"",
+      "input": "{\"schema\":1,\"savedAt\":\"2026-03-14T08:00:00.000Z\",\"data\":{\"sheets\":{\"alpha/first\":{\"signedOff\":\"2026-03-14T09:26:53.5+0300\",\"signedRevision\":\"a1b2c3d\",\"reachedEnd\":false,\"dwellSeconds\":0,\"checklist\":{}}},\"everyoneSheets\":{},\"days\":[\"2026-03-14\"],\"prefs\":{\"charKeys\":true,\"railFolded\":false,\"catalogView\":null,\"diagramTheme\":null,\"codePalette\":null},\"meta\":{\"lastExport\":null,\"persisted\":null}}}",
+      "expect": {
+        "kind": "ok",
+        "reads": {
+          "signed": {
+            "alpha/first": "2026-03-14T09:26:53.5+0300"
+          },
+          "everyoneSigned": {},
+          "days": [
+            "2026-03-14"
+          ]
+        }
+      }
+    },
+    {
+      "name": "signedOff: \"2026-03-14T09:26:53.58\"",
+      "input": "{\"schema\":1,\"savedAt\":\"2026-03-14T08:00:00.000Z\",\"data\":{\"sheets\":{\"alpha/first\":{\"signedOff\":\"2026-03-14T09:26:53.58\",\"signedRevision\":\"a1b2c3d\",\"reachedEnd\":false,\"dwellSeconds\":0,\"checklist\":{}}},\"everyoneSheets\":{},\"days\":[\"2026-03-14\"],\"prefs\":{\"charKeys\":true,\"railFolded\":false,\"catalogView\":null,\"diagramTheme\":null,\"codePalette\":null},\"meta\":{\"lastExport\":null,\"persisted\":null}}}",
+      "expect": {
+        "kind": "ok",
+        "reads": {
+          "signed": {
+            "alpha/first": "2026-03-14T09:26:53.58"
+          },
+          "everyoneSigned": {},
+          "days": [
+            "2026-03-14"
+          ]
+        }
+      }
+    },
+    {
+      "name": "signedOff: \"2026-03-14T09:26:53.58Z\"",
+      "input": "{\"schema\":1,\"savedAt\":\"2026-03-14T08:00:00.000Z\",\"data\":{\"sheets\":{\"alpha/first\":{\"signedOff\":\"2026-03-14T09:26:53.58Z\",\"signedRevision\":\"a1b2c3d\",\"reachedEnd\":false,\"dwellSeconds\":0,\"checklist\":{}}},\"everyoneSheets\":{},\"days\":[\"2026-03-14\"],\"prefs\":{\"charKeys\":true,\"railFolded\":false,\"catalogView\":null,\"diagramTheme\":null,\"codePalette\":null},\"meta\":{\"lastExport\":null,\"persisted\":null}}}",
+      "expect": {
+        "kind": "ok",
+        "reads": {
+          "signed": {
+            "alpha/first": "2026-03-14T09:26:53.58Z"
+          },
+          "everyoneSigned": {},
+          "days": [
+            "2026-03-14"
+          ]
+        }
+      }
+    },
+    {
+      "name": "signedOff: \"2026-03-14T09:26:53.58+03:00\"",
+      "input": "{\"schema\":1,\"savedAt\":\"2026-03-14T08:00:00.000Z\",\"data\":{\"sheets\":{\"alpha/first\":{\"signedOff\":\"2026-03-14T09:26:53.58+03:00\",\"signedRevision\":\"a1b2c3d\",\"reachedEnd\":false,\"dwellSeconds\":0,\"checklist\":{}}},\"everyoneSheets\":{},\"days\":[\"2026-03-14\"],\"prefs\":{\"charKeys\":true,\"railFolded\":false,\"catalogView\":null,\"diagramTheme\":null,\"codePalette\":null},\"meta\":{\"lastExport\":null,\"persisted\":null}}}",
+      "expect": {
+        "kind": "ok",
+        "reads": {
+          "signed": {
+            "alpha/first": "2026-03-14T09:26:53.58+03:00"
+          },
+          "everyoneSigned": {},
+          "days": [
+            "2026-03-14"
+          ]
+        }
+      }
+    },
+    {
+      "name": "signedOff: \"2026-03-14T09:26:53.58-05:30\"",
+      "input": "{\"schema\":1,\"savedAt\":\"2026-03-14T08:00:00.000Z\",\"data\":{\"sheets\":{\"alpha/first\":{\"signedOff\":\"2026-03-14T09:26:53.58-05:30\",\"signedRevision\":\"a1b2c3d\",\"reachedEnd\":false,\"dwellSeconds\":0,\"checklist\":{}}},\"everyoneSheets\":{},\"days\":[\"2026-03-14\"],\"prefs\":{\"charKeys\":true,\"railFolded\":false,\"catalogView\":null,\"diagramTheme\":null,\"codePalette\":null},\"meta\":{\"lastExport\":null,\"persisted\":null}}}",
+      "expect": {
+        "kind": "ok",
+        "reads": {
+          "signed": {
+            "alpha/first": "2026-03-14T09:26:53.58-05:30"
+          },
+          "everyoneSigned": {},
+          "days": [
+            "2026-03-14"
+          ]
+        }
+      }
+    },
+    {
+      "name": "signedOff: \"2026-03-14T09:26:53.58+0300\"",
+      "input": "{\"schema\":1,\"savedAt\":\"2026-03-14T08:00:00.000Z\",\"data\":{\"sheets\":{\"alpha/first\":{\"signedOff\":\"2026-03-14T09:26:53.58+0300\",\"signedRevision\":\"a1b2c3d\",\"reachedEnd\":false,\"dwellSeconds\":0,\"checklist\":{}}},\"everyoneSheets\":{},\"days\":[\"2026-03-14\"],\"prefs\":{\"charKeys\":true,\"railFolded\":false,\"catalogView\":null,\"diagramTheme\":null,\"codePalette\":null},\"meta\":{\"lastExport\":null,\"persisted\":null}}}",
+      "expect": {
+        "kind": "ok",
+        "reads": {
+          "signed": {
+            "alpha/first": "2026-03-14T09:26:53.58+0300"
+          },
+          "everyoneSigned": {},
+          "days": [
+            "2026-03-14"
+          ]
+        }
+      }
+    },
+    {
+      "name": "signedOff: \"2026-03-14T09:26:53.589\"",
+      "input": "{\"schema\":1,\"savedAt\":\"2026-03-14T08:00:00.000Z\",\"data\":{\"sheets\":{\"alpha/first\":{\"signedOff\":\"2026-03-14T09:26:53.589\",\"signedRevision\":\"a1b2c3d\",\"reachedEnd\":false,\"dwellSeconds\":0,\"checklist\":{}}},\"everyoneSheets\":{},\"days\":[\"2026-03-14\"],\"prefs\":{\"charKeys\":true,\"railFolded\":false,\"catalogView\":null,\"diagramTheme\":null,\"codePalette\":null},\"meta\":{\"lastExport\":null,\"persisted\":null}}}",
+      "expect": {
+        "kind": "ok",
+        "reads": {
+          "signed": {
+            "alpha/first": "2026-03-14T09:26:53.589"
+          },
+          "everyoneSigned": {},
+          "days": [
+            "2026-03-14"
+          ]
+        }
+      }
+    },
+    {
+      "name": "signedOff: \"2026-03-14T09:26:53.589Z\"",
+      "input": "{\"schema\":1,\"savedAt\":\"2026-03-14T08:00:00.000Z\",\"data\":{\"sheets\":{\"alpha/first\":{\"signedOff\":\"2026-03-14T09:26:53.589Z\",\"signedRevision\":\"a1b2c3d\",\"reachedEnd\":false,\"dwellSeconds\":0,\"checklist\":{}}},\"everyoneSheets\":{},\"days\":[\"2026-03-14\"],\"prefs\":{\"charKeys\":true,\"railFolded\":false,\"catalogView\":null,\"diagramTheme\":null,\"codePalette\":null},\"meta\":{\"lastExport\":null,\"persisted\":null}}}",
+      "expect": {
+        "kind": "ok",
+        "reads": {
+          "signed": {
+            "alpha/first": "2026-03-14T09:26:53.589Z"
+          },
+          "everyoneSigned": {},
+          "days": [
+            "2026-03-14"
+          ]
+        }
+      }
+    },
+    {
+      "name": "signedOff: \"2026-03-14T09:26:53.589+03:00\"",
+      "input": "{\"schema\":1,\"savedAt\":\"2026-03-14T08:00:00.000Z\",\"data\":{\"sheets\":{\"alpha/first\":{\"signedOff\":\"2026-03-14T09:26:53.589+03:00\",\"signedRevision\":\"a1b2c3d\",\"reachedEnd\":false,\"dwellSeconds\":0,\"checklist\":{}}},\"everyoneSheets\":{},\"days\":[\"2026-03-14\"],\"prefs\":{\"charKeys\":true,\"railFolded\":false,\"catalogView\":null,\"diagramTheme\":null,\"codePalette\":null},\"meta\":{\"lastExport\":null,\"persisted\":null}}}",
+      "expect": {
+        "kind": "ok",
+        "reads": {
+          "signed": {
+            "alpha/first": "2026-03-14T09:26:53.589+03:00"
+          },
+          "everyoneSigned": {},
+          "days": [
+            "2026-03-14"
+          ]
+        }
+      }
+    },
+    {
+      "name": "signedOff: \"2026-03-14T09:26:53.589-05:30\"",
+      "input": "{\"schema\":1,\"savedAt\":\"2026-03-14T08:00:00.000Z\",\"data\":{\"sheets\":{\"alpha/first\":{\"signedOff\":\"2026-03-14T09:26:53.589-05:30\",\"signedRevision\":\"a1b2c3d\",\"reachedEnd\":false,\"dwellSeconds\":0,\"checklist\":{}}},\"everyoneSheets\":{},\"days\":[\"2026-03-14\"],\"prefs\":{\"charKeys\":true,\"railFolded\":false,\"catalogView\":null,\"diagramTheme\":null,\"codePalette\":null},\"meta\":{\"lastExport\":null,\"persisted\":null}}}",
+      "expect": {
+        "kind": "ok",
+        "reads": {
+          "signed": {
+            "alpha/first": "2026-03-14T09:26:53.589-05:30"
+          },
+          "everyoneSigned": {},
+          "days": [
+            "2026-03-14"
+          ]
+        }
+      }
+    },
+    {
+      "name": "signedOff: \"2026-03-14T09:26:53.589+0300\"",
+      "input": "{\"schema\":1,\"savedAt\":\"2026-03-14T08:00:00.000Z\",\"data\":{\"sheets\":{\"alpha/first\":{\"signedOff\":\"2026-03-14T09:26:53.589+0300\",\"signedRevision\":\"a1b2c3d\",\"reachedEnd\":false,\"dwellSeconds\":0,\"checklist\":{}}},\"everyoneSheets\":{},\"days\":[\"2026-03-14\"],\"prefs\":{\"charKeys\":true,\"railFolded\":false,\"catalogView\":null,\"diagramTheme\":null,\"codePalette\":null},\"meta\":{\"lastExport\":null,\"persisted\":null}}}",
+      "expect": {
+        "kind": "ok",
+        "reads": {
+          "signed": {
+            "alpha/first": "2026-03-14T09:26:53.589+0300"
+          },
+          "everyoneSigned": {},
+          "days": [
+            "2026-03-14"
+          ]
+        }
+      }
+    },
+    {
+      "name": "signedOff: \"2026-03-14T09:26:53.5891\"",
+      "input": "{\"schema\":1,\"savedAt\":\"2026-03-14T08:00:00.000Z\",\"data\":{\"sheets\":{\"alpha/first\":{\"signedOff\":\"2026-03-14T09:26:53.5891\",\"signedRevision\":\"a1b2c3d\",\"reachedEnd\":false,\"dwellSeconds\":0,\"checklist\":{}}},\"everyoneSheets\":{},\"days\":[\"2026-03-14\"],\"prefs\":{\"charKeys\":true,\"railFolded\":false,\"catalogView\":null,\"diagramTheme\":null,\"codePalette\":null},\"meta\":{\"lastExport\":null,\"persisted\":null}}}",
+      "expect": {
+        "kind": "ok",
+        "reads": {
+          "signed": {
+            "alpha/first": "2026-03-14T09:26:53.5891"
+          },
+          "everyoneSigned": {},
+          "days": [
+            "2026-03-14"
+          ]
+        }
+      }
+    },
+    {
+      "name": "signedOff: \"2026-03-14T09:26:53.5891Z\"",
+      "input": "{\"schema\":1,\"savedAt\":\"2026-03-14T08:00:00.000Z\",\"data\":{\"sheets\":{\"alpha/first\":{\"signedOff\":\"2026-03-14T09:26:53.5891Z\",\"signedRevision\":\"a1b2c3d\",\"reachedEnd\":false,\"dwellSeconds\":0,\"checklist\":{}}},\"everyoneSheets\":{},\"days\":[\"2026-03-14\"],\"prefs\":{\"charKeys\":true,\"railFolded\":false,\"catalogView\":null,\"diagramTheme\":null,\"codePalette\":null},\"meta\":{\"lastExport\":null,\"persisted\":null}}}",
+      "expect": {
+        "kind": "ok",
+        "reads": {
+          "signed": {
+            "alpha/first": "2026-03-14T09:26:53.5891Z"
+          },
+          "everyoneSigned": {},
+          "days": [
+            "2026-03-14"
+          ]
+        }
+      }
+    },
+    {
+      "name": "signedOff: \"2026-03-14T09:26:53.5891+03:00\"",
+      "input": "{\"schema\":1,\"savedAt\":\"2026-03-14T08:00:00.000Z\",\"data\":{\"sheets\":{\"alpha/first\":{\"signedOff\":\"2026-03-14T09:26:53.5891+03:00\",\"signedRevision\":\"a1b2c3d\",\"reachedEnd\":false,\"dwellSeconds\":0,\"checklist\":{}}},\"everyoneSheets\":{},\"days\":[\"2026-03-14\"],\"prefs\":{\"charKeys\":true,\"railFolded\":false,\"catalogView\":null,\"diagramTheme\":null,\"codePalette\":null},\"meta\":{\"lastExport\":null,\"persisted\":null}}}",
+      "expect": {
+        "kind": "ok",
+        "reads": {
+          "signed": {
+            "alpha/first": "2026-03-14T09:26:53.5891+03:00"
+          },
+          "everyoneSigned": {},
+          "days": [
+            "2026-03-14"
+          ]
+        }
+      }
+    },
+    {
+      "name": "signedOff: \"2026-03-14T09:26:53.5891-05:30\"",
+      "input": "{\"schema\":1,\"savedAt\":\"2026-03-14T08:00:00.000Z\",\"data\":{\"sheets\":{\"alpha/first\":{\"signedOff\":\"2026-03-14T09:26:53.5891-05:30\",\"signedRevision\":\"a1b2c3d\",\"reachedEnd\":false,\"dwellSeconds\":0,\"checklist\":{}}},\"everyoneSheets\":{},\"days\":[\"2026-03-14\"],\"prefs\":{\"charKeys\":true,\"railFolded\":false,\"catalogView\":null,\"diagramTheme\":null,\"codePalette\":null},\"meta\":{\"lastExport\":null,\"persisted\":null}}}",
+      "expect": {
+        "kind": "ok",
+        "reads": {
+          "signed": {
+            "alpha/first": "2026-03-14T09:26:53.5891-05:30"
+          },
+          "everyoneSigned": {},
+          "days": [
+            "2026-03-14"
+          ]
+        }
+      }
+    },
+    {
+      "name": "signedOff: \"2026-03-14T09:26:53.5891+0300\"",
+      "input": "{\"schema\":1,\"savedAt\":\"2026-03-14T08:00:00.000Z\",\"data\":{\"sheets\":{\"alpha/first\":{\"signedOff\":\"2026-03-14T09:26:53.5891+0300\",\"signedRevision\":\"a1b2c3d\",\"reachedEnd\":false,\"dwellSeconds\":0,\"checklist\":{}}},\"everyoneSheets\":{},\"days\":[\"2026-03-14\"],\"prefs\":{\"charKeys\":true,\"railFolded\":false,\"catalogView\":null,\"diagramTheme\":null,\"codePalette\":null},\"meta\":{\"lastExport\":null,\"persisted\":null}}}",
+      "expect": {
+        "kind": "ok",
+        "reads": {
+          "signed": {
+            "alpha/first": "2026-03-14T09:26:53.5891+0300"
+          },
+          "everyoneSigned": {},
+          "days": [
+            "2026-03-14"
+          ]
+        }
+      }
+    },
+    {
+      "name": "signedOff: \"2026-03-14T09:26:53.58912\"",
+      "input": "{\"schema\":1,\"savedAt\":\"2026-03-14T08:00:00.000Z\",\"data\":{\"sheets\":{\"alpha/first\":{\"signedOff\":\"2026-03-14T09:26:53.58912\",\"signedRevision\":\"a1b2c3d\",\"reachedEnd\":false,\"dwellSeconds\":0,\"checklist\":{}}},\"everyoneSheets\":{},\"days\":[\"2026-03-14\"],\"prefs\":{\"charKeys\":true,\"railFolded\":false,\"catalogView\":null,\"diagramTheme\":null,\"codePalette\":null},\"meta\":{\"lastExport\":null,\"persisted\":null}}}",
+      "expect": {
+        "kind": "ok",
+        "reads": {
+          "signed": {
+            "alpha/first": "2026-03-14T09:26:53.58912"
+          },
+          "everyoneSigned": {},
+          "days": [
+            "2026-03-14"
+          ]
+        }
+      }
+    },
+    {
+      "name": "signedOff: \"2026-03-14T09:26:53.58912Z\"",
+      "input": "{\"schema\":1,\"savedAt\":\"2026-03-14T08:00:00.000Z\",\"data\":{\"sheets\":{\"alpha/first\":{\"signedOff\":\"2026-03-14T09:26:53.58912Z\",\"signedRevision\":\"a1b2c3d\",\"reachedEnd\":false,\"dwellSeconds\":0,\"checklist\":{}}},\"everyoneSheets\":{},\"days\":[\"2026-03-14\"],\"prefs\":{\"charKeys\":true,\"railFolded\":false,\"catalogView\":null,\"diagramTheme\":null,\"codePalette\":null},\"meta\":{\"lastExport\":null,\"persisted\":null}}}",
+      "expect": {
+        "kind": "ok",
+        "reads": {
+          "signed": {
+            "alpha/first": "2026-03-14T09:26:53.58912Z"
+          },
+          "everyoneSigned": {},
+          "days": [
+            "2026-03-14"
+          ]
+        }
+      }
+    },
+    {
+      "name": "signedOff: \"2026-03-14T09:26:53.58912+03:00\"",
+      "input": "{\"schema\":1,\"savedAt\":\"2026-03-14T08:00:00.000Z\",\"data\":{\"sheets\":{\"alpha/first\":{\"signedOff\":\"2026-03-14T09:26:53.58912+03:00\",\"signedRevision\":\"a1b2c3d\",\"reachedEnd\":false,\"dwellSeconds\":0,\"checklist\":{}}},\"everyoneSheets\":{},\"days\":[\"2026-03-14\"],\"prefs\":{\"charKeys\":true,\"railFolded\":false,\"catalogView\":null,\"diagramTheme\":null,\"codePalette\":null},\"meta\":{\"lastExport\":null,\"persisted\":null}}}",
+      "expect": {
+        "kind": "ok",
+        "reads": {
+          "signed": {
+            "alpha/first": "2026-03-14T09:26:53.58912+03:00"
+          },
+          "everyoneSigned": {},
+          "days": [
+            "2026-03-14"
+          ]
+        }
+      }
+    },
+    {
+      "name": "signedOff: \"2026-03-14T09:26:53.58912-05:30\"",
+      "input": "{\"schema\":1,\"savedAt\":\"2026-03-14T08:00:00.000Z\",\"data\":{\"sheets\":{\"alpha/first\":{\"signedOff\":\"2026-03-14T09:26:53.58912-05:30\",\"signedRevision\":\"a1b2c3d\",\"reachedEnd\":false,\"dwellSeconds\":0,\"checklist\":{}}},\"everyoneSheets\":{},\"days\":[\"2026-03-14\"],\"prefs\":{\"charKeys\":true,\"railFolded\":false,\"catalogView\":null,\"diagramTheme\":null,\"codePalette\":null},\"meta\":{\"lastExport\":null,\"persisted\":null}}}",
+      "expect": {
+        "kind": "ok",
+        "reads": {
+          "signed": {
+            "alpha/first": "2026-03-14T09:26:53.58912-05:30"
+          },
+          "everyoneSigned": {},
+          "days": [
+            "2026-03-14"
+          ]
+        }
+      }
+    },
+    {
+      "name": "signedOff: \"2026-03-14T09:26:53.58912+0300\"",
+      "input": "{\"schema\":1,\"savedAt\":\"2026-03-14T08:00:00.000Z\",\"data\":{\"sheets\":{\"alpha/first\":{\"signedOff\":\"2026-03-14T09:26:53.58912+0300\",\"signedRevision\":\"a1b2c3d\",\"reachedEnd\":false,\"dwellSeconds\":0,\"checklist\":{}}},\"everyoneSheets\":{},\"days\":[\"2026-03-14\"],\"prefs\":{\"charKeys\":true,\"railFolded\":false,\"catalogView\":null,\"diagramTheme\":null,\"codePalette\":null},\"meta\":{\"lastExport\":null,\"persisted\":null}}}",
+      "expect": {
+        "kind": "ok",
+        "reads": {
+          "signed": {
+            "alpha/first": "2026-03-14T09:26:53.58912+0300"
+          },
+          "everyoneSigned": {},
+          "days": [
+            "2026-03-14"
+          ]
+        }
+      }
+    },
+    {
+      "name": "signedOff: \"2026-03-14T09:26:53.589123\"",
+      "input": "{\"schema\":1,\"savedAt\":\"2026-03-14T08:00:00.000Z\",\"data\":{\"sheets\":{\"alpha/first\":{\"signedOff\":\"2026-03-14T09:26:53.589123\",\"signedRevision\":\"a1b2c3d\",\"reachedEnd\":false,\"dwellSeconds\":0,\"checklist\":{}}},\"everyoneSheets\":{},\"days\":[\"2026-03-14\"],\"prefs\":{\"charKeys\":true,\"railFolded\":false,\"catalogView\":null,\"diagramTheme\":null,\"codePalette\":null},\"meta\":{\"lastExport\":null,\"persisted\":null}}}",
+      "expect": {
+        "kind": "ok",
+        "reads": {
+          "signed": {
+            "alpha/first": "2026-03-14T09:26:53.589123"
+          },
+          "everyoneSigned": {},
+          "days": [
+            "2026-03-14"
+          ]
+        }
+      }
+    },
+    {
+      "name": "signedOff: \"2026-03-14T09:26:53.589123Z\"",
+      "input": "{\"schema\":1,\"savedAt\":\"2026-03-14T08:00:00.000Z\",\"data\":{\"sheets\":{\"alpha/first\":{\"signedOff\":\"2026-03-14T09:26:53.589123Z\",\"signedRevision\":\"a1b2c3d\",\"reachedEnd\":false,\"dwellSeconds\":0,\"checklist\":{}}},\"everyoneSheets\":{},\"days\":[\"2026-03-14\"],\"prefs\":{\"charKeys\":true,\"railFolded\":false,\"catalogView\":null,\"diagramTheme\":null,\"codePalette\":null},\"meta\":{\"lastExport\":null,\"persisted\":null}}}",
+      "expect": {
+        "kind": "ok",
+        "reads": {
+          "signed": {
+            "alpha/first": "2026-03-14T09:26:53.589123Z"
+          },
+          "everyoneSigned": {},
+          "days": [
+            "2026-03-14"
+          ]
+        }
+      }
+    },
+    {
+      "name": "signedOff: \"2026-03-14T09:26:53.589123+03:00\"",
+      "input": "{\"schema\":1,\"savedAt\":\"2026-03-14T08:00:00.000Z\",\"data\":{\"sheets\":{\"alpha/first\":{\"signedOff\":\"2026-03-14T09:26:53.589123+03:00\",\"signedRevision\":\"a1b2c3d\",\"reachedEnd\":false,\"dwellSeconds\":0,\"checklist\":{}}},\"everyoneSheets\":{},\"days\":[\"2026-03-14\"],\"prefs\":{\"charKeys\":true,\"railFolded\":false,\"catalogView\":null,\"diagramTheme\":null,\"codePalette\":null},\"meta\":{\"lastExport\":null,\"persisted\":null}}}",
+      "expect": {
+        "kind": "ok",
+        "reads": {
+          "signed": {},
+          "everyoneSigned": {},
+          "days": [
+            "2026-03-14"
+          ]
+        }
+      }
+    },
+    {
+      "name": "signedOff: \"2026-03-14T09:26:53.589123-05:30\"",
+      "input": "{\"schema\":1,\"savedAt\":\"2026-03-14T08:00:00.000Z\",\"data\":{\"sheets\":{\"alpha/first\":{\"signedOff\":\"2026-03-14T09:26:53.589123-05:30\",\"signedRevision\":\"a1b2c3d\",\"reachedEnd\":false,\"dwellSeconds\":0,\"checklist\":{}}},\"everyoneSheets\":{},\"days\":[\"2026-03-14\"],\"prefs\":{\"charKeys\":true,\"railFolded\":false,\"catalogView\":null,\"diagramTheme\":null,\"codePalette\":null},\"meta\":{\"lastExport\":null,\"persisted\":null}}}",
+      "expect": {
+        "kind": "ok",
+        "reads": {
+          "signed": {},
+          "everyoneSigned": {},
+          "days": [
+            "2026-03-14"
+          ]
+        }
+      }
+    },
+    {
+      "name": "signedOff: \"2026-03-14T09:26:53.589123+0300\"",
+      "input": "{\"schema\":1,\"savedAt\":\"2026-03-14T08:00:00.000Z\",\"data\":{\"sheets\":{\"alpha/first\":{\"signedOff\":\"2026-03-14T09:26:53.589123+0300\",\"signedRevision\":\"a1b2c3d\",\"reachedEnd\":false,\"dwellSeconds\":0,\"checklist\":{}}},\"everyoneSheets\":{},\"days\":[\"2026-03-14\"],\"prefs\":{\"charKeys\":true,\"railFolded\":false,\"catalogView\":null,\"diagramTheme\":null,\"codePalette\":null},\"meta\":{\"lastExport\":null,\"persisted\":null}}}",
+      "expect": {
+        "kind": "ok",
+        "reads": {
+          "signed": {
+            "alpha/first": "2026-03-14T09:26:53.589123+0300"
+          },
+          "everyoneSigned": {},
+          "days": [
+            "2026-03-14"
+          ]
+        }
+      }
+    },
+    {
+      "name": "signedOff: \"2026-03-14 09:26\"",
+      "input": "{\"schema\":1,\"savedAt\":\"2026-03-14T08:00:00.000Z\",\"data\":{\"sheets\":{\"alpha/first\":{\"signedOff\":\"2026-03-14 09:26\",\"signedRevision\":\"a1b2c3d\",\"reachedEnd\":false,\"dwellSeconds\":0,\"checklist\":{}}},\"everyoneSheets\":{},\"days\":[\"2026-03-14\"],\"prefs\":{\"charKeys\":true,\"railFolded\":false,\"catalogView\":null,\"diagramTheme\":null,\"codePalette\":null},\"meta\":{\"lastExport\":null,\"persisted\":null}}}",
+      "expect": {
+        "kind": "ok",
+        "reads": {
+          "signed": {
+            "alpha/first": "2026-03-14 09:26"
+          },
+          "everyoneSigned": {},
+          "days": [
+            "2026-03-14"
+          ]
+        }
+      }
+    },
+    {
+      "name": "signedOff: \"2026-03-14 09:26Z\"",
+      "input": "{\"schema\":1,\"savedAt\":\"2026-03-14T08:00:00.000Z\",\"data\":{\"sheets\":{\"alpha/first\":{\"signedOff\":\"2026-03-14 09:26Z\",\"signedRevision\":\"a1b2c3d\",\"reachedEnd\":false,\"dwellSeconds\":0,\"checklist\":{}}},\"everyoneSheets\":{},\"days\":[\"2026-03-14\"],\"prefs\":{\"charKeys\":true,\"railFolded\":false,\"catalogView\":null,\"diagramTheme\":null,\"codePalette\":null},\"meta\":{\"lastExport\":null,\"persisted\":null}}}",
+      "expect": {
+        "kind": "ok",
+        "reads": {
+          "signed": {
+            "alpha/first": "2026-03-14 09:26Z"
+          },
+          "everyoneSigned": {},
+          "days": [
+            "2026-03-14"
+          ]
+        }
+      }
+    },
+    {
+      "name": "signedOff: \"2026-03-14 09:26+03:00\"",
+      "input": "{\"schema\":1,\"savedAt\":\"2026-03-14T08:00:00.000Z\",\"data\":{\"sheets\":{\"alpha/first\":{\"signedOff\":\"2026-03-14 09:26+03:00\",\"signedRevision\":\"a1b2c3d\",\"reachedEnd\":false,\"dwellSeconds\":0,\"checklist\":{}}},\"everyoneSheets\":{},\"days\":[\"2026-03-14\"],\"prefs\":{\"charKeys\":true,\"railFolded\":false,\"catalogView\":null,\"diagramTheme\":null,\"codePalette\":null},\"meta\":{\"lastExport\":null,\"persisted\":null}}}",
+      "expect": {
+        "kind": "ok",
+        "reads": {
+          "signed": {
+            "alpha/first": "2026-03-14 09:26+03:00"
+          },
+          "everyoneSigned": {},
+          "days": [
+            "2026-03-14"
+          ]
+        }
+      }
+    },
+    {
+      "name": "signedOff: \"2026-03-14 09:26-05:30\"",
+      "input": "{\"schema\":1,\"savedAt\":\"2026-03-14T08:00:00.000Z\",\"data\":{\"sheets\":{\"alpha/first\":{\"signedOff\":\"2026-03-14 09:26-05:30\",\"signedRevision\":\"a1b2c3d\",\"reachedEnd\":false,\"dwellSeconds\":0,\"checklist\":{}}},\"everyoneSheets\":{},\"days\":[\"2026-03-14\"],\"prefs\":{\"charKeys\":true,\"railFolded\":false,\"catalogView\":null,\"diagramTheme\":null,\"codePalette\":null},\"meta\":{\"lastExport\":null,\"persisted\":null}}}",
+      "expect": {
+        "kind": "ok",
+        "reads": {
+          "signed": {
+            "alpha/first": "2026-03-14 09:26-05:30"
+          },
+          "everyoneSigned": {},
+          "days": [
+            "2026-03-14"
+          ]
+        }
+      }
+    },
+    {
+      "name": "signedOff: \"2026-03-14 09:26+0300\"",
+      "input": "{\"schema\":1,\"savedAt\":\"2026-03-14T08:00:00.000Z\",\"data\":{\"sheets\":{\"alpha/first\":{\"signedOff\":\"2026-03-14 09:26+0300\",\"signedRevision\":\"a1b2c3d\",\"reachedEnd\":false,\"dwellSeconds\":0,\"checklist\":{}}},\"everyoneSheets\":{},\"days\":[\"2026-03-14\"],\"prefs\":{\"charKeys\":true,\"railFolded\":false,\"catalogView\":null,\"diagramTheme\":null,\"codePalette\":null},\"meta\":{\"lastExport\":null,\"persisted\":null}}}",
+      "expect": {
+        "kind": "ok",
+        "reads": {
+          "signed": {
+            "alpha/first": "2026-03-14 09:26+0300"
+          },
+          "everyoneSigned": {},
+          "days": [
+            "2026-03-14"
+          ]
+        }
+      }
+    },
+    {
+      "name": "signedOff: \"2026-03-14 09:26:53\"",
+      "input": "{\"schema\":1,\"savedAt\":\"2026-03-14T08:00:00.000Z\",\"data\":{\"sheets\":{\"alpha/first\":{\"signedOff\":\"2026-03-14 09:26:53\",\"signedRevision\":\"a1b2c3d\",\"reachedEnd\":false,\"dwellSeconds\":0,\"checklist\":{}}},\"everyoneSheets\":{},\"days\":[\"2026-03-14\"],\"prefs\":{\"charKeys\":true,\"railFolded\":false,\"catalogView\":null,\"diagramTheme\":null,\"codePalette\":null},\"meta\":{\"lastExport\":null,\"persisted\":null}}}",
+      "expect": {
+        "kind": "ok",
+        "reads": {
+          "signed": {
+            "alpha/first": "2026-03-14 09:26:53"
+          },
+          "everyoneSigned": {},
+          "days": [
+            "2026-03-14"
+          ]
+        }
+      }
+    },
+    {
+      "name": "signedOff: \"2026-03-14 09:26:53Z\"",
+      "input": "{\"schema\":1,\"savedAt\":\"2026-03-14T08:00:00.000Z\",\"data\":{\"sheets\":{\"alpha/first\":{\"signedOff\":\"2026-03-14 09:26:53Z\",\"signedRevision\":\"a1b2c3d\",\"reachedEnd\":false,\"dwellSeconds\":0,\"checklist\":{}}},\"everyoneSheets\":{},\"days\":[\"2026-03-14\"],\"prefs\":{\"charKeys\":true,\"railFolded\":false,\"catalogView\":null,\"diagramTheme\":null,\"codePalette\":null},\"meta\":{\"lastExport\":null,\"persisted\":null}}}",
+      "expect": {
+        "kind": "ok",
+        "reads": {
+          "signed": {
+            "alpha/first": "2026-03-14 09:26:53Z"
+          },
+          "everyoneSigned": {},
+          "days": [
+            "2026-03-14"
+          ]
+        }
+      }
+    },
+    {
+      "name": "signedOff: \"2026-03-14 09:26:53+03:00\"",
+      "input": "{\"schema\":1,\"savedAt\":\"2026-03-14T08:00:00.000Z\",\"data\":{\"sheets\":{\"alpha/first\":{\"signedOff\":\"2026-03-14 09:26:53+03:00\",\"signedRevision\":\"a1b2c3d\",\"reachedEnd\":false,\"dwellSeconds\":0,\"checklist\":{}}},\"everyoneSheets\":{},\"days\":[\"2026-03-14\"],\"prefs\":{\"charKeys\":true,\"railFolded\":false,\"catalogView\":null,\"diagramTheme\":null,\"codePalette\":null},\"meta\":{\"lastExport\":null,\"persisted\":null}}}",
+      "expect": {
+        "kind": "ok",
+        "reads": {
+          "signed": {
+            "alpha/first": "2026-03-14 09:26:53+03:00"
+          },
+          "everyoneSigned": {},
+          "days": [
+            "2026-03-14"
+          ]
+        }
+      }
+    },
+    {
+      "name": "signedOff: \"2026-03-14 09:26:53-05:30\"",
+      "input": "{\"schema\":1,\"savedAt\":\"2026-03-14T08:00:00.000Z\",\"data\":{\"sheets\":{\"alpha/first\":{\"signedOff\":\"2026-03-14 09:26:53-05:30\",\"signedRevision\":\"a1b2c3d\",\"reachedEnd\":false,\"dwellSeconds\":0,\"checklist\":{}}},\"everyoneSheets\":{},\"days\":[\"2026-03-14\"],\"prefs\":{\"charKeys\":true,\"railFolded\":false,\"catalogView\":null,\"diagramTheme\":null,\"codePalette\":null},\"meta\":{\"lastExport\":null,\"persisted\":null}}}",
+      "expect": {
+        "kind": "ok",
+        "reads": {
+          "signed": {
+            "alpha/first": "2026-03-14 09:26:53-05:30"
+          },
+          "everyoneSigned": {},
+          "days": [
+            "2026-03-14"
+          ]
+        }
+      }
+    },
+    {
+      "name": "signedOff: \"2026-03-14 09:26:53+0300\"",
+      "input": "{\"schema\":1,\"savedAt\":\"2026-03-14T08:00:00.000Z\",\"data\":{\"sheets\":{\"alpha/first\":{\"signedOff\":\"2026-03-14 09:26:53+0300\",\"signedRevision\":\"a1b2c3d\",\"reachedEnd\":false,\"dwellSeconds\":0,\"checklist\":{}}},\"everyoneSheets\":{},\"days\":[\"2026-03-14\"],\"prefs\":{\"charKeys\":true,\"railFolded\":false,\"catalogView\":null,\"diagramTheme\":null,\"codePalette\":null},\"meta\":{\"lastExport\":null,\"persisted\":null}}}",
+      "expect": {
+        "kind": "ok",
+        "reads": {
+          "signed": {
+            "alpha/first": "2026-03-14 09:26:53+0300"
+          },
+          "everyoneSigned": {},
+          "days": [
+            "2026-03-14"
+          ]
+        }
+      }
+    },
+    {
+      "name": "signedOff: \"2026-03-14 09:26:53.5\"",
+      "input": "{\"schema\":1,\"savedAt\":\"2026-03-14T08:00:00.000Z\",\"data\":{\"sheets\":{\"alpha/first\":{\"signedOff\":\"2026-03-14 09:26:53.5\",\"signedRevision\":\"a1b2c3d\",\"reachedEnd\":false,\"dwellSeconds\":0,\"checklist\":{}}},\"everyoneSheets\":{},\"days\":[\"2026-03-14\"],\"prefs\":{\"charKeys\":true,\"railFolded\":false,\"catalogView\":null,\"diagramTheme\":null,\"codePalette\":null},\"meta\":{\"lastExport\":null,\"persisted\":null}}}",
+      "expect": {
+        "kind": "ok",
+        "reads": {
+          "signed": {
+            "alpha/first": "2026-03-14 09:26:53.5"
+          },
+          "everyoneSigned": {},
+          "days": [
+            "2026-03-14"
+          ]
+        }
+      }
+    },
+    {
+      "name": "signedOff: \"2026-03-14 09:26:53.5Z\"",
+      "input": "{\"schema\":1,\"savedAt\":\"2026-03-14T08:00:00.000Z\",\"data\":{\"sheets\":{\"alpha/first\":{\"signedOff\":\"2026-03-14 09:26:53.5Z\",\"signedRevision\":\"a1b2c3d\",\"reachedEnd\":false,\"dwellSeconds\":0,\"checklist\":{}}},\"everyoneSheets\":{},\"days\":[\"2026-03-14\"],\"prefs\":{\"charKeys\":true,\"railFolded\":false,\"catalogView\":null,\"diagramTheme\":null,\"codePalette\":null},\"meta\":{\"lastExport\":null,\"persisted\":null}}}",
+      "expect": {
+        "kind": "ok",
+        "reads": {
+          "signed": {
+            "alpha/first": "2026-03-14 09:26:53.5Z"
+          },
+          "everyoneSigned": {},
+          "days": [
+            "2026-03-14"
+          ]
+        }
+      }
+    },
+    {
+      "name": "signedOff: \"2026-03-14 09:26:53.5+03:00\"",
+      "input": "{\"schema\":1,\"savedAt\":\"2026-03-14T08:00:00.000Z\",\"data\":{\"sheets\":{\"alpha/first\":{\"signedOff\":\"2026-03-14 09:26:53.5+03:00\",\"signedRevision\":\"a1b2c3d\",\"reachedEnd\":false,\"dwellSeconds\":0,\"checklist\":{}}},\"everyoneSheets\":{},\"days\":[\"2026-03-14\"],\"prefs\":{\"charKeys\":true,\"railFolded\":false,\"catalogView\":null,\"diagramTheme\":null,\"codePalette\":null},\"meta\":{\"lastExport\":null,\"persisted\":null}}}",
+      "expect": {
+        "kind": "ok",
+        "reads": {
+          "signed": {
+            "alpha/first": "2026-03-14 09:26:53.5+03:00"
+          },
+          "everyoneSigned": {},
+          "days": [
+            "2026-03-14"
+          ]
+        }
+      }
+    },
+    {
+      "name": "signedOff: \"2026-03-14 09:26:53.5-05:30\"",
+      "input": "{\"schema\":1,\"savedAt\":\"2026-03-14T08:00:00.000Z\",\"data\":{\"sheets\":{\"alpha/first\":{\"signedOff\":\"2026-03-14 09:26:53.5-05:30\",\"signedRevision\":\"a1b2c3d\",\"reachedEnd\":false,\"dwellSeconds\":0,\"checklist\":{}}},\"everyoneSheets\":{},\"days\":[\"2026-03-14\"],\"prefs\":{\"charKeys\":true,\"railFolded\":false,\"catalogView\":null,\"diagramTheme\":null,\"codePalette\":null},\"meta\":{\"lastExport\":null,\"persisted\":null}}}",
+      "expect": {
+        "kind": "ok",
+        "reads": {
+          "signed": {
+            "alpha/first": "2026-03-14 09:26:53.5-05:30"
+          },
+          "everyoneSigned": {},
+          "days": [
+            "2026-03-14"
+          ]
+        }
+      }
+    },
+    {
+      "name": "signedOff: \"2026-03-14 09:26:53.5+0300\"",
+      "input": "{\"schema\":1,\"savedAt\":\"2026-03-14T08:00:00.000Z\",\"data\":{\"sheets\":{\"alpha/first\":{\"signedOff\":\"2026-03-14 09:26:53.5+0300\",\"signedRevision\":\"a1b2c3d\",\"reachedEnd\":false,\"dwellSeconds\":0,\"checklist\":{}}},\"everyoneSheets\":{},\"days\":[\"2026-03-14\"],\"prefs\":{\"charKeys\":true,\"railFolded\":false,\"catalogView\":null,\"diagramTheme\":null,\"codePalette\":null},\"meta\":{\"lastExport\":null,\"persisted\":null}}}",
+      "expect": {
+        "kind": "ok",
+        "reads": {
+          "signed": {
+            "alpha/first": "2026-03-14 09:26:53.5+0300"
+          },
+          "everyoneSigned": {},
+          "days": [
+            "2026-03-14"
+          ]
+        }
+      }
+    },
+    {
+      "name": "signedOff: \"2026-03-14 09:26:53.58\"",
+      "input": "{\"schema\":1,\"savedAt\":\"2026-03-14T08:00:00.000Z\",\"data\":{\"sheets\":{\"alpha/first\":{\"signedOff\":\"2026-03-14 09:26:53.58\",\"signedRevision\":\"a1b2c3d\",\"reachedEnd\":false,\"dwellSeconds\":0,\"checklist\":{}}},\"everyoneSheets\":{},\"days\":[\"2026-03-14\"],\"prefs\":{\"charKeys\":true,\"railFolded\":false,\"catalogView\":null,\"diagramTheme\":null,\"codePalette\":null},\"meta\":{\"lastExport\":null,\"persisted\":null}}}",
+      "expect": {
+        "kind": "ok",
+        "reads": {
+          "signed": {
+            "alpha/first": "2026-03-14 09:26:53.58"
+          },
+          "everyoneSigned": {},
+          "days": [
+            "2026-03-14"
+          ]
+        }
+      }
+    },
+    {
+      "name": "signedOff: \"2026-03-14 09:26:53.58Z\"",
+      "input": "{\"schema\":1,\"savedAt\":\"2026-03-14T08:00:00.000Z\",\"data\":{\"sheets\":{\"alpha/first\":{\"signedOff\":\"2026-03-14 09:26:53.58Z\",\"signedRevision\":\"a1b2c3d\",\"reachedEnd\":false,\"dwellSeconds\":0,\"checklist\":{}}},\"everyoneSheets\":{},\"days\":[\"2026-03-14\"],\"prefs\":{\"charKeys\":true,\"railFolded\":false,\"catalogView\":null,\"diagramTheme\":null,\"codePalette\":null},\"meta\":{\"lastExport\":null,\"persisted\":null}}}",
+      "expect": {
+        "kind": "ok",
+        "reads": {
+          "signed": {
+            "alpha/first": "2026-03-14 09:26:53.58Z"
+          },
+          "everyoneSigned": {},
+          "days": [
+            "2026-03-14"
+          ]
+        }
+      }
+    },
+    {
+      "name": "signedOff: \"2026-03-14 09:26:53.58+03:00\"",
+      "input": "{\"schema\":1,\"savedAt\":\"2026-03-14T08:00:00.000Z\",\"data\":{\"sheets\":{\"alpha/first\":{\"signedOff\":\"2026-03-14 09:26:53.58+03:00\",\"signedRevision\":\"a1b2c3d\",\"reachedEnd\":false,\"dwellSeconds\":0,\"checklist\":{}}},\"everyoneSheets\":{},\"days\":[\"2026-03-14\"],\"prefs\":{\"charKeys\":true,\"railFolded\":false,\"catalogView\":null,\"diagramTheme\":null,\"codePalette\":null},\"meta\":{\"lastExport\":null,\"persisted\":null}}}",
+      "expect": {
+        "kind": "ok",
+        "reads": {
+          "signed": {
+            "alpha/first": "2026-03-14 09:26:53.58+03:00"
+          },
+          "everyoneSigned": {},
+          "days": [
+            "2026-03-14"
+          ]
+        }
+      }
+    },
+    {
+      "name": "signedOff: \"2026-03-14 09:26:53.58-05:30\"",
+      "input": "{\"schema\":1,\"savedAt\":\"2026-03-14T08:00:00.000Z\",\"data\":{\"sheets\":{\"alpha/first\":{\"signedOff\":\"2026-03-14 09:26:53.58-05:30\",\"signedRevision\":\"a1b2c3d\",\"reachedEnd\":false,\"dwellSeconds\":0,\"checklist\":{}}},\"everyoneSheets\":{},\"days\":[\"2026-03-14\"],\"prefs\":{\"charKeys\":true,\"railFolded\":false,\"catalogView\":null,\"diagramTheme\":null,\"codePalette\":null},\"meta\":{\"lastExport\":null,\"persisted\":null}}}",
+      "expect": {
+        "kind": "ok",
+        "reads": {
+          "signed": {
+            "alpha/first": "2026-03-14 09:26:53.58-05:30"
+          },
+          "everyoneSigned": {},
+          "days": [
+            "2026-03-14"
+          ]
+        }
+      }
+    },
+    {
+      "name": "signedOff: \"2026-03-14 09:26:53.58+0300\"",
+      "input": "{\"schema\":1,\"savedAt\":\"2026-03-14T08:00:00.000Z\",\"data\":{\"sheets\":{\"alpha/first\":{\"signedOff\":\"2026-03-14 09:26:53.58+0300\",\"signedRevision\":\"a1b2c3d\",\"reachedEnd\":false,\"dwellSeconds\":0,\"checklist\":{}}},\"everyoneSheets\":{},\"days\":[\"2026-03-14\"],\"prefs\":{\"charKeys\":true,\"railFolded\":false,\"catalogView\":null,\"diagramTheme\":null,\"codePalette\":null},\"meta\":{\"lastExport\":null,\"persisted\":null}}}",
+      "expect": {
+        "kind": "ok",
+        "reads": {
+          "signed": {
+            "alpha/first": "2026-03-14 09:26:53.58+0300"
+          },
+          "everyoneSigned": {},
+          "days": [
+            "2026-03-14"
+          ]
+        }
+      }
+    },
+    {
+      "name": "signedOff: \"2026-03-14 09:26:53.589\"",
+      "input": "{\"schema\":1,\"savedAt\":\"2026-03-14T08:00:00.000Z\",\"data\":{\"sheets\":{\"alpha/first\":{\"signedOff\":\"2026-03-14 09:26:53.589\",\"signedRevision\":\"a1b2c3d\",\"reachedEnd\":false,\"dwellSeconds\":0,\"checklist\":{}}},\"everyoneSheets\":{},\"days\":[\"2026-03-14\"],\"prefs\":{\"charKeys\":true,\"railFolded\":false,\"catalogView\":null,\"diagramTheme\":null,\"codePalette\":null},\"meta\":{\"lastExport\":null,\"persisted\":null}}}",
+      "expect": {
+        "kind": "ok",
+        "reads": {
+          "signed": {
+            "alpha/first": "2026-03-14 09:26:53.589"
+          },
+          "everyoneSigned": {},
+          "days": [
+            "2026-03-14"
+          ]
+        }
+      }
+    },
+    {
+      "name": "signedOff: \"2026-03-14 09:26:53.589Z\"",
+      "input": "{\"schema\":1,\"savedAt\":\"2026-03-14T08:00:00.000Z\",\"data\":{\"sheets\":{\"alpha/first\":{\"signedOff\":\"2026-03-14 09:26:53.589Z\",\"signedRevision\":\"a1b2c3d\",\"reachedEnd\":false,\"dwellSeconds\":0,\"checklist\":{}}},\"everyoneSheets\":{},\"days\":[\"2026-03-14\"],\"prefs\":{\"charKeys\":true,\"railFolded\":false,\"catalogView\":null,\"diagramTheme\":null,\"codePalette\":null},\"meta\":{\"lastExport\":null,\"persisted\":null}}}",
+      "expect": {
+        "kind": "ok",
+        "reads": {
+          "signed": {
+            "alpha/first": "2026-03-14 09:26:53.589Z"
+          },
+          "everyoneSigned": {},
+          "days": [
+            "2026-03-14"
+          ]
+        }
+      }
+    },
+    {
+      "name": "signedOff: \"2026-03-14 09:26:53.589+03:00\"",
+      "input": "{\"schema\":1,\"savedAt\":\"2026-03-14T08:00:00.000Z\",\"data\":{\"sheets\":{\"alpha/first\":{\"signedOff\":\"2026-03-14 09:26:53.589+03:00\",\"signedRevision\":\"a1b2c3d\",\"reachedEnd\":false,\"dwellSeconds\":0,\"checklist\":{}}},\"everyoneSheets\":{},\"days\":[\"2026-03-14\"],\"prefs\":{\"charKeys\":true,\"railFolded\":false,\"catalogView\":null,\"diagramTheme\":null,\"codePalette\":null},\"meta\":{\"lastExport\":null,\"persisted\":null}}}",
+      "expect": {
+        "kind": "ok",
+        "reads": {
+          "signed": {
+            "alpha/first": "2026-03-14 09:26:53.589+03:00"
+          },
+          "everyoneSigned": {},
+          "days": [
+            "2026-03-14"
+          ]
+        }
+      }
+    },
+    {
+      "name": "signedOff: \"2026-03-14 09:26:53.589-05:30\"",
+      "input": "{\"schema\":1,\"savedAt\":\"2026-03-14T08:00:00.000Z\",\"data\":{\"sheets\":{\"alpha/first\":{\"signedOff\":\"2026-03-14 09:26:53.589-05:30\",\"signedRevision\":\"a1b2c3d\",\"reachedEnd\":false,\"dwellSeconds\":0,\"checklist\":{}}},\"everyoneSheets\":{},\"days\":[\"2026-03-14\"],\"prefs\":{\"charKeys\":true,\"railFolded\":false,\"catalogView\":null,\"diagramTheme\":null,\"codePalette\":null},\"meta\":{\"lastExport\":null,\"persisted\":null}}}",
+      "expect": {
+        "kind": "ok",
+        "reads": {
+          "signed": {
+            "alpha/first": "2026-03-14 09:26:53.589-05:30"
+          },
+          "everyoneSigned": {},
+          "days": [
+            "2026-03-14"
+          ]
+        }
+      }
+    },
+    {
+      "name": "signedOff: \"2026-03-14 09:26:53.589+0300\"",
+      "input": "{\"schema\":1,\"savedAt\":\"2026-03-14T08:00:00.000Z\",\"data\":{\"sheets\":{\"alpha/first\":{\"signedOff\":\"2026-03-14 09:26:53.589+0300\",\"signedRevision\":\"a1b2c3d\",\"reachedEnd\":false,\"dwellSeconds\":0,\"checklist\":{}}},\"everyoneSheets\":{},\"days\":[\"2026-03-14\"],\"prefs\":{\"charKeys\":true,\"railFolded\":false,\"catalogView\":null,\"diagramTheme\":null,\"codePalette\":null},\"meta\":{\"lastExport\":null,\"persisted\":null}}}",
+      "expect": {
+        "kind": "ok",
+        "reads": {
+          "signed": {
+            "alpha/first": "2026-03-14 09:26:53.589+0300"
+          },
+          "everyoneSigned": {},
+          "days": [
+            "2026-03-14"
+          ]
+        }
+      }
+    },
+    {
+      "name": "signedOff: \"2026-03-14 09:26:53.5891\"",
+      "input": "{\"schema\":1,\"savedAt\":\"2026-03-14T08:00:00.000Z\",\"data\":{\"sheets\":{\"alpha/first\":{\"signedOff\":\"2026-03-14 09:26:53.5891\",\"signedRevision\":\"a1b2c3d\",\"reachedEnd\":false,\"dwellSeconds\":0,\"checklist\":{}}},\"everyoneSheets\":{},\"days\":[\"2026-03-14\"],\"prefs\":{\"charKeys\":true,\"railFolded\":false,\"catalogView\":null,\"diagramTheme\":null,\"codePalette\":null},\"meta\":{\"lastExport\":null,\"persisted\":null}}}",
+      "expect": {
+        "kind": "ok",
+        "reads": {
+          "signed": {
+            "alpha/first": "2026-03-14 09:26:53.5891"
+          },
+          "everyoneSigned": {},
+          "days": [
+            "2026-03-14"
+          ]
+        }
+      }
+    },
+    {
+      "name": "signedOff: \"2026-03-14 09:26:53.5891Z\"",
+      "input": "{\"schema\":1,\"savedAt\":\"2026-03-14T08:00:00.000Z\",\"data\":{\"sheets\":{\"alpha/first\":{\"signedOff\":\"2026-03-14 09:26:53.5891Z\",\"signedRevision\":\"a1b2c3d\",\"reachedEnd\":false,\"dwellSeconds\":0,\"checklist\":{}}},\"everyoneSheets\":{},\"days\":[\"2026-03-14\"],\"prefs\":{\"charKeys\":true,\"railFolded\":false,\"catalogView\":null,\"diagramTheme\":null,\"codePalette\":null},\"meta\":{\"lastExport\":null,\"persisted\":null}}}",
+      "expect": {
+        "kind": "ok",
+        "reads": {
+          "signed": {
+            "alpha/first": "2026-03-14 09:26:53.5891Z"
+          },
+          "everyoneSigned": {},
+          "days": [
+            "2026-03-14"
+          ]
+        }
+      }
+    },
+    {
+      "name": "signedOff: \"2026-03-14 09:26:53.5891+03:00\"",
+      "input": "{\"schema\":1,\"savedAt\":\"2026-03-14T08:00:00.000Z\",\"data\":{\"sheets\":{\"alpha/first\":{\"signedOff\":\"2026-03-14 09:26:53.5891+03:00\",\"signedRevision\":\"a1b2c3d\",\"reachedEnd\":false,\"dwellSeconds\":0,\"checklist\":{}}},\"everyoneSheets\":{},\"days\":[\"2026-03-14\"],\"prefs\":{\"charKeys\":true,\"railFolded\":false,\"catalogView\":null,\"diagramTheme\":null,\"codePalette\":null},\"meta\":{\"lastExport\":null,\"persisted\":null}}}",
+      "expect": {
+        "kind": "ok",
+        "reads": {
+          "signed": {
+            "alpha/first": "2026-03-14 09:26:53.5891+03:00"
+          },
+          "everyoneSigned": {},
+          "days": [
+            "2026-03-14"
+          ]
+        }
+      }
+    },
+    {
+      "name": "signedOff: \"2026-03-14 09:26:53.5891-05:30\"",
+      "input": "{\"schema\":1,\"savedAt\":\"2026-03-14T08:00:00.000Z\",\"data\":{\"sheets\":{\"alpha/first\":{\"signedOff\":\"2026-03-14 09:26:53.5891-05:30\",\"signedRevision\":\"a1b2c3d\",\"reachedEnd\":false,\"dwellSeconds\":0,\"checklist\":{}}},\"everyoneSheets\":{},\"days\":[\"2026-03-14\"],\"prefs\":{\"charKeys\":true,\"railFolded\":false,\"catalogView\":null,\"diagramTheme\":null,\"codePalette\":null},\"meta\":{\"lastExport\":null,\"persisted\":null}}}",
+      "expect": {
+        "kind": "ok",
+        "reads": {
+          "signed": {
+            "alpha/first": "2026-03-14 09:26:53.5891-05:30"
+          },
+          "everyoneSigned": {},
+          "days": [
+            "2026-03-14"
+          ]
+        }
+      }
+    },
+    {
+      "name": "signedOff: \"2026-03-14 09:26:53.5891+0300\"",
+      "input": "{\"schema\":1,\"savedAt\":\"2026-03-14T08:00:00.000Z\",\"data\":{\"sheets\":{\"alpha/first\":{\"signedOff\":\"2026-03-14 09:26:53.5891+0300\",\"signedRevision\":\"a1b2c3d\",\"reachedEnd\":false,\"dwellSeconds\":0,\"checklist\":{}}},\"everyoneSheets\":{},\"days\":[\"2026-03-14\"],\"prefs\":{\"charKeys\":true,\"railFolded\":false,\"catalogView\":null,\"diagramTheme\":null,\"codePalette\":null},\"meta\":{\"lastExport\":null,\"persisted\":null}}}",
+      "expect": {
+        "kind": "ok",
+        "reads": {
+          "signed": {
+            "alpha/first": "2026-03-14 09:26:53.5891+0300"
+          },
+          "everyoneSigned": {},
+          "days": [
+            "2026-03-14"
+          ]
+        }
+      }
+    },
+    {
+      "name": "signedOff: \"2026-03-14 09:26:53.58912\"",
+      "input": "{\"schema\":1,\"savedAt\":\"2026-03-14T08:00:00.000Z\",\"data\":{\"sheets\":{\"alpha/first\":{\"signedOff\":\"2026-03-14 09:26:53.58912\",\"signedRevision\":\"a1b2c3d\",\"reachedEnd\":false,\"dwellSeconds\":0,\"checklist\":{}}},\"everyoneSheets\":{},\"days\":[\"2026-03-14\"],\"prefs\":{\"charKeys\":true,\"railFolded\":false,\"catalogView\":null,\"diagramTheme\":null,\"codePalette\":null},\"meta\":{\"lastExport\":null,\"persisted\":null}}}",
+      "expect": {
+        "kind": "ok",
+        "reads": {
+          "signed": {
+            "alpha/first": "2026-03-14 09:26:53.58912"
+          },
+          "everyoneSigned": {},
+          "days": [
+            "2026-03-14"
+          ]
+        }
+      }
+    },
+    {
+      "name": "signedOff: \"2026-03-14 09:26:53.58912Z\"",
+      "input": "{\"schema\":1,\"savedAt\":\"2026-03-14T08:00:00.000Z\",\"data\":{\"sheets\":{\"alpha/first\":{\"signedOff\":\"2026-03-14 09:26:53.58912Z\",\"signedRevision\":\"a1b2c3d\",\"reachedEnd\":false,\"dwellSeconds\":0,\"checklist\":{}}},\"everyoneSheets\":{},\"days\":[\"2026-03-14\"],\"prefs\":{\"charKeys\":true,\"railFolded\":false,\"catalogView\":null,\"diagramTheme\":null,\"codePalette\":null},\"meta\":{\"lastExport\":null,\"persisted\":null}}}",
+      "expect": {
+        "kind": "ok",
+        "reads": {
+          "signed": {
+            "alpha/first": "2026-03-14 09:26:53.58912Z"
+          },
+          "everyoneSigned": {},
+          "days": [
+            "2026-03-14"
+          ]
+        }
+      }
+    },
+    {
+      "name": "signedOff: \"2026-03-14 09:26:53.58912+03:00\"",
+      "input": "{\"schema\":1,\"savedAt\":\"2026-03-14T08:00:00.000Z\",\"data\":{\"sheets\":{\"alpha/first\":{\"signedOff\":\"2026-03-14 09:26:53.58912+03:00\",\"signedRevision\":\"a1b2c3d\",\"reachedEnd\":false,\"dwellSeconds\":0,\"checklist\":{}}},\"everyoneSheets\":{},\"days\":[\"2026-03-14\"],\"prefs\":{\"charKeys\":true,\"railFolded\":false,\"catalogView\":null,\"diagramTheme\":null,\"codePalette\":null},\"meta\":{\"lastExport\":null,\"persisted\":null}}}",
+      "expect": {
+        "kind": "ok",
+        "reads": {
+          "signed": {
+            "alpha/first": "2026-03-14 09:26:53.58912+03:00"
+          },
+          "everyoneSigned": {},
+          "days": [
+            "2026-03-14"
+          ]
+        }
+      }
+    },
+    {
+      "name": "signedOff: \"2026-03-14 09:26:53.58912-05:30\"",
+      "input": "{\"schema\":1,\"savedAt\":\"2026-03-14T08:00:00.000Z\",\"data\":{\"sheets\":{\"alpha/first\":{\"signedOff\":\"2026-03-14 09:26:53.58912-05:30\",\"signedRevision\":\"a1b2c3d\",\"reachedEnd\":false,\"dwellSeconds\":0,\"checklist\":{}}},\"everyoneSheets\":{},\"days\":[\"2026-03-14\"],\"prefs\":{\"charKeys\":true,\"railFolded\":false,\"catalogView\":null,\"diagramTheme\":null,\"codePalette\":null},\"meta\":{\"lastExport\":null,\"persisted\":null}}}",
+      "expect": {
+        "kind": "ok",
+        "reads": {
+          "signed": {
+            "alpha/first": "2026-03-14 09:26:53.58912-05:30"
+          },
+          "everyoneSigned": {},
+          "days": [
+            "2026-03-14"
+          ]
+        }
+      }
+    },
+    {
+      "name": "signedOff: \"2026-03-14 09:26:53.58912+0300\"",
+      "input": "{\"schema\":1,\"savedAt\":\"2026-03-14T08:00:00.000Z\",\"data\":{\"sheets\":{\"alpha/first\":{\"signedOff\":\"2026-03-14 09:26:53.58912+0300\",\"signedRevision\":\"a1b2c3d\",\"reachedEnd\":false,\"dwellSeconds\":0,\"checklist\":{}}},\"everyoneSheets\":{},\"days\":[\"2026-03-14\"],\"prefs\":{\"charKeys\":true,\"railFolded\":false,\"catalogView\":null,\"diagramTheme\":null,\"codePalette\":null},\"meta\":{\"lastExport\":null,\"persisted\":null}}}",
+      "expect": {
+        "kind": "ok",
+        "reads": {
+          "signed": {
+            "alpha/first": "2026-03-14 09:26:53.58912+0300"
+          },
+          "everyoneSigned": {},
+          "days": [
+            "2026-03-14"
+          ]
+        }
+      }
+    },
+    {
+      "name": "signedOff: \"2026-03-14 09:26:53.589123\"",
+      "input": "{\"schema\":1,\"savedAt\":\"2026-03-14T08:00:00.000Z\",\"data\":{\"sheets\":{\"alpha/first\":{\"signedOff\":\"2026-03-14 09:26:53.589123\",\"signedRevision\":\"a1b2c3d\",\"reachedEnd\":false,\"dwellSeconds\":0,\"checklist\":{}}},\"everyoneSheets\":{},\"days\":[\"2026-03-14\"],\"prefs\":{\"charKeys\":true,\"railFolded\":false,\"catalogView\":null,\"diagramTheme\":null,\"codePalette\":null},\"meta\":{\"lastExport\":null,\"persisted\":null}}}",
+      "expect": {
+        "kind": "ok",
+        "reads": {
+          "signed": {
+            "alpha/first": "2026-03-14 09:26:53.589123"
+          },
+          "everyoneSigned": {},
+          "days": [
+            "2026-03-14"
+          ]
+        }
+      }
+    },
+    {
+      "name": "signedOff: \"2026-03-14 09:26:53.589123Z\"",
+      "input": "{\"schema\":1,\"savedAt\":\"2026-03-14T08:00:00.000Z\",\"data\":{\"sheets\":{\"alpha/first\":{\"signedOff\":\"2026-03-14 09:26:53.589123Z\",\"signedRevision\":\"a1b2c3d\",\"reachedEnd\":false,\"dwellSeconds\":0,\"checklist\":{}}},\"everyoneSheets\":{},\"days\":[\"2026-03-14\"],\"prefs\":{\"charKeys\":true,\"railFolded\":false,\"catalogView\":null,\"diagramTheme\":null,\"codePalette\":null},\"meta\":{\"lastExport\":null,\"persisted\":null}}}",
+      "expect": {
+        "kind": "ok",
+        "reads": {
+          "signed": {
+            "alpha/first": "2026-03-14 09:26:53.589123Z"
+          },
+          "everyoneSigned": {},
+          "days": [
+            "2026-03-14"
+          ]
+        }
+      }
+    },
+    {
+      "name": "signedOff: \"2026-03-14 09:26:53.589123+03:00\"",
+      "input": "{\"schema\":1,\"savedAt\":\"2026-03-14T08:00:00.000Z\",\"data\":{\"sheets\":{\"alpha/first\":{\"signedOff\":\"2026-03-14 09:26:53.589123+03:00\",\"signedRevision\":\"a1b2c3d\",\"reachedEnd\":false,\"dwellSeconds\":0,\"checklist\":{}}},\"everyoneSheets\":{},\"days\":[\"2026-03-14\"],\"prefs\":{\"charKeys\":true,\"railFolded\":false,\"catalogView\":null,\"diagramTheme\":null,\"codePalette\":null},\"meta\":{\"lastExport\":null,\"persisted\":null}}}",
+      "expect": {
+        "kind": "ok",
+        "reads": {
+          "signed": {},
+          "everyoneSigned": {},
+          "days": [
+            "2026-03-14"
+          ]
+        }
+      }
+    },
+    {
+      "name": "signedOff: \"2026-03-14 09:26:53.589123-05:30\"",
+      "input": "{\"schema\":1,\"savedAt\":\"2026-03-14T08:00:00.000Z\",\"data\":{\"sheets\":{\"alpha/first\":{\"signedOff\":\"2026-03-14 09:26:53.589123-05:30\",\"signedRevision\":\"a1b2c3d\",\"reachedEnd\":false,\"dwellSeconds\":0,\"checklist\":{}}},\"everyoneSheets\":{},\"days\":[\"2026-03-14\"],\"prefs\":{\"charKeys\":true,\"railFolded\":false,\"catalogView\":null,\"diagramTheme\":null,\"codePalette\":null},\"meta\":{\"lastExport\":null,\"persisted\":null}}}",
+      "expect": {
+        "kind": "ok",
+        "reads": {
+          "signed": {},
+          "everyoneSigned": {},
+          "days": [
+            "2026-03-14"
+          ]
+        }
+      }
+    },
+    {
+      "name": "signedOff: \"2026-03-14 09:26:53.589123+0300\"",
+      "input": "{\"schema\":1,\"savedAt\":\"2026-03-14T08:00:00.000Z\",\"data\":{\"sheets\":{\"alpha/first\":{\"signedOff\":\"2026-03-14 09:26:53.589123+0300\",\"signedRevision\":\"a1b2c3d\",\"reachedEnd\":false,\"dwellSeconds\":0,\"checklist\":{}}},\"everyoneSheets\":{},\"days\":[\"2026-03-14\"],\"prefs\":{\"charKeys\":true,\"railFolded\":false,\"catalogView\":null,\"diagramTheme\":null,\"codePalette\":null},\"meta\":{\"lastExport\":null,\"persisted\":null}}}",
+      "expect": {
+        "kind": "ok",
+        "reads": {
+          "signed": {
+            "alpha/first": "2026-03-14 09:26:53.589123+0300"
+          },
+          "everyoneSigned": {},
+          "days": [
+            "2026-03-14"
+          ]
+        }
+      }
+    },
+    {
+      "name": "signedOff: \"2026-03-14T24:00\"",
+      "input": "{\"schema\":1,\"savedAt\":\"2026-03-14T08:00:00.000Z\",\"data\":{\"sheets\":{\"alpha/first\":{\"signedOff\":\"2026-03-14T24:00\",\"signedRevision\":\"a1b2c3d\",\"reachedEnd\":false,\"dwellSeconds\":0,\"checklist\":{}}},\"everyoneSheets\":{},\"days\":[\"2026-03-14\"],\"prefs\":{\"charKeys\":true,\"railFolded\":false,\"catalogView\":null,\"diagramTheme\":null,\"codePalette\":null},\"meta\":{\"lastExport\":null,\"persisted\":null}}}",
+      "expect": {
+        "kind": "ok",
+        "reads": {
+          "signed": {
+            "alpha/first": "2026-03-14T24:00"
+          },
+          "everyoneSigned": {},
+          "days": [
+            "2026-03-14"
+          ]
+        }
+      }
+    },
+    {
+      "name": "signedOff: \"2026-03-14T24:00:01\"",
+      "input": "{\"schema\":1,\"savedAt\":\"2026-03-14T08:00:00.000Z\",\"data\":{\"sheets\":{\"alpha/first\":{\"signedOff\":\"2026-03-14T24:00:01\",\"signedRevision\":\"a1b2c3d\",\"reachedEnd\":false,\"dwellSeconds\":0,\"checklist\":{}}},\"everyoneSheets\":{},\"days\":[\"2026-03-14\"],\"prefs\":{\"charKeys\":true,\"railFolded\":false,\"catalogView\":null,\"diagramTheme\":null,\"codePalette\":null},\"meta\":{\"lastExport\":null,\"persisted\":null}}}",
+      "expect": {
+        "kind": "ok",
+        "reads": {
+          "signed": {},
+          "everyoneSigned": {},
+          "days": [
+            "2026-03-14"
+          ]
+        }
+      }
+    },
+    {
+      "name": "signedOff: \"2026-03-14T25:00\"",
+      "input": "{\"schema\":1,\"savedAt\":\"2026-03-14T08:00:00.000Z\",\"data\":{\"sheets\":{\"alpha/first\":{\"signedOff\":\"2026-03-14T25:00\",\"signedRevision\":\"a1b2c3d\",\"reachedEnd\":false,\"dwellSeconds\":0,\"checklist\":{}}},\"everyoneSheets\":{},\"days\":[\"2026-03-14\"],\"prefs\":{\"charKeys\":true,\"railFolded\":false,\"catalogView\":null,\"diagramTheme\":null,\"codePalette\":null},\"meta\":{\"lastExport\":null,\"persisted\":null}}}",
+      "expect": {
+        "kind": "ok",
+        "reads": {
+          "signed": {},
+          "everyoneSigned": {},
+          "days": [
+            "2026-03-14"
+          ]
+        }
+      }
+    },
+    {
+      "name": "signedOff: \"2026-02-31T09:26:53.589Z\"",
+      "input": "{\"schema\":1,\"savedAt\":\"2026-03-14T08:00:00.000Z\",\"data\":{\"sheets\":{\"alpha/first\":{\"signedOff\":\"2026-02-31T09:26:53.589Z\",\"signedRevision\":\"a1b2c3d\",\"reachedEnd\":false,\"dwellSeconds\":0,\"checklist\":{}}},\"everyoneSheets\":{},\"days\":[\"2026-03-14\"],\"prefs\":{\"charKeys\":true,\"railFolded\":false,\"catalogView\":null,\"diagramTheme\":null,\"codePalette\":null},\"meta\":{\"lastExport\":null,\"persisted\":null}}}",
+      "expect": {
+        "kind": "ok",
+        "reads": {
+          "signed": {},
+          "everyoneSigned": {},
+          "days": [
+            "2026-03-14"
+          ]
+        }
+      }
+    },
+    {
+      "name": "signedOff: \"2026-03-14\"",
+      "input": "{\"schema\":1,\"savedAt\":\"2026-03-14T08:00:00.000Z\",\"data\":{\"sheets\":{\"alpha/first\":{\"signedOff\":\"2026-03-14\",\"signedRevision\":\"a1b2c3d\",\"reachedEnd\":false,\"dwellSeconds\":0,\"checklist\":{}}},\"everyoneSheets\":{},\"days\":[\"2026-03-14\"],\"prefs\":{\"charKeys\":true,\"railFolded\":false,\"catalogView\":null,\"diagramTheme\":null,\"codePalette\":null},\"meta\":{\"lastExport\":null,\"persisted\":null}}}",
+      "expect": {
+        "kind": "ok",
+        "reads": {
+          "signed": {
+            "alpha/first": "2026-03-14"
+          },
+          "everyoneSigned": {},
+          "days": [
+            "2026-03-14"
+          ]
+        }
+      }
+    },
+    {
+      "name": "signedOff: \"2026-03-14T--:--\"",
+      "input": "{\"schema\":1,\"savedAt\":\"2026-03-14T08:00:00.000Z\",\"data\":{\"sheets\":{\"alpha/first\":{\"signedOff\":\"2026-03-14T--:--\",\"signedRevision\":\"a1b2c3d\",\"reachedEnd\":false,\"dwellSeconds\":0,\"checklist\":{}}},\"everyoneSheets\":{},\"days\":[\"2026-03-14\"],\"prefs\":{\"charKeys\":true,\"railFolded\":false,\"catalogView\":null,\"diagramTheme\":null,\"codePalette\":null},\"meta\":{\"lastExport\":null,\"persisted\":null}}}",
+      "expect": {
+        "kind": "ok",
+        "reads": {
+          "signed": {},
+          "everyoneSigned": {},
+          "days": [
+            "2026-03-14"
+          ]
+        }
+      }
+    },
+    {
+      "name": "signedOff: \"yesterday\"",
+      "input": "{\"schema\":1,\"savedAt\":\"2026-03-14T08:00:00.000Z\",\"data\":{\"sheets\":{\"alpha/first\":{\"signedOff\":\"yesterday\",\"signedRevision\":\"a1b2c3d\",\"reachedEnd\":false,\"dwellSeconds\":0,\"checklist\":{}}},\"everyoneSheets\":{},\"days\":[\"2026-03-14\"],\"prefs\":{\"charKeys\":true,\"railFolded\":false,\"catalogView\":null,\"diagramTheme\":null,\"codePalette\":null},\"meta\":{\"lastExport\":null,\"persisted\":null}}}",
+      "expect": {
+        "kind": "ok",
+        "reads": {
+          "signed": {},
+          "everyoneSigned": {},
+          "days": [
+            "2026-03-14"
+          ]
+        }
+      }
+    },
+    {
+      "name": "signedOff: a number",
+      "input": "{\"schema\":1,\"savedAt\":\"2026-03-14T08:00:00.000Z\",\"data\":{\"sheets\":{\"alpha/first\":{\"signedOff\":1773480413589,\"signedRevision\":\"a1b2c3d\",\"reachedEnd\":false,\"dwellSeconds\":0,\"checklist\":{}}},\"everyoneSheets\":{},\"days\":[\"2026-03-14\"],\"prefs\":{\"charKeys\":true,\"railFolded\":false,\"catalogView\":null,\"diagramTheme\":null,\"codePalette\":null},\"meta\":{\"lastExport\":null,\"persisted\":null}}}",
+      "expect": {
+        "kind": "ok",
+        "reads": {
+          "signed": {},
+          "everyoneSigned": {},
+          "days": [
+            "2026-03-14"
+          ]
+        }
+      }
+    },
+    {
+      "name": "days: unsorted",
+      "input": "{\"schema\":1,\"savedAt\":\"2026-03-14T08:00:00.000Z\",\"data\":{\"sheets\":{\"alpha/first\":{\"signedOff\":\"2026-03-14T09:26:53.589Z\",\"signedRevision\":\"a1b2c3d\",\"reachedEnd\":false,\"dwellSeconds\":0,\"checklist\":{}}},\"everyoneSheets\":{},\"days\":[\"2026-03-14\",\"2026-03-01\"],\"prefs\":{\"charKeys\":true,\"railFolded\":false,\"catalogView\":null,\"diagramTheme\":null,\"codePalette\":null},\"meta\":{\"lastExport\":null,\"persisted\":null}}}",
+      "expect": {
+        "kind": "ok",
+        "reads": {
+          "signed": {
+            "alpha/first": "2026-03-14T09:26:53.589Z"
+          },
+          "everyoneSigned": {},
+          "days": [
+            "2026-03-01",
+            "2026-03-14"
+          ]
+        }
+      }
+    },
+    {
+      "name": "days: duplicated",
+      "input": "{\"schema\":1,\"savedAt\":\"2026-03-14T08:00:00.000Z\",\"data\":{\"sheets\":{\"alpha/first\":{\"signedOff\":\"2026-03-14T09:26:53.589Z\",\"signedRevision\":\"a1b2c3d\",\"reachedEnd\":false,\"dwellSeconds\":0,\"checklist\":{}}},\"everyoneSheets\":{},\"days\":[\"2026-03-14\",\"2026-03-14\"],\"prefs\":{\"charKeys\":true,\"railFolded\":false,\"catalogView\":null,\"diagramTheme\":null,\"codePalette\":null},\"meta\":{\"lastExport\":null,\"persisted\":null}}}",
+      "expect": {
+        "kind": "ok",
+        "reads": {
+          "signed": {
+            "alpha/first": "2026-03-14T09:26:53.589Z"
+          },
+          "everyoneSigned": {},
+          "days": [
+            "2026-03-14"
+          ]
+        }
+      }
+    },
+    {
+      "name": "days: an invalid day",
+      "input": "{\"schema\":1,\"savedAt\":\"2026-03-14T08:00:00.000Z\",\"data\":{\"sheets\":{\"alpha/first\":{\"signedOff\":\"2026-03-14T09:26:53.589Z\",\"signedRevision\":\"a1b2c3d\",\"reachedEnd\":false,\"dwellSeconds\":0,\"checklist\":{}}},\"everyoneSheets\":{},\"days\":[\"2026-03-14\",\"2026-02-31\"],\"prefs\":{\"charKeys\":true,\"railFolded\":false,\"catalogView\":null,\"diagramTheme\":null,\"codePalette\":null},\"meta\":{\"lastExport\":null,\"persisted\":null}}}",
+      "expect": {
+        "kind": "ok",
+        "reads": {
+          "signed": {
+            "alpha/first": "2026-03-14T09:26:53.589Z"
+          },
+          "everyoneSigned": {},
+          "days": [
+            "2026-03-14"
+          ]
+        }
+      }
+    },
+    {
+      "name": "days: a non-string element",
+      "input": "{\"schema\":1,\"savedAt\":\"2026-03-14T08:00:00.000Z\",\"data\":{\"sheets\":{\"alpha/first\":{\"signedOff\":\"2026-03-14T09:26:53.589Z\",\"signedRevision\":\"a1b2c3d\",\"reachedEnd\":false,\"dwellSeconds\":0,\"checklist\":{}}},\"everyoneSheets\":{},\"days\":[\"2026-03-14\",20260301],\"prefs\":{\"charKeys\":true,\"railFolded\":false,\"catalogView\":null,\"diagramTheme\":null,\"codePalette\":null},\"meta\":{\"lastExport\":null,\"persisted\":null}}}",
+      "expect": {
+        "kind": "ok",
+        "reads": {
+          "signed": {
+            "alpha/first": "2026-03-14T09:26:53.589Z"
+          },
+          "everyoneSigned": {},
+          "days": [
+            "2026-03-14"
+          ]
+        }
+      }
+    }
+  ],
+  "reduce": [
+    {
+      "name": "signOff on the empty record",
+      "before": {
+        "sheets": {},
+        "everyoneSheets": {},
+        "days": [],
+        "prefs": {
+          "charKeys": true,
+          "railFolded": false,
+          "catalogView": null,
+          "diagramTheme": null,
+          "codePalette": null
+        },
+        "meta": {
+          "lastExport": null,
+          "persisted": null
+        }
+      },
+      "steps": [
+        {
+          "op": "signOff",
+          "slug": "alpha/second",
+          "revision": "a1b2c3d",
+          "now": "2026-03-15T07:10:00.000Z"
+        }
+      ],
+      "expect": {
+        "bytes": "{\"schema\":1,\"savedAt\":\"2026-03-15T07:10:00.000Z\",\"data\":{\"sheets\":{\"alpha/second\":{\"signedOff\":\"2026-03-15T07:10:00.000Z\",\"signedRevision\":\"a1b2c3d\",\"reachedEnd\":false,\"dwellSeconds\":0,\"checklist\":{}}},\"everyoneSheets\":{},\"days\":[\"2026-03-15\"],\"prefs\":{\"charKeys\":true,\"railFolded\":false,\"catalogView\":null,\"diagramTheme\":null,\"codePalette\":null},\"meta\":{\"lastExport\":null,\"persisted\":null}}}",
+        "unchanged": []
+      }
+    },
+    {
+      "name": "signOff with no revision",
+      "before": {
+        "sheets": {},
+        "everyoneSheets": {},
+        "days": [],
+        "prefs": {
+          "charKeys": true,
+          "railFolded": false,
+          "catalogView": null,
+          "diagramTheme": null,
+          "codePalette": null
+        },
+        "meta": {
+          "lastExport": null,
+          "persisted": null
+        }
+      },
+      "steps": [
+        {
+          "op": "signOff",
+          "slug": "alpha/second",
+          "revision": null,
+          "now": "2026-03-15T07:10:00.000Z"
+        }
+      ],
+      "expect": {
+        "bytes": "{\"schema\":1,\"savedAt\":\"2026-03-15T07:10:00.000Z\",\"data\":{\"sheets\":{\"alpha/second\":{\"signedOff\":\"2026-03-15T07:10:00.000Z\",\"signedRevision\":null,\"reachedEnd\":false,\"dwellSeconds\":0,\"checklist\":{}}},\"everyoneSheets\":{},\"days\":[\"2026-03-15\"],\"prefs\":{\"charKeys\":true,\"railFolded\":false,\"catalogView\":null,\"diagramTheme\":null,\"codePalette\":null},\"meta\":{\"lastExport\":null,\"persisted\":null}}}",
+        "unchanged": []
+      }
+    },
+    {
+      "name": "signOff on a signed sheet is a no-op",
+      "before": {
+        "sheets": {
+          "alpha/first": {
+            "signedOff": "2026-03-14T09:26:53.589Z",
+            "signedRevision": "a1b2c3d",
+            "reachedEnd": false,
+            "dwellSeconds": 0,
+            "checklist": {}
+          }
+        },
+        "everyoneSheets": {},
+        "days": [
+          "2026-03-14"
+        ],
+        "prefs": {
+          "charKeys": true,
+          "railFolded": false,
+          "catalogView": null,
+          "diagramTheme": null,
+          "codePalette": null
+        },
+        "meta": {
+          "lastExport": null,
+          "persisted": null
+        }
+      },
+      "steps": [
+        {
+          "op": "signOff",
+          "slug": "alpha/first",
+          "revision": "ffff",
+          "now": "2026-03-15T07:10:00.000Z"
+        }
+      ],
+      "expect": {
+        "bytes": "{\"schema\":1,\"savedAt\":\"2026-03-15T07:10:00.000Z\",\"data\":{\"sheets\":{\"alpha/first\":{\"signedOff\":\"2026-03-14T09:26:53.589Z\",\"signedRevision\":\"a1b2c3d\",\"reachedEnd\":false,\"dwellSeconds\":0,\"checklist\":{}}},\"everyoneSheets\":{},\"days\":[\"2026-03-14\"],\"prefs\":{\"charKeys\":true,\"railFolded\":false,\"catalogView\":null,\"diagramTheme\":null,\"codePalette\":null},\"meta\":{\"lastExport\":null,\"persisted\":null}}}",
+        "unchanged": [
+          0
+        ]
+      }
+    },
+    {
+      "name": "signOff refuses an unsafe slug",
+      "before": {
+        "sheets": {
+          "alpha/first": {
+            "signedOff": "2026-03-14T09:26:53.589Z",
+            "signedRevision": "a1b2c3d",
+            "reachedEnd": false,
+            "dwellSeconds": 0,
+            "checklist": {}
+          }
+        },
+        "everyoneSheets": {},
+        "days": [
+          "2026-03-14"
+        ],
+        "prefs": {
+          "charKeys": true,
+          "railFolded": false,
+          "catalogView": null,
+          "diagramTheme": null,
+          "codePalette": null
+        },
+        "meta": {
+          "lastExport": null,
+          "persisted": null
+        }
+      },
+      "steps": [
+        {
+          "op": "signOff",
+          "slug": "__proto__",
+          "revision": "a1b2c3d",
+          "now": "2026-03-15T07:10:00.000Z"
+        }
+      ],
+      "expect": {
+        "bytes": "{\"schema\":1,\"savedAt\":\"2026-03-15T07:10:00.000Z\",\"data\":{\"sheets\":{\"alpha/first\":{\"signedOff\":\"2026-03-14T09:26:53.589Z\",\"signedRevision\":\"a1b2c3d\",\"reachedEnd\":false,\"dwellSeconds\":0,\"checklist\":{}}},\"everyoneSheets\":{},\"days\":[\"2026-03-14\"],\"prefs\":{\"charKeys\":true,\"railFolded\":false,\"catalogView\":null,\"diagramTheme\":null,\"codePalette\":null},\"meta\":{\"lastExport\":null,\"persisted\":null}}}",
+        "unchanged": [
+          0
+        ]
+      }
+    },
+    {
+      "name": "unsign leaves an empty sheet and stamps no day",
+      "before": {
+        "sheets": {
+          "alpha/first": {
+            "signedOff": "2026-03-14T09:26:53.589Z",
+            "signedRevision": "a1b2c3d",
+            "reachedEnd": false,
+            "dwellSeconds": 0,
+            "checklist": {}
+          }
+        },
+        "everyoneSheets": {},
+        "days": [
+          "2026-03-14"
+        ],
+        "prefs": {
+          "charKeys": true,
+          "railFolded": false,
+          "catalogView": null,
+          "diagramTheme": null,
+          "codePalette": null
+        },
+        "meta": {
+          "lastExport": null,
+          "persisted": null
+        }
+      },
+      "steps": [
+        {
+          "op": "unsign",
+          "slug": "alpha/first",
+          "now": "2026-03-15T07:10:00.000Z"
+        }
+      ],
+      "expect": {
+        "bytes": "{\"schema\":1,\"savedAt\":\"2026-03-15T07:10:00.000Z\",\"data\":{\"sheets\":{\"alpha/first\":{\"signedOff\":null,\"signedRevision\":null,\"reachedEnd\":false,\"dwellSeconds\":0,\"checklist\":{}}},\"everyoneSheets\":{},\"days\":[\"2026-03-14\"],\"prefs\":{\"charKeys\":true,\"railFolded\":false,\"catalogView\":null,\"diagramTheme\":null,\"codePalette\":null},\"meta\":{\"lastExport\":null,\"persisted\":null}}}",
+        "unchanged": []
+      }
+    },
+    {
+      "name": "unsign on an unsigned sheet is a no-op",
+      "before": {
+        "sheets": {
+          "alpha/first": {
+            "signedOff": "2026-03-14T09:26:53.589Z",
+            "signedRevision": "a1b2c3d",
+            "reachedEnd": false,
+            "dwellSeconds": 0,
+            "checklist": {}
+          }
+        },
+        "everyoneSheets": {},
+        "days": [
+          "2026-03-14"
+        ],
+        "prefs": {
+          "charKeys": true,
+          "railFolded": false,
+          "catalogView": null,
+          "diagramTheme": null,
+          "codePalette": null
+        },
+        "meta": {
+          "lastExport": null,
+          "persisted": null
+        }
+      },
+      "steps": [
+        {
+          "op": "unsign",
+          "slug": "alpha/second",
+          "now": "2026-03-15T07:10:00.000Z"
+        }
+      ],
+      "expect": {
+        "bytes": "{\"schema\":1,\"savedAt\":\"2026-03-15T07:10:00.000Z\",\"data\":{\"sheets\":{\"alpha/first\":{\"signedOff\":\"2026-03-14T09:26:53.589Z\",\"signedRevision\":\"a1b2c3d\",\"reachedEnd\":false,\"dwellSeconds\":0,\"checklist\":{}}},\"everyoneSheets\":{},\"days\":[\"2026-03-14\"],\"prefs\":{\"charKeys\":true,\"railFolded\":false,\"catalogView\":null,\"diagramTheme\":null,\"codePalette\":null},\"meta\":{\"lastExport\":null,\"persisted\":null}}}",
+        "unchanged": [
+          0
+        ]
+      }
+    },
+    {
+      "name": "signOff in For Everyone writes its own map and leaves For Engineers alone",
+      "before": {
+        "sheets": {
+          "alpha/first": {
+            "signedOff": "2026-03-14T09:26:53.589Z",
+            "signedRevision": "a1b2c3d",
+            "reachedEnd": false,
+            "dwellSeconds": 0,
+            "checklist": {}
+          }
+        },
+        "everyoneSheets": {},
+        "days": [
+          "2026-03-14"
+        ],
+        "prefs": {
+          "charKeys": true,
+          "railFolded": false,
+          "catalogView": null,
+          "diagramTheme": null,
+          "codePalette": null
+        },
+        "meta": {
+          "lastExport": null,
+          "persisted": null
+        }
+      },
+      "steps": [
+        {
+          "op": "signOff",
+          "slug": "alpha/first",
+          "revision": "a1b2c3d",
+          "now": "2026-03-15T07:10:00.000Z",
+          "track": "everyone"
+        }
+      ],
+      "expect": {
+        "bytes": "{\"schema\":1,\"savedAt\":\"2026-03-15T07:10:00.000Z\",\"data\":{\"sheets\":{\"alpha/first\":{\"signedOff\":\"2026-03-14T09:26:53.589Z\",\"signedRevision\":\"a1b2c3d\",\"reachedEnd\":false,\"dwellSeconds\":0,\"checklist\":{}}},\"everyoneSheets\":{\"alpha/first\":{\"signedOff\":\"2026-03-15T07:10:00.000Z\",\"signedRevision\":\"a1b2c3d\",\"reachedEnd\":false,\"dwellSeconds\":0,\"checklist\":{}}},\"days\":[\"2026-03-14\",\"2026-03-15\"],\"prefs\":{\"charKeys\":true,\"railFolded\":false,\"catalogView\":null,\"diagramTheme\":null,\"codePalette\":null},\"meta\":{\"lastExport\":null,\"persisted\":null}}}",
+        "unchanged": []
+      }
+    },
+    {
+      "name": "unsign in For Everyone leaves the For Engineers sign-off",
+      "before": {
+        "sheets": {
+          "alpha/first": {
+            "signedOff": "2026-03-14T09:26:53.589Z",
+            "signedRevision": "a1b2c3d",
+            "reachedEnd": false,
+            "dwellSeconds": 0,
+            "checklist": {}
+          }
+        },
+        "everyoneSheets": {
+          "alpha/first": {
+            "signedOff": "2026-03-14T09:26:53.589Z",
+            "signedRevision": "a1b2c3d",
+            "reachedEnd": false,
+            "dwellSeconds": 0,
+            "checklist": {}
+          }
+        },
+        "days": [
+          "2026-03-14"
+        ],
+        "prefs": {
+          "charKeys": true,
+          "railFolded": false,
+          "catalogView": null,
+          "diagramTheme": null,
+          "codePalette": null
+        },
+        "meta": {
+          "lastExport": null,
+          "persisted": null
+        }
+      },
+      "steps": [
+        {
+          "op": "unsign",
+          "slug": "alpha/first",
+          "now": "2026-03-15T07:10:00.000Z",
+          "track": "everyone"
+        }
+      ],
+      "expect": {
+        "bytes": "{\"schema\":1,\"savedAt\":\"2026-03-15T07:10:00.000Z\",\"data\":{\"sheets\":{\"alpha/first\":{\"signedOff\":\"2026-03-14T09:26:53.589Z\",\"signedRevision\":\"a1b2c3d\",\"reachedEnd\":false,\"dwellSeconds\":0,\"checklist\":{}}},\"everyoneSheets\":{\"alpha/first\":{\"signedOff\":null,\"signedRevision\":null,\"reachedEnd\":false,\"dwellSeconds\":0,\"checklist\":{}}},\"days\":[\"2026-03-14\"],\"prefs\":{\"charKeys\":true,\"railFolded\":false,\"catalogView\":null,\"diagramTheme\":null,\"codePalette\":null},\"meta\":{\"lastExport\":null,\"persisted\":null}}}",
+        "unchanged": []
+      }
+    },
+    {
+      "name": "erase clears both tracks",
+      "before": {
+        "sheets": {
+          "alpha/first": {
+            "signedOff": "2026-03-14T09:26:53.589Z",
+            "signedRevision": "a1b2c3d",
+            "reachedEnd": false,
+            "dwellSeconds": 0,
+            "checklist": {}
+          }
+        },
+        "everyoneSheets": {
+          "beta/first": {
+            "signedOff": "2026-03-14T09:26:53.589Z",
+            "signedRevision": "a1b2c3d",
+            "reachedEnd": false,
+            "dwellSeconds": 0,
+            "checklist": {}
+          }
+        },
+        "days": [
+          "2026-03-14"
+        ],
+        "prefs": {
+          "charKeys": true,
+          "railFolded": false,
+          "catalogView": null,
+          "diagramTheme": null,
+          "codePalette": null
+        },
+        "meta": {
+          "lastExport": null,
+          "persisted": null
+        }
+      },
+      "steps": [
+        {
+          "op": "erase",
+          "now": "2026-03-15T07:10:00.000Z"
+        }
+      ],
+      "expect": {
+        "bytes": "{\"schema\":1,\"savedAt\":\"2026-03-15T07:10:00.000Z\",\"data\":{\"sheets\":{},\"everyoneSheets\":{},\"days\":[],\"prefs\":{\"charKeys\":true,\"railFolded\":false,\"catalogView\":null,\"diagramTheme\":null,\"codePalette\":null},\"meta\":{\"lastExport\":null,\"persisted\":null}}}",
+        "unchanged": []
+      }
+    },
+    {
+      "name": "markActivity stamps a new day once",
+      "before": {
+        "sheets": {
+          "alpha/first": {
+            "signedOff": "2026-03-14T09:26:53.589Z",
+            "signedRevision": "a1b2c3d",
+            "reachedEnd": false,
+            "dwellSeconds": 0,
+            "checklist": {}
+          }
+        },
+        "everyoneSheets": {},
+        "days": [
+          "2026-03-14"
+        ],
+        "prefs": {
+          "charKeys": true,
+          "railFolded": false,
+          "catalogView": null,
+          "diagramTheme": null,
+          "codePalette": null
+        },
+        "meta": {
+          "lastExport": null,
+          "persisted": null
+        }
+      },
+      "steps": [
+        {
+          "op": "markActivity",
+          "now": "2026-03-15T07:10:00.000Z"
+        },
+        {
+          "op": "markActivity",
+          "now": "2026-03-15T07:10:00.000Z"
+        }
+      ],
+      "expect": {
+        "bytes": "{\"schema\":1,\"savedAt\":\"2026-03-15T07:10:00.000Z\",\"data\":{\"sheets\":{\"alpha/first\":{\"signedOff\":\"2026-03-14T09:26:53.589Z\",\"signedRevision\":\"a1b2c3d\",\"reachedEnd\":false,\"dwellSeconds\":0,\"checklist\":{}}},\"everyoneSheets\":{},\"days\":[\"2026-03-14\",\"2026-03-15\"],\"prefs\":{\"charKeys\":true,\"railFolded\":false,\"catalogView\":null,\"diagramTheme\":null,\"codePalette\":null},\"meta\":{\"lastExport\":null,\"persisted\":null}}}",
+        "unchanged": [
+          1
+        ]
+      }
+    },
+    {
+      "name": "markActivity keeps days sorted",
+      "before": {
+        "sheets": {
+          "alpha/first": {
+            "signedOff": "2026-03-14T09:26:53.589Z",
+            "signedRevision": "a1b2c3d",
+            "reachedEnd": false,
+            "dwellSeconds": 0,
+            "checklist": {}
+          }
+        },
+        "everyoneSheets": {},
+        "days": [
+          "2026-03-14"
+        ],
+        "prefs": {
+          "charKeys": true,
+          "railFolded": false,
+          "catalogView": null,
+          "diagramTheme": null,
+          "codePalette": null
+        },
+        "meta": {
+          "lastExport": null,
+          "persisted": null
+        }
+      },
+      "steps": [
+        {
+          "op": "markActivity",
+          "now": "2026-03-01T12:00:00.000Z"
+        }
+      ],
+      "expect": {
+        "bytes": "{\"schema\":1,\"savedAt\":\"2026-03-01T12:00:00.000Z\",\"data\":{\"sheets\":{\"alpha/first\":{\"signedOff\":\"2026-03-14T09:26:53.589Z\",\"signedRevision\":\"a1b2c3d\",\"reachedEnd\":false,\"dwellSeconds\":0,\"checklist\":{}}},\"everyoneSheets\":{},\"days\":[\"2026-03-01\",\"2026-03-14\"],\"prefs\":{\"charKeys\":true,\"railFolded\":false,\"catalogView\":null,\"diagramTheme\":null,\"codePalette\":null},\"meta\":{\"lastExport\":null,\"persisted\":null}}}",
+        "unchanged": []
+      }
+    },
+    {
+      "name": "markActivity with an impossible day stamps nothing",
+      "before": {
+        "sheets": {
+          "alpha/first": {
+            "signedOff": "2026-03-14T09:26:53.589Z",
+            "signedRevision": "a1b2c3d",
+            "reachedEnd": false,
+            "dwellSeconds": 0,
+            "checklist": {}
+          }
+        },
+        "everyoneSheets": {},
+        "days": [
+          "2026-03-14"
+        ],
+        "prefs": {
+          "charKeys": true,
+          "railFolded": false,
+          "catalogView": null,
+          "diagramTheme": null,
+          "codePalette": null
+        },
+        "meta": {
+          "lastExport": null,
+          "persisted": null
+        }
+      },
+      "steps": [
+        {
+          "op": "markActivity",
+          "now": "2026-02-31T12:00:00.000Z"
+        }
+      ],
+      "expect": {
+        "bytes": "{\"schema\":1,\"savedAt\":\"2026-02-31T12:00:00.000Z\",\"data\":{\"sheets\":{\"alpha/first\":{\"signedOff\":\"2026-03-14T09:26:53.589Z\",\"signedRevision\":\"a1b2c3d\",\"reachedEnd\":false,\"dwellSeconds\":0,\"checklist\":{}}},\"everyoneSheets\":{},\"days\":[\"2026-03-14\"],\"prefs\":{\"charKeys\":true,\"railFolded\":false,\"catalogView\":null,\"diagramTheme\":null,\"codePalette\":null},\"meta\":{\"lastExport\":null,\"persisted\":null}}}",
+        "unchanged": [
+          0
+        ]
+      }
+    },
+    {
+      "name": "markExported, then again at the same now",
+      "before": {
+        "sheets": {
+          "alpha/first": {
+            "signedOff": "2026-03-14T09:26:53.589Z",
+            "signedRevision": "a1b2c3d",
+            "reachedEnd": false,
+            "dwellSeconds": 0,
+            "checklist": {}
+          }
+        },
+        "everyoneSheets": {},
+        "days": [
+          "2026-03-14"
+        ],
+        "prefs": {
+          "charKeys": true,
+          "railFolded": false,
+          "catalogView": null,
+          "diagramTheme": null,
+          "codePalette": null
+        },
+        "meta": {
+          "lastExport": null,
+          "persisted": null
+        }
+      },
+      "steps": [
+        {
+          "op": "markExported",
+          "now": "2026-03-15T07:10:00.000Z"
+        },
+        {
+          "op": "markExported",
+          "now": "2026-03-15T07:10:00.000Z"
+        }
+      ],
+      "expect": {
+        "bytes": "{\"schema\":1,\"savedAt\":\"2026-03-15T07:10:00.000Z\",\"data\":{\"sheets\":{\"alpha/first\":{\"signedOff\":\"2026-03-14T09:26:53.589Z\",\"signedRevision\":\"a1b2c3d\",\"reachedEnd\":false,\"dwellSeconds\":0,\"checklist\":{}}},\"everyoneSheets\":{},\"days\":[\"2026-03-14\",\"2026-03-15\"],\"prefs\":{\"charKeys\":true,\"railFolded\":false,\"catalogView\":null,\"diagramTheme\":null,\"codePalette\":null},\"meta\":{\"lastExport\":\"2026-03-15T07:10:00.000Z\",\"persisted\":null}}}",
+        "unchanged": [
+          1
+        ]
+      }
+    },
+    {
+      "name": "erase",
+      "before": {
+        "sheets": {
+          "alpha/first": {
+            "signedOff": "2026-03-14T09:26:53.589Z",
+            "signedRevision": "a1b2c3d",
+            "reachedEnd": false,
+            "dwellSeconds": 0,
+            "checklist": {}
+          }
+        },
+        "everyoneSheets": {},
+        "days": [
+          "2026-03-14"
+        ],
+        "prefs": {
+          "charKeys": true,
+          "railFolded": false,
+          "catalogView": null,
+          "diagramTheme": null,
+          "codePalette": null
+        },
+        "meta": {
+          "lastExport": null,
+          "persisted": null
+        }
+      },
+      "steps": [
+        {
+          "op": "erase",
+          "now": "2026-03-15T07:10:00.000Z"
+        }
+      ],
+      "expect": {
+        "bytes": "{\"schema\":1,\"savedAt\":\"2026-03-15T07:10:00.000Z\",\"data\":{\"sheets\":{},\"everyoneSheets\":{},\"days\":[],\"prefs\":{\"charKeys\":true,\"railFolded\":false,\"catalogView\":null,\"diagramTheme\":null,\"codePalette\":null},\"meta\":{\"lastExport\":null,\"persisted\":null}}}",
+        "unchanged": []
+      }
+    }
+  ],
+  "export": [
+    {
+      "name": "keys out of order",
+      "input": "{\"schema\":1,\"savedAt\":\"2026-03-14T08:00:00.000Z\",\"data\":{\"sheets\":{\"beta/second\":{\"signedOff\":\"2026-03-14T09:26:53.589Z\",\"signedRevision\":\"a1b2c3d\",\"reachedEnd\":false,\"dwellSeconds\":0,\"checklist\":{\"2\":true,\"10\":true}},\"10\":{\"signedOff\":\"2026-03-14T09:26:53.589Z\",\"signedRevision\":\"a1b2c3d\",\"reachedEnd\":false,\"dwellSeconds\":0,\"checklist\":{}},\"alpha/first\":{\"signedOff\":\"2026-03-14T09:26:53.589Z\",\"signedRevision\":\"a1b2c3d\",\"reachedEnd\":false,\"dwellSeconds\":0,\"checklist\":{}},\"2\":{\"signedOff\":\"2026-03-14T09:26:53.589Z\",\"signedRevision\":\"a1b2c3d\",\"reachedEnd\":false,\"dwellSeconds\":0,\"checklist\":{}},\"42\":{\"signedOff\":\"2026-03-14T09:26:53.589Z\",\"signedRevision\":\"a1b2c3d\",\"reachedEnd\":false,\"dwellSeconds\":0,\"checklist\":{}}},\"everyoneSheets\":{},\"days\":[\"2026-03-14\"],\"prefs\":{\"charKeys\":true,\"railFolded\":false,\"catalogView\":null,\"diagramTheme\":null,\"codePalette\":null},\"meta\":{\"lastExport\":null,\"persisted\":null}}}",
+      "at": "2026-03-15T07:10:00.000Z",
+      "expect": {
+        "bytes": "{\n  \"schema\": 1,\n  \"savedAt\": \"2026-03-15T07:10:00.000Z\",\n  \"data\": {\n    \"sheets\": {\n      \"2\": {\n        \"signedOff\": \"2026-03-14T09:26:53.589Z\",\n        \"signedRevision\": \"a1b2c3d\",\n        \"reachedEnd\": false,\n        \"dwellSeconds\": 0,\n        \"checklist\": {}\n      },\n      \"10\": {\n        \"signedOff\": \"2026-03-14T09:26:53.589Z\",\n        \"signedRevision\": \"a1b2c3d\",\n        \"reachedEnd\": false,\n        \"dwellSeconds\": 0,\n        \"checklist\": {}\n      },\n      \"42\": {\n        \"signedOff\": \"2026-03-14T09:26:53.589Z\",\n        \"signedRevision\": \"a1b2c3d\",\n        \"reachedEnd\": false,\n        \"dwellSeconds\": 0,\n        \"checklist\": {}\n      },\n      \"beta/second\": {\n        \"signedOff\": \"2026-03-14T09:26:53.589Z\",\n        \"signedRevision\": \"a1b2c3d\",\n        \"reachedEnd\": false,\n        \"dwellSeconds\": 0,\n        \"checklist\": {\n          \"2\": true,\n          \"10\": true\n        }\n      },\n      \"alpha/first\": {\n        \"signedOff\": \"2026-03-14T09:26:53.589Z\",\n        \"signedRevision\": \"a1b2c3d\",\n        \"reachedEnd\": false,\n        \"dwellSeconds\": 0,\n        \"checklist\": {}\n      }\n    },\n    \"everyoneSheets\": {},\n    \"days\": [\n      \"2026-03-14\",\n      \"2026-03-15\"\n    ],\n    \"prefs\": {\n      \"charKeys\": true,\n      \"railFolded\": false,\n      \"catalogView\": null,\n      \"diagramTheme\": null,\n      \"codePalette\": null\n    },\n    \"meta\": {\n      \"lastExport\": null,\n      \"persisted\": null\n    }\n  }\n}",
+        "filename": "hl-record-2026-03-15.json"
+      }
+    },
+    {
+      "name": "the empty record",
+      "input": "{\"schema\":1,\"savedAt\":\"2026-03-14T08:00:00.000Z\",\"data\":{\"sheets\":{},\"everyoneSheets\":{},\"days\":[],\"prefs\":{\"charKeys\":true,\"railFolded\":false,\"catalogView\":null,\"diagramTheme\":null,\"codePalette\":null},\"meta\":{\"lastExport\":null,\"persisted\":null}}}",
+      "at": "2026-03-15T07:10:00.000Z",
+      "expect": {
+        "bytes": "{\n  \"schema\": 1,\n  \"savedAt\": \"2026-03-15T07:10:00.000Z\",\n  \"data\": {\n    \"sheets\": {},\n    \"everyoneSheets\": {},\n    \"days\": [\n      \"2026-03-15\"\n    ],\n    \"prefs\": {\n      \"charKeys\": true,\n      \"railFolded\": false,\n      \"catalogView\": null,\n      \"diagramTheme\": null,\n      \"codePalette\": null\n    },\n    \"meta\": {\n      \"lastExport\": null,\n      \"persisted\": null\n    }\n  }\n}",
+        "filename": "hl-record-2026-03-15.json"
+      }
+    }
+  ],
+  "derive": [
+    {
+      "name": "the empty record",
+      "index": {
+        "levels": [
+          {
+            "slug": "alpha",
+            "total": 3
+          },
+          {
+            "slug": "beta",
+            "total": 2
+          }
+        ],
+        "modules": [
+          {
+            "key": "alpha/second",
+            "level": "alpha",
+            "number": 2,
+            "tracks": {
+              "engineers": {
+                "drawn": true
+              },
+              "everyone": {
+                "drawn": false
+              }
+            }
+          },
+          {
+            "key": "alpha/first",
+            "level": "alpha",
+            "number": 1,
+            "tracks": {
+              "engineers": {
+                "drawn": true
+              },
+              "everyone": {
+                "drawn": true
+              }
+            }
+          },
+          {
+            "key": "alpha/third",
+            "level": "alpha",
+            "number": 3,
+            "tracks": {
+              "engineers": {
+                "drawn": false
+              },
+              "everyone": {
+                "drawn": true
+              }
+            }
+          },
+          {
+            "key": "beta/first",
+            "level": "beta",
+            "number": 4,
+            "tracks": {
+              "engineers": {
+                "drawn": true
+              },
+              "everyone": {
+                "drawn": false
+              }
+            }
+          },
+          {
+            "key": "beta/second",
+            "level": "beta",
+            "number": 5,
+            "tracks": {
+              "engineers": {
+                "drawn": false
+              },
+              "everyone": {
+                "drawn": false
+              }
+            }
+          }
+        ]
+      },
+      "record": {
+        "sheets": {},
+        "everyoneSheets": {},
+        "days": [],
+        "prefs": {
+          "charKeys": true,
+          "railFolded": false,
+          "catalogView": null,
+          "diagramTheme": null,
+          "codePalette": null
+        },
+        "meta": {
+          "lastExport": null,
+          "persisted": null
+        }
+      },
+      "expect": {
+        "tracks": {
+          "engineers": {
+            "isSigned": {
+              "alpha/second": false,
+              "alpha/first": false,
+              "alpha/third": false,
+              "beta/first": false,
+              "beta/second": false
+            },
+            "categoryProgress": {
+              "alpha": {
+                "approved": 0,
+                "total": 3
+              },
+              "beta": {
+                "approved": 0,
+                "total": 2
+              }
+            },
+            "nextUnsigned": "alpha/first",
+            "signedCount": {
+              "signed": 0,
+              "toGo": 5,
+              "of": 5
+            }
+          },
+          "everyone": {
+            "isSigned": {
+              "alpha/second": false,
+              "alpha/first": false,
+              "alpha/third": false,
+              "beta/first": false,
+              "beta/second": false
+            },
+            "categoryProgress": {
+              "alpha": {
+                "approved": 0,
+                "total": 3
+              },
+              "beta": {
+                "approved": 0,
+                "total": 2
+              }
+            },
+            "nextUnsigned": "alpha/first",
+            "signedCount": {
+              "signed": 0,
+              "toGo": 5,
+              "of": 5
+            }
+          }
+        },
+        "carriesNothing": true,
+        "tally": {
+          "sheets": 0
+        }
+      }
+    },
+    {
+      "name": "one signed module",
+      "index": {
+        "levels": [
+          {
+            "slug": "alpha",
+            "total": 3
+          },
+          {
+            "slug": "beta",
+            "total": 2
+          }
+        ],
+        "modules": [
+          {
+            "key": "alpha/second",
+            "level": "alpha",
+            "number": 2,
+            "tracks": {
+              "engineers": {
+                "drawn": true
+              },
+              "everyone": {
+                "drawn": false
+              }
+            }
+          },
+          {
+            "key": "alpha/first",
+            "level": "alpha",
+            "number": 1,
+            "tracks": {
+              "engineers": {
+                "drawn": true
+              },
+              "everyone": {
+                "drawn": true
+              }
+            }
+          },
+          {
+            "key": "alpha/third",
+            "level": "alpha",
+            "number": 3,
+            "tracks": {
+              "engineers": {
+                "drawn": false
+              },
+              "everyone": {
+                "drawn": true
+              }
+            }
+          },
+          {
+            "key": "beta/first",
+            "level": "beta",
+            "number": 4,
+            "tracks": {
+              "engineers": {
+                "drawn": true
+              },
+              "everyone": {
+                "drawn": false
+              }
+            }
+          },
+          {
+            "key": "beta/second",
+            "level": "beta",
+            "number": 5,
+            "tracks": {
+              "engineers": {
+                "drawn": false
+              },
+              "everyone": {
+                "drawn": false
+              }
+            }
+          }
+        ]
+      },
+      "record": {
+        "sheets": {
+          "alpha/first": {
+            "signedOff": "2026-03-14T09:26:53.589Z",
+            "signedRevision": "a1b2c3d",
+            "reachedEnd": false,
+            "dwellSeconds": 0,
+            "checklist": {}
+          }
+        },
+        "everyoneSheets": {},
+        "days": [
+          "2026-03-14"
+        ],
+        "prefs": {
+          "charKeys": true,
+          "railFolded": false,
+          "catalogView": null,
+          "diagramTheme": null,
+          "codePalette": null
+        },
+        "meta": {
+          "lastExport": null,
+          "persisted": null
+        }
+      },
+      "expect": {
+        "tracks": {
+          "engineers": {
+            "isSigned": {
+              "alpha/second": false,
+              "alpha/first": true,
+              "alpha/third": false,
+              "beta/first": false,
+              "beta/second": false
+            },
+            "categoryProgress": {
+              "alpha": {
+                "approved": 1,
+                "total": 3
+              },
+              "beta": {
+                "approved": 0,
+                "total": 2
+              }
+            },
+            "nextUnsigned": "alpha/second",
+            "signedCount": {
+              "signed": 1,
+              "toGo": 4,
+              "of": 5
+            }
+          },
+          "everyone": {
+            "isSigned": {
+              "alpha/second": false,
+              "alpha/first": false,
+              "alpha/third": false,
+              "beta/first": false,
+              "beta/second": false
+            },
+            "categoryProgress": {
+              "alpha": {
+                "approved": 0,
+                "total": 3
+              },
+              "beta": {
+                "approved": 0,
+                "total": 2
+              }
+            },
+            "nextUnsigned": "alpha/first",
+            "signedCount": {
+              "signed": 0,
+              "toGo": 5,
+              "of": 5
+            }
+          }
+        },
+        "carriesNothing": false,
+        "tally": {
+          "sheets": 1
+        }
+      }
+    },
+    {
+      "name": "a signed draft counts for nothing",
+      "index": {
+        "levels": [
+          {
+            "slug": "alpha",
+            "total": 3
+          },
+          {
+            "slug": "beta",
+            "total": 2
+          }
+        ],
+        "modules": [
+          {
+            "key": "alpha/second",
+            "level": "alpha",
+            "number": 2,
+            "tracks": {
+              "engineers": {
+                "drawn": true
+              },
+              "everyone": {
+                "drawn": false
+              }
+            }
+          },
+          {
+            "key": "alpha/first",
+            "level": "alpha",
+            "number": 1,
+            "tracks": {
+              "engineers": {
+                "drawn": true
+              },
+              "everyone": {
+                "drawn": true
+              }
+            }
+          },
+          {
+            "key": "alpha/third",
+            "level": "alpha",
+            "number": 3,
+            "tracks": {
+              "engineers": {
+                "drawn": false
+              },
+              "everyone": {
+                "drawn": true
+              }
+            }
+          },
+          {
+            "key": "beta/first",
+            "level": "beta",
+            "number": 4,
+            "tracks": {
+              "engineers": {
+                "drawn": true
+              },
+              "everyone": {
+                "drawn": false
+              }
+            }
+          },
+          {
+            "key": "beta/second",
+            "level": "beta",
+            "number": 5,
+            "tracks": {
+              "engineers": {
+                "drawn": false
+              },
+              "everyone": {
+                "drawn": false
+              }
+            }
+          }
+        ]
+      },
+      "record": {
+        "sheets": {
+          "alpha/first": {
+            "signedOff": "2026-03-14T09:26:53.589Z",
+            "signedRevision": "a1b2c3d",
+            "reachedEnd": false,
+            "dwellSeconds": 0,
+            "checklist": {}
+          },
+          "alpha/third": {
+            "signedOff": "2026-03-14T09:26:53.589Z",
+            "signedRevision": "a1b2c3d",
+            "reachedEnd": false,
+            "dwellSeconds": 0,
+            "checklist": {}
+          }
+        },
+        "everyoneSheets": {},
+        "days": [
+          "2026-03-14"
+        ],
+        "prefs": {
+          "charKeys": true,
+          "railFolded": false,
+          "catalogView": null,
+          "diagramTheme": null,
+          "codePalette": null
+        },
+        "meta": {
+          "lastExport": null,
+          "persisted": null
+        }
+      },
+      "expect": {
+        "tracks": {
+          "engineers": {
+            "isSigned": {
+              "alpha/second": false,
+              "alpha/first": true,
+              "alpha/third": false,
+              "beta/first": false,
+              "beta/second": false
+            },
+            "categoryProgress": {
+              "alpha": {
+                "approved": 1,
+                "total": 3
+              },
+              "beta": {
+                "approved": 0,
+                "total": 2
+              }
+            },
+            "nextUnsigned": "alpha/second",
+            "signedCount": {
+              "signed": 1,
+              "toGo": 4,
+              "of": 5
+            }
+          },
+          "everyone": {
+            "isSigned": {
+              "alpha/second": false,
+              "alpha/first": false,
+              "alpha/third": false,
+              "beta/first": false,
+              "beta/second": false
+            },
+            "categoryProgress": {
+              "alpha": {
+                "approved": 0,
+                "total": 3
+              },
+              "beta": {
+                "approved": 0,
+                "total": 2
+              }
+            },
+            "nextUnsigned": "alpha/first",
+            "signedCount": {
+              "signed": 0,
+              "toGo": 5,
+              "of": 5
+            }
+          }
+        },
+        "carriesNothing": false,
+        "tally": {
+          "sheets": 2
+        }
+      }
+    },
+    {
+      "name": "every drawn module signed",
+      "index": {
+        "levels": [
+          {
+            "slug": "alpha",
+            "total": 3
+          },
+          {
+            "slug": "beta",
+            "total": 2
+          }
+        ],
+        "modules": [
+          {
+            "key": "alpha/second",
+            "level": "alpha",
+            "number": 2,
+            "tracks": {
+              "engineers": {
+                "drawn": true
+              },
+              "everyone": {
+                "drawn": false
+              }
+            }
+          },
+          {
+            "key": "alpha/first",
+            "level": "alpha",
+            "number": 1,
+            "tracks": {
+              "engineers": {
+                "drawn": true
+              },
+              "everyone": {
+                "drawn": true
+              }
+            }
+          },
+          {
+            "key": "alpha/third",
+            "level": "alpha",
+            "number": 3,
+            "tracks": {
+              "engineers": {
+                "drawn": false
+              },
+              "everyone": {
+                "drawn": true
+              }
+            }
+          },
+          {
+            "key": "beta/first",
+            "level": "beta",
+            "number": 4,
+            "tracks": {
+              "engineers": {
+                "drawn": true
+              },
+              "everyone": {
+                "drawn": false
+              }
+            }
+          },
+          {
+            "key": "beta/second",
+            "level": "beta",
+            "number": 5,
+            "tracks": {
+              "engineers": {
+                "drawn": false
+              },
+              "everyone": {
+                "drawn": false
+              }
+            }
+          }
+        ]
+      },
+      "record": {
+        "sheets": {
+          "alpha/first": {
+            "signedOff": "2026-03-14T09:26:53.589Z",
+            "signedRevision": "a1b2c3d",
+            "reachedEnd": false,
+            "dwellSeconds": 0,
+            "checklist": {}
+          },
+          "alpha/second": {
+            "signedOff": "2026-03-14T09:26:53.589Z",
+            "signedRevision": "a1b2c3d",
+            "reachedEnd": false,
+            "dwellSeconds": 0,
+            "checklist": {}
+          },
+          "beta/first": {
+            "signedOff": "2026-03-14T09:26:53.589Z",
+            "signedRevision": "a1b2c3d",
+            "reachedEnd": false,
+            "dwellSeconds": 0,
+            "checklist": {}
+          }
+        },
+        "everyoneSheets": {},
+        "days": [
+          "2026-03-14"
+        ],
+        "prefs": {
+          "charKeys": true,
+          "railFolded": false,
+          "catalogView": null,
+          "diagramTheme": null,
+          "codePalette": null
+        },
+        "meta": {
+          "lastExport": null,
+          "persisted": null
+        }
+      },
+      "expect": {
+        "tracks": {
+          "engineers": {
+            "isSigned": {
+              "alpha/second": true,
+              "alpha/first": true,
+              "alpha/third": false,
+              "beta/first": true,
+              "beta/second": false
+            },
+            "categoryProgress": {
+              "alpha": {
+                "approved": 2,
+                "total": 3
+              },
+              "beta": {
+                "approved": 1,
+                "total": 2
+              }
+            },
+            "nextUnsigned": null,
+            "signedCount": {
+              "signed": 3,
+              "toGo": 2,
+              "of": 5
+            }
+          },
+          "everyone": {
+            "isSigned": {
+              "alpha/second": false,
+              "alpha/first": false,
+              "alpha/third": false,
+              "beta/first": false,
+              "beta/second": false
+            },
+            "categoryProgress": {
+              "alpha": {
+                "approved": 0,
+                "total": 3
+              },
+              "beta": {
+                "approved": 0,
+                "total": 2
+              }
+            },
+            "nextUnsigned": "alpha/first",
+            "signedCount": {
+              "signed": 0,
+              "toGo": 5,
+              "of": 5
+            }
+          }
+        },
+        "carriesNothing": false,
+        "tally": {
+          "sheets": 3
+        }
+      }
+    },
+    {
+      "name": "a sign-off for a slug the curriculum does not list",
+      "index": {
+        "levels": [
+          {
+            "slug": "alpha",
+            "total": 3
+          },
+          {
+            "slug": "beta",
+            "total": 2
+          }
+        ],
+        "modules": [
+          {
+            "key": "alpha/second",
+            "level": "alpha",
+            "number": 2,
+            "tracks": {
+              "engineers": {
+                "drawn": true
+              },
+              "everyone": {
+                "drawn": false
+              }
+            }
+          },
+          {
+            "key": "alpha/first",
+            "level": "alpha",
+            "number": 1,
+            "tracks": {
+              "engineers": {
+                "drawn": true
+              },
+              "everyone": {
+                "drawn": true
+              }
+            }
+          },
+          {
+            "key": "alpha/third",
+            "level": "alpha",
+            "number": 3,
+            "tracks": {
+              "engineers": {
+                "drawn": false
+              },
+              "everyone": {
+                "drawn": true
+              }
+            }
+          },
+          {
+            "key": "beta/first",
+            "level": "beta",
+            "number": 4,
+            "tracks": {
+              "engineers": {
+                "drawn": true
+              },
+              "everyone": {
+                "drawn": false
+              }
+            }
+          },
+          {
+            "key": "beta/second",
+            "level": "beta",
+            "number": 5,
+            "tracks": {
+              "engineers": {
+                "drawn": false
+              },
+              "everyone": {
+                "drawn": false
+              }
+            }
+          }
+        ]
+      },
+      "record": {
+        "sheets": {
+          "alpha/first": {
+            "signedOff": "2026-03-14T09:26:53.589Z",
+            "signedRevision": "a1b2c3d",
+            "reachedEnd": false,
+            "dwellSeconds": 0,
+            "checklist": {}
+          },
+          "gamma/gone": {
+            "signedOff": "2026-03-14T09:26:53.589Z",
+            "signedRevision": "a1b2c3d",
+            "reachedEnd": false,
+            "dwellSeconds": 0,
+            "checklist": {}
+          }
+        },
+        "everyoneSheets": {},
+        "days": [
+          "2026-03-14"
+        ],
+        "prefs": {
+          "charKeys": true,
+          "railFolded": false,
+          "catalogView": null,
+          "diagramTheme": null,
+          "codePalette": null
+        },
+        "meta": {
+          "lastExport": null,
+          "persisted": null
+        }
+      },
+      "expect": {
+        "tracks": {
+          "engineers": {
+            "isSigned": {
+              "alpha/second": false,
+              "alpha/first": true,
+              "alpha/third": false,
+              "beta/first": false,
+              "beta/second": false
+            },
+            "categoryProgress": {
+              "alpha": {
+                "approved": 1,
+                "total": 3
+              },
+              "beta": {
+                "approved": 0,
+                "total": 2
+              }
+            },
+            "nextUnsigned": "alpha/second",
+            "signedCount": {
+              "signed": 1,
+              "toGo": 4,
+              "of": 5
+            }
+          },
+          "everyone": {
+            "isSigned": {
+              "alpha/second": false,
+              "alpha/first": false,
+              "alpha/third": false,
+              "beta/first": false,
+              "beta/second": false
+            },
+            "categoryProgress": {
+              "alpha": {
+                "approved": 0,
+                "total": 3
+              },
+              "beta": {
+                "approved": 0,
+                "total": 2
+              }
+            },
+            "nextUnsigned": "alpha/first",
+            "signedCount": {
+              "signed": 0,
+              "toGo": 5,
+              "of": 5
+            }
+          }
+        },
+        "carriesNothing": false,
+        "tally": {
+          "sheets": 2
+        }
+      }
+    },
+    {
+      "name": "a module whose level no level declares",
+      "index": {
+        "levels": [
+          {
+            "slug": "alpha",
+            "total": 3
+          },
+          {
+            "slug": "beta",
+            "total": 2
+          }
+        ],
+        "modules": [
+          {
+            "key": "alpha/second",
+            "level": "alpha",
+            "number": 2,
+            "tracks": {
+              "engineers": {
+                "drawn": true
+              },
+              "everyone": {
+                "drawn": false
+              }
+            }
+          },
+          {
+            "key": "alpha/first",
+            "level": "alpha",
+            "number": 1,
+            "tracks": {
+              "engineers": {
+                "drawn": true
+              },
+              "everyone": {
+                "drawn": true
+              }
+            }
+          },
+          {
+            "key": "alpha/third",
+            "level": "alpha",
+            "number": 3,
+            "tracks": {
+              "engineers": {
+                "drawn": false
+              },
+              "everyone": {
+                "drawn": true
+              }
+            }
+          },
+          {
+            "key": "beta/first",
+            "level": "beta",
+            "number": 4,
+            "tracks": {
+              "engineers": {
+                "drawn": true
+              },
+              "everyone": {
+                "drawn": false
+              }
+            }
+          },
+          {
+            "key": "beta/second",
+            "level": "beta",
+            "number": 5,
+            "tracks": {
+              "engineers": {
+                "drawn": false
+              },
+              "everyone": {
+                "drawn": false
+              }
+            }
+          },
+          {
+            "key": "gamma/first",
+            "level": "gamma",
+            "number": 6,
+            "tracks": {
+              "engineers": {
+                "drawn": true
+              },
+              "everyone": {
+                "drawn": true
+              }
+            }
+          }
+        ]
+      },
+      "record": {
+        "sheets": {
+          "gamma/first": {
+            "signedOff": "2026-03-14T09:26:53.589Z",
+            "signedRevision": "a1b2c3d",
+            "reachedEnd": false,
+            "dwellSeconds": 0,
+            "checklist": {}
+          }
+        },
+        "everyoneSheets": {},
+        "days": [
+          "2026-03-14"
+        ],
+        "prefs": {
+          "charKeys": true,
+          "railFolded": false,
+          "catalogView": null,
+          "diagramTheme": null,
+          "codePalette": null
+        },
+        "meta": {
+          "lastExport": null,
+          "persisted": null
+        }
+      },
+      "expect": {
+        "tracks": {
+          "engineers": {
+            "isSigned": {
+              "alpha/second": false,
+              "alpha/first": false,
+              "alpha/third": false,
+              "beta/first": false,
+              "beta/second": false,
+              "gamma/first": true
+            },
+            "categoryProgress": {
+              "alpha": {
+                "approved": 0,
+                "total": 3
+              },
+              "beta": {
+                "approved": 0,
+                "total": 2
+              },
+              "gamma": {
+                "approved": 1,
+                "total": 1
+              }
+            },
+            "nextUnsigned": "alpha/first",
+            "signedCount": {
+              "signed": 1,
+              "toGo": 5,
+              "of": 6
+            }
+          },
+          "everyone": {
+            "isSigned": {
+              "alpha/second": false,
+              "alpha/first": false,
+              "alpha/third": false,
+              "beta/first": false,
+              "beta/second": false,
+              "gamma/first": false
+            },
+            "categoryProgress": {
+              "alpha": {
+                "approved": 0,
+                "total": 3
+              },
+              "beta": {
+                "approved": 0,
+                "total": 2
+              },
+              "gamma": {
+                "approved": 0,
+                "total": 1
+              }
+            },
+            "nextUnsigned": "alpha/first",
+            "signedCount": {
+              "signed": 0,
+              "toGo": 6,
+              "of": 6
+            }
+          }
+        },
+        "carriesNothing": false,
+        "tally": {
+          "sheets": 1
+        }
+      }
+    },
+    {
+      "name": "a For Everyone sign-off counts in For Everyone only",
+      "index": {
+        "levels": [
+          {
+            "slug": "alpha",
+            "total": 3
+          },
+          {
+            "slug": "beta",
+            "total": 2
+          }
+        ],
+        "modules": [
+          {
+            "key": "alpha/second",
+            "level": "alpha",
+            "number": 2,
+            "tracks": {
+              "engineers": {
+                "drawn": true
+              },
+              "everyone": {
+                "drawn": false
+              }
+            }
+          },
+          {
+            "key": "alpha/first",
+            "level": "alpha",
+            "number": 1,
+            "tracks": {
+              "engineers": {
+                "drawn": true
+              },
+              "everyone": {
+                "drawn": true
+              }
+            }
+          },
+          {
+            "key": "alpha/third",
+            "level": "alpha",
+            "number": 3,
+            "tracks": {
+              "engineers": {
+                "drawn": false
+              },
+              "everyone": {
+                "drawn": true
+              }
+            }
+          },
+          {
+            "key": "beta/first",
+            "level": "beta",
+            "number": 4,
+            "tracks": {
+              "engineers": {
+                "drawn": true
+              },
+              "everyone": {
+                "drawn": false
+              }
+            }
+          },
+          {
+            "key": "beta/second",
+            "level": "beta",
+            "number": 5,
+            "tracks": {
+              "engineers": {
+                "drawn": false
+              },
+              "everyone": {
+                "drawn": false
+              }
+            }
+          }
+        ]
+      },
+      "record": {
+        "sheets": {},
+        "everyoneSheets": {
+          "alpha/first": {
+            "signedOff": "2026-03-14T09:26:53.589Z",
+            "signedRevision": "a1b2c3d",
+            "reachedEnd": false,
+            "dwellSeconds": 0,
+            "checklist": {}
+          },
+          "alpha/third": {
+            "signedOff": "2026-03-14T09:26:53.589Z",
+            "signedRevision": "a1b2c3d",
+            "reachedEnd": false,
+            "dwellSeconds": 0,
+            "checklist": {}
+          }
+        },
+        "days": [
+          "2026-03-14"
+        ],
+        "prefs": {
+          "charKeys": true,
+          "railFolded": false,
+          "catalogView": null,
+          "diagramTheme": null,
+          "codePalette": null
+        },
+        "meta": {
+          "lastExport": null,
+          "persisted": null
+        }
+      },
+      "expect": {
+        "tracks": {
+          "engineers": {
+            "isSigned": {
+              "alpha/second": false,
+              "alpha/first": false,
+              "alpha/third": false,
+              "beta/first": false,
+              "beta/second": false
+            },
+            "categoryProgress": {
+              "alpha": {
+                "approved": 0,
+                "total": 3
+              },
+              "beta": {
+                "approved": 0,
+                "total": 2
+              }
+            },
+            "nextUnsigned": "alpha/first",
+            "signedCount": {
+              "signed": 0,
+              "toGo": 5,
+              "of": 5
+            }
+          },
+          "everyone": {
+            "isSigned": {
+              "alpha/second": false,
+              "alpha/first": true,
+              "alpha/third": true,
+              "beta/first": false,
+              "beta/second": false
+            },
+            "categoryProgress": {
+              "alpha": {
+                "approved": 2,
+                "total": 3
+              },
+              "beta": {
+                "approved": 0,
+                "total": 2
+              }
+            },
+            "nextUnsigned": null,
+            "signedCount": {
+              "signed": 2,
+              "toGo": 3,
+              "of": 5
+            }
+          }
+        },
+        "carriesNothing": false,
+        "tally": {
+          "sheets": 2
+        }
+      }
+    },
+    {
+      "name": "a For Everyone sign-off on a module written only for engineers counts for nothing",
+      "index": {
+        "levels": [
+          {
+            "slug": "alpha",
+            "total": 3
+          },
+          {
+            "slug": "beta",
+            "total": 2
+          }
+        ],
+        "modules": [
+          {
+            "key": "alpha/second",
+            "level": "alpha",
+            "number": 2,
+            "tracks": {
+              "engineers": {
+                "drawn": true
+              },
+              "everyone": {
+                "drawn": false
+              }
+            }
+          },
+          {
+            "key": "alpha/first",
+            "level": "alpha",
+            "number": 1,
+            "tracks": {
+              "engineers": {
+                "drawn": true
+              },
+              "everyone": {
+                "drawn": true
+              }
+            }
+          },
+          {
+            "key": "alpha/third",
+            "level": "alpha",
+            "number": 3,
+            "tracks": {
+              "engineers": {
+                "drawn": false
+              },
+              "everyone": {
+                "drawn": true
+              }
+            }
+          },
+          {
+            "key": "beta/first",
+            "level": "beta",
+            "number": 4,
+            "tracks": {
+              "engineers": {
+                "drawn": true
+              },
+              "everyone": {
+                "drawn": false
+              }
+            }
+          },
+          {
+            "key": "beta/second",
+            "level": "beta",
+            "number": 5,
+            "tracks": {
+              "engineers": {
+                "drawn": false
+              },
+              "everyone": {
+                "drawn": false
+              }
+            }
+          }
+        ]
+      },
+      "record": {
+        "sheets": {
+          "alpha/second": {
+            "signedOff": "2026-03-14T09:26:53.589Z",
+            "signedRevision": "a1b2c3d",
+            "reachedEnd": false,
+            "dwellSeconds": 0,
+            "checklist": {}
+          }
+        },
+        "everyoneSheets": {
+          "alpha/second": {
+            "signedOff": "2026-03-14T09:26:53.589Z",
+            "signedRevision": "a1b2c3d",
+            "reachedEnd": false,
+            "dwellSeconds": 0,
+            "checklist": {}
+          }
+        },
+        "days": [
+          "2026-03-14"
+        ],
+        "prefs": {
+          "charKeys": true,
+          "railFolded": false,
+          "catalogView": null,
+          "diagramTheme": null,
+          "codePalette": null
+        },
+        "meta": {
+          "lastExport": null,
+          "persisted": null
+        }
+      },
+      "expect": {
+        "tracks": {
+          "engineers": {
+            "isSigned": {
+              "alpha/second": true,
+              "alpha/first": false,
+              "alpha/third": false,
+              "beta/first": false,
+              "beta/second": false
+            },
+            "categoryProgress": {
+              "alpha": {
+                "approved": 1,
+                "total": 3
+              },
+              "beta": {
+                "approved": 0,
+                "total": 2
+              }
+            },
+            "nextUnsigned": "alpha/first",
+            "signedCount": {
+              "signed": 1,
+              "toGo": 4,
+              "of": 5
+            }
+          },
+          "everyone": {
+            "isSigned": {
+              "alpha/second": false,
+              "alpha/first": false,
+              "alpha/third": false,
+              "beta/first": false,
+              "beta/second": false
+            },
+            "categoryProgress": {
+              "alpha": {
+                "approved": 0,
+                "total": 3
+              },
+              "beta": {
+                "approved": 0,
+                "total": 2
+              }
+            },
+            "nextUnsigned": "alpha/first",
+            "signedCount": {
+              "signed": 0,
+              "toGo": 5,
+              "of": 5
+            }
+          }
+        },
+        "carriesNothing": false,
+        "tally": {
+          "sheets": 2
+        }
+      }
+    }
+  ]
+}

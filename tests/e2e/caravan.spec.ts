@@ -130,13 +130,15 @@ function ringOf(page: Page) {
 }
 
 for (const viewport of [{ width: 1280, height: 720 }, { width: 1440, height: 800 }, { width: 1440, height: 900 }]) {
-  test(`the whole caravan and the whole strip are in the window at load, with no scrolling — ${viewport.width}x${viewport.height}`, async ({ page }) => {
+  test(`the whole caravan and the whole strip are in the window at load, close up and on long rods — ${viewport.width}x${viewport.height}`, async ({ page }) => {
     await page.setViewportSize(viewport)
     await open(page)
     await expect.poll(async () => page.evaluate(() => {
       const stage = document.querySelector('.cv-stage')!.getBoundingClientRect()
       const strip = document.querySelector('.cv-scrub')!.getBoundingClientRect()
-      const puppets = [...document.querySelectorAll('.cv-member')].map((m) => m.getBoundingClientRect())
+      const cloth = document.querySelector('.cv-screen')!.getBoundingClientRect()
+      const members = [...document.querySelectorAll('.cv-member')]
+      const puppets = members.map((m) => m.getBoundingClientRect())
       const bad: string[] = []
       if (window.scrollY !== 0) bad.push(`the page is scrolled by ${window.scrollY}`)
       if (stage.bottom > innerHeight) bad.push(`the stage ends at ${stage.bottom}`)
@@ -146,10 +148,48 @@ for (const viewport of [{ width: 1280, height: 720 }, { width: 1440, height: 800
       puppets.forEach((p, i) => {
         if (p.top < stage.top + 32 || p.left < stage.left + 24 || p.top > innerHeight) bad.push(`puppet ${i} at ${Math.round(p.left)},${Math.round(p.top)}`)
       })
+      members.forEach((member, i) => {
+        // The painted leather without its rod: what a reader sees as the puppet.
+        const parts = [...member.querySelectorAll('.cv-puppet > :not(.cv-rod)')].map((el) => el.getBoundingClientRect())
+        const body = { top: Math.min(...parts.map((r) => r.top)), bottom: Math.max(...parts.map((r) => r.bottom)) }
+        // M93, the author: "the caravan should be about 30 percent higher". The first build drew
+        // the leader at 11 to 12% of the window's height at these three sizes; the zoom draws it
+        // at 14 to 16%, and 13.5% is between the two.
+        if (i === 0 && body.bottom - body.top < innerHeight * 0.135) bad.push(`the leader is ${Math.round(body.bottom - body.top)} px tall in a ${innerHeight} px window`)
+        // "it is not clearly visible that caravan objects are actually on a stick": each rod is
+        // pinned inside its puppet and runs at least 20 px past the foot of the cloth.
+        const rod = member.querySelector('.cv-rod')
+        if (rod === null) {
+          bad.push(`puppet ${i} has no rod`)
+          return
+        }
+        const r = rod.getBoundingClientRect()
+        if (r.top < body.top || r.top > body.bottom) bad.push(`puppet ${i}'s rod is not pinned to it`)
+        const below = Math.min(r.bottom, stage.bottom) - cloth.bottom
+        if (below < 20) bad.push(`puppet ${i}'s rod shows ${Math.round(below)} px below the cloth`)
+      })
       return bad
     }), { timeout: 5000 }).toEqual([])
   })
 }
+
+test('the head is the title and the year bar, and a year\'s place is only announced', async ({ page }) => {
+  await open(page)
+  // M93, the author: remove the line under the title and the "2026 · The sea port" row.
+  const head = await page.locator('.cv-head').evaluate((el) => ({
+    children: [...el.children].map((child) => `${child.tagName.toLowerCase()}.${child.classList[0] ?? ''}`),
+    text: (el as HTMLElement).innerText.replace(/\s+/g, ' ').trim(),
+    years: [...el.querySelectorAll('[data-cv-year]')].map((b) => b.textContent?.trim()).join(' '),
+  }))
+  expect(head.children).toEqual(['h1.bz-display', 'div.cv-tools'])
+  expect(head.text, 'the head says more than the title and the years').toBe(`Caravan ${head.years}`)
+  await page.locator('[data-cv-year]').last().click()
+  await expect(page.locator('[data-cv-announce]')).toHaveText(/^\d{4} · \S/)
+  const shown = await page.evaluate(() => [...document.querySelectorAll('main *')]
+    .filter((el) => !el.closest('.sr-only') && (el as HTMLElement).offsetParent !== null)
+    .some((el) => [...el.childNodes].some((node) => node.nodeType === Node.TEXT_NODE && /^\d{4} · /.test(node.textContent ?? ''))))
+  expect(shown, 'a "year · place" row is on screen').toBe(false)
+})
 
 test('the year bar moves the journey to that year, and only a picked year is announced', async ({ page }) => {
   await page.emulateMedia({ reducedMotion: 'reduce' })
@@ -158,12 +198,11 @@ test('the year bar moves the journey to that year, and only a picked year is ann
   const count = await years.count()
   expect(count, 'the year bar has fewer than two years').toBeGreaterThan(1)
   const announce = page.locator('[data-cv-announce]')
-  await expect(page.locator('.cv-place')).not.toHaveAttribute('aria-live')
 
-  // Crossing years on the strip changes the place on screen and announces nothing.
+  // Crossing years on the strip moves the year bar's mark and announces nothing.
   await page.locator('.cv-scrub-thumb').focus()
   await page.keyboard.press('End')
-  await expect(page.locator('.cv-place')).not.toHaveText(new RegExp(`^${await years.first().getAttribute('data-cv-year')} `))
+  await expect(years.first()).not.toHaveAttribute('aria-current', 'true')
   await expect(announce).toHaveText('')
 
   for (let i = 0; i < count; i += 1) {
@@ -171,7 +210,6 @@ test('the year bar moves the journey to that year, and only a picked year is ann
     const year = (await button.getAttribute('data-cv-year'))!
     const before = await road(page)
     await button.click()
-    await expect(page.locator('.cv-place')).toHaveText(new RegExp(`^${year} · \\S`))
     await expect(announce).toHaveText(new RegExp(`^${year} · \\S`))
     await expect(button).toHaveAttribute('aria-current', 'true')
     await expect(page.locator('[data-cv-year][aria-current]')).toHaveCount(1)
@@ -324,7 +362,9 @@ for (const viewport of [{ width: 1440, height: 900 }, { width: 1280, height: 720
     expect(reached, 'the walk did not reach the end of the road').toBe(end)
     expect(samples, 'the walk took too few steps to see every stop pass').toBeGreaterThan(60)
     expect(puppetPairs, 'no puppet was compared with a stop').toBeGreaterThan(2000)
-    expect(labelPostPairs, 'no label was compared with a year\'s post').toBeGreaterThan(100)
+    // 50, not the first build's 100: since M93 a month is up to 340 px, not 260, so fewer labels
+    // and posts are on the stage at once. Still far from none, which is what this guards.
+    expect(labelPostPairs, 'no label was compared with a year\'s post').toBeGreaterThan(50)
     expect([...clashes]).toEqual([])
   })
 }
@@ -381,7 +421,8 @@ test('a drag on the picture pulls the road, and the strip walks it by month and 
   const start = before.now
   await page.mouse.move(stage.x + stage.width - 60, y)
   await page.mouse.down()
-  await page.mouse.move(stage.x + stage.width - 360, y, { steps: 12 })
+  // 600 px: more than a month at any zoom (a month is up to 416 px since M93).
+  await page.mouse.move(stage.x + stage.width - 660, y, { steps: 12 })
   await page.mouse.up()
   expect((await thumb(page)).now, 'dragging the road left did not move the caravan on').toBeGreaterThan(before.now)
 
@@ -440,17 +481,194 @@ test('under reduced motion the journey moves at once and nothing walks', async (
   const year = (await target.getAttribute('data-cv-year'))!
   await target.click()
   // One frame later the scene is already where it is going.
-  const inFrame = await page.evaluate(() => new Promise<{ road: string; place: string }>((resolve) => {
+  const inFrame = await page.evaluate(() => new Promise<{ road: string; year: string }>((resolve) => {
     requestAnimationFrame(() => requestAnimationFrame(() => resolve({
       road: (document.querySelector('.cv-road') as HTMLElement).style.transform,
-      place: document.querySelector('.cv-place')?.textContent ?? '',
+      year: document.querySelector('[data-cv-year][aria-current]')?.getAttribute('data-cv-year') ?? '',
     })))
   }))
-  expect(inFrame.place.startsWith(year), `one frame after the click the place is "${inFrame.place}"`).toBe(true)
+  expect(inFrame.year, `one frame after the click the year bar marks "${inFrame.year}"`).toBe(year)
   await page.waitForTimeout(700)
   const settled = await road(page)
   expect(settled, 'the scene kept moving after the first frame').toBe(inFrame.road)
   const moving = await page.evaluate(() => document.querySelector('.cv-stage')!.getAnimations({ subtree: true }).filter((a) => a.playState === 'running').length)
   expect(moving, 'something in the scene is animating').toBe(0)
   await expect(page.locator('.cv-caravan.is-walking')).toHaveCount(0)
+})
+
+/* ---- M93: the list of trends, browsed the way the catalog is ---------------------------------- */
+
+/** The titles of the entries on screen, in order. */
+const shownTitles = (page: Page) => page.locator('.cv-entries > li:visible .cv-entry-title').allTextContents()
+
+async function openList(page: Page): Promise<{ total: number; size: number }> {
+  await open(page)
+  await page.locator('.cv-list[data-cv-browse]').waitFor({ state: 'attached' })
+  const total = await page.locator('.cv-entries > li').count()
+  return { total, size: (await shownTitles(page)).length }
+}
+
+const count = (page: Page) => page.locator('.cv-list .bz-filter-count[role="status"]')
+
+test('without a script every trend is listed and none of the controls are shown', async ({ browser }) => {
+  const context = await browser.newContext({ javaScriptEnabled: false })
+  const bare = await context.newPage()
+  await bare.goto(ROUTE)
+  const all = await bare.locator('.cv-entries > li').count()
+  expect(all, 'the page lists no trend, so this checks nothing').toBeGreaterThan(0)
+  await expect(bare.locator('.cv-entries > li:visible')).toHaveCount(all)
+  await expect(bare.locator('.cv-filters')).toBeHidden()
+  await expect(bare.locator('.cv-pages')).toBeHidden()
+  await context.close()
+})
+
+test('twelve trends to a page, Previous and Next disabled at the ends, the count, and focus at the heading', async ({ page }) => {
+  const { total, size } = await openList(page)
+  test.skip(total <= 12, 'the list fits on one page, so there is nothing to page through')
+  expect(size).toBe(12)
+  const pages = Math.ceil(total / 12)
+  const previous = page.getByRole('button', { name: 'Previous page' })
+  const next = page.getByRole('button', { name: 'Next page' })
+  await expect(count(page)).toHaveText(`Showing 1–12 of ${total}`)
+  await expect(previous).toBeDisabled()
+  await expect(next).toBeEnabled()
+  await expect(page.getByRole('button', { name: 'Page 1', exact: true })).toHaveAttribute('aria-current', 'page')
+
+  const seen = await shownTitles(page)
+  for (let n = 2; n <= pages; n += 1) {
+    await next.click()
+    const first = (n - 1) * 12 + 1
+    const last = Math.min(total, n * 12)
+    await expect(count(page)).toHaveText(`Showing ${first}–${last} of ${total}`)
+    await expect(page.locator('.cv-entries > li:visible')).toHaveCount(last - first + 1)
+    await expect(page.getByRole('button', { name: `Page ${n}`, exact: true })).toHaveAttribute('aria-current', 'page')
+    await expect(page.locator('.cv-pages [aria-current="page"]')).toHaveCount(1)
+    await expect(previous).toBeEnabled()
+    await expect(page.locator('#cv-list-title'), 'a new page did not start at the list\'s heading').toBeFocused()
+    seen.push(...await shownTitles(page))
+  }
+  await expect(next).toBeDisabled()
+  // Every trend once, in the list's order, across the pages.
+  expect(seen).toEqual(await page.locator('.cv-entries > li .cv-entry-title').allTextContents())
+
+  await page.getByRole('button', { name: 'Page 1', exact: true }).click()
+  await expect(previous).toBeDisabled()
+  await expect(count(page)).toHaveText(`Showing 1–12 of ${total}`)
+})
+
+test('a year keeps every trend its span touches, and starts again at page 1', async ({ page }) => {
+  const { total } = await openList(page)
+  const barYears = (await page.locator('[data-cv-year]').allTextContents()).map(Number)
+  const lastYear = Math.max(...barYears)
+  // Each entry's years, from its period as the page prints it: an open trend runs to the last year.
+  const spans = await page.locator('.cv-entries > li .cv-entry').evaluateAll((nodes) => nodes.map((node) => ({
+    title: node.querySelector('.cv-entry-title')?.textContent ?? '',
+    when: node.querySelector('.cv-entry-when')?.textContent ?? '',
+  })))
+  const touches = (when: string, year: number) => {
+    const ys = (when.match(/\d{4}/g) ?? []).map(Number)
+    const to = /^Since /.test(when) ? lastYear : Math.max(...ys)
+    return year >= Math.min(...ys) && year <= to
+  }
+  const chips = page.locator('.cv-list .bz-chip-row')
+  await expect(chips.getByRole('button').first()).toHaveText('All')
+  await expect(chips.getByRole('button').first()).toHaveAttribute('aria-pressed', 'true')
+
+  for (const year of barYears) {
+    if (total > 12) {
+      await chips.getByRole('button', { name: 'All', exact: true }).click()
+      await page.getByRole('button', { name: 'Page 2', exact: true }).click()
+    }
+    await chips.getByRole('button', { name: String(year), exact: true }).click()
+    await expect(chips.locator('[aria-pressed="true"]')).toHaveText(String(year))
+    const expected = spans.filter((span) => touches(span.when, year)).map((span) => span.title)
+    // Page 1 again: the count starts at 1, and the first twelve of the year are shown.
+    await expect(count(page)).toHaveText(expected.length === 0 ? 'No trend matches' : `Showing 1–${Math.min(12, expected.length)} of ${expected.length}`)
+    expect(await shownTitles(page), `${year} shows the wrong trends`).toEqual(expected.slice(0, 12))
+  }
+  await chips.getByRole('button', { name: 'All', exact: true }).click()
+  await expect(count(page)).toHaveText(`Showing 1–${Math.min(12, total)} of ${total}`)
+})
+
+test('the search finds a trend by its text in any case, and an empty result says so and clears', async ({ page }) => {
+  const { total } = await openList(page)
+  const search = page.getByRole('searchbox', { name: 'Search:' })
+  await expect(search).toBeVisible()
+
+  if (total > 12) await page.getByRole('button', { name: 'Page 2', exact: true }).click()
+  // A word from the last trend's text and not its title, in capitals: the search ignores case,
+  // reads the text, and starts again at page 1. (The first version took the text's first long
+  // word, which was in the title too, so a search of titles alone passed.)
+  const last = page.locator('.cv-entries > li').last()
+  const title = (await last.locator('.cv-entry-title').textContent())!.toLowerCase()
+  const word = (await last.locator('.cv-entry-text').textContent())!.split(/\W+/)
+    .filter((w) => w.length > 5 && !title.includes(w.toLowerCase()))[0]
+  expect(word, 'the last trend\'s text has no long word its title lacks').toBeTruthy()
+  await search.fill(word.toUpperCase())
+  const titles = await shownTitles(page)
+  expect(titles).toContain((await last.locator('.cv-entry-title').textContent())!)
+  for (const entry of await page.locator('.cv-entries > li:visible .cv-entry').all()) {
+    const words = `${await entry.locator('.cv-entry-title').textContent()} ${await entry.locator('.cv-entry-text').textContent()}`.toLowerCase()
+    expect(words, 'a trend that does not hold the search is shown').toContain(word.toLowerCase())
+  }
+  await expect(count(page)).toHaveText(new RegExp(`^Showing 1–${titles.length} of \\d+$`))
+
+  await search.fill('qqzzxxqq')
+  await expect(page.locator('.cv-entries > li:visible')).toHaveCount(0)
+  await expect(count(page)).toHaveText('No trend matches')
+  await page.getByRole('button', { name: 'Show every trend' }).click()
+  await expect(search).toHaveValue('')
+  await expect(search).toBeFocused()
+  await expect(count(page)).toHaveText(`Showing 1–${Math.min(12, total)} of ${total}`)
+})
+
+test('Cards and List switch the view, say which is pressed, and keep the page', async ({ page }) => {
+  const { total } = await openList(page)
+  const cards = page.locator('.cv-list .bz-viewbtn', { hasText: 'Cards' })
+  const list = page.locator('.cv-list .bz-viewbtn', { hasText: 'List' })
+  await expect(cards).toHaveAttribute('aria-pressed', 'true')
+  await expect(list).toHaveAttribute('aria-pressed', 'false')
+  const boxes = () => page.locator('.cv-entries > li:visible').evaluateAll((nodes) => nodes.map((n) => {
+    const r = n.getBoundingClientRect()
+    return { left: Math.round(r.left), top: Math.round(r.top) }
+  }))
+  const asCards = await boxes()
+  expect(new Set(asCards.map((r) => r.top)).size, 'the cards are one to a row at 1440').toBeLessThan(asCards.length)
+
+  if (total > 12) await page.getByRole('button', { name: 'Page 2', exact: true }).click()
+  const before = await shownTitles(page)
+  await list.click()
+  await expect(list).toHaveAttribute('aria-pressed', 'true')
+  await expect(cards).toHaveAttribute('aria-pressed', 'false')
+  expect(await shownTitles(page), 'switching the view changed the page').toEqual(before)
+  const asRows = await boxes()
+  expect(new Set(asRows.map((r) => r.left)).size, 'the list is not one entry to a row').toBe(1)
+  expect(new Set(asRows.map((r) => r.top)).size).toBe(asRows.length)
+})
+
+/** The first entry's edge and fill, at rest and under the pointer, and whether it moved or cast a shadow. */
+async function hoverOf(page: Page) {
+  const entry = page.locator('.cv-entries > li:visible .cv-entry').first()
+  await entry.scrollIntoViewIfNeeded()
+  const read = () => entry.evaluate((el) => {
+    const style = getComputedStyle(el)
+    return { edge: style.borderTopColor, fill: style.backgroundColor, transform: style.transform, shadow: style.boxShadow }
+  })
+  await page.mouse.move(0, 0)
+  const rest = await read()
+  await entry.hover()
+  return { rest, hover: await read() }
+}
+
+test('a card and a row change colour under the pointer, as the catalog\'s do, and neither moves', async ({ page }) => {
+  // M93, the author: "no need for shadow or 2px lift. but at least each card should get color
+  // change or border color change similar to the ones in catalog".
+  await openList(page)
+  for (const view of ['Cards', 'List']) {
+    await page.locator('.cv-list .bz-viewbtn', { hasText: view }).click()
+    const { rest, hover } = await hoverOf(page)
+    expect(hover.edge !== rest.edge || hover.fill !== rest.fill, `${view}: the entry looks the same under the pointer`).toBe(true)
+    expect(hover.transform, `${view}: the entry moves under the pointer`).toBe('none')
+    expect(hover.shadow, `${view}: the entry casts a shadow`).toBe('none')
+  }
 })

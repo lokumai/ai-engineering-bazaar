@@ -10,16 +10,20 @@ import { mountStrip, type Strip } from './strip'
  * M91, D116 — the Caravan page's motion, started by `CaravanScene.tsx` and imported on demand so the
  * page's first paint carries none of it (the home page's pattern).
  *
- * It finds what the server rendered under `root`: the year bar, the place it names, the stage, the
- * strip, the card, and the list of trends whose entries the card shows. It draws the scene into the
- * stage and wires the five ways to travel (wheel, drag, strip, year bar, a focused stop) to one
- * journey.
+ * It finds what the server rendered under `root`: the year bar, the stage, the strip, the card,
+ * the live region a picked year is announced in, and the list of trends whose entries the card
+ * shows. It draws the scene into the stage and wires the five ways to travel (wheel, drag, strip,
+ * year bar, a focused stop) to one journey.
  *
- * **The stage is as tall as the window allows**, between 300 px and the mockup's 470 (400 on a
- * phone), so the whole caravan and the whole strip are in view on a laptop without scrolling; the
- * scene draws its heights to that, and its pace across the road stays the same. On a resize that
- * crosses the phone width, or changes the width or the height by more than 40 px, it draws
- * everything again at the new size, as the mockup does.
+ * **The stage is as tall as the window allows**, from 300 px up to `STAGE_MAX`, so the whole caravan
+ * and the whole strip are in view on a laptop without scrolling; the scene picks its zoom from that
+ * height (`shadow.ts`, `zoomFor`). The cap was the mockup's 470 px until M93, when the author asked
+ * for a taller stage; above the new cap a window's extra height is the page's, not more sky. On a
+ * resize that crosses the phone width, or changes the width or the height by more than 40 px, it
+ * draws everything again at the new size, as the mockup does.
+ *
+ * The place a year names ("2023 · The oasis") is no longer a row on the page (M93, the author:
+ * "remove ... the '2026 · The sea port' rows"); it is still announced when a reader picks a year.
  *
  * It returns null, and draws nothing, when the page lacks a part it needs.
  */
@@ -27,14 +31,16 @@ import { mountStrip, type Strip } from './strip'
 /** The space kept under the strip, so it never touches the window's foot. */
 const FOOT = 12
 
+/** The tallest the stage is drawn, in px. */
+const STAGE_MAX = { desk: 640, phone: 420 } as const
+
 export function initCaravan(root: HTMLElement, data: SceneData): (() => void) | null {
   const stage = root.querySelector<HTMLElement>('.cv-stage')
   const strip = root.querySelector<HTMLElement>('.cv-scrub')
   const card = root.querySelector<HTMLElement>('.cv-card')
-  const placeEl = root.querySelector<HTMLElement>('.cv-place')
   const announce = root.querySelector<HTMLElement>('[data-cv-announce]')
   const yearButtons = [...root.querySelectorAll<HTMLButtonElement>('[data-cv-year]')]
-  if (!stage || !strip || !card || !placeEl || !announce || data.months.length === 0) return null
+  if (!stage || !strip || !card || !announce || data.months.length === 0) return null
 
   const trends = place(data.trends)
   const months = data.months
@@ -50,7 +56,7 @@ export function initCaravan(root: HTMLElement, data: SceneData): (() => void) | 
   function fit(): void {
     const top = stage!.getBoundingClientRect().top + window.scrollY
     const below = parseFloat(getComputedStyle(strip!).marginTop) + strip!.offsetHeight + FOOT
-    const max = isPhone() ? 400 : 470
+    const max = isPhone() ? STAGE_MAX.phone : STAGE_MAX.desk
     stage!.style.height = `${clamp(Math.floor(window.innerHeight - top - below), 300, max)}px`
   }
 
@@ -85,10 +91,6 @@ export function initCaravan(root: HTMLElement, data: SceneData): (() => void) | 
       for (const b of yearButtons) {
         if (Number(b.dataset.cvYear) === y) b.setAttribute('aria-current', 'true')
         else b.removeAttribute('aria-current')
-      }
-      if (placeEl!.dataset.year !== String(y)) {
-        placeEl!.dataset.year = String(y)
-        placeEl!.textContent = placeLabel(y, firstYear)
       }
     })
     current = { scene, journey, stops, strip: scrub, phone: isPhone(), width: window.innerWidth, height: window.innerHeight }

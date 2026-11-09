@@ -103,19 +103,40 @@ function horseSVG(body: string, dark: string, saddle: string): string {
 
 /* ---- the four puppets, each on its rod -------------------------------------------------------- */
 
+/**
+ * The tallest puppet's height above its feet, in its own units: the tip of the leader's banner.
+ * The scene keeps this much room over the lower road, so the upper band's stops clear the caravan.
+ */
+export const PUPPET_HEIGHT = 144
+
+/**
+ * A puppet's rod: a stick pinned to the leather at `(x0, y0)` that runs down past the foot of the
+ * cloth and off the stage. The author, on the first build: "it is not clearly visible that caravan
+ * objects are actually on a stick (the stick is not long enough)". The first rods ended a few pixels
+ * under the feet, behind the ledge.
+ *
+ * It is drawn beside the wobbling leather, not inside it, so the stick stays in the puppeteer's hand
+ * while the puppet rocks on its pin; and twice, a dark edge under a light core, so it reads on the
+ * lit cloth and on the dark ledge below it alike (`caravan.css`).
+ */
+function rod(x0: number, y0: number, x1: number): string {
+  const d = `M${x0} ${y0} L${x1} 240`
+  return `<path class="cv-rod" d="${d}"/><path class="cv-rod-core" d="${d}"/><circle class="cv-rod-pin" cx="${x0}" cy="${y0}" r="3.4" fill="${ART.goldL}"/>`
+}
+
 export function leaderPuppet(): string {
-  return `<g class="cv-puppet">${horseSVG(ART.plum, ART.plumD, ART.red)}<g transform="translate(4 -46) scale(.95)">${personSVG({ robe: ART.teal, turban: ART.cream, beard: '#2A1C18', prop: 'banner', flag: ART.red, legs: false })}</g><path class="cv-rod" d="M0 -40 L30 260"/></g>`
+  return `<g class="cv-puppet">${horseSVG(ART.plum, ART.plumD, ART.red)}<g transform="translate(4 -46) scale(.95)">${personSVG({ robe: ART.teal, turban: ART.cream, beard: '#2A1C18', prop: 'banner', flag: ART.red, legs: false })}</g></g>${rod(0, -40, 22)}`
 }
 
 export function driverPuppet(): string {
-  return `<g class="cv-puppet" style="--cv-delay:-.3s">${personSVG({ robe: '#B8873B', skin: ART.skin[1], hat: 'fez', prop: 'lantern', sash: ART.red, beard: '#2A1C18' })}<path class="cv-rod" d="M0 -40 L14 260"/></g>`
+  return `<g class="cv-puppet" style="--cv-delay:-.3s">${personSVG({ robe: '#B8873B', skin: ART.skin[1], hat: 'fez', prop: 'lantern', sash: ART.red, beard: '#2A1C18' })}</g>${rod(0, -40, 12)}`
 }
 
 /** A camel puppet carrying up to three loads, one per trend on the road, in their colours. */
 export function camelPuppet(loads: readonly string[], k: number): string {
   const [a, b, c] = loads
   const extra = `<g transform="translate(-60 -100)">${b ? `<rect x="43" y="8" width="22" height="15" rx="4" fill="${b}"/><path d="M43 15h22" stroke="#00000026" stroke-width="2"/>` : ''}${c ? `<ellipse cx="33" cy="40" rx="7" ry="9" fill="${c}"/>` : ''}</g>`
-  return `<g class="cv-puppet" style="--cv-delay:${(k * -0.17).toFixed(2)}s">${camelSVG(a ?? null, ART.red)}${extra}<path class="cv-rod" d="M-4 -48 L22 260"/></g>`
+  return `<g class="cv-puppet" style="--cv-delay:${(k * -0.17).toFixed(2)}s">${camelSVG(a ?? null, ART.red)}${extra}</g>${rod(-4, -48, 16)}`
 }
 
 /* ---- a stop's prop, by how strong the trend was ------------------------------------------------ */
@@ -127,6 +148,9 @@ export interface StopArtInput {
   /** Its highest measured level, or null when unmeasured. */
   peak: number | null
 }
+
+/** The tallest prop's height above the land, in its own units: the serai's flags (`top` below). */
+export const PROP_HEIGHT = 150
 
 /** A serai for a level-5 trend, a tent for 4, a stall for 3 or unmeasured, a stone below. */
 export function stopArt(x: StopArtInput): { svg: string; top: number } {

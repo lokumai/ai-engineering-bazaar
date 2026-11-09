@@ -10,7 +10,8 @@ description: >
   (M75), the For Everyone versions (M76 to M79), shared headings and logos (M80), and diagram
   backgrounds and copy (M81), Agentic UI (M82), the cast's colours (M83), and M84 to M90 (content
   and site fixes, the home page in Turkish and Persian, Dariush's motif, block menus in the top layer,
-  and About, the story of the Bazaar); and M41, the content bundle for the mobile reader. Each milestone carries its deliverables and acceptance
+  and About, the story of the Bazaar); Caravan built (M91), its real trends waiting (M92) and its second
+  round (M93); and M41, the content bundle for the mobile reader. Each milestone carries its deliverables and acceptance
   criteria as `- [ ]` checkboxes, ticked as the work lands, and closes with a dated report; the loop
   that governs that is below, in this file.
   NOT here: why a choice was made (BRAINSTORM.md), or any rule that outlives the milestone
@@ -18,8 +19,8 @@ description: >
 authority: state
 writes: agent, every session
 status: active
-covers: "M50 to M92, 2026-11-06 onward, and M41, which part 2 held for PR #57"
-last_updated: 2026-11-09
+covers: "M50 to M93, 2026-11-06 onward, and M41, which part 2 held for PR #57"
+last_updated: 2026-11-10
 ---
 
 # 📈 PROGRESS, part 3 — M50 onward
@@ -1562,6 +1563,81 @@ next step, and so the sample does not stay by default.
       he also decides the method's cut points from the first run's evidence), Gate C (the diff).
 - [ ] **The sample removed in the same pull request**: `src/components/caravan/sample-trends.ts` and its
       import deleted, and the page's notice reworded with the author.
+
+
+## 🏁 Milestone M93: Caravan, round 2: a taller, closer stage on long rods, and the trends browsed like the catalog (D117) — DONE, PR open
+
+The author, on the built page: *"everything is fine, but overall the module of shadow play must be
+larger in terms of height. also the caravan should be about 30 percent higher level because currently
+everything is too small and zoom is very out that everything looks very small and it is not clearly
+visible that caravan objects are actually on a stick (the stick is not long enough). also the trend cards
+below should have filter based on year and search bar and be visible in card mode and in list mode,
+somehow similar to catalog page and we should use paging meaning that even after filtering, not all
+should be visible and only 12 of them should be visible at a time and we should provide
+industry-standard buttons so they can be next and previous page. also use some shadow and a bit
+animation for when we hover over each card. also remove the "What the road of AI engineering carried,
+season by season, since November 2022." and "2026 · The sea port" rows."* Then, while it was being
+built: *"ok no need for shadow or 2px lift. but at least each card should get color change or border
+color change similar to the ones in catalog".* Why each choice was made, and what was rejected: **D117**.
+
+- [x] **The two rows removed.** The line under the title and the place beside the year bar are gone; the
+      head is the title and the year bar. A picked year's place is still announced in the hidden live
+      region. Their height went to the stage.
+- [x] **A taller stage, zoomed in.** The stage is as tall as the window leaves, now up to 640 px (was
+      470), and the scene is drawn at the zoom that fits it (`zoomFor` in `scene/shadow.ts`), capped by the
+      window's width; puppets, props, posts, bands and the pace across the road scale with it. Each stop's
+      hit area now ends at the land, so it never reaches the lower road.
+- [x] **Long rods.** The cloth ends above a ledge sized to the zoom; each puppet's rod is pinned to the
+      leather and runs across the ledge off the stage, a dark edge under a light core (`--caravan-rod`),
+      outside the wobbling leather so the stick stays put while the puppet rocks.
+- [x] **The trend list as a browser** (`TrendBrowser.tsx`, the rules in `browse.ts`): a search of the
+      title and the text, a year filter (All and every year of the road; a trend shows in every year its
+      span touches), a Cards and List view, twelve to a page after filtering with Previous and Next
+      (disabled at the ends), page numbers with `aria-current="page"`, and "Showing 13–22 of 22" in a live
+      region. A filter or a search goes back to page 1; a new page puts focus on the list's heading. The
+      controls are the catalog's classes (`bz-filters`, `bz-chip`, `bz-viewtoggle`, its view icons, its
+      count and empty state). Without a script every trend is listed and no control is shown.
+- [x] **Hover as the catalog's**: a card takes the catalog card's strong edge, a row the catalog table
+      row's sunken fill. The shadow and 2px lift first built for the author's first request were removed on
+      his second, with the DESIGN.md deviation and the test exemption they needed; nothing moves.
+- [x] **Tests.** `tests/e2e/caravan.spec.ts`: the whole caravan and strip in the window at 1280x720,
+      1440x800 and 1440x900 with the leader at least 13.5% of the window's height and every rod pinned to
+      its puppet and showing 20 px or more below the cloth; the head is the title and the year bar and no
+      "year · place" row is on screen; without a script every trend is listed and no control shown; twelve
+      a page, Previous and Next disabled at the ends, the count, focus at the heading, every trend once
+      across the pages; a year keeps exactly the trends its span touches and goes back to page 1; the
+      search reads the text in any case, and an empty result says so and clears; Cards and List with
+      `aria-pressed`, keeping the page; hover changes a card's or a row's colour, and nothing moves or casts
+      a shadow. `tests/unit/caravan-browse.test.ts`: the filter, the pages, the count, and the first-paint
+      CSS agreeing with the page size.
+
+**Report, 2026-11-10.** MEASURED on the built export, against a build of `main` (`c567a08`) made in a
+scratch clone; the leader is its painted leather without the rod:
+
+| Window | Stage before → after | Leader before → after | Rod shown below the cloth |
+|---|---|---|---|
+| 1280x720 | 369 → 408 px | 79 → 102 px (+29%) | 1 → 31 px |
+| 1440x800 | 449 → 488 px | 96 → 128 px (+33%) | 1 → 39 px |
+| 1440x900 | 470 → 588 px | 100 → 132 px (+32%) | 1 → 40 px |
+| 390x844 | 371 → 420 px | 64 → 80 px (+25%) | 1 → 26 px |
+
+The strip still ends at 707 of 720, 787 of 800 and 887 of 900. Gate: typecheck clean; 1,528 unit tests;
+the build with its link gate (207 pages, 18,079 internal links) and bundle check; `out/api/` byte-identical
+to the `main` build; 641 browser tests passed and 10 skipped, on port 3111. **Mutations, each seen
+failing:** the new scene cases against `main`'s own build (leader 79 to 101 px, rods 1 px below the cloth,
+the head holding the line under the title), and on a dev server: the zoom at 0.78 of its value, rods
+ending at the feet, 30 a page, Previous and Next never disabled, no focus at the heading, the count without
+its total, a year keeping only trends that start in it, a filter keeping the page, a case-sensitive search,
+a search of titles only, clearing dropping focus, a view switch that never changes `aria-pressed`, List
+keeping the card grid, the server render already paged (no-script list), a card or a row unchanged under
+the pointer, a card that still lifts, and the first-paint CSS one off the page size (unit). **One guard was
+vacuous at first:** the search case took the first long word of the text, which was in the title too, so
+a search of titles alone passed; it now takes a word only the text holds. **Two guards were retuned for
+the zoom**, not weakened: a month is up to 340 px at these sizes (was 260), so the drag case pulls 600 px
+instead of 300 and the walk case expects more than 50 label-and-post comparisons instead of 100.
+Screenshots of the built page at 1440, 1280x720 and 390 (rest, walking, a year, Cards, a hovered card,
+List, page 2, the pager, a search, and dark) are in `playground/2026-11-round-5/shots-caravan-round2/` in
+the main checkout.
 
 ---
 

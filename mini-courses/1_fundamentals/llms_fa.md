@@ -205,6 +205,25 @@ best prompt = the prompt that maximises P(the output you want | prompt)
 - [Large Language Models explained briefly](https://youtu.be/LPZh9BOjkQs?si=8kH-lzHbfHRL1_8h): یه ویدیو درباره‌ی همین موضوع‌ها، اگه دیدن رو به خوندن ترجیح می‌دی
 - [Leaked system prompts](https://github.com/jujumilk3/leaked-system-prompts)
 
+## اصطلاح‌های کلیدی
+
+- **LLM**: مدلی که ورودیش متنه و خروجیش هم متن.
+- **Prompt**: متنی که تو برای مدل می‌فرستی.
+- **Parameters**: عددهای داخل شبکه که تعدادشون اندازه‌ی مدل رو مشخص می‌کنه.
+- **Hyperparameter**: تنظیمی که نحوه‌ی تولید جواب مدل رو عوض می‌کنه و با parameter‌ها فرق داره.
+- **Context window**: بیشترین مقدار متنی که مدل یه‌جا می‌تونه باهاش کار کنه، و ورودی و خروجی هر دو توش حساب می‌شن.
+- **HumanMessage**: درخواستی که تو تایپ می‌کنی و توی context میاد، و آدم‌ها بهش می‌گن prompt.
+- **AIMessage**: جوابی که مدل می‌ده و توی context میاد.
+- **SystemMessage**: دستورهای پیش‌فرضی که فروشنده یا developer نوشته و فقط یه بار، بالای context می‌شینه.
+- **Turn**: یه HumanMessage به‌همراه AIMessage‌ای که جوابشه؛ توی agent، پیام‌های tool هم توی همین turn میان.
+- **Tool schema**: فهرست tool‌هایی که مدل اجازه داره صداشون بزنه، با اسم و argument‌های هر کدوم.
+- **ToolCall**: درخواست مدل برای اجرای یکی از function‌های تو، که این رو LLM تولید می‌کنه.
+- **ToolResult**: خروجی همون function، که این رو host machine تولید می‌کنه، نه LLM.
+- **Temperature**: یه hyperparameter که درجه‌ی خلاقیت رو تنظیم می‌کنه، معمولاً بین 0.0 و 1.0؛ مقدار پایین جواب‌های قابل‌پیش‌بینی می‌ده.
+- **Max output tokens**: سقف طول جواب که با تنظیمش، هزینه رو کنترل می‌کنی.
+- **Inference**: اجرای مدل روی context برای تولید جواب، چه توی cloud چه روی کامپیوتر خودت.
+- **Quantization**: هر weight از 16 بیت رو به 4 بیت می‌رسونه، پس مدل حافظه‌ی تقریباً یک‌چهارم کمتری لازم داره.
+
 ## کجای این مجموعه هستیم
 
 ```mermaid

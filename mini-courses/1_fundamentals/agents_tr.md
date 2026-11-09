@@ -140,6 +140,20 @@ Aynı sorunu farklı yollarla çözen başka framework'ler de var: ![](./images/
 ![LLM beyin, agent gövde](./images/agent-analogy.webp)  
 *LLM beyin, agent onu çevreleyen gövde, tool'lar ise ellerdir.*
 
+## Temel Terimler
+
+- **Agent**: bir LLM'in hedefine ulaşana kadar tool çağırdığı bir döngü.
+- **Agent loop (observe, decide, act)**: bir model çağrısı, bir tool çalıştırması ve bir sonuçtan oluşan tur, döngü bitene kadar tekrar eder.
+- **Single-turn LLM**: bir girdi alıp bir çıktı veren, ardından işin bittiği model çağrısı.
+- **Multi-turn agent**: aynı modelin tekrar tekrar çağrıldığı ve her seferinde tool isteyebildiği yapı.
+- **Termination condition**: tool call'ın olmaması, bu da döngüyü sona erdirir.
+- **Autonomy**: kararların ne kadarını modele bıraktığın: adımları, tool'ları ve ne zaman duracağını.
+- **Fixed workflow (state machine)**: adımları ve sırasını senin yazdığın, modelin yalnızca her adımı doldurduğu iş akışı.
+- **Host**: döngüyü ve tool'ları LLM'in dışında çalıştıran makine, yani laptop'un ya da sunucun.
+- **Message stack**: döngünün tuttuğu ve büyüttüğü, agent'ın hafızası olan mesaj listesi.
+- **Framework**: döngünün boilerplate kodunu bir kez yazan hazır yazılım, örneğin smolagents ya da LangChain.
+- **System prompt**: host'un her çağrıdan önce yeniden oluşturup gönderdiği, agent'ın rolü ve tool listesini içeren talimat.
+
 ## Bu serinin neresindeyiz
 
 ```mermaid

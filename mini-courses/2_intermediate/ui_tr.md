@@ -146,6 +146,20 @@ Streaming temeldir. Agentic UI tanımının geri kalanı onun üstüne kurulur v
 - **Shared state**: ekran ve agent aynı uygulama state'ini okur ve yazar.
 - **Generative UI** ve bunun specification'ları: A2UI, MCP Apps, OpenUI ve json-render.
 
+## Temel Terimler
+
+- **Agentic UI**: bir insanın ve çalışan bir agent'ın aynı uygulamada birlikte kullandığı kullanıcı arayüzü.
+- **Streaming**: agent'ın işinin, oluştuğu anda ekrana parça parça gönderilmesi.
+- **Event**: az önce ne olduğunu söyleyen küçük ve tipli bir mesaj.
+- **Tool call**: agent'ın bir tool'u çalıştırma isteği; başlangıcı, argümanları, bitişi ve sonucu ayrı event'ler olarak gelir.
+- **Decoupling**: bir sözleşme üzerinde anlaştıkları için birbirinden bağımsız değişebilen iki parça.
+- **MCP**: agent'ı tool'lara ve veriye bağlayan protocol; Anthropic'ten.
+- **AG-UI**: Agent–User Interaction Protocol; agent'ı kullanıcıya dönük uygulamalara bağlayan, ortak tek bir event kümesi.
+- **A2A**: agent'ı diğer agent'lara bağlayan protocol; Google'dan.
+- **Human in the loop**: agent, bir adımı çalıştırmadan önce kullanıcıdan onay isteyip durur.
+- **Shared state**: ekranın ve agent'ın aynı uygulama state'ini okuyup yazması.
+- **Generative UI**: agent'ın kendisinin ürettiği arayüz; geliştiricinin yazdığı bileşenlerin yanında gösterilir.
+
 ## Bu serinin neresindeyiz
 
 ```mermaid

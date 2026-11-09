@@ -134,6 +134,22 @@ Bu mekanizma ters yönde de aynı kolaylıkla çalışır. ![](./images/logos/cl
 
 > **NOT:** Saldırıların gerçekte nasıl kurulduğunu görmek istersen birkaç makale var. Önce [Great, Now Write an Article About That: The Crescendo Multi-Turn LLM Jailbreak Attack](https://www.usenix.org/conference/usenixsecurity25/presentation/russinovich) makalesini oku, çünkü en önemli olanı o. Yalnızca zararsız ve insan tarafından okunabilir sorular kullanır, birkaç turda kademeli olarak tırmanır. GPT-4 üzerinde 56%, Gemini Pro üzerinde 83% başarıya ulaşmış. [DeepInception](https://arxiv.org/abs/2311.03191) isteği hayali sahnelerin içine koyar, bir sahnenin içine bir sahne daha yerleştirir. [FlipAttack](https://arxiv.org/abs/2410.02832) zararlı bir prompt'u metni ters çevirerek gizler, sonra modelden metni geri çevirmesini ister. Tek bir sorguda GPT-4o üzerinde yaklaşık 98% başarıya ulaşır. [Sugar-Coated Poison](https://arxiv.org/abs/2504.05652) modele önce bolca zararsız içerik ürettirir. Bu da modelin ardından gelenlere karşı daha az sıkı davranmasına yol açar. Bizim kendi çalışmamız olan [BreakFun](https://arxiv.org/abs/2510.17904) ise modelin yapılandırılmış veriyle olan becerisini saldırı yüzeyine çevirir. Özenle hazırlanmış şemalarla 13 model üzerinde ortalama 89% başarı oranına ulaşır.
 
+## Temel Terimler
+
+- **Jailbreaking**: modelin üretmek üzere tasarlanmadığı bir çıktıyı ürettirmek.
+- **Black box**: saldırganın yalnızca bir metin kutusu vardır; girdi gönderir, çıktıyı okur ve geri kalanını tahmin eder.
+- **White box**: saldırganın ağırlıklar dahil modelin kendisine sahip olduğu saldırı türü; bu sayede modeli belirli bir cevaba iten token'ları arayabilir.
+- **Prompt injection**: zaten var olan talimatları geçersiz kılmak için girdiye yerleştirilen talimatlar.
+- **System prompt**: tasarım gereği kullanıcı mesajından daha yüksek önceliğe sahip talimat; ama model onu yine aynı metin akışının parçası olarak okur.
+- **Prompt leaking**: modeli, kendisine ne söylendiğini, yani system prompt'unu, örneklerini ve iç kurallarını açıklamaya yöneltmek.
+- **Indirect prompt injection**: saldırganın bir doküman, web sayfası ya da e-postaya gizlediği, agent'ın okuduğu talimatlar.
+- **Guardrail**: modelin dışında, girişte ya da çıkışta çalışan bir kontrol.
+- **Guard model**: yalnızca güvenliği yargılamak için yapılmış bir model; cevap yerine bir karar döndürür.
+- **Red teaming**: denemediğin saldırılara karşı savunma yapamayacağın için, kendi sistemine kasıtlı olarak saldırmak.
+- **Attack success rate**: bir red-teaming aracının her saldırıyı ve cevabı puanladıktan sonra raporladığı oran.
+- **Penetration testing**: bir sisteme saldırarak yapılan test; büyük ölçüde okuma, akıl yürütme ve komut çalıştırmaktan oluşur.
+- **Skill**: bir coding agent'a tek bir iş için uzman yöntemini veren `SKILL.md` dosyası.
+
 ## Bu serinin neresindeyiz
 
 ```mermaid

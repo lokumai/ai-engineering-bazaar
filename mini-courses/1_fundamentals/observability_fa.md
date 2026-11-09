@@ -65,6 +65,21 @@ graph LR
 
 کل این مجموعه هم کم‌کم داره به همین سمت می‌ره. درس [Loop Engineering](../2_intermediate/loop_engineering_fa.md) آخرش به agent‌ای می‌رسه که loop‌ای رو طراحی می‌کنه که بقیه‌ی agent‌ها توش کار می‌کنن، و کار agent این درس هم اینه که خروجی agent‌های دیگه رو وارسی کنه. این رو هم در نظر داشته باش که اصلاً چرا این همه دردسر لازمه. دلیلش همون واقعیتیه که [Harness Engineering](../2_intermediate/harness_engineering_fa.md) کارش رو ازش شروع می‌کنه: این سیستم‌ها non-deterministic‌ان، یعنی یه ورودی رو دو بار بدی ممکنه دو تا جواب متفاوت بگیری، و ورودی‌شون هم زبان طبیعیه، اون هم بی هیچ حد و مرزی. برای همین سر و کله‌ی بیشتر خطاهاشون توی production پیدا می‌شه، نه توی تست‌هات.
 
+## اصطلاح‌های کلیدی
+
+- **Trace**: کل درخت یه request، یعنی هر model call، هر tool call و هر subagent.
+- **LangSmith**: ابزار خود LangChain که tracing، dataset، evaluator و annotation رو یه‌جا بهت می‌ده.
+- **Langfuse**: ابزار متن‌باز که وقتی trace‌ها باید روی زیرساخت خودت بمونن، معمولاً همین رو انتخاب می‌کنن.
+- **Latitude**: ابزار متن‌باز که تمرکزش روی monitoring توی production‌ه.
+- **Improvement loop**: چرخه‌ای که trace‌ها راه می‌ندازن: جمع کن، تکمیل کن، الگو رو پیدا کن، یه چیزی رو عوض کن، offline امتحانش کن و دوباره از اول شروع کن.
+- **Evaluator**: چیزی که به trace‌ها نمره می‌ده.
+- **Annotation**: یادداشتی که یه آدم روی trace می‌ذاره.
+- **Dataset**: یه مجموعه‌ی offline از trace‌های واقعی که تغییرت رو باهاش امتحان می‌کنی.
+- **Regression test**: تستی که trace‌های dataset رو دوباره اجرا می‌کنه.
+- **Failure mode**: یه نوع خطا، مثل یه آرگومان کمی غلط یا چهار بار رفتن سراغ همون فایل.
+- **Agent that reads traces**: agent‌ی که trace‌ها رو می‌خونه و بدون این‌که کسی قبلش گفته باشه دنبال چی بگرده، الگوهای استفاده و failure mode‌ها رو پیدا می‌کنه، مثل Insights Agent توی LangSmith.
+- **Non-deterministic**: یه ورودی ممکنه توی هر اجرا یه نتیجه‌ی متفاوت بده.
+
 ## کجای این مجموعه هستیم
 
 ```mermaid

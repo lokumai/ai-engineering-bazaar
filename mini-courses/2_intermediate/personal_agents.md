@@ -144,6 +144,20 @@ So, here is what to do:
 
 This module comes after Security on purpose, and the reason is not the order of the syllabus. The reason is that you need its defences before you give an agent this much access.
 
+## Key Terms
+
+- **Personal agent**: the same agent technology, pointed at your life, which runs on your machine and keeps running.
+- **Lifelong memory**: a store on disk that keeps growing, which is neither a context window nor a session summary.
+- **Skill**: a procedure the agent writes down and reuses after you repeat a request, with no human writing it.
+- **Indirect prompt injection**: text that tells another agent to act, and that agents pass on without an owner's approval.
+- **Emergent normative behaviour**: shared rules of behaviour that appear in a group on their own, without being designed.
+- **SOUL.md**: the file that says who the agent is, which the agent reads first every time it wakes up.
+- **System prompt**: the instructions that set how an agent behaves, and `SOUL.md` is one of them, kept as a file.
+- **Subagent**: a helper the agent delegates work to, which Hermes runs in its own sandbox.
+- **Gateway**: a central point that passes each message on to the part that should handle it.
+- **Harness**: what separates two agents that run the same models: memory design, skill handling and sandboxing.
+- **Hosted agent**: an agent that runs on the company's machines, so there is nothing to install or maintain.
+
 ## Where this fits in the series
 
 ```mermaid

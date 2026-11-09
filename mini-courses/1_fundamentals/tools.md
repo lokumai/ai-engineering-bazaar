@@ -285,6 +285,21 @@ graph TD
     E --> F
 ```
 
+## Key Terms
+
+- **Tool**: a function that you write, which the host runs when the model asks.
+- **Context**: the stack of messages that the model reads, and each tool call adds two messages to it.
+- **Tool call**: the message in which the model asks the host to run a tool.
+- **Host**: the machine that runs your functions, such as your laptop or your server.
+- **Tool result**: the message that the host writes with the function's return value.
+- **Tool schema**: the JSON description of a tool: its name, what it does, and its arguments.
+- **@tool decorator**: the decorator that makes the framework build the schema from the function's name, docstring and type hints.
+- **Tool call ID**: the `id` that links a tool result to its tool call.
+- **Arguments**: the inputs of a tool call, which the model writes as a JSON string rather than as a JSON object.
+- **API wrapper**: a tool that adds a small layer on top of an API that already exists.
+- **Credentials**: the access that you give a tool, since a tool is exactly as powerful as its credentials.
+- **MCP**: a standard way to package tools, so that one tool works in any agent.
+
 ## Where this fits in the series
 
 ```mermaid

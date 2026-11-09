@@ -446,6 +446,22 @@ role prompting is a retrieval problem. You are not adding knowledge to the model
 which of its existing knowledge gets used. And that is also the downside, because the knobs you
 turned down stay down when the question changes.
 
+## Key Terms
+
+- **Prompt engineering**: writing an input that leads the model to the output you expect.
+- **Context**: the input that the model uses to predict its next token, and your prompt is that input.
+- **Prompt template**: a set of named parts, such as Goal, Output Format, Warnings and Context.
+- **In-context learning (ICL)**: the model learns from what is in its context, not from its weights.
+- **Few-shot prompting**: showing the model a few correct examples of the task before the real task.
+- **Zero-shot**: a prompt with no examples at all.
+- **Prompt structure**: sections that tell the model which text is an instruction, which is data, which is the goal and which describes the output.
+- **Prompt injection**: hostile pasted text that the model may take for your own instructions.
+- **Chain of thought**: writing the intermediate steps before the final answer, which makes the final answer better.
+- **Autoregressive**: each token the model writes becomes part of the input for the next token.
+- **Reasoning effort**: the setting that controls how much the model thinks, from `low` to `max`.
+- **Role prompting**: giving the model a job, a persona or a character before the task.
+- **System prompt**: the developer's instructions at the top of the context, which set how the model behaves for the whole conversation.
+
 ## Where this fits in the series
 
 ```mermaid

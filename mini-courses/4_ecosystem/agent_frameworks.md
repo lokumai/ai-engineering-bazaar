@@ -56,7 +56,7 @@ None of these is wrong. They make different trade-offs. Usually the trade-off is
 
 - ![](./images/logos/agno.svg)**[Agno](https://github.com/agno-agi/agno)** looks past the single agent to the whole platform. It helps you build, run and manage agents as a system rather than as a script.
 - ![](./images/logos/crewai.svg)**[CrewAI](https://github.com/crewAIInc/crewAI)** organises everything around roles. You describe a crew of agents, each with a job, and let them work together. This fits well with the multi-agent shapes from [Multi-Agent Systems](../1_fundamentals/multi_agent.md).
-- ![](./images/logos/huggingface.svg)**[smolagents](https://github.com/huggingface/smolagents)** from Hugging Face is the small one, and it is small on purpose. It is a barebones library for agents that act by writing and running code, instead of by sending JSON tool calls. It is the CodeAct idea from [Loop Engineering](../2_intermediate/loop_engineering.md), packaged as a library. It is also the best one to read if you want to understand a loop rather than use one.
+- ![](./images/logos/huggingface.svg)**[smolagents](https://github.com/huggingface/smolagents)** from Hugging Face is the small one, and it is small on purpose. It is a barebones library for agents that act by writing and running code, instead of by sending JSON tool calls. It is the CodeAct idea from [Advanced Loop Engineering](../3_expert/advanced_loop_engineering.md), packaged as a library. It is also the best one to read if you want to understand a loop rather than use one.
 - ![](./images/logos/pydantic.svg)**[Pydantic AI](https://github.com/pydantic/pydantic-ai)** brings the thing Pydantic is good at: types. Every model and every interface is typed from end to end. So a malformed tool call becomes a validation error, not a mystery.
 
 ## If Your Project is TypeScript
@@ -97,6 +97,22 @@ Building workflows through MCP arrived in v2.13. So the agent and the workflow s
 This is worth saying plainly, because engineers tend to skip it. For a lot of jobs, the right answer is a no-code platform. ![](./images/logos/lovable.svg)**[Lovable](https://lovable.dev/)**, ![](./images/logos/bolt-mono.svg)**[Bolt](https://bolt.new/)** and ![](./images/logos/replit.svg)**[Replit](https://replit.com/)** turn a description into a working application. They deploy it, and you can keep writing prompts to change it. For a prototype, an internal tool, or a landing page with a form behind it, that takes hours instead of weeks.
 
 The trade-off is the usual one. You get speed now and less control later. If you move off the platform, you must build the application again. Know which of those you are buying.
+
+## Key Terms
+
+- **Agent framework**: the code around the agent loop, such as retries, streaming, tool schemas and memory.
+- **Agent loop**: a `while` loop around a model call, which runs whichever tool the model asks for.
+- **Tool schema**: a standard description of a tool, so you do not write its JSON by hand.
+- **LangGraph**: the runtime, and the lowest level of the three LangChain libraries.
+- **Graph**: an agent described as nodes (its steps) and edges (what can happen next).
+- **State**: explicit data that moves between steps, so the runtime can save it and resume from it.
+- **LangChain**: the main interface, which gives an ordinary agent from a model, tools and middleware.
+- **Middleware**: the layer where the harness work and the guardrails live.
+- **deepagents**: the highest level, built on the other two, with planning, a filesystem, subagents and summarisation.
+- **CodeAct**: agents that act by writing and running code, instead of sending JSON tool calls.
+- **AI workflow**: runs a fixed path that somebody wrote down, and code decides what happens next.
+- **AI agent**: decides its own path by picking the tools and their order, so each run can differ.
+- **MCP server**: the endpoint n8n runs, so a coding agent can connect and build workflows.
 
 ## Where this fits in the series
 

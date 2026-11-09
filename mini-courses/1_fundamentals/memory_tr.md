@@ -86,6 +86,19 @@ En önemli satır, kaynak satırı. Model ağırlıklarından cevap verdiğinde 
 
 Parametrik olmayan bir cevaba ise **kaynak gösterilebilir**: uygulama, modelin o an önünde duran dokümanı kullanıcıya açıp gösterebilir. Kendi dokümanlarını bir modele vermek için genellikle fine-tuning yerine [RAG](rag_tr.md) tercih edilir; bunun başlıca nedenlerinden biri de budur.
 
+## Temel Terimler
+
+- **Parametric memory**: eğitimin modelin ağırlıklarına yazdığı, kalıcı ama büyük ölçekte bulanıklaşan bilgi.
+- **Fine-tuning**: modeli bir doküman kümesi üzerinde eğitmek, böylece bilgi modelin ağırlıklarında kalır.
+- **Working memory (short-term memory)**: LLM'in tam şu anda context window'unda duran bütün metin.
+- **Context window**: working memory'nin yer aldığı, boyutu sınırlı (örneğin 200K ya da 1M token) alan.
+- **Long-term memory**: geçmiş konuşmaların ve dokümanların özeti ya da indeksi, modelin dışında saklanan ve gerektiğinde geri getirilen bilgi.
+- **Stateless**: üretim sırasında LLM hiçbir durum (state) tutmaz, bu yüzden her çağrı yeni ve bağımsızdır.
+- **Message stack**: uygulamanın her çağrıda tamamını gönderdiği, şu ana kadar değiş tokuş edilen bütün mesajların büyüyen yığını.
+- **RAG**: saklanan metni tekrar context'e getiren yöntem, çoğu zaman long-term memory için kullanılır.
+- **Non-parametric memory**: ağırlıkların dışında, metin olarak tutulan bilgi ve bu gruba working memory ile long-term memory de girer.
+- **Citation**: bir cevabın dayandığı kaynak doküman; bunu yalnızca non-parametric memory sağlayabilir.
+
 ## Bu serinin neresindeyiz
 
 ```mermaid

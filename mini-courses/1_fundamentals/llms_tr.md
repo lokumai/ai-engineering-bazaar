@@ -205,6 +205,25 @@ Gerçek ürünlerdeki prompt'lara ne kadar emek verildiğini görmek için şunl
 - [Large Language Models explained briefly](https://youtu.be/LPZh9BOjkQs?si=8kH-lzHbfHRL1_8h): aynı konuları işleyen bir video, okumak yerine izlemeyi tercih ediyorsan.
 - [Leaked system prompts](https://github.com/jujumilk3/leaked-system-prompts)
 
+## Temel Terimler
+
+- **LLM**: metin girdi olarak alıp metin çıktı olarak veren bir model.
+- **Prompt**: modele gönderdiğin metin.
+- **Parameters**: ağın içindeki sayılar; bu sayıların adedi modelin boyutunu belirler.
+- **Hyperparameter**: modelin cevabını nasıl ürettiğini değiştiren, parametrelerden farklı bir ayar.
+- **Context window**: modelin tek seferde işleyebildiği en fazla metin miktarı; girdi ve çıktı birlikte sayılır.
+- **HumanMessage**: context'teki bir mesaj olarak senin isteğin; insanlar buna "prompt" der.
+- **AIMessage**: context'teki bir mesaj olarak modelin yanıtı.
+- **SystemMessage**: satıcının ya da geliştiricinin yazdığı varsayılan talimatlar; context'in en üstüne bir kez konur.
+- **Turn**: bir HumanMessage ile onu yanıtlayan AIMessage; bir agent turn'ü ayrıca tool mesajlarını da içerir.
+- **Tool schema**: modelin çağırabileceği tool'ların listesi; her tool'un adı ve argümanları yazılıdır.
+- **ToolCall**: modelin senin fonksiyonlarından birini çalıştırma isteği; bunu LLM üretir.
+- **ToolResult**: o fonksiyonun çıktısı; bunu LLM değil, fonksiyonu çalıştıran host makine üretir.
+- **Temperature**: yaratıcılığı ayarlayan, genellikle 0.0 ile 1.0 arasında bir hiperparametre; düşük değerler öngörülebilir cevaplar verir.
+- **Max output tokens**: cevabın uzunluğuna üst sınır koyar; maliyeti kontrol etmek için kullanılır.
+- **Inference**: bir modeli context üzerinde çalıştırıp cevabını üretmek; bu, bulutta da kendi bilgisayarında da yapılabilir.
+- **Quantization**: her 16-bit ağırlığı 4 bit'e indirmek; böylece modelin belleğe ihtiyacı yaklaşık dört kat azalır.
+
 ## Bu serinin neresindeyiz
 
 ```mermaid

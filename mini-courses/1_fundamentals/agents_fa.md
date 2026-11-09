@@ -143,6 +143,20 @@ framework‌های دیگه هم همین مشکل رو هر کدوم به یه 
 ![LLM مغزه، agent بدن](./images/agent-analogy.webp)  
 *LLM مغزه، agent بدنیه که دورش ساخته شده، و tool‌ها دست‌هاش.*
 
+## اصطلاح‌های کلیدی
+
+- **Agent**: یه LLM که توی یه loop اون‌قدر tool صدا می‌زنه تا به هدفش برسه.
+- **Agent loop (observe, decide, act)**: یه call به مدل، یه اجرای tool و یه نتیجه؛ این‌ها پشت سر هم تکرار می‌شن تا loop تموم بشه.
+- **Single-turn LLM**: یه call با یه ورودی و یه خروجی که بعدش دیگه کاری نیست.
+- **Multi-turn agent**: همون مدل که بارها و بارها صداش می‌زنن و هر بار ممکنه tool بخواد.
+- **Termination condition**: نبودن tool call، یعنی وقتی مدل هیچ tool call ننویسه، loop تموم می‌شه.
+- **Autonomy**: این‌که چقدر از تصمیم‌گیری رو به مدل می‌سپاری: مرحله‌ها، tool‌ها و این‌که کی تموم کنه.
+- **Fixed workflow (state machine)**: مرحله‌ها و ترتیبشون رو تو نوشتی و مدل فقط هر مرحله رو پر می‌کنه.
+- **Host**: ماشینی، مثل لپ‌تاپ یا سرور خودت، که loop و tool‌ها رو اجرا می‌کنه، نه خود LLM.
+- **Message stack**: لیست پیام‌هایی که loop نگهش می‌داره و بزرگ‌ترش می‌کنه، که حافظه‌ی agent همینه.
+- **Framework**: کدی مثل smolagents یا LangChain که boilerplate این loop رو یه بار برات می‌نویسه.
+- **System prompt**: دستورالعملی که host قبل از هر call از نو می‌سازه و می‌فرسته، و نقش agent و لیست tool‌ها توشه.
+
 ## کجای این مجموعه هستیم
 
 ```mermaid

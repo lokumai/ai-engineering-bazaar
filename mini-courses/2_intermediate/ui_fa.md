@@ -146,6 +146,20 @@ streaming پایه‌ست. بقیه‌ی تعریف agentic UI روی همین �
 - **Shared state**: صفحه و agent هر دو روی یه state مشترک می‌خونن و می‌نویسن.
 - **Generative UI** و specification‌های مربوط بهش: A2UI، MCP Apps، OpenUI و json-render.
 
+## اصطلاح‌های کلیدی
+
+- **Agentic UI**: رابطی که آدم و agent توی یه برنامه‌ی مشترک باهم کار می‌کنن.
+- **Streaming**: فرستادن هر تیکه از کار agent به صفحه، همون لحظه که ساخته می‌شه.
+- **Event**: یه پیام کوچیک با نوع مشخص، که می‌گه همین الان چی اتفاق افتاد.
+- **Tool call**: درخواست agent برای اجرای یه tool؛ شروعش، آرگومان‌هاش، پایانش و نتیجه‌ش هر کدوم جدا event می‌شن.
+- **Decoupling**: دو بخشی که چون سر یه قرارداد توافق کردن، می‌تونن جدا از هم عوض بشن.
+- **MCP**: protocol‌ای که agent رو به tool‌ها و داده وصل می‌کنه؛ از Anthropic.
+- **AG-UI**: Agent–User Interaction Protocol؛ یه مجموعه event مشترک که agent رو به برنامه‌های رو‌به‌کاربر وصل می‌کنه.
+- **A2A**: protocol‌ای که agent رو به agent‌های دیگه وصل می‌کنه؛ از Google.
+- **Human in the loop**: agent قبل از اجرای یه قدم وایمیسه و از کاربر تأیید می‌گیره.
+- **Shared state**: صفحه و agent هر دو روی یه state برنامه می‌خونن و می‌نویسن.
+- **Generative UI**: رابطی که خود agent می‌سازه و کنار component‌های برنامه‌نویس نشون داده می‌شه.
+
 ## کجای این مجموعه هستیم
 
 ```mermaid

@@ -59,6 +59,11 @@ drops in-progress images into the category folders. **Do not commit or push unle
   is"). Two headings keep their exact text because the app matches them: `## Summary` / `## Özet`
   and `## Where this fits in the series` / `## Bu serinin neresindeyiz` (Persian below).
 - **Every module ends with links out** and a References list built only from links used in the text.
+- **A written module has `## Key Terms` just before the series map** (Turkish `## Temel Terimler`,
+  Persian `## اصطلاح‌های کلیدی`): one bullet per term the module introduces, `- **Term**: one sentence`
+  (an alias goes inside the bold), in an engineer's words, every fact from the module text. It is the For Engineers twin of For
+  Everyone's `## Words You Now Know`, so a reader can look back at a dense module. Terms stay English
+  in Turkish and Persian; the line after the colon is written in that language.
 - **The References list is grouped by kind**, under `###` headings, each present only when it has an
   item, in this order and with these exact words: `### 📄 Articles` (written posts, papers, docs
   pages that explain a topic), `### 🎬 Videos`, `### 🛠️ Tools` (a product, library or service, by its

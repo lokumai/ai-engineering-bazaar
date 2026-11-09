@@ -87,6 +87,17 @@ Accessibility is a clear example of that gap. It means that every person can use
 
 None of these show up in a screenshot. Check them yourself.
 
+## Key Terms
+
+- **AGENTS.md**: a plain file in the repository that the agent reads.
+- **Handoff**: the moment when designers pass their work on to developers.
+- **Codebase**: existing code that a tool takes as input, to find the design system already in it.
+- **Design system**: the set of decisions you make once, such as colours, type scale, spacing, corner radius and button states.
+- **DESIGN.md**: a file at the repository root that holds the tokens and the intent of a design.
+- **Tokens**: the exact design values, such as hex codes, the type scale, spacing steps, radii and component states.
+- **Intent**: in words, what the design is trying to feel like, what it avoids on purpose, and why.
+- **Accessibility**: whether every person can use the screen, including people who use only a keyboard or a screen reader.
+
 ## Where this fits in the series
 
 ```mermaid

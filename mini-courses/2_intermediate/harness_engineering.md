@@ -180,6 +180,22 @@ If you want to compare harnesses, there are two maintained lists. [best-of-Agent
 
 > **NOTE:** this module stays at the level of what a harness is and why it matters. [Advanced Harness Engineering](../3_expert/advanced_harness_engineering.md) covers harness profiles, self-evolving harnesses, and the question of how much of the harness is moving inside the model. Böckeler's [Harness engineering for coding agent users](https://martinfowler.com/articles/harness-engineering.html) goes much deeper than the two splits above. It is the place to continue.
 
+## Key Terms
+
+- **Hook**: a shell command that runs at a fixed point in the agent's life, whether the model wants it or not.
+- **Non-deterministic**: the same input can give a different answer on the next run.
+- **Harness engineering**: designing the mechanical wiring around a model, so the agent behaves the same way on every run.
+- **Agent harness**: the agent, plus the mechanical wiring around it, plus the environment that it runs in.
+- **System prompt**: the instructions that the agent reads before it starts any task, most of them written by the vendor.
+- **Tool description**: the text that the model reads when it decides whether to call a tool, which makes it a prompt.
+- **Compaction**: when the context window is nearly full, the harness summarises older content so the agent can continue.
+- **Continuation**: a hook catches an early stop, and gives the original task back in a fresh context window.
+- **Middleware**: code that runs at fixed points, whatever the model decides.
+- **Guide**: what the agent is told before it acts, such as the system prompt, AGENTS.md, tool descriptions and the approved plan.
+- **Sensor**: what tells the agent how the work went, such as tests, linters, type checks and build errors.
+- **Computational check**: a guide or sensor that ordinary code runs on the CPU, so it is deterministic and fast.
+- **Inferential check**: a guide or sensor that a model runs, which can judge meaning but is slower, costs more and can change between runs.
+
 ## Where this fits in the series
 
 ```mermaid

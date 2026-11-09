@@ -134,6 +134,20 @@ Bu yüzden şu dört şeye dikkat et:
 
 Bu modülün Security'den sonra gelmesinin bir nedeni var ve bu neden müfredattaki sıra değil. Asıl neden şu: bir agent'a bu kadar erişim vermeden önce o modüldeki savunmaları bilmen gerekiyor.
 
+## Temel Terimler
+
+- **Personal agent**: aynı agent teknolojisinin, bir repository yerine kişisel hayatına uygulanmış ve kendi makinende çalışmaya devam eden hâli.
+- **Lifelong memory**: diskte sürekli büyüyen bir depo; bir context window de, tek bir oturumun özeti de değildir.
+- **Skill**: agent'ın aynı isteği tekrar tekrar aldığını fark edince yazıp sonra yeniden kullandığı bir prosedür; bunu hiçbir insan yazmaz.
+- **Indirect prompt injection**: başka bir agent'ı harekete geçiren metin; agent'lar bu talimatları, sahibinin onayı olmadan iletebilir.
+- **Emergent normative behaviour**: hiçbir tasarım olmadan, bir grubun içinde kendiliğinden beliren ortak davranış kuralları.
+- **SOUL.md**: agent'ın kim olduğunu söyleyen dosya; agent her uyandığında bunu önce okur.
+- **System prompt**: agent'ın nasıl davranacağını belirleyen talimatlar; `SOUL.md` de dosya olarak tutulan bir system prompt'tur.
+- **Subagent**: agent'ın iş devrettiği bir yardımcı; Hermes onu kendi sandbox'ında çalıştırır.
+- **Gateway**: her mesajı, onu işlemesi gereken parçaya ileten merkezi bir nokta.
+- **Harness**: aynı modelleri çalıştıran iki agent'ı birbirinden ayıran şey: hafıza tasarımı, skill yönetimi ve sandbox kullanımı.
+- **Hosted agent**: şirketlerin makinelerinde çalışan bir agent; kurulacak ya da bakımı yapılacak bir şey yoktur.
+
 ## Bu serinin neresindeyiz
 
 ```mermaid

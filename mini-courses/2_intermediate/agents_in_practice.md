@@ -176,6 +176,13 @@ repository. It is an agent loop with tools, context and a plan.
 starts it: Duet runs on its own computer in the cloud, watches the apps you connect, and comes to
 you with a brief every morning. [Personal Agents](personal_agents.md) covers it.)
 
+## Key Terms
+
+- **Project**: a context that you set up once and use again.
+- **Claude Code**: the coding agent in your terminal.
+- **Claude Cowork**: Claude working on your files, folders and apps, and you start the work.
+- **Claude Duet**: an agent that runs in the cloud, watches your connected apps, and brings a brief each morning.
+
 ## Where this fits in the series
 
 ```mermaid

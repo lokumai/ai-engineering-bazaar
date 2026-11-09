@@ -325,6 +325,22 @@ Ama dikkatli ol: bir rol, yalnızca değiştirmek istediğin kısmı değil, bü
 
 Bu, mikser benzetmesine geri dönüyor. "Bir güvenlik uzmanı gibi davran" dediğinde güvenlik bilgisini tutan ağ bölümlerini açıyorsun ve sanat tarihini tutan bölümleri kısık bırakıyorsun. Bu açıdan bakınca role prompting bir retrieval problemidir: modele yeni bilgi eklemiyorsun, mevcut bilgisinin hangisinin kullanılacağını seçiyorsun. Dezavantajı da tam burada. Çevirdiğin düğmeler, soru değiştiğinde de kısık kalıyor.
 
+## Temel Terimler
+
+- **Prompt engineering**: modelin beklediğin çıktıya ulaşmasını sağlayan bir girdi yazmak.
+- **Context**: modelin bir sonraki token'ı tahmin etmek için okuduğu girdidir ve prompt'un kendisi bu context'tir.
+- **Prompt template**: Goal, Output Format, Warnings ve Context gibi adlandırılmış parçalardan oluşan bir şablon.
+- **In-context learning (ICL)**: model, ağırlıklarında olmayan bir şeyi context'indeki bilgiden öğrenir.
+- **Few-shot prompting**: asıl görevden önce modele görevin birkaç doğru örneğini göstermek.
+- **Zero-shot**: hiç örnek içermeyen bir prompt.
+- **Prompt structure**: modele hangi metnin talimat, hangisinin veri, hangisinin hedef ve hangisinin çıktı tarifi olduğunu gösteren bölümler.
+- **Prompt injection**: prompt'a yapıştırılan düşmanca bir metindeki talimatın, modelce senin talimatın sanılması.
+- **Chain of thought**: modelin nihai cevaptan önce ara adımları yazması, bu da cevabı daha iyi yapar.
+- **Autoregressive**: modelin yazdığı her token'ın, bir sonraki token için okuduğu girdinin parçası olması.
+- **Reasoning effort**: modelin cevap vermeden önce ne kadar düşüneceğini belirleyen, `low`'dan `max`'a kadar uzanan ayar.
+- **Role prompting**: görevden önce modele bir iş, bir persona ya da bir karakter vermek.
+- **System prompt**: context'in en üstündeki, geliştiricinin yazdığı ve tüm konuşma boyunca modelin davranışını belirleyen talimatlar.
+
 ## Bu serinin neresindeyiz
 
 ```mermaid

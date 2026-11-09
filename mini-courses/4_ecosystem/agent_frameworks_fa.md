@@ -46,7 +46,7 @@ graph TD
 
 - ![](./images/logos/agno.svg)**[Agno](https://github.com/agno-agi/agno)** از یه agent تنها فراتر می‌ره و کل پلتفرم رو در نظر می‌گیره. کمکت می‌کنه agent‌ها رو مثل یه سیستم بسازی، اجرا کنی و مدیریت کنی، نه مثل یه script.
 - ![](./images/logos/crewai.svg)**[CrewAI](https://github.com/crewAIInc/crewAI)** همه‌چیز رو حول نقش‌ها می‌چینه. یه crew از agent‌ها تعریف می‌کنی که هر کدوم یه کاری دارن، و می‌ذاری با هم کار کنن. این با الگوهای multi-agent توی [Multi-Agent Systems](../1_fundamentals/multi_agent_fa.md) خیلی خوب جور درمیاد.
-- ![](./images/logos/huggingface.svg)**[smolagents](https://github.com/huggingface/smolagents)** از Hugging Face کوچیکه‌ی این جمعه، و عمداً هم کوچیک نگهش داشتن: یه کتابخونه‌ی ساده و بی‌زرق‌وبرق برای agent‌هایی که به‌جای فرستادن tool call‌های JSON، کد می‌نویسن و اجراش می‌کنن تا کارشون رو انجام بدن. در واقع همون ایده‌ی CodeAct‌ه که توی [Loop Engineering](../2_intermediate/loop_engineering_fa.md) دیدیم، فقط به شکل یه کتابخونه. اگه می‌خوای بفهمی یه loop چطوری کار می‌کنه، نه اینکه فقط ازش استفاده کنی، این بهترین کدیه که می‌تونی بخونی.
+- ![](./images/logos/huggingface.svg)**[smolagents](https://github.com/huggingface/smolagents)** از Hugging Face کوچیکه‌ی این جمعه، و عمداً هم کوچیک نگهش داشتن: یه کتابخونه‌ی ساده و بی‌زرق‌وبرق برای agent‌هایی که به‌جای فرستادن tool call‌های JSON، کد می‌نویسن و اجراش می‌کنن تا کارشون رو انجام بدن. در واقع همون ایده‌ی CodeAct‌ه که توی [Advanced Loop Engineering](../3_expert/advanced_loop_engineering.md) دیدیم، فقط به شکل یه کتابخونه. اگه می‌خوای بفهمی یه loop چطوری کار می‌کنه، نه اینکه فقط ازش استفاده کنی، این بهترین کدیه که می‌تونی بخونی.
 - ![](./images/logos/pydantic.svg)**[Pydantic AI](https://github.com/pydantic/pydantic-ai)** همون چیزی رو میاره که Pydantic توش استاده: type. همه‌ی مدل‌ها و interface‌ها از سر تا ته type دارن، پس یه tool call خراب به‌جای اینکه یه معمای حل‌نشدنی بشه، یه validation error روشن می‌ده.
 
 ## اگه پروژه‌ت TypeScript‌ه
@@ -87,6 +87,22 @@ graph TD
 این رو باید رک گفت، چون مهندس‌ها معمولاً از کنارش رد می‌شن: برای خیلی از کارها، جواب درست یه پلتفرم no-code‌ه. ![](./images/logos/lovable.svg)**[Lovable](https://lovable.dev/)** و ![](./images/logos/bolt-mono.svg)**[Bolt](https://bolt.new/)** و ![](./images/logos/replit.svg)**[Replit](https://replit.com/)** از روی یه توضیح، یه اپلیکیشن سالم و کارکن تحویلت می‌دن و خودشون deploy‌ش می‌کنن، و تو هم با نوشتن prompt‌های بعدی، هر بار عوضش می‌کنی. برای یه prototype، یه ابزار داخلی، یا یه landing page که یه فرم پشتشه، این کار به‌جای چند هفته چند ساعت طول می‌کشه.
 
 بده‌بستونش هم همون همیشگیه: الان سرعت می‌گیری و بعداً کنترلت کمتره، و اگه بخوای از پلتفرم بری بیرون، باید اپلیکیشن رو از نو بسازی. پس حواست باشه داری چی رو با چی معامله می‌کنی.
+
+## اصطلاح‌های کلیدی
+
+- **Agent framework**: همه‌ی چیزهایی که دور agent loop لازم داری، مثل retry، streaming، tool schema و memory.
+- **Agent loop**: یه `while` loop دور یه call به مدل، که هر tool رو که مدل بخواد اجرا می‌کنه.
+- **Tool schema**: یه توصیف استاندارد از یه tool، که دیگه لازم نیست JSON‌ش رو دستی بنویسی.
+- **LangGraph**: runtime و پایین‌ترین سطح بین سه تا کتابخونه‌ی LangChain.
+- **Graph**: agent رو به شکل node (مرحله‌ها) و edge (قدم بعدی ممکن) تعریف می‌کنی.
+- **State**: داده‌ی صریحی که بین مرحله‌ها جابه‌جا می‌شه، تا runtime بتونه یه اجرا رو ذخیره کنه و ازش ادامه بده.
+- **LangChain**: رابط اصلی که با یه مدل، چند tool و یه middleware، یه agent معمولی بهت می‌ده.
+- **Middleware**: لایه‌ای که کارهای harness و guardrail‌ها توش جا می‌گیرن.
+- **deepagents**: بالاترین سطح، روی دو تای دیگه ساخته شده، با planning، filesystem، subagent‌ها و خلاصه‌سازی.
+- **CodeAct**: agent‌هایی که به‌جای فرستادن JSON tool call، کد می‌نویسن و اجرا می‌کنن.
+- **AI workflow**: یه مسیر رو اجرا می‌کنه که یه نفر نوشته؛ مرحله‌ها ثابتن و کد تصمیم می‌گیره قدم بعدی چی باشه.
+- **AI agent**: خودش مسیرش رو تعیین می‌کنه و tool‌ها و ترتیبشون رو هم خودش انتخاب می‌کنه، پس مسیر هر بار ممکنه فرق کنه.
+- **MCP server**: یه endpoint که n8n اجرا می‌کنه تا coding agent بتونه وصل بشه و workflow بسازه.
 
 ## کجای این مجموعه هستیم
 

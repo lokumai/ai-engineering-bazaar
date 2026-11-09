@@ -62,6 +62,19 @@ Batching'in bir de [Context Engineering](../2_intermediate/context_engineering_t
 
 Bir engine sana bir API verir, ama bakabileceğin bir şey vermez. ![](./images/logos/open-webui-mono.svg)**[Open WebUI](https://github.com/open-webui/open-webui)**, insanların bir engine'in önüne koyduğu arayüzdür. Ollama'ya ya da OpenAI'ın API biçimini kullanan herhangi bir şeye bağlanan bir chat UI'dır. Hesapları, konuşma geçmişi ve model değiştirme özellikleri vardır. Bazı ekipler kendi donanımlarında çalışan özel bir ChatGPT ister. Onlar için tüm yığın iki parçadan ibarettir: engine ve Open WebUI.
 
+## Temel Terimler
+
+- **Inference engine**: model weight'lerini yükleyen ve token'larını bir sonraki token'a çeviren program.
+- **Attention state**: engine'in turlar arasında önbellekte tuttuğu veri; uzun bir context için bu verinin GPU belleğinde kalması gerekir.
+- **Inference provider**: bir engine'i senin yerine çalıştıran ve senden token başına ücret alan şirket.
+- **Crossover point**: kiralık bir GPU'nun, aynı işi token satın almaktan daha ucuza geldiği hacim eşiği.
+- **Self-hosting**: modeli kendi altyapında çalıştırmak; bu gerçek bir operasyon işidir.
+- **Wrapper**: Ollama ya da LM Studio gibi, engine'i gizleyip modeli birkaç dakika içinde çalıştıran araç.
+- **Serving engine**: gerçek kullanıcıların olduğu bir GPU sunucusunda gereken engine; örneğin vLLM.
+- **Batching**: birçok isteği birlikte çalıştırmak; GPU weight'leri bellekten bir kez okur ve gruptaki tüm istekler için kullanır.
+- **Throughput**: aynı anda çok sayıda kullanıcıyla ölçülen, sunucunun tamamladığı iş miktarı.
+- **Continuous batching**: eski istekler bittikçe batch'e yenilerini ekleyen batching biçimi; GPU böylece hiç iş bulamadan kalmaz.
+
 ## Bu serinin neresindeyiz
 
 ```mermaid

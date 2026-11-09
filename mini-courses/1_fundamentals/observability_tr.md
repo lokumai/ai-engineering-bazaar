@@ -65,6 +65,21 @@ Bu yüzden modüldeki en yeni araç, **trace'leri okuyan bir agent**. LangSmith'
 
 Serinin bütünü de bu yöne doğru ilerliyor. [Loop Engineering](../2_intermediate/loop_engineering_tr.md) modülünün sonunda bir agent, başka agent'ların içinde çalıştığı döngüyü tasarlar; bu modülde ise bir agent, başka agent'ların ürettiği çıktıyı kontrol eder. Bunun neden gerekli olduğu, [Harness Engineering](../2_intermediate/harness_engineering_tr.md) modülünün de yola çıktığı olgudan anlaşılır. Bu sistemler deterministik değildir, yani aynı girdi her çalıştırmada farklı bir sonuç verebilir. Girdileri de doğal dildir ve bir kullanıcı neredeyse her şeyi yazabilir, dolayısıyla testlerin olası her girdiyi kapsayamaz. Bu yüzden hatalarının çoğu, kendi testlerinde değil production'da ortaya çıkar.
 
+## Temel Terimler
+
+- **Trace**: tek bir isteğin, her model çağrısını, her tool çağrısını ve her subagent'ı içeren tüm ağacı.
+- **LangSmith**: tracing, dataset, evaluator ve annotation özelliklerini tek bir yerde sunan, LangChain'in kendi aracı.
+- **Langfuse**: açık kaynaklı bir araçtır ve trace'lerin kendi altyapında kalması gerektiğinde genellikle tercih edilir.
+- **Latitude**: açık kaynaklı, odağı production ortamındaki izleme (monitoring) olan bir araç.
+- **Improvement loop**: trace'lerin başlattığı döngü: topla, zenginleştir, örüntüyü bul, bir şeyi değiştir, offline kontrol et ve sonra tekrarla.
+- **Evaluator**: trace'lere puan veren bir değerlendirici.
+- **Annotation**: bir insanın trace'e eklediği not.
+- **Dataset**: bir değişikliğin kontrol edildiği, gerçek trace'lerden oluşan offline bir küme.
+- **Regression test**: dataset'teki trace'leri yeniden oynatan bir test.
+- **Failure mode**: hafifçe yanlış bir argüman ya da aynı dosya üzerinde dört tur gibi bir hata türü.
+- **Agent that reads traces**: kimse önceden ne arayacağını söylemeden örüntüleri ve failure mode'ları bulan bir agent, örneğin LangSmith'in Insights Agent'ı.
+- **Non-deterministic**: aynı girdinin her çalıştırmada farklı sonuç verebilmesi.
+
 ## Bu serinin neresindeyiz
 
 ```mermaid

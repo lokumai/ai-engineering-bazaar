@@ -164,6 +164,22 @@ Harness'leri karşılaştırmak istersen düzenli olarak güncellenen iki liste 
 
 > **NOT:** Bu modül, bir harness'in ne olduğu ve neden önemli olduğu düzeyinde kalıyor. [İleri Seviye Harness Engineering](../3_expert/advanced_harness_engineering_tr.md) harness profillerini, kendini evrimleştiren harness'leri ve harness'in ne kadarının modelin içine taşındığı sorusunu işliyor. Böckeler'in [Harness engineering for coding agent users](https://martinfowler.com/articles/harness-engineering.html) yazısı ise yukarıdaki iki ayrımdan çok daha derine iniyor. Devam etmek için doğru yer orası.
 
+## Temel Terimler
+
+- **Hook**: agent'ın yaşam döngüsündeki sabit bir noktaya bağlı, model istesin istemesin çalışan bir shell komutu.
+- **Non-deterministic**: aynı girdi, bir sonraki çalışmada farklı bir cevap verebilir.
+- **Harness engineering**: modelin etrafındaki mekanik düzeni tasarlamak; böylece agent her çalışmada aynı şekilde davranır.
+- **Agent harness**: agent'ın kendisi, etrafındaki mekanik düzenek ve içinde çalıştığı ortam.
+- **System prompt**: agent'ın herhangi bir işe başlamadan önce okuduğu, çoğunu sağlayıcının yazdığı talimatlar.
+- **Tool description**: modelin bir tool'u çağırıp çağırmayacağına karar verirken okuduğu, yani bir prompt olan metin.
+- **Compaction**: context window neredeyse dolduğunda, harness eski içeriği özetler ki agent çalışmaya devam edebilsin.
+- **Continuation**: bir hook, erken duran modeli yakalar ve orijinal görevi temiz bir context window'da geri verir.
+- **Middleware**: model ne karar verirse versin, sabit noktalarda çalışan kod.
+- **Guide**: agent harekete geçmeden önce ona söylenenler; system prompt, AGENTS.md, tool açıklamaları ve onaylanmış plan gibi.
+- **Sensor**: işin nasıl gittiğini agent'a söyleyen şey; testler, linter'lar, tip kontrolleri ve build hataları gibi.
+- **Computational check**: sıradan kodun CPU üzerinde çalıştırdığı, deterministik ve hızlı bir guide veya sensor.
+- **Inferential check**: bir modelin çalıştırdığı bir guide veya sensor; anlamı değerlendirebilir, ama daha yavaştır, daha pahalıdır ve sonuçları bir çalıştırmadan diğerine değişebilir.
+
 ## Bu serinin neresindeyiz
 
 ```mermaid

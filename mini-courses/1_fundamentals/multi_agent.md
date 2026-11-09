@@ -239,6 +239,23 @@ Stay with one agent while one prompt still fits comfortably and the tool list is
 manage. Split when a single system prompt tries to teach two unrelated jobs. When you split, split
 at the point where the least information has to cross from one agent to the other.
 
+## Key Terms
+
+- **Agent**: one loop, with one system prompt and one set of tools.
+- **Multi-agent system**: a system that splits the work across several agents, each with one job.
+- **Supervisor**: the agent that gets the request, delegates the work, collects the results and answers the user.
+- **Worker**: an agent that a supervisor delegates to, and it talks only to that supervisor.
+- **Network**: a design with no boss, where any agent can hand work to any other agent, also called a swarm.
+- **Coordination**: deciding who does what, in what order, and how anyone knows that a step is finished.
+- **Deadlock**: a state in which agents wait for each other forever.
+- **Subagent**: a short-lived helper that an agent starts, with its own isolated context, and the agent keeps only its results.
+- **Context transfer**: the information that one agent hands to the next.
+- **Shared context**: every agent sees everything, so nothing is lost in a handover, but the context grows fast.
+- **Isolated context**: each agent sees only what it receives, which is cheap and focused, but whatever the handover omits is gone.
+- **Agent2Agent Protocol (A2A)**: an open standard that lets agents talk to each other, whatever framework built them.
+- **Agent Card**: an agent's self-description, with its name, skills, address and authentication, served at `/.well-known/agent-card.json`.
+- **Inter-organisation barrier**: the gap between agents from different companies or frameworks, which cannot talk to each other.
+
 ## Where this fits in the series
 
 ```mermaid

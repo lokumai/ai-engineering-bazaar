@@ -1439,7 +1439,7 @@ by its block but hung off the window's bottom. Fix in `ReadingOptions.tsx` and `
 bundle unchanged. The new test failed 6 of 8 cases on the unfixed build (all four code cases, the two diagram
 cases near the window's bottom) and passes 8 of 8 after.
 
-## 🏁 Milestone M90: About, the story of the Bazaar — BUILT, PR #97 OPEN (D115)
+## 🏁 Milestone M90: About, the story of the Bazaar — DONE, PR #97 (D115)
 
 The author, 2026-11-09: a new page named **About** that tells why the project exists, in five stalls
 and a motto, *"Imperfect Human Art with Soul. Not a Curriculum."* The text is his and final; it lives

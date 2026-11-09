@@ -33,6 +33,9 @@ so you use one account, one bill and one way of connecting, and you can reach al
 - **Failover:** if one provider is down, the request can go to another one instead of failing.
 - **The same model from several sellers**, at different prices and speeds, so you can choose.
 
+![One API, Many Models](../images/openrouter-gateway.webp)  
+*One door in the middle, many models on one side and many builders on the other. The bottom strip shows how the gateway itself makes money: it builds no model of its own, so it earns whichever model wins, and people who build through it tend to stay.*
+
 The cost is one more company between you and the model, and a tiny delay.
 
 ![](../images/logos/portkey.svg)**Portkey** does the same routing job with your own accounts, and adds things a company team asks
@@ -49,13 +52,21 @@ The other way is to buy directly from the company that made the model: ![](../im
 ![](../images/logos/google.svg)Google. You get their newest models first, and features only they offer, such as cheaper
 repeated instructions (caching), discounts for big batches, and higher limits.
 
+![Claude Price List](../images/anthropic-pricing.webp)  
+*Anthropic's own price list. The first time you store repeated instructions costs a little more than normal, and every reuse after that costs only a small fraction. That is caching in plain terms.*
+
 Many companies do both: they buy directly for the model they use every day, and use a gateway to try
 everything else.
 
 ## What to Compare, Beyond the Price
 
 The price per million tokens is the number everyone quotes, and it is the worst number to decide on
-by itself. Here is a buyer's checklist:
+by itself.
+
+![OpenRouter Model List](../images/openrouter-models.webp)  
+*OpenRouter's own list of models. Price is only two of the columns: the same row also shows how much text fits in one request, how fast the first word arrives and how fast the answer streams. Some models appear twice, and the cheaper batch copy is for work that can wait.*
+
+Here is a buyer's checklist:
 
 - **Caching.** If your assistant sends the same long instructions with every request, a provider that
   caches them charges much less for each repeat. This can matter more than the base price.

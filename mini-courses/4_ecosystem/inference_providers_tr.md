@@ -15,6 +15,9 @@ Bu erişimi almanın iki yolu var ve ikisini birbirinden net ayırmak, neyi sat�
 - **Failover.** Bir provider kesintiye uğradığında istek hata vermek yerine başka bir provider'a yönlendirilebilir.
 - **Aynı model, birden fazla satıcıdan.** Birkaç provider, aynı açık ağırlıklı (open-weights) modeli farklı fiyat ve hızlarda sunabilir. Bir gateway ile fiyata, gecikmeye ya da o an müsait olan provider'a göre seçim yapabilirsin.
 
+![Tek API, Tüm Modeller](./images/openrouter-gateway.webp)  
+*Alttaki şerit, anlaşmanın gateway tarafını gösteriyor: gateway kendi modelini eğitmiyor, bu yüzden hangi model kazanırsa kazansın para kazanıyor. Şeritte bir de developer lock-in var; tek bir entegrasyonun bedeli bu.*
+
 Bunun bedeli, isteğinin başkasının altyapısından geçtiği bir ek adım (hop) olur. Bu da biraz gecikme (latency) ekler ve sen ile model arasına bir şirket daha girmiş olur.
 
 OpenRouter, bu işi yapan tek gateway değil. ![](./images/logos/portkey.svg)**[Portkey](https://portkey.ai/)** de aynı yönlendirme işini yapar, ama düzeni farklıdır. OpenRouter'da kredi satın alır, tek bir OpenRouter key'i kullanır ve tek bir fatura alırsın. Bu arada provider'lara ödemeyi de OpenRouter senin yerine yapar. Portkey'de ise genellikle kendi provider key'lerini getirirsin ve Portkey'in [gateway](https://github.com/Portkey-AI/gateway)'i açık kaynak olduğu için onu kendi altyapında da çalıştırabilirsin.
@@ -51,13 +54,21 @@ Bu yolu, yalnızca üreticinin sunduğu şeyleri istediğinde seçersin. Yeni mo
 - en yeni tool calling davranışı
 - bir satış temsilcisiyle konuşarak elde edilen daha yüksek rate limit'ler
 
+![Claude Model Fiyatları](./images/anthropic-pricing.webp)  
+*Anthropic'in fiyat sayfası. Cache'e yazmak sıradan bir input token'dan daha pahalı, daha uzun yaşayan bir yazma ondan da pahalı, bir cache hit ise normal fiyatın yalnızca küçük bir kısmına geliyor. Yani caching, aynı prefix cache süresi dolmadan geri geldiğinde karşılığını veriyor.*
+
 Tek bir model üzerine kuruyorsan ve deneme aşamasını geçtiysen, çoğu zaman doğrudan gitmeye yönelirsin.
 
 İkisini birlikte kullanmana engel yok. Yaygın bir yaklaşım, canlı ortamdaki model için doğrudan gitmek ve diğer her şeyi değerlendirmek için bir gateway kullanmaktır.
 
 ## Fiyatın Ötesinde Neyi Karşılaştırmalısın
 
-Herkesin verdiği sayı milyon token başına fiyattır, ama aynı zamanda tek başına karar vermek için en az işe yarayan sayı da budur. Faturada ve üründe ortaya çıkan şeyler şunlardır:
+Herkesin verdiği sayı milyon token başına fiyattır, ama aynı zamanda tek başına karar vermek için en az işe yarayan sayı da budur.
+
+![OpenRouter Model Listesi](./images/openrouter-models.webp)  
+*OpenRouter'ın tablo görünümündeki model listesi. Fiyat yalnızca input ve output sütunları; aynı satırda context, latency ve throughput da var. Bazı modeller iki kez listeleniyor: batch satırı daha ucuz ama latency ve throughput göstermiyor.*
+
+Faturada ve üründe ortaya çıkan şeyler şunlardır:
 
 - **Prompt caching.** System prompt'un uzunsa ve değişmiyorsa, onu önbelleğe alan bir provider her tekrar için yalnızca fiyatın küçük bir kısmını ücretlendirir. Her turda aynı 5.000 token'lık talimat bloğunu gönderen bir agent'ı düşün. Bu agent için prompt caching, maliyeti düşürmenin tek başına en büyük yoludur. Ayrıca [Harness Engineering](../2_intermediate/harness_engineering_tr.md) bölümündeki harness karşılaştırmasının bir bulgusunu da açıklar. Orada en hızlı araç, başarıyla tamamladığı her görev için en yüksek maliyete sahip olandı, çünkü önbelleğini neredeyse hiç yeniden kullanmıyordu.
 - **Rate limit'ler.** Bunlar, dakika başına istek ve token sayısına konan sınırlardır. İstekler bir kuyrukta bekliyorsa, token başına iyi bir fiyat sana pek yardımcı olmaz.

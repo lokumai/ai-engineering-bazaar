@@ -4,6 +4,9 @@
 
 **Inference engine**, bir modeli gerçekten bir bilgisayarda çalıştıran programdır: modeli yükler ve senin metnini cevaba çevirir. Inference provider ise bu engine'lerden birini senin için çalıştıran ve token başına ücret alan bir şirkettir.
 
+![Inference Engine Katmanları](../images/inference-engine-layers.webp)  
+*Engine ortadaki katman: üstünde modelin kendisi (weight'leri), altında aritmetiği yapan yazılım katmanı ve çip var. Bir provider bunların hepsini senin yerine çalıştırıyor.*
+
 ## Bu Senin İçin Neden Önemli
 
 Er ya da geç şirketindeki biri şunu soracak: "Yapay zekâyı kendi sunucularımızda, kendimiz çalıştırsak mı?" Bu modül sana üç iyi sebebi ve başlıca vazgeçme sebebini veriyor.
@@ -32,9 +35,17 @@ graph TD
 - **Birçok kullanıcısı olan bir şirket sunucusunda**, düzgün bir serving engine: ![](../images/logos/vllm.svg)**vLLM** olağan varsayılan. SGLang ve NVIDIA'nın TensorRT-LLM'i duyacağın diğer isimler.
 - **Birçok makine üzerinde**, ![](../images/logos/llm-d.svg)**llm-d** gibi bir sistem onları koordine ediyor.
 
+Aşağıdaki harita, bütün bunların nerede durduğunu ve provider'ların onların yanında nerede olduğunu gösteriyor.
+
+![LLM Inference Haritası](../images/llm-inference-landscape.webp)  
+*Wing'in yapay zekâ modellerini sunan sistemlerin haritası, aşağıdan yukarı okunuyor: kiralık çipler, onları yöneten araçlar, engine'ler, sonra birçok makine arasında iş paylaştıran yöntemler. Sağdaki inference-as-a-service sütunu provider yolu: o şirketler bütün yığını senin yerine çalıştırıyor.*
+
 ## Sayıları Açıklayan Tek Fikir
 
 Aynı anda tek bir isteğe cevap veren bir bilgisayar çoğu zaman bekliyor. Bu yüzden engine'ler birçok isteği birlikte karşılıyor ve buna **batching** deniyor. Her kişi için ayrı bir taksi yerine bir otobüs düşün: yolculuğun maliyeti aşağı yukarı aynı, ama çok daha fazla insan taşıyor.
+
+![Inference Server ve Engine](../images/inference-server-engine.webp)  
+*İstekler bir uygulamadan geliyor ve bir kuyrukta bekliyor (otobüs durağı). Batching adımı otobüsü dolduruyor ve model herkesi birlikte cevaplıyor. Engine yalnızca içteki kutu; çevresindeki server bekleme sırasını yönetiyor ve işlerin nasıl gittiğinin kaydını tutuyor.*
 
 En iyi engine'ler otobüsün dolmasını bile beklemiyor: yeni istekler, eskileri biter bitmez katılıyor; böylece bilgisayar hiç boş kalmıyor. Büyük provider'ların token'ları ucuza satabilmesinin sebeplerinden biri bu: her yolculuğu dolduruyorlar.
 

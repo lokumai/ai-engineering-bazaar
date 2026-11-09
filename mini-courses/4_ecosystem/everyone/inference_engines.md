@@ -15,6 +15,9 @@ An **inference engine** is the program that actually runs a model on a computer:
 and turns your text into the answer. An inference provider is a company that runs one of these
 engines for you and charges per token.
 
+![The Inference Engine Stack](../images/inference-engine-layers.webp)  
+*The engine is the middle layer: above it sits the model itself (its weights), below it the software layer and the chip that do the arithmetic. A provider runs all of this for you.*
+
 ## Why This Matters to You
 
 Sooner or later someone in your company will ask: "should we run the AI ourselves, on our own
@@ -51,11 +54,19 @@ graph TD
   default. SGLang and NVIDIA's TensorRT-LLM are other names you will hear.
 - **Across many machines**, a system such as ![](../images/logos/llm-d.svg)**llm-d** coordinates them.
 
+The map below shows where all of these sit, and where providers sit next to them.
+
+![The LLM Inference Landscape](../images/llm-inference-landscape.webp)  
+*Wing's map of the systems that serve AI models, read from the bottom: rented chips, the tools that manage them, the engines, then ways to share work between many machines. The inference-as-a-service column on the right is the provider route: those companies run the whole stack for you.*
+
 ## The One Idea That Explains the Numbers
 
 A computer that answers one request at a time is mostly waiting. So engines serve many requests
 together, which is called **batching**. Think of a bus instead of a taxi for each person: the trip
 costs about the same, but it carries many more people.
+
+![Inference Server and Engine](../images/inference-server-engine.webp)  
+*Requests arrive from an app and wait in a queue (the bus stop). The batching step fills the bus, and the model answers everyone together. The engine is only the inner box; the server around it manages the waiting line and keeps count of how things are going.*
 
 The best engines do not even wait for the bus to fill: new requests join as soon as older ones
 finish, so the computer is never idle. This is one reason big providers can sell tokens cheaply:

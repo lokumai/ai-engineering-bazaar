@@ -25,6 +25,9 @@ There are two ways to buy that access, and it helps to keep them clearly apart.
 - **Failover.** When one provider has an outage, the request can go to another provider instead of failing.
 - **The same model from several sellers.** Several providers often serve the same open-weights model, at different prices and speeds. A gateway lets you choose by price, by latency, or by whichever provider is available at the moment.
 
+![One API, Many Models](./images/openrouter-gateway.webp)  
+*The bottom strip shows the gateway's side of the deal: it trains no model, so it earns whichever model wins. It also lists developer lock-in, which is the price of that one integration.*
+
 The cost is one extra hop: your request goes through somebody else's infrastructure. That adds a little latency. It also puts one more company between you and the model.
 
 OpenRouter is not the only gateway. ![](./images/logos/portkey.svg)**[Portkey](https://portkey.ai/)** does the same routing job, but the arrangement is different. With OpenRouter, you buy credits, use one OpenRouter key and get one bill. OpenRouter then pays the providers for you. With Portkey, you usually bring your own provider keys. Its [gateway](https://github.com/Portkey-AI/gateway) is open source, so you can run it on your own infrastructure.
@@ -61,13 +64,21 @@ You do this when you want the things that only the maker ships. New models usual
 - the newest tool-calling behaviour
 - the higher rate limits that you get by talking to a salesperson
 
+![Claude Model Pricing](./images/anthropic-pricing.webp)  
+*Anthropic's pricing page. A cache write costs more than a plain input token, a longer-lived write costs more again, and a cache hit costs only a small fraction. So caching pays off only when the same prefix comes back before the cache expires.*
+
 If you build on one model and you are past the experiment stage, you usually end up going direct.
 
 Nothing stops you from doing both. A common pattern is to go direct for the model in production, and to use a gateway to evaluate everything else.
 
 ## What to Compare, Beyond the Price
 
-The price per million tokens is the number that everyone quotes. It is also the worst number to decide on by itself. Here is what shows up on the bill and in the product:
+The price per million tokens is the number that everyone quotes. It is also the worst number to decide on by itself.
+
+![OpenRouter Model List](./images/openrouter-models.webp)  
+*OpenRouter's model list in table view. The price is only the input and output columns: the same row also shows context, latency and throughput. Some models appear twice, and the batch listing costs less but shows no latency or throughput.*
+
+Here is what shows up on the bill and in the product:
 
 - **Prompt caching.** If your system prompt is long and does not change, a provider that caches it charges you only a fraction of the price for each repeat. Take an agent that sends the same 5,000-token block of instructions on every turn. For that agent, prompt caching is the biggest single way to cut cost. It also explains a result of the harness comparison in [Harness Engineering](../2_intermediate/harness_engineering.md): the fastest tool had the highest cost for each task that it completed successfully, because it almost never reused its cache.
 - **Rate limits.** These are the limits on requests and tokens per minute. A good per-token price does not help you if your requests wait in a queue.

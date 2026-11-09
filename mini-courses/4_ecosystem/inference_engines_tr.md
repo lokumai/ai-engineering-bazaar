@@ -11,6 +11,9 @@ Bir **inference engine**, model weight'lerini belleğe yükleyen ve senin token'
 
 Bir inference provider ise bu engine'lerden birini senin yerine çalıştıran ve senden token başına ücret alan bir başkasıdır. Konunun kendisi, [Inference Provider'lar](inference_providers_tr.md) modülünün ana konusudur.
 
+![Inference Engine Katmanları](./images/inference-engine-layers.webp)  
+*Engine, weight'ler ile altındaki CUDA ya da framework katmanının arasındaki katman. Weight'lerin GPU'yu nasıl kullanacağına o karar veriyor ve bir provider bu dört katmanın hepsini senin yerine çalıştırıyor.*
+
 ## Neden Kendin Çalıştırırsın
 
 Bunu kendin çalıştırmanın üç nedeni var ve yalnızca bu üçü uğraşmaya değer.
@@ -46,6 +49,11 @@ graph TD
 
 **Birden fazla makineye yayıldığında** sorun artık tek bir sunucu programını iyi çalıştırmak değildir. Sorun, bütün bir makine cluster'ını birlikte yönetmeye dönüşür. ![](./images/logos/llm-d.svg)[llm-d](https://github.com/llm-d/llm-d) tam bu iş için tasarlanmıştır ve modern hızlandırıcılarla Kubernetes üzerinde inference çalıştırır. Zamanlamayı ve yönlendirmeyi platform üstlenir, yani her isteği hangi makinenin çalıştıracağına o karar verir. Ayrıca önbellek farkındalıklı yerleştirme (cache-aware placement) yapar: gereken veriyi zaten önbelleğinde tutan bir makineyi tercih eder. Böylece sen bunlarla uğraşmak zorunda kalmazsın.
 
+Bütün bu araçların nerede durduğunu, provider'ların da onların yanında nerede olduğunu tek bir harita gösteriyor.
+
+![LLM Inference Haritası](./images/llm-inference-landscape.webp)  
+*Wing'in LLM inference altyapısı haritası, aşağıdan yukarı okunuyor: kiralık GPU'lar, onları yöneten araçlar, engine'ler, en üstte de cache ve routing. Inference-as-a-service sütunu provider yolu, integrated stacks sütunu ise birkaç katmanı tek bir ürüne topluyor.*
+
 ## Sayıları Açıklayan Tek Fikir
 
 Bu modülden yalnızca tek bir mekanizmayı hatırlayacaksan, o **batching**'dir.
@@ -53,6 +61,9 @@ Bu modülden yalnızca tek bir mekanizmayı hatırlayacaksan, o **batching**'dir
 Tek seferde tek istek çalıştıran bir GPU çoğunlukla boştadır, çünkü bir token üretmek çok az hesaplama ama çok büyük bir bellek trafiği gerektirir. Aynı anda birçok isteği birlikte çalıştırırsan, GPU weight'leri bellekten bir kez okur ve gruptaki bütün istekler için kullanır.
 
 İnsanlar bu engine'lerin verimini (throughput) çok sayıda eş zamanlı kullanıcıyla ölçer. Aynı donanımın bazen harika, bazen umutsuz görünmesinin nedeni de budur. Belirleyici olan tek şey, batch'in ne kadar dolu olduğudur.
+
+![Inference Server ve Engine](./images/inference-server-engine.webp)  
+*Engine yalnızca içteki kutu. Çevresindeki server HTTP ya da gRPC isteklerini alıyor, sıraya koyuyor ve metrikleri tutuyor; batching ise sıradaki isteklerin model için tek bir gruba dönüştüğü adım.*
 
 Pratikte en çok önem taşıyan iyileştirme **continuous batching**'dir. Engine, bir batch'in bitmesini beklemek yerine eski istekler tamamlandıkça yenilerini batch'e ekler. Böylece GPU hiçbir zaman iş olmadan kalmaz. Aynı nedenle, tek istekle çalıştırdığın kendi benchmark'ın sunucunun neler yapabileceği konusunda seni ciddi biçimde yanıltır.
 

@@ -16,7 +16,7 @@ description: >
 authority: state
 writes: agent, every session
 status: active
-covers: "M50 to M86, 2026-11-06 onward, and M41, which part 2 held for PR #57"
+covers: "M50 to M87, 2026-11-06 onward, and M41, which part 2 held for PR #57"
 last_updated: 2026-11-09
 ---
 
@@ -1375,6 +1375,14 @@ other may duplicate or contradict each other's work.
 
 - [x] The note, the figure (`parallel-subagent-drawback.webp`, 100 KB PNG to 36 KB, SSIM 0.995) and a short
       paragraph, in both tracks and three languages; the For Everyone version with a two-colleagues analogy.
+
+## 🏁 Milestone M87: The home page in Turkish and Persian (D113)
+
+- [ ] `/tr/` and `/fa/` render the home with its content translated (hero, reading question, track stalls and
+      tellers' stories, the cast's trades and stories) from one table; names, menus and every linked page stay
+      English; `/` unchanged and English by default.
+- [ ] Persian text right to left in Vazirmatn, the scene never mirrored; nothing clipped at 390 or 1440.
+- [ ] A Haiku review at xhigh, findings fixed, merged.
 
 ---
 

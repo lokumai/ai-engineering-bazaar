@@ -528,7 +528,10 @@ browser bundle and stops the build.
 **15 page routes and 1 route handler** (`find src/app -name page.tsx | wc -l`, `-name route.ts`),
 producing 197 HTML pages and 3 JSON files (measured 2026-11-07, after M69). `/` is a home page
 built from components; `mini-courses/index.md` is no longer the published home page and is read only as
-a link target. Since **D79** `/` is Bazaar Street: its words, its level doors (one per category in
+a link target. Since **D113** the same home renders at `/tr/` and `/fa/` from one component
+(`src/components/home/HomeStreet.tsx`) and one table of its words (`src/lib/home-copy.ts`), keyed by
+`src/lib/content/languages.ts`; only that content is translated, and every link from it goes to the English
+page it reaches from `/`. Since **D79** `/` is Bazaar Street: its words, its level doors (one per category in
 `curriculum.yaml`) and its way in are server-rendered markup, its illustration is SVG read from
 `src/components/home/street/art/` at build time (`street/art.ts`, `node:fs`, so server only), and its
 motion is one client island that imports `gsap` on demand and turns the stacked page into a walk on a

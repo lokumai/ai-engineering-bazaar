@@ -74,6 +74,13 @@ export default defineConfig({
   // 16 minutes (measured 2026-11-05, D88).
   workers: process.env.CI ? 4 : undefined,
   reporter: process.env.CI ? [['github'], ['list']] : 'list',
+  // Not the PR diff. On a pull request in CI, Playwright's git plugin fetches
+  // the base commit with `--depth=1` to attach a diff to the report, and that
+  // fetch makes the checkout shallow at the base before the webServer builds:
+  // MEASURED on PR #57, every module's revision then read as main's head, so
+  // the browser suite tested pages with the wrong REV and a bundle with the
+  // wrong contentVersion. The commit is still captured; nothing reads the diff.
+  captureGitInfo: { commit: true, diff: false },
   use: {
     baseURL,
     trace: 'retain-on-failure',

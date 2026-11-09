@@ -69,10 +69,9 @@ jobs:
       - run: npm run test:e2e
       # The browser suite rebuilt out/ from the same commit, so the two bundles
       # must match byte for byte: the mobile reader treats a new contentVersion
-      # as new content. On PR #57's first run they did not (every module's
-      # revision read as the merge base in the second build, which a local
-      # replay of the same merge commit does not reproduce), so a mismatch
-      # prints what git answered before it fails.
+      # as new content. On PR #57 they did not until Playwright stopped
+      # fetching the PR base shallowly (`captureGitInfo` in playwright.config.ts),
+      # so a mismatch prints what git answered before it fails.
       - name: The two builds of this commit publish the same bundle
         run: |
           if diff -r "$RUNNER_TEMP/api-first" out/api > /dev/null; then exit 0; fi

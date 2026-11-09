@@ -1301,6 +1301,10 @@ tracks, call-out cards, logos, Mermaid's themes and the moved addresses.
 - [x] The first sequence diagram (Agentic UI, M82) drawn: its icon symbols and actor names stripped
       as non-painting, each label's baseline folded into its y against the drawing, and punctuation
       after a right-to-left phrase kept with it so it is shaped in the same script.
+- [x] Why PR #57's two CI builds disagreed: on a pull request, Playwright's git plugin fetched the
+      base with `--depth=1` before the browser suite's build, which made the checkout shallow at
+      main's head, so every revision read as that commit (CI printed `shallow: true`). Turned off
+      with `captureGitInfo: { diff: false }`; it also gave the browser suite pages with a wrong REV.
 - [ ] CI green on PR #57, and the deploy's wait for the live `contentVersion` seen working once.
 
 Noted, not fixed (outside this PR): a vendor mark followed by a space and then a bold name

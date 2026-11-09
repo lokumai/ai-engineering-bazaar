@@ -100,7 +100,9 @@ test('on a phone every main destination is in view in the bar, with the switch a
   await page.setViewportSize({ width: 390, height: 844 })
   await page.goto(A0.path)
   const nav = await page.locator('.bz-bar-nav > ul').boundingBox()
-  const links = page.locator('.bz-bar-nav > ul > li').filter({ visible: true })
+  // `data-bar-edge` marks the one destination allowed at the scroller's cut edge
+  // (Caravan, M62); it must still come fully into view when Tab reaches it.
+  const links = page.locator('.bz-bar-nav > ul > li:not([data-bar-edge])').filter({ visible: true })
   expect(await links.count(), 'no main destination is shown').toBeGreaterThan(1)
   for (const box of await links.evaluateAll((items) => items.map((item) => {
     const rect = item.getBoundingClientRect()
@@ -110,6 +112,16 @@ test('on a phone every main destination is in view in the bar, with the switch a
     expect(box.left).toBeGreaterThanOrEqual(nav!.x - 1)
   }
   expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(390)
+
+  const edge = page.locator('.bz-bar-nav > ul > li[data-bar-edge]')
+  expect(await edge.count(), 'more than one destination is exempt from fitting').toBeLessThanOrEqual(1)
+  if (await edge.count()) {
+    await edge.locator('a').focus()
+    await expect.poll(async () => {
+      const rect = (await edge.boundingBox())!
+      return rect.x + rect.width <= nav!.x + nav!.width + 1 && rect.x >= nav!.x - 1
+    }, 'the edge destination does not scroll into view when focused').toBe(true)
+  }
 })
 
 // While no For Everyone module is written, its side has nothing to draw and

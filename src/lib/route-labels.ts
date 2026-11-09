@@ -147,6 +147,7 @@ const ROUTE_TITLES: Record<string, string> = {
   [INDEX_SEGMENT]: 'Catalog',
   profile: 'Your progress',
   legend: 'Legend',
+  caravan: 'Caravan',
 }
 
 /**

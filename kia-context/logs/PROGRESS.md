@@ -4,7 +4,7 @@ description: >
   the plan of what was left after the round-3 playground (the order table and the gate every build
   ends on), then M50 to M69: the round-3 art finished, the catalog without its Sources count, round 3
   built on the home page, search, the content phase, a certificate still to decide, download
-  cancelled, the fifth level (now Emerging), Caravan, the gate revised (M63), and content revision 4
+  cancelled, the fifth level (now Emerging), Caravan (its address live, the timeline later), the gate revised (M63), and content revision 4
   (M64 to M69), the search filters (M70) and their Filters disclosure (M71), the gate stories (M72),
   Advanced Agent Servers (M73), vendor logos (M74), course call-out cards, Mermaid themes and Mihrî
   (M75), the For Everyone versions (M76 to M79), shared headings and logos (M80), and diagram
@@ -592,7 +592,7 @@ protocols reference moved into Ecosystem, and four draft modules scaffolded for 
 - [x] The full gate and the browser suite on the branch, shipped with M47 and the round-3 playground
       as PR #66 (2026-11-06), ahead of M51.
 
-## 🏁 Milestone M62: Caravan, the trends timeline — PLACEHOLDER, LATER
+## 🏁 Milestone M62: Caravan, the trends timeline — ADDRESS LIVE, TIMELINE LATER
 
 Issue #40's comment: a timeline of what was trending each month or season since ChatGPT (late
 2022), with expandable nodes, high-level only, on a page of its own and not in the modules'
@@ -603,6 +603,19 @@ on issue #40 so it is not lost. Nothing is built until the author takes it up.
       width; the pipeline that collects each trend's seed (which paper, article, feature or news,
       from sources such as Google, YouTube, Medium and LinkedIn, and existing trackers on GitHub);
       what one node holds (a word limit and a source link); and how often it is updated.
+- [x] **The address and its place in the bar** (the author, 2026-11-09: *"add it to navbar right to
+      the Progress page, but when people reach it, it should show under maintenance (it should be
+      clickable and forwardable but the content should show under maintenance)"*). `/caravan/`
+      (`src/app/caravan/page.tsx`) is a fourth bar destination after Progress, named in
+      `route-labels.ts` so its crumb matches its heading, and it says only *Under maintenance.* with a
+      link to the catalog. Added to the navbar and layout route lists in `navigation.spec.ts` and
+      `layout.spec.ts`. On a phone the bar's navigation already scrolls inside itself, so Caravan sits
+      at its cut edge at 390 while Catalog and Progress stay inside. On a module page the bar is 67px
+      short of fitting it (MEASURED: 217px of destinations in a 150px navigation); room could only come
+      from removing the theme toggle or the language flag, so Caravan is marked `data-bar-edge`, the one
+      destination the phone tests in `tracks.spec.ts` and `search.spec.ts` let sit at the edge, at most
+      one, and only if focusing it brings it fully into view. That check found Chrome leaves a
+      half-visible bar link unscrolled on Tab, so `MainNav` now scrolls a link into view on focus.
 
 Not milestones, but open: four old branches with commits found nowhere else (`backup/pre-scrub-2026-09-04`,
 `merge/main-into-revision`, `origin/backup/before-local-user`, `origin/feat/mkdocs`) wait for the

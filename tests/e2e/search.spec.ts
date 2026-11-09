@@ -433,8 +433,8 @@ test('on a phone the search icon leaves every main destination in view', async (
   await page.goto(A0.path)
   await expect(page.getByRole('button', { name: 'Search' })).toBeVisible()
   const nav = (await page.locator('.bz-bar-nav > ul').boundingBox())!
-  expect(await page.locator('.bz-bar-nav > ul > li').filter({ visible: true }).count(), 'no main destination is shown').toBeGreaterThan(1)
-  for (const box of await page.locator('.bz-bar-nav > ul > li').filter({ visible: true }).evaluateAll((items) =>
+  expect(await page.locator('.bz-bar-nav > ul > li:not([data-bar-edge])').filter({ visible: true }).count(), 'no main destination is shown').toBeGreaterThan(1)
+  for (const box of await page.locator('.bz-bar-nav > ul > li:not([data-bar-edge])').filter({ visible: true }).evaluateAll((items) =>
     items.map((item) => ({ text: item.textContent?.trim() ?? '', right: item.getBoundingClientRect().right })))) {
     expect(box.right, `${box.text} runs past the bar's navigation`).toBeLessThanOrEqual(nav.x + nav.width + 1)
   }

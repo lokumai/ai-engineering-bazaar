@@ -9,8 +9,8 @@ description: >
 authority: reasoning
 writes: agent, when a decision is taken
 status: active
-covers: "D97 to D116 so far, and D89, which part 2 held for PR #57 — 2026-11-06 onward"
-last_updated: 2026-11-09
+covers: "D97 to D117 so far, and D89, which part 2 held for PR #57 — 2026-11-06 onward"
+last_updated: 2026-11-10
 ---
 
 # 🧠 BRAINSTORM, part 3 — D97 onward
@@ -620,6 +620,54 @@ links by group (a module as a link target the way a module document carries one)
 strength by month, plus the month totals the land is drawn from, so the reader derives nothing; and an
 optional `caravan` field on the index naming each language's document, listed in `files` with its hash.
 Renaming or retyping any of it afterwards would be `api/v2/`, so the shape settles on the web first.
+
+### D117 · Caravan, round 2: a zoom fitted to the stage, rods across a ledge, and the trend list paged in the browser like the catalog — 2026-11-10
+
+The author's second round on the built page (his words are in **M93**): the stage taller, the caravan
+about 30% larger, the rods visibly sticks, the trends browsable by year and search in a card view and a
+list view twelve at a time, and the line under the title and the "year · place" row removed.
+
+- **The scene is drawn at a zoom fitted to the stage, not at the mockup's size times 1.3.** `zoomFor`
+  takes the largest zoom at which the scene, from the ledge to a label over the tallest prop on the
+  highest land, fits the stage's height, capped by the window's width (1,100 px a unit of zoom) and at
+  1.6. MEASURED: the leader is 29% larger at 1280x720, 33% at 1440x800 and 32% at 1440x900. **Rejected:**
+  a fixed 1.3 times the first build's scale (at 1280x720 the caravan and the strip would no longer both fit
+  the window, which a test holds); a zoom from the height alone (at 1440x900 it reached 1.6, past the
+  "about 30 percent" asked for); and keeping the first build's 470 px cap (he asked for a taller stage).
+  The pace across the road scales with the zoom (260 px a month at zoom 1, up to 416), so larger props
+  stand as far apart for their size as before; the wheel's pace is the road's (D116) and does not change.
+- **The rods run across a ledge under the cloth, and they are drawn beside the wobbling leather, not in
+  it.** The first rods ended a pixel under the cloth, behind a 16 px ledge. Now the cloth ends at a ledge
+  sized to the zoom and the caravan is drawn over it, so the sticks are seen to the stage's foot.
+  **Rejected:** rods inside the wobble group made long (the wobble pivots at the foot of its box, which
+  would be the rod's end, and the puppet would swing wide on a long stick); rods in a separate layer redrawn from
+  the puppets each frame (the wobble is a CSS animation the frame loop does not see, so the stick and the
+  puppet would part at rest); a dark rod only (invisible on the dark ledge), so a light core under a dark
+  edge, the core a new palette colour, `--caravan-rod`.
+- **The list is paged in the browser, every entry kept in the page.** One island, `TrendBrowser.tsx`,
+  hides what is not on the page; the server renders every trend, so without a script all are listed.
+  **Rejected:** a prerendered address per page (`/caravan/page/2/`): the year and the search would still
+  be the browser's, so a page number would mean different trends under different choices, and the
+  scene's card copies an entry from the list, so every entry must be in every page anyway. The choices
+  are not kept in the address, because the catalog keeps none there; the view is not remembered, because
+  the catalog's remembered view is a record field (`prefs.catalogView`) and a second one for a page of
+  sample data is not worth a change to the reader's record.
+- **The controls are the catalog's own classes, and the hover is the catalog's.** The filter bar, the
+  chips with a visible `Year:`, the view toggle and its icons, the count as a live region and the empty
+  state come from `catalog.css`; the page buttons are chips, the current one marked as the catalog marks
+  the current level. The view's state is `aria-pressed`, where the catalog uses a hidden `Showing`
+  because its view is stamped on `<html>` before React runs; here React owns it. A card takes the catalog
+  card's hover (the strong edge) and a row the catalog table row's (the sunken fill).
+- **The controls and the paging wait for the list's own island** (`data-cv-browse`), after a review of
+  PR #100. The first version showed them, and showed only the first page, as soon as the page's inline
+  script had marked `<html>`, so the list would not shrink when the island started. **Rejected,** that
+  first version: a page whose script ran but whose island did not (a chunk that failed to load, a
+  hydration error) showed dead controls and left every trend after the twelfth out of reach. Now such a
+  page lists every trend; the cost is that the list shortens to one page when the island starts, below
+  the scene and out of view on load. The count's live region speaks once the count holds still for half
+  a second, not on every key of a search.
+- **The place stays in the live region.** The row on screen is gone, on his word; a reader who picks a
+  year still hears where the caravan is, so the places in `places.ts` stay.
 
 ## Open questions
 

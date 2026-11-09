@@ -40,9 +40,14 @@ interface Item {
   dx: number
   off: boolean
   hid: boolean
+  hit: HTMLElement
+  /** How far the hit area reaches down from the anchor to the land, in px. */
+  reach: number
 }
 
 const GAP = 6
+/** How far inside the stage a label keeps: the cloth starts 24 px in (`caravan.css`), and 4 px more. */
+const EDGE = 28
 
 export class Stops {
   private active: Item | null = null
@@ -78,7 +83,7 @@ export class Stops {
       label.textContent = x.title
       el.append(hit, label)
       layer.append(el)
-      const item: Item = { el, label, x, sx: -999, sy: -999, w: 0, h: 0, dx: 0, off: false, hid: false }
+      const item: Item = { el, label, x, sx: -999, sy: -999, w: 0, h: 0, dx: 0, off: false, hid: false, hit, reach: 0 }
       el.addEventListener('pointerenter', (e) => { if (e.pointerType !== 'touch') this.preview(item) }, { signal })
       el.addEventListener('pointerleave', (e) => { if (e.pointerType !== 'touch') this.release() }, { signal })
       el.addEventListener('focus', () => {
@@ -112,11 +117,19 @@ export class Stops {
     }, { signal })
   }
 
-  /** The scene calls this each frame with where each stop's anchor is on screen. */
-  place(i: number, x: number, y: number): void {
+  /**
+   * The scene calls this each frame with where each stop's anchor is on screen, and how far below
+   * it the land is: the hit area covers the prop down to the land and no further, so it never
+   * reaches into the lower road.
+   */
+  place(i: number, x: number, y: number, reach: number): void {
     const it = this.items[i]
     it.sx = x
     it.sy = y
+    if (Math.abs(it.reach - reach) > 0.5) {
+      it.reach = reach
+      it.hit.style.height = `${(reach + 6).toFixed(1)}px`
+    }
     const W = this.layer.clientWidth
     const off = x < -60 || x > W + 60
     it.el.style.transform = `translate(${x.toFixed(1)}px,${y.toFixed(1)}px)`
@@ -167,16 +180,29 @@ export class Stops {
     if (this.active) this.placeCard()
   }
 
-  /** The shortest sideways slide that keeps a label off every obstacle; 0 when it already is. */
+  /**
+   * The shortest sideways slide that keeps a label on the cloth and off every obstacle.
+   *
+   * On the cloth: a stop near either edge has its label slid in until it clears the frame (`EDGE`),
+   * so a name is never cut by the frame or the window (M93's review: at 1280x720 a label ran over
+   * the right frame). Inside that, the shortest slide that clears every post; when none does, the
+   * label stays on the cloth and may meet a post rather than leave it.
+   */
   private clear(it: Item, obstacles: readonly Box[]): number {
+    const W = this.layer.clientWidth
+    const lo = EDGE - (it.sx - it.w / 2)
+    const hi = Math.max(lo, W - EDGE - (it.sx + it.w / 2))
+    const fit = (dx: number) => clamp(dx, lo, hi)
     const meets = (dx: number) => {
       const r = this.box(it, dx)
       return obstacles.some((o) => r.l < o.r + GAP && r.r > o.l - GAP && r.t < o.b && r.b > o.t)
     }
-    if (!meets(0)) return 0
+    const start = fit(0)
+    if (!meets(start)) return start
     const candidates = obstacles.flatMap((o) => [o.r + GAP - (it.sx - it.w / 2), o.l - GAP - (it.sx + it.w / 2)])
+      .map(fit)
       .sort((a, b) => Math.abs(a) - Math.abs(b))
-    return candidates.find((dx) => !meets(dx)) ?? 0
+    return candidates.find((dx) => !meets(dx)) ?? start
   }
 
   private preview(it: Item): void {

@@ -11,8 +11,8 @@ description: >
 authority: blueprint
 writes: agent, when explicitly refactoring
 status: active
-covers: the whole system as built on 2026-09-10, with M16 shipped — every route on the design language; the record, channel A and the render step corrected for M24 on 2026-10-11, and the quiz and the end of a module for M25 on 2026-10-12, the Bazaar Street front door for M27 and the Persian pages for M28 the same day, and the progress page slimmed to its circles and its data row for M38 on 2026-11-05, and the account layer, role paths, record of work and two thirds of the test suite removed for M40 the same day, and the two tracks (For Engineers, For Everyone) and their per-track record for M43 the same day; the custom domain (D92), the fifth level, Emerging (first named Emerging Trends), and moved addresses (D94) on 2026-11-06, and the people at the gate (M58), search (M59) and the catalog without its Sources count (M55) the same day; and for M64 to M69 the same night, a planned module that renders the sections it already has (D102), inline vendor logos, and the first For Everyone module; and the search filters and the level bar on a result (M70, D103), folded behind a Filters disclosure (M71, D104), and the stories at the gate kept until everyone has turned (M72), on 2026-11-07; and call-out cards in a module (D106), the reader's choice of Mermaid theme (D107), Mihrî in Leyla's place at the gate and the fifth level titled Emerging (M75), on 2026-11-08; and For Everyone versions of the nineteen other written modules of Fundamentals, Intermediate and Ecosystem, in three languages (M77, M78, D108), the same day; and one heading per shared section (D109), technical terms kept English in translations, and more vendor marks (M80), and each diagram theme on Mermaid's own ground with a copy control (M81), the same day; and the content bundle for the mobile reader, §13 (M41, D89, D111), on 2026-11-09, and Caravan's address in the bar (M62) the same day, and the About page (M90, D115) the same day, and Caravan's page, its two data files and their validation (§14, M91, D116) that evening
-last_updated: 2026-11-09
+covers: the whole system as built on 2026-09-10, with M16 shipped — every route on the design language; the record, channel A and the render step corrected for M24 on 2026-10-11, and the quiz and the end of a module for M25 on 2026-10-12, the Bazaar Street front door for M27 and the Persian pages for M28 the same day, and the progress page slimmed to its circles and its data row for M38 on 2026-11-05, and the account layer, role paths, record of work and two thirds of the test suite removed for M40 the same day, and the two tracks (For Engineers, For Everyone) and their per-track record for M43 the same day; the custom domain (D92), the fifth level, Emerging (first named Emerging Trends), and moved addresses (D94) on 2026-11-06, and the people at the gate (M58), search (M59) and the catalog without its Sources count (M55) the same day; and for M64 to M69 the same night, a planned module that renders the sections it already has (D102), inline vendor logos, and the first For Everyone module; and the search filters and the level bar on a result (M70, D103), folded behind a Filters disclosure (M71, D104), and the stories at the gate kept until everyone has turned (M72), on 2026-11-07; and call-out cards in a module (D106), the reader's choice of Mermaid theme (D107), Mihrî in Leyla's place at the gate and the fifth level titled Emerging (M75), on 2026-11-08; and For Everyone versions of the nineteen other written modules of Fundamentals, Intermediate and Ecosystem, in three languages (M77, M78, D108), the same day; and one heading per shared section (D109), technical terms kept English in translations, and more vendor marks (M80), and each diagram theme on Mermaid's own ground with a copy control (M81), the same day; and the content bundle for the mobile reader, §13 (M41, D89, D111), on 2026-11-09, and Caravan's address in the bar (M62) the same day, and the About page (M90, D115) the same day, and Caravan's page, its two data files and their validation (§14, M91, D116) that evening, and its second round, a closer stage and the trends browsed like the catalog (§14, M93, D117), on 2026-11-10
+last_updated: 2026-11-10
 ---
 
 # 🏗️ ARCHITECTURE — How this project is built
@@ -891,23 +891,39 @@ strength the land and the strip are drawn from. A month with no level counts as 
 trend), whose external links have no address. The first real trend replaces it whole, and the sample
 file is deleted in the same change.
 
-**The page is server markup with one island.** Every trend's words are in the list under the scene,
+**The page is server markup with two islands.** Every trend's words are in the list under the scene,
 so the page reads and links with no script; `CaravanScene.tsx` imports `components/caravan/scene/`
 on demand and draws the stage, the stops (real buttons, one per trend), the year bar's travel and the
-strip, and its card shows a copy of a list entry. The journey and the year bar are shown only once a
-script has marked `<html>` (`data-cv-script`), and hidden again if the scene cannot start
-(`data-cv-failed`). **The stage is fitted to the window**: as tall as the window leaves under it once
-the strip has its place, between 300 and 470 px (400 on a phone), with the scene's heights and art
-scaled to it and its pace across the road unchanged, and drawn again when the window's width or height
-changes by more than 40 px. The whole road takes 3,000 px of wheel, and at either end the wheel is the
-page's. When the author's trends carry no measurement the page says so beside the strip. The theatre's
-colours are `components/caravan/palette.ts`, written into the page as `--caravan-*` properties that
-`src/app/caravan.css` defaults to tokens; the card is the language's slab and the strip its bar.
-`tests/e2e/caravan.spec.ts` holds the page to its rules: the notice first under the trail, every
-trend in the page without a script and drawn as a stop, the whole caravan and strip in the window at
-load on a laptop, keyboard, wheel, drag and strip travel, the card's `aria-expanded` and focus, focus
-rings at 3:1, no puppet meeting a stop and no stop's name meeting a year's post along the whole road,
-a clean redraw on resize, no sideways scroll at 390px, and instant movement under reduced motion.
+strip, and its card shows a copy of a list entry. The head is the title and the year bar; the place a
+picked year names is announced in a hidden live region and shown nowhere (M93). The journey and the
+year bar are shown only once a script has marked `<html>` (`data-cv-script`), and hidden again if the
+scene cannot start (`data-cv-failed`). **The stage is fitted to the window**: as tall as the window
+leaves under it once the strip has its place, between 300 and 640 px (420 on a phone), and the scene is
+drawn at the zoom that fits that height (`zoomFor` in `scene/shadow.ts`), capped by the window's width:
+the art, the bands and the pace across the road scale with it, and it is drawn again when the window's
+width or height changes by more than 40 px. The cloth ends at a ledge sized to the zoom, and each
+puppet's rod runs across it off the stage. The whole road takes 3,000 px of wheel, and at either end the
+wheel is the page's. When the author's trends carry no measurement the page says so beside the strip.
+The theatre's colours are `components/caravan/palette.ts`, written into the page as `--caravan-*`
+properties that `src/app/caravan.css` defaults to tokens; the card is the language's slab and the strip
+its bar.
+
+**The list is browsed in the browser** (`TrendBrowser.tsx`, its rules in `browse.ts`, D117): a search
+of the title and the text, a year filter (a trend is under every year its span touches), a Cards and a
+List view, and twelve to a page after filtering, with Previous, Next, page numbers and a count in a
+live region that speaks once the count holds still; the controls are the catalog's own classes. Every
+entry stays in the page on every page, hidden or not, because the scene's card copies it. The controls
+and the paging wait for the list's own island to mark it (`data-cv-browse`), so with no script, or with
+a script whose islands failed to load, every trend is listed and no control is shown. A
+`#trend-<id>` address opens the page that trend is on. Every stop's name is kept on the cloth. The
+choices are not kept in the address. `tests/e2e/caravan.spec.ts` holds the page to its rules: the
+notice first under the trail, every trend in the page without a script and drawn as a stop, the whole
+caravan and strip in the window at load on a laptop and a phone with the puppets close and their rods
+showing below the cloth, the head without a place row and no two groups of controls sharing a name,
+keyboard, wheel, drag and strip travel, the card's `aria-expanded` and focus, focus rings at 3:1, no
+puppet meeting a stop and no stop's name meeting a year's post or leaving the cloth along the whole
+road, a clean redraw on resize, no sideways scroll at 390px, instant movement under reduced motion, and the
+list's search, year, views, pages and hover.
 
 ---
 

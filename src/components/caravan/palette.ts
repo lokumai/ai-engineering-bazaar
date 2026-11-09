@@ -33,6 +33,8 @@ const PROPERTIES: Readonly<Record<string, string>> = {
   'hill-edge': 'rgba(59, 36, 18, 0.3)',
   land: 'rgba(47, 140, 134, 0.55)',
   'lamp-lit': '#ffd88a',
+  /* a puppet's rod, the light wood of the stick under its dark edge (M93) */
+  rod: '#d9b27a',
   /* the focus ring on the leather, the card and the strip: the lamp, which keeps 3:1 on all three */
   focus: '#ffd88a',
 }

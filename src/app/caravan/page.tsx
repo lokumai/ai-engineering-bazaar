@@ -34,7 +34,7 @@ const view = caravanView(
 
 export const metadata: Metadata = {
   title: 'Caravan',
-  description: 'What the road of AI engineering carried, season by season.',
+  description: 'What was trending in AI engineering, month by month since the chatbot moment.',
 }
 
 export default function CaravanRoute() {

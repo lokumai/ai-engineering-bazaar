@@ -49,6 +49,7 @@
     --caravan-hill-edge: var(--color-line);
     --caravan-land: var(--color-band-a);
     --caravan-lamp-lit: var(--color-caution);
+    --caravan-rod: var(--color-ornament);
     --caravan-focus: var(--color-caution);
     --cv-f: 1;
   }
@@ -70,7 +71,7 @@
     display: flex;
     align-items: flex-start;
     gap: 9px;
-    margin: 0 var(--cv-gutter) 14px;
+    margin: 0 var(--cv-gutter) 12px;
     padding: 8px 13px;
     border: 1px dashed var(--color-line-strong);
     border-radius: var(--radius-sm);
@@ -97,25 +98,21 @@
 
   /* -- the head ------------------------------------------------------------ */
   /* The head and the tools share one row, so the stage and the strip fit a
-     laptop's window under them (the mockup gave the tools a row of their own). */
+     laptop's window under them (the mockup gave the tools a row of their own).
+     M93: the line under the title and the place beside the year bar are gone,
+     on the author's word, so the row is the title and the year bar alone, and
+     the height they took is the stage's. */
   .cv-head {
     display: flex;
     flex-wrap: wrap;
-    align-items: flex-end;
+    align-items: center;
     justify-content: space-between;
     gap: 12px 24px;
-    padding: 0 var(--cv-gutter) 16px;
+    padding: 0 var(--cv-gutter) 12px;
   }
 
   .cv-head .bz-display {
-    margin: 0 0 6px;
-  }
-
-  .cv-lead {
-    max-width: var(--layout-measure);
     margin: 0;
-    color: var(--color-on-surface-muted);
-    font-size: var(--text-lead);
   }
 
   /* -- the journey and its tools, only where a script runs and drew them ---- */
@@ -167,18 +164,13 @@
     outline-offset: 2px;
   }
 
-  .cv-place {
-    margin: 0;
-    color: var(--color-on-surface-title);
-    font: 600 var(--text-body) / 1.2 var(--font-sans);
-  }
-
   /* -- the stage: the theatre ---------------------------------------------- */
   /* The scene sets the exact height from the window (`scene/index.ts`); this
      is the nearest guess before it runs, so the page barely moves when it does. */
   .cv-stage {
+    --cv-ledge: 16px;
     position: relative;
-    height: clamp(300px, calc(100svh - 360px), 470px);
+    height: clamp(300px, calc(100svh - 316px), 640px);
     overflow: hidden;
     border-block: 1px solid var(--caravan-frame);
     background: var(--caravan-frame);
@@ -192,10 +184,12 @@
     cursor: grabbing;
   }
 
+  /* The cloth ends at the ledge, which the scene sizes to its zoom
+     (`--cv-ledge`), so the rods are seen running past its foot. */
   .cv-screen,
   .cv-lamp-light {
     position: absolute;
-    inset: 26px 18px 0;
+    inset: 26px 18px var(--cv-ledge);
   }
 
   .cv-screen {
@@ -239,8 +233,10 @@
     overflow: visible;
   }
 
+  /* Over the ledge (M93): a puppet never walks below the cloth, so what the
+     caravan draws over the ledge is its rods, seen as sticks to the stage's foot. */
   .cv-caravan {
-    z-index: 4;
+    z-index: 6;
     width: 100%;
     height: 100%;
     overflow: visible;
@@ -273,9 +269,11 @@
     bottom: 0;
     left: 0;
     z-index: 5;
-    height: 16px;
+    height: var(--cv-ledge);
     border-top: 3px solid var(--caravan-gilt);
-    background: var(--caravan-wood);
+    background:
+      linear-gradient(var(--caravan-gilt), var(--caravan-gilt)) 0 calc(100% - 5px) / 100% 1px no-repeat,
+      var(--caravan-wood);
   }
 
   /* -- the art: hills, the two levels, the posts, the leather -------------- */
@@ -338,11 +336,27 @@
     filter: saturate(1.35) contrast(1.05);
   }
 
-  .cv-rod {
+  /* A rod is a stick: a light core (`--caravan-rod`) inside an edge of the
+     leather's colour (`--caravan-hide`), a fixed width whatever the zoom, so it
+     reads on the lit cloth and on the ledge below it (M93). Both are the
+     theatre's palette, which is the same in the site's two themes, so the rods
+     look the same in dark. The selectors carry `.cv-caravan` to outrank the
+     leather rule above. */
+  .cv-caravan .cv-rod,
+  .cv-caravan .cv-rod-core {
     fill: none;
-    stroke: var(--caravan-frame);
-    stroke-width: 2.2;
-    opacity: 0.85;
+    stroke-linecap: round;
+    vector-effect: non-scaling-stroke;
+  }
+
+  .cv-caravan .cv-rod {
+    stroke: var(--caravan-hide);
+    stroke-width: 5px;
+  }
+
+  .cv-caravan .cv-rod-core {
+    stroke: var(--caravan-rod);
+    stroke-width: 2.4px;
   }
 
   .cv-puppet {
@@ -408,7 +422,7 @@
   .cv-stops {
     position: absolute;
     inset: 0;
-    z-index: 6;
+    z-index: 7;
     pointer-events: none;
   }
 
@@ -591,6 +605,154 @@
     line-height: 1.5;
   }
 
+  /* -- M93: the list browsed the way the catalog is ------------------------
+     A search, a year filter, Cards and List, and twelve to a page
+     (`TrendBrowser.tsx`). The filter bar, its chips, the view toggle, the
+     count and the empty state are the catalog's own classes from
+     `catalog.css`; the two sizes that sheet reads from the catalog's root are
+     given here for this one, with the catalog's values, and nothing below
+     restyles a chip. */
+  .cv-list {
+    --bz-filter-pad: 20px;
+    --bz-control: 33px;
+  }
+
+  /* The controls are shown only once the list's own island has run and set
+     `data-cv-browse`: not on the page's early `data-cv-script` mark, which a
+     page whose island failed to load also carries, and where the controls
+     would be dead. Without the island every trend is listed. */
+  .cv-list:not([data-cv-browse]) .cv-js {
+    display: none;
+  }
+
+  /* An entry a `#trend-<id>` address scrolls to clears the site's sticky bar. */
+  .cv-entry {
+    scroll-margin-top: calc(var(--layout-bar) + var(--layout-band) + 12px);
+  }
+
+  .cv-filters {
+    margin-bottom: 20px;
+  }
+
+  .cv-list .cv-search {
+    margin: 0;
+  }
+
+  .cv-list .cv-search > input {
+    flex: 0 1 26rem;
+  }
+
+  /* The showing view, filled the way a pressed chip is. The catalog sets the
+     same three properties from `<html>`; here the button's own state says it.
+     The thicker foot is what forced colours keeps. */
+  .cv-list .bz-viewbtn[aria-pressed="true"] {
+    --bz-showing-fill: var(--color-primary);
+    --bz-showing-ink: var(--color-on-primary);
+    --bz-showing-line: var(--color-primary);
+    border-bottom-width: 2px;
+  }
+
+  .cv-list .bz-empty {
+    margin: 0 0 20px;
+  }
+
+  .cv-list .bz-empty-status {
+    margin-bottom: 16px;
+  }
+
+  /* -- the pages: Previous, the numbers, Next ------------------------------ */
+  .cv-pages {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 24px;
+  }
+
+  .cv-page {
+    justify-content: center;
+    min-width: var(--bz-control);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .cv-page-step svg {
+    flex: none;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.6;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  /* A disabled end keeps the chip's edge and fades its words, and the hover
+     changes nothing. */
+  .cv-pages .bz-chip:disabled {
+    background: var(--color-surface-raised);
+    color: var(--color-on-surface-faint);
+    cursor: default;
+  }
+
+  .cv-page-gap {
+    padding: 0 4px;
+    color: var(--color-on-surface-muted);
+  }
+
+  /* -- List: the same entries as rows -------------------------------------- */
+  /* No rule of its own on top: the filter bar's hairline above is the list's
+     first rule, and a second one there drew a double line. */
+  .cv-list[data-cv-view="list"] .cv-entries {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0;
+  }
+
+  .cv-list[data-cv-view="list"] .cv-entry {
+    display: grid;
+    grid-template-columns: 9.5rem minmax(0, 1fr) minmax(0, 21rem);
+    gap: 2px 24px;
+    align-content: start;
+    padding: 14px 4px;
+    border: 0;
+    border-bottom: 1px solid var(--color-line);
+    border-radius: 0;
+    background: none;
+  }
+
+  .cv-list[data-cv-view="list"] .cv-entry-when {
+    grid-column: 1;
+    grid-row: 1 / span 3;
+    padding-top: 3px;
+  }
+
+  .cv-list[data-cv-view="list"] .cv-entry-title { grid-column: 2; grid-row: 1; }
+  .cv-list[data-cv-view="list"] .cv-entry-text { grid-column: 2; grid-row: 2; margin: 0; }
+  .cv-list[data-cv-view="list"] .cv-entry-sample { grid-column: 2; grid-row: 3; margin-top: 4px; }
+
+  .cv-list[data-cv-view="list"] .cv-entry-links {
+    grid-column: 3;
+    grid-row: 1 / span 3;
+    align-content: start;
+    padding-top: 3px;
+    border-top: 0;
+  }
+
+  /* -- under the pointer, as the catalog's do ------------------------------
+     The author: "no need for shadow or 2px lift. but at least each card
+     should get color change or border color change similar to the ones in
+     catalog". So a card takes the catalog card's hover (`.bz-catcard:hover`
+     in `catalog.css`, the strong edge). A row takes the hover of the rows in
+     the catalog's Table view: those are `.bz-row` (`components/sheet/
+     ModuleRow.tsx`), whose hover the language itself declares
+     (`.bz-row:hover` in `src/design/bazaar.css`, the sunken fill). The same
+     tokens, and nothing moves or eases. */
+  .cv-list[data-cv-view="cards"] .cv-entry:hover {
+    border-color: var(--color-line-strong);
+  }
+
+  .cv-list[data-cv-view="list"] .cv-entry:hover {
+    background: var(--color-surface-sunken);
+  }
+
   .cv-entry-when {
     margin: 0 0 3px;
     color: var(--color-on-surface-muted);
@@ -729,10 +891,20 @@
     .cv-tools { width: 100%; align-items: stretch; }
     .cv-years { width: 100%; justify-content: space-between; }
     .cv-year { flex: 1; min-height: 40px; padding: 9px 0; }
-    .cv-place { font-size: var(--text-control); }
-    .cv-stage { height: clamp(300px, calc(100svh - 460px), 400px); }
+    .cv-stage { height: clamp(300px, calc(100svh - 430px), 420px); }
     .cv-scrub { height: 44px; margin-top: 10px; }
     .cv-entry-group { grid-template-columns: 108px minmax(0, 1fr); }
+    .cv-list .cv-search > input { flex: 1; }
+
+    /* A row is one column on a phone, in the order a card has. */
+    .cv-list[data-cv-view="list"] .cv-entry { grid-template-columns: minmax(0, 1fr); }
+    .cv-list[data-cv-view="list"] .cv-entry > * { grid-column: 1; grid-row: auto; }
+
+    .cv-list[data-cv-view="list"] .cv-entry-links {
+      margin-top: 8px;
+      padding-top: 8px;
+      border-top: 1px solid var(--color-line);
+    }
   }
 
   @media (prefers-reduced-motion: reduce) {

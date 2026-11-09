@@ -51,6 +51,13 @@ Bu bölümü ciddiye almakta fayda var, çünkü iki problemin de kaynağı işi
 
 **Koordinasyon (coordination).** Kim ne yapar, hangi sırayla yapar ve bir adımın bittiğini kim nasıl anlar? Tek bir agent'ta döngü bu soruların yanıtını zaten veriyordu. Birden fazla agent'ta ise bir şeyin karar vermesi gerekir ve bu karar yanlış çıkabilir. Örneğin iki agent aynı işi yapabilir. Üstelik bir agent, hiç gelmeyecek bir yanıtı sonsuza kadar bekleyebilir, bir supervisor da işi sürekli devredip hiç bitirmeyebilir. Agent sayısı arttıkça kilitlenme (deadlock), yani agent'ların birbirini sonsuza kadar beklemesi, daha olası hale gelir. Sonsuza kadar dönen bir döngüye girmenin yolları da çoğalır.
 
+Koordinasyon ileri seviye bir konudur ve [İleri Seviye Multi-Agent](../3_expert/advanced_multiagent_tr.md) bölümü onu ayrıntısıyla anlatır. Şimdilik sorunu gösteren basit bir örneğe bakalım:
+
+![Birbirini göremeyen iki paralel subagent](./images/parallel-subagent-drawback.webp)  
+*Agent, bir task'ı iki subtask'a böler ve her biri için bir subagent çalıştırır. Her subagent o ana kadarki konuşmayı ve kendi subtask'ını alır, diğerinin yaptığı işi ise görmez. Bu yüzden ikisi aynı işi iki kez yapabilir ya da çelişen kararlar verebilir. Sonuçları birleştiren agent bunu ancak en sonda fark eder.*
+
+İki subagent birbirinden habersizdir. Multi-agent sistemlerin kırılgan, bazen de güvenilmez olmasının temel nedenlerinden biri budur.
+
 **Bağlam aktarımı (context transfer).** Her agent kendi bağlamına (context) sahiptir, yani kendi mesaj yığınına (message stack). Bu yüzden SQL agent işini bitirdiğinde görselleştirme agent'ı tam olarak ne alır? Yalnızca satırları mı alır, yoksa orijinal soruyu ve satırları üreten SQL'i de mi alır? Çok az bilgi verirsen ikinci agent, ihtiyaç duyduğu bilgiye sahip olmadan çalışmak zorunda kalır. Her şeyi verirsen ise devasa bir bağlamın bedelini ödersin. Üstelik agent'ları ayırmanın önüne geçmek istediğin karmaşayı geri getirmiş olursun.
 
 Bu konuda yanlış karar vermek, multi-agent bir sistemin yerini aldığı tek agent'tan *daha kötü* çalışmasının en sık görülen nedenidir.

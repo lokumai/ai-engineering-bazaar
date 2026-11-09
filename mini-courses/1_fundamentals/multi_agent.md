@@ -79,6 +79,15 @@ that never arrives. A supervisor can keep delegating and never stop. More agents
 to deadlock, which is when agents wait for each other forever. It also means more ways to loop
 without end.
 
+Coordination is an advanced topic, and [Advanced Multi-Agent](../3_expert/advanced_multiagent.md) covers
+it properly. For now, one basic example shows the problem:
+
+![Two parallel subagents that cannot see each other](./images/parallel-subagent-drawback.webp)  
+*The agent splits a task into two subtasks and runs one subagent for each. Each subagent gets the conversation so far plus its own subtask, and nothing of the other's work. So the two can do the same work twice, or make choices that conflict, and the agent that combines the results finds out only at the end.*
+
+The two subagents are unaware of each other. That is one basic reason why multi-agent systems are
+fragile, and sometimes unreliable.
+
 **Context transfer.** Each agent has its own context: its own message stack. So when the SQL agent
 finishes, what exactly does the visualisation agent get? Does it get only the rows? Does it also
 get the original question? Does it get the SQL that produced the rows? If you hand over too little,

@@ -59,7 +59,10 @@ export function watchPage(page: Page): PageProblems {
     // location, which is the only way to tell "the favicon 404'd" from "the
     // page threw".
     if (ignored(message.location().url)) return
-    problems.consoleErrors.push(`console.error: ${message.text()}`)
+    // The location names the resource, so a flaky 404 says which file it was
+    // (`home.spec.ts`'s door test failed in CI with only "Failed to load resource").
+    const where = message.location().url
+    problems.consoleErrors.push(`console.error: ${message.text()}${where ? ` (${where})` : ''}`)
   })
 
   page.on('pageerror', (error) => {

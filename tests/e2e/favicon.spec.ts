@@ -13,6 +13,13 @@ import { watchPage } from './watch'
  * rather than about `/favicon.ico` resolving: nothing has to exist at that path
  * once the document says where its icon is.
  *
+ * One request is left that no `<link>` prevents: going Back, Chrome sometimes
+ * fetches `/favicon.ico` anyway (it failed `home.spec.ts`'s door test in CI, and
+ * the console error named the file). So `public/favicon.ico` exists too, drawn
+ * from `icon.png`; it adds no `<link>`, the site is served from the domain root
+ * (D92), and the assertion below still proves an ordinary navigation asks for
+ * nothing.
+ *
  * `src/app/icon.svg` is a metadata file route rather than a file under
  * `public/`, because Next rewrites both the asset URL and the `<link>` for the
  * base path this site is served from and does neither for `public/`. That is

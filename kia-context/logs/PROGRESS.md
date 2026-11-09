@@ -16,7 +16,7 @@ description: >
 authority: state
 writes: agent, every session
 status: active
-covers: "M50 to M88, 2026-11-06 onward, and M41, which part 2 held for PR #57"
+covers: "M50 to M89, 2026-11-06 onward, and M41, which part 2 held for PR #57"
 last_updated: 2026-11-09
 ---
 
@@ -1421,8 +1421,6 @@ running views, the cast line-up and the phone row.
       carpet and hat unchanged.
 - [x] **`node scripts/capture-cast.mjs`** rewrote only `cast-dariush.html` and `cast-dariush-tile.html`;
       the other six figures came out byte-identical. The home page looked at on the build at 1440.
-
----
 
 ## 🏁 Milestone M89: A block's option menu is never clipped and never leaves the window (D114) — DONE
 

@@ -9,7 +9,7 @@ description: >
 authority: reasoning
 writes: agent, when a decision is taken
 status: active
-covers: "D97 to D113 so far, and D89, which part 2 held for PR #57 — 2026-11-06 onward"
+covers: "D97 to D114 so far, and D89, which part 2 held for PR #57 — 2026-11-06 onward"
 last_updated: 2026-11-09
 ---
 

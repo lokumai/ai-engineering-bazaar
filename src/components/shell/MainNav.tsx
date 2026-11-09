@@ -140,6 +140,9 @@ const DESTINATIONS: readonly Destination[] = [
     label: 'Progress',
     owns: ['/profile/'],
   },
+  // M62 — the trends timeline, beside Progress (the author, 2026-11-09). Its
+  // page is under maintenance until the timeline is built.
+  { href: '/caravan/', label: 'Caravan', owns: ['/caravan/'] },
 ]
 
 /**

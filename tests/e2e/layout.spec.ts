@@ -55,6 +55,7 @@ const ROUTES = [
   '/courses/fundamentals/llms/',
   '/profile/',
   '/legend/',
+  '/caravan/',
 ] as const
 
 test.describe('layout invariants, on every route', () => {

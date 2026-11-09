@@ -131,6 +131,7 @@ const EVERY_ROUTE: readonly string[] = [
   INDEX_SHEET,
   '/legend/',
   '/profile/',
+  '/caravan/',
 ]
 
 test('every route carries the same navbar', async ({ page }) => {

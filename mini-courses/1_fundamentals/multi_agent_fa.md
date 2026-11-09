@@ -17,7 +17,7 @@
 
 ## معماری‌های پایه‌ی Multi-agent
 
-![سه معماری: تک agent، network و supervisor](./images/multiagents.png)  
+![سه معماری: تک agent، network و supervisor](./images/multiagents.webp)  
 *چپ: یه agent با tool‌هاش، همون جایی که [AI Agents](agents_fa.md) تموم شد. وسط: یه network که توش هر agent می‌تونه با همه‌ی agent‌های دیگه حرف بزنه. راست: یه supervisor که درخواست رو می‌گیره و کار رو بین worker‌ها پخش می‌کنه، و worker‌ها فقط با خود supervisor حرف می‌زنن.*
 
 **Supervisor.** یه agent درخواست رو می‌گیره و بعد به این ترتیب:

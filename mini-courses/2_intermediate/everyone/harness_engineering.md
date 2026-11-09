@@ -32,7 +32,7 @@ time, whatever the AI decides.
 
 Designing those surroundings is **harness engineering**.
 
-![Prompt, context and harness on one drawing](../images/car-analogy.png)  
+![Prompt, context and harness on one drawing](../images/car-analogy.webp)  
 *The engine is the prompt: it makes the power. The car is the context: the body built around the engine. The track and the barriers are the harness. The barriers do not steer. They do not make the car go the right way. They make it impossible to go the wrong way.*
 
 The next two modules use this car picture again, so keep it in mind.
@@ -54,14 +54,14 @@ Neither of them is a model. Put a different model inside, and less changes than 
 
 The harness is the **outer** layer. It does not replace prompt and context work; it contains it.
 
-![Prompt, context and harness as three layers](../images/onion-model.png)  
+![Prompt, context and harness as three layers](../images/onion-model.webp)  
 *Each ring contains the one inside it. That is why these are never alternatives. The harness writes the system prompt, summarises the chat and sends the helpers, so your context work happens inside the harness you picked.*
 
 ## Four Disciplines, Four Questions
 
 By 2026, this work has split into four jobs, and each asks one plain question.
 
-![What to say, what to see, and the world to build](../images/prompt-vs-context-vs-harness.jpeg)  
+![What to say, what to see, and the world to build](../images/prompt-vs-context-vs-harness.webp)  
 *Read it from the bottom up. Each layer contains the one below it. At the bottom, a person talks to the robot. At the top, the person builds the place where the robot works.*
 
 - **Prompt engineering**: what do I say, and how?
@@ -142,7 +142,7 @@ changing the surroundings.
 
 Take one model, give it one set of tasks, and change only the harness. The scores move a lot.
 
-![DeepSeek V4 Flash across eight harnesses](../images/harness-comparison.png)  
+![DeepSeek V4 Flash across eight harnesses](../images/harness-comparison.webp)  
 *One model, one set of tasks, eight harnesses, and the scores go from 14 to 20 out of 30. The same model does the thinking in every bar. The fastest harness was also the most expensive per success.*
 
 Composio ran one model through eight harnesses, including Claude Code, Codex, OpenCode and Hermes

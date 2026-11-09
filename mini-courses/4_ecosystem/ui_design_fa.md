@@ -22,7 +22,7 @@ agent‌ی که کد می‌نویسه، با کمال میل برات interface
 
 ![](./images/logos/claude.svg)**[Claude Design](https://claude.ai/design)** کار Anthropic Labs‌ه و آوریل 2026 منتشر شد. همین کار رو از اون طرف انجام می‌ده: prototype، اسلاید، one-pager و چیزهای تعاملی رو به شکل HTML و CSS و JavaScript واقعی می‌سازه. دو تا چیزش جالبه. اول اینکه می‌تونه یه **codebase** موجود رو به‌عنوان ورودی بگیره، design system‌ی که از قبل توی اون کد هست رو پیدا کنه، و هر چی بعداً ازش خواستی رو با همون design system بسازه. دوم اینکه کار رو مستقیم می‌سپره دست Claude Code، و این‌طوری فاصله‌ی بین prototype و repository واقعی از بین می‌ره.
 
-![template‌های Claude Design](./images/claude-design-types.png)  
+![template‌های Claude Design](./images/claude-design-types.webp)  
 *Claude Design با یه درخواست و یه template شروع می‌شه: اپ موبایل، اسلاید، سند، wireframe و چیزهای دیگه. منوی "Design system" قبل از این‌که چیزی کشیده بشه، یه سری تصمیم طراحی رو انتخاب می‌کنه.*
 
 ![تنظیم یه prototype توی Claude Design](./images/claude-design-ui.webp)  
@@ -46,7 +46,7 @@ agent‌ی که صفحه می‌سازه، وسط ساختن مجبوره تک�
 
 راه‌حل همونیه که برای دستورالعمل‌ها جواب داد: تصمیم‌ها رو توی یه فایل داخل repository بنویس و بذار agent خودش بخونتش.
 
-![یه design system کنار صفحه‌ای که ازش ساخته شده](./images/example-design-system.png)  
+![یه design system کنار صفحه‌ای که ازش ساخته شده](./images/example-design-system.webp)  
 *یه design system توی Google Stitch (سمت چپ): رنگ‌هاش با کد دقیقشون، سه تا سبک متن، دکمه‌ها و آیکون‌ها. سمت راست یه fitness dashboard‌ه که ازش ساخته شده. هر صفحه‌ی بعدی که بخوای، مثلاً "workout details screen" که پایینش پیشنهاد شده، همون تصمیم‌ها رو دوباره استفاده می‌کنه.*
 
 ## DESIGN.md

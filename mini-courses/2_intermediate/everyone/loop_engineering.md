@@ -36,7 +36,7 @@ is half done. Never stop, and you keep paying for an agent that goes in circles.
 Back to the car. The engine is the prompt, the body is the context, and the track and barriers are the harness.
 Until now, a person drove. With loop engineering, the AI drives.
 
-![Four years of job titles](../images/loop-unemployment.jpeg)  
+![Four years of job titles](../images/loop-unemployment.webp)  
 *Each panel is a joke about a job title, and the last one is a guess about the future. Read the arrows: first the person points at agents, then the person points at one agent, and that agent points at the others.*
 
 ## Loops Happen at Five Levels
@@ -105,7 +105,7 @@ If the code means nothing to you, read it as: "forever: start the agent with the
 Each start gets a fresh, empty chat. So the agent never gets tired or confused by a long chat, the
 [context rot](context_engineering.md) problem.
 
-![Ralph Wiggum](../images/ralph.png)  
+![Ralph Wiggum](../images/ralph.webp)  
 *The name comes from the Simpsons character. The joke is friendly: the technique works because it is too simple to be clever, and it keeps going after setbacks that would stop something smarter.*
 
 The one rule that matters most: **one task per round.** Each round:

@@ -34,7 +34,7 @@ design to Figma, the tool many designers use.
 slides and one-page documents as real, working code. It can also read an existing project, find the
 design rules already in it, and follow them for whatever you ask next.
 
-![Claude Design's templates](../images/claude-design-types.png)  
+![Claude Design's templates](../images/claude-design-types.webp)  
 *Claude Design starts from one request and a template: a mobile app, slides, a document, a wireframe and more. The "Design system" menu picks a set of design decisions before anything is drawn.*
 
 ![Tweaking a prototype in Claude Design](../images/claude-design-ui.webp)  
@@ -54,7 +54,7 @@ An AI building a screen has to make every one of those decisions. It cannot know
 ones that look reasonable, and different ones each time. The fix is the same as for instructions:
 write the decisions down in a file, and let the AI read it.
 
-![A design system next to a screen built from it](../images/example-design-system.png)  
+![A design system next to a screen built from it](../images/example-design-system.webp)  
 *A design system in Google Stitch (left): its colours with their exact codes, three text styles, buttons and icons. On the right is a fitness dashboard generated from it. Every next screen you ask for, such as the suggested "workout details screen" below it, reuses the same decisions.*
 
 ## DESIGN.md

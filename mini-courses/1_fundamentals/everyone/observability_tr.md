@@ -11,7 +11,7 @@ Bir agent'ta bu artık doğru değil. Kod yalnızca "yapay zekâya sor, o ne too
 
 Bu bilgi yalnızca o çalıştırmanın kaydında bulunur. Bu kayda **trace** denir.
 
-![Langfuse'ta bir trace](../images/smolagents-trace-langfuse.png)  
+![Langfuse'ta bir trace](../images/smolagents-trace-langfuse.webp)  
 *Langfuse adlı bir araçta, bir agent çalıştırmasının gerçek bir trace'i. Solda her adım, yapay zekâ çağrısı ve tool çağrısı var; her birinin ne kadar sürdüğü ve içeri ile dışarı ne kadar metin girip çıktığı görünüyor. Çalıştırmanın tamamı 4 dakika 49 saniye sürdü. Sağdaki nihai cevap bunların hiçbirini söylemiyor.*
 
 ## Bu Senin İçin Neden Önemli

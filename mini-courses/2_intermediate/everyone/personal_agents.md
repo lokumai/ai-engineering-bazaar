@@ -90,10 +90,10 @@ people moved to ![](../images/logos/hermes-agent-mono.svg)**Hermes Agent** from 
 carefully: fast, searchable memory, skills it writes itself, scheduling in plain language ("every
 Monday morning, remind me..."), and helpers that work in their own safe space.
 
-![Hermes and OpenClaw drawn side by side](../images/hermes-vs-openclaw-archi.png)  
+![Hermes and OpenClaw drawn side by side](../images/hermes-vs-openclaw-archi.webp)  
 *Hermes is drawn as a circle that closes back on the user: what it remembers and the skills it wrote feed the next conversation. That is its "grows with you" idea, drawn as a diagram.*
 
-![What each one is for](../images/hermes-and-openclaw.png)  
+![What each one is for](../images/hermes-and-openclaw.webp)  
 *Read the two columns as verbs. On the left, the agent changes itself. On the right, the agent moves work between tools and people. The question is not which tool is better, but which job you have.*
 
 Both run the same AI models. What separates them is memory, skills and safety design: the harness

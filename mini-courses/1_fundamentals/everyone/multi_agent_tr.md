@@ -21,7 +21,7 @@ Her biri, [AI Agents](agents_tr.md) modülündeki sıradan bir agent. Yeni bir �
 
 ## Temel Multi-agent Mimarileri
 
-![Tek agent, network ve supervisor mimarileri](../images/multiagents.png)  
+![Tek agent, network ve supervisor mimarileri](../images/multiagents.webp)  
 *Solda: tool'larıyla tek bir agent. Ortada: her agent'ın diğer her agent'la konuşabildiği bir network. Sağda: isteği alıp işi diğerlerine dağıtan bir supervisor. Diğerleri yalnızca supervisor'la konuşur.*
 
 **Supervisor: bir müdür ve takımı.** Tek bir agent, bir müdür gibi isteği alır. Her parçayı kimin yapması gerektiğine karar verir, işi devreder, sonuçları toplar ve kullanıcıya cevap verir. Takım üyeleri müdürle konuşur, başka kimseyle konuşmaz. Her öğrenciye projenin bir parçasını verip sonra parçaları bir araya getiren bir hocaya benzer.

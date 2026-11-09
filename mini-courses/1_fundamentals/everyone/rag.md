@@ -52,7 +52,7 @@ you.
 Remembering one exact sentence from a huge library is hard and unreliable. Reading a page that
 is open on your desk is easy and exact. RAG chooses which pages go on the desk.
 
-![The naive RAG flow](../images/rag.png)  
+![The naive RAG flow](../images/rag.webp)  
 *The basic RAG flow. The question goes two ways at once. One way goes to a search over your documents (the "embedding model" and "vector store index" boxes in the picture). The other goes straight to the AI, together with the pages the search found.*
 
 ## Vector Embeddings
@@ -66,7 +66,7 @@ fingerprints.** It works like addresses in a city: close addresses mean nearby p
 
 The classic picture uses four words:
 
-![King, queen, man and woman as vectors in space](../images/vector-king-queen.png)  
+![King, queen, man and woman as vectors in space](../images/vector-king-queen.webp)  
 *Each word becomes a point in space. "King" lands near "queen", and "man" lands near "woman". The two arrows are parallel: the step from king to queen is the same step as from man to woman. Meaning has turned into distance and direction.*
 
 The useful part is that it finds meaning, not words. Look at these two contract clauses:
@@ -98,7 +98,7 @@ RAG has two parts.
 3. Add the text of those pieces to the chat, next to the question.
 4. The AI answers from what it can now see.
 
-![RAG offline and online](../images/rag-offline-online.png)  
+![RAG offline and online](../images/rag-offline-online.webp)  
 *The top half runs once, and again when the documents change. The bottom half runs for every question. The picture adds one step: a second check (a "reranker") reads the 20 closest pieces and keeps the best 3, so the chat holds only what answers the question.*
 
 ## Measuring Retrieval

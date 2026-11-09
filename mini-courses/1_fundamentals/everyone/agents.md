@@ -16,7 +16,7 @@ Everything so far has been building to this. The definition is smaller than you 
 That is the whole thing. Most of the confusion about agents comes from expecting
 something bigger.
 
-![An LLM in a loop with an objective](../images/agent-wrapper-meme.jpg)  
+![An LLM in a loop with an objective](../images/agent-wrapper-meme.webp)  
 *Both ends of the IQ curve say the same simple thing. The person in the middle draws a complicated diagram.*
 
 ## Why This Matters to You
@@ -39,14 +39,14 @@ and only then writes the answer.
 It is the same model in both cases. Nothing was added to the model. The only difference is how
 many times it is called, and what it is shown each time.
 
-![Is this an agent?](../images/agent-multi-step-example.jpg)  
+![Is this an agent?](../images/agent-multi-step-example.webp)  
 *Yes. That really is the definition. The joke is that people expect it to be more.*
 
 ## One Pass Through the Loop
 
 [Tool Calling](tools.md) showed a single tool call. An agent is that, repeated:
 
-![The context of an agent](../images/agent-context.jpeg)  
+![The context of an agent](../images/agent-context.webp)  
 *One round: you ask, and the AI thinks. It asks for a tool. The computer runs the tool and writes the result back. Then the AI answers. In the next round, the whole chat goes to the AI again, and it is now longer.*
 
 ```mermaid
@@ -73,7 +73,7 @@ AI. Think of it as a scale:
   in each step.
 - **Agent:** the AI chooses the steps, the tools, and when to stop.
 
-![Three points on the autonomy spectrum](../images/llm-tool-agent-compare.png)  
+![Three points on the autonomy spectrum](../images/llm-tool-agent-compare.webp)  
 *The same model sits in all three panels. Two things change: how many times it is called, and who picks the next step. You pick it in the first two panels. The AI picks it in the third.*
 
 Most real products do not go to the far end, and that is usually the right choice. Less freedom means
@@ -131,7 +131,7 @@ So the loop runs several times:
 One goal took six rounds and five calls to the AI. A plain LLM would get one call for all of
 that, so it could only guess.
 
-![LLM as brain, agent as body](../images/agent-analogy.png)  
+![LLM as brain, agent as body](../images/agent-analogy.webp)  
 *The LLM is the brain, the agent is the body around it, and the tools are its hands.*
 
 ## Words You Now Know

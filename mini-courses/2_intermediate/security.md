@@ -22,7 +22,7 @@ Jailbreaking an LLM means getting it to produce output that it was built not to 
 
 That is the whole definition. The model was trained to refuse certain things. Someone finds a way of asking that gets past the refusal. Nothing is hacked in the traditional sense. Nobody breaks into a server, and nobody steals a password. Somebody just words the request differently.
 
-![A refusal, then the same question with a jailbreak in front of it](./images/jb-exmaple-1.png)  
+![A refusal, then the same question with a jailbreak in front of it](./images/jb-exmaple-1.webp)  
 *The question is identical in both halves. The only change is the text in front of it, and that is the uncomfortable part. The safety behaviour is not a locked door. It is a habit the model has, and with the right words you can persuade the model to drop a habit. Notice also that the model does not act like it is breaking a rule in the second half. Seen from the inside, it is only answering.*
 
 The prompt in that example is the famous one. People usually call it **DAN**, short for "do anything now". You tell the model that it is playing a character with no restrictions, and then you ask the character. The prompt is old and mostly patched, and that is why we can print it. We show it here because attackers still use the same pattern today: they ask the model to play a character that has no rules.
@@ -36,7 +36,7 @@ Attacks split into two kinds. The split is about what the attacker can see.
 
 You can see that difference directly in what the attacks look like.
 
-![Token-level and prompt-level jailbreaks](./images/jb-example-2.png)  
+![Token-level and prompt-level jailbreaks](./images/jb-example-2.webp)  
 *The top one is what a computer finds. The bottom one is what a person writes. The nonsense text at the top is not random. It is the output of a search over tokens, and that is why it usually needs white-box access to produce. The story below it needs no access at all, only an idea. That is why prompt-level attacks are the ones you actually meet. And a filter can easily spot a nonsense suffix. But a request for a creative story about insider trading looks like an ordinary request, because it is one.*
 
 The practical result: white-box attacks are stronger. But the attack that somebody uses against *your* product is almost always black box, because your product is a text box on the internet.

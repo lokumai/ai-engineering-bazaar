@@ -32,7 +32,7 @@ This module is about the two tools that generate interfaces properly. It is also
 
 ![](./images/logos/claude.svg)**[Claude Design](https://claude.ai/design)** comes from Anthropic Labs and launched in April 2026. It does the same job from the other direction. It produces prototypes, slides, one-pagers and interactive pieces as real HTML, CSS and JavaScript. Two things make it interesting. First, it can take an existing **codebase** as the input. It finds the design system that is already in that code, and it applies that design system to whatever you ask for next. Second, it passes the work directly to Claude Code. That closes the gap between a prototype and the actual repository.
 
-![Claude Design's templates](./images/claude-design-types.png)  
+![Claude Design's templates](./images/claude-design-types.webp)  
 *Claude Design starts from one request and a template: a mobile app, slides, a document, a wireframe and more. The "Design system" menu picks a set of design decisions before anything is drawn.*
 
 ![Tweaking a prototype in Claude Design](./images/claude-design-ui.webp)  
@@ -56,7 +56,7 @@ An agent that generates a screen has to make every one of those decisions while 
 
 The fix is the same one that worked for instructions. Write the decisions down in a file in the repository, and let the agent read it.
 
-![A design system next to a screen built from it](./images/example-design-system.png)  
+![A design system next to a screen built from it](./images/example-design-system.webp)  
 *A design system in Google Stitch (left): its colours with their exact codes, three text styles, buttons and icons. On the right is a fitness dashboard generated from it. Every next screen you ask for, such as the suggested "workout details screen" below it, reuses the same decisions.*
 
 ## DESIGN.md

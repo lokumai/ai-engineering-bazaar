@@ -105,7 +105,7 @@ sequenceDiagram
 
 AG-UI یکی از سه protocol مشترکه، و هر کدوم agent رو به یه طرف دیگه وصل می‌کنه.
 
-![protocol stack برای agent: MCP و A2A و AG-UI](../images/ag-ui-mcp.png)  
+![protocol stack برای agent: MCP و A2A و AG-UI](../images/ag-ui-mcp.webp)  
 *agent وسطه. MCP و A2A به سمت چپ می‌رن، به tool‌ها و agent‌های دیگه. AG-UI به سمت راست می‌ره، به آدم‌هایی که از برنامه استفاده می‌کنن.*
 
 | Protocol | agent رو وصل می‌کنه به |

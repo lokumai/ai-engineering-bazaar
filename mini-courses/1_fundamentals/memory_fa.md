@@ -33,7 +33,7 @@
 
 پس چرا حس می‌کنی داری یه گفتگوی پیوسته می‌کنی؟ چون *ما* داریم این توهم رو می‌سازیم. یه stack از همه‌ی پیام‌هایی که تا الان رد و بدل شده نگه می‌داریم که مدام بزرگ‌تر می‌شه: هر بار که تو پیام می‌فرستی یا LLM جواب می‌ده، اون پیام جدید رو به stack اضافه می‌کنیم، و توی call بعدی **کل stack** رو دوباره برای LLM می‌فرستیم.
 
-![stack پیام‌ها، یعنی همون working memory](./images/llm-context.jpeg)  
+![stack پیام‌ها، یعنی همون working memory](./images/llm-context.webp)  
 *working memory همین stack‌ه. تو یه پیام می‌نویسی و مدل یکی در جوابت می‌نویسه، و هیچ‌چیز هیچ‌وقت پاک نمی‌شه. توی نوبت دوم، مدل کل نوبت اول رو دوباره می‌خونه، چون ما با هر call کل این ظرف رو می‌فرستیم.*
 
 دقت کن که هر call *کل* stack رو می‌فرسته، نه فقط آخرین پیام رو، چون LLM خودش از call قبلی هیچی یادش نیست. پس «memory» این‌جا در واقع یعنی فقط همین: هر بار همه‌چیز رو از اول جلوش می‌ذاریم.
@@ -46,7 +46,7 @@ graph TD
     A -->|جواب رو به stack اضافه می‌کنه| A
 ```
 
-![Short-Term Memory در برابر Long-Term Memory](./images/short-vs-long-memory.png)  
+![Short-Term Memory در برابر Long-Term Memory](./images/short-vs-long-memory.webp)  
 *short-term memory (همون working memory) چیزی نیست جز همین stack پیام‌های Human و AI که مدام بزرگ‌تر می‌شه. long-term memory یه store جداست که stack توش ذخیره می‌شه و توی session‌های بعدی ازش بیرون کشیده می‌شه. برچسب‌های «Checkpointer» و «Store» مال framework‌ای به اسم LangGraph‌ان؛ framework‌های دیگه همین ایده رو با اسم‌های دیگه‌ای صدا می‌زنن.*
 
 ## Long-term Memory

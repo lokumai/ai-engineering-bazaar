@@ -7,7 +7,7 @@
 
 همه‌ش همینه. یه بار دیگه بخونش؛ بیشتر سردرگمی‌ها درباره‌ی agent‌ها از این‌جا میاد که آدم انتظار یه چیز گنده‌تر رو داره.
 
-![یه LLM توی loop با یه هدف](./images/agent-wrapper-meme.jpg)  
+![یه LLM توی loop با یه هدف](./images/agent-wrapper-meme.webp)  
 *دو سر منحنی به یه جواب می‌رسن؛ ولی اونایی که وسط منحنی‌ان، به‌جاش دنبال یه معماری می‌گردن.*
 
 ## تفاوت single-turn و multi-turn
@@ -20,14 +20,14 @@
 
 توی هر دو حالت مدل همونه و هیچ چیزی بهش اضافه نشده؛ همه‌ی فرق توی اینه که چند بار صداش می‌زنی و هر بار چی براش می‌فرستی.
 
-![این agent‌ه؟](./images/agent-multi-step-example.jpg)  
+![این agent‌ه؟](./images/agent-multi-step-example.webp)  
 *آره، تعریفش واقعاً همینه. شوخیش هم همین‌جاست که آدم‌ها انتظار دارن یه چیز بیشتر باشه.*
 
 ## یه دور از loop
 
 توی [Tool Calling](tools_fa.md) یه tool call تکی رو دیدیم. یه نوبت agent دقیقاً همونه، فقط چند بار پشت هم:
 
-![context یه agent](./images/agent-context.jpeg)  
+![context یه agent](./images/agent-context.webp)  
 *یه دور: تو می‌پرسی و مدل فکر می‌کنه، بعد یه tool درخواست می‌ده. host اون tool رو اجرا می‌کنه و نتیجه رو برمی‌گردونه، و بعد مدل جواب می‌ده. توی دور بعد، کل message stack دوباره برای مدل فرستاده می‌شه، که حالا دو تا پیام بلندتر شده.*
 
 ```mermaid
@@ -48,7 +48,7 @@ agent بودن صفر و یکی نیست؛ سوال اصلی اینه که چق�
 
 یه سر این طیف، صدا زدن ساده‌ی LLM‌ه: همه‌ی تصمیم‌ها با توئه و مدل فقط متن می‌نویسه. وسط طیف **fixed workflow‌ها** هستن که گاهی بهشون state machine هم می‌گن؛ توی یه fixed workflow، مرحله‌ها و ترتیبشون رو *تو* نوشتی و مدل فقط هر مرحله رو پر می‌کنه. سر دیگه‌ی طیف یه agent واقعیه که خود مدل مرحله‌ها، tool‌ها و زمان تموم کردن رو انتخاب می‌کنه.
 
-![سه نقطه روی طیف خودمختاری](./images/llm-tool-agent-compare.png)  
+![سه نقطه روی طیف خودمختاری](./images/llm-tool-agent-compare.webp)  
 *توی هر سه پنل همون مدل نشسته و فقط دو چیز فرق می‌کنه: این‌که چند بار صدا زده می‌شه، و این‌که قدم بعدی رو کی انتخاب می‌کنه. توی دو پنل اول تو انتخاب می‌کنی و توی سومی خود مدل.*
 
 بیشتر سیستم‌هایی که توی production هستن اون سر طیف نیستن، و معمولاً هم کار درستی می‌کنن، چون هرچی اختیار مدل کمتر باشه، راه‌های کمتری برای خراب شدن کار هست. مطلب [what is an agent](https://www.langchain.com/blog/what-is-an-agent) از LangChain این طیف رو خوب توضیح داده و قبل از این‌که تصمیم بگیری چقدر به مدل آزادی بدی، ارزش خوندن داره.
@@ -140,7 +140,7 @@ result = agent.run("Read main.py and summarise it")
 
 framework‌های دیگه هم همین مشکل رو هر کدوم به یه روش حل می‌کنن: ![](./images/logos/langchain.svg)[LangChain](https://github.com/langchain-ai/langchain) و ![](./images/logos/crewai.svg)[crewAI](https://github.com/crewAIInc/crewAI) و ![](./images/logos/autogen.svg)[AutoGen](https://github.com/microsoft/autogen). توی [Agent Framework‌ها](../4_ecosystem/agent_frameworks_fa.md) این‌ها رو کنار هم مقایسه کردیم.
 
-![LLM مغزه، agent بدن](./images/agent-analogy.png)  
+![LLM مغزه، agent بدن](./images/agent-analogy.webp)  
 *LLM مغزه، agent بدنیه که دورش ساخته شده، و tool‌ها دست‌هاش.*
 
 ## کجای این مجموعه هستیم

@@ -92,7 +92,7 @@ A normal chat has three kinds of message:
   the AI reads them first, every time. They tell the AI how to behave and which tools it may
   use.
 
-![The context of a plain LLM chat](../images/llm-context.jpeg)  
+![The context of a plain LLM chat](../images/llm-context.webp)  
 *Two turns of a plain chat: two of your messages and two AI replies. Nothing is removed. So in the second turn, the AI also reads everything from the first turn.*
 
 One message from you, plus the AI's reply to it, is called a **turn**. The picture above shows
@@ -101,7 +101,7 @@ two turns.
 The system prompt is not one short sentence. It is often long, and it holds the behaviour
 rules and a list of the **tools** the AI is allowed to use:
 
-![Inside the system prompt](../images/system-prompt-context.jpeg)  
+![Inside the system prompt](../images/system-prompt-context.webp)  
 *Inside a system prompt: the behaviour rules, the list of tools, and sometimes some fixed reference text. All of it sits at the very top of the chat, before you say anything.*
 
 If you are curious, people have collected the real, leaked system prompts of many AI products

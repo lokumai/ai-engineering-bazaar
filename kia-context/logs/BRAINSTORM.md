@@ -9,7 +9,7 @@ description: >
 authority: reasoning
 writes: agent, when a decision is taken
 status: active
-covers: "D97 to D111 so far, and D89, which part 2 held for PR #57 — 2026-11-06 onward"
+covers: "D97 to D112 so far, and D89, which part 2 held for PR #57 — 2026-11-06 onward"
 last_updated: 2026-11-09
 ---
 
@@ -420,6 +420,21 @@ or does is the intended shape, not an intrusion: PR #57 moves the module page's 
 offered while D90 stood. It would have kept this repository untouched at the price of the app reading
 another repository's internals, its content arriving from a second host, and the logic having a second
 build to drift in. MANIFESTO §7 carries the rule in one line; the struck D90 bullet stays beside it.
+
+### D112 · Course images are WebP, capped at 1,600 px, at a measured quality — 2026-11-09
+
+**Asked by the author** after a media analysis: the course images were 30.1 MB, eight of them 2.0 to 2.8 MB
+JPEGs about 2,800 px wide, so one module page downloaded 7.7 MB of pictures. **Done:** every raster course
+image is WebP, at most 1,600 px wide (sharp at the text width on a 2x screen), encoded at quality 82, then 90,
+then near-lossless, taking the first whose SSIM against the original resized to 1,600 px is at least 0.985; an
+image whose WebP is larger keeps its original (one did). Measured: 30.1 MB to 6.2 MB, 30 at q82, 7 at q90, 11
+near-lossless (screenshots and text-heavy diagrams, and the two most detailed illustrations), 1 kept.
+**Rejected:** a single quality for all, because q82 blurred small text in screenshots (SSIM 0.957); and keeping
+one copy of `system-prompt-context` for two levels, because the renderer serves an image from its own level's
+folder and the mobile bundle names images by that path (ARCHITECTURE §13), so it would change the app's image
+paths for a 50 KB saving. **Deferred, not done:** `loading="lazy"`, width and height on `<img>`, and a smaller
+phone variant. **For the app:** image paths and hashes change inside `api/v1/`, which is a content change;
+Flutter decodes WebP.
 
 ## Open questions
 

@@ -29,7 +29,7 @@ RAG de şunu yapıyor: dokümanları yapay zekânın dışında tutuyor. Bir sor
 
 Dev bir kütüphaneden tam bir cümleyi hatırlamak zor ve güvenilmezdir. Masanda açık duran bir sayfayı okumak ise kolay ve kesindir. RAG, hangi sayfaların masaya konacağını seçer.
 
-![Basit RAG akışı](../images/rag.png)  
+![Basit RAG akışı](../images/rag.webp)  
 *Temel RAG akışı. Soru aynı anda iki yöne gider. Bir yol, dokümanlarında yapılan aramaya gider (resimdeki "embedding model" ve "vector store index" kutuları). Diğeri doğrudan yapay zekâya gider ve yanında aramanın bulduğu sayfalar vardır.*
 
 ## Vector Embedding'ler
@@ -40,7 +40,7 @@ Arama doğru maddeyi nasıl buluyor? Eşleşen kelimeleri aramıyor. Eşleşen *
 
 Klasik resimde dört kelime kullanılır:
 
-![King, queen, man ve woman kelimelerinin uzayda vektör olarak gösterimi](../images/vector-king-queen.png)  
+![King, queen, man ve woman kelimelerinin uzayda vektör olarak gösterimi](../images/vector-king-queen.webp)  
 *Her kelime uzayda bir noktaya dönüşür. "King", "queen"in yakınına, "man" de "woman"ın yakınına düşer. İki ok paraleldir: king'den queen'e geçiş, man'den woman'a geçişle aynı adımdır. Anlam, mesafeye ve yöne dönüşmüştür.*
 
 Asıl işe yarayan kısım, kelimeleri değil anlamı bulması. Şu iki sözleşme maddesine bak:
@@ -70,7 +70,7 @@ RAG iki parçadan oluşur.
 3. O parçaların metnini, sorunun yanına, sohbete ekle.
 4. Yapay zekâ, artık görebildiği şeyden yola çıkarak cevap verir.
 
-![RAG'in offline ve online aşamaları](../images/rag-offline-online.png)  
+![RAG'in offline ve online aşamaları](../images/rag-offline-online.webp)  
 *Üst yarı bir kez, bir de dokümanlar değiştiğinde çalışır. Alt yarı her soruda çalışır. Resim bir adım daha ekliyor: ikinci bir kontrol ("reranker") en yakın 20 parçayı okuyup en iyi 3'ünü tutar; böylece sohbette yalnızca soruyu cevaplayan parçalar kalır.*
 
 ## Retrieval'ı Ölçmek

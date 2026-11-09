@@ -30,7 +30,7 @@ plain words.
 Nothing is hacked in the usual sense. Nobody breaks into a server. Someone finds a way of asking
 that gets past the refusal. The attacker persuades the AI; they do not break in.
 
-![A refusal, then the same question with a jailbreak in front of it](../images/jb-exmaple-1.png)  
+![A refusal, then the same question with a jailbreak in front of it](../images/jb-exmaple-1.webp)  
 *The question is the same in both halves. The only change is the text in front of it. The safety behaviour is not a locked door; it is a habit the model has, and the right words can talk it out of the habit.*
 
 The famous example is called **DAN**, short for "do anything now". You tell the AI it is playing a
@@ -45,7 +45,7 @@ Attacks come in two kinds, depending on what the attacker can see:
 - **White box**: the attacker has the model itself, and can calculate exactly which words push it
   where.
 
-![Token-level and prompt-level jailbreaks](../images/jb-example-2.png)  
+![Token-level and prompt-level jailbreaks](../images/jb-example-2.webp)  
 *The top one is what a computer finds by calculation; it looks like nonsense and usually needs the model itself. The bottom one is what a person writes.*
 
 White-box attacks are stronger. But the attack on your company's assistant is almost always black

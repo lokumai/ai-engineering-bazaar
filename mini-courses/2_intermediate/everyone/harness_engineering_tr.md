@@ -14,7 +14,7 @@ Ne kadar nazik rica edersen et, bu bir garanti değildir. Yapay zekânın bir m�
 
 Bu ortamı tasarlamaya **harness engineering** deniyor.
 
-![Prompt, context ve harness tek çizimde](../images/car-analogy.png)  
+![Prompt, context ve harness tek çizimde](../images/car-analogy.webp)  
 *Motor, prompt: gücü o üretiyor. Araba, context: motorun etrafına kurulan gövde. Pist ve bariyerler ise harness. Bariyerler direksiyon çevirmiyor. Arabanın doğru yöne gitmesini sağlamıyorlar. Yanlış yöne gitmeyi imkânsız kılıyorlar.*
 
 Sonraki iki modül bu araba resmini yeniden kullanıyor, o yüzden aklında dursun.
@@ -31,14 +31,14 @@ Bu aynı zamanda, kullandığın yapay zekâ ürünlerinin birer harness olduğu
 
 Harness **en dış** katman. Prompt ve context çalışmasının yerini almıyor; onları içine alıyor.
 
-![Prompt, context ve harness üç katman olarak](../images/onion-model.png)  
+![Prompt, context ve harness üç katman olarak](../images/onion-model.webp)  
 *Her halka, içindekini kapsıyor. Bu yüzden bunlar hiçbir zaman birbirinin alternatifi değil. System prompt'u harness yazıyor, sohbeti harness özetliyor ve yardımcıları harness gönderiyor; yani senin context çalışman, seçtiğin harness'ın içinde gerçekleşiyor.*
 
 ## Dört Disiplin, Dört Soru
 
 2026'ya gelindiğinde bu iş dört işe ayrıldı ve her biri tek bir sade soru soruyor.
 
-![Ne söyleyeceksin, ne göreceksin ve hangi dünyayı kuracaksın](../images/prompt-vs-context-vs-harness.jpeg)  
+![Ne söyleyeceksin, ne göreceksin ve hangi dünyayı kuracaksın](../images/prompt-vs-context-vs-harness.webp)  
 *Aşağıdan yukarıya oku. Her katman, altındaki katmanı kapsıyor. En altta bir insan robotla konuşuyor. En üstte insan, robotun çalıştığı yeri inşa ediyor.*
 
 - **Prompt engineering**: ne söylüyorum ve nasıl söylüyorum?
@@ -104,7 +104,7 @@ Bu rakamı aklında tut. Bu modülün var olma sebebi o: neredeyse on dört puan
 
 Tek bir model al, ona tek bir görev seti ver ve yalnızca harness'ı değiştir. Puanlar epey oynuyor.
 
-![DeepSeek V4 Flash, sekiz harness'te](../images/harness-comparison.png)  
+![DeepSeek V4 Flash, sekiz harness'te](../images/harness-comparison.webp)  
 *Tek model, tek görev seti, sekiz harness ve puanlar 30 üzerinden 14 ile 20 arasında değişiyor. Her çubukta düşünen aynı model. En hızlı harness, başarı başına en pahalı olan da oldu.*
 
 Composio tek bir modeli, aralarında Claude Code, Codex, OpenCode ve Hermes Agent'ın da bulunduğu sekiz harness'ta çalıştırdı. Dersi "kazananı kullan" değil. Asıl ders **eşleşmenin önemli olduğu**; bir tişört gibi: herkese uyan tek bir beden yok. Claude Code, Claude modelleri için ayarlanmış; Codex ise OpenAI'ınkiler için. Bu yüzden bir modelin "en iyi" olduğunu okuduğunda sor: hangi harness'ta?

@@ -47,14 +47,14 @@ Because two wordings are two different inputs. Inside the model is a network, an
 decide which parts of it become active. Change the words, and you change which parts work on your
 question.
 
-![Which neurons light up](../images/neurons-activation.jpeg)  
+![Which neurons light up](../images/neurons-activation.webp)  
 *The model's numbers are the same in both cases. The prompt only decides which of them get used. That is why the same model answers a maths question with one part of itself and a painting question with another.*
 
 Think of a DJ mixer. It has knobs for volume, bass and echo. The DJ never changes the machine.
 They turn the knobs, listen, and turn them again until the room sounds right. Your prompt is one
 setting of those knobs.
 
-![Turning the knobs](../images/prompt-mixer.jpeg)  
+![Turning the knobs](../images/prompt-mixer.webp)  
 *Every knob here is something this module covers. None of them is on a panel you can touch: the prompt text is the only thing that moves them.*
 
 But the knobs have no labels, and you can only move them with words. That is why prompting is
@@ -104,7 +104,7 @@ The simple one:
 - **Warnings**: the mistakes you already expect the AI to make.
 - **Context**: everything about your situation that a stranger would need to know to help you.
 
-![The anatomy of a simple prompt](../images/prompt-1.jpg)  
+![The anatomy of a simple prompt](../images/prompt-1.webp)  
 *The context part is the longest and the least polished, and that is fine. It is the part no template can write for you.*
 
 The detailed one:
@@ -125,7 +125,7 @@ The detailed one:
 - **Output format**: the exact shape, including table columns if you need them.
 - **Stop conditions**: how the AI knows it is finished.
 
-![The anatomy of a detailed prompt](../images/prompt-2.png)  
+![The anatomy of a detailed prompt](../images/prompt-2.webp)  
 *Stop conditions are the part people forget. Without one, "done" is the AI's guess, not your definition.*
 
 You do not have to follow either template strictly. They are here so that "write a clear prompt"
@@ -295,7 +295,7 @@ problems, but it costs more and takes longer.
 > product writes it, not the user, and it is usually long. It also lists the tools the AI may use
 > ([Tool Calling](../1_fundamentals/tools.md)).
 
-![Inside the system prompt](../images/system-prompt-context.jpeg)  
+![Inside the system prompt](../images/system-prompt-context.webp)  
 *The same figure as in LLM Fundamentals. A role goes into the identity and instructions part. Everything in this box is written before the user says anything.*
 
 A role usually works best in the system prompt. The technique itself is simple:

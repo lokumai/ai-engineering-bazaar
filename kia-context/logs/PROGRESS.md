@@ -16,7 +16,7 @@ description: >
 authority: state
 writes: agent, every session
 status: active
-covers: "M50 to M83, 2026-11-06 onward, and M41, which part 2 held for PR #57"
+covers: "M50 to M84, 2026-11-06 onward, and M41, which part 2 held for PR #57"
 last_updated: 2026-11-09
 ---
 
@@ -1311,11 +1311,6 @@ Noted, not fixed (outside this PR): a vendor mark followed by a space and then a
 (`![X](logo.svg) **X**`) is dropped by `rehypeKeepLogoWithName`, because the space is taken as the word
 to bind; the corpus always writes `)**X**` or `) X`, so no page shows it today.
 
----
-
-> **← Part 2: [`PROGRESS_2.md`](PROGRESS_2.md)** — M16 to M49. **← Part 1: [`PROGRESS_1.md`](PROGRESS_1.md)**
-> — M1 to M15. The loop is at the top of this file.
-
 ## 🏁 Milestone M83: The cast's colours told apart, and Mei's dragon — DONE
 
 The author, 2026-11-09: Murat, Mei, Dariush and Piri wore clothes too alike (Dariush and Piri the
@@ -1333,3 +1328,18 @@ yellow silk, an indigo Persian blue against a slate scholar's blue.
       Mei's differ by that hex plus the inserted dragon.
 - [x] Gate: typecheck; 1,459 unit and corpus tests; build, link check and bundle check; 562 browser tests
       passed and 10 skipped. Screenshots in `playground/2026-11-round-4/shots-cast-colours/`.
+
+## 🏁 Milestone M84: Course images as WebP (D112) — DONE
+
+- [x] All 49 raster course images converted (48 to WebP, 1 kept), references in 104 module files rewritten (287
+      links), originals removed from the tree and backed up outside the repo.
+- [x] `mini-courses/CLAUDE.md` and `AGENTS.md`: new images are WebP at a measured quality.
+
+**Report, 2026-11-09.** 30.1 MB to 6.2 MB of course images; the built `course-images/` 32 MB to 7.5 MB.
+Every converted image has SSIM at least 0.985 against its resized original. Gate: 1,459 unit tests, the build
+with its link check and `check-bundle-out.mjs` (131 images listed), 562 browser tests passed and 10 skipped.
+
+---
+
+> **← Part 2: [`PROGRESS_2.md`](PROGRESS_2.md)** — M16 to M49. **← Part 1: [`PROGRESS_1.md`](PROGRESS_1.md)**
+> — M1 to M15. The loop is at the top of this file.

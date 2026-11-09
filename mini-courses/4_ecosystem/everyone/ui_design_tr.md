@@ -17,7 +17,7 @@ Bir web sitesini ya da iç aracı, bu kursun vaat ettiği gibi, tarif ederek yap
 
 Anthropic'in ![](../images/logos/claude.svg)**[Claude Design](https://claude.ai/design)**'ı, Nisan 2026'da çıktı ve prototipleri, slaytları ve tek sayfalık dokümanları gerçek, çalışan kod olarak yapıyor. Var olan bir projeyi okuyabiliyor, içindeki tasarım kurallarını bulabiliyor ve bundan sonra ne istersen onlara uyarak yapabiliyor.
 
-![Claude Design şablonları](../images/claude-design-types.png)  
+![Claude Design şablonları](../images/claude-design-types.webp)  
 *Claude Design tek bir istek ve bir şablonla başlıyor: mobil uygulama, slaytlar, doküman, wireframe ve daha fazlası. "Design system" menüsü, daha hiçbir şey çizilmeden bir dizi tasarım kararını seçiyor.*
 
 ![Claude Design'da bir prototipi ayarlamak](../images/claude-design-ui.webp)  
@@ -31,7 +31,7 @@ Anthropic'in ![](../images/logos/claude.svg)**[Claude Design](https://claude.ai/
 
 Bir ekran yapan yapay zekâ bu kararların her birini vermek zorunda. Seninkileri bilemez, bu yüzden makul görünen kararlar uyduruyor ve her seferinde farklı olanlar. Çözüm, talimatlardaki çözümle aynı: kararları bir dosyaya yaz ve yapay zekânın onu okumasına izin ver.
 
-![Bir design system ve ondan yapılmış bir ekran](../images/example-design-system.png)  
+![Bir design system ve ondan yapılmış bir ekran](../images/example-design-system.webp)  
 *Google Stitch'te bir design system (solda): kesin kodlarıyla renkleri, üç yazı stili, butonlar ve ikonlar. Sağda ondan üretilmiş bir fitness dashboard'u var. İstediğin her yeni ekran, örneğin altta önerilen "workout details screen", aynı kararları yeniden kullanıyor.*
 
 ## DESIGN.md

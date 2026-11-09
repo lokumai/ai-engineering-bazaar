@@ -12,7 +12,7 @@ LLM‌ها non-deterministic‌ان. هر کاری با prompt بکنی و هر 
 
 به طراحی همین لایه می‌گن **harness engineering**.
 
-![prompt، context و harness توی یه تصویر](./images/car-analogy.png)  
+![prompt، context و harness توی یه تصویر](./images/car-analogy.webp)  
 *موتور همون prompt‌ه، یعنی چیزی که قدرت تولید می‌کنه. ماشین همون context‌ه، یعنی بدنه‌ای که دور موتور ساخته شده و تعیین می‌کنه اون قدرت به چه کاری بیاد. پیست و گاردریل‌ها هم harness‌ان. دقت کن که گاردریل‌ها فرمون نمی‌گیرن، و نکته دقیقاً همین‌جاست: کاری نمی‌کنن که ماشین درست بره، کاری می‌کنن که نتونه از مسیر بیرون بزنه.*
 
 این تشبیه از مقاله‌ی [Harness Engineering: What It Is and How It Complements Context Engineering](https://medium.com/@amirkiarafiei/harness-engineering-what-it-is-and-how-it-complements-context-engineering-6545b40bfc84) اومده و دو درس بعدی هم دوباره سراغش می‌رن، پس خوبه یادت بمونه.
@@ -29,14 +29,14 @@ Philipp Schmid توی [The importance of Agent Harness in 2026](https://www.phil
 
 یه چیز رو باید روشن کنیم، چون کلمه‌ی «harness» رو خیلی سرسری به کار می‌برن: harness لایه‌ی **بیرونی** ماجراست و با اون دو لایه‌ی دیگه رقابتی نداره. کار prompt و context تو رو در بر می‌گیره، نه اینکه جاش رو بگیره.
 
-![prompt، context و harness به شکل سه لایه](./images/onion-model.png)  
+![prompt، context و harness به شکل سه لایه](./images/onion-model.webp)  
 *هر حلقه، حلقه‌ی داخلی‌ش رو در بر گرفته، و برای همین این‌ها هیچ‌وقت جایگزین هم نیستن. وقتی یه harness انتخاب می‌کنی، در واقع یه سری تصمیم درباره‌ی context‌ت رو هم از قبل گرفتی، چون همین harness‌ه که context window رو compact می‌کنه، subagent‌ها رو راه می‌ندازه و system prompt رو می‌نویسه. نمی‌شه context engineering رو «به‌جای» harness engineering انجام داد؛ انجامش می‌دی، ولی توی همون harness‌ی که انتخاب کردی.*
 
 ## چهار کار، چهار سوال
 
 تا 2026 این کار به چهار شاخه تقسیم شده که هر کدوم یه سوال جدا می‌پرسه.
 
-![چی بگی، چی ببینه، چه دنیایی بسازی](./images/prompt-vs-context-vs-harness.jpeg)  
+![چی بگی، چی ببینه، چه دنیایی بسازی](./images/prompt-vs-context-vs-harness.webp)  
 *از پایین به بالا بخونش؛ هر لایه، لایه‌ی زیری رو در بر می‌گیره. لایه‌ی پایین، یعنی گفتن، فقط حرف‌های یه نوبت رو در بر می‌گیره، لایه‌ی وسط، یعنی دیدن، کل context window رو، و ساختن دنیا یعنی هر چیزی که agent بهش دسترسی داره و هر چیزی که جلوش رو می‌گیره. هر چی بالاتر می‌ری، کار آدم هم عوض می‌شه: پایین، آدم با ربات حرف می‌زنه، و بالا، آدم جایی رو می‌سازه که ربات توش کار می‌کنه.*
 
 - **Prompt engineering**: چی بپرسم و چطوری بپرسم؟
@@ -133,7 +133,7 @@ guide‌ها قبل از کار میان و sensor‌ها بعدش. هر چی se
 
 یه مدل رو بردار، روی یه benchmark اجراش کن و هیچی رو جز harness عوض نکن؛ امتیازها حسابی بالا پایین می‌شن.
 
-![DeepSeek V4 Flash توی هشت harness](./images/harness-comparison.png)  
+![DeepSeek V4 Flash توی هشت harness](./images/harness-comparison.webp)  
 *یه مدل، یه مجموعه کار، هشت harness، و امتیازها از 14 تا 20 از 30. توی پایین‌ترین میله و بالاترین میله، همون وزن‌ها دارن فکر می‌کنن. فقط هم به برنده نگاه نکن؛ منبع هزینه و سرعت رو هم اندازه گرفته، و سریع‌ترین harness این‌جا به ازای هر موفقیت از همه گرون‌تر هم درومد، چون تقریباً هیچ‌وقت از prompt cache‌ش دوباره استفاده نمی‌کرد.*
 
 این نمودار مال مقاله‌ی [Finding the Best Harness for DeepSeek V4 Flash](https://composio.dev/content/best-agent-harness-deepseek-v4-flash) از Composio‌ه که مدل رو توی این هشت harness اجرا کرده:

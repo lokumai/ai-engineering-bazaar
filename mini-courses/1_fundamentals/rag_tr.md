@@ -21,7 +21,7 @@ Bunu düşünmenin basit bir yolu var. **Modelin ağırlıkları bir kütüphane
 
 Büyük bir kütüphanedeki bir şeyi hatırlamak zor ve güvenilmezdir, oysa önündeki masada açık duran bir sayfayı okumak kolay ve kesindir. Yani RAG, masaya hangi sayfaların konacağını seçmektir.
 
-![Naif RAG akışı](./images/rag.png)  
+![Naif RAG akışı](./images/rag.webp)  
 *Temel "naif" RAG akışı: sorgu aynı anda iki yere gider. Bir yol, vektör deposu indeksini aramak için bir embedding modelinden geçer. Diğer yol ise arama sonucunda dönen context ile birlikte doğrudan LLM'e gider.*
 
 ## RAG Ne Yapar?
@@ -56,7 +56,7 @@ Asıl faydalı özellik şu: **benzer anlam, benzer sayılar üretir.** Bu, bir 
 
 Bunun klasik örneği, dört kelime üzerinden anlatılan bir görseldir:
 
-![King, queen, man ve woman vektörleri](./images/vector-king-queen.png)  
+![King, queen, man ve woman vektörleri](./images/vector-king-queen.webp)  
 *Dört kelime dört vektöre dönüşür ve bu vektörler uzayda birer konuma yerleşir. King, queen'e yakın düşer, man ise woman'a. İki oka bak: paralel olmaları, king'den queen'e giden adımın man'den woman'a giden adımla aynı olduğunu gösterir. Böylece kelimelerin anlamı, uzaydaki mesafelere ve yönlere dönüşmüş olur.*
 
 Şu paralelliğe bir an dikkat et, çünkü sayıların, her kelimeye yalnızca sabit bir kayıt veren sıradan bir arama tablosundan (lookup table) fazlası olduğunu gösteren şey budur. Embedding yalnızca benzer şeyleri yan yana koymakla kalmadı. İkisi arasındaki *ilişkiyi* de tutarlı bir yöne yerleştirdi.
@@ -118,7 +118,7 @@ Bir vektör veritabanı bu parmak izlerinden milyonlarcasını saklar, her birin
 5. Bu metni soruyla birlikte context'e koy.
 6. LLM, artık gördüğü şeye bakarak cevap verir.
 
-![RAG'in offline ve online yarıları](./images/rag-offline-online.png)  
+![RAG'in offline ve online yarıları](./images/rag-offline-online.webp)  
 *Offline yarı bir kez, sonra da belgeler her değiştiğinde çalışır; online yarı ise her soruda çalışır. Resim, listelerde olmayan bir adımı da gösteriyor: bir reranker en yakın 20 chunk'ı okur ve en iyi 3'ünü tutar, böylece context'te yalnızca soruyu cevaplayan şey kalır.*
 
 ```mermaid

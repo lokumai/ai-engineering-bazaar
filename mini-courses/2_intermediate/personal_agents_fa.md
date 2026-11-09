@@ -68,12 +68,12 @@ OpenClaw اون‌قدر سریع بزرگ شد که مهندسیش ازش جا 
 - **subagent‌هایی که هر کدوم sandbox خودشون رو دارن.** این همون delegation‌ه، به همون شکلی که [Context Engineering](context_engineering_fa.md) توضیح داد. بین پنج تا backend هم می‌تونی انتخاب کنی: local، Docker، SSH، Singularity یا Modal.
 - **همون کانال‌های پیام‌رسان**، به‌اضافه‌ی وب‌گردی با vision. از طریق Nous Portal هم به بیشتر از 300 مدل دسترسی می‌ده.
 
-![Hermes و OpenClaw کنار هم](./images/hermes-vs-openclaw-archi.png)  
+![Hermes و OpenClaw کنار هم](./images/hermes-vs-openclaw-archi.webp)  
 *اصل حرف رو خود شکل‌ها می‌زنن. Hermes به شکل یه دایره کشیده شده که دوباره به کاربر برمی‌گرده، یعنی هر چیزی که یادش مونده و هر skill‌ی که نوشته، خوراک نوبت بعدی می‌شه. این همون ادعای خودبهبودیه که به شکل نمودار کشیده شده. ولی توی OpenClaw هیچ حلقه‌ای نیست: همه‌چیز به یه gateway وصل می‌شه؛ یه نقطه‌ی مرکزی که هر پیامی رو می‌فرسته سراغ همون بخشی که باید بهش رسیدگی کنه. یکی از این دو تصویر درباره‌ی بهتر شدنه، اون یکی درباره‌ی رسوندن کار به جای درستش.*
 
 مقاله‌ی Composio، یعنی [OpenClaw vs Hermes Agent: The best agent harness in 2026](https://composio.dev/content/openclaw-vs-hermes-agent)، این فرق رو از همه روشن‌تر توضیح می‌ده. اگه مسئله‌ت هماهنگ کردن کار بین کلی کانال مختلفه (orchestration) و یه marketplace از skill‌های آماده می‌خوای، برو سراغ OpenClaw. اگه مسئله‌ت کارهای تکراریه که باید خودبه‌خود بهتر بشن، برو سراغ Hermes. مقاله‌ی Firecrawl، یعنی [OpenClaw vs Hermes Agent: Which one should you actually run?](https://www.firecrawl.dev/blog/openclaw-vs-hermes)، هم همین مقایسه رو کرده، با عددهای benchmark.
 
-![هر کدوم به چه دردی می‌خوره](./images/hermes-and-openclaw.png)  
+![هر کدوم به چه دردی می‌خوره](./images/hermes-and-openclaw.webp)  
 *حرف اصلی رو اون برچسب خاکستری وسط شکل می‌زنه. دو تا ستون رو مثل دو تا فعل بخون: هر چی سمت چپه، agent داره خودش رو تغییر می‌ده، و هر چی سمت راسته، agent داره کار رو این‌ور و اون‌ور می‌بره. پس سؤال این نیست که کدوم ابزار بهتره؛ سؤال اینه که تو واقعاً با کدوم یکی از این دو تا مشکل سروکار داری.*
 
 دقت کن که این دوباره همون بحثیه که توی [Harness Engineering](harness_engineering_fa.md) داشتیم، فقط این بار یه جای دیگه. هر دو ابزار با همون مدل‌ها کار می‌کنن، و هر فرقی بینشون هست برمی‌گرده به طراحی memory، مدیریت skill‌ها و sandboxing. یعنی هر فرقی بینشون هست، فرق harness‌ه.

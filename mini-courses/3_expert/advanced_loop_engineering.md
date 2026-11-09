@@ -25,7 +25,7 @@ An agent team is several full Claude Code sessions that work together. One sessi
 
 That creates a loop, almost as a side effect. The lead watches what the others are doing and decides what happens next. That is the job you used to do.
 
-![Subagents next to an agent team](./images/subagents-vs-teams.png)  
+![Subagents next to an agent team](./images/subagents-vs-teams.webp)  
 *The thing to notice is the dashed circles on the left. When a subagent ends, only its result survives. The main agent is the only place that any of that work comes back to. On the right, nothing gets summarised on the way up, because no single window sees everything. That is where the higher token cost in the table below comes from. It is also why a lead can lose track of what its own team is doing.*
 
 Here is how the two compare, from [Orchestrate teams of Claude Code sessions](https://code.claude.com/docs/en/agent-teams):

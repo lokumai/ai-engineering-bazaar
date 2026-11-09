@@ -125,7 +125,7 @@ AG-UI روی همون وب معمولی کار می‌کنه. overview‌ش می
 
 AG-UI یکی از سه protocol‌ه، و هر کدوم یه طرف agent رو پوشش می‌دن.
 
-![protocol stack برای agent: MCP و A2A و AG-UI](./images/ag-ui-mcp.png)  
+![protocol stack برای agent: MCP و A2A و AG-UI](./images/ag-ui-mcp.webp)  
 *agent وسطه. MCP و A2A به سمت چپ می‌رن، به tool‌ها و agent‌های دیگه. AG-UI به سمت راست می‌ره، به کاربرهایی که پشت صفحه نشستن.*
 
 | Protocol | agent رو وصل می‌کنه به | از طرف |

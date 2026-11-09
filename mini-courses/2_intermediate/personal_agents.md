@@ -78,12 +78,12 @@ They went to ![](./images/logos/hermes-agent-mono.svg)**[Hermes Agent](https://g
 - **Subagents with their own sandboxes.** This is delegation the way [Context Engineering](context_engineering.md) described it. You can choose from five backends: local, Docker, SSH, Singularity or Modal.
 - **The same channels**, plus web browsing with vision. It also gives you access to more than 300 models through Nous Portal.
 
-![Hermes and OpenClaw drawn side by side](./images/hermes-vs-openclaw-archi.png)  
+![Hermes and OpenClaw drawn side by side](./images/hermes-vs-openclaw-archi.webp)  
 *The shapes are the argument. Hermes is drawn as a circle that closes back on the user. So what it remembers, and the skills it wrote, feed the next turn. That is the self-improvement claim, drawn as a diagram. OpenClaw has no loop in it at all. Everything connects to a gateway, which is a central point that passes each message on to the part that should handle it. One picture is about getting better. The other is about moving work to the right place.*
 
 Composio's [OpenClaw vs Hermes Agent: The best agent harness in 2026](https://composio.dev/content/openclaw-vs-hermes-agent) explains the difference about as clearly as anyone can. Use OpenClaw when the problem is orchestration across many channels, with a marketplace of ready-made skills. Use Hermes when the problem is repetitive work that should get better on its own. Firecrawl's [OpenClaw vs Hermes Agent: Which one should you actually run?](https://www.firecrawl.dev/blog/openclaw-vs-hermes) makes the same comparison, with the benchmark numbers included.
 
-![What each one is for](./images/hermes-and-openclaw.png)  
+![What each one is for](./images/hermes-and-openclaw.webp)  
 *The grey pill in the middle is the main point. Read the two columns as verbs. Everything on the left is the agent changing itself. Everything on the right is the agent moving work around. So the question is not which tool is better. It is which of those two problems you actually have.*
 
 Notice that this is the harness argument from [Harness Engineering](harness_engineering.md) again, in a new place. Both of these tools run the same models. Everything that separates them is memory design, skill handling and sandboxing. In other words, everything that separates them is the harness.

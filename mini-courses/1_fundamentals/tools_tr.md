@@ -6,7 +6,7 @@ Bu, her agent'in altında çalışan mekanizmadır, o yüzden onu tam olarak anl
 
 ## Tool Nedir?
 
-![Tool'larla Dışarıya Uzanan Bir LLM](./images/tools.jpg)  
+![Tool'larla Dışarıya Uzanan Bir LLM](./images/tools.webp)  
 *Tool'lar bir modelin kendi dünyasının dışına uzanmasını sağlar. Model web'de arama yapabilir, matematik çözebilir ya da kod çalıştırabilir, sonra bir cevapla geri döner.*
 
 Bir **tool**, senin yazdığın sıradan bir Python fonksiyonudur: bir adı, birkaç girdisi ve bir dönüş değeri vardır. Bunda özel bir şey yoktur.
@@ -17,7 +17,7 @@ Bir **tool**, senin yazdığın sıradan bir Python fonksiyonudur: bir adı, bir
 
 [LLM Temelleri](llms_tr.md) context'i bir mesaj yığını olarak tanıtmıştı. Bir tool call bu yığına iki yeni tür mesaj ekler, aşağıdaki resim ise bu akışın tamamını gösteriyor:
 
-![Tek Bir Tool Call'ın Context'i](./images/context-tool-call.jpeg)  
+![Tek Bir Tool Call'ın Context'i](./images/context-tool-call.webp)  
 *Tek bir tool call'ın akışı sırayla şöyle: System prompt, kimse konuşmadan önce tool'u tanımlar. Sen soruyu sorarsın ve LLM bir Tool Call yazar. Host makine bunu çalıştırıp bir Tool Result yazar. Son olarak LLM bu sonucu okuyup cevabını yazar.*
 
 Dört oka dikkat et, çünkü her mesajı kimin yazdığı önemli:

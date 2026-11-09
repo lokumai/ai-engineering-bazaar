@@ -1565,7 +1565,7 @@ next step, and so the sample does not stay by default.
       import deleted, and the page's notice reworded with the author.
 
 
-## 🏁 Milestone M93: Caravan, round 2: a taller, closer stage on long rods, and the trends browsed like the catalog (D117) — DONE, PR open
+## 🏁 Milestone M93: Caravan, round 2: a taller, closer stage on long rods, and the trends browsed like the catalog (D117) — DONE, PR #100
 
 The author, on the built page: *"everything is fine, but overall the module of shadow play must be
 larger in terms of height. also the caravan should be about 30 percent higher level because currently

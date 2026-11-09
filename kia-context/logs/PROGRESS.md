@@ -16,7 +16,7 @@ description: >
 authority: state
 writes: agent, every session
 status: active
-covers: "M50 to M89, 2026-11-06 onward, and M41, which part 2 held for PR #57"
+covers: "M50 to M90, 2026-11-06 onward, and M41, which part 2 held for PR #57"
 last_updated: 2026-11-09
 ---
 
@@ -1433,6 +1433,23 @@ running views, the cast line-up and the phone row.
 by its block but hung off the window's bottom. Fix in `ReadingOptions.tsx` and `bazaar.css`; build markup and the
 bundle unchanged. The new test failed 6 of 8 cases on the unfixed build (all four code cases, the two diagram
 cases near the window's bottom) and passes 8 of 8 after.
+
+## 🏁 Milestone M90: About, the story of the Bazaar — IN PROGRESS
+
+The author, 2026-11-09: a new page named **About** that tells why the project exists, in five stalls
+and a motto, *"Imperfect Human Art with Soul. Not a Curriculum."* The text is his and final; it lives
+in `mini-courses/STORY.md`. The page is to feel artistic, possibly on a darker ground, with a heavy
+scroll: each stall's text appears after the reader arrives, beside an animation or object tied to its
+heading, text and object swapping sides from stall to stall.
+
+- [x] **`mini-courses/STORY.md`**, verbatim, linked beside MANIFEST and ROADMAP in `README.md` and
+      `mini-courses/index.md`.
+- [ ] **Round-5 playground** (`playground/2026-11-round-5/`): three backgrounds and three overall
+      designs (`R0-about-design.html`), and five animations per stall (`R1` to `R5`), the first of
+      each the author's idea (a wojak generating slop, a needle in a haystack, humans for humans, a
+      cherub with bow and arrow in the spirit of *Labor of Love*, a portrait of Nietzsche). Each drawn
+      by its own Opus agent.
+- [ ] The author's picks, then the page built at `/about/`.
 
 ---
 

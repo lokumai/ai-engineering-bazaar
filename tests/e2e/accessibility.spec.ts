@@ -28,6 +28,8 @@ const PAGES = [
   SHORT.path,
   A0.path,
   A4.path,
+  // M90 — the About page: a show page, and still a document like any other.
+  '/about/',
 ]
 
 /** What has focus, described the way a keyboard user would recognise it. */

@@ -8,7 +8,9 @@ description: >
   (M64 to M69), the search filters (M70) and their Filters disclosure (M71), the gate stories (M72),
   Advanced Agent Servers (M73), vendor logos (M74), course call-out cards, Mermaid themes and Mihrî
   (M75), the For Everyone versions (M76 to M79), shared headings and logos (M80), and diagram
-  backgrounds and copy (M81), Agentic UI (M82), and the cast's colours (M83); and M41, the content bundle for the mobile reader. Each milestone carries its deliverables and acceptance
+  backgrounds and copy (M81), Agentic UI (M82), the cast's colours (M83), and M84 to M90 (content
+  and site fixes, the home page in Turkish and Persian, Dariush's motif, block menus in the top layer,
+  and About, the story of the Bazaar); and M41, the content bundle for the mobile reader. Each milestone carries its deliverables and acceptance
   criteria as `- [ ]` checkboxes, ticked as the work lands, and closes with a dated report; the loop
   that governs that is below, in this file.
   NOT here: why a choice was made (BRAINSTORM.md), or any rule that outlives the milestone
@@ -1434,7 +1436,7 @@ by its block but hung off the window's bottom. Fix in `ReadingOptions.tsx` and `
 bundle unchanged. The new test failed 6 of 8 cases on the unfixed build (all four code cases, the two diagram
 cases near the window's bottom) and passes 8 of 8 after.
 
-## 🏁 Milestone M90: About, the story of the Bazaar — IN PROGRESS
+## 🏁 Milestone M90: About, the story of the Bazaar — BUILT, PR #97 OPEN (D115)
 
 The author, 2026-11-09: a new page named **About** that tells why the project exists, in five stalls
 and a motto, *"Imperfect Human Art with Soul. Not a Curriculum."* The text is his and final; it lives
@@ -1444,12 +1446,45 @@ heading, text and object swapping sides from stall to stall.
 
 - [x] **`mini-courses/STORY.md`**, verbatim, linked beside MANIFEST and ROADMAP in `README.md` and
       `mini-courses/index.md`.
-- [ ] **Round-5 playground** (`playground/2026-11-round-5/`): three backgrounds and three overall
+- [x] **Round-5 playground** (`playground/2026-11-round-5/`): three backgrounds and three overall
       designs (`R0-about-design.html`), and five animations per stall (`R1` to `R5`), the first of
       each the author's idea (a wojak generating slop, a needle in a haystack, humans for humans, a
       cherub with bow and arrow in the spirit of *Labor of Love*, a portrait of Nietzsche). Each drawn
-      by its own Opus agent.
-- [ ] The author's picks, then the page built at `/about/`.
+      by its own Opus agent. **Report:** the author picked B2 + F1 with smaller, column-wide headings,
+      2A, 3E, 4E and 5A, and no scene in a box (D115); the HTML is committed, the screenshots are not.
+- [x] **The page at `/about/`** (D115): `src/app/about/page.tsx` in `PageShell`, the text from
+      `mini-courses/STORY.md` (`lib/content/story.ts`), the page `components/about/AboutStory.tsx`, one
+      island (`AboutMotion.tsx`) that imports `gsap` on demand (`motion.ts`), `src/app/about.css`, the
+      palette in `components/about/palette.ts`; linked from the footer; crumb `About the Bazaar`.
+      **Report:** MEASURED on the build: `out/api/v1/` unchanged but for `publishedAt`, which is the HEAD
+      commit's time (contentVersion `d01d5a62…` both times), the link gate and the bundle check pass; 390 px `scrollWidth` 390; with the
+      script blocked and under reduced motion every heading and paragraph is visible and nothing pins.
+- [x] **Its tests**: `tests/unit/content/story.test.ts` (one stall per `##`, in order, the motto from the
+      closing line, any story), `tests/unit/about-palette.test.ts` (the palette and the stylesheet name the
+      same properties), `tests/e2e/about.spec.ts` (order, no-JS, reduced motion, 390, no box), `/about/` in
+      the route lists of `navigation.spec.ts` and `layout.spec.ts`, `components/about` and `app/about` in
+      the copy register. **Report:** each e2e assertion seen failing once under an injected defect
+      (swapped stalls, hidden text, a 460 px body, the scene above the text, a border, a fill, a clip,
+      a painted canvas corner).
+- [x] **Stall 1's scene**: the author picked **1B6, "Down the table, revised"** (D115), built as
+      `components/about/scenes/TreatyScene.tsx` from `treaty.ts`, where one pure `frame(t)` both writes
+      the still into the page and moves it (`treaty-motion.ts`); it replaces `PendingScene`, which now
+      only holds the place of a `##` section the art has not reached. **Report:** MEASURED on the build:
+      the still (reduced motion and no script) shows page 412 of 412, the yes page and the raised cup;
+      at 390 the hall stays inside the window (`scrollWidth` 390); the about, responsive, accessibility,
+      navigation, layout, colour-not-alone, site-footer and containment specs pass (184 passed, 8 skipped),
+      and the copy register passes, with no exemption beyond the two 4E meme captions (each for one
+      ban, D115). Bit's bubble in stall 4 was moved left
+      (x 390 to 574 of 600): its longest line, "humour.exe not found", now ends 20 units inside it,
+      measured with `getBBox()` for all three of its lines.
+- [x] **Two Haiku reviews of PR #97, fixed.** The haystack keeps its named still in the tree while the
+      canvas draws (opacity, not visibility); scenes restore from a `snapshot` of their own attributes
+      instead of GSAP's `clearProps: 'all'`, which had wiped the fonts React wrote; the still of stall 1
+      shows the question too; the phone stage stops 2px inside the window (it ran 13px past); the stall
+      rail follows the story in the document; `gsap` is not fetched under reduced motion; the parser keeps
+      `## Why C#`, takes only an `Our motto:` line as the motto, and refuses `###`. **Report:** new and
+      tightened checks in `about.spec.ts`, `colour-not-alone.spec.ts`, `accessibility.spec.ts` and
+      `story.test.ts`, each seen failing once against a broken build or input (the PR says how).
 
 ---
 

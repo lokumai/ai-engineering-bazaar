@@ -1,0 +1,1063 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Stall four, five ways</title>
+<meta name="description" content="Round 5, the About page: five drawings for stall 4, Every single topic became a labor of love. 4A is the author's cherub; 4B is three.js and 4D is CSS 3D.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT@0,9..144,400..800,0..100;1,9..144,400..700,0..100&family=Caveat:wght@500;600;700&display=swap">
+<style>
+/* Every colour the page and the drawings use comes from these tokens, so the final page can
+   re-theme a stall by redefining them. The figure colours (skin, steel, paper) are fixed, as
+   they are for the cast on the home page. */
+:root{
+  --ground:#0D0E21; --ground-2:#14153A; --ground-3:#1C1E4C;
+  --ink:#E7E3D8; --ink-dim:#A9A6BE; --title:#F4EFE5; --hair:rgba(231,227,216,.13);
+  --gold:#C8A078; --gold-lift:#E4C291; --rose:#E28FA1; --rose-deep:#C45E77;
+  --teal:#2F8C86; --teal-lift:#8FE3DA; --crimson:#C8434B; --sand:#E6DAC6; --paper:#F4EBDC;
+  --indigo:#282864; --indigo-lift:#848BD0;
+  --sans:"Avenir Next", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --display:"Fraunces", "Iowan Old Style", Georgia, serif;
+  --hand:"Caveat", "Segoe Print", cursive;
+  --mono:ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  --slot:min(44vw, 560px);
+}
+*{box-sizing:border-box}
+html{overflow-x:clip; background:var(--ground)}
+body{margin:0; color:var(--ink); font-family:var(--sans); font-size:17px; line-height:1.55; -webkit-font-smoothing:antialiased; overflow-x:clip;
+  background:
+    radial-gradient(1200px 700px at 80% -10%, rgba(132,139,208,.10), transparent 60%),
+    radial-gradient(900px 600px at 0% 40%, rgba(226,143,161,.05), transparent 60%),
+    var(--ground)}
+:focus-visible{outline:2px solid var(--gold); outline-offset:3px; border-radius:5px}
+
+.intro{max-width:1240px; margin:0 auto; padding:56px 32px 8vh}
+.intro .eyebrow{font-size:13px; letter-spacing:.16em; text-transform:uppercase; color:var(--gold); font-weight:600}
+.intro h1{font-family:var(--display); font-weight:600; font-variation-settings:"SOFT" 100, "opsz" 120; color:var(--title); font-size:clamp(34px, 4.6vw, 58px); line-height:1.05; margin:12px 0 18px}
+.intro p{max-width:760px; color:var(--ink-dim); margin:0 0 10px}
+.intro ul{max-width:760px; color:var(--ink-dim); padding-left:20px; margin:12px 0 0}
+.intro li{margin:3px 0}
+.intro b{color:var(--ink); font-weight:600}
+
+.opt{max-width:1240px; margin:0 auto; padding:10vh 32px 16vh}
+.opt-head{display:flex; flex-wrap:wrap; align-items:center; gap:10px 14px; padding-bottom:16px; margin-bottom:9vh; border-bottom:1px solid var(--hair)}
+.code{font-family:var(--display); font-weight:700; font-size:15px; color:var(--ground); background:var(--gold); border-radius:4px; padding:2px 9px; letter-spacing:.02em}
+.opt-head h2{font-family:var(--display); font-weight:600; font-size:23px; margin:0; color:var(--title); font-variation-settings:"SOFT" 100}
+.tag{font-size:12px; font-weight:600; letter-spacing:.08em; text-transform:uppercase; color:var(--teal-lift); border:1px solid rgba(143,227,218,.4); border-radius:999px; padding:1px 9px}
+.opt-head .what{flex:1 1 100%; order:5; margin:0; color:var(--ink-dim); font-size:15.5px; max-width:820px}
+.replay{margin-left:auto; font:600 14px/1 var(--sans); color:var(--ink); background:transparent; border:1px solid rgba(231,227,216,.28); border-radius:999px; padding:9px 16px 9px 13px; cursor:pointer; display:inline-flex; align-items:center; gap:8px; min-height:40px}
+.replay:hover{border-color:var(--gold); color:var(--title)}
+.replay svg{width:15px; height:15px}
+
+.stall{display:grid; grid-template-columns:var(--slot) minmax(0, 1fr); gap:clamp(36px, 6vw, 104px); align-items:center}
+.slot{position:relative; width:var(--slot); aspect-ratio:1/1; border-radius:6px; overflow:hidden;
+  background:radial-gradient(72% 72% at 50% 46%, var(--ground-3) 0%, var(--ground-2) 52%, var(--ground) 100%);
+  box-shadow:0 0 0 1px var(--hair), 0 40px 80px -40px rgba(0,0,0,.6)}
+.slot > svg, .slot > canvas{position:absolute; inset:0; width:100%; height:100%; display:block}
+.copy{max-width:560px}
+.kicker{display:flex; align-items:center; gap:14px; color:var(--gold); font-family:var(--display); font-weight:600; font-size:15px; letter-spacing:.12em; margin-bottom:20px}
+.kicker::after{content:""; width:56px; height:1px; background:var(--gold); opacity:.7}
+.copy h3{font-family:var(--display); font-weight:600; font-variation-settings:"SOFT" 100, "opsz" 110; color:var(--title); font-size:clamp(30px, 3.3vw, 48px); line-height:1.08; letter-spacing:-.01em; margin:0 0 26px; text-wrap:balance}
+.copy h3 .w{display:inline-block; overflow:hidden; vertical-align:top; padding-bottom:.1em; margin-bottom:-.1em}
+.copy h3 .w > span{display:inline-block}
+.copy p{font-size:clamp(17px, 1.25vw, 19px); line-height:1.75; color:var(--ink); margin:0}
+.copy p .s{display:inline}
+
+.nolib{position:absolute; inset:auto 16px 16px; margin:0; color:var(--ink-dim); font-size:14px}
+
+/* 4C — the phrases on the strips */
+.strip-t{font-family:var(--display); font-size:19px; font-weight:500; fill:#2A2740; font-variation-settings:"opsz" 24}
+/* 4E — a meme caption, in the house serif rather than a stock meme face */
+.memecap{font-family:var(--display); font-weight:800; font-size:17px; fill:#fff; stroke:#161423; stroke-width:2.6px; stroke-linejoin:round; paint-order:stroke; letter-spacing:.03em; text-transform:uppercase; font-variation-settings:"opsz" 40}
+
+/* 4D — a sheet on the desk, in CSS 3D */
+.desk{position:absolute; inset:0; perspective:1050px; perspective-origin:50% 18%}
+.plane{position:absolute; left:15%; top:23%; width:70%; height:52.5%; transform-style:preserve-3d; transform:rotateX(48deg)}
+.spin{position:absolute; inset:0; transform-style:preserve-3d; transform:rotateZ(-11deg)}
+.sheet{position:absolute; inset:0; border-radius:2px; background:#F3EADB; box-shadow:inset 0 0 50px rgba(140,104,60,.16)}
+.s2{background:#E2D6C1; transform:translateZ(-1px) rotate(3.5deg)}
+.s3{background:#CABDA6; transform:translateZ(-2px) rotate(-4deg) translate(-2%, 1.5%)}
+.sheet-shadow{position:absolute; inset:2% -3% -8% 3%; background:rgba(0,0,0,.62); filter:blur(20px); transform:translateZ(-4px)}
+.s1 svg{position:absolute; inset:0; width:100%; height:100%; display:block}
+.probe{position:absolute; left:0; top:0; width:2px; height:2px; margin:-1px 0 0 -1px}
+.slot-d{background:
+  radial-gradient(52% 46% at 50% 50%, rgba(255,226,180,.12), rgba(255,226,180,0) 72%),
+  radial-gradient(72% 72% at 50% 46%, var(--ground-3) 0%, var(--ground-2) 52%, var(--ground) 100%)}
+.over{position:absolute; inset:0; width:100%; height:100%; pointer-events:none}
+
+@media (max-width: 820px){
+  .intro{padding:36px 16px 6vh}
+  .opt{padding:8vh 16px 12vh}
+  .opt-head{margin-bottom:5vh}
+  .stall{grid-template-columns:minmax(0, 1fr); gap:30px}
+  .copy{order:-1}
+  .slot{width:100%}
+}
+@media (prefers-reduced-motion: reduce){ .replay{display:none} }
+</style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+</head>
+<body>
+
+<header class="intro">
+  <div class="eyebrow">Round 5 · About page · stall 4</div>
+  <h1>Every single topic became a labor of love, drawn five ways</h1>
+  <p>Each option is shown as the stall will sit on the dark ground: the drawing on the left in its square slot, the text on the right, revealed as you scroll. Stall 4 is even, so its drawing takes the left; stalls 3 and 5 put theirs on the right.</p>
+  <ul>
+    <li><b>4A</b> is the author's idea: a cherub with a bow and a heart-tipped arrow, in the engraving spirit of the old "Labor of Love" covers, drawn new here.</li>
+    <li><b>4B</b> is three.js, a real 3D scene. <b>4D</b> is CSS 3D: a sheet tilted on a desk, which tilts further as you scroll.</li>
+    <li>Each starts when it comes into view and pauses when it leaves. With reduced motion, or with <code>?still</code> on the address, each shows one still frame that tells the whole story.</li>
+  </ul>
+</header>
+
+<main>
+<!-- ============ 4A ============ -->
+<section class="opt" id="o4a" data-opt="a">
+  <div class="opt-head">
+    <span class="code">4A</span><h2>The cherub's arrow</h2><span class="tag">2D · SVG</span>
+    <button class="replay" type="button"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M2.5 8a5.5 5.5 0 1 0 1.8-4.1"/><path d="M2.3 1.8v3h3"/></svg>Replay</button>
+    <p class="what">A winged cherub looses a heart-tipped arrow; where it lands, a crossed-out draft becomes a clean page, and hearts rise from it.</p>
+  </div>
+  <div class="stall">
+    <div class="slot" id="slot-a"><svg id="art-a" viewBox="0 0 600 600" role="img" aria-label="A cherub draws a bow with a heart-tipped arrow; the arrow strikes a crossed-out draft, which becomes a clean page as hearts rise."></svg></div>
+    <div class="copy"><div class="kicker">04</div><h3>Every single topic became a labor of love.</h3><p>We spent hours deciding what to keep and what to cut. We shared our drafts with real beginners, listened to their feedback, and rewrote everything until it clicked. We searched through hundreds of articles to pick only the best ones, and drew diagrams by hand when words were not enough. We even included Gen-Z style memes to make it enjoyable. AI can do many things we humans do, but it cannot enjoy a good brainrot. That is why.</p></div>
+  </div>
+</section>
+
+<!-- ============ 4B ============ -->
+<section class="opt" id="o4b" data-opt="b">
+  <div class="opt-head">
+    <span class="code">4B</span><h2>The sieve</h2><span class="tag">3D · three.js</span>
+    <button class="replay" type="button"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M2.5 8a5.5 5.5 0 1 0 1.8-4.1"/><path d="M2.3 1.8v3h3"/></svg>Replay</button>
+    <p class="what">Hundreds of articles spiral down a funnel to a brass sieve; most fall through and fade, and the five worth reading rise to the front, lit gold.</p>
+  </div>
+  <div class="stall">
+    <div class="slot" id="slot-b" role="img" aria-label="A 3D vortex of hundreds of paper articles falling through a brass sieve; five gold-edged ones rise out and fan in front."></div>
+    <div class="copy"><div class="kicker">04</div><h3>Every single topic became a labor of love.</h3><p>We spent hours deciding what to keep and what to cut. We shared our drafts with real beginners, listened to their feedback, and rewrote everything until it clicked. We searched through hundreds of articles to pick only the best ones, and drew diagrams by hand when words were not enough. We even included Gen-Z style memes to make it enjoyable. AI can do many things we humans do, but it cannot enjoy a good brainrot. That is why.</p></div>
+  </div>
+</section>
+
+<!-- ============ 4C ============ -->
+<section class="opt" id="o4c" data-opt="c">
+  <div class="opt-head">
+    <span class="code">4C</span><h2>Keep and cut</h2><span class="tag">2D · SVG</span>
+    <button class="replay" type="button"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M2.5 8a5.5 5.5 0 1 0 1.8-4.1"/><path d="M2.3 1.8v3h3"/></svg>Replay</button>
+    <p class="what">Brass scissors cut the padding out of a draft, phrase by phrase, and the plain lines that are left slide onto one index card.</p>
+  </div>
+  <div class="stall">
+    <div class="slot" id="slot-c"><svg id="art-c" viewBox="0 0 600 600" role="img" aria-label="Phrases of padding are struck through and cut in two by scissors; the plain sentences are kept and placed on an index card titled What a token is."></svg></div>
+    <div class="copy"><div class="kicker">04</div><h3>Every single topic became a labor of love.</h3><p>We spent hours deciding what to keep and what to cut. We shared our drafts with real beginners, listened to their feedback, and rewrote everything until it clicked. We searched through hundreds of articles to pick only the best ones, and drew diagrams by hand when words were not enough. We even included Gen-Z style memes to make it enjoyable. AI can do many things we humans do, but it cannot enjoy a good brainrot. That is why.</p></div>
+  </div>
+</section>
+
+<!-- ============ 4D ============ -->
+<section class="opt" id="o4d" data-opt="d">
+  <div class="opt-head">
+    <span class="code">4D</span><h2>Drawn by hand</h2><span class="tag">3D · CSS</span>
+    <button class="replay" type="button"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M2.5 8a5.5 5.5 0 1 0 1.8-4.1"/><path d="M2.3 1.8v3h3"/></svg>Replay</button>
+    <p class="what">A fountain pen draws a diagram on a sheet lying on the desk, wobble and all, beside the crumpled drafts that came before it.</p>
+  </div>
+  <div class="stall">
+    <div class="slot slot-d" id="slot-d" role="img" aria-label="A fountain pen draws a hand-made diagram of how a model reads a word, piece by piece, on a sheet of paper tilted on a desk, next to crumpled drafts.">
+      <div class="desk"><div class="plane" id="plane-d"><div class="spin">
+        <div class="sheet-shadow"></div><div class="sheet s3"></div><div class="sheet s2"></div>
+        <div class="sheet s1" id="sheet-d"><svg id="art-d" viewBox="0 0 400 300"></svg><i class="probe" id="probe-d"></i></div>
+      </div></div></div>
+      <svg class="over" id="over-d" viewBox="0 0 600 600"></svg>
+    </div>
+    <div class="copy"><div class="kicker">04</div><h3>Every single topic became a labor of love.</h3><p>We spent hours deciding what to keep and what to cut. We shared our drafts with real beginners, listened to their feedback, and rewrote everything until it clicked. We searched through hundreds of articles to pick only the best ones, and drew diagrams by hand when words were not enough. We even included Gen-Z style memes to make it enjoyable. AI can do many things we humans do, but it cannot enjoy a good brainrot. That is why.</p></div>
+  </div>
+</section>
+
+<!-- ============ 4E ============ -->
+<section class="opt" id="o4e" data-opt="e">
+  <div class="opt-head">
+    <span class="code">4E</span><h2>Brainrot</h2><span class="tag">2D · SVG</span>
+    <button class="replay" type="button"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M2.5 8a5.5 5.5 0 1 0 1.8-4.1"/><path d="M2.3 1.8v3h3"/></svg>Replay</button>
+    <p class="what">A reader laughs at the course's memes as they scroll past; Bit, the robot in the fez, reads the same phone and finds nothing there.</p>
+  </div>
+  <div class="stall">
+    <div class="slot" id="slot-e"><svg id="art-e" viewBox="0 0 600 600" role="img" aria-label="A phone shows a meme; a young reader in a hoodie laughs, while Bit the robot tilts its head and reports that it cannot find the joke."></svg></div>
+    <div class="copy"><div class="kicker">04</div><h3>Every single topic became a labor of love.</h3><p>We spent hours deciding what to keep and what to cut. We shared our drafts with real beginners, listened to their feedback, and rewrote everything until it clicked. We searched through hundreds of articles to pick only the best ones, and drew diagrams by hand when words were not enough. We even included Gen-Z style memes to make it enjoyable. AI can do many things we humans do, but it cannot enjoy a good brainrot. That is why.</p></div>
+  </div>
+</section>
+</main>
+
+<script>
+/* ======================================================================
+   Shared helpers
+   ====================================================================== */
+const $ = s => document.querySelector(s);
+const NS = 'http://www.w3.org/2000/svg';
+function S(tag, attrs = {}, parent){ const e = document.createElementNS(NS, tag); for (const k in attrs) e.setAttribute(k, attrs[k]); if (parent) parent.appendChild(e); return e; }
+function T(tag, attrs, text, parent){ const e = S(tag, attrs, parent); e.textContent = text; return e; }
+function rng(a){ return () => { a |= 0; a = a + 0x6D2B79F5 | 0; let t = Math.imul(a ^ a >>> 15, 1 | a); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+const heartD = (s = 1) => `M0 ${10*s}C${-4*s} ${6*s} ${-12*s} ${1*s} ${-12*s} ${-5*s}C${-12*s} ${-10*s} ${-6*s} ${-13*s} 0 ${-7*s}C${6*s} ${-13*s} ${12*s} ${-10*s} ${12*s} ${-5*s}C${12*s} ${1*s} ${4*s} ${6*s} 0 ${10*s}Z`;
+const STILL = matchMedia('(prefers-reduced-motion: reduce)').matches || /[?&]still\b/.test(location.search);
+const G = window.gsap;
+
+/* A controller for a GSAP-driven option: one main timeline, a few endless loops, and a render
+   function the ticker calls only while the option is on screen. */
+function gctrl(tl, loops, render, stillAt){
+  let active = false;
+  if (render) G.ticker.add(() => { if (active) render(); });
+  return {
+    start(){ active = true; loops.forEach(l => l.play()); tl.play(0); },
+    pause(){ active = false; tl.pause(); loops.forEach(l => l.pause()); },
+    resume(){ active = true; tl.resume(); loops.forEach(l => l.resume()); },
+    replay(){ active = true; loops.forEach(l => l.resume()); tl.restart(); },
+    still(){ active = false; loops.forEach(l => l.pause()); tl.pause(); tl.seek(stillAt, false); if (render) render(); }
+  };
+}
+
+/* ======================================================================
+   4A — the cherub's arrow
+   ====================================================================== */
+function initA(){
+  const svg = $('#art-a'); if (!svg || !G) return null;
+  const C = { skin:'#F7E7D3', skinS:'#E5C6A5', skinD:'#DDBD9C', line:'#6A4733', hair:'#D9B173', hairD:'#9F7647' };
+  svg.innerHTML = `<defs>
+    <radialGradient id="a-skin" cx="64%" cy="28%" r="82%"><stop offset="0" stop-color="#FFF7EC"/><stop offset=".55" stop-color="${C.skin}"/><stop offset="1" stop-color="${C.skinS}"/></radialGradient>
+    <pattern id="a-hatch" width="4" height="4" patternUnits="userSpaceOnUse" patternTransform="rotate(40)"><line x1="0" y1="0" x2="0" y2="4" stroke="${C.line}" stroke-width=".8"/></pattern>
+    <linearGradient id="a-fade" x1="0" y1="0" x2="1" y2=".25"><stop offset="0" stop-color="#fff"/><stop offset=".62" stop-color="#000"/></linearGradient>
+    <mask id="a-shade" maskContentUnits="objectBoundingBox"><rect width="1" height="1" fill="url(#a-fade)"/></mask>
+    <radialGradient id="a-halo"><stop offset="0" style="stop-color:var(--gold);stop-opacity:.34"/><stop offset=".5" style="stop-color:var(--rose);stop-opacity:.08"/><stop offset="1" style="stop-color:var(--rose);stop-opacity:0"/></radialGradient>
+    <radialGradient id="a-flash"><stop offset="0" stop-color="#FFF6E0" stop-opacity="1"/><stop offset=".4" style="stop-color:var(--gold-lift);stop-opacity:.6"/><stop offset="1" style="stop-color:var(--gold);stop-opacity:0"/></radialGradient>
+    <filter id="a-drop" x="-30%" y="-30%" width="160%" height="160%"><feDropShadow dx="0" dy="12" stdDeviation="12" flood-color="#000" flood-opacity=".5"/></filter>
+  </defs>`;
+
+  /* --- the engraved ground: a halo, slow rays, a double ring --- */
+  const CX = 232, CY = 236, SC = .86;           // the cherub's place and scale
+  const bg = S('g', {}, svg);
+  S('circle', { cx:CX + 15, cy:CY + 20, r:255, fill:'url(#a-halo)' }, bg);
+  const rays = S('g', { opacity:.2, style:'stroke:var(--gold)', 'stroke-width':.7 }, bg);
+  for (let i = 0; i < 72; i++){ const a = i / 72 * Math.PI * 2, r0 = 100, r1 = [300, 215, 255][i % 3];
+    S('line', { x1:CX + Math.cos(a)*r0, y1:CY + Math.sin(a)*r0, x2:CX + Math.cos(a)*r1, y2:CY + Math.sin(a)*r1 }, rays); }
+  S('circle', { cx:300, cy:300, r:284, fill:'none', style:'stroke:var(--gold)', 'stroke-opacity':.3 }, bg);
+  S('circle', { cx:300, cy:300, r:275, fill:'none', style:'stroke:var(--gold)', 'stroke-opacity':.45, 'stroke-width':2, 'stroke-dasharray':'.5 7', 'stroke-linecap':'round' }, bg);
+  const motes = [];
+  const Rm = rng(3);
+  for (let i = 0; i < 14; i++) motes.push(S('circle', { cx:40 + Rm()*520, cy:40 + Rm()*520, r:1 + Rm()*1.4, style:'fill:var(--gold-lift)', opacity:.0 }, bg));
+
+  /* --- the draft page --- */
+  const PX = 470, PY = 452;
+  const page = S('g', { transform:`translate(${PX} ${PY}) rotate(7)` }, svg);
+  const pin = S('g', {}, page);
+  S('rect', { x:-82, y:-106, width:164, height:212, rx:3, fill:'#B9AC95', transform:'rotate(-8)' }, pin);
+  S('rect', { x:-82, y:-106, width:164, height:212, rx:3, fill:'#D8CBB3', transform:'rotate(-3.5)' }, pin);
+  S('rect', { x:-82, y:-106, width:164, height:212, rx:3, fill:'#F5ECDD', filter:'url(#a-drop)' }, pin);
+  S('rect', { x:-73, y:-97, width:146, height:194, fill:'none', stroke:'#CDBB9B', 'stroke-width':.8 }, pin);
+  const messy = S('g', {}, pin), strikes = [];
+  const Rp = rng(7);
+  for (let i = 0; i < 10; i++){
+    const y = -76 + i * 16, x1 = -60, x2 = -60 + 58 + Rp() * 60;
+    let d = `M${x1} ${y}`; for (let x = x1 + 8; x <= x2; x += 8) d += ` L${x} ${(y + (Rp() - .5) * 2.6).toFixed(1)}`;
+    S('path', { d, fill:'none', stroke:'#A09380', 'stroke-width':3.4, 'stroke-linecap':'round', 'stroke-linejoin':'round' }, messy);
+    if ([0, 2, 3, 5, 6].includes(i)) strikes.push(S('path', { d:`M${x1 - 4} ${y + 2} L${x2 + 5} ${y - 2}`, fill:'none', style:'stroke:var(--crimson)', 'stroke-width':2.4, 'stroke-linecap':'round', pathLength:1, 'stroke-dasharray':'1 1', 'stroke-dashoffset':0 }, messy));
+  }
+  let sd = 'M-62 66'; for (let k = 0; k < 10; k++) sd += ` L${-58 + k * 11} ${k % 2 ? 58 : 84}`;
+  S('path', { d:sd, fill:'none', style:'stroke:var(--crimson)', 'stroke-width':2, 'stroke-linejoin':'round', opacity:.85 }, messy);
+  T('text', { x:56, y:-14, 'font-family':'Caveat, cursive', 'font-size':38, 'font-weight':700, style:'fill:var(--crimson)' }, '?', messy);
+  T('text', { x:-8, y:-88, 'font-family':'Caveat, cursive', 'font-size':15, 'font-weight':600, style:'fill:var(--crimson)', 'text-anchor':'middle' }, 'draft 6', messy);
+
+  const clean = S('g', {}, pin), cleanStrokes = [];
+  const cs = (d, style, w) => { const p = S('path', { d, fill:'none', style, 'stroke-width':w, 'stroke-linecap':'round', 'stroke-linejoin':'round', pathLength:1, 'stroke-dasharray':'1 1', 'stroke-dashoffset':1 }, clean); cleanStrokes.push(p); return p; };
+  cs('M-60 -78 L 26 -78', 'stroke:#282864', 6);
+  [44, 58, 30, 52, 38, 60].forEach((w, i) => cs(`M-60 ${-54 + i * 14} L ${-60 + w + 40} ${-54 + i * 14}`, 'stroke:#4A4766', 3.2));
+  cs('M-44 40 a12 12 0 1 0 0.01 0', 'stroke:var(--teal)', 2.4);
+  cs('M-28 52 L-8 52 M-14 47 L-8 52 L-14 57', 'stroke:var(--teal)', 2.2);
+  cs('M-2 40 H40 V64 H-2 Z', 'stroke:var(--teal)', 2.4);
+  const seal = S('g', { transform:'translate(54 80)' }, clean);
+  const sealIn = S('g', {}, seal);
+  S('circle', { r:15, style:'fill:var(--rose-deep)', opacity:.16 }, sealIn);
+  S('path', { d:heartD(.85), style:'fill:var(--rose-deep)' }, sealIn);
+
+  /* --- the cherub --- */
+  const ch = S('g', { transform:`translate(${CX} ${CY}) scale(${SC})` }, svg);
+  const body = S('g', {}, ch);
+  const shade = hex => { const n = parseInt(hex.slice(1), 16), k = .84; return '#' + [n >> 16, n >> 8 & 255, n & 255].map(v => Math.round(v * k).toString(16).padStart(2, '0')).join(''); };
+  const feather = (L, w) => `M0 ${-w*.5}C${L*.3} ${-w} ${L*.85} ${-w} ${L} ${-w*.2}Q${L*1.03} ${w*.4} ${L*.9} ${w*.72}C${L*.6} ${w} ${L*.2} ${w*.82} 0 ${w*.5}Z`;
+  /* A wing is a curved leading edge (the bone) with three rows of feathers hanging from it:
+     long flight feathers that turn from hanging down at the shoulder to sweeping back at the tip,
+     then two rows of coverts over their roots. */
+  function wing(parent, ax, ay, rot, sc, far){
+    const g = S('g', {}, parent);
+    const inner = S('g', { transform:`translate(${ax} ${ay}) rotate(${rot}) scale(${sc})` }, g);
+    const B = t => { const a = 1 - t; return [a*a*0 + 2*a*t*-6 + t*t*-104, a*a*0 + 2*a*t*-158 + t*t*-146]; };
+    const rows = [
+      { n:15, t0:.04, t1:1,   L0:84, L1:150, w:13,   f:'#EADFCB', lift:0 },
+      { n:12, t0:.0,  t1:.94, L0:52, L1:84,  w:12.5, f:'#F3EADB', lift:-4 },
+      { n:11, t0:.0,  t1:.88, L0:28, L1:44,  w:11,   f:'#FBF5EA', lift:-7 } ];
+    rows.forEach(r => { for (let k = r.n - 1; k >= 0; k--){
+      const t = r.t0 + (r.t1 - r.t0) * k / (r.n - 1), [bx, by] = B(t);
+      const a = 102 + 86 * Math.pow(t, 1.15), L = r.L0 + (r.L1 - r.L0) * Math.pow(t, .9);
+      const fg = S('g', { transform:`translate(${bx.toFixed(1)} ${(by + r.lift).toFixed(1)}) rotate(${a.toFixed(1)})` }, inner);
+      S('path', { d:feather(L, r.w), fill:far ? shade(r.f) : r.f, stroke:'#8C6C4C', 'stroke-width':1.2 / sc, 'stroke-linejoin':'round' }, fg);
+      S('path', { d:`M2 0Q${L*.5} ${-r.w*.1} ${L*.9} ${-r.w*.04}`, fill:'none', stroke:'#B39470', 'stroke-width':1 }, fg);
+      for (let j = 1; j < 5; j++){ const x = L * j / 5.4; S('line', { x1:x, y1:r.w*.1, x2:x + 5, y2:r.w*.64, stroke:'#A88A66', 'stroke-width':.7, opacity:.7 }, fg); }
+    }});
+    let d = ''; for (let i = 0; i <= 24; i++){ const [x, y] = B(i / 24); d += (i ? 'L' : 'M') + x.toFixed(1) + ' ' + (y - 8).toFixed(1); }
+    S('path', { d, fill:'none', stroke:'#8C6C4C', 'stroke-width':12, 'stroke-linecap':'round', 'stroke-linejoin':'round' }, inner);
+    S('path', { d, fill:'none', stroke:far ? shade('#FFFAF2') : '#FFFAF2', 'stroke-width':9, 'stroke-linecap':'round', 'stroke-linejoin':'round' }, inner);
+    for (let i = 1; i < 12; i++){ const [x, y] = B(i / 12); S('path', { d:`M${(x - 5).toFixed(1)} ${(y - 3).toFixed(1)}q5 6 10 0`, fill:'none', stroke:'#B39470', 'stroke-width':1.1 }, inner); }
+    return g;
+  }
+  function limb(parent, pts, ws, fill){
+    const g = S('g', {}, parent), outs = [], ins = [];
+    for (let i = 0; i < pts.length - 1; i++) outs.push(S('line', { stroke:C.line, 'stroke-width':ws[i] + 4, 'stroke-linecap':'round' }, g));
+    for (let i = 0; i < pts.length - 1; i++) ins.push(S('line', { stroke:fill, 'stroke-width':ws[i], 'stroke-linecap':'round' }, g));
+    const set = p => { for (let i = 0; i < p.length - 1; i++) [outs[i], ins[i]].forEach(l => { l.setAttribute('x1', p[i][0]); l.setAttribute('y1', p[i][1]); l.setAttribute('x2', p[i+1][0]); l.setAttribute('y2', p[i+1][1]); }); };
+    set(pts); return { g, set };
+  }
+  const farWing = wing(body, 8, 40, 12, .66, true);
+  // the bow arm is the far one; a right-handed archer holds the bow in the left hand
+  limb(body, [[24, 58], [72, 72], [116, 78]], [18, 15], C.skinD);
+  const T1 = [123.2, -23.7], T2 = [56.2, 160.5];
+  const bowD = `M${T1}C145.2 24.8 104.2 137.6 ${T2}`;
+  S('path', { d:bowD, fill:'none', stroke:'#5A3F22', 'stroke-width':8, 'stroke-linecap':'round' }, body);
+  S('path', { d:bowD, fill:'none', style:'stroke:var(--gold)', 'stroke-width':5, 'stroke-linecap':'round' }, body);
+  S('path', { d:bowD, fill:'none', style:'stroke:var(--gold-lift)', 'stroke-width':1.2, 'stroke-dasharray':'30 12 60 14', opacity:.8 }, body);
+  [T1, T2].forEach(p => S('circle', { cx:p[0], cy:p[1], r:4, style:'fill:var(--gold-lift)', stroke:'#5A3F22', 'stroke-width':1.4 }, body));
+  const string = S('path', { fill:'none', stroke:'#FBF3E6', 'stroke-width':1.2, opacity:.9 }, body);
+  S('circle', { cx:116, cy:78, r:10, fill:C.skinD, stroke:C.line, 'stroke-width':2 }, body);
+  limb(body, [[-12, 140], [-36, 176], [-70, 182]], [28, 21], C.skinD);
+  S('ellipse', { cx:-80, cy:180, rx:14, ry:9, transform:'rotate(-10 -80 180)', fill:C.skinD, stroke:C.line, 'stroke-width':2 }, body);
+  const torsoD = 'M-20 36C-46 52-54 104-38 134C-22 162 26 166 44 140C60 116 56 64 30 40C16 30-6 30-20 36Z';
+  S('path', { d:torsoD, fill:'url(#a-skin)', stroke:C.line, 'stroke-width':2.2 }, body);
+  S('path', { d:torsoD, fill:'url(#a-hatch)', opacity:.4, mask:'url(#a-shade)' }, body);
+  S('path', { d:'M22 114q4 4 8 0', fill:'none', stroke:C.line, 'stroke-width':1.5, 'stroke-linecap':'round' }, body);
+  const nearWing = wing(body, -16, 50, -4, .8, false);
+  // a rose sash over the far shoulder, its loose end streaming behind
+  S('path', { d:'M34 44C14 64-6 96-32 118', fill:'none', stroke:'#7A3446', 'stroke-width':10, 'stroke-linecap':'round' }, body);
+  S('path', { d:'M34 44C14 64-6 96-32 118', fill:'none', style:'stroke:var(--rose)', 'stroke-width':7.5, 'stroke-linecap':'round' }, body);
+  const tail = S('path', { d:'M-32 114C-66 104-98 132-142 116C-126 134-92 148-58 138C-48 135-40 130-32 124Z', style:'fill:var(--rose)', stroke:'#7A3446', 'stroke-width':1.6, 'stroke-linejoin':'round' }, body);
+  limb(body, [[22, 136], [68, 158], [48, 198]], [32, 22], C.skin);
+  S('ellipse', { cx:58, cy:205, rx:15, ry:9, transform:'rotate(18 58 205)', fill:C.skin, stroke:C.line, 'stroke-width':2 }, body);
+  S('path', { d:'M60 168q6 2 9-3', fill:'none', stroke:C.line, 'stroke-width':1.3, opacity:.7 }, body);
+  // the head, turned to the target, one eye closed to aim
+  const head = S('g', {}, body);
+  S('circle', { cx:0, cy:0, r:44, fill:'url(#a-skin)', stroke:C.line, 'stroke-width':2.2 }, head);
+  S('circle', { cx:0, cy:0, r:44, fill:'url(#a-hatch)', opacity:.32, mask:'url(#a-shade)' }, head);
+  [[-34, 22, 12], [-41, 4, 15], [-43, -14, 15], [-37, -30, 15], [-25, -42, 16], [-9, -48, 16], [8, -48, 15], [24, -42, 14], [36, -31, 11]].forEach(([x, y, r]) => {
+    S('circle', { cx:x, cy:y, r, fill:C.hair, stroke:C.hairD, 'stroke-width':1.6 }, head);
+    S('path', { d:`M${x - r*.45} ${y + r*.1}a${r*.42} ${r*.42} 0 1 1 ${r*.5} ${r*.42}`, fill:'none', stroke:C.hairD, 'stroke-width':1.4, 'stroke-linecap':'round' }, head);
+  });
+  S('path', { d:'M30 -36C44 -40 46 -24 36 -22C30 -21 30 -28 35 -28', fill:'none', stroke:C.hairD, 'stroke-width':2.2, 'stroke-linecap':'round' }, head);
+  S('path', { d:'M-8 -2C-22 -6 -24 18 -8 16C-12 12 -12 4 -8 -2Z', fill:C.skinS, stroke:C.line, 'stroke-width':1.6 }, head);
+  S('ellipse', { cx:24, cy:16, rx:12, ry:9, style:'fill:var(--rose)', opacity:.42 }, head);
+  S('path', { d:'M12 -17Q22 -23 33 -16', fill:'none', stroke:C.hairD, 'stroke-width':2.4, 'stroke-linecap':'round' }, head);
+  S('path', { d:'M14 -4Q23 2 32 -4', fill:'none', stroke:C.line, 'stroke-width':2.4, 'stroke-linecap':'round' }, head);
+  S('path', { d:'M16 -2l-2 4M22 0l-1 4.5M28 -1l1 4', fill:'none', stroke:C.line, 'stroke-width':1.2, 'stroke-linecap':'round' }, head);
+  S('path', { d:'M41 -1Q50 6 42 11', fill:C.skin, stroke:C.line, 'stroke-width':1.8, 'stroke-linecap':'round' }, head);
+  S('path', { d:'M29 25Q34 29 39 24', fill:'none', style:'stroke:var(--rose-deep)', 'stroke-width':2.4, 'stroke-linecap':'round' }, head);
+  S('path', { d:'M18 40Q28 42 34 36', fill:'none', stroke:C.line, 'stroke-width':1.2, opacity:.6 }, head);
+  // the arrow, nock at its origin, heart at its tip
+  const arrow = S('g', {}, body);
+  S('line', { x1:0, y1:0, x2:140, y2:0, stroke:'#5A3F22', 'stroke-width':4.4, 'stroke-linecap':'round' }, arrow);
+  S('line', { x1:0, y1:0, x2:140, y2:0, style:'stroke:var(--gold-lift)', 'stroke-width':2.6, 'stroke-linecap':'round' }, arrow);
+  S('path', { d:'M1 0L24 0L17-9L-5-10Z', style:'fill:var(--rose)', stroke:'#7A3446', 'stroke-width':.9 }, arrow);
+  S('path', { d:'M1 0L24 0L17 9L-5 10Z', style:'fill:var(--rose-deep)', stroke:'#7A3446', 'stroke-width':.9 }, arrow);
+  S('path', { d:heartD(1.05), transform:'translate(139 0) rotate(-90)', style:'fill:var(--rose-deep)', stroke:'#6E2034', 'stroke-width':1.2 }, arrow);
+  // the near arm draws the string to the chin
+  const drawArm = limb(body, [[2, 58], [-40, 68], [27, 46]], [18, 15], C.skin);
+  const hand = S('g', {}, body);
+  S('circle', { r:9.5, fill:C.skin, stroke:C.line, 'stroke-width':2 }, hand);
+  S('path', { d:'M2 -6q5 3 4 8M-2 -7q6 2 6 7', fill:'none', stroke:C.line, 'stroke-width':1.1 }, hand);
+
+  /* --- effects, in the page's own coordinates --- */
+  const fx = S('g', {}, svg);
+  const HX = PX - 2, HY = PY - 14;               // where the arrow lands
+  const flash = S('circle', { cx:HX, cy:HY, r:60, fill:'url(#a-flash)', opacity:0 }, fx);
+  const burst = [], rise = [];
+  for (let i = 0; i < 10; i++) burst.push(S('path', { d:heartD(.55), style:`fill:var(${i % 2 ? '--rose' : '--gold-lift'})`, opacity:0 }, fx));
+  for (let i = 0; i < 9; i++) rise.push(S('path', { d:heartD(.6 + (i % 3) * .22), style:`fill:var(${i % 3 === 1 ? '--gold-lift' : '--rose'})`, opacity:0 }, fx));
+
+  /* --- the geometry of the shot --- */
+  const u = [Math.cos(20 * Math.PI / 180), Math.sin(20 * Math.PI / 180)];
+  const Nr = [89.7, 68.4], Nf = [26.7, 45.5];      // the nock at rest, and at full draw
+  const tip0 = [Nf[0] + 150 * u[0], Nf[1] + 150 * u[1]];
+  const ctrl = [tip0[0] + 95 * u[0], tip0[1] + 95 * u[1]];
+  const st = { d:.12, f:0, fly:0 };
+  function render(){
+    const N = [Nr[0] + (Nf[0] - Nr[0]) * st.d, Nr[1] + (Nf[1] - Nr[1]) * st.d];
+    string.setAttribute('d', `M${T1}L${N}L${T2}`);
+    const elbow = [50 + (-42 - 50) * st.d, 84 + (66 - 84) * st.d];
+    drawArm.set([[2, 58], elbow, N]);
+    hand.setAttribute('transform', `translate(${N})`);
+    if (st.fly < .5){ arrow.setAttribute('transform', `translate(${N}) rotate(20)`); return; }
+    const by = +G.getProperty(body, 'y') || 0;
+    const tgt = [(HX - CX) / SC, (HY - CY) / SC - by], f = st.f, a = 1 - f;
+    const tip = [a*a*tip0[0] + 2*a*f*ctrl[0] + f*f*tgt[0], a*a*tip0[1] + 2*a*f*ctrl[1] + f*f*tgt[1]];
+    const ang = Math.atan2(2*a*(ctrl[1] - tip0[1]) + 2*f*(tgt[1] - ctrl[1]), 2*a*(ctrl[0] - tip0[0]) + 2*f*(tgt[0] - ctrl[0]));
+    arrow.setAttribute('transform', `translate(${tip[0] - 150 * Math.cos(ang)} ${tip[1] - 150 * Math.sin(ang)}) rotate(${ang * 180 / Math.PI})`);
+  }
+
+  G.set(nearWing, { svgOrigin:'-16 50' }); G.set(farWing, { svgOrigin:'6 40' });
+  G.set(tail, { svgOrigin:'-32 120' }); G.set(rays, { svgOrigin:`${CX} ${CY}` });
+  G.set(pin, { svgOrigin:'0 0' }); G.set(sealIn, { scale:0, transformOrigin:'50% 50%' });
+  G.set([...burst, ...rise], { transformOrigin:'50% 50%' });
+  const loops = [
+    G.fromTo(nearWing, { rotation:5 }, { rotation:-9, duration:.62, ease:'sine.inOut', yoyo:true, repeat:-1, paused:true }),
+    G.fromTo(farWing, { rotation:3 }, { rotation:-10, duration:.62, ease:'sine.inOut', yoyo:true, repeat:-1, delay:.09, paused:true }),
+    G.to(body, { y:-9, duration:1.9, ease:'sine.inOut', yoyo:true, repeat:-1, paused:true }),
+    G.fromTo(tail, { skewY:-5 }, { skewY:8, duration:1.1, ease:'sine.inOut', yoyo:true, repeat:-1, paused:true }),
+    G.to(rays, { rotation:360, duration:200, ease:'none', repeat:-1, paused:true }),
+    ...motes.map((m, i) => G.to(m, { opacity:.8, duration:1.4 + (i % 4) * .5, yoyo:true, repeat:-1, delay:i * .3, ease:'sine.inOut', paused:true }))
+  ];
+
+  const tl = G.timeline({ paused:true, repeat:-1 });
+  tl.set(st, { d:.12, f:0, fly:0 }, 0)
+    .set(arrow, { opacity:1 }, 0)
+    .set(messy, { opacity:1 }, 0).set(clean, { opacity:1 }, 0)
+    .to(st, { d:1, duration:1.5, ease:'power2.inOut' }, .3)
+    .to(st, { d:.96, duration:.07, yoyo:true, repeat:5 }, 1.85)
+    .set(st, { fly:1 }, 2.35)
+    .to(st, { d:0, duration:.45, ease:'elastic.out(1.2, .3)' }, 2.35)
+    .to(st, { f:1, duration:.55, ease:'power1.in' }, 2.35)
+    .fromTo(flash, { opacity:0, attr:{ r:10 } }, { opacity:1, attr:{ r:70 }, duration:.25, ease:'power2.out', immediateRender:false }, 2.9)
+    .to(flash, { opacity:0, duration:.8 }, 3.15)
+    .to(arrow, { opacity:0, duration:.3 }, 2.95)
+    .to(pin, { rotation:-3, duration:.07, yoyo:true, repeat:3 }, 2.9)
+    .to(strikes, { attr:{ 'stroke-dashoffset':-1 }, duration:.4, stagger:.06, ease:'power1.in' }, 2.95)
+    .to(messy, { opacity:0, duration:.6 }, 3.15)
+    .to(cleanStrokes, { attr:{ 'stroke-dashoffset':0 }, duration:.42, stagger:.11, ease:'power1.inOut' }, 3.25)
+    .to(sealIn, { scale:1, duration:.55, ease:'back.out(3)' }, 4.5);
+  burst.forEach((h, i) => { const a = i / burst.length * Math.PI * 2 - .3, r = 44 + (i % 3) * 16;
+    tl.fromTo(h, { x:HX, y:HY, scale:.2, opacity:1 }, { x:HX + Math.cos(a) * r, y:HY + Math.sin(a) * r, scale:1, opacity:0, duration:1, ease:'power2.out', immediateRender:false }, 2.92); });
+  const Rr = rng(19);
+  rise.forEach((h, i) => { const x0 = PX - 60 + Rr() * 120, y0 = PY - 40 + Rr() * 70, t0 = 3.6 + i * .42;
+    tl.fromTo(h, { x:x0, y:y0, scale:.5, opacity:0, rotation:-10 }, { x:x0 + (Rr() - .5) * 60, y:y0 - 190, scale:1.15, rotation:10, duration:2.8, ease:'sine.out', immediateRender:false }, t0)
+      .to(h, { keyframes:[{ opacity:.95, duration:.6 }, { opacity:.95, duration:1.2 }, { opacity:0, duration:1 }] }, t0); });
+  tl.set(strikes, { attr:{ 'stroke-dashoffset':0 } }, 8.3)
+    .to(clean, { opacity:0, duration:.7 }, 8.4)
+    .to(messy, { opacity:1, duration:.7 }, 8.6)
+    .set(cleanStrokes, { attr:{ 'stroke-dashoffset':1 } }, 9.15).set(sealIn, { scale:0 }, 9.15).set(clean, { opacity:1 }, 9.2)
+    .set(st, { fly:0, d:.12, f:0 }, 8.6)
+    .fromTo(arrow, { opacity:0 }, { opacity:1, duration:.6, immediateRender:false }, 8.6)
+    .to({}, { duration:.5 }, 9.3);
+  return gctrl(tl, loops, render, 5.3);
+}
+
+/* ======================================================================
+   4B — the sieve (three.js)
+   ====================================================================== */
+function initB(){
+  const slot = $('#slot-b');
+  if (!window.THREE){ slot.insertAdjacentHTML('beforeend', '<p class="nolib">three.js did not load, so this option cannot draw here.</p>'); return null; }
+  const T3 = THREE, css = getComputedStyle(document.documentElement), cv = n => css.getPropertyValue(n).trim();
+  const renderer = new T3.WebGLRenderer({ antialias:true, alpha:true, powerPreference:'low-power' });
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+  renderer.outputEncoding = T3.sRGBEncoding;
+  slot.appendChild(renderer.domElement);
+  const scene = new T3.Scene();
+  scene.fog = new T3.Fog(new T3.Color(cv('--ground-2')), 8.5, 15.5);
+  const cam = new T3.PerspectiveCamera(34, 1, .1, 40);
+  cam.position.set(0, 2.2, 8.6);
+
+  function cardTex(chosen){
+    const c = document.createElement('canvas'); c.width = 128; c.height = 168; const g = c.getContext('2d');
+    g.fillStyle = chosen ? '#FBF4E6' : '#E7DCC8'; g.fillRect(0, 0, 128, 168);
+    if (chosen){ g.strokeStyle = cv('--gold'); g.lineWidth = 7; g.strokeRect(5, 5, 118, 158); g.strokeStyle = 'rgba(200,160,120,.6)'; g.lineWidth = 1.5; g.strokeRect(13, 13, 102, 142); }
+    g.fillStyle = '#282864'; g.fillRect(20, 24, 66, 10);
+    g.fillStyle = 'rgba(42,39,64,.5)';
+    for (let y = 46, i = 0; y < 146; y += 11, i++){ g.fillRect(20, y, 50 + ((i * 37) % 38), 4); }
+    if (chosen){ g.fillStyle = cv('--rose-deep'); g.save(); g.translate(98, 134); g.scale(1.1, 1.1); g.beginPath(); g.moveTo(0, 10); g.bezierCurveTo(-4, 6, -12, 1, -12, -5); g.bezierCurveTo(-12, -10, -6, -13, 0, -7); g.bezierCurveTo(6, -13, 12, -10, 12, -5); g.bezierCurveTo(12, 1, 4, 6, 0, 10); g.fill(); g.restore(); }
+    const t = new T3.CanvasTexture(c); t.encoding = T3.sRGBEncoding; t.anisotropy = 4; return t;
+  }
+
+  const TOP = 2.3, SPAN = 4.7, NECK = .78;
+  const yOf = s => TOP - s * SPAN;
+  const rOf = s => s < NECK ? .42 + 1.9 * Math.pow(1 - s / NECK, 1.5) : .42 * (1 - (s - NECK) / (1 - NECK) * .75);
+  const N = 380, R = rng(5);
+  const geo = new T3.PlaneGeometry(.36, .48);
+  const inst = new T3.InstancedMesh(geo, new T3.MeshStandardMaterial({ map:cardTex(false), side:T3.DoubleSide, roughness:.88, metalness:0 }), N);
+  scene.add(inst);
+  const cs = new Float32Array(N), th = new Float32Array(N), sp = new Float32Array(N), br = new Float32Array(N), ph = new Float32Array(N);
+  for (let i = 0; i < N; i++){ cs[i] = R(); th[i] = R() * Math.PI * 2; sp[i] = .035 + R() * .02; br[i] = .62 + R() * .38; ph[i] = R() * 6.28; }
+  const dummy = new T3.Object3D(), colr = new T3.Color();
+
+  const chosenTex = cardTex(true), chosen = [];
+  const cS = [.15, .28, .4, .52, .63];
+  for (let k = 0; k < 5; k++){
+    const m = new T3.Mesh(geo, new T3.MeshStandardMaterial({ map:chosenTex, side:T3.DoubleSide, roughness:.6, emissive:new T3.Color(cv('--gold')), emissiveIntensity:.04 }));
+    m.userData = { s:cS[k], th:k * 1.3 + .4 }; scene.add(m); chosen.push(m);
+  }
+  const gold = new T3.Color(cv('--gold'));
+  const ring = new T3.Mesh(new T3.TorusGeometry(.47, .06, 16, 72), new T3.MeshStandardMaterial({ color:gold, metalness:.5, roughness:.3, emissive:gold, emissiveIntensity:.35 }));
+  ring.rotation.x = Math.PI / 2; ring.position.y = yOf(NECK); scene.add(ring);
+  const net = [];
+  for (let v = -.4; v <= .41; v += .1){ const h = Math.sqrt(Math.max(0, .44 * .44 - v * v)); net.push(v, 0, -h, v, 0, h, -h, 0, v, h, 0, v); }
+  const ng = new T3.BufferGeometry(); ng.setAttribute('position', new T3.Float32BufferAttribute(net, 3));
+  const netM = new T3.LineSegments(ng, new T3.LineBasicMaterial({ color:gold, transparent:true, opacity:.45 })); netM.position.y = yOf(NECK); scene.add(netM);
+  [.04, .18, .32, .46, .6].forEach(s => { const pts = []; for (let i = 0; i <= 96; i++){ const a = i / 96 * Math.PI * 2; pts.push(new T3.Vector3(Math.cos(a) * rOf(s), yOf(s), Math.sin(a) * rOf(s))); }
+    scene.add(new T3.Line(new T3.BufferGeometry().setFromPoints(pts), new T3.LineBasicMaterial({ color:gold, transparent:true, opacity:.11 }))); });
+  const DN = 160, dpos = new Float32Array(DN * 3);
+  for (let i = 0; i < DN; i++){ const a = R() * 6.28, r = R() * 3; dpos[i*3] = Math.cos(a) * r; dpos[i*3+1] = -2.6 + R() * 5.6; dpos[i*3+2] = Math.sin(a) * r; }
+  const dg = new T3.BufferGeometry(); dg.setAttribute('position', new T3.BufferAttribute(dpos, 3));
+  const dust = new T3.Points(dg, new T3.PointsMaterial({ color:new T3.Color(cv('--gold-lift')), size:.035, transparent:true, opacity:.7, depthWrite:false })); scene.add(dust);
+
+  scene.add(new T3.AmbientLight(0xbab6dc, .46));
+  const key = new T3.DirectionalLight(0xfff1dc, .78); key.position.set(2.5, 5, 6); scene.add(key);
+  const roseL = new T3.PointLight(new T3.Color(cv('--rose')), 1.1, 12); roseL.position.set(-3, -1, 3); scene.add(roseL);
+  const rim = new T3.PointLight(new T3.Color(cv('--teal-lift')), .7, 12); rim.position.set(2.5, 1, -3.5); scene.add(rim);
+  const pickL = new T3.PointLight(new T3.Color(cv('--gold-lift')), 0, 7); pickL.position.set(0, .8, 5.2); scene.add(pickL);
+
+  const smooth = x => x <= 0 ? 0 : x >= 1 ? 1 : x * x * (3 - 2 * x);
+  const qa = new T3.Quaternion(), qb = new T3.Quaternion(), look = new T3.Object3D(), va = new T3.Vector3(), vb = new T3.Vector3();
+  let camY = 2.2, camYT = 2.2, camX = 0, camXT = 0;
+  const LOOP = 13;
+  function update(t, dt){
+    const p = t % LOOP;
+    const pk = chosen.map((_, k) => smooth((p - 3.4 - k * .2) / 1.5) * (1 - smooth((p - 10.6 - k * .12) / 1.4)));
+    const pick = pk.reduce((a, b) => a + b, 0) / 5;
+    const dim = 1 - .58 * pick;
+    for (let i = 0; i < N; i++){
+      const s = (cs[i] + t * sp[i]) % 1, r = rOf(s);
+      th[i] += dt * (.25 + .55 / (r + .25));
+      const y = yOf(s) - (s > NECK ? (s - NECK) * 2.2 : 0);
+      dummy.position.set(Math.cos(th[i]) * r, y, Math.sin(th[i]) * r);
+      dummy.rotation.set(Math.sin(t * 1.3 + ph[i]) * .5, Math.PI / 2 - th[i], .3 * Math.sin(t * .9 + ph[i] * 1.7));
+      const sc = Math.min(1, s / .05) * (s > .84 ? Math.max(0, (1 - s) / .16) : 1);
+      dummy.scale.setScalar(sc);
+      dummy.updateMatrix(); inst.setMatrixAt(i, dummy.matrix);
+      const b = br[i] * dim * (s > NECK ? .55 : 1); colr.setRGB(b, b, b * 1.02); inst.setColorAt(i, colr);
+    }
+    inst.instanceMatrix.needsUpdate = true; if (inst.instanceColor) inst.instanceColor.needsUpdate = true;
+    chosen.forEach((m, k) => {
+      const d = m.userData, r = rOf(d.s); d.th += dt * (.25 + .55 / (r + .25)) * (1 - pk[k]);
+      va.set(Math.cos(d.th) * r, yOf(d.s), Math.sin(d.th) * r);
+      look.position.copy(va); look.rotation.set(Math.sin(t * 1.1 + k) * .4, Math.PI / 2 - d.th, .2 * Math.sin(t + k)); qa.copy(look.quaternion);
+      vb.set((k - 2) * .56, .2 - Math.abs(k - 2) * .08, 3.0 - Math.abs(k - 2) * .08);
+      vb.y += Math.sin(t * 1.4 + k * .8) * .03 * pk[k];
+      look.position.copy(vb); look.lookAt(cam.position); look.rotateZ(-(k - 2) * .1); qb.copy(look.quaternion);
+      const e = pk[k];
+      m.position.lerpVectors(va, vb, e);
+      m.quaternion.copy(qa).slerp(qb, e);
+      m.scale.setScalar(1 + .55 * e);
+      m.material.emissiveIntensity = .04 + .06 * e;
+    });
+    pickL.intensity = .55 * pick;
+    ring.material.emissiveIntensity = .35 + .4 * pick;
+    const dp = dust.geometry.attributes.position;
+    for (let i = 0; i < DN; i++){ let y = dp.array[i*3+1] + dt * .1; if (y > 3) y = -2.6; dp.array[i*3+1] = y; }
+    dp.needsUpdate = true;
+    camY += (camYT - camY) * .05; camX += (camXT - camX) * .05;
+    cam.position.set(camX, camY, 9.3); cam.lookAt(0, 0, 0);
+  }
+  function size(){ const w = slot.clientWidth; renderer.setSize(w, w, false); renderer.domElement.style.width = '100%'; renderer.domElement.style.height = '100%'; cam.aspect = 1; cam.updateProjectionMatrix(); }
+  size();
+  let running = false, raf = 0, last = 0, t = 0, isStill = false;
+  new ResizeObserver(() => { size(); if (!running) renderer.render(scene, cam); }).observe(slot);
+  function frame(now){ raf = requestAnimationFrame(frame); const dt = Math.min(.05, (now - last) / 1000); last = now; t += dt; update(t, dt); renderer.render(scene, cam); }
+  const run = () => { if (running) return; running = true; last = performance.now(); raf = requestAnimationFrame(frame); };
+  const stop = () => { running = false; cancelAnimationFrame(raf); };
+  if (window.ScrollTrigger && !STILL){
+    ScrollTrigger.create({ trigger:'#o4b', start:'top bottom', end:'bottom top', onUpdate:s => { camYT = 2.8 - 2.0 * s.progress; } });
+    slot.addEventListener('pointermove', e => { const r = slot.getBoundingClientRect(); camXT = ((e.clientX - r.left) / r.width - .5) * 1.4; });
+    slot.addEventListener('pointerleave', () => { camXT = 0; });
+  }
+  return {
+    start(){ t = 0; run(); }, pause: stop, resume: run, replay(){ t = 0; run(); },
+    still(){ isStill = true; stop(); camY = camYT = 1.7; update(8, 0); renderer.render(scene, cam); }
+  };
+}
+
+/* ======================================================================
+   4C — keep and cut
+   ====================================================================== */
+function initC(){
+  const svg = $('#art-c'); if (!svg || !G) return null;
+  svg.innerHTML = `<defs>
+    <pattern id="c-grid" width="20" height="20" patternUnits="userSpaceOnUse" x="0" y="0"><path d="M20 0H0V20" fill="none" stroke="rgba(143,227,218,.11)" stroke-width="1"/></pattern>
+    <pattern id="c-grid5" width="100" height="100" patternUnits="userSpaceOnUse" x="0" y="0"><path d="M100 0H0V100" fill="none" stroke="rgba(143,227,218,.24)" stroke-width="1"/></pattern>
+    <radialGradient id="c-matfade" cx="50%" cy="48%" r="58%"><stop offset="0" stop-color="#fff"/><stop offset=".72" stop-color="#fff" stop-opacity=".7"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></radialGradient>
+    <mask id="c-matmask"><rect width="600" height="600" fill="url(#c-matfade)"/></mask>
+    <radialGradient id="c-mat" cx="50%" cy="48%" r="60%"><stop offset="0" stop-color="#123536"/><stop offset="1" stop-color="#0B2224" stop-opacity="0"/></radialGradient>
+    <linearGradient id="c-steel" x1="0" x2="1"><stop offset="0" stop-color="#8E93A8"/><stop offset=".45" stop-color="#EEF0F6"/><stop offset=".62" stop-color="#C5C9D8"/><stop offset="1" stop-color="#7D8297"/></linearGradient>
+    <filter id="c-drop" x="-20%" y="-40%" width="140%" height="200%"><feDropShadow dx="0" dy="6" stdDeviation="6" flood-color="#000" flood-opacity=".45"/></filter>
+    <filter id="c-sdrop" x="-50%" y="-30%" width="200%" height="160%"><feDropShadow dx="10" dy="14" stdDeviation="7" flood-color="#000" flood-opacity=".45"/></filter>
+  </defs>`;
+  const defs = svg.querySelector('defs');
+  // the cutting mat, dissolving into the ground at its edges
+  S('rect', { width:600, height:600, fill:'url(#c-mat)' }, svg);
+  const mat = S('g', { mask:'url(#c-matmask)' }, svg);
+  S('rect', { width:600, height:600, fill:'url(#c-grid)' }, mat);
+  S('rect', { width:600, height:600, fill:'url(#c-grid5)' }, mat);
+  S('line', { x1:60, y1:560, x2:560, y2:60, stroke:'rgba(143,227,218,.16)', 'stroke-dasharray':'2 6' }, mat);
+  for (let i = 0; i <= 30; i++) S('line', { x1:i * 20, y1:0, x2:i * 20, y2:i % 5 ? 8 : 16, style:'stroke:var(--gold)', opacity:.5 }, mat);
+
+  // the card the kept lines land on
+  const CXc = 300, CYc = 470;
+  const card = S('g', { transform:`translate(${CXc} ${CYc})` }, svg);
+  S('rect', { x:-150, y:-82, width:300, height:164, rx:5, fill:'#F6EEDF', filter:'url(#c-drop)' }, card);
+  S('line', { x1:-150, x2:150, y1:-34, y2:-34, style:'stroke:var(--crimson)', 'stroke-width':1.4, opacity:.7 }, card);
+  [-6, 24, 54].forEach(y => S('line', { x1:-150, x2:150, y1:y, y2:y, stroke:'#9FB4D6', 'stroke-width':1, opacity:.85 }, card));
+  T('text', { x:-132, y:-46, 'font-family':'Fraunces, Georgia, serif', 'font-size':21, 'font-weight':650, fill:'#282864' }, 'What a token is', card);
+  const stamp = S('g', { transform:'translate(116 -52)' }, card);
+  const stampIn = S('g', {}, stamp);
+  S('circle', { r:22, fill:'none', style:'stroke:var(--rose-deep)', 'stroke-width':2.2 }, stampIn);
+  S('circle', { r:18, fill:'none', style:'stroke:var(--rose-deep)', 'stroke-width':.8, 'stroke-dasharray':'2 3' }, stampIn);
+  S('path', { d:heartD(.75), style:'fill:var(--rose-deep)' }, stampIn);
+
+  const PHR = [
+    ['cut',  'In today’s fast-paced digital world,'],
+    ['keep', 'A model reads text in small pieces.'],
+    ['cut',  'it is important to note that'],
+    ['keep', 'Each piece is called a token.'],
+    ['cut',  'let us delve into the rich tapestry of'],
+    ['keep', 'It guesses the next one, again and again.'],
+    ['cut',  'In conclusion, it is a multifaceted topic.'] ];
+  const layer = S('g', {}, svg);
+  const strips = PHR.map(([kind, text], i) => {
+    const g = S('g', {}, layer);
+    const probe = T('text', { class:'strip-t', x:0, y:0 }, text, g);
+    const tw = probe.getComputedTextLength(); probe.remove();
+    const W = tw + 36, H = 40;
+    const zig = 'L4 -18L-3 -6L4 6L-3 18L0 30';
+    const cl = S('clipPath', { id:`c-l${i}` }, defs); S('path', { d:`M${-W/2 - 12} -30L0 -30${zig}L${-W/2 - 12} 30Z` }, cl);
+    const cr = S('clipPath', { id:`c-r${i}` }, defs); S('path', { d:`M${W/2 + 12} -30L0 -30${zig}L${W/2 + 12} 30Z` }, cr);
+    const halves = [], rects = [], strikesC = [], texts = [];
+    ['w', 'l', 'r'].forEach(sd => {
+      const h = S('g', sd === 'w' ? {} : { 'clip-path':`url(#c-${sd}${i})`, opacity:0 }, g);
+      rects.push(S('rect', { x:-W/2, y:-H/2, width:W, height:H, rx:2, fill:'#F2E8D7', stroke:'#CDBB9B', 'stroke-width':.8 }, h));
+      texts.push(T('text', { class:'strip-t', x:-W/2 + 18, y:6.5 }, text, h));
+      strikesC.push(S('path', { d:`M${-W/2 + 12} 0L${W/2 - 12} -1`, fill:'none', style:'stroke:var(--crimson)', 'stroke-width':2.6, 'stroke-linecap':'round', pathLength:1, 'stroke-dasharray':'1 1', 'stroke-dashoffset':1 }, h));
+      halves.push(h);
+    });
+    const outline = S('rect', { x:-W/2 - 3, y:-H/2 - 3, width:W + 6, height:H + 6, rx:4, fill:'none', style:'stroke:var(--gold)', 'stroke-width':2, pathLength:1, 'stroke-dasharray':'1 1', 'stroke-dashoffset':1 }, g);
+    const sticker = S('g', { transform:`translate(${W/2 - 2} ${-H/2})` }, g);
+    const stickerIn = S('g', {}, sticker);
+    S('circle', { r:11, style:'fill:var(--rose)', stroke:'#7A3446', 'stroke-width':1 }, stickerIn);
+    S('path', { d:heartD(.5), fill:'#FFF6EE' }, stickerIn);
+    const X0 = 620 + W / 2;
+    G.set(g, { x:X0, y:236, svgOrigin:'0 0' }); G.set(halves, { svgOrigin:'0 0' }); G.set(stickerIn, { scale:0, transformOrigin:'50% 50%' });
+    return { kind, g, W, X0, whole:halves[0], halves:halves.slice(1), rects, strikes:strikesC, texts, outline, stickerIn };
+  });
+
+  // the scissors: two crossed pieces on one pivot, handles above, blades pointing down
+  const sc = S('g', { filter:'url(#c-sdrop)' }, svg);
+  const pieces = [];
+  [-1, 1].forEach(m => {
+    const p = S('g', {}, sc), q = S('g', { transform:`scale(${m} 1)` }, p);
+    S('path', { d:'M-24 -60C-18 -40 -8 -18 -4 -2', fill:'none', stroke:'#6E5232', 'stroke-width':11, 'stroke-linecap':'round' }, q);
+    S('path', { d:'M-24 -60C-18 -40 -8 -18 -4 -2', fill:'none', style:'stroke:var(--gold)', 'stroke-width':8, 'stroke-linecap':'round' }, q);
+    S('circle', { cx:-34, cy:-84, r:21, fill:'none', stroke:'#6E5232', 'stroke-width':11 }, q);
+    S('circle', { cx:-34, cy:-84, r:21, fill:'none', style:'stroke:var(--gold)', 'stroke-width':8 }, q);
+    S('path', { d:'M-52 -92A20 20 0 0 1 -30 -104', fill:'none', style:'stroke:var(--gold-lift)', 'stroke-width':2, 'stroke-linecap':'round' }, q);
+    S('path', { d:'M-7 -6L7 -3C9 50 7 104 1 154C-4 104 -8 50 -7 -6Z', fill:'url(#c-steel)', stroke:'#4C5064', 'stroke-width':1.3, 'stroke-linejoin':'round' }, q);
+    S('path', { d:'M3 4C5 52 4 100 1 148', fill:'none', stroke:'#fff', 'stroke-width':.9, opacity:.7 }, q);
+    pieces.push(p);
+  });
+  S('circle', { r:7, style:'fill:var(--gold-lift)', stroke:'#6E5232', 'stroke-width':1.6 }, sc);
+  S('path', { d:'M-4 -4L4 4', stroke:'#6E5232', 'stroke-width':1.6 }, sc);
+  const [pB, pA] = pieces;     // pA's handle is upper-left after the mirror; both open about the pivot
+  G.set(pieces, { svgOrigin:'0 0' });
+  const REST = { x:478, y:116, rotation:-32 };
+  G.set(sc, { ...REST, svgOrigin:'0 0' }); G.set(pA, { rotation:6 }); G.set(pB, { rotation:-6 });
+
+  const tl = G.timeline({ paused:true, repeat:-1 });
+  const lines = [-8, 22, 52];
+  let at = .3, kept = 0, stillAt = 0;
+  strips.forEach(s => {
+    tl.fromTo(s.g, { x:s.X0, y:236, rotation:5, scale:1 }, { x:300, rotation:0, duration:.75, ease:'power3.out', immediateRender:false }, at);
+    if (s.kind === 'cut'){
+      tl.to(s.strikes, { attr:{ 'stroke-dashoffset':0 }, duration:.4, ease:'power1.inOut' }, at + .6)
+        .to(s.texts, { attr:{ fill:'#8A7274' }, duration:.4 }, at + .7)
+        .to(sc, { x:300, y:150, rotation:0, duration:.5, ease:'power2.inOut' }, at + .75)
+        .to(pA, { rotation:18, duration:.35, ease:'power2.out' }, at + .75).to(pB, { rotation:-18, duration:.35, ease:'power2.out' }, at + .75)
+        .to(pieces, { rotation:0, duration:.12, ease:'power3.in' }, at + 1.32)
+        .set(s.whole, { opacity:0 }, at + 1.44).set(s.halves, { opacity:1 }, at + 1.44)
+        .to(s.halves[0], { x:-46, y:320, rotation:-30, opacity:0, duration:1, ease:'power2.in' }, at + 1.44)
+        .to(s.halves[1], { x:54, y:330, rotation:34, opacity:0, duration:1, ease:'power2.in' }, at + 1.44)
+        .to(sc, { ...REST, duration:.6, ease:'power2.inOut' }, at + 1.62)
+        .to(pA, { rotation:6, duration:.4 }, at + 1.62).to(pB, { rotation:-6, duration:.4 }, at + 1.62);
+      stillAt = at + 1.75;
+      at += 2.3;
+    } else {
+      const k = Math.min(.82, 262 / (s.W - 36)), ly = lines[kept++];
+      tl.to(sc, { x:352, y:110, rotation:-14, duration:.5, ease:'power2.inOut' }, at + .6)
+        .to(pA, { rotation:12, duration:.4 }, at + .6).to(pB, { rotation:-12, duration:.4 }, at + .6)
+        .to(sc, { rotation:-22, duration:.16, yoyo:true, repeat:1, ease:'sine.inOut' }, at + 1.1)
+        .to(s.outline, { attr:{ 'stroke-dashoffset':0 }, duration:.55, ease:'power1.inOut' }, at + 1.0)
+        .to(s.stickerIn, { scale:1, duration:.4, ease:'back.out(3)' }, at + 1.35)
+        .to(sc, { ...REST, duration:.55, ease:'power2.inOut' }, at + 1.5)
+        .to(pA, { rotation:6, duration:.4 }, at + 1.5).to(pB, { rotation:-6, duration:.4 }, at + 1.5)
+        .to(s.g, { x:CXc - 150 + 18 - 18 * k + s.W * k / 2, y:CYc + ly - 6.5 * k, scale:k, duration:.85, ease:'power3.inOut' }, at + 1.75)
+        .to([...s.rects, s.outline, s.stickerIn], { opacity:0, duration:.5 }, at + 2.1);
+      at += 2.6;
+    }
+  });
+  G.set(stampIn, { scale:0, rotation:-30, transformOrigin:'50% 50%' });
+  tl.to(stampIn, { scale:1, rotation:-12, duration:.5, ease:'back.out(2.5)' }, at)
+    .to([...strips.filter(s => s.kind === 'keep').map(s => s.g), stampIn], { opacity:0, duration:.6 }, at + 2.4)
+    .to({}, { duration:.4 }, at + 3);
+  return gctrl(tl, [], null, stillAt);
+}
+
+/* ======================================================================
+   4D — drawn by hand (CSS 3D sheet, SVG ink)
+   ====================================================================== */
+function initD(){
+  const slot = $('#slot-d'), svg = $('#art-d'), over = $('#over-d'), probe = $('#probe-d'), sheet = $('#sheet-d'), plane = $('#plane-d');
+  if (!svg || !G) return null;
+  svg.innerHTML = `<defs>
+    <pattern id="d-dots" width="20" height="20" patternUnits="userSpaceOnUse"><circle cx="10" cy="10" r=".9" fill="#B9AC95"/></pattern>
+    <filter id="d-rough" x="-5%" y="-5%" width="110%" height="110%"><feTurbulence type="fractalNoise" baseFrequency=".035" numOctaves="2" seed="4" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="2.6" xChannelSelector="R" yChannelSelector="G"/></filter>
+  </defs>`;
+  const defs = svg.querySelector('defs');
+  S('rect', { width:400, height:300, fill:'url(#d-dots)', opacity:.55 }, svg);
+  const draw = S('g', { filter:'url(#d-rough)' }, svg);
+  const R = rng(23), j = () => (R() - .5) * 2.2;
+  const rrect = (x, y, w, h) => `M${x+j()} ${y+j()}Q${x+w/2+j()} ${y-1.5+j()} ${x+w+1.5} ${y+j()}Q${x+w+1.5+j()} ${y+h/2+j()} ${x+w+j()} ${y+h+1}Q${x+w/2+j()} ${y+h+1.5+j()} ${x-1} ${y+h+j()}Q${x-1.5+j()} ${y+h/2+j()} ${x+3} ${y-2.5}`;
+  const rline = (x1, y1, x2, y2) => `M${x1+j()} ${y1+j()}Q${(x1+x2)/2+j()*1.4} ${(y1+y2)/2+j()*1.4} ${x2+j()*.6} ${y2+j()*.6}`;
+  const rell = (cx, cy, rx, ry) => { let d = ''; const n = 36; for (let i = 0; i <= n + 4; i++){ const a = -Math.PI * .6 + i / n * Math.PI * 2, k = 1 + (R() - .5) * .04; d += (i ? 'L' : 'M') + (cx + Math.cos(a) * rx * k).toFixed(1) + ' ' + (cy + Math.sin(a) * ry * k).toFixed(1); } return d; };
+  const head = (x, y, ang) => { const a = ang * Math.PI / 180, l = 9; return `M${x - l*Math.cos(a - .45)} ${y - l*Math.sin(a - .45)}L${x} ${y}L${x - l*Math.cos(a + .45)} ${y - l*Math.sin(a + .45)}`; };
+  const INK = '#262863', TEAL = '#2F8C86', ROSE = '#C45E77';
+  const items = [];
+  const P_ = (d, c = INK, w = 2.4) => items.push({ type:'path', d, c, w });
+  const L_ = (text, x, y, s = 20, a = 'start', c = INK) => items.push({ type:'label', text, x, y, s, a, c });
+  L_('how a model reads', 22, 40, 28); P_(rline(22, 50, 204, 47), INK, 2);
+  P_(rrect(14, 104, 110, 58)); L_('unbelievable', 69, 140, 21, 'middle');
+  P_(rline(128, 133, 153, 133)); P_(head(155, 133, 0));
+  P_(rrect(160, 119, 26, 28)); L_('un', 173, 139, 17, 'middle');
+  P_(rrect(190, 119, 46, 28)); L_('believ', 213, 139, 17, 'middle');
+  P_(rrect(240, 119, 38, 28)); L_('able', 259, 139, 17, 'middle');
+  P_(rline(282, 133, 305, 133)); P_(head(307, 133, 0));
+  P_(rell(346, 133, 36, 28)); L_('model', 346, 140, 21, 'middle');
+  P_('M346 165Q352 190 345 213'); P_(head(345, 215, 92));
+  P_(rrect(290, 219, 100, 42)); L_('next piece', 340, 246, 20, 'middle');
+  L_('one piece at a time', 26, 252, 21, 'start', TEAL);
+  P_('M150 236C176 226 196 196 206 158', TEAL, 1.8); P_(head(206, 156, -75), TEAL, 1.8);
+  P_('M372 292C362 284 357 276 363 271C367 268 372 271 372 276C372 271 377 268 381 271C387 276 382 284 372 292', ROSE, 2);
+  items.forEach((it, i) => {
+    if (it.type === 'path'){
+      it.el = S('path', { d:it.d, fill:'none', stroke:it.c, 'stroke-width':it.w, 'stroke-linecap':'round', 'stroke-linejoin':'round' }, draw);
+      it.len = it.el.getTotalLength(); it.el.setAttribute('stroke-dasharray', `${it.len} ${it.len + 4}`);
+      it.dur = Math.min(1.1, Math.max(.26, it.len / 190));
+      it.at = v => it.el.getPointAtLength(it.len * v);
+    } else {
+      const cp = S('clipPath', { id:'d-c' + i }, defs); it.cr = S('rect', { width:0 }, cp);
+      it.el = T('text', { x:it.x, y:it.y, 'text-anchor':it.a, 'font-family':'Caveat, cursive', 'font-size':it.s, 'font-weight':600, fill:it.c, 'clip-path':`url(#d-c${i})` }, it.text, draw);
+      const b = it.b = it.el.getBBox();
+      it.cr.setAttribute('x', b.x - 3); it.cr.setAttribute('y', b.y - 4); it.cr.setAttribute('height', b.height + 8);
+      it.dur = Math.max(.35, b.width / 115);
+      it.at = v => ({ x:b.x + b.width * v, y:b.y + b.height * .72 + Math.sin(v * 38) * 2.2 });
+    }
+    it.v = 0;
+  });
+  function paint(){ items.forEach(it => { if (it.type === 'path') it.el.setAttribute('stroke-dashoffset', it.len * (1 - it.v)); else it.cr.setAttribute('width', (it.b.width + 6) * it.v); }); }
+
+  /* the desk: crumpled drafts and the pen, drawn flat over the 3D sheet */
+  over.innerHTML = `<defs>
+    <filter id="d-blur" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="6"/></filter>
+    <linearGradient id="d-barrel" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5A5CB0"/><stop offset=".4" stop-color="#282864"/><stop offset="1" stop-color="#121332"/></linearGradient>
+    <linearGradient id="d-gold" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F4DCAE"/><stop offset=".5" stop-color="#C8A078"/><stop offset="1" stop-color="#8A6640"/></linearGradient>
+    <radialGradient id="d-ball" cx="35%" cy="30%" r="80%"><stop offset="0" stop-color="#F7EFE1"/><stop offset=".65" stop-color="#D8CBB3"/><stop offset="1" stop-color="#A3957B"/></radialGradient>
+  </defs>`;
+  function crumple(cx, cy, r, seed){
+    const Rc = rng(seed), g = S('g', {}, over);
+    S('ellipse', { cx:cx + 8, cy:cy + r * .82, rx:r * 1.05, ry:r * .32, fill:'#000', opacity:.5, filter:'url(#d-blur)' }, g);
+    const pts = []; for (let i = 0; i < 16; i++){ const a = i / 16 * Math.PI * 2, k = .84 + Rc() * .22; pts.push([cx + Math.cos(a) * r * k, cy + Math.sin(a) * r * k]); }
+    const d = 'M' + pts.map(p => p.map(v => v.toFixed(1)).join(' ')).join('L') + 'Z';
+    const id = 'd-cr' + seed; S('path', { d }, S('clipPath', { id }, over.querySelector('defs')));
+    S('path', { d, fill:'url(#d-ball)', stroke:'#8F8169', 'stroke-width':1.2, 'stroke-linejoin':'round' }, g);
+    const inner = S('g', { 'clip-path':`url(#${id})` }, g);
+    for (let i = 0; i < 8; i++){ const a = pts[Math.floor(Rc() * 16)], b = pts[Math.floor(Rc() * 16)], c = [cx + (Rc() - .5) * r * .8, cy + (Rc() - .5) * r * .8];
+      S('path', { d:`M${a}L${c}L${b}`, fill:Rc() < .5 ? '#C4B59A' : '#F1E8D8', opacity:.6, stroke:'#A39479', 'stroke-width':.8 }, inner); }
+    S('path', { d:`M${cx - r*.55} ${cy - r*.05}l${r*.62} ${-r*.2}M${cx - r*.5} ${cy + r*.12}l${r*.5} ${-r*.16}M${cx - r*.42} ${cy + r*.29}l${r*.36} ${-r*.12}`, fill:'none', stroke:'#262863', 'stroke-width':1.3, 'stroke-linecap':'round', opacity:.45 }, inner);
+  }
+  crumple(516, 500, 40, 31); crumple(84, 516, 29, 47); crumple(98, 96, 22, 59);
+  const penShadow = S('g', { opacity:.4 }, over);
+  S('line', { x1:6, y1:0, x2:206, y2:0, stroke:'#000', 'stroke-width':15, 'stroke-linecap':'round', filter:'url(#d-blur)', transform:'rotate(-58)' }, penShadow);
+  const pen = S('g', {}, over), pr = S('g', { transform:'rotate(-58)' }, pen), penSh = penShadow.firstChild;
+  S('path', { d:'M0 0L20 -5.5Q27 -6.6 31 -6.2L31 6.2Q27 6.6 20 5.5Z', fill:'url(#d-gold)', stroke:'#6E5232', 'stroke-width':.9 }, pr);
+  S('path', { d:'M2 0L21 0', stroke:'#5A3F22', 'stroke-width':.9 }, pr);
+  S('circle', { cx:21, cy:0, r:1.4, fill:'#5A3F22' }, pr);
+  S('path', { d:'M31 -6.6L52 -8.2L52 8.2L31 6.6Z', fill:'#17182E' }, pr);
+  S('rect', { x:52, y:-9.6, width:4.5, height:19.2, fill:'url(#d-gold)' }, pr);
+  S('rect', { x:56, y:-9.6, width:122, height:19.2, rx:4, fill:'url(#d-barrel)' }, pr);
+  S('rect', { x:150, y:-9.6, width:6, height:19.2, fill:'url(#d-gold)' }, pr);
+  S('rect', { x:176, y:-9.6, width:34, height:19.2, rx:8, fill:'#1C1D4A' }, pr);
+  S('path', { d:'M158 -12L204 -12', style:'stroke:var(--gold)', 'stroke-width':3, 'stroke-linecap':'round' }, pr);
+  S('circle', { cx:160, cy:-12, r:3, style:'fill:var(--gold-lift)' }, pr);
+  S('line', { x1:60, y1:-5, x2:172, y2:-5, stroke:'#fff', 'stroke-width':1.5, opacity:.22, 'stroke-linecap':'round' }, pr);
+
+  const P = { x:440, y:-60, lift:1 };
+  function place(){
+    probe.style.left = (P.x / 4) + '%'; probe.style.top = (P.y / 3) + '%';
+    const r = probe.getBoundingClientRect(), s = slot.getBoundingClientRect();
+    if (!s.width) return;
+    const ox = (r.left + r.width / 2 - s.left) / s.width * 600, oy = (r.top + r.height / 2 - s.top) / s.height * 600;
+    // the wrist turns the pen upright as the nib moves right, so the pen stays on the desk
+    const ang = -58 - Math.max(-.6, Math.min(1, (ox - 250) / 250)) * 24;
+    pen.setAttribute('transform', `translate(${ox} ${oy - P.lift * 16}) scale(.92)`); pr.setAttribute('transform', `rotate(${ang})`);
+    penShadow.setAttribute('transform', `translate(${ox + 10 + P.lift * 18} ${oy + 8 + P.lift * 12}) scale(.92)`); penSh.setAttribute('transform', `rotate(${ang})`);
+  }
+  function render(){ paint(); place(); }
+
+  const tl = G.timeline({ paused:true, repeat:-1 });
+  tl.set(items, { v:0 }, 0).set(P, { x:440, y:-60, lift:1 }, 0);
+  let at = .4;
+  items.forEach(it => {
+    const s0 = it.at(0);
+    tl.to(P, { x:s0.x, y:s0.y, duration:.34, ease:'power2.inOut' }, at)
+      .to(P, { lift:1, duration:.12, ease:'power1.out' }, at)
+      .to(P, { lift:0, duration:.12, ease:'power1.in' }, at + .22);
+    at += .36;
+    tl.to(it, { v:1, duration:it.dur, ease:it.type === 'label' ? 'none' : 'power1.inOut', onUpdate:() => { const p = it.at(it.v); P.x = p.x; P.y = p.y; } }, at);
+    at += it.dur + .06;
+  });
+  const stillAt = at - .25;
+  tl.to(P, { x:440, y:-60, lift:1, duration:.6, ease:'power2.inOut' }, at + .3)
+    .to(sheet, { xPercent:118, yPercent:-14, rotation:16, duration:.9, ease:'power2.in' }, at + 2.2)
+    .set(items, { v:0 }, at + 3.15)
+    .set(sheet, { xPercent:0, yPercent:8, rotation:0, opacity:0 }, at + 3.15)
+    .to(sheet, { yPercent:0, opacity:1, duration:.6, ease:'power2.out' }, at + 3.2);
+  if (window.ScrollTrigger && !STILL){
+    G.fromTo(plane, { rotationX:60 }, { rotationX:36, ease:'none', scrollTrigger:{ trigger:'#o4d', start:'top bottom', end:'bottom top', scrub:1.2 } });
+  } else G.set(plane, { rotationX:46 });
+  const c = gctrl(tl, [], render, stillAt);
+  const still = c.still; c.still = () => { still(); requestAnimationFrame(render); };
+  return c;
+}
+
+/* ======================================================================
+   4E — brainrot
+   ====================================================================== */
+function initE(){
+  const svg = $('#art-e'); if (!svg || !G) return null;
+  svg.innerHTML = `<defs>
+    <radialGradient id="e-warm" cx="25%" cy="76%" r="45%"><stop offset="0" style="stop-color:var(--rose);stop-opacity:.22"/><stop offset=".6" style="stop-color:var(--gold);stop-opacity:.06"/><stop offset="1" style="stop-color:var(--gold);stop-opacity:0"/></radialGradient>
+    <radialGradient id="e-cool" cx="75%" cy="76%" r="42%"><stop offset="0" style="stop-color:var(--teal-lift);stop-opacity:.13"/><stop offset="1" style="stop-color:var(--teal-lift);stop-opacity:0"/></radialGradient>
+    <radialGradient id="e-phone" cx="50%" cy="50%" r="50%"><stop offset="0" style="stop-color:var(--gold-lift);stop-opacity:.22"/><stop offset="1" style="stop-color:var(--gold-lift);stop-opacity:0"/></radialGradient>
+    <clipPath id="e-screen"><rect x="0" y="0" width="210" height="246" rx="10"/></clipPath>
+    <clipPath id="e-scroll"><rect id="e-scrollc" x="258" y="300" width="84" height="0"/></clipPath>
+    <filter id="e-glow" x="-50%" y="-100%" width="200%" height="300%"><feGaussianBlur stdDeviation="2.2" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+  </defs>`;
+  S('rect', { width:600, height:600, fill:'url(#e-warm)' }, svg);
+  S('rect', { width:600, height:600, fill:'url(#e-cool)' }, svg);
+  S('ellipse', { cx:300, cy:190, rx:200, ry:180, fill:'url(#e-phone)' }, svg);
+  // doodles that only the human side gets
+  const doodles = S('g', { opacity:.75 }, svg), dl = [];
+  const spark = 'M0 -9C1 -2 2 -1 9 0C2 1 1 2 0 9C-1 2 -2 1 -9 0C-2 -1 -1 -2 0 -9Z';
+  [[60, 330, 'spark', '--gold-lift'], [222, 350, 'spark', '--rose'], [40, 420, 'spiral', '--sand'], [250, 430, 'heart', '--rose'], [56, 276, 'lol', '--gold-lift'], [30, 210, 'spark', '--rose'], [22, 532, 'spiral', '--gold-lift']].forEach(([x, y, k, c]) => {
+    const g = S('g', { transform:`translate(${x} ${y})` }, doodles), gi = S('g', {}, g);
+    if (k === 'spark') S('path', { d:spark, style:`fill:var(${c})` }, gi);
+    if (k === 'heart') S('path', { d:heartD(.8), style:`fill:var(${c})` }, gi);
+    if (k === 'spiral') S('path', { d:'M0 0a2 2 0 0 1 4 0a5 5 0 0 1 -9 1a8 8 0 0 1 14 -3a11 11 0 0 1 -18 7', fill:'none', style:`stroke:var(${c})`, 'stroke-width':1.8, 'stroke-linecap':'round' }, gi);
+    if (k === 'lol') T('text', { 'font-family':'Caveat, cursive', 'font-size':24, 'font-weight':700, style:`fill:var(${c})`, 'text-anchor':'middle', transform:'rotate(-12)' }, 'lol', gi);
+    dl.push(gi);
+  });
+
+  /* the phone and its feed */
+  S('rect', { x:181, y:44, width:238, height:282, rx:26, fill:'#18192E', stroke:'rgba(230,218,198,.4)', 'stroke-width':1.5 }, svg);
+  S('rect', { x:186, y:49, width:228, height:272, rx:22, fill:'none', stroke:'rgba(0,0,0,.5)', 'stroke-width':2 }, svg);
+  S('rect', { x:276, y:53, width:48, height:8, rx:4, fill:'#0B0C1A' }, svg);
+  const screen = S('g', { transform:'translate(195 66)' }, svg);
+  S('rect', { width:210, height:246, rx:10, fill:'#F4EBDC' }, screen);
+  const feed = S('g', { 'clip-path':'url(#e-screen)' }, screen);
+  const cap = (g, lines, y0, size) => lines.forEach((l, i) => T('text', { x:105, y:y0 + i * 21, 'text-anchor':'middle', class:'memecap', style:size ? `font-size:${size}px` : '' }, l, g));
+  const ink = '#2A2740';
+  // meme 1: one quick question, and the answer that never ends
+  const m1 = S('g', {}, feed);
+  S('rect', { width:210, height:246, fill:'#EDE3D1' }, m1);
+  cap(m1, ['me: one quick', 'question'], 30);
+  S('circle', { cx:92, cy:122, r:20, fill:'#F2CE9A', stroke:ink, 'stroke-width':2.2 }, m1);
+  S('path', { d:'M84 118h.1M100 118h.1', stroke:ink, 'stroke-width':4, 'stroke-linecap':'round' }, m1);
+  S('path', { d:'M86 130q6 4 12 0', fill:'none', stroke:ink, 'stroke-width':2, 'stroke-linecap':'round' }, m1);
+  S('path', { d:'M70 168q22 -26 44 0', fill:'#7A4A86', stroke:ink, 'stroke-width':2.2 }, m1);
+  S('path', { d:'M122 92a18 15 0 1 1 6 26l-8 6l1 -9a18 15 0 0 1 1 -23Z', fill:'#fff', stroke:ink, 'stroke-width':2 }, m1);
+  T('text', { x:135, y:113, 'text-anchor':'middle', 'font-family':'Caveat, cursive', 'font-size':26, 'font-weight':700, fill:ink }, '?', m1);
+  cap(m1, ['the AI:'], 206);
+  // meme 2: attention is all you need
+  const m2 = S('g', {}, feed);
+  S('rect', { width:210, height:246, fill:'#E4EFEC' }, m2);
+  cap(m2, ['attention is', 'all you need'], 30);
+  cap(m2, ['my attention span:'], 86, 14);
+  S('path', { d:'M66 120A44 44 0 1 0 144 120', fill:'rgba(63,163,156,.22)', stroke:ink, 'stroke-width':2.2 }, m2);
+  S('path', { d:'M63 128Q105 122 147 128', fill:'none', stroke:'#3FA39C', 'stroke-width':1.6 }, m2);
+  S('path', { d:'M62 116Q105 112 148 116', fill:'none', stroke:ink, 'stroke-width':2.6, 'stroke-linecap':'round' }, m2);
+  const fish = S('g', { transform:'translate(105 160)' }, m2), fishIn = S('g', {}, fish);
+  S('path', { d:'M14 0C10 -12 -10 -12 -16 0C-10 12 10 12 14 0Z', fill:'#E0A45C', stroke:'#8A5A2A', 'stroke-width':1.6 }, fishIn);
+  S('path', { d:'M-15 0L-28 -10L-25 0L-28 10Z', fill:'#D98E4A', stroke:'#8A5A2A', 'stroke-width':1.4, 'stroke-linejoin':'round' }, fishIn);
+  S('circle', { cx:7, cy:-3, r:2.4, fill:ink }, fishIn);
+  S('path', { d:'M-2 -9q4 5 0 10', fill:'none', stroke:'#8A5A2A', 'stroke-width':1 }, fishIn);
+  const bubs = [0, 1, 2].map(i => S('circle', { cx:122, cy:150, r:2.2 + i * .6, fill:'none', stroke:'#3FA39C', 'stroke-width':1.2 }, m2));
+  // meme 3: the diagram finally clicks
+  const m3 = S('g', {}, feed);
+  S('rect', { width:210, height:246, fill:'#EAE4F2' }, m3);
+  cap(m3, ['when the diagram', 'finally clicks'], 30);
+  S('circle', { cx:105, cy:138, r:40, fill:'#F2CE9A', stroke:ink, 'stroke-width':2.2 }, m3);
+  S('path', { d:'M86 156Q105 172 124 156', fill:'none', stroke:ink, 'stroke-width':2.6, 'stroke-linecap':'round' }, m3);
+  S('path', { d:'M80 112q8 -8 16 -2M114 110q8 -6 16 2', fill:'none', stroke:ink, 'stroke-width':2.2, 'stroke-linecap':'round' }, m3);
+  const glasses = S('g', {}, m3);
+  [[68, 124, 74, 6], [74, 130, 28, 12], [78, 142, 20, 5], [108, 130, 28, 12], [112, 142, 20, 5]].forEach(([x, y, w, h]) => S('rect', { x, y, width:w, height:h, fill:'#141221' }, glasses));
+  [[79, 132], [113, 132]].forEach(([x, y]) => S('rect', { x, y, width:5, height:5, fill:'#fff' }, glasses));
+  const aura = S('g', {}, m3); cap(aura, ['aura +1000'], 214);
+
+  /* the scroll that the AI's answer unrolls out of the phone */
+  const scroll = S('g', { opacity:0 }, svg);
+  const scIn = S('g', { 'clip-path':'url(#e-scroll)' }, scroll);
+  S('rect', { x:266, y:296, width:68, height:290, fill:'#F1E6D2', stroke:'#B8A88C', 'stroke-width':1.2 }, scIn);
+  T('text', { x:272, y:314, 'font-family':'Fraunces, Georgia, serif', 'font-size':10.5, 'font-style':'italic', fill:ink }, 'Certainly.', scIn);
+  const Rl = rng(2);
+  for (let y = 324; y < 580; y += 9){ if (y === 441 || y === 450) continue; S('rect', { x:272, y, width:40 + Rl() * 16, height:3, rx:1.5, fill:'#9A8D78' }, scIn); }
+  T('text', { x:300, y:452, 'text-anchor':'middle', 'font-family':'Fraunces, Georgia, serif', 'font-size':9, fill:'#7A4A86' }, 'part 1 of 40', scIn);
+  const roll = S('rect', { x:260, y:294, width:80, height:14, rx:7, fill:'#E2D4BA', stroke:'#8F8169', 'stroke-width':1.2 }, scroll);
+  const scClip = svg.querySelector('#e-scrollc');
+
+  /* the reader */
+  const hum = S('g', {}, svg), humB = S('g', {}, hum);
+  const SK = '#C98F62', SKS = '#AA7448', OL = '#5A3A28', HAIR = '#231815';
+  S('path', { d:'M44 600C46 540 78 508 150 502C222 508 254 540 256 600Z', fill:'#2F8C86', stroke:'#1D5753', 'stroke-width':2 }, humB);
+  S('path', { d:'M98 512C108 486 192 486 202 512C188 528 112 528 98 512Z', fill:'#24706B', stroke:'#1D5753', 'stroke-width':1.5 }, humB);
+  S('path', { d:'M136 482L136 508Q150 516 164 508L164 482Z', fill:SKS }, humB);
+  S('path', { d:'M140 522L136 566M160 522L164 566', stroke:'#F2EADB', 'stroke-width':2.4, 'stroke-linecap':'round' }, humB);
+  S('path', { d:'M100 590Q150 576 200 590', fill:'none', stroke:'#1D5753', 'stroke-width':1.6, opacity:.7 }, humB);
+  const hh = S('g', {}, humB);
+  [[104, 452], [196, 452]].forEach(([x, y]) => S('ellipse', { cx:x, cy:y, rx:7.5, ry:10, fill:SK, stroke:OL, 'stroke-width':1.8 }, hh));
+  S('circle', { cx:150, cy:448, r:46, fill:SK, stroke:OL, 'stroke-width':2 }, hh);
+  for (let i = 0; i <= 10; i++){ const a = Math.PI * (1.08 + i * .084); S('circle', { cx:150 + Math.cos(a) * 41, cy:440 + Math.sin(a) * 40, r:14, fill:HAIR }, hh); }
+  [[150, 404, 22], [128, 410, 17], [172, 410, 17]].forEach(([x, y, r]) => S('circle', { cx:x, cy:y, r, fill:HAIR }, hh));
+  const cheeks = [[122, 464], [178, 464]].map(([x, y]) => S('ellipse', { cx:x, cy:y, rx:9, ry:6, style:'fill:var(--rose)', opacity:.3 }, hh));
+  const eyesN = S('g', {}, hh);
+  [[134, 444], [166, 444]].forEach(([x, y]) => { S('ellipse', { cx:x, cy:y, rx:4.4, ry:5.4, fill:HAIR }, eyesN); S('circle', { cx:x + 1.4, cy:y - 2, r:1.4, fill:'#fff' }, eyesN); });
+  const eyesL = S('path', { d:'M125 447Q134 436 143 447M157 447Q166 436 175 447', fill:'none', stroke:HAIR, 'stroke-width':3.2, 'stroke-linecap':'round', opacity:0 }, hh);
+  const brows = S('path', { d:'M125 431Q134 425 143 430M157 430Q166 425 175 431', fill:'none', stroke:HAIR, 'stroke-width':3, 'stroke-linecap':'round' }, hh);
+  S('path', { d:'M150 450Q145 460 152 462', fill:'none', stroke:'#8F5A3A', 'stroke-width':2, 'stroke-linecap':'round' }, hh);
+  const mouthN = S('path', { d:'M139 472Q150 479 161 472', fill:'none', stroke:'#7A2F36', 'stroke-width':2.6, 'stroke-linecap':'round' }, hh);
+  const mouthL = S('g', { opacity:0 }, hh);
+  S('path', { d:'M131 466Q150 469 169 466Q167 495 150 496Q133 495 131 466Z', fill:'#4A1A26', stroke:'#5A2A20', 'stroke-width':1.5 }, mouthL);
+  S('path', { d:'M134 467Q150 470 166 467L165 473Q150 476 135 473Z', fill:'#fff' }, mouthL);
+  S('ellipse', { cx:150, cy:488, rx:9, ry:5, style:'fill:var(--rose)' }, mouthL);
+  const tear = S('path', { d:'M116 446Q110 456 116 460Q122 456 116 446Z', style:'fill:var(--teal-lift)', opacity:0 }, hh);
+  const has = ['ha', 'ha', 'HA'].map((t, i) => T('text', { x:166, y:408, 'font-family':'Caveat, cursive', 'font-size':26 + i * 5, 'font-weight':700, style:'fill:var(--rose)', opacity:0 }, t, svg));
+
+  /* Bit, the robot in the fez */
+  const STEEL = '#AEB2C8', STEEL_D = '#8E8A9E', IRON = '#25233F', GLOW = '#8FE3DA';
+  const rob = S('g', {}, svg);
+  S('path', { d:'M356 600C358 556 388 534 450 530C512 534 542 556 544 600Z', fill:STEEL, stroke:'#6E737F', 'stroke-width':2 }, rob);
+  S('path', { d:'M400 548L500 600L476 600L392 556Z', fill:'#2F8C86' }, rob);
+  S('rect', { x:418, y:560, width:64, height:30, rx:6, fill:IRON }, rob);
+  [['#A0503C', 434], ['#B8873B', 450], ['#2F8C86', 466]].forEach(([c, x]) => S('circle', { cx:x, cy:575, r:4, fill:c }, rob));
+  S('rect', { x:434, y:494, width:32, height:40, rx:4, fill:STEEL_D }, rob);
+  S('path', { d:'M438 506h24M438 516h24M438 526h24', stroke:'#00000030', 'stroke-width':3, 'stroke-linecap':'round' }, rob);
+  const rh = S('g', {}, rob);
+  S('rect', { x:378, y:432, width:16, height:38, rx:6, fill:'#B8873B' }, rh);
+  S('rect', { x:506, y:432, width:16, height:38, rx:6, fill:'#B8873B' }, rh);
+  S('rect', { x:388, y:398, width:124, height:104, rx:26, fill:STEEL, stroke:'#6E737F', 'stroke-width':2 }, rh);
+  S('rect', { x:388, y:466, width:124, height:36, rx:22, fill:'#00000012' }, rh);
+  S('rect', { x:402, y:412, width:96, height:72, rx:16, fill:IRON }, rh);
+  const reyes = S('g', { filter:'url(#e-glow)' }, rh);
+  S('rect', { x:420, y:440, width:20, height:5, rx:2.5, fill:GLOW }, reyes);
+  S('rect', { x:460, y:440, width:20, height:5, rx:2.5, fill:GLOW }, reyes);
+  const rmouth = S('rect', { x:436, y:464, width:28, height:3.6, rx:1.8, fill:GLOW, filter:'url(#e-glow)' }, rh);
+  const dots = [436, 450, 464].map(x => S('circle', { cx:x, cy:466, r:2.8, fill:GLOW, opacity:0 }, rh));
+  S('path', { d:'M414 402L422 358Q450 352 478 358L486 402Q450 409 414 402Z', fill:'#A0503C', stroke:'#7A3A2C', 'stroke-width':1.6 }, rh);
+  S('ellipse', { cx:450, cy:357, rx:28, ry:6, fill:'#B9694F' }, rh);
+  S('path', { d:'M476 360Q494 370 492 394', fill:'none', stroke:IRON, 'stroke-width':2.2 }, rh);
+  S('path', { d:'M488 392l4 14l4 -14Z', fill:IRON }, rh);
+  const qm = T('text', { x:528, y:396, 'font-family':'Fraunces, Georgia, serif', 'font-size':44, 'font-weight':700, fill:GLOW, opacity:0 }, '?', svg);
+  const bub = S('g', { opacity:0 }, svg);
+  S('rect', { x:422, y:312, width:166, height:42, rx:10, fill:'#14153A', stroke:'rgba(143,227,218,.5)', 'stroke-width':1.2 }, bub);
+  S('path', { d:'M446 354L458 354L448 368Z', fill:'#14153A', stroke:'rgba(143,227,218,.5)', 'stroke-width':1.2, 'stroke-linejoin':'round' }, bub);
+  S('rect', { x:447, y:350, width:10, height:5, fill:'#14153A' }, bub);
+  const btxt = T('text', { x:436, y:338, 'font-family':'ui-monospace, SF Mono, Menlo, Consolas, monospace', 'font-size':12.5, fill:GLOW }, '', bub);
+
+  G.set(rh, { svgOrigin:'450 500' }); G.set(fishIn, { svgOrigin:'0 0' }); G.set(humB, { svgOrigin:'150 600' });
+  G.set(aura, { svgOrigin:'105 208' }); G.set(cheeks, { transformOrigin:'50% 50%' });
+  const loops = [
+    G.fromTo(fish, { x:118, y:160 }, { x:92, duration:1.6, ease:'sine.inOut', yoyo:true, repeat:-1, paused:true }),
+    G.to(fishIn, { scaleX:-1, duration:.18, repeat:-1, repeatDelay:1.42, yoyo:true, paused:true }),
+    ...bubs.map((b, i) => G.fromTo(b, { attr:{ cy:150 }, opacity:1 }, { attr:{ cy:122 }, opacity:0, duration:1.6, repeat:-1, delay:i * .5, ease:'sine.out', paused:true })),
+    ...dl.map((d, i) => G.to(d, { y:-8 - (i % 3) * 3, rotation:(i % 2 ? 14 : -14), duration:2.2 + (i % 3) * .6, yoyo:true, repeat:-1, ease:'sine.inOut', paused:true, transformOrigin:'50% 50%' }))
+  ];
+  const memes = [m1, m2, m3];
+  const READ = ['parsing joke... 0%', 'humour.exe not found', 'aura: undefined'];
+  const tl = G.timeline({ paused:true, repeat:-1 });
+  tl.set(m1, { y:0 }, 0).set([m2, m3], { y:246 }, 0).set(glasses, { y:-120 }, 0).set(aura, { scale:0 }, 0);
+  memes.forEach((m, i) => {
+    const b = i * 5;
+    if (i > 0){ tl.to(memes[i - 1], { y:-246, duration:.6, ease:'power3.inOut' }, b).to(m, { y:0, duration:.6, ease:'power3.inOut' }, b); }
+    if (i === 0){
+      tl.set(scroll, { opacity:1 }, b + .5)
+        .fromTo(scClip, { attr:{ height:0 } }, { attr:{ height:290 }, duration:1.8, ease:'power1.inOut', immediateRender:false }, b + .5)
+        .fromTo(roll, { y:0 }, { y:282, duration:1.8, ease:'power1.inOut', immediateRender:false }, b + .5)
+        .to(scroll, { opacity:0, duration:.4 }, b + 4.4);
+    }
+    if (i === 2){
+      tl.to(glasses, { y:0, duration:.9, ease:'bounce.out' }, b + .6)
+        .to(aura, { scale:1, duration:.45, ease:'back.out(3)' }, b + 1.5)
+        .to(glasses, { y:-120, duration:.01 }, b + 4.99).to(aura, { scale:0, duration:.01 }, b + 4.99);
+    }
+    const L = b + (i === 0 ? 1.9 : 1.3);
+    tl.to(eyesN, { opacity:0, duration:.1 }, L).to(eyesL, { opacity:1, duration:.1 }, L)
+      .to(mouthN, { opacity:0, duration:.1 }, L).to(mouthL, { opacity:1, duration:.12 }, L)
+      .to(brows, { y:-4, duration:.2 }, L).to(cheeks, { scale:1.35, opacity:.55, duration:.3 }, L)
+      .to(tear, { opacity:1, duration:.3 }, L + .5)
+      .to(humB, { y:-7, rotation:-1.5, duration:.11, yoyo:true, repeat:13, ease:'sine.inOut' }, L)
+      .to([eyesL, mouthL, tear], { opacity:0, duration:.2 }, b + 4.2).to([eyesN, mouthN], { opacity:1, duration:.2 }, b + 4.2)
+      .to(brows, { y:0, duration:.3 }, b + 4.2).to(cheeks, { scale:1, opacity:.3, duration:.3 }, b + 4.2);
+    has.forEach((h, k) => tl.fromTo(h, { x:k * 14, y:k * -6, opacity:0 }, { keyframes:[{ x:k * 12 - 8, y:-26 - k * 10, opacity:1, duration:.3 }, { x:k * 10 - 66, y:-80 - k * 14, opacity:0, duration:1.1 }], immediateRender:false }, L + .1 + k * .28));
+    const n = { v:0 };
+    tl.to(rh, { rotation:9, duration:.5, ease:'power2.inOut' }, b + 1.2)
+      .to(rmouth, { opacity:0, duration:.1 }, b + 1.2)
+      .to(dots, { opacity:1, duration:.18, stagger:.14, yoyo:true, repeat:3 }, b + 1.25)
+      .to(bub, { opacity:1, duration:.25 }, b + 2.1)
+      .fromTo(n, { v:0 }, { v:READ[i].length, duration:.9, ease:'none', immediateRender:false, onUpdate:() => { btxt.textContent = READ[i].slice(0, Math.round(n.v)); } }, b + 2.2)
+      .to(qm, { opacity:1, duration:.3 }, b + 2.7)
+      .to(rh, { rotation:0, duration:.5, ease:'power2.inOut' }, b + 4.0)
+      .to(rmouth, { opacity:.85, duration:.2 }, b + 4.1)
+      .to([bub, qm], { opacity:0, duration:.3 }, b + 4.3);
+  });
+  tl.to(m3, { y:-246, duration:.6, ease:'power3.inOut' }, 14.4).fromTo(m1, { y:246 }, { y:0, duration:.6, ease:'power3.inOut', immediateRender:false }, 14.4);
+  return gctrl(tl, loops, null, 3.6);
+}
+
+/* ======================================================================
+   The page: text reveals, the heavy scroll, and who plays when
+   ====================================================================== */
+function revealText(sec){
+  const h = sec.querySelector('.copy h3'), p = sec.querySelector('.copy p'), k = sec.querySelector('.kicker');
+  h.innerHTML = h.textContent.split(' ').map(w => `<span class="w"><span>${w}</span></span>`).join(' ');
+  p.innerHTML = p.textContent.split(/(?<=\.)\s+/).map(s => `<span class="s">${s}</span>`).join(' ');
+  if (STILL || !G || !window.ScrollTrigger) return null;
+  const tl = G.timeline({ paused:true });
+  tl.from(k, { opacity:0, x:-24, duration:1.1, ease:'power3.out' })
+    .from(h.querySelectorAll('.w > span'), { yPercent:115, duration:1.4, ease:'power4.out', stagger:.07 }, .1)
+    .from(p.querySelectorAll('.s'), { opacity:0, y:24, filter:'blur(6px)', duration:1.5, ease:'power3.out', stagger:.17 }, .55);
+  ScrollTrigger.create({ trigger:sec.querySelector('.stall'), start:'top 72%', once:true, onEnter:() => tl.play() });
+  return tl;
+}
+function heavy(sec){
+  if (STILL || !G || !window.ScrollTrigger || matchMedia('(max-width: 820px)').matches) return;
+  const slot = sec.querySelector('.slot'), copy = sec.querySelector('.copy');
+  G.fromTo(slot, { y:80 }, { y:-80, ease:'none', scrollTrigger:{ trigger:sec, start:'top bottom', end:'bottom top', scrub:1.6 } });
+  G.fromTo(copy, { y:30 }, { y:-30, ease:'none', scrollTrigger:{ trigger:sec, start:'top bottom', end:'bottom top', scrub:1.6 } });
+}
+function boot(){
+  if (G && window.ScrollTrigger) G.registerPlugin(ScrollTrigger);
+  const make = { a:initA, b:initB, c:initC, d:initD, e:initE };
+  document.querySelectorAll('.opt').forEach(sec => {
+    const key = sec.dataset.opt;
+    let c = null;
+    try { c = make[key](); } catch (err) { console.error('option ' + key, err); }
+    const txt = revealText(sec);
+    heavy(sec);
+    sec.querySelector('.replay').addEventListener('click', () => { if (c) (STILL ? c.still() : c.replay()); if (txt) txt.restart(); });
+    if (!c) return;
+    if (STILL){ c.still(); return; }
+    let started = false;
+    new IntersectionObserver(es => es.forEach(e => {
+      if (e.isIntersecting){ if (!started){ started = true; c.start(); } else c.resume(); }
+      else if (started) c.pause();
+    }), { threshold:.12 }).observe(sec.querySelector('.slot'));
+  });
+}
+Promise.race([document.fonts.ready, new Promise(r => setTimeout(r, 2500))]).then(boot);
+</script>
+</body>
+</html>

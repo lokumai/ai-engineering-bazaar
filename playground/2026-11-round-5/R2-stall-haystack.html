@@ -1,0 +1,771 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Stall 2 Options</title>
+<!--
+  Round 5, the About page, STALL 2: "born out of frustration with that noise".
+  Five drawings for the one stall, each shown as the stall will stand: the drawing in a square slot
+  of min(44vw, 560px) on one side, the story on the other, on the dark ground. 2A is the author's
+  idea (the needle in the haystack); 2B to 2E are proposals. 2B is three.js, 2E is CSS 3D.
+  Every colour comes from the custom properties on :root, read by the canvases at start, so the final
+  page can re-theme them. Each drawing runs only while its slot is on screen (IntersectionObserver);
+  under prefers-reduced-motion each shows its last, meaningful frame and Replay plays it once.
+  Phone: the slot grows to the column width (44vw would be 170px), and the text sits above it.
+-->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght,SOFT@9..144,400..750,0..100&display=swap">
+<style>
+:root{
+  /* the ground: deep indigo to near-black */
+  --ground:#0f0e23; --ground-2:#16153a; --ground-3:#1f1e4c; --tile:#17163f;
+  --ink:#ece7dc; --title:#f5f0e6; --body:#d3cedf; --muted:#a6a3c0; --faint:#6c6a8c;
+  --line:rgba(236,231,220,.12); --line-strong:rgba(236,231,220,.24);
+  /* the Bazaar hues, lifted for a dark ground */
+  --indigo:#282864; --indigo-lift:#848bd0;
+  --gold:#c8a078; --ochre:#b8873b; --straw:#dcb66a; --sand:#e6dac6;
+  --rose:#e3a3b6; --crimson:#b3343f; --teal:#3aa39b; --steel:#d6dce8;
+  --display:"Fraunces", "Iowan Old Style", Georgia, serif;
+  --sans:"Avenir Next", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --slot:min(44vw, 560px);
+}
+*{box-sizing:border-box}
+html{overflow-x:clip; background:var(--ground)}
+body{margin:0; background:var(--ground); color:var(--ink); font-family:var(--sans); font-size:17px; line-height:1.5;
+  overflow-x:clip; -webkit-font-smoothing:antialiased}
+:focus-visible{outline:2px solid var(--gold); outline-offset:3px; border-radius:5px}
+
+/* ---------- the page head ---------- */
+.top{max-width:1240px; margin:0 auto; padding:56px clamp(16px,4vw,48px) 48px}
+.eyebrow{font-size:13px; letter-spacing:.08em; text-transform:uppercase; color:var(--gold); font-weight:600; margin:0 0 14px}
+.top h1{font-family:var(--display); font-weight:600; font-size:clamp(32px,4.4vw,56px); line-height:1.08; margin:0 0 18px;
+  color:var(--title); letter-spacing:-.015em; font-variation-settings:"SOFT" 60, "opsz" 96; text-wrap:balance}
+.top p{max-width:64ch; color:var(--muted); margin:0}
+.index{display:flex; flex-wrap:wrap; gap:8px; margin-top:26px; padding:0; list-style:none}
+.index a{display:inline-flex; gap:8px; align-items:baseline; text-decoration:none; color:var(--body); font-size:14px;
+  border:1px solid var(--line); border-radius:999px; padding:6px 14px}
+.index a:hover{border-color:var(--line-strong); color:var(--title)}
+.index b{color:var(--gold); font-weight:650}
+
+/* ---------- one option ---------- */
+.opt{min-height:100vh; display:flex; flex-direction:column; justify-content:center; padding:10vh 0; border-top:1px solid var(--line)}
+.opt-head{max-width:1240px; width:100%; margin:0 auto 40px; padding:0 clamp(16px,4vw,48px);
+  display:flex; flex-wrap:wrap; align-items:center; gap:10px 16px}
+.code{font-family:var(--display); font-weight:650; font-size:20px; color:var(--ground); background:var(--gold);
+  border-radius:5px; padding:2px 10px; line-height:1.3}
+.opt-name{font-family:var(--display); font-weight:600; font-size:22px; color:var(--title); margin:0}
+.tag{font-size:12px; letter-spacing:.06em; text-transform:uppercase; color:var(--muted); border:1px solid var(--line-strong);
+  border-radius:999px; padding:2px 9px}
+.opt-line{flex-basis:100%; margin:0; color:var(--muted); max-width:78ch}
+.replay{margin-left:auto; font:600 14px/1 var(--sans); color:var(--ink); background:transparent; border:1px solid var(--line-strong);
+  border-radius:5px; padding:9px 14px; cursor:pointer; display:inline-flex; gap:8px; align-items:center}
+.replay:hover{background:rgba(255,255,255,.06)}
+.replay svg{width:14px; height:14px}
+
+.stall{max-width:1240px; width:100%; margin:0 auto; padding:0 clamp(16px,4vw,48px);
+  display:grid; grid-template-columns:var(--slot) minmax(0,1fr); gap:clamp(32px,6vw,96px); align-items:center}
+.slot{width:var(--slot); aspect-ratio:1/1; position:relative; overflow:hidden; border-radius:4px}
+/* the slot's bounds, drawn as four corner ticks so the art floats on the ground */
+.slot::after{content:""; position:absolute; inset:0; pointer-events:none; opacity:.55;
+  background:
+    linear-gradient(var(--line-strong),var(--line-strong)) 0 0/18px 1px no-repeat,
+    linear-gradient(var(--line-strong),var(--line-strong)) 0 0/1px 18px no-repeat,
+    linear-gradient(var(--line-strong),var(--line-strong)) 100% 0/18px 1px no-repeat,
+    linear-gradient(var(--line-strong),var(--line-strong)) 100% 0/1px 18px no-repeat,
+    linear-gradient(var(--line-strong),var(--line-strong)) 0 100%/18px 1px no-repeat,
+    linear-gradient(var(--line-strong),var(--line-strong)) 0 100%/1px 18px no-repeat,
+    linear-gradient(var(--line-strong),var(--line-strong)) 100% 100%/18px 1px no-repeat,
+    linear-gradient(var(--line-strong),var(--line-strong)) 100% 100%/1px 18px no-repeat}
+.slot canvas,.slot > svg{position:absolute; inset:0; width:100%; height:100%; display:block}
+.fallback{position:absolute; inset:0; display:grid; place-items:center; color:var(--muted); font-size:14px; margin:0}
+
+.copy{max-width:46ch}
+.kicker{font-family:var(--display); color:var(--gold); font-size:15px; letter-spacing:.14em; margin:0 0 18px; display:flex; align-items:center; gap:12px}
+.kicker::after{content:""; width:48px; height:1px; background:var(--gold); opacity:.6}
+.copy h3{font-family:var(--display); font-weight:560; font-size:clamp(28px,3.1vw,44px); line-height:1.13; margin:0 0 26px;
+  color:var(--title); letter-spacing:-.012em; font-variation-settings:"SOFT" 80, "opsz" 72; text-wrap:balance}
+.copy h3 .w{display:inline-block; overflow:hidden; vertical-align:top; padding-bottom:.08em; margin-bottom:-.08em}
+.copy h3 .w > span{display:inline-block; will-change:transform}
+.copy p.body{font-size:clamp(17px,1.35vw,19px); line-height:1.7; color:var(--body); margin:0}
+
+.foot{max-width:1240px; margin:0 auto; padding:48px clamp(16px,4vw,48px) 72px; color:var(--faint); font-size:14px; border-top:1px solid var(--line)}
+
+@media (max-width:760px){
+  :root{--slot:min(calc(100vw - 32px), 560px)}
+  .opt{min-height:auto; padding:56px 0}
+  .opt-head{margin-bottom:28px}
+  .replay{margin-left:0}
+  .stall{grid-template-columns:minmax(0,1fr); gap:28px}
+  .copy{order:-1}
+  .slot{justify-self:center}
+}
+
+/* ---------- 2E, the corridor (CSS 3D) ---------- */
+.cor{position:absolute; inset:0; perspective:calc(var(--W) * .9px); perspective-origin:50% 40%; overflow:hidden}
+.cor-glow{position:absolute; left:50%; top:40%; width:calc(var(--W) * .9px); height:calc(var(--W) * .9px); transform:translate(-50%,-50%);
+  background:radial-gradient(closest-side, rgba(230,218,198,.55), rgba(200,160,120,.22) 35%, rgba(132,139,208,.06) 70%, transparent)}
+.cor-world{position:absolute; inset:0; transform-style:preserve-3d}
+.cor-floor{position:absolute; left:50%; top:74%; width:calc(var(--W) * 1.7px); height:calc(var(--W) * 6px); margin-left:calc(var(--W) * -.85px);
+  transform-origin:50% 0; transform:translateZ(calc(var(--W) * .6px)) rotateX(-90deg);
+  background-image:
+    linear-gradient(45deg, transparent 47.5%, rgba(200,160,120,.30) 48.5% 51.5%, transparent 52.5%),
+    linear-gradient(-45deg, transparent 47.5%, rgba(200,160,120,.30) 48.5% 51.5%, transparent 52.5%);
+  background-size:calc(var(--W) * .2px) calc(var(--W) * .2px);
+  -webkit-mask-image:linear-gradient(to bottom, rgba(0,0,0,.9), rgba(0,0,0,.6) 30%, transparent 78%);
+          mask-image:linear-gradient(to bottom, rgba(0,0,0,.9), rgba(0,0,0,.6) 30%, transparent 78%)}
+.cor-thread{position:absolute; left:50%; top:0; bottom:0; width:5px; margin-left:-2.5px;
+  background-color:rgba(200,160,120,.55);
+  background-image:repeating-linear-gradient(to bottom, rgba(255,240,210,.95) 0 calc(var(--W) * .05px), transparent calc(var(--W) * .05px) calc(var(--W) * .22px));
+  box-shadow:0 0 12px rgba(200,160,120,.7)}
+.cor-arch{position:absolute; left:50%; bottom:26%; width:calc(var(--W) * .66px); height:calc(var(--W) * .9px); margin-left:calc(var(--W) * -.33px);
+  transform-origin:50% 100%; will-change:transform, opacity}
+.cor-arch svg{width:100%; height:100%; display:block; overflow:visible}
+.a-frame{fill:var(--ground-3)}
+.a-out{fill:none; stroke:var(--gold); stroke-width:3; opacity:.55}
+.a-edge{fill:none; stroke:var(--gold); stroke-width:6}
+.a-band{fill:none; stroke:var(--teal); stroke-width:9; stroke-linecap:round; stroke-dasharray:1 22}
+.a-med{fill:var(--rose)}
+.a-tag{fill:var(--sand)} .a-seal{fill:var(--crimson)} .a-str{stroke:var(--sand); stroke-width:3; fill:none; opacity:.7}
+.a-ln{stroke:#6a6558; stroke-width:6; stroke-linecap:round}
+.cor-tie{position:absolute; inset:0; width:100%; height:100%; overflow:visible}
+.cor-tie path{fill:none; stroke:var(--gold); stroke-width:3; stroke-linecap:round; filter:drop-shadow(0 0 4px rgba(200,160,120,.8))}
+.cor-sheet{position:absolute; left:0; top:0; width:calc(var(--W) * .34px); aspect-ratio:34/46; background:#f3eadb; border-radius:3px;
+  box-shadow:0 18px 40px rgba(0,0,0,.55), 0 0 0 1px rgba(0,0,0,.2); padding:0 0 calc(var(--W) * .02px); overflow:hidden;
+  transform-origin:50% 50%; will-change:transform}
+.cs-band{display:block; height:calc(var(--W) * .045px); background:var(--indigo);
+  border-bottom:calc(var(--W) * .012px) solid transparent;
+  border-image:repeating-linear-gradient(90deg, var(--teal) 0 8%, var(--gold) 8% 16%, #a0503c 16% 24%) 1}
+.cs-row{display:block; height:calc(var(--W) * .011px); background:#5a586c; border-radius:3px; margin:calc(var(--W) * .016px) calc(var(--W) * .03px) 0}
+.cs-row.h{height:calc(var(--W) * .02px); background:#1b1b47; width:62%; margin-top:calc(var(--W) * .03px)}
+.cs-row.k{background:#1b1b47; box-shadow:0 0 0 calc(var(--W) * .006px) rgba(227,163,182,.7); width:70%}
+.cs-dia{display:flex; gap:7%; margin:calc(var(--W) * .025px) calc(var(--W) * .03px) 0; height:calc(var(--W) * .05px)}
+.cs-dia i{flex:1; border:2px solid var(--teal); border-radius:4px; background:#e8f2ef}
+.cs-dia i:nth-child(2){border-color:var(--indigo); background:#e6e6f2} .cs-dia i:nth-child(3){border-color:#a0503c; background:#f4e4dc}
+.cs-link{display:flex; align-items:center; gap:6%; margin:calc(var(--W) * .02px) calc(var(--W) * .03px) 0}
+.cs-link::before{content:""; width:calc(var(--W) * .016px); height:calc(var(--W) * .016px); border:2px solid #2f8c86; border-left:0; border-bottom:0; flex:none}
+.cs-link b{display:block; height:calc(var(--W) * .011px); flex:1; background:#2f8c86; border-radius:3px; box-shadow:0 2px 0 var(--gold)}
+.cs-link.on b{background:#b8873b; box-shadow:0 0 calc(var(--W) * .02px) rgba(200,160,120,.9)}
+.cor-vig{position:absolute; inset:0; pointer-events:none; background:radial-gradient(closest-side at 50% 45%, transparent 55%, rgba(15,14,35,.85))}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <p class="eyebrow">About page &middot; round 5 &middot; stall 2 of 5</p>
+  <h1>Five drawings for the second stall</h1>
+  <p>Each option is shown as the stall will stand: the drawing in its square slot, the story beside it, on the dark ground. Scroll to each one; Replay runs it again from the start. 2A is the author's idea.</p>
+  <ul class="index" id="index"></ul>
+</header>
+
+<main id="opts"></main>
+
+<footer class="foot">Stall 2 heading and body are the author's text, unchanged. Colours come from the custom properties at the top of this file.</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+"use strict";
+/* ============================== the text, verbatim ============================== */
+const HEADING = "AI Engineering Bazaar was born out of frustration with that noise.";
+const BODY = "We did not want another heavy textbook or a boring 40-hour course. We wanted a simple, honest cheatsheet: something that gives you the key 30% of practical knowledge so you can understand 70% of the topic, with trusted links if you want to explore deeper.";
+
+const OPTIONS = [
+  {code:"2A", name:"Needle in the haystack", tags:["the author's idea","2D canvas","scroll"], art:haystack,
+   line:"Thousands of straws part in the wind as you scroll, and the one needle left in the stack catches the light."},
+  {code:"2B", name:"The textbook falls away", tags:["3D, three.js"], art:textbook,
+   line:"A heavy textbook lands, opens, and its pages blow off one by one; the single page left rises to face you."},
+  {code:"2C", name:"The key pieces", tags:["2D SVG"], art:tile,
+   line:"Out of a swarm of shards, 30% of a tile is set in colour, and the rest of the pattern draws itself in."},
+  {code:"2D", name:"Tuning out the noise", tags:["2D canvas"], art:dial,
+   line:"A brass dial turns, heavily, until a scope full of static settles into one clean wave."},
+  {code:"2E", name:"Arches deeper", tags:["3D, CSS"], art:corridor,
+   line:"One page in front; a gold thread from its links runs back through a corridor of arches, each a trusted source."}
+];
+
+/* ============================== helpers ============================== */
+const RM = matchMedia("(prefers-reduced-motion: reduce)").matches;
+const clamp=(v,a=0,b=1)=>v<a?a:v>b?b:v;
+const smooth=(a,b,v)=>{const x=clamp((v-a)/(b-a));return x*x*(3-2*x)};
+const lerp=(a,b,t)=>a+(b-a)*t;
+const E={inOut:x=>x<.5?4*x*x*x:1-Math.pow(-2*x+2,3)/2, out:x=>1-Math.pow(1-x,3), in:x=>x*x*x,
+  back:x=>{const c1=1.15,c3=c1+1;return 1+c3*Math.pow(x-1,3)+c1*Math.pow(x-1,2)}};
+function rng(seed){return function(){seed|=0;seed=seed+0x6D2B79F5|0;let t=Math.imul(seed^seed>>>15,1|seed);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+const tok=n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+function rgb(h){h=h.replace("#","");if(h.length===3)h=h.split("").map(c=>c+c).join("");const n=parseInt(h,16);return[n>>16&255,n>>8&255,n&255]}
+function mix(a,b,t){const A=rgb(a),B=rgb(b);return "#"+A.map((v,i)=>Math.round(lerp(v,B[i],t)).toString(16).padStart(2,"0")).join("")}
+function rgba(h,a){const[r,g,b]=rgb(h);return `rgba(${r},${g},${b},${a})`}
+const NS="http://www.w3.org/2000/svg";
+function el(tag,attrs={},parent){const e=document.createElementNS(NS,tag);for(const k in attrs)e.setAttribute(k,attrs[k]);if(parent)parent.appendChild(e);return e}
+function fit(cv,slot){const w=slot.clientWidth||1,d=Math.min(2,window.devicePixelRatio||1);cv.width=Math.round(w*d);cv.height=Math.round(w*d);return{w,d,k:w*d/1000}}
+
+/* ============================== the page ============================== */
+const main=document.getElementById("opts"), index=document.getElementById("index");
+const REPLAY_ICON='<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M2.5 8a5.5 5.5 0 1 0 1.7-4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><path d="M3.6 1.2v3.4h3.4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+OPTIONS.forEach(o=>{
+  const id="o"+o.code.toLowerCase();
+  const sec=document.createElement("section"); sec.className="opt"; sec.id=id; sec.setAttribute("aria-labelledby",id+"-n");
+  sec.innerHTML=`
+    <div class="opt-head">
+      <span class="code">${o.code}</span><h2 class="opt-name" id="${id}-n">${o.name}</h2>
+      ${o.tags.map(t=>`<span class="tag">${t}</span>`).join("")}
+      <button class="replay" type="button" aria-label="Replay ${o.code}">${REPLAY_ICON}Replay</button>
+      <p class="opt-line">${o.line}</p>
+    </div>
+    <div class="stall">
+      <div class="slot" role="img" aria-label="${o.name}: ${o.line}"></div>
+      <div class="copy">
+        <p class="kicker">02</p>
+        <h3>${HEADING.split(" ").map(w=>`<span class="w"><span>${w}</span></span>`).join(" ")}</h3>
+        <p class="body">${BODY}</p>
+      </div>
+    </div>`;
+  main.appendChild(sec);
+  index.insertAdjacentHTML("beforeend",`<li><a href="#${id}"><b>${o.code}</b>${o.name}</a></li>`);
+});
+
+/* A drawing is a function of its own clock. The clock runs only while the slot is on screen; Replay
+   sets it back to zero. Under reduced motion the drawing shows `still` and Replay plays it once. */
+function stage(sec,make){
+  const slot=sec.querySelector(".slot");
+  const art=make(slot,sec); if(!art) return;
+  const s={t:0,raf:0,last:0,visible:false,playing:!RM};
+  const draw=()=>art.render(s.playing?s.t:art.still,0);
+  function tick(now){
+    const dt=Math.min(.05,(now-s.last)/1000||0); s.last=now; s.t+=dt;
+    art.render(s.t,dt);
+    if(RM&&s.t>=art.duration){s.playing=false;s.raf=0;draw();return}
+    s.raf=requestAnimationFrame(tick);
+  }
+  const start=()=>{if(s.raf||!s.visible||!s.playing)return;s.last=performance.now();s.raf=requestAnimationFrame(tick)};
+  const stop=()=>{cancelAnimationFrame(s.raf);s.raf=0};
+  new IntersectionObserver(es=>es.forEach(e=>{s.visible=e.intersectionRatio>=.3; s.visible?start():stop()}),{threshold:[0,.3,.6]}).observe(slot);
+  new ResizeObserver(()=>{art.resize&&art.resize(); if(!s.raf) draw()}).observe(slot);
+  sec.querySelector(".replay").addEventListener("click",()=>{s.t=0;s.playing=true;art.replay&&art.replay();stop();start();if(!s.visible)draw()});
+  draw();
+  slot._stage=s;
+}
+
+/* ===================================================================================
+   2A  NEEDLE IN THE HAYSTACK  (canvas 2D, driven by scroll)
+   The straw below the needle stays as its bed and is painted once to an offscreen canvas;
+   the straw above it is drawn per frame and blows away from the left as the scroll goes on.
+   =================================================================================== */
+function haystack(slot){
+  const cv=document.createElement("canvas"); slot.appendChild(cv);
+  const ctx=cv.getContext("2d"), bed=document.createElement("canvas"), bx=bed.getContext("2d");
+  const R=rng(20261109), C={straw:tok("--straw"),ground:tok("--ground"),rose:tok("--rose"),crimson:tok("--crimson"),
+    steel:tok("--steel"),gold:tok("--gold"),sand:tok("--sand")};
+  const ramp=[mix(C.ground,C.straw,.30),mix(C.ground,C.straw,.50),mix(C.ground,C.straw,.72),C.straw,mix(C.straw,"#fff4da",.45)];
+  const A={x:318,y:640},B={x:694,y:622};
+  const L=Math.hypot(B.x-A.x,B.y-A.y),ux=(B.x-A.x)/L,uy=(B.y-A.y)/L,nx=-uy,ny=ux;
+  const P=(s,o)=>[A.x+ux*s+nx*o,A.y+uy*s+ny*o];
+  const cx=500,base=800,RX=390,H=455,HB=176;
+  const bedTop=x=>{const u=(x-cx)/RX;return base-HB*Math.pow(Math.max(0,1-u*u),.6)};
+  const keep=[],fly=[];
+  const WID=[1.3,2.1,4.2];
+  for(let i=0;i<4000;i++){
+    const core=i<1200, u=R()*2-1,prof=Math.pow(1-u*u,.62)*(1+.05*Math.sin(u*7+1)),v=core?Math.pow(R(),.9)*.93:Math.pow(R(),.7);
+    const x=cx+u*RX*(.93+R()*.11),y=base-H*prof*v+(R()-.5)*16;
+    const slope=H*.62*Math.pow(Math.max(.02,1-u*u),-.38)*2*u/RX;
+    const ang=clamp(Math.atan(slope*v*.9),-1.2,1.2)+(R()-.5)*1.25;
+    const light=.2+.46*v+.2*(-u)+(R()-.5)*.55;
+    const s={x,y,ang,len:24+R()*60,wi:core?2:R()<.7?0:1,ci:core?Math.min(1,Math.round(light*1.6)):Math.max(0,Math.min(4,Math.round(light*4))),v,r1:R(),r2:R(),r3:R(),r4:R()};
+    if(y>bedTop(x)+(R()-.5)*26) keep.push(s);
+    else{s.th=.03+.36*((x-(cx-RX))/(2*RX))+.16*(1-v)+R()*.2; fly.push(s)}
+  }
+  keep.sort((a,b)=>b.wi-a.wi||a.y-b.y); fly.sort((a,b)=>(b.wi===2)-(a.wi===2)||a.v-b.v);
+  const motes=Array.from({length:46},()=>({s:R(),c:R(),ph:R()*6.3,sp:.5+R(),r:1.4+R()*1.8}));
+  const drift=Array.from({length:9},(_,i)=>({off:R()*1300,y:170+i*48+R()*30,sp:.6+R()*.7,len:30+R()*40,ph:R()*6}));
+  const state={p:RM?1:0};
+  let k=1;
+  const seg=(c,x,y,a,l)=>{const dx=Math.cos(a)*l/2,dy=Math.sin(a)*l/2;c.moveTo(x-dx,y-dy);c.lineTo(x+dx,y+dy)};
+  function paintBed(){
+    bed.width=cv.width; bed.height=cv.height; bx.setTransform(k,0,0,k,0,0); bx.lineCap="round";
+    for(const wi of [2,0,1])for(let ci=0;ci<5;ci++){bx.beginPath();for(const s of keep)if(s.ci===ci&&s.wi===wi)seg(bx,s.x,s.y,s.ang,s.len);bx.strokeStyle=ramp[ci];bx.lineWidth=WID[wi];bx.stroke()}
+  }
+  function resize(){k=fit(cv,slot).k*1; k=cv.width/1000; paintBed()}
+  resize();
+  if(!RM&&window.gsap&&window.ScrollTrigger){
+    gsap.registerPlugin(ScrollTrigger);
+    gsap.to(state,{p:1,ease:"none",scrollTrigger:{trigger:slot,start:"top 82%",end:"center 52%",scrub:1.6}});
+  } else state.p=1;
+
+  function needle(){
+    ctx.lineCap="round"; ctx.lineJoin="round";
+    const [ex,ey]=P(18,0);
+    ctx.beginPath(); ctx.moveTo(ex,ey); ctx.bezierCurveTo(290,612,232,600,214,642); ctx.bezierCurveTo(196,684,262,708,236,748); ctx.bezierCurveTo(214,782,160,772,130,808);
+    ctx.strokeStyle=C.crimson; ctx.lineWidth=4.8; ctx.stroke(); ctx.strokeStyle=C.rose; ctx.lineWidth=2.2; ctx.stroke();
+    const w0=5.4; ctx.beginPath();
+    ctx.moveTo(...P(0,w0)); ctx.lineTo(...P(L*.8,w0*.74)); ctx.quadraticCurveTo(...P(L*.95,w0*.3),...P(L,0));
+    ctx.quadraticCurveTo(...P(L*.95,-w0*.3),...P(L*.8,-w0*.74)); ctx.lineTo(...P(0,-w0)); ctx.quadraticCurveTo(...P(-w0*1.2,0),...P(0,w0));
+    const [g1x,g1y]=P(L*.4,w0+1),[g2x,g2y]=P(L*.4,-w0-1), g=ctx.createLinearGradient(g1x,g1y,g2x,g2y);
+    g.addColorStop(0,"#454c60"); g.addColorStop(.3,C.steel); g.addColorStop(.46,"#ffffff"); g.addColorStop(.62,mix(C.steel,"#000000",.3)); g.addColorStop(1,"#353b4d");
+    ctx.fillStyle=g; ctx.fill(); ctx.strokeStyle="rgba(8,8,20,.55)"; ctx.lineWidth=.8; ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(...P(9,0)); ctx.lineTo(...P(27,0)); ctx.strokeStyle="rgba(14,13,32,.95)"; ctx.lineWidth=3.4; ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(...P(18,0)); ctx.bezierCurveTo(...P(26,-12),...P(44,-22),...P(64,-18)); ctx.strokeStyle=C.rose; ctx.lineWidth=2.2; ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(...P(32,w0*.42)); ctx.lineTo(...P(L*.9,w0*.14)); ctx.strokeStyle="rgba(255,255,255,.55)"; ctx.lineWidth=1; ctx.stroke();
+  }
+  function star(x,y,s,a){
+    ctx.save(); ctx.translate(x,y); ctx.rotate(-.28);
+    const rg=ctx.createRadialGradient(0,0,0,0,0,s*.45); rg.addColorStop(0,`rgba(255,255,255,${a})`); rg.addColorStop(1,"rgba(255,255,255,0)");
+    ctx.fillStyle=rg; ctx.fillRect(-s,-s,2*s,2*s);
+    ctx.fillStyle=`rgba(255,252,240,${a*.95})`;
+    for(const [r,l,w] of [[0,s,2.4],[Math.PI/2,s*.62,2],[Math.PI/4,s*.3,1.4],[-Math.PI/4,s*.3,1.4]]){
+      ctx.save(); ctx.rotate(r); ctx.beginPath(); ctx.moveTo(-l,0); ctx.lineTo(0,-w); ctx.lineTo(l,0); ctx.lineTo(0,w); ctx.closePath(); ctx.fill(); ctx.restore();
+    }
+    ctx.restore();
+  }
+  function render(t){
+    const p=state.p, rev=smooth(.62,.95,p);
+    ctx.setTransform(1,0,0,1,0,0); ctx.clearRect(0,0,cv.width,cv.height); ctx.setTransform(k,0,0,k,0,0);
+    let g=ctx.createRadialGradient(510,610,10,510,610,470); g.addColorStop(0,rgba(C.gold,.12+.1*rev)); g.addColorStop(1,rgba(C.gold,0));
+    ctx.fillStyle=g; ctx.fillRect(0,0,1000,1000);
+    ctx.save(); ctx.globalCompositeOperation="lighter";
+    g=ctx.createLinearGradient(240,0,560,740); g.addColorStop(0,rgba(C.sand,.09+.06*rev)); g.addColorStop(1,rgba(C.sand,0));
+    ctx.fillStyle=g; ctx.beginPath(); ctx.moveTo(130,-10); ctx.lineTo(360,-10); ctx.lineTo(730,700); ctx.lineTo(380,750); ctx.closePath(); ctx.fill(); ctx.restore();
+    ctx.save(); ctx.translate(500,806); ctx.scale(1,.15); g=ctx.createRadialGradient(0,0,0,0,0,480); g.addColorStop(0,"rgba(0,0,0,.6)"); g.addColorStop(1,"rgba(0,0,0,0)");
+    ctx.fillStyle=g; ctx.fillRect(-500,-500,1000,1000); ctx.restore();
+    ctx.drawImage(bed,0,0,1000,1000);
+    needle();
+    ctx.lineCap="round";
+    const paths=Array.from({length:15},()=>new Path2D());
+    for(const s of fly){
+      const q=clamp((p-s.th)/.26); if(q>=1) continue;
+      const sway=Math.sin(t*1.25+s.x*.013+s.r3*3)*.05*s.v*(1-q);
+      if(q===0){
+        const shiver=p>s.th-.07?Math.sin(t*26+s.r1*40)*.05:0, a=s.ang+sway+shiver, l=s.len, dx=Math.cos(a)*l/2, dy=Math.sin(a)*l/2, pa=paths[s.wi*5+s.ci];
+        pa.moveTo(s.x-dx,s.y-dy); pa.lineTo(s.x+dx,s.y+dy);
+      }else{
+        const e=Math.pow(q,1.6), x=s.x+e*(600+s.r1*700), y=s.y-e*(120+s.r2*380)+Math.sin(e*5+s.r3*6)*45*e;
+        ctx.globalAlpha=(1-smooth(.55,1,q))*(1-smooth(760,980,x))*smooth(10,140,y); ctx.beginPath(); seg(ctx,x,y,s.ang+sway+e*(s.r4-.5)*7,s.len);
+        ctx.strokeStyle=ramp[s.ci]; ctx.lineWidth=WID[s.wi]; ctx.stroke(); ctx.globalAlpha=1;
+      }
+    }
+    for(const wi of [2,0,1])for(let ci=0;ci<5;ci++){ctx.strokeStyle=ramp[ci]; ctx.lineWidth=WID[wi]; ctx.stroke(paths[wi*5+ci])}
+    if(rev>0){
+      for(const d of drift){
+        const x=((t*44*d.sp+d.off)%1300)-150, y=d.y+Math.sin(t*.8+d.ph)*22;
+        ctx.globalAlpha=rev*.5*smooth(-40,120,x)*(1-smooth(860,1040,x)); ctx.beginPath(); seg(ctx,x,y,Math.sin(t*.5+d.ph)*1.4,d.len); ctx.strokeStyle=ramp[3]; ctx.lineWidth=1.4; ctx.stroke();
+      }
+      ctx.globalAlpha=1;
+      ctx.save(); ctx.globalCompositeOperation="lighter";
+      const [mx,my]=P(L*.5,0); g=ctx.createRadialGradient(mx,my,0,mx,my,280); g.addColorStop(0,rgba(C.steel,.13*rev)); g.addColorStop(1,rgba(C.steel,0));
+      ctx.fillStyle=g; ctx.fillRect(mx-300,my-300,600,600);
+      const cyc=(t%3.6)/3.6;
+      if(cyc<.55){const s=cyc/.55,[x,y]=P(L*(.06+.9*E.inOut(s)),0),a=.75*rev*Math.sin(Math.PI*s);
+        g=ctx.createRadialGradient(x,y,0,x,y,36); g.addColorStop(0,`rgba(255,255,255,${a})`); g.addColorStop(1,"rgba(255,255,255,0)"); ctx.fillStyle=g; ctx.fillRect(x-40,y-40,80,80)}
+      const f=RM?1:smooth(.42,.55,cyc)*(1-smooth(.58,.95,cyc));
+      if(f>0){const [x,y]=P(L*.86,0); star(x,y,110*f+24,rev*Math.max(f,.0))}
+      ctx.restore();
+    }
+    ctx.save(); ctx.globalCompositeOperation="lighter";
+    for(const m of motes){
+      const s=(m.s+t*.012*m.sp)%1, x=lerp(250,560,s)+(m.c-.5)*lerp(220,330,s)+Math.sin(t*.5+m.ph)*8, y=lerp(0,720,s);
+      ctx.fillStyle=rgba(C.sand,(.14+.3*(.5+.5*Math.sin(t*1.7+m.ph)))*(.35+.65*rev)); ctx.beginPath(); ctx.arc(x,y,m.r,0,6.283); ctx.fill();
+    }
+    ctx.restore();
+  }
+  return {render,resize,still:2.1,duration:5,
+    replay(){ if(window.gsap){state.p=0; gsap.to(state,{p:1,duration:4.4,ease:"power1.inOut",overwrite:false})} }};
+}
+
+/* ===================================================================================
+   2B  THE TEXTBOOK FALLS AWAY  (three.js)
+   =================================================================================== */
+function textbook(slot){
+  if(typeof THREE==="undefined"){slot.innerHTML='<p class="fallback">three.js did not load.</p>';return null}
+  const C={ground:tok("--ground"),gold:tok("--gold"),teal:tok("--teal"),crimson:tok("--crimson"),indigo:tok("--indigo"),
+    sand:tok("--sand"),rose:tok("--rose"),lift:tok("--indigo-lift"),ochre:tok("--ochre")};
+  const R=rng(42);
+  let renderer;
+  try{renderer=new THREE.WebGLRenderer({antialias:true,alpha:true,powerPreference:"low-power"})}catch(e){slot.innerHTML='<p class="fallback">WebGL is not available here.</p>';return null}
+  renderer.setClearColor(0x000000,0); slot.appendChild(renderer.domElement);
+  const scene=new THREE.Scene(); scene.fog=new THREE.Fog(new THREE.Color(C.ground),9,17);
+  const cam=new THREE.PerspectiveCamera(32,1,.1,60);
+  scene.add(new THREE.HemisphereLight(0x9a9ae0,0x15142e,.5));
+  const key=new THREE.DirectionalLight(0xffe2b8,.85); key.position.set(-3.5,6,4.5); scene.add(key);
+  const rim=new THREE.DirectionalLight(new THREE.Color(C.teal),.8); rim.position.set(4,2.5,-5); scene.add(rim);
+  const fill=new THREE.PointLight(new THREE.Color(C.rose),.55,14); fill.position.set(2.6,1.6,3.2); scene.add(fill);
+
+  const tex=(w,h,paint)=>{const c=document.createElement("canvas");c.width=w;c.height=h;paint(c.getContext("2d"),w,h);const t=new THREE.CanvasTexture(c);t.anisotropy=4;return t};
+  const lattice=(g,x0,y0,w,h,col,lw)=>{g.strokeStyle=col;g.lineWidth=lw;const s=h;for(let x=x0;x<x0+w-1;x+=s){g.beginPath();g.moveTo(x,y0+h/2);g.lineTo(x+s/2,y0);g.lineTo(x+s,y0+h/2);g.lineTo(x+s/2,y0+h);g.closePath();g.stroke()}};
+  const coverTex=tex(512,700,(g,w,h)=>{
+    g.fillStyle=mix(C.indigo,"#3a3a8a",.25); g.fillRect(0,0,w,h);
+    for(let i=0;i<2600;i++){g.fillStyle=`rgba(255,255,255,${R()*.05})`;g.fillRect(R()*w,R()*h,R()*3+1,1)}
+    g.strokeStyle=C.gold; g.lineWidth=6; g.strokeRect(26,26,w-52,h-52); g.lineWidth=2; g.strokeRect(42,42,w-84,h-84);
+    lattice(g,60,70,w-120,34,C.gold,2.5); lattice(g,60,h-104,w-120,34,C.gold,2.5);
+    g.fillStyle=C.crimson; g.fillRect(140,170,w-280,74); g.strokeStyle=C.gold; g.lineWidth=3; g.strokeRect(146,176,w-292,62);
+    g.fillStyle=C.gold; g.fillRect(180,196,w-360,9); g.fillRect(210,214,w-420,6);
+    g.save(); g.translate(w/2,410); g.strokeStyle=C.gold; g.lineWidth=4;
+    for(let r=0;r<2;r++){g.save();g.rotate(r*Math.PI/4);g.strokeRect(-78,-78,156,156);g.restore()}
+    g.beginPath(); g.arc(0,0,48,0,6.283); g.stroke(); g.beginPath(); g.arc(0,0,22,0,6.283); g.fillStyle=C.gold; g.fill(); g.restore();
+  });
+  const endTex=tex(256,340,(g,w,h)=>{g.fillStyle=mix(C.sand,C.rose,.25);g.fillRect(0,0,w,h);for(let y=0;y<h;y+=24)lattice(g,0,y,w,24,rgba(C.indigo,.25),1.5)});
+  const edgeTex=tex(16,256,(g,w,h)=>{for(let y=0;y<h;y++){const s=226-R()*34-(y%3===0?18:0);g.fillStyle=`rgb(${s|0},${s*.95|0},${s*.83|0})`;g.fillRect(0,y,w,1)}});
+  const leafTexs=[0,1].map(v=>tex(512,700,(g,w,h)=>{
+    g.fillStyle="#efe6d2"; g.fillRect(0,0,w,h); g.fillStyle="rgba(120,110,95,.75)";
+    let y=56; const fig=v?300:470;
+    while(y<650){ if(Math.abs(y-fig)<8){g.strokeStyle="rgba(90,80,70,.6)";g.lineWidth=2;g.strokeRect(70,y,372,120);
+        for(let i=0;i<14;i++){g.beginPath();g.moveTo(80+i*26,y+110);g.lineTo(100+i*26,y+14);g.stroke()} y+=140; continue}
+      const para=R()<.08; g.fillRect(50,y,(para?200+R()*150:396+R()*16),5); y+=para?22:12.5}
+    g.fillRect(w/2-10,672,20,5);
+  }));
+  const sheetTex=tex(720,985,(g,w,h)=>{
+    g.fillStyle="#f4ebd8"; g.fillRect(0,0,w,h);
+    for(let i=0;i<500;i++){g.fillStyle=`rgba(120,100,70,${R()*.05})`;g.fillRect(R()*w,R()*h,R()*8+2,1)}
+    g.fillStyle="#282864"; g.fillRect(0,0,w,92);
+    const cols=[C.teal,"#c8a078","#a0503c"]; for(let i=0,x=0;x<w;i++,x+=24){g.fillStyle=cols[i%3];g.beginPath();g.moveTo(x,102);g.lineTo(x+12,92);g.lineTo(x+24,102);g.lineTo(x+12,112);g.closePath();g.fill()}
+    const bar=(x,y,ww,hh,c)=>{g.fillStyle=c;g.beginPath();g.roundRect?g.roundRect(x,y,ww,hh,hh/2):g.rect(x,y,ww,hh);g.fill()};
+    bar(60,150,430,30,"#1b1b47"); bar(60,196,260,16,"#6a6558");
+    g.save(); g.transform(1,0,-.12,1,30,0); g.fillStyle="rgba(227,163,182,.6)"; g.fillRect(52,254,540,32); g.restore(); bar(66,264,470,13,"#1b1b47");
+    [[C.teal,380],["#c8a078",320],["#a0503c",410]].forEach(([c,ww],i)=>{g.fillStyle=c;g.beginPath();g.arc(78,340+i*46,9,0,6.283);g.fill();bar(104,334+i*46,ww,12,"#4a4a5e")});
+    const bx=[60,270,480]; bx.forEach((x,i)=>{g.lineWidth=4;g.strokeStyle=[C.teal,"#282864","#a0503c"][i];g.fillStyle=["#e3f0ec","#e5e5f2","#f4e2d9"][i];
+      g.beginPath();g.roundRect?g.roundRect(x,510,180,92,12):g.rect(x,510,180,92);g.fill();g.stroke(); bar(x+28,548,124,10,"#4a4a5e")});
+    g.strokeStyle="#282864"; g.lineWidth=4; [[240,270],[450,480]].forEach(([a,b])=>{g.beginPath();g.moveTo(a+4,556);g.lineTo(b-6,556);g.stroke();g.beginPath();g.moveTo(b-16,546);g.lineTo(b-4,556);g.lineTo(b-16,566);g.stroke()});
+    g.setLineDash([3,10]); g.strokeStyle="rgba(40,40,100,.35)"; g.lineWidth=3; g.beginPath(); g.moveTo(60,680); g.lineTo(w-60,680); g.stroke(); g.setLineDash([]);
+    [300,350,260].forEach((ww,i)=>{const y=730+i*62; g.strokeStyle="#2f8c86"; g.lineWidth=4; g.beginPath(); g.moveTo(66,y+16); g.lineTo(84,y-2); g.moveTo(72,y-2); g.lineTo(84,y-2); g.lineTo(84,y+10); g.stroke();
+      bar(104,y,ww,13,"#2f8c86"); g.fillStyle="#c8a078"; g.fillRect(104,y+19,ww,3)});
+    g.strokeStyle="rgba(40,40,100,.25)"; g.lineWidth=2; g.strokeRect(1,1,w-2,h-2);
+  });
+  const glowTex=tex(128,128,(g,w)=>{const r=g.createRadialGradient(64,64,0,64,64,64);r.addColorStop(0,"rgba(255,255,255,1)");r.addColorStop(.35,"rgba(255,255,255,.35)");r.addColorStop(1,"rgba(255,255,255,0)");g.fillStyle=r;g.fillRect(0,0,w,w)});
+  const shadowTex=tex(128,128,(g,w)=>{const r=g.createRadialGradient(64,64,0,64,64,64);r.addColorStop(0,"rgba(0,0,0,.85)");r.addColorStop(1,"rgba(0,0,0,0)");g.fillStyle=r;g.fillRect(0,0,w,w)});
+
+  const W=2.0,D=2.7,T=.95,ct=.07, CW=W+.14, CD=D+.14;
+  const root=new THREE.Group(); scene.add(root);
+  const book=new THREE.Group(); root.add(book);
+  const bookMats=[];
+  const M=(o)=>{const m=new THREE.MeshStandardMaterial(Object.assign({roughness:.85,metalness:0,transparent:true},o));bookMats.push(m);return m};
+  const clothSide=M({color:new THREE.Color(mix(C.indigo,"#000000",.15))}), clothTop=M({map:coverTex,color:0xffffff,roughness:.7}), endM=M({map:endTex});
+  const bottom=new THREE.Mesh(new THREE.BoxGeometry(CW,ct,CD),[clothSide,clothSide,clothSide,clothTop,clothSide,clothSide]); bottom.position.y=ct/2; book.add(bottom);
+  const edgeM=M({map:edgeTex,color:0xe2dccf,roughness:.95}), creamM=M({map:leafTexs[0],color:0xcfc7b6,roughness:.95});
+  const block=new THREE.Mesh(new THREE.BoxGeometry(W-.02,T,D-.04),[edgeM,edgeM,creamM,edgeM,edgeM,edgeM]); block.position.set(.03,ct+T/2,0); book.add(block);
+  const spine=new THREE.Mesh(new THREE.BoxGeometry(.12,T+2*ct,CD),M({color:new THREE.Color(C.crimson),roughness:.6})); spine.position.set(-CW/2-.04,(T+2*ct)/2,0); book.add(spine);
+  const topPivot=new THREE.Group(); topPivot.position.set(-CW/2,ct+T,0); book.add(topPivot);
+  const topCover=new THREE.Mesh(new THREE.BoxGeometry(CW,ct,CD),[clothSide,clothSide,clothTop,endM,clothSide,clothSide]); topCover.position.set(CW/2,ct/2,0); topPivot.add(topCover);
+  const shadow=new THREE.Mesh(new THREE.PlaneGeometry(5,5),new THREE.MeshBasicMaterial({map:shadowTex,transparent:true,depthWrite:false,opacity:.7}));
+  shadow.rotation.x=-Math.PI/2; shadow.position.y=-.01; root.add(shadow);
+
+  const NL=28, LW=W-.08, LD=D-.1, leaves=[];
+  for(let i=0;i<NL;i++){
+    const geo=new THREE.PlaneGeometry(LW,LD,10,1), mat=new THREE.MeshStandardMaterial({map:leafTexs[i%2],color:0xcfc7b6,roughness:.95,side:THREE.DoubleSide,transparent:true});
+    const mesh=new THREE.Mesh(geo,mat); mesh.rotation.x=-Math.PI/2; mesh.position.x=LW/2;
+    const pv=new THREE.Group(); pv.add(mesh); pv.visible=false; book.add(pv);
+    leaves.push({pv,mesh,geo,mat,base:Float32Array.from(geo.attributes.position.array),dir:R()<.5?-1:1,tw:R()*2-1,sw:R()*2-1});
+  }
+  const sheet=new THREE.Mesh(new THREE.PlaneGeometry(1.9,2.6),new THREE.MeshBasicMaterial({map:sheetTex,color:0xece6da,side:THREE.DoubleSide}));
+  sheet.rotation.order="YXZ"; root.add(sheet);
+  const glow=new THREE.Sprite(new THREE.SpriteMaterial({map:glowTex,color:new THREE.Color(C.gold),blending:THREE.AdditiveBlending,transparent:true,depthWrite:false,opacity:0}));
+  glow.scale.set(3.6,3.6,1); root.add(glow);
+  const ND=150, dpos=new Float32Array(ND*3); for(let i=0;i<ND;i++){dpos[i*3]=(R()-.5)*5;dpos[i*3+1]=R()*3.4;dpos[i*3+2]=(R()-.5)*3}
+  const dgeo=new THREE.BufferGeometry(); dgeo.setAttribute("position",new THREE.BufferAttribute(dpos,3));
+  const dust=new THREE.Points(dgeo,new THREE.PointsMaterial({size:.05,map:glowTex,color:new THREE.Color(C.gold),transparent:true,opacity:0,blending:THREE.AdditiveBlending,depthWrite:false}));
+  scene.add(dust);
+  const target=new THREE.Vector3();
+
+  const t0=1.9,gap=.1,dur=1.35, tEmpty=t0+gap*NL;
+  function render(t,dt){
+    let y; if(t<.7) y=.9*(1-Math.pow(t/.7,2)); else y=.06*Math.exp(-(t-.7)*7)*Math.abs(Math.sin((t-.7)*14));
+    root.rotation.y=-.55+Math.sin(t*.35)*.05; root.position.x=lerp(.42,0,E.inOut(clamp((t-(tEmpty+.35))/1.9)));
+    topPivot.rotation.z=E.inOut(clamp((t-1.1)/1.0))*Math.PI*.64;
+    const frac=1-clamp((t-t0)/(gap*NL));
+    block.visible=frac>.002; block.scale.y=Math.max(.002,frac); block.position.y=ct+T*frac/2;
+    const sh=(T*frac+2*ct)/(T+2*ct); spine.scale.y=sh; spine.position.y=(T*frac+2*ct)/2; topPivot.position.y=ct+T*frac;
+    leaves.forEach((lf,i)=>{
+      const u=(t-(t0+i*gap))/dur;
+      if(u<0||u>1){lf.pv.visible=false;return}
+      lf.pv.visible=true;
+      const u1=clamp(u/.42),u2=clamp((u-.3)/.7);
+      lf.pv.position.set(-W/2+.03-1.6*u2*u2+lf.sw*.4*u2, ct+T*(1-i/NL)+.004+.7*u2+Math.sin(u2*7+i)*.12*u2, -4.6*u2);
+      lf.pv.rotation.set(u2*lf.tw*1.2, 0, Math.PI*.8*E.inOut(u1)+u2*lf.dir*.7);
+      lf.mat.opacity=1-smooth(.1,.7,u2);
+      const bend=-.55*Math.sin(Math.PI*u1)+u2*lf.dir*.35, pos=lf.geo.attributes.position;
+      for(let v=0;v<pos.count;v++){const s=(lf.base[v*3]+LW/2)/LW; pos.array[v*3+2]=bend*s*s}
+      pos.needsUpdate=true;
+    });
+    const fa=E.in(clamp((t-(tEmpty+.2))/1.4));
+    book.position.y=y-2.2*fa; book.scale.setScalar(1-.25*fa);
+    bookMats.forEach(m=>m.opacity=1-fa); shadow.material.opacity=.7*(1-fa);
+    const sr=E.inOut(clamp((t-(tEmpty+.35))/1.9));
+    sheet.visible=t>tEmpty-.6;
+    sheet.position.set(0,lerp(ct+.006+y,1.2,sr)+Math.sin(t*1.1)*.05*sr,0);
+    sheet.rotation.set(lerp(-Math.PI/2,-.36,sr),(.55+Math.sin(t*.6)*.07)*sr,0);
+    sheet.scale.setScalar(lerp(1,1.1,sr));
+    glow.position.set(0,sheet.position.y-.05,-.35); glow.material.opacity=.6*sr*(.85+.15*Math.sin(t*1.6));
+    dust.material.opacity=.85*sr;
+    if(dt){for(let i=0;i<ND;i++){dpos[i*3+1]+=dt*(.1+(i%5)*.03); if(dpos[i*3+1]>3.4) dpos[i*3+1]=0} dgeo.attributes.position.needsUpdate=true}
+    target.set(0,lerp(.35,1.05,sr),lerp(0,.3,sr));
+    cam.position.set(0,lerp(3.9,2.9,sr),lerp(8.9,6.9,sr)); cam.lookAt(target);
+    renderer.render(scene,cam);
+  }
+  function resize(){const w=slot.clientWidth||1; renderer.setPixelRatio(Math.min(2,window.devicePixelRatio||1)); renderer.setSize(w,w,false); renderer.domElement.style.width="100%"; renderer.domElement.style.height="100%"}
+  resize();
+  return {render,resize,still:9,duration:9};
+}
+
+/* ===================================================================================
+   2C  THE KEY PIECES  (SVG)
+   A rosette of 57 pieces; 17 of them, the star, the kites and the arches, are the key and are
+   set in colour. The share shown on the meter is computed from those counts, never typed.
+   =================================================================================== */
+function tile(slot){
+  const C={ground:tok("--ground"),tile:tok("--tile"),muted:tok("--muted"),gold:tok("--gold"),teal:tok("--teal"),crimson:tok("--crimson"),
+    rose:tok("--rose"),lift:tok("--indigo-lift"),sand:tok("--sand")};
+  const R=rng(57), c={x:500,y:440}, D2R=Math.PI/180;
+  const pol=(r,a)=>[c.x+r*Math.cos(a),c.y+r*Math.sin(a)];
+  const svg=el("svg",{viewBox:"0 0 1000 1000","aria-hidden":"true"}); slot.appendChild(svg);
+  const defs=el("defs",{},svg);
+  const sg=el("linearGradient",{id:"c-sheen",x1:"0",y1:"0",x2:"1",y2:"0"},defs);
+  [["0","#fff",0],[".5","#fff",.38],["1","#fff",0]].forEach(([o,col,a])=>el("stop",{offset:o,"stop-color":col,"stop-opacity":a},sg));
+  const hp=el("pattern",{id:"c-hatch",width:"14",height:"14",patternUnits:"userSpaceOnUse",patternTransform:"rotate(45)"},defs);
+  el("rect",{width:"3",height:"14",fill:C.gold,opacity:".55"},hp);
+
+  const pieces=[];
+  const add=(d,pts,key,fill)=>pieces.push({d,pts,key,fill});
+  const poly=pts=>"M"+pts.map(p=>p.map(v=>v.toFixed(1)).join(",")).join("L")+"Z";
+  const lens=(r1,r2,a,hw)=>{const p1=pol(r1,a),p2=pol(r2,a),m=(r1+r2)/2,tx=-Math.sin(a),ty=Math.cos(a),mc=pol(m,a);
+    const q1=[mc[0]+tx*hw*2,mc[1]+ty*hw*2],q2=[mc[0]-tx*hw*2,mc[1]-ty*hw*2];
+    return {d:`M${p1}Q${q1} ${p2}Q${q2} ${p1}Z`,pts:[p1,p2,mc]}};
+  // the star, 16 points
+  const sp=[]; for(let i=0;i<16;i++) sp.push(pol(i%2?46:84,i*22.5*D2R)); add(poly(sp),sp,true,C.gold);
+  // kites between its points
+  for(let i=0;i<8;i++){const a=(22.5+45*i)*D2R, pts=[pol(54,a),pol(150,a-15*D2R),pol(206,a),pol(150,a+15*D2R)]; add(poly(pts),pts,true,C.lift)}
+  // leaves in the gaps, and beyond the kites
+  for(let i=0;i<8;i++){const L=lens(100,205,45*i*D2R,14); add(L.d,L.pts,false)}
+  for(let i=0;i<8;i++){const L=lens(222,290,(22.5+45*i)*D2R,20); add(L.d,L.pts,false)}
+  // pointed arches on the eight axes
+  for(let i=0;i<8;i++){
+    const a=45*i*D2R, rx=Math.cos(a), ry=Math.sin(a), tx=-ry, ty=rx, r0=214;
+    const loc=(x,y)=>[c.x+rx*(r0+y)+tx*x, c.y+ry*(r0+y)+ty*x];
+    const w=40,h1=40,h=104, p=[loc(-w,0),loc(-w,h1),loc(-w,h*.86),loc(0,h),loc(w,h*.86),loc(w,h1),loc(w,0)];
+    add(`M${p[0]}L${p[1]}Q${p[2]} ${p[3]}Q${p[4]} ${p[5]}L${p[6]}Z`,[p[0],p[3],p[6]],true,i%2?C.crimson:C.teal);
+  }
+  // corner spandrels
+  for(const [sx,sy] of [[1,1],[-1,1],[-1,-1],[1,-1]]){
+    const K=[c.x+sx*330,c.y+sy*330],e1=[c.x+sx*330,c.y+sy*180],e2=[c.x+sx*180,c.y+sy*330],q=[c.x+sx*262,c.y+sy*262];
+    add(`M${K}L${e1}Q${q} ${e2}Z`,[K,e1,e2],false);
+  }
+  // the border, five diamonds a side
+  for(let side=0;side<4;side++)for(const o of [-264,-132,0,132,264]){
+    const along=side%2===0, sgn=side<2?1:-1, mx=along?c.x+o:c.x+sgn*365, my=along?c.y+sgn*365:c.y+o;
+    const ax=along?42:24, ay=along?24:42, pts=[[mx-ax,my],[mx,my-ay],[mx+ax,my],[mx,my+ay]]; add(poly(pts),pts,false);
+  }
+  const nKey=pieces.filter(p=>p.key).length, pct=Math.round(nKey/pieces.length*100);
+
+  el("rect",{x:c.x-400,y:c.y-400,width:800,height:800,rx:6,fill:C.tile,stroke:rgba(C.sand,.18),"stroke-width":2},svg);
+  el("rect",{x:c.x-330,y:c.y-330,width:660,height:660,fill:"none",stroke:rgba(C.sand,.14),"stroke-width":2},svg);
+  const ghostG=el("g",{fill:"none",stroke:C.gold,"stroke-width":2.4,"stroke-linejoin":"round"},svg);
+  const solidG=el("g",{"stroke-linejoin":"round"},svg);
+  const clip=el("clipPath",{id:"c-keys"},defs);
+  const grey=mix(C.ground,C.muted,.45);
+  let ki=0;
+  pieces.forEach((p,i)=>{
+    const n=p.pts.length; p.cx=p.pts.reduce((s,q)=>s+q[0],0)/n; p.cy=p.pts.reduce((s,q)=>s+q[1],0)/n;
+    p.el=el("path",{d:p.d,stroke:C.ground,"stroke-width":p.key?4:2},solidG);
+    p.sx=60+R()*880; p.sy=40+R()*820; p.r0=R()*360-180; p.spin=(R()-.5)*80; p.sr=14+R()*30; p.ws=.8+R()*1.6; p.ph=R()*6.3; p.fl=R()*20;
+    if(p.key){p.ki=ki++; el("path",{d:p.d},clip)}
+    else{p.g=el("path",{d:p.d,pathLength:"1","stroke-dasharray":"1 1","stroke-dashoffset":"1"},ghostG); p.ang=Math.atan2(p.cy-c.y,p.cx-c.x); p.out=R()}
+  });
+  const ghosts=pieces.filter(p=>!p.key).sort((a,b)=>a.ang-b.ang); ghosts.forEach((p,i)=>p.order=i);
+  const sheenG=el("g",{"clip-path":"url(#c-keys)"},svg);
+  const sheen=el("rect",{x:-400,y:0,width:360,height:1000,fill:"url(#c-sheen)",transform:"skewX(-18)"},sheenG);
+  // the meter: x 140..860
+  const mx0=140, MW=720, w30=MW*pct/100;
+  el("rect",{x:mx0,y:896,width:MW,height:14,rx:3,fill:"none",stroke:rgba(C.sand,.16),"stroke-width":1.5},svg);
+  const m30=el("rect",{x:mx0,y:896,width:0,height:14,rx:2,fill:C.gold},svg);
+  const m70=el("rect",{x:mx0+w30+4,y:896,width:0,height:14,fill:"url(#c-hatch)"},svg);
+  const txt=(x,s,anchor,col)=>{const t=el("text",{x,y:958,"text-anchor":anchor,fill:col,"font-family":"Fraunces, Georgia, serif","font-size":34,"font-weight":560},svg);t.textContent=s;return t};
+  const l30=txt(mx0,`${pct}% placed`,"start",C.gold), l70=txt(mx0+MW,`${100-pct}% understood`,"end",rgba(C.gold,.85));
+
+  function render(t){
+    for(const p of pieces){
+      const chaosX=p.sx+Math.cos(t*p.ws+p.ph)*p.sr, chaosY=p.sy+Math.sin(t*p.ws*1.3+p.ph)*p.sr, rot=p.r0+t*p.spin;
+      let X,Y,Rr,S,op,fill;
+      if(p.key){
+        const k=E.inOut(clamp((t-1.3-p.ki*.05)/1.4));
+        X=lerp(chaosX,p.cx,k); Y=lerp(chaosY,p.cy,k); Rr=rot*(1-k); S=lerp(.55,1,k); op=1;
+        fill=mix(grey,p.fill,smooth(.45,1,k));
+      }else{
+        const k=clamp((t-1.3-p.out*.5)/1.1);
+        if(k>=1){p.el.setAttribute("display","none");continue}
+        p.el.removeAttribute("display");
+        const dx=chaosX-c.x,dy=chaosY-c.y,dl=Math.hypot(dx,dy)||1;
+        X=chaosX+dx/dl*140*k; Y=chaosY+dy/dl*140*k; Rr=rot; S=.55*(1-.4*k); op=1-k; fill=grey;
+      }
+      if(t<1.6) op*=.65+.35*Math.abs(Math.sin(t*9+p.fl));
+      p.el.setAttribute("transform",`translate(${X.toFixed(1)} ${Y.toFixed(1)}) rotate(${Rr.toFixed(1)}) scale(${S.toFixed(3)}) translate(${(-p.cx).toFixed(1)} ${(-p.cy).toFixed(1)})`);
+      p.el.setAttribute("fill",fill); p.el.setAttribute("opacity",op.toFixed(3));
+    }
+    const breathe=.5+.12*Math.sin(t*1.3);
+    for(const p of ghosts){const g=E.out(clamp((t-3.3-p.order*.035)/.9)); p.g.setAttribute("stroke-dashoffset",(1-g).toFixed(3)); p.g.setAttribute("opacity",(breathe*g+.0).toFixed(3))}
+    m30.setAttribute("width",(w30*E.out(clamp((t-2.4)/1))).toFixed(1));
+    m70.setAttribute("width",((MW-w30-4)*E.out(clamp((t-3.4)/2.2))).toFixed(1));
+    l30.setAttribute("opacity",smooth(2.4,3.2,t)); l70.setAttribute("opacity",smooth(3.8,4.8,t));
+    const sc=t>4.2?((t-4.2)%4.6)/4.6:0; sheen.setAttribute("x",(-500+sc*1900).toFixed(0)); sheen.setAttribute("opacity",t>4.2?1:0);
+  }
+  return {render,still:6.5,duration:6.5};
+}
+
+/* ===================================================================================
+   2D  TUNING OUT THE NOISE  (canvas 2D)
+   The ring is painted once to its own canvas and drawn rotated; the screen keeps a phosphor
+   canvas that fades a little each frame, so the noise leaves trails and the signal does not.
+   =================================================================================== */
+function dial(slot){
+  const cv=document.createElement("canvas"); slot.appendChild(cv);
+  const ctx=cv.getContext("2d"), ring=document.createElement("canvas"), rg=ring.getContext("2d");
+  const ph=document.createElement("canvas"), pg=ph.getContext("2d");
+  const C={ground:tok("--ground"),g2:tok("--ground-2"),gold:tok("--gold"),ochre:tok("--ochre"),sand:tok("--sand"),teal:tok("--teal"),
+    rose:tok("--rose"),crimson:tok("--crimson"),lift:tok("--indigo-lift"),muted:tok("--muted")};
+  const c={x:500,y:470},Ro=405,Ri=330,Rs=316, R=rng(9);
+  const traces=Array.from({length:6},()=>Array.from({length:4},()=>({a:.3+R(),f:.02+R()*.07,s:(R()-.5)*14,p:R()*6.3})));
+  let k=1;
+  function paintRing(){
+    ring.width=cv.width; ring.height=cv.height; rg.setTransform(k,0,0,k,0,0);
+    const g=rg.createLinearGradient(c.x-Ro,c.y-Ro,c.x+Ro,c.y+Ro);
+    g.addColorStop(0,mix(C.gold,"#fff3dc",.4)); g.addColorStop(.32,C.gold); g.addColorStop(.62,mix(C.ochre,C.ground,.35)); g.addColorStop(1,mix(C.ground,C.ochre,.4));
+    rg.beginPath(); rg.arc(c.x,c.y,Ro,0,6.283); rg.moveTo(c.x+Ri,c.y); rg.arc(c.x,c.y,Ri,6.2832,0,true); rg.fillStyle=g; rg.fill("evenodd");
+    rg.strokeStyle=rgba("#fff3dc",.5); rg.lineWidth=2; rg.beginPath(); rg.arc(c.x,c.y,Ro-2,Math.PI*.9,Math.PI*1.6); rg.stroke();
+    rg.strokeStyle=rgba(C.ground,.7); rg.lineWidth=3; rg.beginPath(); rg.arc(c.x,c.y,Ri+1,0,6.283); rg.stroke(); rg.beginPath(); rg.arc(c.x,c.y,Ro-1,0,6.283); rg.stroke();
+    const eng=mix(C.ground,C.ochre,.25), hi=rgba("#fff3dc",.35);
+    for(let i=0;i<180;i++){
+      const a=i*2*Math.PI/180, l=i%15===0?34:i%5===0?22:12, r1=Ri+8, r2=r1+l, cs=Math.cos(a), sn=Math.sin(a);
+      rg.strokeStyle=eng; rg.lineWidth=i%5===0?3:1.8; rg.beginPath(); rg.moveTo(c.x+cs*r1,c.y+sn*r1); rg.lineTo(c.x+cs*r2,c.y+sn*r2); rg.stroke();
+      rg.strokeStyle=hi; rg.lineWidth=1; rg.beginPath(); rg.moveTo(c.x+cs*r1+1,c.y+sn*r1+1); rg.lineTo(c.x+cs*r2+1,c.y+sn*r2+1); rg.stroke();
+    }
+    for(let i=0;i<60;i++){const a=i*2*Math.PI/60, r=Ro-18, x=c.x+Math.cos(a)*r, y=c.y+Math.sin(a)*r;
+      rg.save(); rg.translate(x,y); rg.rotate(a); rg.fillStyle=i%5===0?C.crimson:eng; const s=i%5===0?7:4.5;
+      rg.beginPath(); rg.moveTo(-s,0); rg.lineTo(0,-s); rg.lineTo(s,0); rg.lineTo(0,s); rg.closePath(); rg.fill(); rg.restore()}
+    ph.width=Math.round(2*Rs*k); ph.height=ph.width; clearScreen(1);
+  }
+  function clearScreen(a){pg.setTransform(1,0,0,1,0,0); pg.globalCompositeOperation="source-over"; pg.fillStyle=rgba(C.g2,a); pg.fillRect(0,0,ph.width,ph.height)}
+  function resize(){fit(cv,slot); k=cv.width/1000; paintRing()}
+  resize();
+  const tune=t=>{ if(t<1.2) return -128+Math.sin(t*2.3)*7; const u=clamp((t-1.2)/3.6); return u<1?-128*(1-E.back(u)):Math.sin((t-4.8)*.6)*.6 };
+  function render(t,dt){
+    const ang=tune(t), n=Math.pow(clamp(Math.abs(ang)/110),.85), lock=1-smooth(.02,.12,n);
+    ctx.setTransform(1,0,0,1,0,0); ctx.clearRect(0,0,cv.width,cv.height); ctx.setTransform(k,0,0,k,0,0);
+    let g=ctx.createRadialGradient(c.x,c.y,Ri,c.x,c.y,Ro+120); g.addColorStop(0,rgba(C.teal,.10*lock)); g.addColorStop(.5,rgba(C.gold,.07)); g.addColorStop(1,rgba(C.gold,0));
+    ctx.fillStyle=g; ctx.fillRect(0,0,1000,1000);
+    ctx.save(); ctx.translate(c.x+10,c.y+18); g=ctx.createRadialGradient(0,0,Ro*.8,0,0,Ro+40); g.addColorStop(0,"rgba(0,0,0,.5)"); g.addColorStop(1,"rgba(0,0,0,0)");
+    ctx.fillStyle=g; ctx.beginPath(); ctx.arc(0,0,Ro+40,0,6.283); ctx.fill(); ctx.restore();
+    // the phosphor
+    const S=ph.width, sk=S/(2*Rs);
+    if(!dt) clearScreen(1); else clearScreen(.16+.6*(1-n));
+    pg.setTransform(sk,0,0,sk,Rs*sk,Rs*sk); pg.globalCompositeOperation="lighter"; pg.lineJoin="round";
+    const Aamp=92, f=2*Math.PI/220, phase=t*1.7;
+    const sig=x=>Aamp*Math.sin(x*f-phase)*(.75+.25*Math.cos(x*.006));
+    for(let j=0;j<6;j++){
+      pg.beginPath();
+      for(let x=-Rs;x<=Rs;x+=5){
+        let nz=0; for(const h of traces[j]) nz+=h.a*Math.sin(x*h.f+t*h.s+h.p);
+        const y=sig(x)*(1-.55*n)+n*(nz*62+(R()-.5)*70*n+(j-2.5)*26);
+        x===-Rs?pg.moveTo(x,y):pg.lineTo(x,y);
+      }
+      pg.strokeStyle=rgba(mix(C.lift,C.teal,1-n),.22+.5*(1-n)); pg.lineWidth=1.8; pg.stroke();
+    }
+    if(n<.3){
+      const a=1-n/.3; pg.beginPath(); for(let x=-Rs;x<=Rs;x+=4){const y=sig(x); x===-Rs?pg.moveTo(x,y):pg.lineTo(x,y)}
+      pg.strokeStyle=rgba(C.teal,.28*a); pg.lineWidth=12; pg.stroke(); pg.strokeStyle=rgba(mix(C.teal,"#e9fffb",.45),.9*a); pg.lineWidth=3; pg.stroke();
+    }
+    if(n>.05){pg.fillStyle=rgba(C.sand,.5*n); for(let i=0;i<90*n;i++){pg.fillRect((R()-.5)*2*Rs,(R()-.5)*2*Rs,2,2)}}
+    // the screen
+    ctx.save(); ctx.beginPath(); ctx.arc(c.x,c.y,Rs,0,6.283); ctx.clip();
+    ctx.drawImage(ph,c.x-Rs,c.y-Rs,2*Rs,2*Rs);
+    ctx.strokeStyle=rgba(C.lift,.12); ctx.lineWidth=1.2;
+    for(let i=-5;i<=5;i++){ctx.beginPath();ctx.moveTo(c.x+i*60,c.y-Rs);ctx.lineTo(c.x+i*60,c.y+Rs);ctx.moveTo(c.x-Rs,c.y+i*60);ctx.lineTo(c.x+Rs,c.y+i*60);ctx.stroke()}
+    ctx.strokeStyle=rgba(C.lift,.22); ctx.beginPath(); ctx.moveTo(c.x-Rs,c.y); ctx.lineTo(c.x+Rs,c.y); ctx.moveTo(c.x,c.y-Rs); ctx.lineTo(c.x,c.y+Rs); ctx.stroke();
+    g=ctx.createRadialGradient(c.x,c.y,Rs*.7,c.x,c.y,Rs); g.addColorStop(0,"rgba(0,0,0,0)"); g.addColorStop(1,"rgba(0,0,0,.6)"); ctx.fillStyle=g; ctx.fillRect(c.x-Rs,c.y-Rs,2*Rs,2*Rs);
+    ctx.restore();
+    ctx.save(); ctx.beginPath(); ctx.ellipse(c.x-90,c.y-150,190,80,-.5,0,6.283); g=ctx.createLinearGradient(c.x-250,c.y-260,c.x,c.y-80);
+    g.addColorStop(0,"rgba(255,255,255,.06)"); g.addColorStop(1,"rgba(255,255,255,0)"); ctx.fillStyle=g; ctx.fill(); ctx.restore();
+    // the ring turns; the marker stays
+    ctx.save(); ctx.translate(c.x,c.y); ctx.rotate(ang*Math.PI/180); ctx.translate(-c.x,-c.y); ctx.drawImage(ring,0,0,1000,1000); ctx.restore();
+    ctx.beginPath(); ctx.moveTo(c.x-18,c.y-Ro-26); ctx.lineTo(c.x+18,c.y-Ro-26); ctx.lineTo(c.x,c.y-Ri-18); ctx.closePath(); ctx.fillStyle=C.rose; ctx.fill();
+    ctx.strokeStyle=rgba(C.ground,.6); ctx.lineWidth=2; ctx.stroke();
+    // the lamp
+    const ly=c.y+Ro+50; g=ctx.createRadialGradient(c.x,ly,0,c.x,ly,60); g.addColorStop(0,rgba(C.teal,.6*lock)); g.addColorStop(1,rgba(C.teal,0));
+    ctx.fillStyle=g; ctx.fillRect(c.x-60,ly-60,120,120);
+    ctx.beginPath(); ctx.arc(c.x,ly,13,0,6.283); ctx.fillStyle=lock>.5?mix(C.teal,"#dffaf5",.3*lock):mix(C.ground,C.teal,.25); ctx.fill();
+    ctx.strokeStyle=C.gold; ctx.lineWidth=3; ctx.stroke();
+  }
+  return {render,resize,still:6,duration:6,replay(){clearScreen(1)}};
+}
+
+/* ===================================================================================
+   2E  ARCHES DEEPER  (CSS 3D)
+   Eight arches recycle along z, so the corridor is endless; the floor's lattice and the
+   thread's light move with the travel. The page stays in front, held at the lower left.
+   =================================================================================== */
+function corridor(slot){
+  const N=8;
+  const archSVG=(i)=>{const L=i%2===0, tx=L?84:502;
+    return `<svg viewBox="0 0 660 900" preserveAspectRatio="none" aria-hidden="true">
+      <path class="a-frame" fill-rule="evenodd" d="M0,900 L0,340 C0,170 170,58 330,0 C490,58 660,170 660,340 L660,900 Z M78,900 L78,360 C78,222 214,126 330,74 C446,126 582,222 582,360 L582,900 Z"/>
+      <path class="a-band" d="M39,900 L39,350 C39,196 192,92 330,37 C468,92 621,196 621,350 L621,900"/>
+      <path class="a-out" d="M0,900 L0,340 C0,170 170,58 330,0 C490,58 660,170 660,340 L660,900"/>
+      <path class="a-edge" d="M78,900 L78,360 C78,222 214,126 330,74 C446,126 582,222 582,360 L582,900"/>
+      <path class="a-str" d="M${tx+37},400 L${tx+37},452"/>
+      <rect class="a-tag" x="${tx}" y="452" width="74" height="104" rx="6"/>
+      <circle class="a-seal" cx="${tx+37}" cy="530" r="17"/>
+      <line class="a-ln" x1="${tx+14}" y1="474" x2="${tx+60}" y2="474"/><line class="a-ln" x1="${tx+14}" y1="492" x2="${tx+48}" y2="492"/>
+    </svg>`};
+  slot.insertAdjacentHTML("beforeend",`
+    <div class="cor" aria-hidden="true">
+      <div class="cor-glow"></div>
+      <div class="cor-world"><div class="cor-floor"><div class="cor-thread"></div></div>${Array.from({length:N},(_,i)=>`<div class="cor-arch">${archSVG(i)}</div>`).join("")}</div>
+      <svg class="cor-tie"><path/></svg>
+      <div class="cor-sheet"><i class="cs-band"></i><i class="cs-row h"></i><i class="cs-row" style="width:40%"></i><i class="cs-row k"></i><i class="cs-row"></i><i class="cs-row" style="width:70%"></i>
+        <span class="cs-dia"><i></i><i></i><i></i></span><span class="cs-link"><b></b></span><span class="cs-link"><b style="flex:.8"></b></span><span class="cs-link on"><b style="flex:.9"></b></span></div>
+      <div class="cor-vig"></div>
+    </div>`);
+  const cor=slot.querySelector(".cor"), arches=[...slot.querySelectorAll(".cor-arch")], floor=slot.querySelector(".cor-floor"),
+    thread=slot.querySelector(".cor-thread"), sheet=slot.querySelector(".cor-sheet"), tie=slot.querySelector(".cor-tie path"),
+    tieSvg=slot.querySelector(".cor-tie"), anchor=slot.querySelector(".cs-link.on b");
+  let W=1, travel=0;
+  function resize(){W=slot.clientWidth||1; cor.style.setProperty("--W",W); tieSvg.setAttribute("viewBox",`0 0 ${W} ${W}`)}
+  resize();
+  function render(t,dt){
+    if(!dt&&t===0) travel=0;
+    const v=.3*W; if(dt) travel+=dt*v*smooth(1.8,3.8,t); else if(RM||t>=9) travel=.32*.55*W;
+    const S=.55*W, Ltot=N*S, nearZ=.3*W;
+    arches.forEach((a,i)=>{
+      const d=(((i*S+S*.35-travel)%Ltot)+Ltot)%Ltot, z=nearZ-d;
+      const o=smooth(0,.35*W,d)*(1-smooth(Ltot*.5,Ltot*.95,d));
+      a.style.transform=`translateZ(${z.toFixed(1)}px)`; a.style.opacity=o.toFixed(3);
+    });
+    const tile=.2*W;
+    floor.style.backgroundPosition=`0 ${(-(travel%tile)).toFixed(1)}px`;
+    thread.style.backgroundPosition=`0 ${((t*.6*W-travel)%(.22*W)).toFixed(1)}px`;
+    const m=RM&&!dt?1:E.inOut(clamp((t-1.4)/1.6)), bob=Math.sin(t*1.2)*W*.008;
+    const sw=.34*W, sh=sw*46/34;
+    const x=lerp(W/2-sw/2,W*.06,m), y=lerp(W*.42-sh/2,W*.6-sh/2,m)+bob, sc=lerp(1,.8,m);
+    sheet.style.transform=`translate(${x.toFixed(1)}px,${y.toFixed(1)}px) perspective(${(W*1.2).toFixed(0)}px) rotateY(${(18*m).toFixed(2)}deg) rotateZ(${(-6*m).toFixed(2)}deg) scale(${sc.toFixed(3)})`;
+    const sr=slot.getBoundingClientRect(), ar=anchor.getBoundingClientRect();
+    const ax=ar.right-sr.left, ay=ar.top+ar.height/2-sr.top, bx=W/2, by=W*.86;
+    tie.setAttribute("d",`M${ax.toFixed(1)},${ay.toFixed(1)} C${(ax+W*.16).toFixed(1)},${(ay+W*.02).toFixed(1)} ${(bx-W*.02).toFixed(1)},${(by-W*.2).toFixed(1)} ${bx},${by}`);
+    tie.style.opacity=smooth(.4,1,m).toFixed(3);
+    tie.style.strokeDasharray=`${(W*.04).toFixed(1)} ${(W*.03).toFixed(1)}`; tie.style.strokeDashoffset=(-t*W*.12).toFixed(1);
+  }
+  return {render,resize,still:10,duration:6,replay(){travel=0}};
+}
+
+/* ============================== start ============================== */
+document.querySelectorAll(".opt").forEach((sec,i)=>stage(sec,OPTIONS[i].art));
+
+/* The text arrives after the drawing's slot does, heavily: the heading word by word, then the body. */
+if(!RM&&window.gsap&&window.ScrollTrigger){
+  gsap.registerPlugin(ScrollTrigger);
+  document.querySelectorAll(".opt").forEach(sec=>{
+    const copy=sec.querySelector(".copy");
+    const tl=gsap.timeline({scrollTrigger:{trigger:copy,start:"top 80%",toggleActions:"play none none reverse"}});
+    tl.from(copy.querySelector(".kicker"),{opacity:0,x:-24,duration:1,ease:"power3.out"})
+      .from(copy.querySelectorAll("h3 .w > span"),{yPercent:115,duration:1.25,ease:"power4.out",stagger:.055},"-=.7")
+      .from(copy.querySelector("p.body"),{opacity:0,y:34,duration:1.5,ease:"power3.out"},"-=.8");
+  });
+}
+</script>
+</body>
+</html>

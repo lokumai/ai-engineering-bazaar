@@ -11,7 +11,7 @@ description: >
 authority: blueprint
 writes: agent, when explicitly refactoring
 status: active
-covers: the whole system as built on 2026-09-10, with M16 shipped — every route on the design language; the record, channel A and the render step corrected for M24 on 2026-10-11, and the quiz and the end of a module for M25 on 2026-10-12, the Bazaar Street front door for M27 and the Persian pages for M28 the same day, and the progress page slimmed to its circles and its data row for M38 on 2026-11-05, and the account layer, role paths, record of work and two thirds of the test suite removed for M40 the same day, and the two tracks (For Engineers, For Everyone) and their per-track record for M43 the same day; the custom domain (D92), the fifth level, Emerging (first named Emerging Trends), and moved addresses (D94) on 2026-11-06, and the people at the gate (M58), search (M59) and the catalog without its Sources count (M55) the same day; and for M64 to M69 the same night, a planned module that renders the sections it already has (D102), inline vendor logos, and the first For Everyone module; and the search filters and the level bar on a result (M70, D103), folded behind a Filters disclosure (M71, D104), and the stories at the gate kept until everyone has turned (M72), on 2026-11-07; and call-out cards in a module (D106), the reader's choice of Mermaid theme (D107), Mihrî in Leyla's place at the gate and the fifth level titled Emerging (M75), on 2026-11-08; and For Everyone versions of the nineteen other written modules of Fundamentals, Intermediate and Ecosystem, in three languages (M77, M78, D108), the same day; and one heading per shared section (D109), technical terms kept English in translations, and more vendor marks (M80), and each diagram theme on Mermaid's own ground with a copy control (M81), the same day; and the content bundle for the mobile reader, §13 (M41, D89, D111), on 2026-11-09, and Caravan's address in the bar (M62) the same day
+covers: the whole system as built on 2026-09-10, with M16 shipped — every route on the design language; the record, channel A and the render step corrected for M24 on 2026-10-11, and the quiz and the end of a module for M25 on 2026-10-12, the Bazaar Street front door for M27 and the Persian pages for M28 the same day, and the progress page slimmed to its circles and its data row for M38 on 2026-11-05, and the account layer, role paths, record of work and two thirds of the test suite removed for M40 the same day, and the two tracks (For Engineers, For Everyone) and their per-track record for M43 the same day; the custom domain (D92), the fifth level, Emerging (first named Emerging Trends), and moved addresses (D94) on 2026-11-06, and the people at the gate (M58), search (M59) and the catalog without its Sources count (M55) the same day; and for M64 to M69 the same night, a planned module that renders the sections it already has (D102), inline vendor logos, and the first For Everyone module; and the search filters and the level bar on a result (M70, D103), folded behind a Filters disclosure (M71, D104), and the stories at the gate kept until everyone has turned (M72), on 2026-11-07; and call-out cards in a module (D106), the reader's choice of Mermaid theme (D107), Mihrî in Leyla's place at the gate and the fifth level titled Emerging (M75), on 2026-11-08; and For Everyone versions of the nineteen other written modules of Fundamentals, Intermediate and Ecosystem, in three languages (M77, M78, D108), the same day; and one heading per shared section (D109), technical terms kept English in translations, and more vendor marks (M80), and each diagram theme on Mermaid's own ground with a copy control (M81), the same day; and the content bundle for the mobile reader, §13 (M41, D89, D111), on 2026-11-09, and Caravan's address in the bar (M62) the same day, and the About page (M90, D115) the same day
 last_updated: 2026-11-09
 ---
 
@@ -38,7 +38,7 @@ with the role paths and the record of work. A reader keeps a copy by exporting a
 
 ```
 mini-courses/*.md  ──build──▶  static export  ──▶  the reader's browser
-   (read-only)                  197 pages           record in localStorage
+   (read-only)                  207 pages           record in localStorage
 ```
 
 ---
@@ -525,10 +525,24 @@ Four components import `CategorySlug` from `categories.ts` and all four use `imp
 erased; a value import from `curriculum-file.ts` into a client island pulls the file system into the
 browser bundle and stops the build.
 
-**18 page routes and 7 route handlers** (`find src/app -name page.tsx | wc -l`, `-name route.ts`),
-producing 206 HTML pages and 161 JSON files (measured 2026-11-09, after M62's address; the JSON is
+**19 page routes and 7 route handlers** (`find src/app -name page.tsx | wc -l`, `-name route.ts`),
+producing 207 HTML pages and 161 JSON files (measured 2026-11-09, after M90's About page; the JSON is
 mostly the mobile bundle, §13). `/caravan/` is the trends timeline's address (M62): in the bar beside
-Progress, with its content under maintenance until the timeline is built. `/` is a home page
+Progress, with its content under maintenance until the timeline is built.
+
+**About (M90, D115).** `/about/` tells why the project exists, and its words are
+`mini-courses/STORY.md`: `src/lib/content/story.ts` reads the file at build time (`node:fs`, so the route
+reads it and passes strings down), one stall per `##` section in order and the motto from the closing
+line. The page is `src/components/about/AboutStory.tsx`, server-rendered complete: every word, and each
+stall's scene as a still picture (SVG or CSS; stall 2 is drawn on a canvas while it moves; a scene
+belongs to a stall by position; stall 1's is
+written from the same pure `frame(t)` that animates it, `scenes/treaty.ts`). Its colours are the
+page's art, in `components/about/palette.ts`, written into the page as `--about-*` properties that
+`src/app/about.css` reads. One island, `AboutMotion.tsx`, imports `gsap` on demand (`motion.ts`): on a wide
+screen each stall pins and plays under the scroll and the ground changes colour; below 900px stalls rise
+into place unpinned; each scene is wrapped and run only near the screen. With no script, or under
+`prefers-reduced-motion`, the island does nothing and the still page is what a reader gets. The footer
+links to it; the bar does not. `/` is a home page
 built from components; `mini-courses/index.md` is no longer the published home page and is read only as
 a link target. Since **D113** the same home renders at `/tr/` and `/fa/` from one component
 (`src/components/home/HomeStreet.tsx`) and one table of its words (`src/lib/home-copy.ts`), keyed by

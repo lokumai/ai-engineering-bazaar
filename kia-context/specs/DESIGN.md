@@ -11,8 +11,8 @@ source: playground/01-theme-T4-ground-G3-powder.html (light) · playground/01-th
 authority: blueprint
 writes: agent, as the language evolves
 status: active
-covers: "the Bazaar language, transcribed from T4 on ground G3, with its derived dark sibling, plus the six primitives M16 derived from the component mockups — 2026-09-13, with eleven recorded deviations (the sixth and seventh, the logo and the rail group, 2026-10-11; the eighth, the pager, the ninth, the Bazaar Street front door, and the tenth, a right-to-left script, 2026-10-12; the eleventh, the diagram frame's ground, 2026-11-08), the three reader palettes for code, the ten Mermaid themes for diagrams, the call-out card, and the end of a reading page"
-last_updated: 2026-11-08
+covers: "the Bazaar language, transcribed from T4 on ground G3, with its derived dark sibling, plus the six primitives M16 derived from the component mockups — 2026-09-13, with twelve recorded deviations (the sixth and seventh, the logo and the rail group, 2026-10-11; the eighth, the pager, the ninth, the Bazaar Street front door, and the tenth, a right-to-left script, 2026-10-12; the eleventh, the diagram frame's ground, 2026-11-08; the twelfth, the About page, 2026-11-09), the three reader palettes for code, the ten Mermaid themes for diagrams, the call-out card, and the end of a reading page"
+last_updated: 2026-11-09
 ---
 
 ---
@@ -641,12 +641,12 @@ for a home page that makes a reader say *"WoW"*, with art and with things that *
 and move and evolve"* as the page scrolls. He was shown three standalone concepts and chose **Bazaar
 Street** (**D79**), which is now the home page's reference: `playground/10-home-bazaar-street.html`,
 replacing `08`. It departs from this document in four ways, all of them the author's choice and all
-of them scoped to `/`:
+of them scoped to `/` (and, since 2026-11-09, to `/about/`, the twelfth deviation below):
 
 - **A display face.** The headline and the signs are set in **Fraunces**, against the don't-list's
-  "no serif". It is the only downloaded face on the site, fetched by `next/font` at build time and
-  served from the site itself, so a reader's browser asks Google for nothing. Every other page keeps
-  the system stack.
+  "no serif". It is fetched by `next/font` at build time and served from the site itself, so a
+  reader's browser asks Google for nothing. Fraunces is downloaded on `/` and `/about/` only, and Caveat
+  on `/about/` only; every other page keeps the system stack.
 - **An illustration with its own palette.** The stone, wood, brass and lantern colours live in the
   art's SVG (`src/components/home/street/art/`), the way a mindmap keeps its own colours. Nothing a
   reader READS is in the art: the headline, the mottos, the doors and the way in are markup on this
@@ -658,6 +658,24 @@ of them scoped to `/`:
 
 It adds no shadow and no new token: the sign boards are told apart by their hairline, and every CSS
 colour on the page is a token.
+
+**A TWELFTH DEVIATION, AND THE AUTHOR'S: ABOUT IS A SHOW PAGE TOO.** On 2026-11-09 the author picked,
+for `/about/`, the ground **B2, Dusk to dawn**, and the feel **F1, Procession**
+(`playground/2026-11-round-5/R0-about-design.html`, **D115**). Like the front door it departs from
+this document, and only on that page:
+
+- **Two downloaded faces.** Fraunces sets the headings and the motto, as on `/`; **Caveat** writes the
+  doodles in stall 4's drawing. Both come through `next/font`, served from the site.
+- **A dark page in both themes, with its own grounds.** The page is at dusk whatever theme a reader
+  chose and turns to dawn sand for the motto. Its grounds and inks are the page's art, stated in
+  `src/components/about/palette.ts` and written into the page as `--about-*` properties (the
+  `diagram-themes.ts` mechanism); `about.css` gives each a token of this language as its fallback and
+  holds no colour of its own.
+- **Ornament and motion.** A gate arch round the title and the motto, a drawn scene beside each stall,
+  pinned and scroll-played stalls on a wide screen. Under `prefers-reduced-motion` and with no script
+  it is a still, complete page.
+
+It adds no shadow, no blur and no token to the language.
 
 **A TENTH DEVIATION, AND THE CONTENT FORCED IT: A RIGHT-TO-LEFT SCRIPT.** On 2026-10-12 the author
 asked for the modules in Persian, at the level of the content and not of the chrome (**D80**). The
@@ -953,3 +971,5 @@ The measurement that forced the hook, and the two grounds that rebind it, are ab
 
 **Do** use the type stack as given.
 **Don't** substitute a different family, add a serif, or introduce small uppercase mono labels.
+(Two pages carry the author's own exceptions to the serif: `/` and `/about/`, the ninth and twelfth
+deviations above.)

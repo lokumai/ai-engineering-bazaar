@@ -72,6 +72,10 @@ const ROOTS: readonly string[] = [
   'components/catalog',
   'components/curriculum',
   'lib/catalog',
+  // M90 — the About page. Its story is the author's and comes from STORY.md; what is scanned here is
+  // the copy the page adds round it: its name, the scenes' labels and the words drawn in them.
+  'components/about',
+  'app/about',
 ]
 
 function walk(target: string): string[] {
@@ -276,6 +280,23 @@ const ALLOWED: ReadonlyArray<{ text: RegExp; ban: string; why: string }> = [
       + 'one state where a name is expected — a chip, a row, a key, a band. Prose that explains '
       + 'the state it has already named is the case the ban is not about, and rewording it to '
       + 'avoid the phrase would make the sentence worse to read for no gain in consistency.',
+  },
+  {
+    text: /^MY ATTENTION SPAN:$/,
+    ban: 'anthropomorphism (first person)',
+    why: 'M90, D115 — a meme caption drawn inside the About page\'s stall 4 scene (4E, the author\'s '
+      + 'pick): "attention is all you need / my attention span:". The "my" is a reader\'s, quoted in '
+      + 'the format a meme is written in, not the site speaking as a person, and the joke is the '
+      + 'point of the stall ("AI cannot enjoy a good brainrot"). Exempt by the whole caption and for '
+      + 'this one ban, so the same words anywhere else, or another ban on these, are still caught.',
+  },
+  {
+    text: /^ME: ONE QUICK$/,
+    ban: 'condescension',
+    why: 'M90, D115 — the other caption of the same scene: "me: one quick question / the AI:". The '
+      + '"quick" is the reader\'s own question being short, which is the joke (the answer is forty '
+      + 'parts long); it tells nobody their struggle is trivial. Exempt by the whole caption and for '
+      + 'this one ban only.',
   },
   {
     text: /(?:^|\s)hl-/,

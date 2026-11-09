@@ -1,0 +1,805 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Stall 1, five ways</title>
+<meta name="description" content="Round 5, About page, stall 1 (AI slop): five animation options, 1A the author's wojak, 1B to 1E alternatives, each beside the stall's text on a dark ground.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT@0,9..144,400..800,0..100;1,9..144,400..700,0..100&display=swap">
+<style>
+/* Every colour the art uses is read from these tokens (canvas and three.js read them with
+   getComputedStyle), so the final page can re-theme all five pieces from here. */
+:root{
+  --ground:#0E0F24; --ground-raised:#15163A; --ground-deep:#090A1A;
+  --hairline:rgba(201,198,228,.14);
+  --title:#F3ECDF; --text:#CFCBE6; --muted:#8C8FB8;
+  --indigo:#282864; --shirt:#3B3B7E; --periwinkle:#848BD0;
+  --rose:#D98A9A; --teal:#63B2AB; --teal-deep:#2F8C86; --gold:#DDB46A; --sand:#E6DAC6;
+  --paper:#EFE6D6; --parchment:#E9DCC0; --crimson:#A0503C; --skin:#F1E6D2;
+  --ink:#16163A; --pile-top:#B9AC95; --pile-deep:#5E5648;
+  --display:"Fraunces", "Iowan Old Style", Georgia, serif;
+  --sans:"Avenir Next", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --slot:min(44vw, 560px);
+}
+*{box-sizing:border-box}
+html{overflow-x:clip; background:var(--ground)}
+body{margin:0; background:var(--ground); color:var(--text); font-family:var(--sans); font-size:17px; line-height:1.55;
+  -webkit-font-smoothing:antialiased; overflow-x:clip}
+:focus-visible{outline:2px solid var(--gold); outline-offset:3px; border-radius:5px}
+
+.intro{max-width:1240px; margin:0 auto; padding:72px 24px 40px}
+.intro .kicker{font-size:13px; letter-spacing:.14em; text-transform:uppercase; color:var(--muted); margin:0 0 12px}
+.intro h1{font-family:var(--display); font-weight:650; font-size:clamp(30px,3.4vw,46px); line-height:1.1; color:var(--title); margin:0 0 14px;
+  font-variation-settings:"SOFT" 60, "opsz" 96}
+.intro p{max-width:44em; margin:0; color:var(--text)}
+.intro ol{list-style:none; padding:0; margin:28px 0 0; display:flex; flex-wrap:wrap; gap:8px 10px}
+.intro ol a{display:inline-flex; gap:8px; align-items:baseline; text-decoration:none; color:var(--text); font-size:15px;
+  border:1px solid var(--hairline); border-radius:5px; padding:6px 12px}
+.intro ol a:hover{border-color:var(--muted)}
+.intro ol b{font-family:var(--display); color:var(--gold); font-weight:600}
+
+.opt{min-height:100vh; display:flex; flex-direction:column; justify-content:center; max-width:1240px; margin:0 auto; padding:72px 24px;
+  border-top:1px solid var(--hairline)}
+.opt-meta{display:flex; align-items:center; gap:10px 14px; flex-wrap:wrap; margin-bottom:44px}
+.code{font-family:var(--display); font-weight:600; color:var(--gold); font-size:15px; letter-spacing:.06em;
+  border:1px solid rgba(221,180,106,.45); padding:1px 9px; border-radius:4px}
+.opt-meta h2{font-family:var(--display); font-weight:600; font-size:22px; line-height:1.2; color:var(--title); margin:0}
+.tag{font-size:12px; letter-spacing:.12em; text-transform:uppercase; color:var(--teal); border:1px solid rgba(99,178,171,.4); border-radius:4px; padding:2px 8px}
+.opt-meta .line{flex-basis:100%; order:5; margin:0; color:var(--muted); font-size:15px; max-width:60em}
+.replay{margin-left:auto; display:inline-flex; align-items:center; gap:8px; background:transparent; color:var(--sand);
+  border:1px solid var(--hairline); border-radius:5px; padding:7px 14px; font:600 14px/1.2 var(--sans); cursor:pointer}
+.replay:hover{border-color:var(--muted); background:rgba(255,255,255,.04)}
+.replay svg{width:16px; height:16px}
+
+.stall{display:grid; grid-template-columns:minmax(0,1fr) var(--slot); gap:clamp(32px,6vw,96px); align-items:center}
+.stall.flip{grid-template-columns:var(--slot) minmax(0,1fr)}
+.stall.flip .slot{order:-1}
+.stall-text h3{font-family:var(--display); font-weight:600; font-size:clamp(28px,3.1vw,44px); line-height:1.12; color:var(--title);
+  margin:0 0 26px; text-wrap:balance; font-variation-settings:"SOFT" 50, "opsz" 72}
+.stall-text p{font-size:clamp(17px,1.3vw,19px); line-height:1.7; max-width:33em; margin:0; color:var(--text)}
+
+.slot{width:var(--slot); aspect-ratio:1/1; position:relative; border-radius:6px; overflow:hidden; container-type:inline-size;
+  background:radial-gradient(120% 90% at 50% 30%, var(--ground-raised) 0%, var(--ground) 62%, var(--ground-deep) 100%);
+  box-shadow:inset 0 0 0 1px var(--hairline)}
+.slot > canvas, .slot > svg{position:absolute; inset:0; width:100%; height:100%; display:block}
+
+/* 1A — the wojak sits under the canvas the pages are drawn on */
+
+/* 1B — the treaty, a crawl on a tilted plane */
+.tq{position:absolute; left:7%; top:6%; right:7%; display:flex; flex-direction:column; align-items:flex-start; gap:1.2cqw; z-index:2}
+.tq small{font-size:2.3cqw; letter-spacing:.14em; text-transform:uppercase; color:var(--muted)}
+.tq span{font-family:var(--display); font-size:4.3cqw; line-height:1.2; color:var(--title); background:var(--ground-raised);
+  border:1px solid var(--hairline); border-radius:2.4cqw 2.4cqw 2.4cqw .6cqw; padding:1.8cqw 3cqw}
+.tpage{position:absolute; right:7%; top:8.4%; font-size:2.3cqw; letter-spacing:.08em; color:var(--muted); z-index:2; font-variant-numeric:tabular-nums}
+.tview{position:absolute; left:0; right:0; top:23%; bottom:0; perspective:52cqw; perspective-origin:50% 0%;
+  -webkit-mask-image:linear-gradient(to bottom, transparent 4%, #000 46%); mask-image:linear-gradient(to bottom, transparent 4%, #000 46%)}
+.tplane{position:absolute; left:13%; right:13%; top:-220%; bottom:0; transform-origin:50% 100%; transform:rotateX(56deg); overflow:hidden}
+.tdoc{position:absolute; left:0; right:0; top:0; will-change:transform; color:#3A2A1C; padding:7cqw 6cqw 10cqw;
+  background:
+    linear-gradient(90deg, rgba(120,80,40,.22), transparent 6%, transparent 94%, rgba(120,80,40,.22)),
+    repeating-linear-gradient(0deg, rgba(120,80,40,.035) 0 2px, transparent 2px 7px),
+    var(--parchment);
+  font-family:var(--display); font-size:3.2cqw; line-height:1.5; text-align:justify; hyphens:auto; font-optical-sizing:none; font-variation-settings:"opsz" 12}
+.tdoc h4{font-size:7.4cqw; letter-spacing:.12em; text-align:center; margin:0; font-weight:700; line-height:1.05}
+.tdoc .sub{text-align:center; font-style:italic; margin:1.6cqw 0 0; font-size:3.4cqw}
+.tdoc .rule{height:1.6cqw; margin:4cqw 18%; border-top:2px solid #7A5A33; border-bottom:1px solid #7A5A33}
+.tdoc h5{text-align:center; font-size:3.6cqw; letter-spacing:.1em; margin:5cqw 0 .4cqw; font-weight:700}
+.tdoc .ttl{text-align:center; font-style:italic; margin:0 0 1.6cqw}
+.tdoc p{margin:0 0 1.6cqw}
+.tdoc mark{background:var(--gold); color:#241A0E; padding:0 .8cqw; border-radius:.5cqw; box-shadow:0 0 3cqw rgba(221,180,106,.9); font-weight:700}
+.tdoc .sign{display:flex; justify-content:space-between; align-items:flex-end; margin-top:6cqw}
+.tdoc .seal{width:16cqw; height:16cqw; border-radius:50%; background:radial-gradient(circle at 40% 35%, #C0644C, var(--crimson) 55%, #6E2E22);
+  display:grid; place-items:center; color:#F2C9A8; font-size:7cqw; font-weight:700; box-shadow:0 .6cqw 0 rgba(60,20,10,.35)}
+.tdoc svg{width:24cqw; height:9cqw; stroke:#2A2A5A; fill:none; stroke-width:2.2; stroke-linecap:round}
+
+/* 1C — the HUD over the three.js tower */
+.hud{position:absolute; left:6%; top:5.5%; z-index:2; pointer-events:none; font-variant-numeric:tabular-nums}
+.hud .sec{font-family:var(--display); font-weight:600; font-size:11cqw; line-height:1; color:var(--title)}
+.hud .sec small{font-size:4cqw; color:var(--muted); margin-left:1cqw; font-weight:500}
+.hud .wds{font-size:3.3cqw; color:var(--sand); margin-top:1.4cqw; letter-spacing:.03em}
+.slow{position:absolute; right:6%; top:6.5%; z-index:2; font-size:2.3cqw; letter-spacing:.14em; text-transform:uppercase; color:var(--muted)}
+.cap{position:absolute; left:6%; right:6%; bottom:5.5%; z-index:2; font-family:var(--display); font-style:italic; font-size:3.6cqw; color:var(--gold);
+  opacity:0; transition:opacity .6s}
+.fail[hidden]{display:none}
+.vignette{position:absolute; inset:0; pointer-events:none; z-index:1; background:radial-gradient(90% 80% at 50% 45%, transparent 55%, rgba(9,10,26,.75) 100%)}
+.fail{position:absolute; inset:0; display:grid; place-items:center; padding:10%; text-align:center; color:var(--muted)}
+
+@media (max-width:760px){
+  :root{--slot:min(calc(100vw - 32px), 560px)}
+  .intro{padding:48px 16px 24px}
+  .opt{min-height:auto; padding:56px 16px}
+  .opt-meta{margin-bottom:28px}
+  .replay{margin-left:0}
+  .stall, .stall.flip{grid-template-columns:minmax(0,1fr); gap:28px}
+  .stall.flip .slot{order:0}
+}
+</style>
+</head>
+<body>
+
+<header class="intro">
+  <p class="kicker">About page, round 5 &middot; R1</p>
+  <h1>Stall 1, five ways</h1>
+  <p>Each option is shown as the stall will stand on the page: the text on one side, the drawing on the other, on the dark ground. 1A is the author's wojak; 1B to 1E are alternatives. The sides alternate, as they will from stall to stall.</p>
+  <ol>
+    <li><a href="#o1a"><b>1A</b> Wojak, endless</a></li>
+    <li><a href="#o1b"><b>1B</b> The treaty</a></li>
+    <li><a href="#o1c"><b>1C</b> Three seconds</a></li>
+    <li><a href="#o1d"><b>1D</b> Going under</a></li>
+    <li><a href="#o1e"><b>1E</b> Into static</a></li>
+  </ol>
+</header>
+
+<template id="stall-copy">
+  <div class="stall-text">
+    <h3>Generation is free, and the internet is drowning in AI slop.</h3>
+    <p>You ask AI a simple question, and instead of giving you a straight answer, it writes the Treaty of Versailles: pages of polite, robotic text that says everything while explaining nothing. Anyone can generate thousands of words in three seconds, but real understanding has never been harder to find.</p>
+  </div>
+</template>
+
+<section class="opt" id="o1a" aria-labelledby="h1a">
+  <div class="opt-meta">
+    <span class="code">1A</span><h2 id="h1a">Wojak, endless</h2><span class="tag">2D &middot; SVG + canvas</span>
+    <button class="replay" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v5h5"/></svg>Replay</button>
+    <p class="line">The author's idea: a dopey wojak pours out pages and polite phrases until it drowns in its own pile.</p>
+  </div>
+  <div class="stall">
+    <div class="copy"></div>
+    <div class="slot" role="img" aria-label="A dopey bald meme face with its mouth hanging open, pouring out sheets of paper that pile up until they reach its chin.">
+      <svg class="wj" viewBox="0 0 560 560" aria-hidden="true">
+        <defs>
+          <clipPath id="wj-eye-l"><path d="M146 214 C158 199 194 199 206 213 C194 228 158 229 146 214Z"/></clipPath>
+          <clipPath id="wj-eye-r"><path d="M234 211 C246 195 282 195 294 210 C282 226 246 227 234 211Z"/></clipPath>
+        </defs>
+        <g class="wj-body" stroke="var(--ink)" stroke-width="4.5" stroke-linejoin="round" stroke-linecap="round">
+          <path d="M172 360 L168 446 C192 474 250 474 274 446 L270 360Z" fill="var(--skin)"/>
+          <path d="M40 572 C58 500 102 474 152 458 C182 482 260 482 290 458 C338 474 382 500 402 572Z" fill="var(--shirt)"/>
+          <path d="M152 458 C182 482 260 482 290 458" fill="none" stroke="var(--periwinkle)" stroke-width="3" opacity=".6"/>
+        </g>
+        <g class="wj-head">
+          <g stroke="var(--ink)" stroke-width="4.5" stroke-linejoin="round" stroke-linecap="round">
+            <path d="M100 205 C72 194 64 242 80 260 C88 272 102 270 106 262Z" fill="var(--skin)"/>
+            <path d="M334 203 C362 192 370 240 354 258 C346 270 332 268 328 260Z" fill="var(--skin)"/>
+            <path d="M215 70 C300 68 345 130 340 215 C338 260 330 300 312 335 C290 378 258 402 222 404 C186 404 150 382 128 345 C108 310 96 262 94 215 C92 130 135 72 215 70Z" fill="var(--skin)"/>
+          </g>
+          <path d="M300 120 C336 170 338 260 312 335 C292 374 262 396 230 402 C280 360 316 280 300 120Z" fill="#8a7a62" opacity=".16"/>
+          <g fill="none" stroke="var(--ink)" stroke-linecap="round">
+            <path d="M86 220 C78 230 82 246 92 250" stroke-width="2.6"/>
+            <path d="M348 218 C356 228 352 244 342 248" stroke-width="2.6"/>
+            <path d="M168 128 C192 120 236 120 262 128" stroke-width="2" opacity=".35"/>
+            <path d="M180 146 C200 140 228 140 250 146" stroke-width="2" opacity=".28"/>
+            <path d="M146 183 C160 174 186 174 200 180" stroke-width="3.2"/>
+            <path d="M240 178 C256 171 280 172 292 181" stroke-width="3.2"/>
+          </g>
+          <!-- eyes: white, iris, then a heavy lid clipped to the eye -->
+          <g class="wj-eye">
+            <path d="M146 214 C158 199 194 199 206 213 C194 228 158 229 146 214Z" fill="#FFFDF7"/>
+            <circle class="wj-pupil" cx="172" cy="218" r="6.5" fill="var(--ink)"/>
+            <g clip-path="url(#wj-eye-l)"><path class="wj-lid" d="M138 196 L214 196 L214 226 C196 233 160 233 138 226Z" fill="var(--skin)" stroke="var(--ink)" stroke-width="3.4" style="transform-box:view-box;transform-origin:176px 196px"/></g>
+            <path d="M146 214 C158 199 194 199 206 213 C194 228 158 229 146 214Z" fill="none" stroke="var(--ink)" stroke-width="3"/>
+          </g>
+          <g class="wj-eye">
+            <path d="M234 211 C246 195 282 195 294 210 C282 226 246 227 234 211Z" fill="#FFFDF7"/>
+            <circle class="wj-pupil" cx="271" cy="214" r="6.5" fill="var(--ink)"/>
+            <g clip-path="url(#wj-eye-r)"><path class="wj-lid" d="M226 193 L302 193 L302 223 C284 230 248 230 226 223Z" fill="var(--skin)" stroke="var(--ink)" stroke-width="3.4" style="transform-box:view-box;transform-origin:264px 193px"/></g>
+            <path d="M234 211 C246 195 282 195 294 210 C282 226 246 227 234 211Z" fill="none" stroke="var(--ink)" stroke-width="3"/>
+          </g>
+          <g fill="none" stroke="var(--ink)" stroke-linecap="round">
+            <path d="M152 232 C166 240 190 240 202 231" stroke-width="2.2" opacity=".55"/>
+            <path d="M240 229 C254 238 278 238 290 228" stroke-width="2.2" opacity=".55"/>
+            <path d="M224 222 C220 246 213 262 220 272 C227 279 238 276 241 268" stroke-width="3.4"/>
+            <path d="M214 386 C224 392 236 392 246 386" stroke-width="2" opacity=".4"/>
+          </g>
+          <g class="wj-mouth" style="transform-box:view-box;transform-origin:239px 312px">
+            <path d="M206 314 C218 306 258 306 272 318 C272 344 254 360 238 360 C220 360 206 342 206 314Z" fill="#2B1622" stroke="var(--ink)" stroke-width="3.6" stroke-linejoin="round"/>
+            <path d="M214 314 C228 309 250 309 264 316 L262 323 C248 318 228 318 216 321Z" fill="#FFFDF7"/>
+            <path d="M216 346 C226 334 254 336 264 346 C256 357 226 359 216 346Z" fill="#C9785F"/>
+          </g>
+          <g class="wj-drool">
+            <path d="M226 357 C225 369 230 379 227 390" fill="none" stroke="#BFD6E4" stroke-width="3" stroke-linecap="round" opacity=".85"/>
+            <circle cx="227" cy="394" r="4" fill="#BFD6E4" opacity=".85"/>
+          </g>
+        </g>
+      </svg>
+      <canvas aria-hidden="true"></canvas>
+    </div>
+  </div>
+</section>
+
+<section class="opt" id="o1b" aria-labelledby="h1b">
+  <div class="opt-meta">
+    <span class="code">1B</span><h2 id="h1b">The treaty</h2><span class="tag">3D &middot; CSS perspective</span>
+    <button class="replay" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v5h5"/></svg>Replay</button>
+    <p class="line">A yes-or-no question gets a treaty that crawls away into the dark, article after article; the answer, yes, is buried in Article XIV.</p>
+  </div>
+  <div class="stall flip">
+    <div class="copy"></div>
+    <div class="slot" role="img" aria-label="A one-line question, and beneath it a parchment treaty of many articles scrolling away into the distance, with the word yes highlighted somewhere in the middle.">
+      <div class="tq" aria-hidden="true"><small>You asked</small><span>Should I take an umbrella?</span></div>
+      <div class="tpage" aria-hidden="true">page <b>1</b> of 412</div>
+      <div class="tview" aria-hidden="true"><div class="tplane"><div class="tdoc"></div></div></div>
+    </div>
+  </div>
+</section>
+
+<section class="opt" id="o1c" aria-labelledby="h1c">
+  <div class="opt-meta">
+    <span class="code">1C</span><h2 id="h1c">Three seconds</h2><span class="tag">3D &middot; three.js</span>
+    <button class="replay" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v5h5"/></svg>Replay</button>
+    <p class="line">A tower of 600 pages, 4,800 words, stacks itself in three seconds, slowed down, on top of the one gold page that held the answer.</p>
+  </div>
+  <div class="stall">
+    <div class="copy"></div>
+    <div class="slot" role="img" aria-label="A stopwatch counting to three seconds while a tall, leaning tower of paper sheets piles up on a single glowing gold sheet.">
+      <canvas aria-hidden="true"></canvas>
+      <div class="vignette" aria-hidden="true"></div>
+      <div class="hud" aria-hidden="true"><div class="sec"><span>0.00</span><small>s</small></div><div class="wds"><span>0</span> words</div></div>
+      <div class="slow" aria-hidden="true">slowed 3&times;</div>
+      <div class="cap" aria-hidden="true">The gold page at the bottom is the answer.</div>
+      <div class="fail" hidden>This option needs WebGL, which this browser has turned off.</div>
+    </div>
+  </div>
+</section>
+
+<section class="opt" id="o1d" aria-labelledby="h1d">
+  <div class="opt-meta">
+    <span class="code">1D</span><h2 id="h1d">Going under</h2><span class="tag">2D &middot; canvas</span>
+    <button class="replay" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v5h5"/></svg>Replay</button>
+    <p class="line">A sea made of polite sentences rises, and a reader's hand reaching up out of it slowly goes under.</p>
+  </div>
+  <div class="stall flip">
+    <div class="copy"></div>
+    <div class="slot" role="img" aria-label="Rolling waves made of lines of text, with a hand in a teal sleeve reaching up out of them and sinking.">
+      <canvas aria-hidden="true"></canvas>
+    </div>
+  </div>
+</section>
+
+<section class="opt" id="o1e" aria-labelledby="h1e">
+  <div class="opt-meta">
+    <span class="code">1E</span><h2 id="h1e">Into static</h2><span class="tag">2D &middot; canvas type</span>
+    <button class="replay" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v5h5"/></svg>Replay</button>
+    <p class="line">The answer to "What time is it?" keeps growing until its words shrink into static; a lens finds the one true line still in there.</p>
+  </div>
+  <div class="stall">
+    <div class="copy"></div>
+    <div class="slot" role="img" aria-label="The question what time is it, and an answer that grows so long its type shrinks to grey static, with a magnifying lens finding the line it is ten past four.">
+      <canvas aria-hidden="true"></canvas>
+    </div>
+  </div>
+</section>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+(() => {
+'use strict';
+const S = 560;                                  // every 2D piece draws in a 560-unit square
+const root = document.documentElement;
+const tok = n => getComputedStyle(root).getPropertyValue(n).trim();
+const RM = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+const lerp = (a, b, k) => a + (b - a) * k;
+const smooth = k => { k = clamp(k, 0, 1); return k * k * (3 - 2 * k); };
+function rng(a) { return () => { a |= 0; a = a + 0x6D2B79F5 | 0; let t = Math.imul(a ^ a >>> 15, 1 | a);
+  t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+function hexA(hex, a) { const h = hex.replace('#', ''); const n = parseInt(h.length === 3 ? h.replace(/./g, '$&$&') : h, 16);
+  return `rgba(${n >> 16 & 255},${n >> 8 & 255},${n & 255},${a})`; }
+function mix(h1, h2, k) { const p = h => { const n = parseInt(h.replace('#', ''), 16); return [n >> 16 & 255, n >> 8 & 255, n & 255]; };
+  const a = p(h1), b = p(h2); return `rgb(${a.map((v, i) => Math.round(lerp(v, b[i], k))).join(',')})`; }
+function setupCanvas(cv) {
+  const ctx = cv.getContext('2d');
+  const fit = () => { const r = cv.getBoundingClientRect(); const d = Math.min(2, window.devicePixelRatio || 1);
+    cv.width = Math.max(1, Math.round(r.width * d)); cv.height = Math.max(1, Math.round(r.height * d));
+    ctx.setTransform(cv.width / S, 0, 0, cv.height / S, 0, 0); };
+  fit(); return { ctx, fit };
+}
+
+// The phrases every piece is made of: the register of a reply that says everything and explains nothing.
+const SLOP = ['Certainly.', 'It is important to note that', "in today's fast-paced world,", 'a rich tapestry of', 'Let us delve deeper.',
+  'Moreover,', 'Furthermore,', 'In conclusion,', 'navigating the complexities of', 'a multifaceted landscape', 'it is worth mentioning that',
+  'Ultimately,', 'unlock the full potential', 'a testament to', 'seamless and robust', 'a holistic approach', 'As we have seen,',
+  'In summary,', 'at the end of the day,', 'plays a pivotal role', 'each with its own nuances', 'when it comes to', 'a key consideration',
+  'there are several factors', 'Here is a comprehensive overview.', 'leveraging synergies', 'it depends on many factors',
+  'both sides have merit', 'Additionally,', 'a wide range of considerations', 'in the ever-evolving world of'];
+function sentence(r, topic) {
+  const op = ['Moreover,', 'Furthermore,', 'Additionally,', 'It is important to note that', 'It is worth mentioning that',
+    "In today's fast-paced world,", 'Ultimately,', 'As we have seen,', `When it comes to ${topic},`, 'At the end of the day,', 'In many ways,'];
+  const mid = [`${topic} plays a pivotal role in`, 'the question touches on', 'many experts emphasise', 'one must consider',
+    'this invites us to delve into', 'we can explore', 'there are several factors behind', 'a holistic view reveals'];
+  const obj = ['a rich tapestry of perspectives', 'the multifaceted landscape of modern life', 'the complexities of human experience',
+    'both historical and cultural nuances', 'a wide range of considerations', 'the delicate balance of many factors',
+    'the many ways people approach the matter', 'a seamless and robust framework'];
+  const tail = ['', ', each with its own nuances', ', which is a testament to its significance', ', and both sides have merit',
+    ', depending on many factors', ', in a holistic way'];
+  const pick = a => a[Math.floor(r() * a.length)];
+  return `${pick(op)} ${pick(mid)} ${pick(obj)}${pick(tail)}.`;
+}
+
+const pieces = [];
+function piece(id, p) { p.id = id; p.section = document.getElementById(id); p.slot = p.section.querySelector('.slot');
+  p.t = 0; p.visible = false; pieces.push(p); return p; }
+function still(p) { if (p.still) { p.still(); return; } p.reset(); const h = 1 / 30; for (let x = 0; x < p.stillAt; x += h) { p.t += h; p.step(h); } p.draw(); }
+
+/* ============================================================ 1A  Wojak, endless */
+piece('o1a', {
+  // the still is the moment the pile reaches the chin, before the flood takes the mouth
+  still() { this.reset(); const h = 1 / 30; for (let i = 0; i < 900 && this.level() > 396; i++) { this.t += h; this.step(h); } this.draw(); },
+  level() { let l = 0; for (let k = 30; k <= 90; k++) l += this.hm[k]; return l / 61; },
+  init() {
+    this.cv = this.slot.querySelector('canvas'); const c = setupCanvas(this.cv); this.ctx = c.ctx; this.fit = c.fit;
+    const svg = this.slot.querySelector('svg');
+    this.head = svg.querySelector('.wj-head'); this.mouth = svg.querySelector('.wj-mouth');
+    this.lids = [...svg.querySelectorAll('.wj-lid')]; this.pupils = [...svg.querySelectorAll('.wj-pupil')];
+    this.drool = svg.querySelector('.wj-drool');
+    this.col = { paper: tok('--paper'), rose: tok('--rose'), sand: tok('--sand'), ink: tok('--ink'), muted: tok('--muted'),
+      top: tok('--pile-top'), deep: tok('--pile-deep'), gold: tok('--gold') };
+    this.pile = document.createElement('canvas'); this.pile.width = this.pile.height = S * 2;
+    this.pctx = this.pile.getContext('2d'); this.pctx.setTransform(2, 0, 0, 2, 0, 0);
+    // eight sheet sprites, drawn once: paper, a dog-ear, a heading bar on some, lines of grey "text"
+    const r = rng(7); this.sprites = [];
+    for (let k = 0; k < 8; k++) {
+      const c2 = document.createElement('canvas'); c2.width = 88; c2.height = 112; const g = c2.getContext('2d'); g.scale(2, 2);
+      g.fillStyle = mix(this.col.paper, this.col.top, r() * .45); g.fillRect(0, 0, 44, 56);
+      g.fillStyle = 'rgba(0,0,0,.12)'; g.beginPath(); g.moveTo(36, 0); g.lineTo(44, 8); g.lineTo(36, 8); g.fill();
+      g.strokeStyle = 'rgba(40,30,20,.35)'; g.lineWidth = .8; g.strokeRect(.4, .4, 43.2, 55.2);
+      let y = 8;
+      if (k % 3 === 0) { g.fillStyle = this.col.rose; g.fillRect(5, 6, 20, 3.2); y = 14; }
+      g.fillStyle = 'rgba(40,36,60,.45)';
+      while (y < 51) { const w = k % 2 && y > 30 ? 18 + r() * 16 : 26 + r() * 9; g.fillRect(5, y, w, 1.5); y += r() < .18 ? 6 : 3.7; }
+      this.sprites.push(c2);
+    }
+    this.phrases = SLOP;
+  },
+  resize() { this.fit(); },
+  reset() {
+    this.t = 0; this.pages = []; this.phr = []; this.hm = new Float32Array(141).fill(574);
+    this.pctx.clearRect(0, 0, S, S); this.acc = 0; this.pacc = 0; this.emitted = 0; this.flushT = -1; this.r = rng(11); this.pi = 0;
+  },
+  settle(p) {
+    const r = this.r, rot = (r() - .5) * 1.2, c = clamp(Math.round(p.x / 4), 0, 140), y = this.hm[c] - 8;
+    const g = this.pctx; g.save(); g.translate(p.x, y); g.rotate(rot); g.drawImage(p.s, -22, -28, 44, 56);
+    g.fillStyle = `rgba(20,16,30,${.05 + r() * .2})`; g.fillRect(-22, -28, 44, 56); g.restore();
+    const cs = Math.abs(Math.cos(rot)), sn = Math.abs(Math.sin(rot));
+    const half = 22 * cs + 28 * sn, top = y - (28 * cs + 22 * sn) * .55;
+    for (let k = Math.max(0, Math.floor((p.x - half) / 4)); k <= Math.min(140, Math.ceil((p.x + half) / 4)); k++) this.hm[k] = Math.min(this.hm[k], top + 6);
+    for (let pass = 0; pass < 3; pass++) for (let k = 1; k <= 140; k++) {
+      const d = this.hm[k - 1] - this.hm[k];
+      if (d > 6) { this.hm[k] += (d - 6) / 2; this.hm[k - 1] -= (d - 6) / 2; }
+      else if (d < -6) { this.hm[k] -= (-d - 6) / 2; this.hm[k - 1] += (-d - 6) / 2; }
+    }
+  },
+  step(dt) {
+    const t = this.t, r = this.r;
+    const lvl = this.level();
+    if (this.flushT < 0 && (lvl < 362 || t > 22)) this.flushT = 0;
+    if (this.flushT >= 0) { this.flushT += dt; if (this.flushT > 3.1) { this.reset(); return; } }
+    const pouring = this.flushT < 1.5;
+    const rate = 4 + 46 * Math.pow(Math.min(1, t / 11), 1.8);
+    if (pouring) {
+      this.acc += rate * dt;
+      while (this.acc >= 1) { this.acc -= 1; this.emitted++;
+        const left = r() < .34;
+        this.pages.push({ x: 246 + r() * 12, y: 340, vx: left ? -150 + r() * 100 : 50 + r() * 330, vy: left ? -120 - r() * 120 : -300 + r() * 220, rot: r() * 6, vr: (r() - .5) * 9,
+          s: this.sprites[Math.floor(r() * 8)], age: 0 }); }
+      this.pacc += dt; if (this.pacc > Math.max(.32, .8 - t * .04)) { this.pacc = 0;
+        this.phr.push({ s: this.phrases[this.pi++ % this.phrases.length], x: 300 + r() * 20, y: 300, vx: 34 + r() * 30, vy: -44 - r() * 26, age: 0 }); }
+    }
+    for (let i = this.pages.length - 1; i >= 0; i--) {
+      const p = this.pages[i]; p.age += dt; p.vy += 900 * dt; p.x += p.vx * dt; p.y += p.vy * dt; p.rot += p.vr * dt;
+      if (p.x < 10) p.vx = Math.abs(p.vx) * .5; if (p.x > 550) p.vx = -Math.abs(p.vx) * .5;
+      const c = clamp(Math.round(p.x / 4), 0, 140);
+      if (p.vy > 0 && p.y >= this.hm[c] - 10) { this.settle(p); this.pages.splice(i, 1); }
+    }
+    for (let i = this.phr.length - 1; i >= 0; i--) { const q = this.phr[i]; q.age += dt; q.x += q.vx * dt; q.y += q.vy * dt; if (q.age > 2.6) this.phr.splice(i, 1); }
+  },
+  draw() {
+    const g = this.ctx, t = this.t; g.clearRect(0, 0, S, S);
+    let off = 0, a = 1;
+    if (this.flushT > 1.5) { const k = Math.min(1, (this.flushT - 1.5) / 1.4); off = k * k * 320; a = 1 - k * .7; }
+    g.save(); g.translate(0, off); g.globalAlpha = a;
+    const grad = g.createLinearGradient(0, 330, 0, 560); grad.addColorStop(0, this.col.top); grad.addColorStop(1, this.col.deep);
+    g.beginPath(); g.moveTo(-10, S + 40); for (let k = 0; k <= 140; k++) g.lineTo(k * 4, this.hm[k] + 12); g.lineTo(S + 10, S + 40); g.closePath();
+    g.fillStyle = grad; g.fill();
+    g.drawImage(this.pile, 0, 0, S, S);
+    g.restore();
+    for (const p of this.pages) { g.save(); g.translate(p.x, p.y); g.rotate(p.rot); const sc = Math.min(1, .25 + p.age * 3.5); g.scale(sc, sc);
+      g.drawImage(p.s, -22, -28, 44, 56); g.restore(); }
+    g.font = 'italic 500 16px Fraunces, Georgia, serif'; g.textBaseline = 'middle';
+    for (const q of this.phr) { g.globalAlpha = clamp(Math.min(q.age * 4, (2.6 - q.age) / 1.2), 0, 1); g.fillStyle = this.col.rose; g.fillText(q.s, q.x, q.y); }
+    g.globalAlpha = 1;
+    g.font = '600 12px "Avenir Next", system-ui, sans-serif'; g.textAlign = 'right'; g.fillStyle = hexA(this.col.sand, .75);
+    g.fillText(`${(this.emitted * 118).toLocaleString('en-US')} words`, S - 22, 30); g.textAlign = 'left';
+    // the face: a slow nod, a mouth flapping with the output, drifting pupils, a rare blink
+    const pour = this.flushT < 1.5;
+    this.head.setAttribute('transform', `rotate(${(Math.sin(t * 1.7) * 1.8).toFixed(2)} 220 470)`);
+    const flap = pour ? .92 + .26 * Math.abs(Math.sin(t * (7 + Math.min(t, 10) * .6))) : .6;
+    this.mouth.style.transform = `scaleY(${flap.toFixed(3)})`;
+    const dx = Math.sin(t * .9) * 3, dy = Math.cos(t * .7) * 1.5;
+    this.pupils.forEach((p, i) => p.setAttribute('transform', `translate(${(i ? dx : -dx).toFixed(2)} ${dy.toFixed(2)})`));
+    const bp = t % 4.3, blink = bp > 4.1 ? 1 : 0;
+    this.lids[0].style.transform = `scaleY(${blink ? 1.25 : .52})`; this.lids[1].style.transform = `scaleY(${blink ? 1.25 : .44})`;
+    this.drool.setAttribute('transform', `translate(${(Math.sin(t * 2.3) * 1.5).toFixed(2)} 0) translate(227 357) scale(1 ${(1 + .12 * Math.sin(t * 1.3)).toFixed(3)}) translate(-227 -357)`);
+  }
+});
+
+/* ============================================================ 1B  The treaty */
+piece('o1b', {
+  init() {
+    this.doc = this.slot.querySelector('.tdoc'); this.plane = this.slot.querySelector('.tplane');
+    this.page = this.slot.querySelector('.tpage b'); this.q = this.slot.querySelector('.tq');
+    const r = rng(3);
+    const roman = n => { const m = [[10, 'X'], [9, 'IX'], [5, 'V'], [4, 'IV'], [1, 'I']]; let s = ''; for (const [v, c] of m) while (n >= v) { s += c; n -= v; } return s; };
+    const titles = ['On the Nature of Precipitation', 'On the Definition of an Umbrella', 'On Clouds, Considered Holistically', 'On the Many Factors Involved',
+      'On Personal Preference', 'On Wind', 'On the Historical Context of Rain', 'On Alternative Coverings', 'On Shared Responsibility',
+      'On Transitional Weather', 'On Further Considerations', 'On Nuance', 'On Forecasts and Their Limits', 'On the Question as Asked',
+      'On What Was Not Asked', 'On Hats', 'On the Ethics of Staying Indoors', 'On Puddles', 'On Regional Variation', 'On the Future of Umbrellas',
+      'On Drizzle, Mist and Related Phenomena', 'On Closing Remarks', 'On Final Considerations', 'On the Summary'];
+    let h = '<h4>TREATY OF PEACE</h4><p class="sub">between the Party Who Asked and the Party Who Answers, concerning an umbrella</p><div class="rule"></div>' +
+      '<h5>PREAMBLE</h5><p>Recognising the profound importance of weather in human affairs, and mindful that every question, however short, deserves a comprehensive response, the Parties have agreed as follows.</p>';
+    titles.forEach((tt, i) => {
+      h += `<h5>ARTICLE ${roman(i + 1)}</h5><p class="ttl">${tt}</p>`;
+      const n = 2 + Math.floor(r() * 2);
+      for (let k = 1; k <= n; k++) {
+        let s = sentence(r, 'rain') + ' ' + sentence(r, 'the umbrella');
+        if (i === 13 && k === 2) s = 'In light of the foregoing, and without prejudice to Article IX, the short answer is <mark>yes</mark>. It is important to note, however, that the matter remains open to further discussion.';
+        h += `<p>${k}. ${s}</p>`;
+      }
+    });
+    h += '<p>Done at the Bazaar, in twelve copies, each equally authentic.</p><div class="sign">' +
+      '<svg viewBox="0 0 120 44"><path d="M4 30 C14 6 22 40 30 22 S44 10 50 28 C56 40 64 8 74 24 S96 34 116 18"/></svg>' +
+      '<div class="seal">&para;</div>' +
+      '<svg viewBox="0 0 120 44"><path d="M6 26 C20 8 30 36 42 20 C50 10 58 34 70 18 C80 6 90 36 114 22"/><path d="M30 36 L96 36"/></svg></div>';
+    this.doc.innerHTML = h; this.mark = this.doc.querySelector('mark');
+  },
+  resize() { this.planeH = this.plane.offsetHeight; this.docH = this.doc.offsetHeight; this.u = this.slot.offsetWidth; },
+  reset() { this.t = 0; },
+  step() {},
+  place(y) {
+    this.doc.style.transform = `translate3d(0,${y.toFixed(1)}px,0)`;
+    const prog = clamp((this.y0() - y) / (this.docH || 1), 0, 1);
+    this.page.textContent = 1 + Math.floor(prog * 411);
+  },
+  draw() {
+    if (!this.planeH) this.resize();
+    let y = this.y0() - this.t * this.u * .07;
+    if (y < -this.docH) { this.t = 0; y = this.y0(); }
+    this.place(y);
+    this.q.style.opacity = clamp(this.t * 2.5, 0, 1).toFixed(2);
+  },
+  y0() { return this.planeH - this.u * .62; },
+  still() { this.resize(); this.q.style.opacity = 1; this.place(this.planeH - this.u * .3 - this.mark.offsetTop); }
+});
+
+/* ============================================================ 1C  Three seconds (three.js) */
+piece('o1c', {
+  stillAt: 11.2,
+  init() {
+    const T = window.THREE; this.cv = this.slot.querySelector('canvas');
+    this.sec = this.slot.querySelector('.sec span'); this.wds = this.slot.querySelector('.wds span'); this.cap = this.slot.querySelector('.cap');
+    if (!T) { this.fail = true; }
+    else try { this.renderer = new T.WebGLRenderer({ canvas: this.cv, antialias: true }); } catch (e) { this.fail = true; }
+    if (this.fail) { this.slot.querySelector('.fail').hidden = false; this.step = this.draw = this.reset = () => {}; return; }
+    this.renderer.setPixelRatio(Math.min(2, window.devicePixelRatio || 1));
+    const scene = this.scene = new T.Scene(), ground = new T.Color(tok('--ground'));
+    scene.fog = new T.Fog(ground, 14, 46); scene.background = ground;
+    this.camera = new T.PerspectiveCamera(34, 1, .1, 100);
+    scene.add(new T.HemisphereLight(new T.Color(tok('--sand')), new T.Color(tok('--indigo')), .65));
+    const key = new T.DirectionalLight(new T.Color(tok('--sand')), 1.05); key.position.set(5, 10, 6); scene.add(key);
+    const rim = new T.DirectionalLight(new T.Color(tok('--periwinkle')), .3); rim.position.set(-6, 5, -5); scene.add(rim);
+    const floor = new T.Mesh(new T.CircleGeometry(60, 96), new T.MeshStandardMaterial({ color: new T.Color(tok('--ground-raised')), roughness: 1 }));
+    floor.rotation.x = -Math.PI / 2; scene.add(floor);
+    const paper = (gold) => { const c = document.createElement('canvas'); c.width = 256; c.height = 332; const g = c.getContext('2d');
+      g.fillStyle = gold ? tok('--gold') : tok('--paper'); g.fillRect(0, 0, 256, 332);
+      if (gold) { g.fillStyle = '#3A2A10'; g.font = 'italic 600 40px Fraunces, Georgia, serif'; g.textAlign = 'center'; g.fillText('the answer', 128, 176); }
+      else { g.fillStyle = 'rgba(40,36,60,.30)'; const r = rng(2); for (let y = 34; y < 300; y += 9) { if (r() < .12) continue; g.fillRect(26, y, 150 + r() * 54, 3); } }
+      const tx = new T.CanvasTexture(c); tx.anisotropy = 4; return tx; };
+    this.N = 600; this.TH = .02;
+    const geo = new T.BoxGeometry(1, this.TH, 1.3);
+    this.mesh = new T.InstancedMesh(geo, new T.MeshStandardMaterial({ map: paper(false), roughness: .88 }), this.N);
+    this.mesh.instanceMatrix.setUsage(T.DynamicDrawUsage);
+    const col = new T.Color(), r = rng(9);
+    this.land = []; this.ox = []; this.oz = []; this.ry = []; this.st = [];
+    for (let i = 0; i < this.N; i++) {
+      const v = .78 + r() * .22; col.setRGB(v, v * (.97 + r() * .03), v * (.92 + r() * .06)); this.mesh.setColorAt(i, col);
+      const f = i / this.N;
+      this.land[i] = .03 + i * this.TH; this.ox[i] = .42 * f * f + .07 * Math.sin(i * .05) + (r() - .5) * .1;
+      this.oz[i] = .22 * f * Math.sin(i * .008 + 1) + (r() - .5) * .1; this.ry[i] = (r() - .5) * .7;
+      this.st[i] = 1 + 9 * Math.sqrt((i + 1) / this.N);
+    }
+    this.mesh.instanceColor.needsUpdate = true;
+    this.gold = new T.Mesh(new T.BoxGeometry(1.5, .02, 1.95), new T.MeshStandardMaterial({ map: paper(true), emissive: new T.Color(tok('--gold')), emissiveIntensity: .28, roughness: .6 }));
+    this.gold.position.y = .012; this.gold.rotation.y = .5;
+    this.glow = new T.PointLight(new T.Color(tok('--gold')), 2, 4.5, 2); this.glow.position.set(0, .3, 0);
+    this.group = new T.Group(); this.group.add(this.mesh, this.gold, this.glow); scene.add(this.group);
+    this.dummy = new T.Object3D(); this.cam = { y: .5, d: 3.6 };
+  },
+  resize() { if (this.fail) return; const r = this.slot.getBoundingClientRect(); this.renderer.setSize(r.width, r.height, false);
+    this.camera.aspect = 1; this.camera.updateProjectionMatrix(); },
+  reset() { this.t = 0; this.lo = 0; this.cam = { y: .5, d: 3.6 }; this.group.position.y = 0;
+    const d = this.dummy; d.position.set(0, -50, 0); d.scale.set(0, 0, 0); d.updateMatrix();
+    for (let i = 0; i < this.N; i++) this.mesh.setMatrixAt(i, d.matrix); this.mesh.instanceMatrix.needsUpdate = true; this.n = 0; },
+  step(dt) {
+    const t = this.t, d = this.dummy;
+    if (t > 14.8) { this.reset(); return; }
+    for (let i = this.lo; i < this.N; i++) {
+      if (t < this.st[i]) break;
+      const k = Math.min(1, (t - this.st[i]) / .45), e = 1 - k;
+      d.position.set(this.ox[i] + e * .3 * Math.sin(i), this.land[i] + 3.2 * (1 - k * k), this.oz[i]);
+      d.rotation.set(e * .7 * Math.sin(i * 1.7), this.ry[i] + e * 1.4, e * .6 * Math.cos(i * 2.3)); d.scale.set(1, 1, 1); d.updateMatrix();
+      this.mesh.setMatrixAt(i, d.matrix); if (k >= 1 && i === this.lo) this.lo++;
+    }
+    this.mesh.instanceMatrix.needsUpdate = true;
+    this.n = Math.min(this.N, Math.floor(this.N * Math.pow(clamp(t - 1, 0, 9) / 9, 2)));
+    const top = this.n * this.TH;
+    this.cam.y = lerp(this.cam.y, .5 + top * .46, Math.min(1, dt * 2.5));
+    this.cam.d = lerp(this.cam.d, 3.6 + top * 1.75, Math.min(1, dt * 2.5));
+    if (t > 13) { const k = (t - 13) / 1.6; this.group.position.y = -k * k * 16; }
+  },
+  draw() {
+    const t = this.t, a = .7 + t * .2, c = this.camera;
+    c.position.set(Math.sin(a) * this.cam.d, this.cam.y + 1.4 + this.cam.d * .12, Math.cos(a) * this.cam.d); c.lookAt(0, this.cam.y, 0);
+    this.glow.intensity = 1.8 + .6 * Math.sin(t * 2.2);
+    this.sec.textContent = (clamp(t - 1, 0, 9) / 3).toFixed(2);
+    this.wds.textContent = (this.n * 8).toLocaleString('en-US');
+    this.cap.style.opacity = t > 10.4 && t < 13.4 ? 1 : 0;
+    this.renderer.render(this.scene, c);
+  }
+});
+
+/* ============================================================ 1D  Going under */
+piece('o1d', {
+  stillAt: 6.6, R: 14, DH: .42,
+  init() {
+    this.cv = this.slot.querySelector('canvas'); const c = setupCanvas(this.cv); this.ctx = c.ctx; this.fit = c.fit;
+    this.col = { sand: tok('--sand'), peri: tok('--periwinkle'), teal: tok('--teal'), tealD: tok('--teal-deep'), gold: tok('--gold'),
+      skin: tok('--skin'), ink: tok('--ink'), raised: tok('--ground-raised'), deep: tok('--ground-deep'), rose: tok('--rose') };
+    this.build();
+  },
+  build() {
+    const g = this.ctx, r = rng(5); this.rows = [];
+    for (let i = 0; i < this.R; i++) {
+      const d = i / (this.R - 1), size = 7 + 19 * Math.pow(d, 1.25), font = `500 ${size.toFixed(1)}px Fraunces, Georgia, serif`;
+      g.font = font; let s = '', xs = [], x = 0;
+      while (x < S + 260) { const w = SLOP[Math.floor(r() * SLOP.length)] + ' ';
+        for (const ch of w) { xs.push(x); s += ch; x += g.measureText(ch).width; } }
+      this.rows.push({ d, font, s, xs, W: x, dir: i % 2 ? 1 : -1, speed: 5 + 16 * d, off: r() * 200,
+        color: hexA(d < .5 ? this.col.peri : this.col.sand, (.28 + .62 * d).toFixed(2)), accent: hexA(this.col.teal, (.35 + .5 * d).toFixed(2)) });
+    }
+  },
+  resize() { this.fit(); },
+  reset() { this.t = 0; this.bub = []; this.r = rng(21); this.bacc = 0; },
+  horizon(t) { return 262 - 62 * smooth(t / 13); },
+  wave(x, d, t) { const A = 2 + 9 * d; return A * (Math.sin(x * .018 + t * 1.1 + d * 5) + .5 * Math.sin(x * .041 - t * 1.7 + d * 9)); },
+  rowY(d, t) { const H = this.horizon(t); return H + (S + 30 - H) * Math.pow(d, 1.5); },
+  emerge(t) {
+    if (t < 1.4) { const k = t / 1.4, b = 1 + 1.7 * Math.pow(k - 1, 3) + .7 * Math.pow(k - 1, 2); return lerp(-80, 150, b); }
+    if (t < 4.5) return 150 + 8 * Math.sin((t - 1.4) * 2.2);
+    if (t < 11) { const k = (t - 4.5) / 6.5; return 150 + 8 * Math.sin((t - 1.4) * 2.2) * (1 - k) - 250 * k * k; }
+    return -200;
+  },
+  step(dt) {
+    if (this.t > 14.5) { this.reset(); return; }
+    const t = this.t, r = this.r;
+    if (t > 9.2 && t < 12.6) { this.bacc += dt; if (this.bacc > .16) { this.bacc = 0;
+      this.bub.push({ x: this.hx(t) + (r() - .5) * 40, y: 0, v: 18 + r() * 26, rad: 1.5 + r() * 3.5, age: 0, life: .6 + r() * .7 }); } }
+    for (let i = this.bub.length - 1; i >= 0; i--) { const b = this.bub[i]; b.age += dt; b.y -= b.v * dt; if (b.age > b.life) this.bub.splice(i, 1); }
+  },
+  hx(t) { return 300 + 22 * Math.sin(t * .5); },
+  drawRow(g, row, t) {
+    g.font = row.font; const yb = this.rowY(row.d, t), off = row.off + t * row.speed * row.dir, W = row.W;
+    for (let j = 0; j < row.s.length; j++) {
+      const ch = row.s[j]; if (ch === ' ') continue;
+      const x = ((row.xs[j] - off) % W + W) % W - 30; if (x > S + 10) continue;
+      const wv = this.wave(x, row.d, t);
+      g.fillStyle = wv < -(2 + 9 * row.d) * .9 ? row.accent : row.color;
+      g.fillText(ch, x, yb + wv);
+    }
+  },
+  drawHand(g, x, y, rot, curl, sc) {
+    const C = this.col;
+    g.save(); g.translate(x, y); g.rotate(rot); g.scale(sc, sc); g.lineCap = 'round'; g.lineJoin = 'round';
+    const segs = [];
+    const finger = (bx, by, adeg, len, w, side) => {
+      const a = adeg * Math.PI / 180, L = len * (1 - .33 * curl), l1 = L * .56, l2 = L * .44, a2 = a + side * curl * .45;
+      const mx = bx + Math.cos(a) * l1, my = by + Math.sin(a) * l1;
+      segs.push([bx, by, mx, my, w], [mx, my, mx + Math.cos(a2) * l2, my + Math.sin(a2) * l2, w * .92]);
+    };
+    segs.push([0, -20, 0, -40, 52]);
+    finger(-16, -54, -103, 42, 12, 1); finger(-4, -60, -92, 48, 12.5, 1); finger(8, -58, -82, 44, 12, -1); finger(19, -50, -70, 33, 10.5, -1);
+    finger(-22, -26, -150, 38, 14, 1);
+    const arm = [0, 6, 0, 330, 40], sleeve = [0, 118, 0, 360, 52];
+    const stroke = (s, w, c) => { g.strokeStyle = c; g.lineWidth = w; g.beginPath(); g.moveTo(s[0], s[1]); g.lineTo(s[2], s[3]); g.stroke(); };
+    stroke(arm, arm[4] + 7, C.ink); for (const s of segs) stroke(s, s[4] + 7, C.ink);
+    stroke(arm, arm[4], C.skin); for (const s of segs) stroke(s, s[4], C.skin);
+    stroke([10, 10, 10, 330], 12, 'rgba(90,60,40,.16)');
+    g.strokeStyle = 'rgba(40,30,30,.38)'; g.lineWidth = 1.8; g.beginPath(); g.moveTo(-18, -30); g.quadraticCurveTo(0, -18, 16, -36); g.stroke();
+    g.beginPath(); g.moveTo(-14, -14); g.quadraticCurveTo(2, -6, 18, -18); g.stroke();
+    stroke(sleeve, sleeve[4] + 7, C.ink); stroke(sleeve, sleeve[4], C.tealD);
+    g.strokeStyle = 'rgba(10,30,40,.35)'; g.lineWidth = 2; g.beginPath(); g.moveTo(-10, 140); g.quadraticCurveTo(-14, 200, -8, 260); g.moveTo(12, 150); g.quadraticCurveTo(16, 210, 10, 270); g.stroke();
+    g.strokeStyle = C.gold; g.lineWidth = 7; g.beginPath(); g.moveTo(-26, 122); g.lineTo(26, 122); g.stroke();
+    g.strokeStyle = hexA(C.gold, .6); g.lineWidth = 2; g.beginPath(); g.moveTo(-26, 134); g.lineTo(26, 134); g.stroke();
+    g.restore();
+  },
+  draw() {
+    const g = this.ctx, t = this.t, C = this.col; g.clearRect(0, 0, S, S);
+    const H = this.horizon(t);
+    const glow = g.createRadialGradient(300, H, 10, 300, H, 300); glow.addColorStop(0, hexA(C.peri, .18)); glow.addColorStop(1, hexA(C.peri, 0));
+    g.fillStyle = glow; g.fillRect(0, 0, S, S);
+    const body = g.createLinearGradient(0, H - 10, 0, S); body.addColorStop(0, C.raised); body.addColorStop(1, C.deep);
+    g.beginPath(); g.moveTo(0, S); for (let x = 0; x <= S; x += 10) g.lineTo(x, this.rowY(0, t) + this.wave(x, 0, t) - 6); g.lineTo(S, S); g.closePath();
+    g.fillStyle = body; g.fill();
+    g.textBaseline = 'alphabetic';
+    const split = Math.round(this.DH * (this.R - 1));
+    for (let i = 0; i <= split; i++) this.drawRow(g, this.rows[i], t);
+    const e = this.emerge(t);
+    if (e > -190) {
+      const hx = this.hx(t), dh = this.rows[split].d, ys = x => this.rowY(dh, t) + this.wave(x, dh, t) + 4;
+      g.save(); g.beginPath(); g.moveTo(-10, -10); g.lineTo(S + 10, -10); for (let x = S + 10; x >= -10; x -= 8) g.lineTo(x, ys(x)); g.closePath(); g.clip();
+      const sinking = t > 4.5 ? (t - 4.5) / 6.5 : 0;
+      const rot = .09 * Math.sin(t * 1.4) + .1 * sinking * Math.sin(t * 4.2);
+      const curl = t < 1.4 ? .1 : .45 + .45 * Math.sin(t * (2.2 + sinking * 3));
+      this.drawHand(g, hx, ys(hx) - e * 1.15, rot, curl, 1.15);
+      g.restore();
+      // the ripple where the arm breaks the surface
+      if (e > -40) { g.strokeStyle = hexA(C.sand, .45); g.lineWidth = 1.4;
+        for (let k = 0; k < 2; k++) { const p = (t * .8 + k * .5) % 1; g.globalAlpha = 1 - p;
+          g.beginPath(); g.ellipse(hx, ys(hx) - 2, 30 + p * 60, 5 + p * 9, 0, 0, Math.PI * 2); g.stroke(); }
+        g.globalAlpha = 1; }
+    }
+    for (const b of this.bub) { const ys = this.rowY(dhOf(this), t) + this.wave(b.x, dhOf(this), t);
+      g.globalAlpha = 1 - b.age / b.life; g.strokeStyle = C.sand; g.lineWidth = 1.2; g.beginPath(); g.arc(b.x, ys + b.y, b.rad, 0, Math.PI * 2); g.stroke(); }
+    g.globalAlpha = 1;
+    for (let i = split + 1; i < this.R; i++) this.drawRow(g, this.rows[i], t);
+  }
+});
+function dhOf(p) { return p.rows[Math.round(p.DH * (p.R - 1))].d; }
+
+/* ============================================================ 1E  Into static */
+piece('o1e', {
+  stillAt: 15.4, BX: 44, BY: 132, BW: 472, BH: 350,
+  init() {
+    this.cv = this.slot.querySelector('canvas'); const c = setupCanvas(this.cv); this.ctx = c.ctx; this.fit = c.fit;
+    this.col = { sand: tok('--sand'), muted: tok('--muted'), rose: tok('--rose'), gold: tok('--gold'), peri: tok('--periwinkle'),
+      title: tok('--title'), raised: tok('--ground-raised'), ground: tok('--ground') };
+    this.noise = document.createElement('canvas'); this.noise.width = 236; this.noise.height = 175; this.nctx = this.noise.getContext('2d');
+    this.nimg = this.nctx.createImageData(236, 175);
+    this.build();
+  },
+  build() {
+    const r = rng(13);
+    let text = 'Certainly. Time is a multifaceted concept that has shaped human civilisation for millennia. Before answering, it is important to note that the perception of time varies across cultures, time zones and individual experience. ';
+    while (text.length < 30000) text += sentence(r, 'time') + ' ';
+    const g = this.ctx; g.font = '400 100px Fraunces, Georgia, serif'; this.sp = g.measureText(' ').width;
+    const cache = new Map(); this.words = []; let c0 = 0;
+    for (const w of text.trim().split(' ')) { if (!cache.has(w)) cache.set(w, g.measureText(w).width);
+      this.words.push({ s: w, w: cache.get(w), c0 }); c0 += w.length + 1; }
+    this.total = c0; this.uniq = [...cache.keys()];
+  },
+  resize() { this.fit(); this.lastN = -1; },
+  widths(s) {
+    this.wcache = this.wcache || new Map(); let W = this.wcache.get(s); if (W) return W;
+    const g = this.ctx; g.font = `400 ${s}px Fraunces, Georgia, serif`; W = { sp: g.measureText(' ').width, m: new Map() };
+    for (const w of this.uniq) W.m.set(w, g.measureText(w).width); this.wcache.set(s, W); return W;
+  },
+  reset() { this.t = 0; this.lastN = -1; this.lines = []; this.size = 30; },
+  chars(t) { const tau = t - .8; if (tau <= 0) return 0; return Math.min(this.total, Math.floor(18 / .62 * (Math.exp(.62 * Math.min(tau, 11)) - 1))); },
+  layout(n) {
+    let k = 0; while (k < this.words.length && this.words[k].c0 + this.words[k].s.length <= n) k++;
+    const part = k < this.words.length && n > this.words[k].c0 ? this.words[k].s.slice(0, n - this.words[k].c0) : '';
+    let sum = 0; for (let i = 0; i < k; i++) sum += this.words[i].w + this.sp;
+    const g = this.ctx; g.font = '400 100px Fraunces, Georgia, serif'; const pw = part ? g.measureText(part).width : 0;
+    const A = (sum + pw) / 100 || 1;
+    // Fraunces changes its optical size with the type size, so widths are measured at the size drawn
+    let s = Math.min(30, Math.sqrt(this.BW * this.BH / (A * 1.3)) * .9), lines;
+    for (let it = 0; it < 14; it++) {
+      s = Math.round(s * 4) / 4; const W = this.widths(s);
+      lines = []; let cur = [], cw = 0; const maxW = this.BW;
+      const push = (str, w) => { if (cur.length && cw + w > maxW) { lines.push(cur.join(' ')); cur = []; cw = 0; } cur.push(str); cw += w + W.sp; };
+      for (let i = 0; i < k; i++) push(this.words[i].s, W.m.get(this.words[i].s));
+      if (part) { g.font = `400 ${s}px Fraunces, Georgia, serif`; push(part, g.measureText(part).width); }
+      if (cur.length) lines.push(cur.join(' '));
+      if (lines.length * s * 1.3 <= this.BH) break; s *= .94;
+    }
+    this.size = s; this.lines = lines; this.nWords = k;
+  },
+  step() {
+    if (this.t > 17.6) { this.reset(); return; }
+    const n = this.chars(this.t); if (n !== this.lastN) { this.lastN = n; this.layout(n); }
+  },
+  answerPos() { return { x: 190, y: 431 }; },
+  lens(t) {
+    const p = [[150, 210], [400, 250], [300, 380], [190, 425]], k = clamp((t - 13.2) / 2, 0, 1);
+    const seg = Math.min(2, Math.floor(k * 3)), f = smooth(k * 3 - seg);
+    return { x: lerp(p[seg][0], p[seg + 1][0], f), y: lerp(p[seg][1], p[seg + 1][1], f), a: smooth((t - 12.9) / .5) };
+  },
+  draw() {
+    const g = this.ctx, t = this.t, C = this.col; g.clearRect(0, 0, S, S);
+    // the question
+    const qa = clamp(t * 2, 0, 1); g.globalAlpha = qa;
+    g.font = '600 11px "Avenir Next", system-ui, sans-serif'; g.fillStyle = C.muted; g.textAlign = 'right';
+    g.fillText('YOU ASKED', 516, 38);
+    g.font = '500 22px Fraunces, Georgia, serif'; const qw = g.measureText('What time is it?').width;
+    g.fillStyle = C.raised; g.strokeStyle = hexA(C.peri, .35); g.lineWidth = 1;
+    g.beginPath(); g.roundRect(516 - qw - 32, 48, qw + 32, 44, [14, 14, 4, 14]); g.fill(); g.stroke();
+    g.fillStyle = C.title; g.fillText('What time is it?', 500, 78); g.textAlign = 'left';
+    g.globalAlpha = 1;
+    // the answer
+    const s = this.size, fadeT = clamp((t - 11.8) / 1.4, 0, 1);
+    if (this.lines.length) {
+      g.font = `400 ${s.toFixed(2)}px Fraunces, Georgia, serif`; g.textBaseline = 'top';
+      g.fillStyle = s > 6 ? C.sand : mix(C.sand, C.muted, clamp((6 - s) / 4, 0, 1)); g.globalAlpha = 1 - fadeT * .75;
+      const lh = s * 1.3; for (let i = 0; i < this.lines.length; i++) g.fillText(this.lines[i], this.BX, this.BY + i * lh);
+      if (s > 4.5 && t < 11.8 && Math.floor(t * 2.4) % 2 === 0) {
+        const last = this.lines[this.lines.length - 1]; const w = g.measureText(last).width;
+        g.fillStyle = C.rose; g.fillRect(this.BX + w + 2, this.BY + (this.lines.length - 1) * lh, Math.max(1.2, s * .08), s * 1.05);
+      }
+      g.globalAlpha = 1; g.textBaseline = 'alphabetic';
+    }
+    // static
+    if (fadeT > 0) {
+      const d = this.nimg.data, r = Math.random;
+      for (let i = 0; i < d.length; i += 4) { const v = 120 + r() * 135; d[i] = v; d[i + 1] = v * .96; d[i + 2] = v * .9; d[i + 3] = r() < .55 ? 255 * r() : 0; }
+      this.nctx.putImageData(this.nimg, 0, 0);
+      g.imageSmoothingEnabled = false; g.globalAlpha = fadeT * .5; g.drawImage(this.noise, this.BX, this.BY, this.BW, this.BH);
+      g.globalAlpha = 1; g.imageSmoothingEnabled = true;
+    }
+    // the lens, and the one line it finds
+    const L = this.lens(t);
+    if (L.a > 0) {
+      const R = 84, A = this.answerPos();
+      g.save(); g.globalAlpha = L.a; g.beginPath(); g.arc(L.x, L.y, R, 0, Math.PI * 2); g.clip();
+      g.fillStyle = C.ground; g.fillRect(L.x - R, L.y - R, R * 2, R * 2);
+      g.imageSmoothingEnabled = false; g.globalAlpha = L.a * .16; g.drawImage(this.noise, this.BX - 60, this.BY - 40, this.BW * 1.7, this.BH * 1.7); g.imageSmoothingEnabled = true;
+      g.globalAlpha = L.a; g.font = 'italic 500 19px Fraunces, Georgia, serif'; g.fillStyle = C.gold;
+      g.textAlign = 'center'; g.shadowColor = hexA(C.gold, .6); g.shadowBlur = 12; g.fillText('It is ten past four.', A.x, A.y); g.shadowBlur = 0; g.textAlign = 'left';
+      g.restore();
+      g.globalAlpha = L.a; g.strokeStyle = C.gold; g.lineWidth = 2.4; g.beginPath(); g.arc(L.x, L.y, R, 0, Math.PI * 2); g.stroke();
+      g.lineWidth = 9; g.lineCap = 'round'; g.beginPath(); g.moveTo(L.x + R * .72, L.y + R * .72); g.lineTo(L.x + R * 1.22, L.y + R * 1.22); g.stroke();
+      g.lineCap = 'butt'; g.globalAlpha = 1;
+    }
+    if (this.nWords) { g.font = '600 12px "Avenir Next", system-ui, sans-serif'; g.fillStyle = hexA(C.sand, .7); g.textAlign = 'right';
+      g.fillText(`${this.nWords.toLocaleString('en-US')} words`, 516, 520); g.textAlign = 'left'; }
+  }
+});
+
+/* ============================================================ the page */
+const tpl = document.getElementById('stall-copy');
+document.querySelectorAll('.copy').forEach(c => c.replaceWith(tpl.content.firstElementChild.cloneNode(true)));
+
+function start() {
+  for (const p of pieces) { try { p.init(); p.resize && p.resize(); p.reset(); } catch (e) { console.error(p.id, e); p.broken = true; } }
+  const live = pieces.filter(p => !p.broken);
+  if (RM) { live.forEach(still); }
+  const io = new IntersectionObserver(es => es.forEach(e => { const p = live.find(q => q.slot === e.target); if (p) p.visible = e.isIntersecting; }), { rootMargin: '80px' });
+  live.forEach(p => io.observe(p.slot));
+  const ro = new ResizeObserver(es => es.forEach(e => { const p = live.find(q => q.slot === e.target);
+    if (p && p.resize) { p.resize(); if (RM) still(p); else p.draw(); } }));
+  live.forEach(p => ro.observe(p.slot));
+  live.forEach(p => p.section.querySelector('.replay').addEventListener('click', () => { if (RM) still(p); else { p.reset(); p.draw(); } }));
+  let last = performance.now();
+  const loop = now => { const dt = Math.min(.05, (now - last) / 1000); last = now;
+    if (!RM) for (const p of live) if (p.visible) { p.t += dt; p.step(dt); p.draw(); }
+    requestAnimationFrame(loop); };
+  requestAnimationFrame(loop);
+
+  if (!RM && window.gsap && window.ScrollTrigger) {
+    gsap.registerPlugin(ScrollTrigger);
+    document.querySelectorAll('.opt').forEach(sec => {
+      const tl = gsap.timeline({ scrollTrigger: { trigger: sec.querySelector('.stall'), start: 'top 78%' } });
+      tl.from(sec.querySelector('.slot'), { autoAlpha: 0, scale: .96, duration: 1.4, ease: 'power3.out' })
+        .from(sec.querySelector('.stall-text h3'), { autoAlpha: 0, y: 46, duration: 1.3, ease: 'power3.out' }, .25)
+        .from(sec.querySelector('.stall-text p'), { autoAlpha: 0, y: 30, duration: 1.3, ease: 'power3.out' }, .5);
+    });
+  }
+}
+// canvas measures text, so the faces it draws with must be loaded before the pieces are built
+const faces = document.fonts ? Promise.all(['400 20px Fraunces', '500 20px Fraunces', 'italic 500 20px Fraunces', '600 20px Fraunces'].map(f => document.fonts.load(f))).catch(() => {}) : Promise.resolve();
+Promise.race([faces, new Promise(r => setTimeout(r, 2500))]).then(start);
+})();
+</script>
+</body>
+</html>

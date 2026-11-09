@@ -1,0 +1,892 @@
+/* ===========================================================================
+   M90, D115 — ABOUT: THE STORY OF THE BAZAAR, IN FIVE STALLS AND A MOTTO.
+
+   Reference: `playground/2026-11-round-5/R0-about-design.html?bg=B2&feel=F1`, the
+   author's pick of a ground (B2, "Dusk to dawn") and a feel (F1, "Procession"),
+   and the scenes he picked from R1 to R5 in the same folder.
+
+   What this sheet does and does not do:
+
+   - Everything is scoped under `.bz-about`, and the page's own `<main>` (whose
+     trail sits on the same ground). The vocabulary inside (`stall`, `copy`, `slot`,
+     `scene`, the scenes' own `e-*`) is shared with the markup and the motion,
+     which find their nodes by it.
+   - **Every colour is a custom property, and none is written here.** The page's
+     grounds and inks are its art, stated once in `components/about/palette.ts`
+     and declared on the page as `--about-*` (a surface stylesheet may hold no
+     colour, and the language may hold none its mockup lacks). Inside, `--a-*`
+     rebind them per section, so the motto's section turns its own text dark at
+     dawn.
+   - **Headings are smaller than F1 drew them and run the width of the text under
+     them**, the author's one change to F1: one `.copy` column, no measure of its
+     own on either the `h2` or the paragraph, and `text-wrap: pretty` rather than
+     `balance`, which would have shortened the lines again.
+   - **No scene sits in a box** (the author, on 1B: "the fact that each animation
+     is in a box is bad. in the final version I want no box."). A `.slot` only
+     sizes its scene: no border, no fill, no clip, and a scene whose art reached
+     the playground square's edge fades out at that edge instead.
+   - No shadow and no blur: the sheet in 3E is lifted by a soft pool of shade
+     under it, drawn as a gradient. No transform or opacity transition: the
+     motion is the island's, through GSAP, and the one CSS animation (the cue)
+     stops under `prefers-reduced-motion`.
+   - Without the island (no script, or reduced motion) each section paints its
+     own ground and nothing is hidden. With it, `[data-motion]` lets a single
+     fixed ground show through every section and change colour behind them.
+   =========================================================================== */
+
+@layer components {
+  /* The page is a scene, edge to edge, and its trail stands on the same dusk.
+
+     Every `--about-*` the page reads, each with the language's nearest token as its
+     default. The art's own values arrive from `palette.ts` in an unlayered `<style>`,
+     which outranks this layer; these hold only if that style is missing, and then
+     the page is drawn in the bar's indigo and the surface's inks rather than in
+     nothing. */
+  .bz-main:has(> .bz-about) {
+    --about-ground-hero: var(--color-bar);
+    --about-ground-1: var(--color-bar);
+    --about-ground-2: var(--color-bar);
+    --about-ground-3: var(--color-bar);
+    --about-ground-4: var(--color-bar);
+    --about-ground-5: var(--color-bar);
+    --about-ground-motto: var(--color-surface);
+    --about-hue-hero: var(--color-ornament);
+    --about-hue-1: var(--color-ornament);
+    --about-hue-2: var(--color-ornament);
+    --about-hue-3: var(--color-ornament);
+    --about-hue-4: var(--color-ornament);
+    --about-hue-5: var(--color-ornament);
+    --about-hue-dawn: var(--color-caution);
+    --about-ink: var(--color-on-bar);
+    --about-title: var(--color-on-bar);
+    --about-muted: var(--color-on-bar-dim);
+    --about-line-2: var(--color-bar-field-line);
+    --about-gold: var(--color-ornament);
+    --about-dawn-ink: var(--color-on-surface);
+    --about-dawn-title: var(--color-on-surface-title);
+    --about-dawn-muted: var(--color-on-surface-muted);
+    --about-dawn-line-2: var(--color-line-strong);
+    --about-dawn-gold: var(--color-caution);
+    --about-vignette: transparent;
+    --about-shade: transparent;
+    --about-bubble: var(--color-surface);
+    --about-bubble-ink: var(--color-on-surface-title);
+    --about-bubble-edge: var(--color-line);
+    --about-yes: var(--color-caution);
+    --about-yes-ink: var(--color-on-caution);
+    --about-tally: var(--color-caution);
+    --about-tally-shade: transparent;
+    --about-desk-a: var(--color-bar);
+    --about-desk-b: var(--color-bar);
+    --about-paper-a: var(--color-surface);
+    --about-paper-b: var(--color-surface);
+    --about-paper-c: var(--color-surface-sunken);
+    --about-paper-edge: var(--color-line);
+    --about-reed-a: var(--color-caution);
+    --about-reed-b: var(--color-ornament);
+    --about-reed-c: var(--color-caution);
+    --about-reed-tip: var(--color-bar);
+    --about-wax: var(--color-fault);
+    --about-wax-deep: var(--color-fault);
+    --about-wax-edge: var(--color-line-strong);
+    padding: 0;
+    background: var(--about-ground-hero);
+    color: var(--about-ink);
+  }
+
+  .bz-main:has(> .bz-about) > .bz-crumb {
+    position: relative;
+    z-index: 2;
+    margin: 0;
+    padding: 20px clamp(24px, 5vw, 80px) 0;
+    color: var(--about-muted);
+  }
+
+  .bz-main:has(> .bz-about) > .bz-crumb a {
+    color: var(--about-muted);
+  }
+
+  .bz-about {
+    --slot: min(44vw, 560px, calc(100svh - 200px));
+    --padx: clamp(24px, 5vw, 80px);
+    --chrome: var(--layout-sticky);
+    --ease: cubic-bezier(0.22, 0.61, 0.36, 1);
+    --a-ink: var(--about-ink);
+    --a-title: var(--about-title);
+    --a-muted: var(--about-muted);
+    --a-line-2: var(--about-line-2);
+    --a-arch: var(--about-gold);
+    --hue: var(--about-hue-hero);
+    /* the current stall's glaze, which the island writes as the reader moves */
+    --act: var(--about-gold);
+    position: relative;
+    isolation: isolate;
+    /* The fixed ground and every pinned stall are clipped to the page, so neither
+       ever draws over the trail above it or the footer below. */
+    clip-path: inset(0);
+    overflow-x: clip;
+    color: var(--a-ink);
+    font-family: var(--font-sans);
+    font-size: 17px;
+    line-height: 1.6;
+  }
+
+  /* ---------- the ground ---------- */
+  .bz-about .ground {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    background-color: var(--about-ground-hero);
+  }
+
+  /* a fine grain, and the edge of the lamp's reach */
+  .bz-about .ground::before,
+  .bz-about .ground::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+  }
+
+  .bz-about .ground::before {
+    opacity: 0.075;
+    background-size: 220px 220px;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='220' height='220'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1  0 0 0 0 .97  0 0 0 0 .9  0 0 0 .9 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+  }
+
+  .bz-about .ground::after {
+    background: radial-gradient(ellipse 80% 75% at 50% 50%, transparent 55%, var(--about-vignette) 100%);
+  }
+
+  .bz-about[data-dawn] .ground::after {
+    opacity: 0.25;
+  }
+
+  /* ---------- the sections and their grounds ---------- */
+  .bz-about [data-sec] {
+    position: relative;
+    z-index: 1;
+    scroll-margin-top: var(--chrome);
+    color: var(--a-ink);
+    --sec-ground: var(--about-ground-hero);
+  }
+
+  .bz-about [data-sec="1"] { --hue: var(--about-hue-1); --sec-ground: var(--about-ground-1); }
+  .bz-about [data-sec="2"] { --hue: var(--about-hue-2); --sec-ground: var(--about-ground-2); }
+  .bz-about [data-sec="3"] { --hue: var(--about-hue-3); --sec-ground: var(--about-ground-3); }
+  .bz-about [data-sec="4"] { --hue: var(--about-hue-4); --sec-ground: var(--about-ground-4); }
+  .bz-about [data-sec="5"] { --hue: var(--about-hue-5); --sec-ground: var(--about-ground-5); }
+  .bz-about [data-sec="motto"] { --sec-ground: var(--about-ground-motto); }
+
+  /* The still page: each section on its own ground. */
+  .bz-about:not([data-motion]) [data-sec] {
+    background: var(--sec-ground);
+  }
+
+  /* Dawn: the motto's own inks, on sand. */
+  .bz-about:not([data-motion]) [data-sec="motto"],
+  .bz-about[data-dawn] [data-sec="motto"] {
+    --a-ink: var(--about-dawn-ink);
+    --a-title: var(--about-dawn-title);
+    --a-muted: var(--about-dawn-muted);
+    --a-line-2: var(--about-dawn-line-2);
+    --a-arch: var(--about-dawn-gold);
+    --hue: var(--about-hue-dawn);
+  }
+
+  .bz-about [data-sec="motto"] .motto-k,
+  .bz-about [data-sec="motto"] .motto-q,
+  .bz-about [data-sec="motto"] .m2 {
+    transition: color 1.6s var(--ease);
+  }
+
+  .bz-about [data-sec="motto"] .arch path,
+  .bz-about [data-sec="motto"] .motto-stroke {
+    transition: stroke 1.6s var(--ease);
+  }
+
+  /* ---------- the text, split for the reveals by the island ---------- */
+  .bz-about .sw {
+    display: inline-block;
+    vertical-align: top;
+    overflow: hidden;
+    padding: 0.08em 0.02em 0.16em;
+    margin: -0.08em -0.02em -0.16em;
+  }
+
+  .bz-about .swi {
+    display: inline-block;
+  }
+
+  .bz-about .sln {
+    display: block;
+    overflow: hidden;
+    padding-bottom: 0.14em;
+    margin-bottom: -0.14em;
+  }
+
+  .bz-about .sli {
+    display: block;
+  }
+
+  /* ---------- the rail: one diamond per stall, the current one filled ---------- */
+  .bz-about .rail {
+    display: none;
+  }
+
+  .bz-about[data-motion="wide"] .rail {
+    position: fixed;
+    z-index: 30;
+    right: 22px;
+    top: 50%;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    transform: translateY(-50%);
+  }
+
+  .bz-about .rail a {
+    position: relative;
+    display: block;
+    width: 24px;
+    height: 24px;
+  }
+
+  .bz-about .rail a:focus-visible {
+    outline: 2px solid var(--about-gold);
+    outline-offset: 2px;
+  }
+
+  .bz-about .rail-mark {
+    position: absolute;
+    inset: 7px;
+    border: 1px solid var(--a-line-2);
+    transform: rotate(45deg);
+    transition: background-color 0.5s, border-color 0.5s, inset 0.5s;
+  }
+
+  .bz-about .rail a[aria-current] .rail-mark {
+    inset: 5px;
+    border-color: var(--act);
+    background: var(--act);
+  }
+
+  .bz-about[data-dawn] .rail {
+    --a-line-2: var(--about-dawn-line-2);
+  }
+
+  /* ---------- the hero: the title in the gate ---------- */
+  .bz-about .hero {
+    display: grid;
+    min-height: calc(100svh - var(--chrome) - 44px);
+    overflow: clip;
+  }
+
+  .bz-about .hero-in {
+    position: relative;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    place-items: center;
+    min-width: 0;
+    text-align: center;
+  }
+
+  .bz-about .arch {
+    grid-area: 1 / 1;
+    width: auto;
+    max-width: 100%;
+    height: min(76svh, 660px);
+    overflow: visible;
+  }
+
+  .bz-about .arch path {
+    fill: none;
+    stroke: var(--a-arch);
+    stroke-width: 1.25;
+  }
+
+  .bz-about .arch .arch-in {
+    stroke-opacity: 0.45;
+  }
+
+  .bz-about .arch-finial {
+    fill: var(--a-arch);
+  }
+
+  .bz-about h1 {
+    grid-area: 1 / 1;
+    align-self: center;
+    margin: 12svh 0 0;
+    color: var(--a-title);
+    font-weight: 680;
+    font-size: clamp(46px, 5.6vw, 88px);
+    line-height: 1.02;
+    letter-spacing: -0.018em;
+    font-variation-settings: "SOFT" 50, "opsz" 110;
+  }
+
+  .bz-about .h1a,
+  .bz-about .h1b {
+    display: block;
+  }
+
+  .bz-about .h1a {
+    margin-bottom: 0.12em;
+    color: var(--hue);
+    font-style: italic;
+    font-weight: 460;
+    font-size: 0.62em;
+  }
+
+  .bz-about .cue {
+    position: absolute;
+    left: 50%;
+    bottom: 26px;
+    width: 1px;
+    height: 56px;
+    background: var(--a-line-2);
+    transform: translateX(-50%);
+  }
+
+  .bz-about .cue::after {
+    content: "";
+    position: absolute;
+    left: -4px;
+    top: 0;
+    width: 9px;
+    height: 9px;
+    background: var(--hue);
+    transform: rotate(45deg);
+    animation: about-cue 2.4s var(--ease) infinite;
+  }
+
+  @keyframes about-cue {
+    0% { top: 0; opacity: 0; }
+    20% { opacity: 1; }
+    80% { opacity: 1; }
+    100% { top: 48px; opacity: 0; }
+  }
+
+  /* ---------- a stall: the text on one side, the scene on the other ---------- */
+  .bz-about .stall-in {
+    position: relative;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) var(--slot);
+    grid-template-areas: "copy obj";
+    align-items: center;
+    column-gap: clamp(40px, 6vw, 112px);
+    max-width: 1360px;
+    min-height: calc(100svh - var(--chrome));
+    margin: 0 auto;
+    padding: clamp(48px, 8vh, 96px) var(--padx);
+  }
+
+  .bz-about .stall.flip .stall-in {
+    grid-template-columns: var(--slot) minmax(0, 1fr);
+    grid-template-areas: "obj copy";
+  }
+
+  /* The text stands in front of the art: a scene with no box bleeds past its slot,
+     and where it reaches the column it passes under the words, never over them. */
+  .bz-about .copy {
+    grid-area: copy;
+    position: relative;
+    z-index: 2;
+    min-width: 0;
+    max-width: 36rem;
+  }
+
+  .bz-about .stall.flip .copy {
+    justify-self: end;
+  }
+
+  .bz-about .obj {
+    grid-area: obj;
+    position: relative;
+    z-index: 1;
+  }
+
+  .bz-about .num {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 24px;
+  }
+
+  .bz-about .num-d {
+    display: block;
+    width: 11px;
+    height: 11px;
+    background: var(--hue);
+    transform: rotate(45deg);
+  }
+
+  .bz-about .num-n {
+    display: block;
+    color: var(--hue);
+    font-style: italic;
+    font-weight: 500;
+    font-size: 22px;
+    line-height: 1;
+  }
+
+  .bz-about .num::after {
+    content: "";
+    width: 64px;
+    height: 1px;
+    background: var(--hue);
+    opacity: 0.6;
+  }
+
+  .bz-about h2 {
+    margin: 0 0 22px;
+    color: var(--a-title);
+    font-weight: 600;
+    font-size: clamp(24px, 2.05vw, 30px);
+    line-height: 1.2;
+    letter-spacing: -0.012em;
+    font-variation-settings: "SOFT" 50, "opsz" 72;
+    text-wrap: pretty;
+  }
+
+  .bz-about .copy p {
+    margin: 0;
+    font-size: clamp(17px, 1.22vw, 19px);
+    line-height: 1.68;
+  }
+
+  .bz-about .copy p + p {
+    margin-top: 1em;
+  }
+
+  /* ---------- the slot: a size, never a box ---------- */
+  .bz-about .slot {
+    position: relative;
+    width: var(--slot);
+    aspect-ratio: 1;
+    margin: 0;
+  }
+
+  .bz-about .scene {
+    position: absolute;
+    inset: 0;
+  }
+
+  .bz-about .scene > svg,
+  .bz-about .scene > canvas {
+    position: absolute;
+    inset: 0;
+    display: block;
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+  }
+
+  /* 1, pending: a pool of the stall's glaze and one quiet line */
+  .bz-about .scene-pending {
+    display: grid;
+    place-items: center;
+  }
+
+  .bz-about .pending-pool {
+    position: absolute;
+    inset: 6%;
+    border-radius: 50%;
+    background: radial-gradient(closest-side, color-mix(in oklab, var(--hue) 20%, transparent), transparent);
+  }
+
+  .bz-about .pending-mark {
+    position: absolute;
+    top: calc(50% - 46px);
+    left: calc(50% - 9px);
+    width: 18px;
+    height: 18px;
+    border: 1px solid var(--hue);
+    transform: rotate(45deg);
+  }
+
+  .bz-about .pending-note {
+    position: relative;
+    color: var(--a-muted);
+    font-style: italic;
+    font-size: 15px;
+  }
+
+  /* 1B6, the treaty: a wide, short hall, so the drawing is larger than the slot and
+     fades out in an ellipse that keeps both ends of the table; its bubbles and tally
+     float on it (the playground's `.vs .stage`, `.bubble` and `.tally`) */
+  .bz-about .t-stage {
+    position: absolute;
+    inset: -8% -20% -32% -20%;
+  }
+
+  .bz-about .t-stage svg {
+    position: absolute;
+    inset: 0;
+    display: block;
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+    -webkit-mask-image: radial-gradient(ellipse 50% 40% at 50% 50%, black 72%, color-mix(in srgb, black 50%, transparent) 87%, transparent 100%);
+    mask-image: radial-gradient(ellipse 50% 40% at 50% 50%, black 72%, color-mix(in srgb, black 50%, transparent) 87%, transparent 100%);
+  }
+
+  .bz-about .t-bubble {
+    position: absolute;
+    z-index: 2;
+    max-width: 92%;
+    padding: 0.55em 0.95em;
+    border: 1px solid var(--about-bubble-edge);
+    border-radius: var(--radius-pill);
+    background: var(--about-bubble);
+    color: var(--about-bubble-ink);
+    font-weight: 600;
+    font-size: clamp(13px, 1.25vw, 17px);
+    line-height: 1.25;
+    white-space: nowrap;
+    transform: translate(-50%, calc(-100% - 14px));
+    pointer-events: none;
+  }
+
+  .bz-about .t-bubble::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    bottom: -9px;
+    margin-left: -9px;
+    border: 9px solid transparent;
+    border-bottom: 0;
+    border-top-color: var(--about-bubble);
+  }
+
+  /* the question, in the still: the same bubble, smaller and quieter, said earlier */
+  .bz-about .t-bubble.t-earlier {
+    font-size: clamp(11px, 1vw, 14px);
+  }
+
+  .bz-about .t-yes {
+    padding: 0 0.3em;
+    border-radius: var(--radius-xs);
+    background: var(--about-yes);
+    color: var(--about-yes-ink);
+    font-weight: 700;
+  }
+
+  .bz-about .t-tally {
+    position: absolute;
+    z-index: 2;
+    left: 50%;
+    top: 25%;
+    color: var(--about-tally);
+    font-weight: 600;
+    font-size: clamp(11px, 1vw, 13px);
+    line-height: 1;
+    letter-spacing: 0.14em;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+    text-shadow: 0 1px 8px var(--about-tally-shade);
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+  }
+
+  .bz-about .t-tally b {
+    color: var(--about-title);
+    font-weight: 700;
+  }
+
+  /* 2A, the haystack: the beam ran off the square's top; every edge fades instead */
+  .bz-about .scene-haystack {
+    -webkit-mask-image:
+      linear-gradient(to bottom, transparent 0, black 24%, black 90%, transparent 100%),
+      linear-gradient(to right, transparent 0, black 9%, black 91%, transparent 100%);
+    -webkit-mask-composite: source-in;
+    mask-image:
+      linear-gradient(to bottom, transparent 0, black 24%, black 90%, transparent 100%),
+      linear-gradient(to right, transparent 0, black 9%, black 91%, transparent 100%);
+    mask-composite: intersect;
+  }
+
+  /* 4E, brainrot: the reader and Bit stand in the ground instead of being cut by a frame */
+  .bz-about .scene-brainrot {
+    -webkit-mask-image:
+      linear-gradient(to bottom, black 82%, transparent 100%),
+      linear-gradient(to right, transparent 0, black 5%, black 96%, transparent 100%);
+    -webkit-mask-composite: source-in;
+    mask-image:
+      linear-gradient(to bottom, black 82%, transparent 100%),
+      linear-gradient(to right, transparent 0, black 5%, black 96%, transparent 100%);
+    mask-composite: intersect;
+  }
+
+  /* 3E, the seal, in CSS 3D */
+  .bz-about .e-stage {
+    position: absolute;
+    inset: 0;
+    perspective: 1100px;
+    perspective-origin: 50% 22%;
+  }
+
+  .bz-about .e-desk {
+    position: absolute;
+    inset: 0;
+    transform-style: preserve-3d;
+    /* where the playground's still leaves the desk; the timeline takes it from here */
+    transform: rotate(-8deg) rotateX(40deg);
+  }
+
+  .bz-about .e-table {
+    position: absolute;
+    left: -40%;
+    top: -30%;
+    width: 180%;
+    height: 160%;
+    border-radius: 50%;
+    background: radial-gradient(closest-side, var(--about-desk-a) 0%, var(--about-desk-b) 55%, transparent 100%);
+    transform: translateZ(-2px);
+  }
+
+  .bz-about .e-shadow {
+    position: absolute;
+    left: 12%;
+    top: 14%;
+    width: 78%;
+    aspect-ratio: 400 / 540;
+    border-radius: 50%;
+    background: radial-gradient(closest-side, var(--about-shade), transparent);
+    transform: translateZ(-1px);
+  }
+
+  .bz-about .e-page {
+    position: absolute;
+    left: 19%;
+    top: 8%;
+    width: 62%;
+    aspect-ratio: 400 / 520;
+    transform-style: preserve-3d;
+    border-radius: var(--radius-xs);
+    outline: 1px solid var(--about-paper-edge);
+    background: linear-gradient(170deg, var(--about-paper-a), var(--about-paper-b) 60%, var(--about-paper-c));
+  }
+
+  .bz-about .e-page svg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+
+  .bz-about .e-pen {
+    position: absolute;
+    left: 62.5%;
+    top: 65.8%;
+    width: 0;
+    height: 0;
+    opacity: 0;
+    transform-style: preserve-3d;
+  }
+
+  .bz-about .e-reed {
+    position: absolute;
+    left: -4px;
+    bottom: 0;
+    width: 8px;
+    height: 150px;
+    transform-origin: 50% 100%;
+    transform: rotateX(-58deg) rotateY(-24deg);
+    background: linear-gradient(90deg, var(--about-reed-a), var(--about-reed-b) 45%, var(--about-reed-c));
+    clip-path: polygon(0 0, 100% 0, 100% 88%, 62% 100%, 38% 100%, 0 88%);
+  }
+
+  .bz-about .e-reed::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 12%;
+    background: var(--about-reed-tip);
+  }
+
+  .bz-about .e-seal,
+  .bz-about .e-ring {
+    position: absolute;
+    left: 62%;
+    top: 70%;
+    width: 40%;
+    aspect-ratio: 1;
+    margin: -20% 0 0 -20%;
+  }
+
+  .bz-about .e-seal {
+    transform-style: preserve-3d;
+  }
+
+  .bz-about .e-seal svg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+
+  .bz-about .e-layer {
+    position: absolute;
+    inset: 5%;
+    border: 1px solid var(--about-wax-edge);
+    border-radius: 50%;
+    background: var(--about-wax-deep);
+  }
+
+  .bz-about .e-ring {
+    border: 2px solid var(--about-wax);
+    border-radius: 50%;
+    opacity: 0;
+  }
+
+  /* ---------- the motto, at dawn, in the gate again ---------- */
+  .bz-about .motto {
+    display: grid;
+    min-height: calc(100svh - var(--chrome));
+  }
+
+  .bz-about .motto-in {
+    position: relative;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    place-items: center;
+    min-width: 0;
+    padding: 40px var(--padx);
+    text-align: center;
+  }
+
+  .bz-about .motto .arch {
+    height: min(82svh, 720px);
+  }
+
+  .bz-about .motto-t {
+    grid-area: 1 / 1;
+    display: grid;
+    justify-items: center;
+    margin-top: 16%;
+  }
+
+  .bz-about .motto-k {
+    margin: 0 0 22px;
+    color: var(--a-muted);
+    font-style: italic;
+    font-weight: 500;
+    font-size: clamp(19px, 1.5vw, 24px);
+    line-height: 1.2;
+  }
+
+  .bz-about .motto-q {
+    max-width: 9em;
+    margin: 0;
+    color: var(--a-title);
+    font-weight: 700;
+    font-size: clamp(34px, 3.5vw, 54px);
+    line-height: 1.08;
+    letter-spacing: -0.018em;
+    font-variation-settings: "SOFT" 50, "opsz" 110;
+    text-wrap: balance;
+  }
+
+  .bz-about .m1,
+  .bz-about .m2 {
+    display: block;
+  }
+
+  .bz-about .m2 {
+    margin-top: 0.18em;
+    color: var(--hue);
+    font-style: italic;
+    font-weight: 480;
+  }
+
+  /* the hand-drawn line under it, a little uneven on purpose (R5's close) */
+  .bz-about .motto-line {
+    display: block;
+    width: min(400px, 70vw);
+    height: 30px;
+    margin-top: 20px;
+    overflow: visible;
+  }
+
+  .bz-about .motto-stroke {
+    fill: none;
+    stroke: var(--a-arch);
+    stroke-width: 2.2;
+    stroke-linecap: round;
+  }
+
+  .bz-about .motto-dot {
+    fill: var(--hue);
+  }
+
+  /* ---------- phone: text above its scene, nothing pinned ---------- */
+  @media (max-width: 899.98px) {
+    .bz-main:has(> .bz-about) > .bz-crumb {
+      padding-inline: 16px;
+    }
+
+    .bz-about {
+      --slot: min(calc(100vw - 32px), 560px);
+      --padx: 16px;
+    }
+
+    .bz-about .stall-in,
+    .bz-about .stall.flip .stall-in {
+      grid-template-columns: minmax(0, 1fr);
+      grid-template-areas: "copy" "obj";
+      row-gap: 32px;
+      min-height: 0;
+      padding: 72px 16px;
+    }
+
+    .bz-about .obj,
+    .bz-about .stall.flip .obj {
+      justify-self: center;
+    }
+
+    .bz-about .stall.flip .copy {
+      justify-self: stretch;
+    }
+
+    .bz-about .hero {
+      min-height: calc(88svh - var(--chrome));
+    }
+
+    .bz-about .hero .arch {
+      height: min(64svh, 520px);
+    }
+
+    .bz-about h1 {
+      margin-top: 8svh;
+    }
+
+    .bz-about .motto .arch {
+      width: 100%;
+      max-width: 440px;
+      height: auto;
+    }
+
+    .bz-about .motto-in {
+      padding: 88px 16px;
+    }
+
+    .bz-about .motto-q {
+      font-size: clamp(28px, 8vw, 36px);
+    }
+
+    /* The hall stays inside the window: the slot has a 16px gutter each side, and 4% of a 358px
+       slot is 14px, so the stage stops 2px short of the edge (R1b's -8% ran 13px past it). */
+    .bz-about .t-stage {
+      inset: -2% -4% -8% -4%;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .bz-about .cue::after {
+      animation: none;
+    }
+  }
+}

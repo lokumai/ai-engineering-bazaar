@@ -111,6 +111,12 @@ interface Destination {
   label: string
   /** Every route this destination owns, so a child page still lights it. */
   owns: readonly string[]
+  /**
+   * May sit at the scroller's cut edge on a phone, reached by swipe or Tab.
+   * Every other destination must fit at 390 (D91's guarantee, asserted in
+   * `tracks.spec.ts` and `search.spec.ts`).
+   */
+  edge?: boolean
 }
 
 /**
@@ -141,8 +147,11 @@ const DESTINATIONS: readonly Destination[] = [
     owns: ['/profile/'],
   },
   // M62 — the trends timeline, beside Progress (the author, 2026-11-09). Its
-  // page is under maintenance until the timeline is built.
-  { href: '/caravan/', label: 'Caravan', owns: ['/caravan/'] },
+  // page is under maintenance until the timeline is built. On a module page at
+  // 390 the bar is 67px short of fitting it beside Catalog and Progress, and
+  // the only ways to make room were removing the theme toggle or the language
+  // flag; the navigation already scrolls there, so Caravan takes the edge.
+  { href: '/caravan/', label: 'Caravan', owns: ['/caravan/'], edge: true },
 ]
 
 /**
@@ -382,7 +391,11 @@ export function MainNav({ categories }: { categories: readonly CategoryLabel[] }
           const hasMenu = destination.href === INDEX_ROUTE
 
           return (
-            <li key={destination.href} data-home={destination.href === '/' ? '' : undefined}>
+            <li
+              key={destination.href}
+              data-home={destination.href === '/' ? '' : undefined}
+              data-bar-edge={destination.edge ? '' : undefined}
+            >
               {hasMenu ? (
                 <details
                   ref={panel}
@@ -503,6 +516,10 @@ export function MainNav({ categories }: { categories: readonly CategoryLabel[] }
                   className="bz-bar-link"
                   data-current={current ? '' : undefined}
                   aria-current={current ? 'page' : undefined}
+                  // Chrome leaves a half-visible link where it is when Tab
+                  // reaches it inside the phone bar's scroller (MEASURED at 390,
+                  // M62), so the link brings itself fully into view.
+                  onFocus={(event) => event.currentTarget.scrollIntoView({ block: 'nearest', inline: 'nearest' })}
                 >
                   {destination.label}
                 </Link>

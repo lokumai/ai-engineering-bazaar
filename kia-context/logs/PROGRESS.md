@@ -610,7 +610,12 @@ on issue #40 so it is not lost. Nothing is built until the author takes it up.
       `route-labels.ts` so its crumb matches its heading, and it says only *Under maintenance.* with a
       link to the catalog. Added to the navbar and layout route lists in `navigation.spec.ts` and
       `layout.spec.ts`. On a phone the bar's navigation already scrolls inside itself, so Caravan sits
-      at its cut edge at 390 while Catalog and Progress stay inside.
+      at its cut edge at 390 while Catalog and Progress stay inside. On a module page the bar is 67px
+      short of fitting it (MEASURED: 217px of destinations in a 150px navigation); room could only come
+      from removing the theme toggle or the language flag, so Caravan is marked `data-bar-edge`, the one
+      destination the phone tests in `tracks.spec.ts` and `search.spec.ts` let sit at the edge, at most
+      one, and only if focusing it brings it fully into view. That check found Chrome leaves a
+      half-visible bar link unscrolled on Tab, so `MainNav` now scrolls a link into view on focus.
 
 Not milestones, but open: four old branches with commits found nowhere else (`backup/pre-scrub-2026-09-04`,
 `merge/main-into-revision`, `origin/backup/before-local-user`, `origin/feat/mkdocs`) wait for the

@@ -205,7 +205,8 @@
        this project already uses for a wide table — the content scrolls inside
        its own box — so the list does, with `contain` so a swipe cannot chain
        out to the page. Every link stays reachable, by swipe and by Tab, which
-       scrolls its target into view; no control is hidden, and no destination
+       scrolls its target into view (`MainNav` does that on focus: Chrome alone
+       left a half-visible link where it was, M62); no control is hidden, and no destination
        moves behind a menu.
 
        `min-width: 0` on the nav is what makes it possible at all: a flex item

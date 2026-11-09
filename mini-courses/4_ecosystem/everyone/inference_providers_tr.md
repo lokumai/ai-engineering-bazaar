@@ -17,6 +17,9 @@ Bir **inference provider**, yapay zekâ modellerini kendi bilgisayarlarında ça
 - **Failover:** bir provider çökmüşse istek hata vermek yerine bir başkasına gidebilir.
 - **Aynı model, birkaç satıcıdan**, farklı fiyat ve hızlarda; böylece seçebilirsin.
 
+![Tek API, Tüm Modeller](../images/openrouter-gateway.webp)  
+*Ortada tek bir kapı, bir yanda birçok model, öbür yanda onları kullanarak bir şey kuran insanlar. Alttaki şerit gateway'in kendi kazancını da gösteriyor: kendi modelini yapmıyor, bu yüzden hangi model kazanırsa kazansın para kazanıyor ve üzerinden bir şey kuranlar orada kalma eğiliminde.*
+
 Bedeli, seninle model arasında bir şirket daha ve küçük bir gecikme.
 
 ![](../images/logos/portkey.svg)**Portkey**, aynı yönlendirme işini senin kendi hesaplarınla yapıyor ve bir şirket ekibinin istediği şeyleri ekliyor: koruyucular, izler, bütçe sınırları ve caching.
@@ -27,11 +30,19 @@ Farklı türde bir router için bir uyarı: ![](../images/logos/agentrouter.svg)
 
 Diğer yol, modeli yapan şirketten doğrudan satın almak: ![](../images/logos/openai-mono.svg)OpenAI, ![](../images/logos/anthropic-mono.svg)Anthropic ya da ![](../images/logos/google.svg)Google. En yeni modellerine ilk sen ulaşıyorsun ve yalnızca onların sunduğu özelliklere de: tekrarlanan talimatlar için daha ucuz fiyat (caching), büyük toplu işler için indirimler ve daha yüksek limitler.
 
+![Claude Fiyat Listesi](../images/anthropic-pricing.webp)  
+*Anthropic'in kendi fiyat listesi. Tekrar eden talimatları ilk kez saklamak normalden biraz pahalı, sonraki her yeniden kullanım ise normal fiyatın yalnızca küçük bir kısmı. Caching'in sade hâli bu.*
+
 Birçok şirket ikisini de yapıyor: her gün kullandıkları model için doğrudan satın alıyor, geri kalan her şeyi denemek için bir gateway kullanıyor.
 
 ## Fiyatın Ötesinde Neyi Karşılaştırmalısın
 
-Bir milyon token'ın fiyatı herkesin söylediği rakam ve tek başına karar vermek için en kötü rakam. İşte bir alıcı kontrol listesi:
+Bir milyon token'ın fiyatı herkesin söylediği rakam ve tek başına karar vermek için en kötü rakam.
+
+![OpenRouter Model Listesi](../images/openrouter-models.webp)  
+*OpenRouter'ın kendi model listesi. Fiyat sütunların yalnızca ikisi: aynı satırda bir istekte ne kadar metnin sığdığı, ilk kelimenin ne kadar çabuk geldiği ve cevabın ne hızla aktığı da yazıyor. Bazı modeller iki kez listeleniyor ve daha ucuz olan batch kopyası, beklemeyi göze alabileceğin işler için.*
+
+İşte bir alıcı kontrol listesi:
 
 - **Caching.** Asistanın her istekle aynı uzun talimatları gönderiyorsa, bunları önbelleğe alan bir provider her tekrar için çok daha az ücret alır. Bu, taban fiyattan daha önemli olabilir.
 - **Rate limit'ler.** Dakikada kaç istek göndermene izin verildiği. İsteklerin bir kuyrukta bekliyorsa iyi bir fiyatın işine yaramaz.

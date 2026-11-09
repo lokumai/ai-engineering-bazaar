@@ -21,6 +21,9 @@ An **inference engine** is the program that loads the weights and turns your tok
 
 An inference provider, the subject of [Inference Providers](inference_providers.md), is somebody else who runs one of these engines for you and charges you per token.
 
+![The Inference Engine Stack](./images/inference-engine-layers.webp)  
+*The engine is the layer between the weights and the CUDA or framework layer below it. It decides how the weights use the GPU, and a provider runs all four layers for you.*
+
 ## Why You Would Run it Yourself
 
 There are three reasons, and only these three are worth the trouble.
@@ -56,11 +59,19 @@ graph TD
 
 **Across many machines**, the problem is no longer how to run one server program well. The problem becomes how to coordinate a whole cluster of machines. That is what ![](./images/logos/llm-d.svg)**[llm-d](https://github.com/llm-d/llm-d)** is for. It runs inference on Kubernetes with modern accelerators. The platform then handles scheduling and routing for you, which means that it decides which machine runs each request. It also does cache-aware placement: it prefers a machine that already holds the needed data in its cache.
 
+One map shows where all of these tools sit, and where providers sit next to them.
+
+![The LLM Inference Landscape](./images/llm-inference-landscape.webp)  
+*Wing's map of the LLM inference infrastructure, read from the bottom: rented GPUs, then the tools that manage them, then engines, then caching and routing on top. The inference-as-a-service column is the provider route, and the integrated stacks column bundles several layers into one product.*
+
 ## The One Idea That Explains the Numbers
 
 If you remember only one mechanism from this module, remember **batching**.
 
 A GPU that runs one request at a time is mostly idle. The reason is that generating a token takes a small amount of arithmetic and a huge amount of memory traffic. If you run many requests together, the GPU reads the weights from memory once and uses them for every request in the group. That is why people measure throughput on these engines with many concurrent users. It is also why the same hardware can look brilliant or hopeless. It depends only on how full the batch is.
+
+![Inference Server and Engine](./images/inference-server-engine.webp)  
+*The engine is only the inner box. The server around it receives HTTP or gRPC requests, queues them and reports metrics, and batching is the step where queued requests become one group for the model.*
 
 Continuous batching is the improvement that matters in practice. The engine does not wait for a batch to finish. Instead, it puts new requests into the batch as older ones complete, so the GPU is never left without work. This is also why your own benchmark, with one request at a time, will badly mislead you about what the server can do.
 

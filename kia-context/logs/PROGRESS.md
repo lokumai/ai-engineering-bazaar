@@ -19,7 +19,7 @@ description: >
 authority: state
 writes: agent, every session
 status: active
-covers: "M50 to M94, 2026-11-06 onward, and M41, which part 2 held for PR #57"
+covers: "M50 to M95, 2026-11-06 onward, and M41, which part 2 held for PR #57"
 last_updated: 2026-11-10
 ---
 
@@ -1726,6 +1726,40 @@ everyone track ... do it for all modules written, for all languages."*
       (UI Design) to 15 (LLM Fundamentals).
 - [x] **Gate:** typecheck, `npm test` (1,520), build, link check and bundle check pass; the full
       browser suite runs in CI.
+
+## 🏁 Milestone M95: Six images in Inference Providers and Inference Engines — DONE, PR #104
+
+The author: *"in the proper place of inference engines and inference providers, use these images"*,
+with six of his own files. No decision was rejected, so there is no D entry.
+
+- [x] **Six files converted** to WebP in `mini-courses/4_ecosystem/images/` (D112: resized once to at most
+      1,600 px wide, the first of q82, q90, near-lossless 60 whose SSIM against the resized PNG, measured
+      on the decoded WebP with ffmpeg, is at least 0.985):
+
+      | File | Source | Final | Setting | SSIM |
+      | --- | --- | --- | --- | --- |
+      | `anthropic-pricing.webp` | 974 px PNG, 114,584 B | 38,172 B | q82 | 0.9969 |
+      | `openrouter-models.webp` | 1,577 px PNG, 171,414 B | 53,460 B | q82 | 0.9930 |
+      | `openrouter-gateway.webp` | 1,400 px PNG, 990,444 B | 55,916 B | q82 | 0.9858 |
+      | `inference-engine-layers.webp` | 2,560 px WebP, 67,254 B, resized to 1,600 px | 48,934 B | q82 | 0.9871 |
+      | `inference-server-engine.webp` | 1,400 px JPEG, 113,381 B | 107,388 B | q90 (q82 gave 0.9791) | 0.9887 |
+      | `llm-inference-landscape.webp` | 1,213 px PNG, 305,505 B | 55,602 B | q82 | 0.9865 |
+
+      The landscape PNG has a transparent background (mean alpha 0.6): measured as it came, SSIM read
+      0.86, because the encoder drops the colour under transparent pixels. It was flattened onto white,
+      which is how the author sees it, and the black labels would vanish on the dark theme without that.
+- [x] **Placed where the text discusses the idea**, in all twelve files (the module, its `_tr` and `_fa`,
+      and the same three for the For Everyone version): the gateway diagram in the Gateway section after
+      the benefits list; Anthropic's pricing after the list of what only the maker ships; OpenRouter's
+      model list under "What to Compare, Beyond the Price"; the layer stack once the engine is defined;
+      the server and engine diagram in the batching section; Wing's map ending "The Engines, by the Size
+      of the Problem", with one sentence to introduce it. Captions credit the pricing pages and Wing's
+      map, quote no price, and say what the picture cannot (a cache write costs more than a plain
+      input, the batch listing has no latency, the engine is only the inner box, lock-in is the price
+      of one integration).
+- [x] **Checks**: `npm test` green; `npm run build`, the link gate and `check-bundle-out.mjs` green;
+      each file name found under `out/courses/`; the figures screenshotted at 1440 px in
+      `playground/2026-11-round-5/shots-inference-images/`.
 
 ---
 

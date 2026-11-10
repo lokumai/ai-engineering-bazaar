@@ -58,7 +58,7 @@ content):
 | Phase | Milestones, in order |
 |---|---|
 | **Design and site** | M61 (Emerging Trends) · M50 (round-3 art) → M55 (no Sources count) → M58 (round 3 built) → M51 (shipped as PR #69); M63 (the gate revised): **all done** |
-| **Playground round 4** | M56 search, **picked (D95, D97)**; M57 download, **cancelled (D96)**; M54 certificate (should it exist at all) still open |
+| **Playground round 4** | M56 search, **picked (D95, D97)**; M57 download, **cancelled (D96)**; M54 certificate, **decided: outside the site (D121)** |
 | **Site** | M59 (search built, done) |
 | **Content, last** | M52 (For Everyone modules: the first written in M68, the order of the rest open), M53 (readers' feedback and issues), content revision 4 (M64 to M69, done) |
 | **Later, a component kept over time** | M62 (Caravan, the trends timeline page) |
@@ -443,7 +443,7 @@ Types: unclear explanation, missing topic, error or outdated, too long or dense,
 - No reader note is treated as already handled. Search, the For Everyone track and the Turkish and Persian translations answer none of the 11 files' points, and spot checks of the current modules (duplicate link, Hugging Face placement, quantization, heading text) show those notes still apply.
 
 
-## 🏁 Milestone M54: A certificate and an exam per track — WAITING FOR THE AUTHOR'S YES OR NO
+## 🏁 Milestone M54: A certificate and an exam per track — DECIDED: OUTSIDE THE SITE (D121)
 
 Raised by the author on 2026-11-05 as an idea, not decided. **It contradicts the MANIFESTO as it
 stands:** §6 says *"Not a textbook or a certification. No exams, no credentials, no completion
@@ -456,6 +456,10 @@ stored). With no server, a certificate proves nothing: anyone can edit their own
       (where the exam lives, what passing means without a server, what the certificate says).
       **Not started on 2026-11-06:** building it would amend a MANIFESTO promise (§6, rule 11), and a
       promise is the author's to change, so the first step is still the author's yes or no.
+- [x] **Decided 2026-11-10 (D121):** assessment happens outside the website. Intellica's program
+      uses the Bazaar as its reading and runs its exam, project and certificates in Microsoft Forms
+      and its own Microsoft 365; the site gets no exam, no account and no certificate page. The
+      MANIFESTO's §6 promise stands, with one sentence saying so.
 
 ## 🏁 Milestone M55: The catalog without its Sources count — DONE
 

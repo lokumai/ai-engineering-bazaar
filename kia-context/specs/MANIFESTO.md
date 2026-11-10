@@ -10,7 +10,7 @@ authority: law
 writes: agent, from what the human decided
 status: active
 covers: the whole product
-last_updated: "2026-11-09"
+last_updated: "2026-11-10"
 ---
 
 # 📜 MANIFESTO — What we are building, and why
@@ -140,6 +140,7 @@ reason, and so does a Persian version of every written one (**D80**). See `genes
 ## 6. What this is NOT
 
 - **Not a textbook or a certification.** No exams, no credentials, no completion certificates.
+  The site holds none; an organisation may assess its own people on the course outside it (D121).
 - **Not a blog.** Modules are revised in place and ordered as a curriculum, not published as dated
   posts.
 - **Not a machine-written content farm.** This is the whole premise. A module written by summarising

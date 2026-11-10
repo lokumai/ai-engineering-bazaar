@@ -11,7 +11,7 @@ description: >
   backgrounds and copy (M81), Agentic UI (M82), the cast's colours (M83), and M84 to M90 (content
   and site fixes, the home page in Turkish and Persian, Dariush's motif, block menus in the top layer,
   and About, the story of the Bazaar); Caravan built (M91), its real trends waiting (M92) and its second
-  round (M93); multilingual SEO (M96); translated objectives on the site (M98) and in the bundle (M99); the story in the bundle (M100); three screen recordings and Human in the Loop moved into Agentic UI (M101); and M41, the content bundle for the mobile reader. Each milestone carries its deliverables and acceptance
+  round (M93); multilingual SEO (M96); translated objectives on the site (M98) and in the bundle (M99); the story in the bundle (M100); three screen recordings and Human in the Loop moved into Agentic UI (M101); a laptop section in Inference Engines (M103); and M41, the content bundle for the mobile reader. Each milestone carries its deliverables and acceptance
   criteria as `- [ ]` checkboxes, ticked as the work lands, and closes with a dated report; the loop
   that governs that is below, in this file.
   NOT here: why a choice was made (BRAINSTORM.md), or any rule that outlives the milestone
@@ -19,7 +19,7 @@ description: >
 authority: state
 writes: agent, every session
 status: active
-covers: "M50 to M101, 2026-11-06 onward, and M41, which part 2 held for PR #57"
+covers: "M50 to M103, 2026-11-06 onward, and M41, which part 2 held for PR #57"
 last_updated: 2026-11-10
 ---
 
@@ -1976,6 +1976,40 @@ in the proper format and again, update kia-context and review and merge"*
 - [x] **Gate:** 1,594 unit tests, typecheck, build, link check, bundle check (the bundle's content
       changes, its shape does not); each image name found in the built pages of every language and
       track; each new figure and the new section screenshotted at 1440 and read.
+
+## 🏁 Milestone M103: Run a model on your laptop, in Inference Engines — DONE
+
+M101 is the videos and Human in the Loop pull request (#109), and M102 is left free for the search Apply
+one, so this takes the next number after both. The author, asking for it: *"also I remember previously one
+student said if we could also explain how to run ollama in our machine. in the inference engine module, we
+can add a very short section saying running models on ollama in your laptop is very easy. open terminal,
+install, and run these commands (basic ollama commands like): ollama pull, ollama list, ollama run, ollama
+stop. and then say there is also lm studio which has desktop app: https://lmstudio.ai/ ... and do not forget
+to include these two images in the proper format and convention"*. Then two additions: *"also mention people
+not confuse OpenWebUI with other things. Openwebui is just the interface that works with ollama, or any other
+inference engine that it supports. but LM Studio is an app that has both inference engine within as well as
+UI"*, and, when the second image turned out to show "Bionic": *"use it. bionic is the new branding. use the
+image"*. The site agrees: lmstudio.ai now leads with "LM Studio Bionic", and says that Bionic is LM Studio's
+agent for open models, with the LM Studio runtime, MLX and llama.cpp under the hood.
+
+- [x] **The section**: `## Run a Model on Your Laptop` in Inference Engines, after the engines by size of
+      problem and before batching, in English, Turkish and Persian, and in the three For Everyone versions
+      under the same heading. Install lines and the commands were checked against Ollama's download page,
+      its CLI Reference, its Quickstart and its FAQ (`ollama list` is the command and `ls` its alias,
+      `cmd/cmd.go`). The code block is byte-identical in all six files.
+- [x] **The two images**: `ollama-list.webp` copied as it came (892 px, lossless WebP, 20,374 bytes) and
+      `lm-studio.webp` from the author's PNG (1,104 px, 356,844 bytes): q82 gave SSIM 0.9834, below the
+      floor, so q90, 61,296 bytes at SSIM 0.9882 on a dwebp decode (D112). The originals on the Desktop are
+      untouched. Both carry captions that say what to notice, translated, and a translated alt text.
+- [x] **The note on names**: Ollama is an engine used from a terminal, LM Studio one app with an engine and
+      a chat window, and Open WebUI only a chat interface that connects to an engine; one paragraph in each
+      language, and in plain words in each For Everyone version. Open WebUI's own section is not repeated.
+- [x] **The record of the lesson**: objectives (one added in each of the six files, counts equal), Key
+      Terms (Ollama, LM Studio), Words You Now Know, Summary, and References (`### Articles`: CLI Reference,
+      FAQ). The quiz was re-read and no question contradicts the text.
+- [x] **Gate:** typecheck, 1,594 unit tests, build, link check and bundle check pass; both images are in the
+      export of all six pages and load at their natural width; the English, Persian and For Everyone Turkish
+      sections were read as screenshots at 1440 px.
 
 ---
 

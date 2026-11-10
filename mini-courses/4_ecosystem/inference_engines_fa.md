@@ -5,6 +5,7 @@ objectives:
   - "برای یه سیستم، یه سرور GPU یا یه cluster، engine مناسب رو انتخاب کن"
   - "توضیح بده چرا batching، throughput رو تعیین می‌کنه"
   - "یه رابط چت جلوی یه مدل محلی بذار"
+  - "با Ollama یه مدل کوچیک رو روی لپ‌تاپ خودت اجرا کن"
 ---
 
 # Inference Engine‌ها
@@ -65,6 +66,30 @@ graph TD
 ![نقشه‌ی Inference برای LLM](./images/llm-inference-landscape.webp)  
 *نقشه‌ی Wing از زیرساخت inference برای LLM، از پایین به بالا: GPU‌های اجاره‌ای، ابزارهایی که مدیریتشون می‌کنن، بعد engine‌ها، و بالاش cache و routing. ستون inference-as-a-service همون راه provider‌هاست، و ستون integrated stack‌ها چند تا لایه رو توی یه محصول جمع می‌کنه.*
 
+## یه مدل رو روی لپ‌تاپت اجرا کن
+
+می‌تونی یه مدل رو روی کامپیوتر خودت اجرا کنی، و ![](./images/logos/ollama-mono.svg)**[Ollama](https://ollama.com/)** کار رو خیلی راحت می‌کنه. یه terminal باز کن و Ollama رو نصب کن. روی macOS و Linux این دستور رو اجرا کن: `curl -fsSL https://ollama.com/install.sh | sh`. روی Windows هم توی PowerShell این رو اجرا کن: `irm https://ollama.com/install.ps1 | iex`. می‌تونی از [صفحه‌ی دانلود Ollama](https://ollama.com/download) هم یه installer دانلود کنی. بعد از اون، این دستورها رو بزن:
+
+```bash
+ollama pull llama3.2:3b   # download the model to your disk
+ollama list               # show the models you have downloaded
+ollama run llama3.2:3b    # chat with the model; it pulls the model first if needed
+ollama ps                 # show the models that are loaded in memory
+ollama stop llama3.2:3b   # unload the model from memory
+```
+
+مدل مثال، یعنی `llama3.2:3b`، یه مدل کوچیکه و حدود 2 GB حجم داره. وسط یه چت با نوشتن `/bye` میای بیرون. Ollama به‌طور پیش‌فرض یه مدل رو تا پنج دقیقه بعد از آخرین استفاده توی حافظه نگه می‌داره، و دستور `ollama stop` اون حافظه رو همون لحظه آزاد می‌کنه. لیست همه‌ی دستورها توی [CLI Reference](https://docs.ollama.com/cli) هست، و اینکه یه مدل چقدر توی حافظه می‌مونه رو [FAQ](https://docs.ollama.com/faq) توضیح می‌ده.
+
+![مدل‌هایی که Ollama لیست کرده](./images/ollama-list.webp)  
+*خروجی `ollama list`. هر مدلی که pull می‌کنی یه فایل روی دیسکته، و ستون size نشون می‌ده چقدر جا می‌گیره، پس می‌تونی ببینی چی روی سیستمت جا می‌شه. دو اسم `llama3.2` یه ID دارن، چون هر دو یه مدل هستن.*
+
+![](./images/logos/lmstudio-mono.svg)**[LM Studio](https://lmstudio.ai/)** همین کار رو به جای terminal با یه اپ دسکتاپ انجام می‌ده. اپ فعلی‌ش اسمش LM Studio Bionic هست. مدل‌ها رو از داخل خود اپ دانلود می‌کنی و توی پنجره‌ی خودش باهاشون چت می‌کنی.
+
+![LM Studio Bionic](./images/lm-studio.webp)  
+*LM Studio Bionic یه اپ دسکتاپه. چت، لیست پروژه‌ها و پیش‌نمایش زنده توی یه پنجره هستن، پس terminal لازم نداری. اینجا با یه درخواست ازش خواستن یه سایت portfolio بسازه.*
+
+این ابزارها رو با هم قاطی نکن. Ollama یه engine هست که از terminal کنترلش می‌کنی. LM Studio فقط یه اپه که هم engine و هم پنجره‌ی چت توشه. Open WebUI رو آخر همین درس توضیح می‌دیم، و اون فقط یه رابط چته: خودش هیچ مدلی اجرا نمی‌کنه و به Ollama یا یه engine دیگه که پشتیبانی می‌کنه وصل می‌شه.
+
 ## ایده‌ای که همه‌ی عددها رو توضیح می‌ده
 
 اگه قراره از این درس فقط یه مکانیزم یادت بمونه، اون **batching** باشه.
@@ -90,6 +115,8 @@ engine فقط یه API بهت می‌ده و هیچ صفحه‌ای برای د�
 - **Crossover point**: نقطه‌ای از حجم کار که از اون به بعد، اجاره‌ی GPU ارزون‌تر از خریدن token درمیاد.
 - **Self-hosting**: اجرای مدل روی زیرساخت خودت، که یه کار عملیاتی واقعیه.
 - **Wrapper**: ابزاری مثل Ollama یا LM Studio که engine رو پشت خودش قایم می‌کنه و ظرف چند دقیقه مدل رو راه می‌ندازه.
+- **Ollama**: یه wrapper که از terminal کنترلش می‌کنی و دستورهایی مثل `ollama pull`، `ollama list`، `ollama run` و `ollama stop` داره.
+- **LM Studio**: یه اپ دسکتاپ که هم engine و هم پنجره‌ی چت توشه.
 - **Serving engine**: engine‌ای برای سرور GPU با کاربرهای واقعی، مثل vLLM.
 - **Batching**: اجرای چند تا درخواست با هم، طوری که GPU weight‌ها رو یه بار از حافظه بخونه و برای کل گروه به کار ببره.
 - **Throughput**: حجم کاری که سرور با کلی کاربر هم‌زمان تموم می‌کنه.
@@ -129,11 +156,18 @@ provider هم یعنی یکی دیگه یه engine رو برات اجرا می�
 
 engine رو به اندازه‌ی مسئله انتخاب کن. روی سیستم خودت Ollama یا LM Studio، که llama.cpp زیرشونه. روی یه سرور GPU با کاربرهای واقعی vLLM، SGLang یا TensorRT-LLM: SGLang برای وقتی که درخواست‌ها یه prefix طولانی مشترک دارن، و TensorRT-LLM برای گرفتن حداکثر کارایی از سخت‌افزار NVIDIA. وقتی هم کار به cluster کشید، llm-d.
 
+برای امتحان کردنش روی لپ‌تاپت، Ollama رو نصب کن و از `ollama pull` و `ollama run` استفاده کن. LM Studio همین کار رو توی یه اپ دسکتاپ انجام می‌ده. Open WebUI فقط یه رابط چته، پس یه engine باید پشتش باشه.
+
 batching ایده‌ایه که همه‌ی عددهای این درس رو توضیح می‌ده. GPU‌ای که فقط یه درخواست رو جواب می‌ده بیشتر وقتش بیکاره، و continuous batching پر نگهش می‌داره. برای همینه که یه benchmark با یه درخواست در هر لحظه، تقریباً هیچی بهت نمی‌گه.
 
 **بررسی سریع**: مدل self-host‌شده‌ت رو با یه درخواست در هر لحظه تست می‌کنی و سریع به نظر میاد. چرا ممکنه با پنجاه تا کاربر از پا دربیاد؟ و به‌جاش باید چی رو اندازه می‌گرفتی؟
 
 ## منابع
+
+### 📄 مقاله‌ها
+
+- [CLI Reference](https://docs.ollama.com/cli): دستورهایی که Ollama بهت می‌ده، و اینکه هر کدوم چی کار می‌کنه
+- [FAQ](https://docs.ollama.com/faq): اینکه Ollama یه مدل رو چقدر توی حافظه نگه می‌داره، و چطور همون لحظه آزادش کنی
 
 ### 🛠️ ابزارها
 

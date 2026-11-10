@@ -148,6 +148,22 @@ run of short sentences is the failure, and so is a dense line packed with clause
 
 - **Check the structure, then read it.** Matching heading, figure and code counts prove nothing was
   dropped, not that the right thing is there: read the opening and the closing of both files.
+- **A translation file opens with a frontmatter block holding `objectives` only**: the English
+  file's objectives, translated, the same number and in the same order (the objectives card is
+  content, so a Turkish or Persian reader sees it in their language). No `summary` (it feeds the
+  English catalog) and no other key. The same block goes on a For Everyone translation. The build
+  fails on another key or on a different count; a file without the block still builds and the card
+  shows the English list.
+
+  ```
+  ---
+  objectives:
+    - "…"
+    - "…"
+  ---
+
+  # Title
+  ```
 - **Turkish** is natural, professional Turkish, the register of a good Turkish tech blog, with the
   reader as `sen`. Technical vocabulary stays English with Turkish suffixes (`context'in`,
   `weight'ler`); words Turks say in Turkish stay Turkish (`model`, `veri`, `kod`).
@@ -166,7 +182,7 @@ planned module gets none. Everything above holds, plus:
 - **Technical vocabulary stays English, in Latin letters**; a Persian suffix joins it with a
   zero-width non-joiner (`Agent‌ها`). A Persian word for a technical concept takes the English in
   parentheses the first time: `استدلال (reasoning)`.
-- **No frontmatter.** **ASCII digits**, Persian punctuation (`،` `؛` `؟`).
+- **Frontmatter is the `objectives` block above and nothing else.** **ASCII digits**, Persian punctuation (`،` `؛` `؟`).
 - **Four strings the site matches**, spelled exactly: `## کجای این مجموعه هستیم`, `## خلاصه`,
   `## منابع`, and `**بررسی سریع**:` at the start of the quick check line. The aside's label, the bold lead-in of a `> ` quote (`> **Note:**` in English), is
   `**نکته:**`; a call-out card is the other thing, the `> [!NOTE]` alert of [Call-outs](#call-outs), and its
@@ -250,7 +266,8 @@ line.
 - A module is listed by `name` (its file stem and URL), with a required `title`, a `status` (default
   `draft`), `minutes`, and `needs` naming prerequisites by name.
 - **A module file's frontmatter is `summary` and `objectives` only**; a draft has none. Adding
-  `module:` or `status:` back fails the build.
+  `module:` or `status:` back fails the build. A `_tr.md` or `_fa.md` may carry `objectives` alone,
+  translated, with the English file's count and order (see Translating a module).
 - **Filenames carry no number**, the H1 is the title alone, and prose names another module by title,
   never by number: `[Context Engineering](context_engineering.md)`.
 - The app derives the sequence, so no `*Category: … Module 11*` dek, no Previous/Next footers and no

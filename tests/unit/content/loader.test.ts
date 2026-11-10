@@ -1,7 +1,8 @@
 import { execFileSync } from 'node:child_process'
 import fs from 'node:fs'
+import os from 'node:os'
 import path from 'node:path'
-import { describe, expect, it } from 'vitest'
+import { afterAll, describe, expect, it } from 'vitest'
 import type { CategorySlug } from '@/lib/content/categories'
 import { CATEGORIES } from '@/lib/content/curriculum-file'
 import { TRANSLATED_LANGS } from '@/lib/content/languages'
@@ -11,6 +12,7 @@ import {
   loadCategoryIntro,
   loadModule,
   loadModuleIn,
+  readTranslationFile,
 } from '@/lib/content/loader'
 import {
   countDiagrams,
@@ -230,5 +232,108 @@ describe('fileFor', () => {
 
   it('throws for a name no file answers to, naming both the name and the directory', () => {
     expect(() => fileFor('1_fundamentals', 'wizardry')).toThrow(/wizardry.*1_fundamentals/s)
+  })
+})
+
+/**
+ * A translation's `objectives` frontmatter, through the loader's own read of a
+ * translation file. The files are written to a temp directory and are made up;
+ * the corpus checks below hold for any content.
+ */
+describe('readTranslationFile', () => {
+  const english = ['One', 'Two']
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'bazaar-objectives-'))
+  afterAll(() => fs.rmSync(dir, { recursive: true, force: true }))
+  const write = (name: string, text: string) => {
+    const file = path.join(dir, name)
+    fs.writeFileSync(file, text)
+    return file
+  }
+
+  it('reads the objectives out of the frontmatter and leaves the body without it', () => {
+    const file = write('a_tr.md', '---\nobjectives:\n  - "Bir"\n  - "İki"\n---\n\n# Başlık\n\nMetin.\n')
+    const read = readTranslationFile(file, 'a_tr.md', english)!
+    expect(read.objectives).toEqual(['Bir', 'İki'])
+    expect(read.text.startsWith('# Başlık')).toBe(true)
+  })
+
+  it('falls back to no objectives when the file has no frontmatter', () => {
+    const read = readTranslationFile(write('b_tr.md', '# Başlık\n\nMetin.\n'), 'b_tr.md', english)!
+    expect(read.objectives).toBeNull()
+    expect(read.text.startsWith('# Başlık')).toBe(true)
+  })
+
+  it('is null for a file that is not there', () => {
+    expect(readTranslationFile(path.join(dir, 'none_tr.md'), 'none_tr.md', english)).toBeNull()
+  })
+
+  it('rejects another key, whatever the extent of the file', () => {
+    const file = write('c_tr.md', '---\nsummary: "Özet"\nobjectives:\n  - "Bir"\n  - "İki"\n---\n\n# Başlık\n')
+    expect(() => readTranslationFile(file, 'c_tr.md', english)).toThrow(/c_tr\.md[\s\S]*summary/)
+  })
+
+  it('rejects a count that differs from the English file\'s', () => {
+    const file = write('d_fa.md', '---\nobjectives:\n  - "یک"\n---\n\n# عنوان\n')
+    expect(() => readTranslationFile(file, 'd_fa.md', english)).toThrow(/d_fa\.md[\s\S]*has 1/)
+  })
+})
+
+describe('translated objectives, across the corpus', () => {
+  const modules = loadAllModules()
+
+  it('are the same count as the English list wherever a translation declares them', () => {
+    for (const m of modules) {
+      for (const lang of TRANSLATED_LANGS) {
+        const own = m.objectivesIn[lang]
+        if (own !== null) expect(own.length, `${m.slug} ${lang}`).toBe(m.frontmatter.objectives.length)
+      }
+    }
+  })
+
+  it('are what a translated page reads, marked with its language, and the English list is the fallback marked en', () => {
+    let translated = 0
+    let fallback = 0
+    for (const m of modules) {
+      for (const lang of TRANSLATED_LANGS) {
+        const read = loadModuleIn(m.slug, lang)
+        if (read === undefined) continue
+        const own = m.objectivesIn[lang]
+        if (own === null) {
+          fallback++
+          expect(read.frontmatter.objectives, `${m.slug} ${lang}`).toEqual(m.frontmatter.objectives)
+          expect(read.objectivesLang, `${m.slug} ${lang}`).toBe('en')
+        } else {
+          translated++
+          expect(read.frontmatter.objectives, `${m.slug} ${lang}`).toEqual(own)
+          expect(read.objectivesLang, `${m.slug} ${lang}`).toBe(lang)
+        }
+      }
+    }
+    // Non-vacuity of the pair: some page is checked on at least one branch.
+    expect(translated + fallback).toBeGreaterThan(0)
+  })
+
+  it('leave the English page and the summary alone', () => {
+    for (const m of modules) {
+      expect(loadModuleIn(m.slug, 'en')!.objectivesLang).toBe('en')
+      for (const lang of TRANSLATED_LANGS) {
+        const read = loadModuleIn(m.slug, lang)
+        if (read) expect(read.frontmatter.summary, `${m.slug} ${lang}`).toBe(m.frontmatter.summary)
+      }
+    }
+  })
+
+  it('holds for the For Everyone track too', () => {
+    for (const m of modules) {
+      if (m.everyone === null) continue
+      for (const lang of TRANSLATED_LANGS) {
+        const own = m.everyone.objectivesIn[lang]
+        if (own !== null) expect(own.length, `${m.slug} everyone ${lang}`).toBe(m.everyone.objectives.length)
+        const read = loadModuleIn(m.slug, lang, 'everyone')
+        if (!read) continue
+        expect(read.frontmatter.objectives, `${m.slug} everyone ${lang}`).toEqual(own ?? m.everyone.objectives)
+        expect(read.objectivesLang, `${m.slug} everyone ${lang}`).toBe(own === null ? 'en' : lang)
+      }
+    }
   })
 })

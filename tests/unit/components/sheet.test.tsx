@@ -72,6 +72,26 @@ describe('Objectives (§5.5)', () => {
   it('renders nothing when the array is empty — no empty box', () => {
     expect(renderToStaticMarkup(<Objectives items={[]} />)).toBe('')
   })
+
+  it('marks the card with the language of its items, and its heading en when that is not English', () => {
+    const tr = renderToStaticMarkup(<Objectives items={['Bir']} lang="tr" />)
+    expect(tr).toMatch(/<section[^>]* lang="tr"/)
+    expect(tr).toMatch(/<b[^>]* lang="en"/)
+    expect(tr, 'a left-to-right language takes no dir').not.toContain('dir=')
+
+    const en = renderToStaticMarkup(<Objectives items={['One']} lang="en" />)
+    expect(en).toMatch(/<section[^>]* lang="en"/)
+    expect(en).not.toMatch(/<b[^>]* lang=/)
+
+    expect(renderToStaticMarkup(<Objectives items={['One']} />)).not.toContain('lang=')
+  })
+
+  it('turns only the list round for Persian, never the card', () => {
+    const fa = renderToStaticMarkup(<Objectives items={['یک']} lang="fa" />)
+    expect(fa).toMatch(/<section[^>]* lang="fa"/)
+    expect(fa).not.toMatch(/<section[^>]* dir=/)
+    expect(fa).toMatch(/<ul[^>]* dir="rtl"/)
+  })
 })
 
 describe('StatusBand (§4.5)', () => {

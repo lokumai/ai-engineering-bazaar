@@ -1,3 +1,12 @@
+---
+objectives:
+  - "Trace'in ne olduğunu ve trace olmadan bir agent'ta neden hata ayıklanamayacağını açıkla"
+  - "Kodun artık sistemin ne yaptığını neden söylemediğini açıkla"
+  - "Observability araçlarını ve her birinin ne işe yaradığını say"
+  - "Bir trace'ten başlayan iyileştirme döngüsünü anlat"
+  - "Neden kimsenin 100,000 trace'i okumadığını ve onları bunun yerine neyin okuduğunu açıkla"
+---
+
 # Observability
 
 Sıradan bir yazılımda sistemin ne yaptığını öğrenmek istiyorsan kodu okursun, çünkü kod sistemin davranışını eksiksiz anlatır ve onu okuyunca sistemin ne yapacağını bilirsin.

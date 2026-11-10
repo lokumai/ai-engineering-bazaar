@@ -1,3 +1,12 @@
+---
+objectives:
+  - "Hangi tür karmaşıklığın seni birden fazla agent kullanmaya ittiğini açıkla"
+  - "Supervisor ve network mimarilerini karşılaştır"
+  - "Multi-agent sistemlerin iki zor sorununu say: koordinasyon ve bağlam aktarımı (context transfer)"
+  - "Shared context ile isolated context arasındaki farkı açıkla"
+  - "Tek bir agent'ın ne zaman hâlâ doğru cevap olduğunu ayırt et"
+---
+
 # Multi-Agent Systems
 
 [AI Agents](agents_tr.md) modülü tek bir agent ile bitmişti: tek bir döngü (loop), tek bir system prompt ve tek bir tool seti. Bu modülde birden fazla agent kullandığında neler olduğunu ve bunun sana neye mal olduğunu anlatacağız.

@@ -1,3 +1,12 @@
+---
+objectives:
+  - "Ağırlıkları donmuş bir modelin, aynı soru farklı şekilde sorulduğunda neden farklı cevaplar verdiğini açıkla"
+  - "Hedefi, context'i, çıktı biçimini ve Stop Conditions'ı tanımlanmış bir prompt yaz"
+  - "Bir görevi prompt'un içinde öğretmek için in-context learning ve few-shot örneklerini kullan"
+  - "Model talimatlarını verilerinden ayırt edebilsin diye uzun bir prompt'a yapı ver"
+  - "Chain of Thought'un ne olduğunu, neden işe yaradığını ve artık onu neden nadiren elle yazdığını açıkla"
+---
+
 # Prompt Engineering
 
 [LLM Temelleri](../1_fundamentals/llms_tr.md) modülü, prompt engineering hakkında tek bir paragrafla bitiyordu. Bu modül o paragrafı açıp genişletiyor.

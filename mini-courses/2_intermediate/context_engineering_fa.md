@@ -1,3 +1,12 @@
+---
+objectives:
+  - "توضیح بده context rot چیه و چرا مدل قبل از این‌که window پر بشه، کیفیتش افت می‌کنه"
+  - "بگو context engineering سر چی تصمیم می‌گیره و چرا این تصمیم توی هر نوبت از نو گرفته می‌شه"
+  - "این تکنیک‌ها رو به کار بگیر: خلاصه کردن context (Compaction)، Context Offloading، subagent‌ها، برنامه‌ریزی مکتوب (TODO‌ها) و یه Knowledge Base که agent بتونه توش بگرده"
+  - "بگو یه deep agent باید چی داشته باشه و چرا coding agent‌ها همین حالا هم deep agent‌ان"
+  - "توضیح بده chain of thought چطوری یه session طولانی رو توی مسیرش نگه می‌داره"
+---
+
 # Context Engineering
 
 درس [Prompt Engineering](prompt_engineering_fa.md) درباره‌ی نوشتن یه ورودی خوب بود. این درس درباره‌ی بقیه‌ی چیزهاییه که جلوی مدل گذاشته می‌شه، و مشکل اصلی‌ش هم اینه که برای همه‌ی این‌ها جا کم میاد.

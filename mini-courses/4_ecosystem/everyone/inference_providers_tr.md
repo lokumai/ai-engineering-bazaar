@@ -1,3 +1,10 @@
+---
+objectives:
+  - "Inference provider'ın ne olduğunu ve bir gateway'in ne eklediğini söyle"
+  - "Modeli yapan şirketten doğrudan almanın ne zaman mantıklı olduğunu bil"
+  - "Fiyatın ötesine bakan bir kontrol listesi kullan, verilerine ne olduğunu da buna dahil et"
+---
+
 # Inference Provider'lar
 
 [LLM Temelleri](../1_fundamentals/llms_tr.md) modülü, bir modeli çalıştırmaya inference dendiğini ve bunu bulutta yapabileceğini göstermişti. Bu modül bu hizmeti satan şirketleri ve birini seçerken nelere bakman gerektiğini anlatıyor.

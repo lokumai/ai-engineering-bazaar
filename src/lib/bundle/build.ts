@@ -89,6 +89,12 @@ function dirOf(lang: ReadingLang): 'ltr' | 'rtl' {
   return translation.dir
 }
 
+/** The English objectives of a module, which v1 documents carry in every language. */
+function englishObjectives(slug: string, track: Track, own: readonly string[], lang: ReadingLang): readonly string[] {
+  if (lang === 'en') return own
+  return loadModuleIn(slug, 'en', track)?.frontmatter.objectives ?? own
+}
+
 export async function buildModuleDoc(
   slug: string,
   lang: ReadingLang,
@@ -111,7 +117,10 @@ export async function buildModuleDoc(
     dir: dirOf(lang),
     // The translated heading (`loadModuleIn`); `ModuleRenderInput` carries no title.
     title: sheet.frontmatter.title,
-    objectives: { lang: 'en', items: [...input.objectives] },
+    // v1 carries the English objectives in every document (`lang: 'en'`, ARCHITECTURE §13). The site
+    // now shows translated objectives, but the bundle keeps its contract until the mobile reader
+    // agrees an additive field for them; see D123.
+    objectives: { lang: 'en', items: [...englishObjectives(slug, track, input.objectives, lang)] },
     prerequisites: input.prerequisites.map(refOf),
     previous: input.previous === null ? null : refOf(input.previous),
     next: input.next === null ? null : refOf(input.next),

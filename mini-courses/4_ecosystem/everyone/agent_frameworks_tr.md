@@ -1,3 +1,10 @@
+---
+objectives:
+  - "Bir framework'ün sana ne verdiğini anlat; bir framework'e kesin olarak ihtiyacın olmadığını da söyle"
+  - "Başlıca isimleri tanı: LangChain, LangGraph, deepagents, CrewAI ve n8n"
+  - "Bir workflow ile bir agent'ı birbirinden ayırt et; workflow'un ne zaman daha iyi tercih olduğunu bil"
+---
+
 # Agent Framework'leri
 
 Buraya kadar her şey agent'ların nasıl çalıştığıyla ilgiliydi. Bu modül, insanların bir agent kurarken gerçekte ne kullandığının haritası. Bu isimleri toplantılarda ve satıcılardan duyacaksın.

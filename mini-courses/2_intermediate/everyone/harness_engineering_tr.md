@@ -1,3 +1,10 @@
+---
+objectives:
+  - "Talimatların tek başına, yapay zekânın ne yapacağını neden garanti edemediğini açıkla"
+  - "Araba, pist ve bariyer resmiyle agent harness'in ne olduğunu söyle"
+  - "Dört soruyu say: ne söyleyeceğin, yapay zekânın neyi göreceği, hangi dünyayı kuracağın ve tekrar ne zaman çalışacağı"
+---
+
 # Harness Engineering
 
 [Code Agent'lar](coding_agents_tr.md) modülü hook'larla bitiyordu ve hook'lar o modüldeki diğer her şeyden farklıydı. Diğer her şey, yapay zekânın çoğu zaman uyduğu bir tavsiyedir. Hook ise yapay zekâ istesin istemesin çalışır. Bu modülün bütün konusu bu fark.

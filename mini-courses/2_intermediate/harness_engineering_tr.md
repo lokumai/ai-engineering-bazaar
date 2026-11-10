@@ -1,3 +1,12 @@
+---
+objectives:
+  - "Prompt ve context çalışmasına rağmen bir agent'ın neden hâlâ deterministik olmadığını açıkla"
+  - "Agent harness'in ne olduğunu ve neyden oluştuğunu söyle"
+  - "Bir harness'i, agent'a önceden söylenenler ve işin nasıl gittiğini bildirenler olarak ayır"
+  - "Harness değişikliklerinden gerçek örnekler ver ve her birinin ne kazandırdığını açıkla"
+  - "Her model için tek bir en iyi harness'in neden olmadığını açıkla"
+---
+
 # Harness Engineering
 
 [Code Agent'lar](coding_agents_tr.md) modülü hook'larla bitiyordu. Hook'lar ise o modüldeki diğer genişletme noktalarının hiçbirine benzemiyordu, çünkü diğerleri modele verdiğin tavsiyelerdi. Bu tavsiyeler iyiydi ve model çoğunlukla onlara uyuyordu, ama son kararı yine model veriyordu. Hook ise agent'ın yaşamındaki sabit bir noktaya bağlı bir shell komutudur ve model isteyip istemediğine bakmadan çalışır.

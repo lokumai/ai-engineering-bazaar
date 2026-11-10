@@ -434,8 +434,7 @@ export async function ModuleSheet({
             The brief asked for `<html lang>` per page. In the app router only
             the ROOT layout renders `<html>`, and it is shared by both trees —
             but more to the point, a Turkish module page is a MIXED-LANGUAGE
-            document: the bar, the rail, the footer and the objectives card are
-            all still English. Stamping the whole document `tr` would have a
+            document: the bar, the rail and the footer are all still English. Stamping the whole document `tr` would have a
             screen reader read every one of them in a Turkish voice, which is
             the defect the attribute exists to prevent, pointed the other way.
 
@@ -449,16 +448,16 @@ export async function ModuleSheet({
             dir={contentDir}
             opening={
               <Objectives
-                items={sheet.frontmatter.objectives}
-                lang={translated ? 'en' : undefined}
+                items={input.objectives}
+                lang={translated ? input.objectivesLang : undefined}
               />
             }
           />
         ) : (
           <>
             <Objectives
-              items={sheet.frontmatter.objectives}
-              lang={translated ? 'en' : undefined}
+              items={input.objectives}
+              lang={translated ? input.objectivesLang : undefined}
             />
             {summary && <p className="bz-lead" lang={translated ? 'en' : undefined}>{summary}</p>}
             <ScheduleOfParts parts={input.parts} />

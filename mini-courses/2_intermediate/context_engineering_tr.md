@@ -1,3 +1,12 @@
+---
+objectives:
+  - "Context rot'u ve modelin pencere dolmadan önce neden kötüleştiğini açıkla"
+  - "Context engineering'in neye karar verdiğini ve bu kararın neden her turda yeniden verildiğini açıkla"
+  - "Context summarization (compaction), context offloading, subagent'lar, explicit planning (TODO'lar) ve explorable context olarak knowledge base tekniklerini bir görevde uygula"
+  - "Bir deep agent'ın neye sahip olması gerektiğini söyle ve kodlama agent'larının neden zaten birer deep agent olduğunu açıkla"
+  - "Chain of thought'un uzun bir oturumu nasıl yolunda tuttuğunu açıkla"
+---
+
 # Context Engineering
 
 [Prompt Engineering](prompt_engineering_tr.md) bir tane iyi girdi yazmakla ilgiliydi. Bu modül ise modelin önüne konan geri kalan her şeyi konu alıyor. Bunun yanında tek bir sorunu da ele alıyor: hepsine yetecek kadar yer yok.

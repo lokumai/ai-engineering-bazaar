@@ -1,3 +1,12 @@
+---
+objectives:
+  - "Inference engine'in ne yaptığını ve bir provider'ın bunu senden nasıl sakladığını söyle"
+  - "Modeli kendin çalıştırmanın üç gerçek nedenini say"
+  - "Tek bir makine, bir GPU sunucusu ya da bir cluster için uygun engine'i seç"
+  - "Batching'in throughput'u neden belirlediğini açıkla"
+  - "Yerel bir modelin önüne bir chat arayüzü koy"
+---
+
 # Inference Engine'ler
 
 [LLM Temelleri](../1_fundamentals/llms_tr.md) modülünde inference engine'lerin adları geçmişti. Oradaki açıklama, bu engine'lere nadiren doğrudan dokunacağını söylüyordu. Bu doğru ve bu yüzden o modül hemen Ollama'ya geçmişti. Bu modül ise engine'lere gerçekten dokunmanın gerektiği durumları anlatıyor.

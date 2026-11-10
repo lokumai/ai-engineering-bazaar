@@ -42,9 +42,9 @@ export function Prose({
    * document's own.
    *
    * It goes on the inner box that holds the markdown and not on this element,
-   * because the `opening` slot beside it is a different language: the
-   * objectives card has no translation anywhere in the corpus and stays
-   * English. One attribute per run of text, and `lang` inherits from there.
+   * because the `opening` slot beside it may be a different language: the
+   * objectives card is English where a translation declares none. One
+   * attribute per run of text, and `lang` inherits from there.
    */
   lang?: string
   /** M28 — `rtl` on the Persian tree, on the same element as `lang` and only it. */

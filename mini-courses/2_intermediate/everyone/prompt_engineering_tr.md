@@ -1,3 +1,10 @@
+---
+objectives:
+  - "Aynı sorunun iki farklı ifadesinin neden iki farklı cevap verdiğini açıkla"
+  - "Hedef, çıktı biçimi, uyarılar ve context içeren bir şablonla açık bir prompt yaz"
+  - "Örnekleri, yapıyı ve bir rolü kullan; her birinin neyi yapabildiğini ve neyi yapamadığını bil"
+---
+
 # Prompt Engineering
 
 [LLM Temelleri](../1_fundamentals/llms_tr.md) modülü prompt'lar hakkında tek bir paragrafla bitiyordu. Bu modül o paragrafı açıp genişletiyor.

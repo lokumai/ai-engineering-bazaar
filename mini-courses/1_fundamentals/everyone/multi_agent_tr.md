@@ -1,3 +1,10 @@
+---
+objectives:
+  - "İş yerindeki bir takımı örnek alarak, işi agent'lar arasında bölmenin neden yardımcı olabileceğini açıkla"
+  - "Bir supervisor'ı (müdür) bir network'ten (açık ofis) ayırt et"
+  - "Her agent takımının yaşadığı iki sorunu say: koordinasyon ve devir"
+---
+
 # Multi-Agent Systems
 
 [AI Agents](agents_tr.md) modülü tek bir agent ile bitti: tek bir döngü, tek bir talimat seti, tek bir tool seti. Bu modül, birden fazla agent'ı birlikte kullanmakla ilgili. İnsanların birlikte çalışmasına çok benziyor ve aynı sorunları da getiriyor.

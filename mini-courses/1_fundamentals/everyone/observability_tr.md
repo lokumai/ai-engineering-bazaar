@@ -1,3 +1,10 @@
+---
+objectives:
+  - "Trace'in ne olduğunu, bir banka hesap özetini örnek alarak açıkla"
+  - "Bir agent'ın hatalarının neden yalnızca trace'inde görülebildiğini açıkla"
+  - "Trace'lerle başlayan iyileştirme döngüsünü anlat"
+---
+
 # Observability
 
 Normal bir yazılımda sistemin ne yapacağını bilmek istiyorsan kodunu okursun. Kod, davranışı eksiksiz anlatır.

@@ -1,3 +1,10 @@
+---
+objectives:
+  - "Bir code agent'ın neden yazılımla ilgisi olmayan işlerde de yardım edebildiğini açıkla"
+  - "Bir code agent'ın standart parçalarını adlarıyla say: AGENTS.md, skill'ler, MCP, hook'lar, plan mode ve memory"
+  - "Bir isteği bir kuraldan ayırt et: agent'ın yok sayabileceği bir talimatla, yok sayamayacağı bir hook'u"
+---
+
 # Code Agent'lar
 
 [Context Engineering](context_engineering_tr.md) modülü bir noktayla bitmişti: belki de zaten kullandığın code agent'lar, deep agent'lardır. Plan yapıyorlar, alt agent'lar (subagent) başlatıyorlar, dosyaları okuyup yazıyorlar. Bu modül o agent'ları ve onların standart parçalarını anlatıyor.

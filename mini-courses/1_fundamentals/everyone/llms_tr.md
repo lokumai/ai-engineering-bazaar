@@ -1,3 +1,11 @@
+---
+objectives:
+  - "LLM'in sana verdiğin metinle ne yaptığını sade bir dille anlat."
+  - "Context window'u, telefondaki bir sohbeti örnek alarak açıkla."
+  - "Bir sohbetteki üç tür mesajı say ve her birini kimin yazdığını söyle."
+  - "Bir modeli bulutta çalıştırmakla kendi bilgisayarında çalıştırmayı birbirinden ayırt et."
+---
+
 # LLM Temelleri
 
 ChatGPT'nin, Claude'un ve Gemini'nin içinde aynı şey var: LLM, yani Large Language Model (Büyük Dil Modeli). Bu kurstaki her modül bu tek fikrin ve onunla gelen bir sınırın üzerine kurulu. O yüzden başlangıç noktamız burası.

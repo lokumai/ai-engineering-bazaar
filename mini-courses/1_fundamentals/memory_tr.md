@@ -1,3 +1,12 @@
+---
+objectives:
+  - "Parametric, working ve long-term memory'yi birbirinden ayırt et"
+  - "Working memory'nin neden yalnızca context window olduğunu açıkla"
+  - "LLM'in üretim sırasında neden stateless olduğunu ve bir konuşmanın nasıl taklit edildiğini açıkla"
+  - "Long-term memory'nin oturumlar arasında nasıl korunduğunu anlat"
+  - "Parametric ile non-parametric memory'yi karşılaştır; yalnızca birinin neden kaynak gösterebildiğini açıkla"
+---
+
 # Memory
 
 Agent'lara geçmeden önce, şimdiye kadar anlattığımız her şeyin altında sessizce duran bir fikre bakalım: bir LLM kendi başına hiçbir şey hatırlamaz. Ayrıca "bellek" dediğimiz şey de tek bir şey değildir. Üç türü vardır ve bunlar farklı yerlerde yaşar, birbirinden tamamen farklı davranır.

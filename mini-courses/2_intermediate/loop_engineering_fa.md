@@ -1,3 +1,11 @@
+---
+objectives:
+  - "بگو loop engineering چیه و چرا stop condition کل طراحیه"
+  - "پنج سطح Loop رو از هم جدا کن، از LLM Loop که داخل خود مدله تا Autonomous Loop"
+  - "Ralph loop رو توضیح بده و بگو چرا توی هر loop فقط یه task انجام دادن مهمه"
+  - "تکنیک‌هایی رو بشناس که به agent اجازه می‌دن loop خودش رو طراحی کنه، و بدونی هر کدوم کجا توضیح داده شده"
+---
+
 # Loop Engineering
 
 آخر [Harness Engineering](harness_engineering_fa.md)، agent‌مون همه‌چی داشت: موتور، بدنه، و یه پیست که دورش حفاظ کشیده بودیم. حالا یه بار دیگه به اون تصویر نگاه کن؛ می‌بینی که هنوز خودت پشت فرمونی.

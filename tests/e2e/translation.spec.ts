@@ -223,10 +223,11 @@ test('says which language each run of text is in', async ({ page }) => {
   await page.goto(tr(TRANSLATED[0].slug))
 
   await expect(page.locator('[data-hl-prose] > div[lang]')).toHaveAttribute('lang', 'tr')
-  // MEASURED: a `_tr.md` carries no frontmatter, so the objectives exist in
-  // English and nowhere else. Marked, rather than dropped or left to be read
-  // in the wrong voice.
-  await expect(page.locator('.bz-card[aria-labelledby="objectives"]')).toHaveAttribute('lang', 'en')
+  // The objectives card says its own language, `tr` where the translation
+  // declares objectives and `en` where it falls back to the English list; the
+  // two cases are measured by the tests under "the objectives card" below.
+  await expect(page.locator('.bz-card[aria-labelledby="objectives"]'))
+    .toHaveAttribute('lang', TRANSLATED[0].objectivesIn.tr === null ? 'en' : 'tr')
 
   await page.goto(en(TRANSLATED[0].slug))
   // …and the English tree carries neither, because an attribute restating the
@@ -313,7 +314,8 @@ test.describe('the Persian tree', () => {
     expect(await direction('header')).toBe('ltr')
     expect(await direction('.bz-rail')).toBe('ltr')
     expect(await direction('.bz-card[aria-labelledby="objectives"]')).toBe('ltr')
-    await expect(page.locator('.bz-card[aria-labelledby="objectives"]')).toHaveAttribute('lang', 'en')
+    await expect(page.locator('.bz-card[aria-labelledby="objectives"]'))
+      .toHaveAttribute('lang', PERSIAN[0].objectivesIn.fa === null ? 'en' : 'fa')
 
     // Inside it, what reads turns round and what is drawn does not.
     expect(await direction('[data-hl-prose] > div[lang] p')).toBe('rtl')
@@ -382,5 +384,75 @@ test.describe('the Persian tree', () => {
         .map((link) => new URL((link as HTMLAnchorElement).href).pathname)
         .filter((path) => path.startsWith('/fa/')))
     expect(persian).toEqual([fa(PERSIAN[0].slug)])
+  })
+})
+
+/* ---------------------------------------------------------------------------
+   The objectives card on a translated page.
+
+   A translation file may declare its own `objectives` (same count and order as
+   the English, checked at load). Where it does, the card is in the page's
+   language; where it does not, the card is the English list marked `en`. Pages
+   are picked from the corpus, never named, and the texts compared are the
+   loader's, never typed here.
+   --------------------------------------------------------------------------- */
+const CARD = '.bz-card[aria-labelledby="objectives"]'
+const cardItems = (page: import('@playwright/test').Page) => page.locator(`${CARD} li`).allInnerTexts()
+
+test.describe('the objectives card', () => {
+  const translatedTr = TRANSLATED.filter((sheet) => sheet.objectivesIn.tr !== null)
+  const fallbackTr = TRANSLATED.filter((sheet) => sheet.objectivesIn.tr === null)
+  const translatedFa = PERSIAN.filter((sheet) => sheet.objectivesIn.fa !== null)
+
+  test('shows a Turkish module its own objectives, marked tr', async ({ page }) => {
+    expect(translatedTr.length, 'no Turkish module declares objectives, so nothing was checked')
+      .toBeGreaterThan(0)
+    for (const sheet of translatedTr.slice(0, 3)) {
+      await page.goto(tr(sheet.slug))
+      await expect(page.locator(CARD), sheet.slug).toHaveAttribute('lang', 'tr')
+      await expect(page.locator(CARD), sheet.slug).not.toHaveAttribute('dir', /.+/)
+      expect(await cardItems(page), sheet.slug).toEqual(sheet.objectivesIn.tr)
+      expect(await cardItems(page), sheet.slug).not.toEqual(sheet.frontmatter.objectives)
+      // The heading is the interface's, English, and says so inside a `tr` card.
+      await expect(page.locator(`${CARD} .bz-card-title`), sheet.slug).toHaveAttribute('lang', 'en')
+    }
+  })
+
+  test('falls back to the English list, marked en, where a translation declares none', async ({ page }) => {
+    test.skip(fallbackTr.length === 0,
+      'every Turkish module declares objectives; the fallback is held by the loader tests in tests/unit/content/loader.test.ts')
+    for (const sheet of fallbackTr.slice(0, 3)) {
+      await page.goto(tr(sheet.slug))
+      await expect(page.locator(CARD), sheet.slug).toHaveAttribute('lang', 'en')
+      expect(await cardItems(page), sheet.slug).toEqual(sheet.frontmatter.objectives)
+    }
+  })
+
+  test('shows a Persian module its own objectives, marked fa, with the list right-to-left and the card not', async ({ page }) => {
+    expect(translatedFa.length, 'no Persian module declares objectives, so nothing was checked')
+      .toBeGreaterThan(0)
+    const sheet = translatedFa[0]
+    await page.goto(fa(sheet.slug))
+    await expect(page.locator(CARD)).toHaveAttribute('lang', 'fa')
+    await expect(page.locator(CARD)).not.toHaveAttribute('dir', /.+/)
+    await expect(page.locator(`${CARD} ul`)).toHaveAttribute('dir', 'rtl')
+    expect(await cardItems(page)).toEqual(sheet.objectivesIn.fa)
+    expect(await page.locator(CARD).evaluate((element) => getComputedStyle(element).direction)).toBe('ltr')
+    expect(await page.locator(`${CARD} ul`).evaluate((element) => getComputedStyle(element).direction)).toBe('rtl')
+  })
+
+  test('leaves the English page on the English list, with no lang attribute', async ({ page }) => {
+    const sheet = translatedTr[0]
+    await page.goto(en(sheet.slug))
+    await expect(page.locator(CARD)).not.toHaveAttribute('lang', /.+/)
+    expect(await cardItems(page)).toEqual(sheet.frontmatter.objectives)
+  })
+
+  test('does the same on a For Everyone page', async ({ page }) => {
+    const sheet = MODULES.find((one) => one.everyone?.objectivesIn.tr)
+    expect(sheet, 'no For Everyone module declares Turkish objectives, so nothing was checked').toBeDefined()
+    await page.goto(`/tr/everyone/courses/${sheet!.slug}/`)
+    await expect(page.locator(CARD)).toHaveAttribute('lang', 'tr')
+    expect(await cardItems(page)).toEqual(sheet!.everyone!.objectivesIn.tr)
   })
 })

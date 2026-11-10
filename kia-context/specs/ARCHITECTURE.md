@@ -187,6 +187,19 @@ the route segment, the menu's label, the text direction and whether every module
 Everything that used to say `'tr'` asks it. A translation is a different body for the same module,
 never a module of its own, so it changes no count, no number and no record key.
 
+**A translation file may carry `objectives`, and only that (frontmatter, same count and order).**
+The objectives card is content, so a Turkish or Persian page shows the translated list (D113: content
+is multilingual, the interface is not). `parseTranslationFrontmatter` (`src/lib/content/schema.ts`)
+is the rule and `loader.ts` applies it to every `_tr.md` and `_fa.md` that exists, in both tracks,
+usable or not: any other key (`summary`, `module`, `status`) fails the build naming the file, and so
+does a count different from the English file's own list. A file with no block builds as before, and
+its page shows the English list, `loadModuleIn` marking the language of `frontmatter.objectives` in
+`objectivesLang` (`tr`, `fa` or `en`). `summary` stays English on every page, because it feeds the
+English catalog. This replaces M19's rule that a translated page's objectives are always the English
+ones, marked `lang="en"`; that stays only as the fallback. On the page the card carries `lang`
+(its heading says `en`, being the interface's) and the list alone carries `dir="rtl"` on a Persian
+page; the card is never mirrored.
+
 **A retired address still answers (D94).** When `curriculum.yaml` renames a level or moves a module,
 the old address is listed in `src/lib/content/moved.ts`, and the catalog, the `/courses/<level>/`
 stub and the module routes (both tracks) prerender it as a forward (`MovedTo`, `noindex`). The list
@@ -854,6 +867,7 @@ Every path in every field is relative to the site root, with no base path and no
 The route handlers write every document the TypeScript pipeline can produce, and they are static, so `next build` writes each as a plain file, as the search index's route does (D95).
 A module document comes from `src/lib/content/module-render.ts`, the same render input the module page reads: the one map every link out of a page goes through, the quiz (For Engineers only), a planned module's summary and written sections (D102), and the neighbours.
 So the page and the bundle cannot drift (rule 4); a link's track and language are read back off the address that map returned (`src/lib/bundle/address.ts`).
+A module document's `objectives` stays `{ lang: 'en', items }` with the English list in every language: v1 pins `lang` to `en`, and a translated list needs an additive field agreed with the mobile reader first (D123).
 The index lists each module once with an entry per track, and the record key `<level>/<module>` is the same in both of the record's maps (§5).
 The finaliser is the `postbuild` of `npm run build` and writes what needs a browser or the hash of another file.
 It draws every diagram the draft lists in Playwright's bundled Chromium, twice, in Mermaid's own themes (D107): `light` in the web's default theme and `dark` in `dark`, with the theme stamped on `<html>` as the site stamps a reader's choice, and the index names each variant's theme and the ground Mermaid gives it (`src/lib/bundle/diagrams.ts`).

@@ -1,3 +1,12 @@
+---
+objectives:
+  - "بگو چه جور پیچیدگی‌ای تو رو به سمت چند تا agent می‌کشونه"
+  - "معماری supervisor و معماری network رو با هم مقایسه کن"
+  - "دو تا مشکل سخت سیستم‌های multi-agent رو اسم ببر: coordination (هماهنگی) و context transfer (انتقال context)"
+  - "فرق context مشترک (shared) و context جداگانه (isolated) رو توضیح بده"
+  - "تشخیص بده کی هنوز یه agent تنها جواب درسته"
+---
+
 # Multi-Agent Systems
 
 [AI Agents](agents_fa.md) با یه agent تموم شد: یه loop، یه system prompt و یه دسته tool. این درس درباره‌ی اینه که وقتی چند تا agent رو با هم به کار می‌گیری چی می‌شه، و این کار چه هزینه‌ای برات داره.

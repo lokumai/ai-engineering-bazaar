@@ -1,3 +1,12 @@
+---
+objectives:
+  - "Kod yazıp çalıştırmanın bir code agent'ı kodlamanın çok dışında neden yararlı kıldığını açıkla"
+  - "AGENTS.md'nin ne için olduğunu ve içine neyin girmemesi gerektiğini söyle"
+  - "MCP'nin neyi çözdüğünü ve bir kez yazılan bir tool'un neden artık her yerde çalıştığını açıkla"
+  - "Subagent'ları, skill'leri ve slash command'ları kimin çağırdığına ve nerede çalıştıklarına göre birbirinden ayır"
+  - "Hook'ları, plugin'leri, auto memory'yi, plan mode'u ve reasoning effort'u her birinin uyduğu işe göre kullan"
+---
+
 # Code Agent'lar
 
 [Context Engineering](context_engineering_tr.md) modülü tek bir noktayla bitmişti: zaten kullandığın code agent'lar birer deep agent'tır. Plan yaparlar, işin bir kısmını subagent'lara devrederler ve dosyaları okuyup yazarlar. Bu modül ise tam da bu agent'ların kendisini konu alıyor. Önce, neden sadece "kod yazan bir araç" olmaktan çok daha faydalı olduklarını anlatacağız. Ardından bir agent'ı genişletmenin sekiz yolunu ele alacağız.

@@ -19,7 +19,7 @@ description: >
 authority: state
 writes: agent, every session
 status: active
-covers: "M50 to M103, 2026-11-06 onward, and M41, which part 2 held for PR #57"
+covers: "M50 to M104, 2026-11-06 onward, and M41, which part 2 held for PR #57"
 last_updated: 2026-11-10
 ---
 
@@ -2063,6 +2063,26 @@ that downloads models and chats, and Bionic as its newer, separate app, shown in
       export of all six pages and load at their natural width; after the review fixes the English and Persian
       sections were read again as screenshots at 1440 px, and in Persian the install and command blocks
       render cleanly (the inline commands that broke the line are gone).
+
+## 🏁 Milestone M104: The tool-call and reasoning recordings at full length — DONE
+
+The author, on M101's trimmed loops: *"why the heck the tool calling video is not full? it is trimmed.
+You should show all in full. same for prompt engineering cot reasoning"*. M101 had cut the tool-call
+recording where the run ends (11.0 s of 28.7) and the reasoning one a few answer lines in (8.0 s of 35.7).
+
+- [x] **Both re-encoded from the author's GIFs with nothing cut from the timeline.** Measured:
+      `tool-call-cards.webp` 1600 x 670, 270 frames, the full 28.7 s at 10 frames a second, quality 82
+      (text preset), 1,700,314 bytes; only the browser's tab, address and bookmark bars are cropped
+      away (they showed unrelated personal tabs), so the Dojo's sidebar and its demo name stay in view.
+      `reasoning-stream.webp` 1200 x 676, 214 frames, the full 35.7 s at 6 frames a second, quality 75,
+      3,306,006 bytes, the whole frame: at 10 frames a second and 1,600 px it was 9.2 MB and at 1,200 px
+      6.2 MB, because the answer scrolls the whole time and almost every frame differs, so the frame rate
+      was lowered instead of cutting it.
+- [x] The captions describe what each recording shows and named no cut, so they stand unchanged in
+      all six files of each module.
+
+**Rule for later recordings:** a recording the author supplies is shown in full; reduce the frame rate,
+the width or the quality to keep it light, never its length.
 
 ---
 

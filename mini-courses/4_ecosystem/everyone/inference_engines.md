@@ -4,6 +4,7 @@ objectives:
   - "Say what an inference engine is, and how it relates to a provider"
   - "Name the three reasons to run a model yourself, and when not to"
   - "Explain batching with a simple picture, and why it makes big providers cheap"
+  - "Know that you can run a model on your own computer, and which app is the easiest"
 ---
 
 # Inference Engines
@@ -59,6 +60,28 @@ The map below shows where all of these sit, and where providers sit next to them
 ![The LLM Inference Landscape](../images/llm-inference-landscape.webp)  
 *Wing's map of the systems that serve AI models, read from the bottom: rented chips, the tools that manage them, the engines, then ways to share work between many machines. The inference-as-a-service column on the right is the provider route: those companies run the whole stack for you.*
 
+## Run a Model on Your Laptop
+
+You can run an AI model on your own computer. The easiest way is ![](../images/logos/lmstudio-mono.svg)**[LM Studio](https://lmstudio.ai/)**. It is a desktop app, and you install it like any other program. You download models inside it and chat with them in its own window. Its newer, separate app, LM Studio Bionic, is built for an AI agent that does tasks for you, and the picture below shows it.
+
+![LM Studio Bionic](../images/lm-studio.webp)  
+*A normal app window: your projects on the left, the chat in the middle, and a preview of the result on the right. There is no terminal.*
+
+If you are comfortable with a terminal, ![](../images/logos/ollama-mono.svg)**[Ollama](https://ollama.com/)** does the same job with typed commands. You install it from the [Ollama download page](https://ollama.com/download). These commands download a model, list your models, chat with one, and stop it. It is fine not to follow them: LM Studio gives you the same result without any commands.
+
+```bash
+ollama pull llama3.2:3b   # download the model to your disk
+ollama list               # show the models you have downloaded
+ollama run llama3.2:3b    # chat with the model; it pulls the model first if needed
+ollama ps                 # show the models that are loaded in memory
+ollama stop llama3.2:3b   # unload the model from memory
+```
+
+![Models Listed by Ollama](../images/ollama-list.webp)  
+*Every model you download is a file on your computer, and this list shows how big each one is. A bigger file usually needs a more powerful computer.*
+
+Do not mix up the names. Open WebUI, described at the end of this module, is a web page for chatting. It does not run a model itself: it connects to Ollama or to a similar program that does. A version of it is packaged together with Ollama, but Ollama still does the running. LM Studio is different, because the program that runs the model and the chat screen are in one app.
+
 ## The One Idea That Explains the Numbers
 
 A computer that answers one request at a time is mostly waiting. So engines serve many requests
@@ -85,12 +108,14 @@ looks and works like ChatGPT, running on the company's own computers.
 - **vLLM**: the usual engine for a company server.
 - **Batching**: serving many requests together, like a bus instead of taxis.
 - **Open WebUI**: a ChatGPT-like screen for a company's own model.
+- **LM Studio**: a desktop app that runs a model on your own computer and has the chat window inside it.
+- **Ollama**: a tool you use from a terminal to download and run models on your own computer.
 
 ## Summary
 
 An inference engine runs the model; a provider is a company running one for you. Run it yourself
 only for one of three reasons: the data must stay inside, the volume is very large, or you need
-something no provider offers. Otherwise, rent. Batching is one reason large providers are cheap.
+something no provider offers. Otherwise, rent. Batching is one reason large providers are cheap. You can also run a small model on your own computer, and LM Studio is the easiest way.
 
 **Quick check**: What is the most common reason a company runs a model itself? And why does batching
 make each token cheaper?

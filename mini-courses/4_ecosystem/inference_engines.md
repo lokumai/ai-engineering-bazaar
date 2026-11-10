@@ -6,6 +6,7 @@ objectives:
   - "Pick an engine for one machine, for a GPU server, or for a cluster"
   - "Explain why batching decides throughput"
   - "Put a chat interface in front of a local model"
+  - "Run a small model on your own laptop with Ollama"
 ---
 
 # Inference Engines
@@ -49,7 +50,7 @@ graph TD
     B --> C["Many machines<br/>llm-d on Kubernetes"]
 ```
 
-**On your own machine**, use the wrappers. [LLM Fundamentals](../1_fundamentals/llms.md) covered [Ollama](https://ollama.com/) and [LM Studio](https://lmstudio.ai/), and they are the right answer here. They hide the engine, and they get you running in minutes. Underneath, both of them are built on ![](./images/logos/llamacpp.svg)**[llama.cpp](https://github.com/ggml-org/llama.cpp)**. It is LLM inference written in C and C++. It is also the reason that a quantized model can run on a laptop at all. Use llama.cpp directly in two cases: when you want a build flag that the wrapper does not expose, or when you are putting a model on hardware that nobody else supports.
+**On your own machine**, use the wrappers. [LLM Fundamentals](../1_fundamentals/llms.md) covered ![](./images/logos/ollama-mono.svg)**[Ollama](https://ollama.com/)** and ![](./images/logos/lmstudio-mono.svg)**[LM Studio](https://lmstudio.ai/)**, and they are the right answer here. They hide the engine, and they get you running in minutes. Underneath, both of them are built on ![](./images/logos/llamacpp.svg)**[llama.cpp](https://github.com/ggml-org/llama.cpp)**. It is LLM inference written in C and C++. It is also the reason that a quantized model can run on a laptop at all. Use llama.cpp directly in two cases: when you want a build flag that the wrapper does not expose, or when you are putting a model on hardware that nobody else supports.
 
 **On a GPU server with real users**, the wrappers are no longer enough. Here you want a serving engine.
 
@@ -63,6 +64,40 @@ One map shows where all of these tools sit, and where providers sit next to them
 
 ![The LLM Inference Landscape](./images/llm-inference-landscape.webp)  
 *Wing's map of the LLM inference infrastructure, read from the bottom: rented GPUs, then the tools that manage them, then engines, then caching and routing on top. The inference-as-a-service column is the provider route, and the integrated stacks column bundles several layers into one product.*
+
+## Run a Model on Your Laptop
+
+You can run a model on your own computer, and **[Ollama](https://ollama.com/)** makes it easy. Open a terminal and install Ollama. On macOS or Linux, run the first command. On Windows, run the second command in PowerShell:
+
+```bash
+# macOS and Linux
+curl -fsSL https://ollama.com/install.sh | sh
+
+# Windows, in PowerShell
+irm https://ollama.com/install.ps1 | iex
+```
+
+On Linux, if the server is not already running, start it with `ollama serve` in a separate terminal. You can also download an installer from the [Ollama download page](https://ollama.com/download). Then use these commands:
+
+```bash
+ollama pull llama3.2:3b   # download the model to your disk
+ollama list               # show the models you have downloaded
+ollama run llama3.2:3b    # chat with the model; it pulls the model first if needed
+ollama ps                 # show the models that are loaded in memory
+ollama stop llama3.2:3b   # unload the model from memory
+```
+
+The model in the example, `llama3.2:3b`, is a small one of about 2 GB. Inside a chat, type `/bye` to leave. By default, Ollama keeps a model in memory for five minutes after its last use. The command `ollama stop` frees that memory at once. The [CLI Reference](https://docs.ollama.com/cli) lists every command, and the [FAQ](https://docs.ollama.com/faq) explains how long a model stays in memory.
+
+![Models Listed by Ollama](./images/ollama-list.webp)
+*The output of `ollama list`. Every model you pull is a file on your disk. The size column shows how large it is, so you can check what fits on your machine. The two `llama3.2` names share one ID because they are the same model.*
+
+**[LM Studio](https://lmstudio.ai/)** does the same job with a desktop app instead of a terminal. You download models inside the app and chat with them in its own window. Its newer, separate app, [LM Studio Bionic](https://lmstudio.ai/docs/bionic), is built for agentic work with open models, and the picture below shows it.
+
+![LM Studio Bionic](./images/lm-studio.webp)
+*LM Studio Bionic is a desktop app. The chat, the list of projects and a live preview sit in one window, so you need no terminal. Here, one request asked it to build a landing page in a code repository.*
+
+Do not confuse these tools. Ollama is a wrapper that you control from a terminal. LM Studio is one app that has both an engine and a chat window inside it. Open WebUI, described at the end of this module, is a web interface. It runs no model itself: it connects to Ollama or to another server with an OpenAI-compatible API. Its `:ollama` Docker image is bundled with Ollama, but Ollama still does the running.
 
 ## The One Idea That Explains the Numbers
 
@@ -89,6 +124,8 @@ An engine gives you an API and nothing to look at. ![](./images/logos/open-webui
 - **Crossover point**: the volume above which a rented GPU costs less than buying the same work by the token.
 - **Self-hosting**: running the model on your own infrastructure, which is a real operational job.
 - **Wrapper**: a tool, such as Ollama or LM Studio, that hides the engine and gets a model running in minutes.
+- **Ollama**: a wrapper that you control from a terminal, with commands such as `ollama pull`, `ollama list`, `ollama run` and `ollama stop`.
+- **LM Studio**: a desktop app that has an engine and a chat window inside it.
 - **Serving engine**: an engine for a GPU server with real users, such as vLLM.
 - **Batching**: running many requests together, so the GPU reads the weights once for the whole group.
 - **Throughput**: how much work a server completes, measured with many concurrent users.
@@ -128,11 +165,19 @@ Otherwise, use a provider, because self-hosting is an operational job.
 
 Match the engine to the size of the problem. On your own machine, use Ollama or LM Studio, with llama.cpp underneath. On a GPU server with real users, use vLLM, SGLang or TensorRT-LLM. SGLang suits a shared long prefix, and TensorRT-LLM gets the most out of NVIDIA hardware. When the problem becomes a cluster, use llm-d.
 
+To try this on your laptop, install Ollama and use `ollama pull` and `ollama run`. LM Studio does the same in a desktop app. Open WebUI needs an engine behind it, such as Ollama.
+
 Batching is the idea that explains every number in this module. A GPU that serves one request is mostly idle. Continuous batching keeps it full. That is why a benchmark with one request at a time tells you almost nothing.
 
 **Quick Check**: you measure your self-hosted model with one request at a time, and it looks fast. Why might it collapse with fifty users? And what should you have measured instead?
 
 ## References
+
+### 📄 Articles
+
+- [Welcome to LM Studio Bionic](https://lmstudio.ai/docs/bionic): the docs for Bionic, the newer app that is separate from LM Studio
+- [CLI Reference](https://docs.ollama.com/cli): the commands Ollama gives you, and what each one does
+- [FAQ](https://docs.ollama.com/faq): how long Ollama keeps a model in memory, and how to unload it at once
 
 ### 🛠️ Tools
 

@@ -3,6 +3,7 @@ objectives:
   - "Inference engine'in ne olduğunu ve bir provider ile arasındaki ilişkiyi açıkla"
   - "Modeli kendin çalıştırmanın üç nedenini ve ne zaman çalıştırmaman gerektiğini say"
   - "Batching'i otobüs benzetmesiyle açıkla ve büyük provider'ların token'ı neden ucuza satabildiğini söyle"
+  - "Bir modeli kendi bilgisayarında çalıştırabileceğini ve en kolay uygulamanın hangisi olduğunu bil"
 ---
 
 # Inference Engine'ler
@@ -47,6 +48,28 @@ Aşağıdaki harita, bütün bunların nerede durduğunu ve provider'ların onla
 ![LLM Inference Haritası](../images/llm-inference-landscape.webp)  
 *Wing'in yapay zekâ modellerini sunan sistemlerin haritası, aşağıdan yukarı okunuyor: kiralık çipler, onları yöneten araçlar, engine'ler, sonra birçok makine arasında iş paylaştıran yöntemler. Sağdaki inference-as-a-service sütunu provider yolu: o şirketler bütün yığını senin yerine çalıştırıyor.*
 
+## Dizüstü Bilgisayarında Bir Model Çalıştır
+
+Bir yapay zekâ modelini kendi bilgisayarında çalıştırabilirsin. En kolay yolu ![](../images/logos/lmstudio-mono.svg)**[LM Studio](https://lmstudio.ai/)**. Bu bir masaüstü uygulaması ve diğer programlar gibi kurulur. Modelleri uygulamanın içinden indirir ve kendi penceresinde onlarla sohbet edersin. Daha yeni ve ayrı bir uygulaması olan LM Studio Bionic ise senin yerine görevleri yapan bir yapay zekâ agent'ı için geliştirildi; aşağıdaki görsel onu gösteriyor.
+
+![LM Studio Bionic](../images/lm-studio.webp)  
+*Sıradan bir uygulama penceresi: solda projelerin, ortada sohbet, sağda sonucun önizlemesi var. Terminal yok.*
+
+Terminalle aran iyiyse, ![](../images/logos/ollama-mono.svg)**[Ollama](https://ollama.com/)** aynı işi yazdığın komutlarla yapar. Kurulumu [Ollama indirme sayfasından](https://ollama.com/download) yaparsın. Aşağıdaki komutlar bir modeli indirir, modellerini listeler, biriyle sohbet ettirir ve onu durdurur. Bunları takip etmesen de olur: LM Studio aynı sonucu hiç komut yazmadan verir.
+
+```bash
+ollama pull llama3.2:3b   # download the model to your disk
+ollama list               # show the models you have downloaded
+ollama run llama3.2:3b    # chat with the model; it pulls the model first if needed
+ollama ps                 # show the models that are loaded in memory
+ollama stop llama3.2:3b   # unload the model from memory
+```
+
+![Ollama'nın Listelediği Modeller](../images/ollama-list.webp)  
+*İndirdiğin her model bilgisayarında bir dosyadır ve bu liste her birinin ne kadar büyük olduğunu gösterir. Daha büyük bir dosya genellikle daha güçlü bir bilgisayar ister.*
+
+İsimleri birbirine karıştırma. Open WebUI'ı bu modülün sonunda anlatıyoruz ve o sohbet etmek için bir web sayfasıdır: modeli kendisi çalıştırmaz, Ollama'ya ya da modeli çalıştıran benzer bir programa bağlanır. Ollama ile birlikte paketlenmiş bir sürümü de var, ama modeli yine Ollama çalıştırır. LM Studio farklıdır, çünkü modeli çalıştıran program ile sohbet ekranı tek bir uygulamanın içindedir.
+
 ## Sayıları Açıklayan Tek Fikir
 
 Aynı anda tek bir isteğe cevap veren bir bilgisayar çoğu zaman bekliyor. Bu yüzden engine'ler birçok isteği birlikte karşılıyor ve buna **batching** deniyor. Her kişi için ayrı bir taksi yerine bir otobüs düşün: yolculuğun maliyeti aşağı yukarı aynı, ama çok daha fazla insan taşıyor.
@@ -67,10 +90,12 @@ Bir engine, programların onunla konuşması için bir yol veriyor, ama bir insa
 - **vLLM**: bir şirket sunucusu için olağan engine.
 - **Batching**: birçok isteği birlikte karşılamak; taksiler yerine otobüs gibi.
 - **Open WebUI**: bir şirketin kendi modeli için ChatGPT benzeri bir ekran.
+- **LM Studio**: bir modeli kendi bilgisayarında çalıştıran ve sohbet penceresini içinde taşıyan masaüstü uygulaması.
+- **Ollama**: modelleri kendi bilgisayarında indirmek ve çalıştırmak için terminalden kullandığın araç.
 
 ## Özet
 
-Inference engine modeli çalıştırır; provider ise onlardan birini senin için çalıştıran bir şirkettir. Kendin çalıştırmayı yalnızca üç sebepten biri için yap: verinin içeride kalması gerekiyor, hacim çok büyük ya da hiçbir provider'ın sunmadığı bir şeye ihtiyacın var. Aksi halde kirala. Büyük provider'ların ucuz olmasının sebeplerinden biri batching.
+Inference engine modeli çalıştırır; provider ise onlardan birini senin için çalıştıran bir şirkettir. Kendin çalıştırmayı yalnızca üç sebepten biri için yap: verinin içeride kalması gerekiyor, hacim çok büyük ya da hiçbir provider'ın sunmadığı bir şeye ihtiyacın var. Aksi halde kirala. Büyük provider'ların ucuz olmasının sebeplerinden biri batching. Küçük bir modeli kendi bilgisayarında da çalıştırabilirsin ve en kolay yolu LM Studio.
 
 **Hızlı Kontrol**: Bir şirketin modeli kendisinin çalıştırmasının en yaygın sebebi nedir? Batching her token'ı neden daha ucuz yapıyor?
 

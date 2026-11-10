@@ -149,8 +149,13 @@ export function PageShell({
    * actually take focus: without it Safari and VoiceOver leave the cursor in
    * the header after the skip.
    */
+  /* D119 — `<html lang>` is the page's own language, which the shared root layout cannot know
+     at render and a script sets (`boot.ts`, `RecordStateSync`, the finaliser). The page's
+     furniture is English on every page (D113), so the chrome says so itself (`lang="en"`
+     here, on the bar, the skip link and the footer) and translated text says its own language
+     where it is written, as it always did. */
   const main = (
-    <main id="main" tabIndex={-1} className="bz-main" data-track={track}>
+    <main id="main" tabIndex={-1} className="bz-main" data-track={track} lang="en">
       {inner}
     </main>
   )
@@ -158,7 +163,7 @@ export function PageShell({
   return (
     <>
       {rail === undefined ? main : (
-        <div className="bz-shell" data-bz-aside={aside === undefined ? undefined : ''} data-track={track}>
+        <div className="bz-shell" data-bz-aside={aside === undefined ? undefined : ''} data-track={track} lang="en">
           {/* M21 — THE FOLD CONTROL, and it is here rather than in the page
               because of the TAB ORDER.
 

@@ -4,7 +4,7 @@ import { CaravanPage } from '@/components/caravan/CaravanPage'
 import { sampleInput } from '@/components/caravan/sample-trends'
 import { PageShell } from '@/components/shell/PageShell'
 import { monthOfDate } from '@/lib/caravan-months'
-import { caravanView, inputFromFiles, moduleLink } from '@/lib/content/caravan'
+import { caravanView, inputFromFiles, moduleLink, showsSample } from '@/lib/content/caravan'
 import { loadCaravanFiles } from '@/lib/content/caravan-file'
 import { CURRICULUM_MODULES } from '@/lib/content/curriculum-file'
 
@@ -25,7 +25,7 @@ const modules = new Map(CURRICULUM_MODULES.map((module) => [module.name, module]
 const latest = monthOfDate(new Date())
 const files = loadCaravanFiles({ modules: new Set(modules.keys()), latest })
 const view = caravanView(
-  files.trends.trends.length > 0
+  !showsSample(files.trends)
     ? inputFromFiles(files.trends, files.strength, modules, latest)
     : sampleInput((name) => {
       const module = modules.get(name)
@@ -37,6 +37,8 @@ export const metadata: Metadata = {
   title: 'Caravan',
   description: 'What was trending in AI engineering, month by month since the chatbot moment.',
   alternates: canonicalOf('/caravan/'),
+  // D120: a page of sample data is not indexed; the first real trend lifts this.
+  robots: showsSample(files.trends) ? { index: false, follow: true } : undefined,
 }
 
 export default function CaravanRoute() {

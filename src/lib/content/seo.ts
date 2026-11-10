@@ -18,7 +18,8 @@
  * ## What is not here, on purpose
  *
  * Forwards (`moved.ts`, the `/courses/<level>/` stubs), the unwritten For Everyone
- * pages and the 404 carry `noindex` and are in no list. The catalog, the level pages
+ * pages, the planned (`draft`) modules, the profile, the caravan while it shows its
+ * sample (D120) and the 404 carry `noindex` and are in no list. The catalog, the level pages
  * and the handful of single pages are listed by route, not by content, because a route
  * is not content: a page added without being added here is caught by
  * `tests/e2e/seo.spec.ts`, which compares this list with every page `out/` holds that
@@ -27,8 +28,11 @@
  * Reaches `node:fs` through the loader: server components and `app/*.ts` only.
  */
 import type { Metadata } from 'next'
-import { CATEGORIES } from './curriculum-file'
-import { loadAllModules, loadModuleIn } from './loader'
+import { monthOfDate } from '../caravan-months'
+import { showsSample } from './caravan'
+import { loadCaravanFiles } from './caravan-file'
+import { CATEGORIES, CURRICULUM_MODULES } from './curriculum-file'
+import { type CourseModule, loadAllModules, loadModuleIn } from './loader'
 import { type ReadingLang, TRANSLATED_LANGS, homeRoute } from './languages'
 import { type Track, TRACK_IDS, catalogRoute, moduleRoute } from '../tracks'
 import { absoluteUrl } from '../site'
@@ -39,10 +43,21 @@ export type LanguageRoutes = Partial<Record<ReadingLang, string>>
 
 const ALL_LANGS: readonly ReadingLang[] = ['en', ...TRANSLATED_LANGS]
 
-/** Where a module's page in `track` exists, by language. */
+/**
+ * D120 — a module page a search engine should index: it is written. A `draft` (planned)
+ * module's page is a stub of its objectives and a schedule, the same thing an unwritten
+ * For Everyone page is, and it is kept out the same way (`noindex`, no alternates, no
+ * sitemap entry). The For Everyone page of a module is a written page whatever the status
+ * of the For Engineers one (`loadModuleIn` says `ready` for it).
+ */
+export function isIndexableModule(sheet: CourseModule | undefined): boolean {
+  return sheet !== undefined && sheet.frontmatter.status !== 'draft'
+}
+
+/** Where a module's page in `track` exists and is indexable, by language. */
 export function moduleLanguageRoutes(slug: string, track: Track): LanguageRoutes {
   return Object.fromEntries(
-    ALL_LANGS.filter((lang) => loadModuleIn(slug, lang, track) !== undefined).map((lang) => [
+    ALL_LANGS.filter((lang) => isIndexableModule(loadModuleIn(slug, lang, track))).map((lang) => [
       lang,
       moduleRoute(slug, track, lang),
     ]),
@@ -91,8 +106,20 @@ export interface IndexablePage {
   languages: LanguageRoutes
 }
 
-/** The pages with one address. They are routes, not content (see the header). */
-const SINGLE_PAGES: readonly string[] = ['/about/', '/caravan/', '/legend/', '/profile/']
+/**
+ * The pages with one address. They are routes, not content (see the header). Left out on
+ * purpose (D120): `/profile/`, which shows this browser's own record, and `/caravan/` while it
+ * draws sample data (`showsSample`, the page's own test, so it joins the day a real trend lands).
+ */
+const SINGLE_PAGES: readonly string[] = ['/about/', '/legend/']
+
+function caravanIsReal(): boolean {
+  const files = loadCaravanFiles({
+    modules: new Set(CURRICULUM_MODULES.map((module) => module.name)),
+    latest: monthOfDate(new Date()),
+  })
+  return !showsSample(files.trends)
+}
 
 /** Every page a search engine should index, once per language it is written in. */
 export function indexablePages(): IndexablePage[] {
@@ -106,6 +133,7 @@ export function indexablePages(): IndexablePage[] {
 
   add(homeLanguageRoutes())
   for (const route of SINGLE_PAGES) add({ en: route })
+  if (caravanIsReal()) add({ en: '/caravan/' })
   for (const track of TRACK_IDS) {
     add({ en: catalogRoute(track) })
     for (const category of CATEGORIES) add({ en: catalogRoute(track, category.slug) })

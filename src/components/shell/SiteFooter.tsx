@@ -41,7 +41,7 @@ export interface SiteFooterProps {
  */
 export function SiteFooter({ sheet, revision, readout }: SiteFooterProps) {
   return (
-    <footer role="contentinfo" className="border-t border-line-strong bg-surface">
+    <footer role="contentinfo" className="border-t border-line-strong bg-surface" lang="en">
       <div className="w-full px-[22px]">
         {/* §5.2 row 1 — the three-part flex, which is what puts the sheet
             label left, the revision centre and the readout right. On a page

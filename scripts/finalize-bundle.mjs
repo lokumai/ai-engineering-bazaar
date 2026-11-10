@@ -62,6 +62,7 @@ import { canonicalJson, contentVersionOf, sha256Hex, sortedRecord } from './lib/
 import { diagramPaths, imagePaths } from './lib/bundle-walk.mjs'
 import { DIAGRAM_FONT } from './lib/diagram-font.mjs'
 import { flattenMarkers } from './lib/flatten-markers.mjs'
+import { setHtmlLang } from './lib/html-lang.mjs'
 import { profileViolations, stripNonPainting } from './lib/svg-profile.mjs'
 
 const REPO = resolve(dirname(fileURLToPath(import.meta.url)), '..')
@@ -631,6 +632,13 @@ async function main() {
   renameSync(partial, at('api/v1/index.json'))
   rmSync(at(draftPath))
   console.log(`finalize-bundle: wrote api/v1/index.json, contentVersion ${index.contentVersion}, ${Object.keys(index.files).length} files and ${Object.keys(index.images).length} images`)
+
+  // 3. D119: `<html lang>` of each translation's pages. The root layout is one for every
+  // language and renders `en`; the export is where the address of each page is known.
+  // After the bundle is written, because the bundle's hashes cover no HTML.
+  if (!Array.isArray(index.translations) || index.translations.length === 0) stop('the index lists no translations, so no page can be given its language')
+  const counts = setHtmlLang(outDir, index.translations.map((one) => one.id))
+  console.log(`finalize-bundle: set <html lang> on ${Object.entries(counts).map(([lang, count]) => `${count} ${lang}`).join(', ')} pages`)
 }
 
 try {

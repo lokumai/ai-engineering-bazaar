@@ -11,8 +11,6 @@ const nextConfig = {
   assetPrefix: basePath,
   trailingSlash: true,
   images: { unoptimized: true },
-  // Three root layouts (one per language, for `<html lang>`) leave no layout to compose 404.html from.
-  experimental: { globalNotFound: true },
   env: { NEXT_PUBLIC_SITE_BASE_PATH: basePath },
 }
 

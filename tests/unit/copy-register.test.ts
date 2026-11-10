@@ -40,8 +40,8 @@ const ROOTS: readonly string[] = [
   // the sheets. Agent-written prose is exactly what this register exists for.
   // §13.5's two new course components print `signed off` and a `--` placeholder.
   'components/course',
-  'app/(en)/profile',
-  'app/(en)/legend',
+  'app/profile',
+  'app/legend',
   'lib/record',
   'lib/content/criteria.ts',
   // §15 — the front matter. Every root below carries reader-visible prose this
@@ -50,7 +50,7 @@ const ROOTS: readonly string[] = [
   // and the three identity surfaces are where a name could be mistaken for a
   // proof, which is exactly the kind of claim the register guards.
   'components/home',
-  'app/(en)/sheets',
+  'app/sheets',
   // §16.6 — the two auth panels. `lib/auth` was scanned from §15 but the panels
   // that print its states were not, and §16.1.1 makes them reader-visible in a
   // second place: `SignInPanel` and `AccountPanel` now render inside the
@@ -75,11 +75,11 @@ const ROOTS: readonly string[] = [
   // M90 — the About page. Its story is the author's and comes from STORY.md; what is scanned here is
   // the copy the page adds round it: its name, the scenes' labels and the words drawn in them.
   'components/about',
-  'app/(en)/about',
+  'app/about',
   // M91 — Caravan. Its trends are the author's (or, until they land, a labelled sample); what is
   // scanned is the copy the page adds round them: the notice, the controls and the card.
   'components/caravan',
-  'app/(en)/caravan',
+  'app/caravan',
 ]
 
 function walk(target: string): string[] {

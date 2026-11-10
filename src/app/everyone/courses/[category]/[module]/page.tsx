@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import {
   ModuleSheet,
-  everyModuleParam,
+  everyoneModuleParam,
   sheetMetadata,
   type SheetRouteParams,
 } from '@/components/sheet/ModuleSheet'
@@ -10,21 +10,10 @@ import { movedModuleOf, movedModuleParams } from '@/lib/content/moved'
 import { loadModule } from '@/lib/content/loader'
 import { moduleRoute } from '@/lib/tracks'
 
-/**
- * A module, in English — M19 made this route file four calls.
- *
- * The page itself is `components/sheet/ModuleSheet.tsx`, because a module has
- * two addresses now and the other one renders the same 300 lines. What lives
- * here is what is true of THIS tree and nothing else: which modules it
- * prerenders (all of them), and which language it asks the corpus for.
- *
- * The route does not move and never has. M17 folded the two level listings into
- * the catalog and left this address alone deliberately — a module is the thing
- * the whole site is for, and its URL is the one people send each other.
- */
+/** D91 — every module's For Everyone page; an unwritten one says so (`NotWritten`). */
 export function generateStaticParams(): SheetRouteParams[] {
   // D94 — and every module the curriculum moved, at its old address, as a forward.
-  return [...everyModuleParam(), ...movedModuleParams()]
+  return [...everyoneModuleParam('en'), ...movedModuleParams()]
 }
 
 export async function generateMetadata({
@@ -34,19 +23,19 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { category, module } = await params
   const to = movedModuleOf(category, module)
-  if (to) return Promise.resolve(movedMetadata(movedTitle(to)))
-  return sheetMetadata(params, 'en')
+  if (to) return Promise.resolve(movedMetadata(movedTitle(to), moduleRoute(to, 'everyone')))
+  return sheetMetadata(params, 'en', 'everyone')
 }
 
-export default async function ModuleSheetPage({
+export default async function EveryoneModulePage({
   params,
 }: {
   params: Promise<SheetRouteParams>
 }) {
   const { category, module } = await params
   const to = movedModuleOf(category, module)
-  if (to) return <MovedPage to={moduleRoute(to, 'engineers')} name={movedTitle(to)} what={`The ${movedTitle(to)} module`} />
-  return <ModuleSheet params={params} lang="en" />
+  if (to) return <MovedPage to={moduleRoute(to, 'everyone')} name={movedTitle(to)} what={`The ${movedTitle(to)} module`} />
+  return <ModuleSheet params={params} lang="en" track="everyone" />
 }
 
 /** The title of the module a moved address now points at. */

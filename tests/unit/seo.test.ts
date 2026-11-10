@@ -1,13 +1,18 @@
 import { describe, expect, it } from 'vitest'
 import { homeMetadata } from '@/components/home/HomeStreet'
-import { shellMetadata } from '@/components/shell/RootShell'
+import { sheetMetadata } from '@/components/sheet/ModuleSheet'
+import { movedMetadata } from '@/components/shell/Moved'
+import { metadata as caravanMetadata } from '@/app/caravan/page'
+import { metadata as profileMetadata } from '@/app/profile/page'
 import { TRANSLATED_LANGS, type ReadingLang } from '@/lib/content/languages'
 import { loadAllModules, loadModuleIn } from '@/lib/content/loader'
+import { showsSample } from '@/lib/content/caravan'
 import { MOVED_LEVELS, MOVED_MODULES } from '@/lib/content/moved'
 import {
   alternatesOf,
   canonicalOf,
   indexablePages,
+  isIndexableModule,
   moduleLanguageRoutes,
   sitemapEntry,
 } from '@/lib/content/seo'
@@ -50,7 +55,7 @@ describe('alternatesOf', () => {
 })
 
 describe('the languages a module page exists in', () => {
-  it('are exactly those the loader serves, in both tracks', () => {
+  it('are exactly the written pages the loader serves, in both tracks', () => {
     const modules = loadAllModules()
     expect(modules.length, 'the corpus is empty, so every check below is vacuous').toBeGreaterThan(0)
     for (const sheet of modules) {
@@ -60,7 +65,7 @@ describe('the languages a module page exists in', () => {
           expect(
             routes[lang] !== undefined,
             `${sheet.slug} (${track}) in ${lang}: the list and the loader disagree`,
-          ).toBe(loadModuleIn(sheet.slug, lang, track) !== undefined)
+          ).toBe(isIndexableModule(loadModuleIn(sheet.slug, lang, track)))
         }
       }
     }
@@ -128,9 +133,67 @@ describe('the indexable pages', () => {
 })
 
 describe('the site address', () => {
-  it('is one https origin with no trailing slash, and the metadata base of every page', () => {
+  it('is one https origin with no trailing slash, and every absolute URL starts with it', () => {
     expect(SITE_ORIGIN).toMatch(/^https:\/\/[^/]+$/)
-    expect(new URL(String(shellMetadata.metadataBase)).origin).toBe(SITE_ORIGIN)
+    expect(absoluteUrl('/a/')).toBe(`${SITE_ORIGIN}/a/`)
+  })
+})
+
+describe('what is kept out of search (D120)', () => {
+  const listed = new Set(indexablePages().map((page) => page.route))
+  const robotsOf = async (slug: string, lang: ReadingLang, track: 'engineers' | 'everyone') => {
+    const [category, module] = slug.split('/')
+    return (await sheetMetadata(Promise.resolve({ category, module }), lang, track)).robots
+  }
+
+  it('keeps every planned (draft) module out of the sitemap and marks its page noindex', async () => {
+    const drafts = loadAllModules().filter((sheet) => sheet.frontmatter.status === 'draft')
+    expect(drafts.length, 'no draft module, so the rule is untested').toBeGreaterThan(0)
+    for (const sheet of drafts) {
+      expect(listed.has(`/courses/${sheet.slug}/`), `${sheet.slug} is a draft and is in the sitemap`).toBe(false)
+      expect(await robotsOf(sheet.slug, 'en', 'engineers'), sheet.slug).toMatchObject({ index: false })
+    }
+  })
+
+  it('marks no written module noindex, and lists it', async () => {
+    const written = loadAllModules().filter((sheet) => sheet.frontmatter.status !== 'draft')
+    expect(written.length).toBeGreaterThan(0)
+    for (const sheet of written) {
+      expect(listed.has(`/courses/${sheet.slug}/`), sheet.slug).toBe(true)
+      expect(await robotsOf(sheet.slug, 'en', 'engineers'), sheet.slug).toBeUndefined()
+    }
+  })
+
+  it('marks every unwritten For Everyone page noindex, and lists none', async () => {
+    const unwritten = loadAllModules().filter((sheet) => sheet.everyone === null)
+    expect(unwritten.length).toBeGreaterThan(0)
+    for (const sheet of unwritten) {
+      expect(listed.has(`/everyone/courses/${sheet.slug}/`), sheet.slug).toBe(false)
+      expect(await robotsOf(sheet.slug, 'en', 'everyone'), sheet.slug).toMatchObject({ index: false })
+    }
+  })
+
+  it('lists no page whose own metadata says noindex: the profile, and the caravan while it draws its sample', () => {
+    expect(profileMetadata.robots).toMatchObject({ index: false })
+    expect(listed.has('/profile/')).toBe(false)
+    const sample = caravanMetadata.robots !== undefined
+    expect(listed.has('/caravan/'), 'the caravan is listed exactly when it is not the sample').toBe(!sample)
+  })
+
+  it('calls the caravan a sample exactly when no trend is written', () => {
+    expect(showsSample({ trends: [] } as never)).toBe(true)
+    expect(showsSample({ trends: [{}] } as never)).toBe(false)
+  })
+
+  it('lists the About and Legend pages', () => {
+    expect(listed.has('/about/')).toBe(true)
+    expect(listed.has('/legend/')).toBe(true)
+  })
+
+  it('has a forward name its destination as canonical, and stay noindex', () => {
+    const forward = movedMetadata('A', '/somewhere/')
+    expect(forward.robots).toMatchObject({ index: false })
+    expect(forward.alternates?.canonical).toBe('/somewhere/')
   })
 })
 

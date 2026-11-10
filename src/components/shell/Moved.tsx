@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import { MovedTo } from '@/components/shell/MovedTo'
+import { canonicalOf } from '@/lib/content/seo'
 import { PageShell } from '@/components/shell/PageShell'
 
 /**
@@ -7,11 +8,14 @@ import { PageShell } from '@/components/shell/PageShell'
  * where its level or module answers now (`src/lib/content/moved.ts`). A search
  * engine indexes the destination, not the forward.
  */
-export function movedMetadata(name: string): Metadata {
+export function movedMetadata(name: string, to: string): Metadata {
   return {
     title: name,
     description: `${name} has moved. This page forwards there.`,
     robots: { index: false, follow: true },
+    // The forward names its destination as the page that counts, so what a crawler
+    // already knows of the old address moves there (D119).
+    alternates: canonicalOf(to),
   }
 }
 

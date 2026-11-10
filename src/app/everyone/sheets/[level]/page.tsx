@@ -22,7 +22,7 @@ export async function generateMetadata({
   params: Promise<RouteParams>
 }): Promise<Metadata> {
   const asked = (await params).level
-  if (MOVED_LEVELS[asked]) return movedMetadata(categoryBySlug(MOVED_LEVELS[asked])?.title ?? asked)
+  if (MOVED_LEVELS[asked]) return movedMetadata(categoryBySlug(MOVED_LEVELS[asked])?.title ?? asked, catalogRoute('everyone', MOVED_LEVELS[asked]))
   const category = categoryBySlug(asked)
   if (!category) return {}
   return {

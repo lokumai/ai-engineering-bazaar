@@ -131,7 +131,7 @@ export function SiteHeader({
 
   return (
     <>
-      <header role="banner" className="bz-bar">
+      <header role="banner" className="bz-bar" lang="en">
         <div className="bz-bar-inner">
           {/* The wordmark is its own element so a phone can keep the logo and
               drop the words without losing the link's name — see `shell.css`

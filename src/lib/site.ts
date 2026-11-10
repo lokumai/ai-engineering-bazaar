@@ -19,7 +19,7 @@ export function absoluteUrl(route: string): string {
 }
 
 export const SITE_DESCRIPTION =
-  'Thirty-two modules on becoming an AI-powered software engineer.'
+  'A short course on becoming an AI-powered software engineer.'
 
 export const REPO_URL = 'https://github.com/lokumai/ai-engineering-bazaar'
 

@@ -466,11 +466,11 @@ for (const [lang, path] of TRANSLATED) {
       copy.tracks.all.teller.story,
     ])
 
-    // D119: the document says the page's own language and never a direction; the interface around the
-    // words is English, so the body says so. The words carry their language as well, checked below.
+    // D119: the document says the page's own language and never a direction; the bar and the footer
+    // around the words say they are English. The words carry their language as well, checked below.
     expect(await page.locator('html').getAttribute('lang')).toBe(lang)
     expect(await page.locator('html').getAttribute('dir')).toBeNull()
-    expect(await page.locator('body').getAttribute('lang')).toBe('en')
+    expect(await page.locator('header').getAttribute('lang')).toBe('en')
     expect(await page.locator('body').getAttribute('dir')).toBeNull()
     for (const text of ['h1', '.bz-lede', '.stall .sign h2', '.stall .sign p', '#track-q', '.sg-p', '.who-cloud']) {
       // The mark may sit on the element or on the button that holds it (a story's cloud).

@@ -17,7 +17,7 @@
  */
 
 import type { Metadata } from 'next'
-import { alternatesOf, moduleLanguageRoutes } from '@/lib/content/seo'
+import { alternatesOf, isIndexableModule, moduleLanguageRoutes } from '@/lib/content/seo'
 import { notFound } from 'next/navigation'
 import { Prose } from '@/components/course/Prose'
 import { SignOff } from '@/components/record/SignOff'
@@ -132,6 +132,12 @@ export async function sheetMetadata(
 
   const slug = `${category}/${module}`
   const translatedPage = lang !== 'en'
+
+  // D120 — a planned module's page names itself and is kept out of search, as an unwritten
+  // For Everyone page is above; it has no translation, so there is nothing to alternate.
+  if (!isIndexableModule(sheet)) {
+    return { title: sheet.frontmatter.title, robots: { index: false, follow: true } }
+  }
 
   return {
     title: sheet.frontmatter.title,

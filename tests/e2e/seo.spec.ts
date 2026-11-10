@@ -104,14 +104,19 @@ test('the export has pages to check, in every language, and some that forward', 
   expect(pages.some((page) => page.noindex), 'nothing says noindex, so the exclusions are untested').toBe(true)
 })
 
-test('html[lang] is the language of the address, the layout is never mirrored, and the interface stays English', () => {
+test('html[lang] is the language of the address, the layout is never mirrored, and the chrome says it is English', () => {
   for (const page of pages) {
-    const html = /<html\b[^>]*>/i.exec(page.html)?.[0] ?? ''
+    const tag = (name: string) => new RegExp(`<${name}\\b[^>]*>`, 'i').exec(page.html)?.[0] ?? ''
+    const html = tag('html')
     expect(attr(html, 'lang'), `${page.route}: <html lang>`).toBe(page.lang)
     expect(attr(html, 'dir'), `${page.route}: <html dir>`).toBeUndefined()
-    const body = /<body\b[^>]*>/i.exec(page.html)?.[0] ?? ''
-    expect(attr(body, 'lang'), `${page.route}: <body lang>`).toBe(page.lang === 'en' ? undefined : 'en')
-    expect(attr(body, 'dir'), `${page.route}: <body dir>`).toBeUndefined()
+    // One root layout: the interface is English on every page (D113), and says so itself.
+    for (const name of ['header', 'main', 'footer']) {
+      expect(attr(tag(name), 'lang'), `${page.route}: <${name} lang>`).toBe('en')
+      expect(attr(tag(name), 'dir'), `${page.route}: <${name} dir>`).toBeUndefined()
+    }
+    expect(attr(tag('body'), 'lang'), `${page.route}: <body lang>`).toBeUndefined()
+    expect(attr(tag('body'), 'dir'), `${page.route}: <body dir>`).toBeUndefined()
   }
 })
 
@@ -165,13 +170,25 @@ test('every hreflang in the export is absolute and resolves to an indexable page
   expect(checked, 'no alternate was checked').toBeGreaterThan(0)
 })
 
-test('a translated page that is not the English one has its own title', () => {
+test('the translated home pages have a title of their own', () => {
   const english = /<title>([^<]*)<\/title>/.exec(pages.find((page) => page.route === '/')!.html)?.[1]
   for (const lang of TRANSLATED_LANGS) {
     const home = pages.find((page) => page.route === `/${lang}/`)
     expect(home, `no /${lang}/ page`).toBeDefined()
     const title = /<title>([^<]*)<\/title>/.exec(home!.html)?.[1]
     expect(title, `/${lang}/ is titled like /`).not.toBe(english)
+  }
+})
+
+test('no page that says noindex is in the sitemap or in any hreflang list', () => {
+  const excluded = new Set(pages.filter((page) => page.noindex).map((page) => absolute(page.route)))
+  expect(excluded.size, 'nothing says noindex').toBeGreaterThan(0)
+  for (const entry of sitemap()) {
+    expect(excluded.has(entry.loc), `${entry.loc} says noindex and is in the sitemap`).toBe(false)
+    for (const url of entry.alternates.values()) expect(excluded.has(url), `${entry.loc}: sitemap alternate ${url} says noindex`).toBe(false)
+  }
+  for (const page of pages) {
+    for (const [lang, url] of declared(page)) expect(excluded.has(url), `${page.route}: hreflang ${lang} points at ${url}, which says noindex`).toBe(false)
   }
 })
 

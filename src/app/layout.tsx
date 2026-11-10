@@ -7,21 +7,17 @@ import { curriculumFacts } from '@/lib/content/facts'
 import { RecordStateSync } from '@/components/record/RecordStateSync'
 import { recordBootScript } from '@/lib/record/boot'
 import { diagramGroundCss } from '@/lib/reading/diagram-themes'
-import type { ReadingLang } from '@/lib/content/languages'
 import { SITE_DESCRIPTION, SITE_NAME, SITE_ORIGIN } from '@/lib/site'
 import { THEME_BOOT_SCRIPT } from '@/lib/theme'
-import '@/app/globals.css'
+import './globals.css'
 
 /**
- * The metadata every root layout shares, and the one place `metadataBase` is set.
- *
- * `metadataBase` is what makes a relative `canonical` or `hreflang` leave the page
- * as an absolute URL: a crawler reads a relative `hreflang` as an error, and the
- * `href()` the pages build their addresses with returns an app-relative path (it
- * carries the base path, which Next does not apply to `alternates`). The origin is
- * `SITE_ORIGIN`, the one place the site's address is written.
+ * `metadataBase` is what makes a relative `canonical` or `hreflang` leave the page as an
+ * absolute URL, which a crawler requires of an `hreflang`. The pages build their addresses
+ * with `href()` (it carries the base path, which Next does not apply to `alternates`); the
+ * origin is `SITE_ORIGIN`, the one place the site's address is written (D119).
  */
-export const shellMetadata: Metadata = {
+export const metadata: Metadata = {
   metadataBase: new URL(SITE_ORIGIN),
   title: { default: SITE_NAME, template: `%s · ${SITE_NAME}` },
   description: SITE_DESCRIPTION,
@@ -37,7 +33,7 @@ export const shellMetadata: Metadata = {
  * no layout can know, so `PageShell` renders both from inside the page tree
  * and every page uses it.
  */
-export function RootShell({ lang, children }: { lang: ReadingLang; children: React.ReactNode }) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   /**
    * §12.2 channel A — the record's pre-paint script needs two build-time maps
    * it cannot derive in the browser: how many sheets each subsystem holds (the
@@ -71,18 +67,9 @@ export function RootShell({ lang, children }: { lang: ReadingLang; children: Rea
    * …`. So type varies with the reader's OS, exactly as the mockup's own does.
    * `--font-sans` and `--font-mono` in `src/design/bazaar.css` are the only
    * place a family is named now, and nothing is downloaded.
-   *
-   * **`<html lang>` is the page's own language, and the interface stays English.**
-   * Each language tree is its own root layout (`(en)`, `tr`, `fa`) and renders this
-   * shell with its code, so the document says what it is for a crawler and for
-   * `:lang()`. The menus, the bar, the rails and the footer are English on every page
-   * (D113), so on a translated page `<body>` says `lang="en"` and the content that
-   * is translated says its own language where it is written (`ModuleSheet`,
-   * `HomeStreet`), exactly as before the root said anything but English. No `dir` on
-   * `<html>`: the layout never mirrors (D80).
    */
   return (
-    <html lang={lang} suppressHydrationWarning>
+    <html lang="en" suppressHydrationWarning>
       <head>
         {/* Blocking, before any paint: no flash of the wrong theme (§2.5). */}
         <script dangerouslySetInnerHTML={{ __html: THEME_BOOT_SCRIPT }} />
@@ -107,8 +94,10 @@ export function RootShell({ lang, children }: { lang: ReadingLang; children: Rea
         */}
         <style dangerouslySetInnerHTML={{ __html: diagramGroundCss() }} />
       </head>
-      <body className="flex min-h-screen flex-col" lang={lang === 'en' ? undefined : 'en'}>
-        <a href="#main" className="skip-link">
+      <body className="flex min-h-screen flex-col">
+        {/* The interface is English on every page (D113), and `<html lang>` is the page's
+            own language (D119), so each piece of chrome says it is English itself. */}
+        <a href="#main" className="skip-link" lang="en">
           Skip to content
         </a>
         {/* The bar's language menu needs to know which modules HAVE a second

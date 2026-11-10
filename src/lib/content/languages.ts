@@ -74,3 +74,16 @@ export function homeRoute(lang: ReadingLang): string {
 export function langAttr(lang: ReadingLang): TranslatedLang | undefined {
   return lang === 'en' ? undefined : lang
 }
+
+/**
+ * D119 — the language an address is in: the first segment when it is a translation's
+ * route segment, English otherwise. `<html lang>` follows it. The root layout is shared
+ * by every address, so it renders `en` and three writers set the real value: the
+ * finaliser in the exported HTML (`scripts/lib/html-lang.mjs`), the pre-paint script on
+ * every load (`recordBootScript`) and `RecordStateSync` on a client navigation. `pathname`
+ * is app-relative, without the base path.
+ */
+export function languageOfPath(pathname: string): ReadingLang {
+  const first = pathname.split('/')[1]
+  return TRANSLATED_LANGS.find((one) => one === first) ?? 'en'
+}

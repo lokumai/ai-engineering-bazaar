@@ -9,7 +9,7 @@ description: >
 authority: reasoning
 writes: agent, when a decision is taken
 status: active
-covers: "D97 to D119 so far, and D89, which part 2 held for PR #57 — 2026-11-06 onward"
+covers: "D97 to D120 so far, and D89, which part 2 held for PR #57 — 2026-11-06 onward"
 last_updated: 2026-11-10
 ---
 
@@ -695,7 +695,7 @@ fact from the module itself. The rule lives in `mini-courses/CLAUDE.md`.
   recap sits where the reading ends. Rejected: after References (it would follow the links out).
 - **No quiz or test change.** The section restates the module, so it adds no fact a quiz could ask.
 
-### D119 · `<html lang>` from three root layouts, absolute canonicals and hreflang, a generated sitemap — 2026-11-10
+### D119 · `<html lang>` set by the finaliser and a script on one root layout, absolute canonicals and hreflang, a generated sitemap — 2026-11-10
 status: active
 
 **Asked by the author**, who wondered whether English-only menus hurt search ranking, and, once five
@@ -705,39 +705,70 @@ crawler reads: `<html lang="en">` on Turkish and Persian pages, relative `canoni
 crawler needs an absolute `hreflang`, and no module page named `x-default`), no sitemap, no `robots.txt`,
 and the English title on `/tr/` and `/fa/`.
 
-- **`<html lang>`: one root layout per language tree.** `src/app/(en)/layout.tsx` (a route group, no URL
-  segment), `src/app/tr/layout.tsx` and `src/app/fa/layout.tsx`, each rendering the one `RootShell`. The
-  English routes moved under `(en)/` with `git mv`; no URL changed. The price, all measured or checked in
-  the build: `experimental.globalNotFound` for `404.html` (three roots leave no layout to compose it
-  from); a link from one tree to another is a full page load; `prose.css`'s `[lang="fa"]` rule now reads
-  `:where(body) [lang="fa"]`, or `<html lang="fa">` would have set the Persian face on the English bar;
-  and a few test paths (`@/app/(en)/api/…`, the copy register's roots). **Rejected:** a script in `<head>`
-  that sets the attribute from `location.pathname`, because the served HTML still says `en`, which is
-  what a crawler without scripts reads; patching `out/**/*.html` after the build, because the source then
-  says one thing and the files another, `next dev` shows `en`, and a soft navigation leaves the old value;
-  `app/[lang]/layout.tsx` with root params, because English has no prefix and would need `/en/` and a
-  redirect from every English URL, which a static export cannot serve; a language read from `headers()`,
-  because a static export has no request.
-- **`<body lang="en">` on translated pages, and no `dir` on `<html>`.** The interface around the
-  translated text is English (D113) and a screen reader must keep reading it as English, so the body
-  says so and the translated content says its own language where it is written, as it did before.
-  **Rejected:** marking each English component (the bar, the rails, the footer, the objectives) one by one,
-  which is a longer list that a new component would forget. The layout never mirrors (D80).
-- **One address, written once.** `SITE_ORIGIN` in `src/lib/site.ts` feeds `metadataBase`, the sitemap
-  and `robots.txt`. Pages keep building their addresses with `href()`, which carries the base path that
-  Next does not apply to `alternates`. **Rejected:** absolute strings built in each page.
+- **`<html lang>`: one root layout, and the attribute written where the address is known.** The layout
+  renders `en` (`<html>` already carries `suppressHydrationWarning`). Three writers set the real value, all
+  from the first path segment: `scripts/lib/html-lang.mjs`, called by `scripts/finalize-bundle.mjs` after
+  the bundle is written, rewrites `<html lang="en"` in every file under `out/tr/` and `out/fa/` (43 pages
+  each, the translations read from the bundle's own index, a file that does not open on the English
+  attribute is an error and not a skip); `recordBootScript` sets it before first paint on every load, so
+  `next dev` and a saved copy are right too; and `RecordStateSync` sets it after a client navigation, with
+  `languageOfPath` (`src/lib/content/languages.ts`) as the one rule, which `tests/unit/html-lang.test.ts`
+  holds the boot script to. No `dir` anywhere (D80). Measured in the browser suite: a load at `/tr/…` or
+  `/fa/…` says that language, a client navigation to the home page (same document, no reload) says `en`,
+  one through the language picker into Turkish says `tr`, and the console stays clean with no hydration
+  mismatch.
+- **The English chrome says it is English itself.** `lang="en"` is on the skip link, the bar (the search
+  dialog is inside it), `<main>` and the footer, and the translated text says its own language where it is
+  written, as it did before. So an English control on a Turkish page is still read in an English voice.
+  **Rejected:** `<body lang="en">`, at the lead's word, for the one reason that it makes `<html lang>`
+  decorative; the cost of the chosen form is four more attributes, redundant but harmless on English pages.
+- **Built, measured and rejected: three root layouts** (`(en)`, `tr`, `fa` over one shared shell). It set
+  `<html lang>` in the static HTML with no script, and PR review measured what it cost: **49 of the 80
+  internal links on a Turkish module page, and 29 of 30 on `/tr/` and `/fa/`, leave the tree**, and a link
+  that crosses root layouts is a full document load (confirmed: a click from a Turkish page to `/` reloaded
+  the document), so reading in a translation and using the bar became a series of reloads. It also needed
+  `experimental.globalNotFound` (experimental in Next 16.3.3, with a TODO in its loader) to produce
+  `404.html`, left `/tr/` and `/fa/` without a `not-found`, moved every English route under `(en)/`, and
+  forced `:where(body)` into a Persian font rule. Reverted in the same PR; **one root layout stays.**
+- **Also rejected:** a `[lang]` root segment (English has no prefix); a language read from `headers()`
+  (a static export has no request); a script alone, with the served HTML still `en`, which is what a
+  crawler without scripts reads.
+- **One address, written once.** `SITE_ORIGIN` in `src/lib/site.ts` feeds `metadataBase` (in the root
+  layout), the sitemap and `robots.txt`. Pages keep building their addresses with `href()`, which carries
+  the base path that Next does not apply to `alternates`. **Rejected:** absolute strings built in each page.
 - **Which versions exist is the loader's answer.** `src/lib/content/seo.ts` asks `loadModuleIn` per
   language and track, the function the route renders from, so a module with no `_fa.md` has no Persian
   alternate and an unwritten For Everyone page is in no list. `x-default` is the English version. Every
-  indexable page has a `canonical`.
+  indexable page has a `canonical`; a forward (`MovedTo`) names its destination as its canonical.
 - **Sitemap from `app/sitemap.ts`, not from a script that walks `out/`.** A walker is a second
-  implementation of "what is indexable"; `tests/e2e/seo.spec.ts` is the one that reads `out/`, and it
-  compares the two. No `lastmod`: no measured date exists for a page, and a wrong one is worse than none.
-  The single pages and the catalog are listed by route in `seo.ts` (they are not content); a page added
-  without being listed fails that test.
+  implementation of "what is indexable"; `tests/e2e/seo.spec.ts` reads `out/` and compares the two. No
+  `lastmod`: no measured date exists for a page, and a wrong one is worse than none.
 - **The `/tr/` and `/fa/` titles are the home copy's headline** (`hero.first` and `hero.second`, full stop
   removed) followed by the site name. This replaces §15.2.2's "the title does not translate" for those two
   pages; `/` is unchanged.
+
+### D120 · Planned modules, the caravan on sample data and the profile are not indexed — 2026-11-10
+status: active
+
+The sitemap and `robots` of D119 list a page only if a reader could land on something worth finding.
+Three kinds of page are not that, and each is `noindex, follow` and absent from the sitemap and from every
+`hreflang` list:
+
+- **A planned module (`status: draft` in `curriculum.yaml`).** Its page is its objectives and a schedule,
+  the same stub an unwritten For Everyone page is, and that page was already `noindex` (`sheetMetadata`).
+  23 modules at the time. The rule is the status, not a list, so a module is listed the day it is written.
+  The For Everyone page of such a module is a written page and stays indexable (`loadModuleIn` marks it
+  `ready`). **Rejected:** indexing them for the title alone, which spends a crawl on thin pages and puts
+  stubs beside the course in a result.
+- **`/caravan/` while it draws its sample.** The data is invented, so a result would show a reader
+  something false. The test is `showsSample` in `src/lib/content/caravan.ts`, the very predicate the page
+  uses to choose its input, so the page becomes indexable by itself when the first real trend lands.
+  **Rejected:** a hand-kept flag, which is the thing someone forgets.
+- **`/profile/`.** It shows this browser's own record, which nobody can search for. **Rejected:** leaving
+  it listed because it carried no `noindex` before.
+
+`/about/` and `/legend/` stay indexable. A forward (`MovedTo`) was already `noindex` and now carries a
+canonical to its destination.
 
 ---
 

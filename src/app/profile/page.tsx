@@ -25,6 +25,8 @@ export const metadata: Metadata = {
     'Every module in both tracks and whether you have completed it, and how to '
     + 'back up, restore or reset your progress.',
   alternates: canonicalOf('/profile/'),
+  // D120: the page shows this browser's own record, so there is nothing in it to find.
+  robots: { index: false, follow: true },
 }
 
 /**

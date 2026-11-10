@@ -9,7 +9,7 @@ description: >
 authority: reasoning
 writes: agent, when a decision is taken
 status: active
-covers: "D97 to D120 so far, and D89, which part 2 held for PR #57 — 2026-11-06 onward"
+covers: "D97 to D121 so far, and D89, which part 2 held for PR #57 — 2026-11-06 onward"
 last_updated: 2026-11-10
 ---
 
@@ -769,6 +769,33 @@ Three kinds of page are not that, and each is `noindex, follow` and absent from 
 
 `/about/` and `/legend/` stay indexable. A forward (`MovedTo`) was already `noindex` and now carries a
 canonical to its destination.
+
+### D121 · Assessment happens outside the website: forms in Microsoft 365, no portal — 2026-11-10
+status: active
+
+Intellica's manager asked for a process: registration, what to read, an exam, a project, dates, and
+who earns the "AI Powered Engineer" role. The author's plan: 30 days or more of reading the Bazaar,
+an exam, then a project per track (For Engineers and For Everyone) assessed by people, then a
+certificate. His words on the system: *"I do not want to create extra dependencies"*; then *"I agree
+with option A. We can just put some forms ... with static rules. Send the links to people and keep it
+lightweight, which makes it suitable for the open source philosophy of it ... and we focus on website
+and content instead"*; and *"Assessing is something outside of the website."*
+
+- **The program runs in Microsoft Forms and Excel inside Intellica's Microsoft 365** (the company uses
+  Teams and Microsoft 365): a registration form, an auto-graded exam form (sign-in required, one
+  response, shuffled questions, a time window), a project form (a GitHub URL for engineers, a document
+  link for everyone else), one workbook for scores and the rubric, certificates from a Word template.
+  The personal data stays in the company's existing Microsoft 365, so the project adds no data store.
+- **The website does not change.** No exam, no account, no certificate verification page: the site
+  keeps MANIFESTO §6 and rule 11, and §6 now says an organisation may assess its people outside it.
+- **Rejected:** a small portal on Intellica's Hetzner server with Microsoft (Entra ID) sign-in (2 to 4
+  days with agents; it would make the project own uptime, security, backups and the KVKK duties for
+  stored scores, and needs IT to register an app); basic auth with a shared password (cannot tell
+  people apart); an exam inside the Bazaar (no server or accounts by design, D88, and a static exam is
+  trivially cheated); a public `/certificates/` page on the site (it would put a credential on the
+  site, against §6); an LMS (too heavy for one program).
+- **Open, for later:** the email to the manager, the exam questions (separate from the published quick
+  quizzes, which readers have seen), the two projects and their rubric, the dates.
 
 ---
 

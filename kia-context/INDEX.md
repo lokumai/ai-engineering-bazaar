@@ -218,7 +218,7 @@ every other file.
 and 2 are `closed` (`PROGRESS_1.md`, `PROGRESS_2.md`, `BRAINSTORM_1.md`, `BRAINSTORM_2.md`) and point
 forward; part 3 is where the next entry goes, and it keeps the bare name (`PROGRESS.md`,
 `BRAINSTORM.md`). The
-numbering runs straight through — `M1…M96`, `D1…D120` — so a citation never has
+numbering runs straight through — `M1…M96`, `D1…D121` — so a citation never has
 to say which part it means, only the number.
 
 The heaviest edges, measured with `grep` on 2026-11-06 rather than estimated (the two `PROGRESS_2.md` rows re-measured 2026-11-07; the two rows into part 3 re-measured 2026-11-09):

@@ -1,3 +1,12 @@
+---
+objectives:
+  - "Değişen gerçekler için retrieval'ın neden fine-tuning'den daha iyi olduğunu açıkla"
+  - "Bir metnin nasıl embedding'e dönüştüğünü ve iki embedding'in benzerliğinin cosine similarity ile nasıl ölçüldüğünü anlat"
+  - "RAG sürecini (retrieve-then-generate) baştan sona, adım adım gözden geçir"
+  - "Retrieval'ı Recall@k, Precision@k, MRR ve nDCG@k ile ölç"
+  - "Verilen bir problem için RAG mi yoksa fine-tuning mi istediğine karar ver"
+---
+
 # Retrieval-Augmented Generation (RAG)
 
 [LLM Temelleri](llms_tr.md) modülünde context window'u gördün. Bu, modelin çalışma masası gibidir ve masadaki her şey bu masaya sığmak zorundadır. [Training LLMs](training_tr.md) modülünde de fine-tuning'i öğrendin, yani modelin kendisini değiştiren yöntemi. Bu modül üçüncü bir seçenekten bahsediyor ve bu seçenek, en sık kullanacağın seçenek olacak.

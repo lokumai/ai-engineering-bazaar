@@ -9,7 +9,7 @@ description: >
 authority: reasoning
 writes: agent, when a decision is taken
 status: active
-covers: "D97 to D122 so far, and D89, which part 2 held for PR #57 — 2026-11-06 onward"
+covers: "D97 to D123 so far, and D89, which part 2 held for PR #57 — 2026-11-06 onward"
 last_updated: 2026-11-10
 ---
 
@@ -869,6 +869,22 @@ Legal section prints a row for whichever are present.
 ## Open questions
 
 None open in this part yet. New ones go here, numbered after O5.
+
+### D123 · Objectives are translated on the site; the bundle keeps English until the app agrees — 2026-11-10
+status: active
+
+M19 showed a translated page the English objectives, marked `lang="en"`, because only the English
+file had frontmatter. A manager read that as untranslated content, and by D113 objectives are content.
+So a `_tr.md` or `_fa.md` may now carry an `objectives`-only frontmatter block (rules in
+`mini-courses/CLAUDE.md`); the M19 behaviour stays only as the fallback for a file without one.
+
+- **Rejected:** requiring the block in every translation (a new translation would fail the build
+  before its list is written); translating `summary` too (it feeds the catalog, which stays English
+  by D113); putting `dir="rtl"` on the whole card (the heading is the interface's and stays LTR).
+- **The bundle does not change in this round.** The first version set `objectives.lang` to the
+  document's language. ARCHITECTURE §13 counts a new value in a closed set as a retyping, which needs
+  `api/v2/`, and the mobile reader may check `en`. So v1 keeps `{ lang: 'en', items: <English> }`;
+  translated objectives reach the app later as an additive field, once its developer agrees.
 
 ---
 

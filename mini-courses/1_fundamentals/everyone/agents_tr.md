@@ -1,3 +1,10 @@
+---
+objectives:
+  - "Bir kez cevap veren bir LLM ile çalışmaya devam eden bir agent arasındaki farkı açıkla"
+  - "Bir agent'ın döngüsünü neyin bitirdiğini söyle"
+  - "Bir ürünü düz sohbet, workflow ve agent arasındaki ölçekte doğru yere yerleştir"
+---
+
 # AI Agents
 
 Şimdiye kadar anlattığımız her şey buraya varmak içindi. Tanım, beklediğinden daha küçük.

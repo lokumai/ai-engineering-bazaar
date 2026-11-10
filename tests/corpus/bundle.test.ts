@@ -20,7 +20,7 @@ import {
   ModuleDoc,
 } from '@/lib/bundle/schema'
 import type { ReadingLang } from '@/lib/content/languages'
-import { loadAllModules, loadModule } from '@/lib/content/loader'
+import { loadAllModules, loadModule, loadModuleIn } from '@/lib/content/loader'
 import { CONTENT_ROOT } from '@/lib/content/paths'
 import { TRACK_IDS, type Track } from '@/lib/tracks'
 
@@ -113,6 +113,24 @@ describe('the bundle, over the real corpus', () => {
   it('parses every level and module document with its strict schema', () => {
     for (const [path, doc] of levels) expect(() => LevelDoc.parse(doc), path).not.toThrow()
     for (const [path, doc] of modules) expect(() => ModuleDoc.parse(doc), path).not.toThrow()
+  })
+
+  it('carries the track\'s English objectives in every document, whatever its language (v1, D123)', () => {
+    let translatedChecked = 0
+    for (const [path, doc] of modules) {
+      const english = loadModuleIn(doc.key, 'en', doc.track)
+      if (!english) throw new Error(`bundle.test: ${path} has no English page in ${doc.track}`)
+      expect(doc.objectives.lang, path).toBe('en')
+      expect([...doc.objectives.items], path).toEqual(english.frontmatter.objectives)
+      // Non-vacuity: a translated document whose own list differs from the English
+      // is what tells a bundle that leaked the translation from one that did not.
+      if (doc.lang !== 'en') {
+        const own = loadModuleIn(doc.key, doc.lang as ReadingLang, doc.track)!.frontmatter.objectives
+        if (JSON.stringify(own) !== JSON.stringify(english.frontmatter.objectives)) translatedChecked++
+      }
+    }
+    expect(translatedChecked, 'no translated document declares its own objectives, so a leak could not be seen')
+      .toBeGreaterThan(0)
   })
 
   it('names each level document at its own path', () => {

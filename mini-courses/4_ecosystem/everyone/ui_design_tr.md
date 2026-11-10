@@ -1,3 +1,10 @@
+---
+objectives:
+  - "Yapay zekânın yaptığı ekranların neden farklı şirketten gelmiş gibi göründüğünü açıkla"
+  - "Design system'in ne olduğunu ve DESIGN.md'nin bunu yapay zekâya nasıl verdiğini söyle"
+  - "Üretilen ekranların hâlâ neyi yanlış yaptığını say, özellikle erişilebilirlikte"
+---
+
 # UI Design
 
 Kod yazan bir yapay zekâ sana seve seve bir ekran yapar. Sorun, her seferinde farklı bir tane yapması. Bugün bir ayarlar sayfası, yarın bir dashboard istersen, iki farklı şirketten gelmiş gibi duran iki ekran elde edersin: farklı renkler, farklı buton şekilleri, farklı başlıklar. Her biri tek başına iyi görünür. Yan yana durduklarında ise sanki işin başında kimse yokmuş gibi görünür.

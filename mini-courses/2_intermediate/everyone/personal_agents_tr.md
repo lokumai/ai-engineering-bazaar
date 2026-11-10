@@ -1,3 +1,10 @@
+---
+objectives:
+  - "Personal agent'ı, ondan önceki agent'lardan farklı kılan şeyi anlat"
+  - "Başlıca isimleri tanı: OpenClaw, Hermes Agent ve büyük şirketlerin personal agent'ları"
+  - "Personal agent'ın erişiminin hem onu işe yarar kıldığını hem de onu riskli yaptığını açıkla; buna karşı ne yapman gerektiğini söyle"
+---
+
 # Personal Agent'lar
 
 Şimdiye kadarki her agent bir proje üzerinde çalıştı. Onu açtın, bir iş verdin ve kapattığında gitti.

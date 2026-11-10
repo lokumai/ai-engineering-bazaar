@@ -1,3 +1,10 @@
+---
+objectives:
+  - "Context rot'u ve sohbet dolmadan çok önce yapay zekânın neden kötüleştiğini açıkla"
+  - "Context engineering'in neye karar verdiğini tek cümleyle söyle"
+  - "Ana teknikleri anlat: sohbeti özetlemek, notlar yazmak, yardımcı göndermek, yapılacaklar listesi tutmak ve bir bilgi tabanında gezinmek"
+---
+
 # Context Engineering
 
 [Prompt Engineering](prompt_engineering_tr.md) tek bir iyi mesaj yazmakla ilgiliydi. Bu modül ise sohbetteki geri kalan her şeyi ve tek bir problemi anlatıyor: hepsine yetecek kadar yer yok.

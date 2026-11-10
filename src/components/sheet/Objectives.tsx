@@ -1,3 +1,5 @@
+import { type ReadingLang, dirOf } from '@/lib/content/languages'
+
 /**
  * §6.3 — what the reader will be able to do, as the mockup's `leaf` card.
  *
@@ -30,25 +32,26 @@ export function Objectives({
 }: {
   items: readonly string[]
   /**
-   * M19 — which language these are in, where that is not the document's.
+   * Which language `items` are in, where that is not the document's: `tr` or
+   * `fa` where the translation file declares its own objectives, `en` on a
+   * translated page that falls back to the English list, nothing on the English
+   * tree (an attribute restating the document's own language is noise).
    *
-   * **MEASURED: a `_tr.md` carries no frontmatter at all**, so `objectives`
-   * exists in English and nowhere else. On a Turkish page this card is the one
-   * run of English inside the reading column, and saying so is what stops a
-   * screen reader reading it in a Turkish voice. Printing it unmarked or
-   * dropping it were the other two answers: the first is wrong and the second
-   * takes a capability off the translated page.
+   * The card carries it, and its heading says `en` itself: the heading is the
+   * interface's own words, which stay English (D113). `dir="rtl"` goes on the
+   * list alone and never on the card, so the card's box is not mirrored, the
+   * same rule as the prose (M28).
    */
-  lang?: string
+  lang?: ReadingLang
 }) {
   if (items.length === 0) return null
 
   return (
     <section className="bz-card" aria-labelledby="objectives" lang={lang}>
-      <b id="objectives" className="bz-card-title">
+      <b id="objectives" className="bz-card-title" lang={lang === undefined || lang === 'en' ? undefined : 'en'}>
         What you will be able to do
       </b>
-      <ul className="bz-card-list">
+      <ul className="bz-card-list" dir={dirOf(lang)}>
         {items.map((item) => (
           <li key={item}>{item}</li>
         ))}

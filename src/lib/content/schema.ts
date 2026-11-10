@@ -79,3 +79,65 @@ export function parseFrontmatter(
   }
   return data
 }
+
+/**
+ * The frontmatter a translation file (`_tr.md`, `_fa.md`, in either
+ * track) may carry: `objectives`, translated, and nothing else.
+ *
+ * **Only `objectives`, and why.** The objectives card is content and a Turkish
+ * or Persian reader should read it in their language (D113: content is
+ * multilingual, the interface is not). `summary` stays out: it feeds the English
+ * catalog, which is the interface. `module`, `status` and the rest are the
+ * yaml's, as they are for the English file, so naming any of them here fails
+ * the build by name rather than becoming a second copy of a fact.
+ *
+ * **Same count, same order as the English.** An objective is not a free list: a
+ * reader switching language is shown the same promises, so a translation with a
+ * different number of them is a translation that dropped or invented one. The
+ * count is compared with the English file's own list (already validated), and a
+ * mismatch names the file and both counts.
+ *
+ * **Absent is a valid answer.** A file with no block, or a block with no keys
+ * at all (`{}`), returns `null` and the page falls back to the English list, marked `lang="en"`
+ * (M19). Rejected: requiring the block, which would fail the build for every
+ * translation written before this rule. A block that names `objectives` and
+ * leaves it empty (`objectives: []`) is not absent: it throws.
+ */
+const translationFrontmatterSchema = z.strictObject({
+  objectives: z.array(z.string().min(1)).min(1),
+})
+
+export function parseTranslationFrontmatter(
+  raw: unknown,
+  source: string,
+  english: readonly string[],
+): string[] | null {
+  const data = (raw ?? {}) as Record<string, unknown>
+  const keys = Object.keys(data)
+  if (keys.length === 0) return null
+
+  const extra = keys.filter((key) => key !== 'objectives')
+  if (extra.length > 0) {
+    throw new Error(
+      `Invalid frontmatter in ${source}:\n  ${extra.join(', ')}: a translation's frontmatter holds `
+      + '`objectives` only (the summary feeds the English catalog, and the yaml owns the rest)',
+    )
+  }
+
+  const result = translationFrontmatterSchema.safeParse(data)
+  if (!result.success) {
+    const detail = result.error.issues
+      .map((i) => `  ${i.path.join('.') || '(root)'}: ${i.message}`)
+      .join('\n')
+    throw new Error(`Invalid frontmatter in ${source}:\n${detail}`)
+  }
+
+  const objectives = result.data.objectives
+  if (objectives.length !== english.length) {
+    throw new Error(
+      `Invalid frontmatter in ${source}:\n  objectives: has ${objectives.length}, `
+      + `the English file has ${english.length}; a translation keeps the same objectives in the same order`,
+    )
+  }
+  return objectives
+}

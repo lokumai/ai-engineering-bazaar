@@ -1,3 +1,12 @@
+---
+objectives:
+  - "Bir agent'ı döngü olarak tanımla ve bu döngüyü neyin bitirdiğini açıkla"
+  - "Single-turn LLM ile multi-turn agent arasındaki farkı açıkla"
+  - "Bir agent'ın hangi parçalarının modelin içinde değil, host makinede çalıştığını söyle"
+  - "Düz bir LLM çağrısının gerektirmediği hâlde agent'ların neden bir framework'e ihtiyaç duyduğunu açıkla"
+  - "System prompt'un modele hangi tool'ların var olduğunu nasıl bildirdiğini açıkla"
+---
+
 # AI Agents
 
 Şimdiye kadar anlattığımız her şey bu tanıma doğru ilerliyordu, ama tanım beklediğinden çok daha küçük.

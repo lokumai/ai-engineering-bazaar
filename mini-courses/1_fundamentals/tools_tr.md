@@ -1,3 +1,12 @@
+---
+objectives:
+  - "Modelin bir tool call istemesini ve bu çağrıyı gerçekte kimin çalıştırdığını açıkla"
+  - "Bir tool schema'nın neler içerdiğini ve bu schema'nın nereden geldiğini tarif et"
+  - "Bir tool'un adının ve açıklamasının, o tool'un kullanılıp kullanılmayacağını neden belirlediğini açıkla"
+  - "Tek bir tool call'ı istekten yanıta kadar adım adım izle"
+  - "Daha fazla prompt yazmak yerine tool gerektiren görevleri ayırt et"
+---
+
 # LLM Tool Calling
 
 [LLM Temelleri](llms_tr.md), [Training LLMs](training_tr.md) ve [Retrieval-Augmented Generation (RAG)](rag_tr.md) modüllerinde üç şeyi ele aldık: model nedir, nasıl eğitilir ve kendi verini modelin önüne nasıl koyarsın. Bu üç modülde model hâlâ yalnızca okuyordu, ama bu modülde bir şeyler *yapmaya* başlıyor: bir dosyayı okuyor, bir komut çalıştırıyor ya da bir API'yi çağırıyor.

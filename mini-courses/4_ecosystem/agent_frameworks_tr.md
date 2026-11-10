@@ -1,3 +1,12 @@
+---
+objectives:
+  - "Bir framework'ün, aksi halde elle yazman gereken hangi işleri senin yerine yaptığını anlat"
+  - "LangGraph, LangChain ve deepagents'ı her birinin çalıştığı seviyeye bakarak birbirinden ayırt et"
+  - "Gerçek bir proje için Python ve TypeScript seçenekleri arasında seçim yap"
+  - "AI workflow ile AI agent arasındaki farkı açıkla"
+  - "No-code bir aracın ne zaman doğru tercih olduğunu bil"
+---
+
 # Agent Framework'leri
 
 Buraya kadar olan kısım agent'ların nasıl çalıştığıyla ilgiliydi. Bu modül ise bir agent'ı kurarken gerçekte neyi yüklediğini anlatıyor.

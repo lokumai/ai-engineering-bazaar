@@ -19,7 +19,7 @@ description: >
 authority: state
 writes: agent, every session
 status: active
-covers: "M50 to M97, 2026-11-06 onward, and M41, which part 2 held for PR #57"
+covers: "M50 to M98, 2026-11-06 onward, and M41, which part 2 held for PR #57"
 last_updated: 2026-11-10
 ---
 
@@ -1883,6 +1883,25 @@ What was measured:
 
 One of these first passed and was a weak mutation, not a weak test: editing `id="legal"` in the built
 HTML was undone when the page hydrated, so the same mutation was made in the source and rebuilt.
+
+## 🏁 Milestone M98: Translated objectives on Turkish and Persian pages (D123) — DONE
+
+A manager, on the Turkish site: *"Sağ üstten dili değiştiriyoruz, Türkçe seçiyoruz ama eğitim içeriğinde
+İngilizce yerler var"*; the "what you will learn" card was English on every translated module. The
+author: *"Ok translate the objectives also to each language. And merge in the end as always"*.
+
+- [x] **Support** (one Sonnet agent): a translation file may open with an `objectives`-only
+      frontmatter block, same count and order as the English; any other key, or a different count,
+      fails the build naming the file; a file without one falls back to the English list marked
+      `lang="en"`. The card carries the page's `lang`, and the list alone `dir="rtl"` in Persian.
+- [x] **Content** (seven Haiku xhigh agents, three modules each): 84 lists, the 21 written modules in
+      both tracks, Turkish and Persian. Measured: all 84 parse with the one key, match the English
+      count, and leave the title and body byte-identical.
+- [x] **The mobile bundle keeps its contract**: v1 pins `objectives.lang` to `en`, so every document
+      still carries the English list (`englishObjectives` in `src/lib/bundle/build.ts`); all 149 module
+      documents say `en`. A translated list for the app waits on an additive field agreed with its
+      developer (D123).
+- [x] **Gate:** typecheck, 1,577 unit tests, build, link check, bundle check; the full browser suite in CI.
 
 ---
 

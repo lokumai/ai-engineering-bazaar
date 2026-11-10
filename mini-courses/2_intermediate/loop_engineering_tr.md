@@ -1,3 +1,11 @@
+---
+objectives:
+  - "Loop engineering'in ne olduğunu ve durma koşulunun neden bütün tasarım olduğunu söyle"
+  - "Beş döngü seviyesini birbirinden ayırt et: modelin kendi token döngüsünden (LLM Loop) Autonomous Loop'a kadar"
+  - "Ralph loop'u açıkla ve her döngüde tek bir görev yapmanın neden önemli olduğunu anlat"
+  - "Agent'ın kendi döngüsünü tasarlamasını sağlayan teknikleri ve bunların nerede anlatıldığını bil"
+---
+
 # Loop Engineering
 
 [Harness Engineering](harness_engineering_tr.md) modülünün sonunda agent'ın bir motoru, bir gövdesi ve engellerin olduğu bir pisti vardı. Çizime bir daha bak ve hâlâ sürücü koltuğunda kimin oturduğuna dikkat et.

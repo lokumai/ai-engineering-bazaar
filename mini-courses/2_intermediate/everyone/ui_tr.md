@@ -1,3 +1,10 @@
+---
+objectives:
+  - "Agentic UI'ın ne olduğunu, normal bir uygulamadan ve bir chat kutusundan nasıl farklı olduğunu söyle"
+  - "Bir agent'ın işinin neden sonda tek seferde değil, adım adım gösterildiğini açıkla"
+  - "Code Agents modülündeki evrensel şarj fişi benzetmesiyle AG-UI'ın ne işe yaradığını açıkla"
+---
+
 # Agentic UI
 
 [Loop Engineering](loop_engineering_tr.md) modülü, dakikalarca, saatlerce, bazen günlerce çalışan agent'larla bitti. Yine de biri bu işe bakmak zorunda: agent'ın ne yaptığını görmek, işler ters gittiğinde onu durdurmak ve önemli adımlara onay vermek. Bu modül, tüm bunların olduğu ekranı anlatıyor.

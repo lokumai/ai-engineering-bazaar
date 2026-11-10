@@ -1,3 +1,10 @@
+---
+objectives:
+  - "Yapay zekânın tool'u neden hiçbir zaman kendisi çalıştırmadığını ve bunu kimin yaptığını açıkla"
+  - "Tek bir tool çağrısındaki dört mesajı adlandır ve her birini kimin yazdığını söyle"
+  - "Bir tool'un adının ve açıklamasının, yapay zekânın onu ne kadar iyi kullandığını neden belirlediğini açıkla"
+---
+
 # Tool Calling
 
 [LLM Temelleri](llms_tr.md), [Training LLMs](training_tr.md) ve [RAG & Embeddings](rag_tr.md) modülleri bir modelin ne olduğunu, nasıl öğrendiğini ve kendi dokümanlarını onun önüne nasıl koyacağını anlattı. Bunların hepsinde yapay zekâ yalnızca okuyor ve yazıyordu. Bu modülde ise bir şeyler *yapmaya* başlıyor: internette arama yapıyor, bir dosyayı okuyor, takvimde bir etkinlik oluşturuyor ya da bir e-posta gönderiyor.

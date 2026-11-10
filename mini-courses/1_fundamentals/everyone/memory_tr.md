@@ -1,3 +1,10 @@
+---
+objectives:
+  - "Üç memory türünü adlandır: parametric, working ve long-term"
+  - "Yapay zekânın her mesajda neden tüm sohbeti baştan okuduğunu açıkla"
+  - "Bir cevabın nereden geldiğini yalnızca modelin dışındaki belleğin neden gösterebildiğini açıkla"
+---
+
 # Memory
 
 Agent'lara geçmeden önce, şimdiye kadar anlattığımız her şeyin altında yatan bir fikir var: bir yapay zekâ kendi başına hiçbir şeyi hatırlamaz. Üstelik "hafıza" tek bir şey değil. Üç türü var. Farklı yerlerde duruyorlar ve birbirinden tamamen farklı davranıyorlar.

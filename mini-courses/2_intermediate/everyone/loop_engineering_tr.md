@@ -1,3 +1,10 @@
+---
+objectives:
+  - "Loop engineering'in ortadan kaldırdığı şeyi açıkla: agent'ı yeniden başlatan insanı"
+  - "Durma koşulunun neden en önemli tasarım kararı olduğunu söyle"
+  - "Beş döngü seviyesini say: her seferinde bir kelimeden, günlerce süren gözetimsiz işe kadar"
+---
+
 # Loop Engineering
 
 [Harness Engineering](harness_engineering_tr.md) modülünün sonunda agent'ın bir motoru, bir araba gövdesi ve bariyerli bir pisti vardı. Resme yeniden bak ve direksiyonda hâlâ kimin oturduğuna dikkat et.

@@ -1,3 +1,12 @@
+---
+objectives:
+  - "Agentic UI'ın ne olduğunu söyle ve onun geleneksel bir UI'dan ve chat UI'dan nasıl ayrıldığını açıkla"
+  - "Bir agent run'ının neden sonunda tek parça dönmek yerine event olarak stream edildiğini açıkla"
+  - "Bir run'ın ürettiği başlıca event türlerini say: lifecycle, text, reasoning, tool call, subagent ve state"
+  - "Ortak bir event sözleşmesinin ortadan kaldırdığı coupling sorununu açıkla"
+  - "AG-UI'ı Agent Protocol Stack'te MCP ve A2A'in yanına yerleştir"
+---
+
 # Agentic UI
 
 [Loop Engineering](loop_engineering_tr.md) modülü, dakikalarca, saatlerce, bazen günlerce çalışan agent'larla bitti. Yine de biri bu işe bakmak zorunda: agent'ın ne yaptığını görmek, işler ters gittiğinde onu durdurmak ve önemli adımlara onay vermek. Bu modül, bunların gerçekleştiği arayüzü ve bir agent'ın işini backend'den ekrana taşıyan sözleşmeyi (contract) anlatıyor.

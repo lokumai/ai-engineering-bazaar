@@ -1,3 +1,10 @@
+---
+objectives:
+  - "Inference engine'in ne olduğunu ve bir provider ile arasındaki ilişkiyi açıkla"
+  - "Modeli kendin çalıştırmanın üç nedenini ve ne zaman çalıştırmaman gerektiğini say"
+  - "Batching'i otobüs benzetmesiyle açıkla ve büyük provider'ların token'ı neden ucuza satabildiğini söyle"
+---
+
 # Inference Engine'ler
 
 [Inference Provider'lar](inference_providers_tr.md) modülü, bir şirketten model kiralamayı anlatıyordu. Bu modül ise o şirketlerin çalıştırdığı yazılımı ve senin şirketinin onu ne zaman kendisinin çalıştırabileceğini anlatıyor.

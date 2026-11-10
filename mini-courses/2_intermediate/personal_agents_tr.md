@@ -1,3 +1,12 @@
+---
+objectives:
+  - "Personal agent'ı coding agent'tan farklı kılan şeyi anlat"
+  - "SOUL.md'nin ne olduğunu ve neden asıl önemli dosya olduğunu açıkla"
+  - "OpenClaw ile Hermes Agent'ı birbirinden ayırt et; her birinin hangi durumda uygun olduğunu söyle"
+  - "Moltbook'u anlat ve ne ortaya koyduğunu açıkla"
+  - "Bunlardan birine makinenin tam erişimini vermenin gerçek risklerini say"
+---
+
 # Personal Agent'lar
 
 Şimdiye kadarki her agent bir repository'de yaşadı: onu açıp bir iş verirsin, kodun üzerinde çalışır ve terminali kapattığında da ortadan kaybolur.

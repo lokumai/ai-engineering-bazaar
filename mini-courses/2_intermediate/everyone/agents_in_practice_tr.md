@@ -1,3 +1,10 @@
+---
+objectives:
+  - "Bir agent'la çalışmayı neden onu kullanarak öğrendiğini söyle"
+  - "Önce hangi kursu alacağını ve hangisinin isteğe bağlı olduğunu bil"
+  - "Claude Cowork'ü Claude Duet'ten ayırt et"
+---
+
 # Agent'lar Pratikte
 
 Bir yapay zekâ agent'ı, sana yalnızca cevap veren bir yapay zekâ değildir; senin için iş de yapar. Dosyaları açar, doküman yazar, internette arama yapar ve uygulamalarını kullanır; bir işi bitirene kadar bunları adım adım yapar. Agent'lar hakkında uzun süre okuyabilirsin, ama onları anlamanın en hızlı yolu birine gerçek bir iş verip ne yaptığını izlemektir.

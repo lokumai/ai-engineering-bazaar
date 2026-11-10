@@ -1,3 +1,10 @@
+---
+objectives:
+  - "Üç saldırı türünü birbirinden ayırt et: prompt injection, prompt leaking ve jailbreaking"
+  - "Gizli talimatlar taşıyan bir özgeçmiş örneğiyle indirect prompt injection'ı açıkla"
+  - "Guardrail'leri ve guard model'leri anlat; neden önce kendi sistemine saldırman gerektiğini de söyle"
+---
+
 # Güvenlik
 
 [Loop Engineering](loop_engineering_tr.md) insanı döngünün dışına aldı. Agent'lar artık günlerce, senin dosyalarınla ve hesaplarınla çalışıyor ve her adımı kimse okumuyor. Bu onları işe yarar kıldı, aynı zamanda değerli bir hedef de yaptı. Bu modül onları kandırmaya çalışan insanları ve onların önüne neler koyduğunu anlatıyor.

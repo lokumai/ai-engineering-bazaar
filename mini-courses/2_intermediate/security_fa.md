@@ -1,3 +1,12 @@
+---
+objectives:
+  - "به زبون ساده بگو jailbreaking چیه، و black box با white box چه فرقی دارن"
+  - "prompt injection، prompt leaking و jailbreaking رو از هم تشخیص بده"
+  - "توضیح بده چرا system prompt، با این‌که عمداً اولویتش بالاتره، باز هم می‌شه دورش زد"
+  - "guardrail رو قبل یا بعد از مدل بذار، و اسم کتابخونه‌هایی رو که این کار رو می‌کنن بگو"
+  - "یه ابزار red teaming انتخاب کن، و بدون که agent‌ها الان خودشون کار امنیتی می‌کنن"
+---
+
 # Security
 
 [Loop Engineering](loop_engineering_fa.md) با کنار گذاشتن آدم از چرخه‌ی کار تموم شد. حالا agent چند روز پشت سر هم کار می‌کنه و دیگه تو بهش prompt نمی‌دی؛ این کار رو یه script می‌کنه، و تا وقتی agent داره کار می‌کنه هیچ‌کس خروجیش رو نمی‌خونه. توی همه‌ی این مدت، چیزی که agent رو بین حفاظ‌هاش نگه می‌داره همون چیزهاییه که توی [Harness Engineering](harness_engineering_fa.md) دورش چیدیم.

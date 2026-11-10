@@ -1,3 +1,12 @@
+---
+objectives:
+  - "توضیح بده چرا برای اطلاعاتی که عوض می‌شن، retrieval از fine-tuning بهتره"
+  - "توضیح بده یه متن چطور به embedding تبدیل می‌شه، و نزدیکی دو embedding با cosine similarity چطور سنجیده می‌شه"
+  - "مراحل RAG رو (retrieve-then-generate) از اول تا آخر قدم به قدم توضیح بده"
+  - "Retrieval رو با Recall@k، Precision@k، MRR و nDCG@k بسنج"
+  - "برای یه مسئله‌ی مشخص تصمیم بگیر که RAG می‌خوای یا fine-tuning"
+---
+
 # RAG و Embedding‌ها
 
 توی [مبانی LLM](llms_fa.md) با context window آشنا شدی، همون میز کار مدل که هر چیزی روش می‌ذاری باید جا بشه. توی [Training LLMs](training_fa.md) هم fine-tuning رو دیدی که خود مدل رو تغییر می‌ده. این درس درباره‌ی راه سومه، که اتفاقاً بیشتر از همه سراغش می‌ری.

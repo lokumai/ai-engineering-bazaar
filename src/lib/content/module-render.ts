@@ -112,6 +112,8 @@ export interface ModuleRenderInput {
   /** The planned module's schedule of parts, read out of the body. */
   parts: string[]
   objectives: readonly string[]
+  /** The language `objectives` are in: the page's own where the translation file declares them, else `en`. */
+  objectivesLang: ReadingLang
   /** `graph.requires(number)`, a number no module answers to dropped. */
   prerequisites: RenderRef[]
   previous: RenderRef | null
@@ -174,6 +176,7 @@ export async function moduleRenderInput(
     summary: drawn ? null : sheet.frontmatter.summary ?? summarySentence(sheet.body),
     parts: scheduleOfParts(sheet.body),
     objectives: sheet.frontmatter.objectives,
+    objectivesLang: sheet.objectivesLang,
     prerequisites,
     previous: previous ? refFor(previous, localise) : null,
     next: next ? refFor(next, localise) : null,

@@ -1371,6 +1371,16 @@
     padding-left: 20px;
   }
 
+  /* A card's list in a right-to-left language carries its own `dir` (the card is
+     the interface's and is never mirrored), so the prose's `[dir="rtl"] ul` rule,
+     which wants an ancestor, does not reach it. 22px, not the 20px above: on a
+     module page `.bz-prose :is(ul, ol)` wins over `.bz-card ul` and an LTR card
+     list renders at 22px (measured), so this mirrors what the reader sees. */
+  .bz-card-list[dir="rtl"] {
+    padding-left: 0;
+    padding-right: 22px;
+  }
+
   /* M18 — `list-style: disc`, because Tailwind's preflight removes it from every
      list in the document and this is the list the author named: `What you will
      be able to do` was a run of indented sentences that looked like a paragraph

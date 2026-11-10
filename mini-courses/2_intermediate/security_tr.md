@@ -1,3 +1,12 @@
+---
+objectives:
+  - "Jailbreaking'in ne olduğunu sade bir dille anlat; black box ile white box'ın nasıl ayrıldığını söyle"
+  - "Prompt injection, prompt leaking ve jailbreaking'i birbirinden ayırt et"
+  - "System prompt'un tasarım gereği öncelikli olmasına rağmen neden geçersiz kılınabildiğini açıkla"
+  - "Guardrail'i modelin önüne ya da arkasına yerleştir ve bunu yapan kütüphanelerin adlarını say"
+  - "Bir red teaming aracı seç ve agent'ların artık güvenlik işini kendilerinin yaptığını bil"
+---
+
 # Security
 
 [Loop Engineering](loop_engineering_tr.md) modülü, insanı döngünün dışına çıkararak bitiyordu. Artık agent günlerce kesintisiz çalışabiliyor ve ona artık sen prompt vermiyorsun. Bunu bir script yapıyor, script çalışırken de çıktısını kimse okumuyor. Bütün bunlar sürerken agent'ı kendi sınırları içinde tutan şey, [Harness Engineering](harness_engineering_tr.md) modülünde anlatılan kurulumdur (wiring).

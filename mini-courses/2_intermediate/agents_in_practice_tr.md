@@ -1,3 +1,10 @@
+---
+objectives:
+  - "Bir agent hakkında okumanın öğretemediğini, gerçek bir agent'la pratik yapmanın neden öğrettiğini söyle"
+  - "Dört Claude Academy kursunu adlarıyla say ve bunları hangi sırayla alman gerektiğini söyle"
+  - "Claude Cowork'ü Claude Code'dan ve Claude Duet'ten ayırt et"
+---
+
 # Agent'lar Pratikte
 
 [Code Agent'lar](coding_agents_tr.md) modülünde bir coding agent'ı parçalarına ayırdık: AGENTS.md, slash command'lar, MCP, subagent'lar, skill'ler, hook'lar ve plugin'ler. Artık her parçanın ne işe yaradığını biliyorsun. Bu modül ise onları kullanmakla ilgili. Bunu öğrenmenin en iyi yolu, gerçek aracı önünde açıkken işi kendi elinle yaptığın kısa bir kurs.

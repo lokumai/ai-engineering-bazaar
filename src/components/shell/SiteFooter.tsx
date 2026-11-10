@@ -2,7 +2,15 @@ import Link from 'next/link'
 import { Fragment } from 'react'
 import { categoryLabels } from '@/lib/content/chrome'
 import { ABOUT_ROUTE } from '@/lib/route-labels'
-import { AFFILIATION, LICENCE_LABEL, LICENCE_URL, REPO_URL } from '@/lib/site'
+import {
+  AFFILIATION,
+  LEGAL_ROUTE,
+  LICENCE_LABEL,
+  LICENCE_URL,
+  PRIVACY_ROUTE,
+  REPO_URL,
+  SITE_OWNER,
+} from '@/lib/site'
 import { SheetLabel } from './SheetLabel'
 
 /** The file's last-touching commit — never repo HEAD (spec §5.2, §11.26). */
@@ -28,7 +36,8 @@ export interface SiteFooterProps {
 }
 
 /**
- * Site footer (spec §5.2). Two rows, 72px total, one hairline top rule.
+ * Site footer (spec §5.2). Two rows, 72px total, one hairline top rule; and since M94 a third,
+ * the site owner's row, which is as tall as its text needs.
  *
  * Costume budget (§4.3): the sheet / revision / readout line and nothing else.
  * No stamps, no registration marks, no gauges.
@@ -131,6 +140,39 @@ export function SiteFooter({ sheet, revision, readout }: SiteFooterProps) {
             </Fragment>
           ))}
         </div>
+
+        {/* M94, D118 — row 3, who owns the site and how to reach them. Law 5651 asks a content
+            provider to be identifiable on the site itself, and the footer is the one place every
+            route carries. The facts are `SITE_OWNER`'s, written once with their sources; the
+            registered name is printed whole because a shortened name is not the registered one.
+            An `<address>` because it is contact information for the page's owner, and `not-italic`
+            because the element's default is an emphasis nothing here means.
+
+            Two groups, the owner on the left and the way to reach them on the right, so that a
+            narrow width wraps BETWEEN the groups and never leaves a separator dot at the end of a
+            line. A 73-character name and an address do not fit across 342px, so the row takes
+            more lines rather than pushing the document sideways (§4.7); `py-2` and not a fixed
+            height, for the same reason. The details live on `/legend/`: the footer
+            names, the page explains. */}
+        <address className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1 py-2 text-meta not-italic text-on-surface-muted">
+          <div className="flex flex-col">
+            <span>{SITE_OWNER.tradeName}</span>
+            <span>{SITE_OWNER.address}</span>
+          </div>
+          <div className="flex flex-wrap items-center gap-x-3">
+            <a className="bz-link" href={`mailto:${SITE_OWNER.email}`}>
+              {SITE_OWNER.email}
+            </a>
+            <Dot />
+            <Link className="bz-link" href={PRIVACY_ROUTE}>
+              Privacy
+            </Link>
+            <Dot />
+            <Link className="bz-link" href={LEGAL_ROUTE}>
+              Legal
+            </Link>
+          </div>
+        </address>
       </div>
     </footer>
   )

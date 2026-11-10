@@ -267,7 +267,7 @@ categories:
         status: draft
         notes: >-
           generative UI (the agent producing the interface itself), shared
-          state, human in the loop, agentic GenUI, A2UI, MCP Apps, OpenUI,
+          state, steering a run mid-way, agentic GenUI, A2UI, MCP Apps, OpenUI,
           json-render, CopilotKit, Agent Client Protocol ACP, TUI for agents
       - name: advanced_deployment
         title: Advanced Deployment

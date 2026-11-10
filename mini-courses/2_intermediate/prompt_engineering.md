@@ -360,6 +360,12 @@ When ChatGPT or an agent shows you that it is "thinking", that is chain of thoug
 happen because someone typed *let us think step by step*. It happens because the model was trained
 to reason before it answers. It always does this, whether you asked or not.
 
+Some chat screens show this reasoning as the model writes it. In the recording below, the prompt asks
+for a step by step explanation.
+
+![A model's reasoning, streamed](./images/reasoning-stream.webp)  
+*The reasoning appears first, under "Thinking...", before any of the answer. When the answer starts, the reasoning folds into "Thought for a few seconds".*
+
 How much the model thinks is now a dial, not a prompt. This is what people mean when they talk
 about running a model on high thinking, or low effort, or max effort. Anthropic's [effort
 parameter](https://platform.claude.com/docs/en/build-with-claude/effort) takes `low`, `medium`,

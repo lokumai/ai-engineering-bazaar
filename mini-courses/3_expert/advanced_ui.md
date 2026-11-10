@@ -7,7 +7,7 @@ Everything in agentic UI beyond streaming: the human steering the agent mid-run,
 **Topics this module will cover**:
 - Generative UI: the agent producing the interface itself, not only the text inside it, and the ways to do it, each with its trade-offs
 - Shared state: the screen and the agent reading and writing the same application state
-- Human in the loop: the agent pausing for approval, steering a run mid-way
+- Steering: the human redirecting a run while the agent works
 - Agentic generative UI: interface generated while the agent runs
 - A2UI
 - MCP Apps
@@ -21,7 +21,7 @@ Everything in agentic UI beyond streaming: the human steering the agent mid-run,
 - [What is agentic UI?](https://www.copilotkit.ai/learning/what-is-agentic-ui): the concept on its own, before any framework
 - [Generative UI](https://www.copilotkit.ai/generative-ui): an interface the agent produces rather than one written in advance, and the ways to build it
 - [Generative UI: A rich, custom, visual interactive user experience for any prompt](https://research.google/blog/generative-ui-a-rich-custom-visual-interactive-user-experience-for-any-prompt/): Google Research on a model that generates a whole interface for a prompt
-- [AG-UI Protocol](https://www.copilotkit.ai/ag-ui) and the [CopilotKit Interactive Dojo](https://dojo.ag-ui.com/): the protocol beyond streaming, and live demos of shared state, human in the loop and generative UI
+- [AG-UI Protocol](https://www.copilotkit.ai/ag-ui) and the [CopilotKit Interactive Dojo](https://dojo.ag-ui.com/): the protocol beyond streaming, and live demos of shared state and generative UI
 - [A2UI: Get Started in 5 Minutes](https://a2ui.org/#get-started-in-5-minutes) and [How Agents Work](https://a2ui.org/reference/agents/#how-agents-work): the protocol, from the shortest way in to the agent side of it
 - [AGenUI](https://github.com/AGenUI/AGenUI): a native A2UI renderer for iOS, Android and HarmonyOS, so the protocol reaches a phone instead of a browser
 - [AG-UI: State Management](https://docs.ag-ui.com/concepts/state): how the agent's state and the front end stay in step

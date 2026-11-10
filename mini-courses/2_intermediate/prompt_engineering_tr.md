@@ -288,6 +288,11 @@ Bu kursun yazarı, bir dizi bulmaca üzerinde iki yaklaşımı yan yana izleyebi
 
 ChatGPT ya da bir agent "düşünüyor" gösterdiğinde bu chain of thought'tur. Bu, birinin *let us think step by step* yazmasından değil, modelin cevap vermeden önce akıl yürütmek üzere eğitilmiş olmasından kaynaklanır. Sen istesen de istemesen de model her zaman böyle yapar.
 
+Bazı chat ekranları bu akıl yürütmeyi model yazarken gösterir. Aşağıdaki kayıtta prompt, adım adım bir açıklama istiyor.
+
+![Stream Edilen Bir Modelin Akıl Yürütmesi](./images/reasoning-stream.webp)  
+*Akıl yürütme, cevabın herhangi bir parçasından önce, "Thinking..." başlığının altında görünür. Cevap başlayınca akıl yürütme "Thought for a few seconds" satırına katlanır.*
+
 Modelin ne kadar düşüneceği artık bir prompt değil, bir kadran. İnsanlar bir modeli high thinking, low effort ya da max effort ile çalıştırmaktan bahsettiğinde bu kadranı kastediyorlar. Anthropic'in [effort parameter](https://platform.claude.com/docs/en/build-with-claude/effort)'ı `low`, `medium`, `high`, `xhigh` ve `max` değerlerini alıyor. Diğer sağlayıcıların da aynı düğmenin kendi sürümleri var. Daha fazla düşünmek, zor problemlerde daha iyi cevaplar demek. Ama aynı zamanda daha fazla maliyet, daha yavaş cevaplar ve daha hızlı dolan bir context window demek.
 
 > **NOT, daha fazla düşünmek her zaman daha iyi değil.** Tıpkı insanlar gibi, modeller de aşırı düşünebilir ve bunu yaptıklarında performansları düşer. Bu konu iyi belgelenmiş:

@@ -9,7 +9,7 @@ description: >
 authority: reasoning
 writes: agent, when a decision is taken
 status: active
-covers: "D97 to D124 so far, and D89, which part 2 held for PR #57 — 2026-11-06 onward"
+covers: "D97 to D125 so far, and D89, which part 2 held for PR #57 — 2026-11-06 onward"
 last_updated: 2026-11-10
 ---
 
@@ -912,6 +912,31 @@ module, the gap a manager reported on the site in M98.
   `objectives` with `lang: 'en'` kept (a document that lies about its language); an optional field
   absent when empty (the only optional-by-absence key in a module document would be this one);
   translating `summary` as well (it feeds the English catalog, D113, D123).
+
+### D125 · The bundle carries the About page's story, `api/v1/story/en.json` — 2026-11-10
+status: active
+
+The mobile reader's developer asked for it in the same pull request as D124: the app shows the story of
+the Bazaar to a reader on the first launch, in place of its own guide, and in its Settings, and its words
+must be the author's, not a copy in the app's code that drifts when STORY.md changes (D111: the content is
+the same, the design may differ).
+
+- **One document, the page's own reading.** `buildStoryDoc` returns what `loadStory` returns to the About
+  page (D115): the `#` title, one stall per `##` section with its paragraphs, and the motto split into its
+  sentences, as plain strings. So the page and the app cannot disagree about a word, and STORY.md's
+  rules (no `###`, the `Our motto:` line) hold for both.
+- **Per language in its path, English only today.** The document is `api/v1/story/en.json` and the
+  index's `story` maps a language to its document, `{ en: ... }`, so a Turkish or Persian story is a new
+  key and a new file, additive in v1, the day the author writes one. `files` lists it with its hash like
+  every other document, so the reader fetches and checks it as it does a module.
+- **Additive, so v1** (ARCHITECTURE §13): a new document and a new index field; the released app ignores
+  both.
+- **Not the scenes.** The five scenes are the page's art, drawn in its code (D115); the app draws its own
+  pictures for the stalls, so nothing of them is in the bundle.
+- **Rejected:** a `story.json` with no language in the path (a translation would need a second naming
+  rule); the text as `inlines` (STORY.md's reader drops its marks to text, so inlines would carry
+  nothing more and would let the two drift); an optional `story` field absent when no story exists (the
+  build already fails without STORY.md, and the index's fields are always present).
 
 ---
 

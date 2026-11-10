@@ -2,7 +2,7 @@
 
 *(Bu bir placeholder modül: şimdilik kısa bir özet; tam ders içeriği yakında geliyor.)*
 
-Agentic UI'da streaming'in ötesindeki her şey: insanın agent'ı çalışırken yönlendirmesi, ekran ile agent arasında paylaşılan state ve agent'ın kendisinin ürettiği arayüz. Temeli, yani bir run'ı event'ler olarak stream etmeyi ve AG-UI'ı, Agentic UI modülü anlattı.
+Agentic UI'da streaming'in ve human in the loop'un ötesindeki her şey: insanın agent'ı çalışırken yönlendirmesi, ekran ile agent arasında paylaşılan state ve agent'ın kendisinin ürettiği arayüz. Temeli, yani bir run'ı event'ler olarak stream etmeyi, AG-UI'ı ve human in the loop'u, Agentic UI modülü anlattı.
 
 **Bu modülde işlenecek konular**:
 - Generative UI: agent'ın yalnızca içindeki metni değil arayüzün kendisini üretmesi, bunu yapmanın yolları ve her birinin artıları ile eksileri

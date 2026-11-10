@@ -131,9 +131,9 @@ Bir agent'ı izlemek faydalıdır. O harekete geçmeden önce "evet" ya da "hay�
 
 Senin için bir e-posta yazan yeni bir asistan düşün. İyi bir asistan onu hemen göndermez. Sana gösterir; sen onaylarsın, değiştirirsin ya da hayır dersin. Sonra devam eder. Bir agent de aynı şekilde çalışabilir. Rutin adımları kendi başına yapar. Bir e-posta göndermek, bir kaydı değiştirmek ya da bir şey için ödeme yapmak gibi önemli bir adımda ise durur ve seni bekler.
 
-Bu, en çok bir adımın gerçek sonuçları olduğunda önemlidir. Adımı çalışmadan önce görürsen onu durdurabilir ya da düzeltebilirsin. Böylece hata henüz ucuzken yakalanır; ekranın adımları göstermesinin sebebi de aynıdır.
+Bu, en çok bir adımın gerçek sonuçları olduğunda önemlidir. Adımı çalışmadan önce görürsen onu durdurabilir ya da düzeltebilirsin. Erken yakalanan bir hata daha az maliyetlidir. Ekranın adımları göstermesinin sebebi de budur.
 
-Ekranda bu şöyle işler. Agent durur. Ekran, agent'ın ne yapmak istediğini gösterir; yanında onaylamak, reddetmek ya da bir seçeneği seçmek için düğmeler vardır. Cevabın agent'a geri gider ve agent oradan devam eder. AG-UI bunu yapmanın standart bir yolunu tanımlıyor; böylece her ekran, her agent'ın sorusunu gösterebilir.
+Ekranda bu şöyle işler. Agent durur. Ekran, agent'ın ne yapmak istediğini gösterir; yanında onaylamak, reddetmek ya da bir seçeneği seçmek için düğmeler vardır. Cevabın agent'a geri gider ve agent oradan devam eder. AG-UI bunu yapmanın standart bir yolunu tanımlıyor; böylece her ekran en azından mesajın metnini gösterebilir.
 
 ![Cevabın İçin Duran Bir Yapay Zekâ](../images/human-in-the-loop.webp)  
 *Yapay zekâ bir toplantı için saatler önerir ve durur. Sen birini seçtikten sonra randevuyu oluşturur. İkinci denemede kişi "None of these work" seçiyor ve yapay zekâ randevuyu oluşturamadığını söylüyor.*

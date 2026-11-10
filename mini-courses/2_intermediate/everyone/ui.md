@@ -173,13 +173,13 @@ in the same way. It does the routine steps by itself. At a step that matters, su
 email, changing a record or paying for something, it stops and waits for you.
 
 This matters most when a step has real consequences. If you see the step before it runs, you can
-stop it or fix it. So a mistake is caught while it is still cheap, which is the same reason that
-the screen shows the steps.
+stop it or fix it. A mistake caught early costs less. That is also why the screen shows the
+steps.
 
 On the screen, it works like this. The agent stops. The screen shows what the agent wants to do,
 with buttons to approve it, to reject it, or to pick one option. Your answer goes back to the
 agent, and the agent continues from there. AG-UI has a standard way to do this, so any screen can
-show the question from any agent.
+at least show the message text.
 
 ![An AI that stops for your answer](../images/human-in-the-loop.webp)  
 *The AI offers times for a meeting and stops. It books only after you pick one. In the second try, the person picks "None of these work", and the AI says that it could not book.*

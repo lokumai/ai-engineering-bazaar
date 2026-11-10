@@ -124,8 +124,8 @@ questions:
     fa:
       question: "توی AG-UI وقتی agent به جواب یه آدم نیاز داره، run چطوری متوقف می‌شه؟"
       options:
-        - "با یه event از نوع RunError تموم می‌شه و آدم باید از اول شروع کنه"
+        - "با یه RunError تموم می‌شه و آدم باید از اول شروع کنه"
         - "run باز می‌مونه و تا رسیدن جواب مدام text event می‌فرسته"
-        - "با یه event از نوع RunFinished تموم می‌شه که outcome‌اش interrupt هست"
+        - "با RunFinished تموم می‌شه که outcome‌اش interrupt هست"
         - "thread پاک می‌شه و با جواب، یه thread تازه شروع می‌شه"
       explain: "run با outcome از نوع interrupt تموم می‌شه. run بعدی، روی همون thread، جواب آدم رو توی لیست resume می‌بره."

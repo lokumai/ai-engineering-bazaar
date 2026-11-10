@@ -227,7 +227,7 @@ tool call, shown as a card. [Agentic UI](../2_intermediate/ui.md) explains how t
 these steps.
 
 ![Tool calls shown as cards](./images/tool-call-cards.webp)  
-*Each `get_stock_price` call is a card with the arguments the model wrote (the ticker) and the result the host returned. The model writes its answer after both results are in. Recorded from the "Generative UI: Tool calls + reasoning" demo in CopilotKit's AG-UI Dojo.*
+*Each `get_stock_price` call is a card with the arguments the model wrote (the ticker) and the result the host returned. There is one card for each ticker. Recorded from the "Generative UI: Tool calls + reasoning" demo in CopilotKit's AG-UI Dojo.*
 
 ## Example Tools
 

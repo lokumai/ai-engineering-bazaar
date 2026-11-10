@@ -288,7 +288,7 @@ Bu kursun yazarı, bir dizi bulmaca üzerinde iki yaklaşımı yan yana izleyebi
 
 ChatGPT ya da bir agent "düşünüyor" gösterdiğinde bu chain of thought'tur. Bu, birinin *let us think step by step* yazmasından değil, modelin cevap vermeden önce akıl yürütmek üzere eğitilmiş olmasından kaynaklanır. Sen istesen de istemesen de model her zaman böyle yapar.
 
-Bazı chat ekranları bu akıl yürütmeyi model yazarken gösterir. Aşağıdaki kayıtta prompt, adım adım bir açıklama istiyor.
+Bazı chat ekranları bu akıl yürütmeyi model yazarken gösterir. Aşağıdaki kayıtta prompt, modelden gökyüzünün gündüz neden mavi, gün batımında neden kırmızı göründüğünü açıklamasını istiyor.
 
 ![Stream Edilen Bir Modelin Akıl Yürütmesi](./images/reasoning-stream.webp)  
 *Akıl yürütme, cevabın herhangi bir parçasından önce, "Thinking..." başlığının altında görünür. Cevap başlayınca akıl yürütme "Thought for a few seconds" satırına katlanır.*

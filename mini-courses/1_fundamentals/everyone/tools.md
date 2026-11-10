@@ -129,7 +129,7 @@ Some chat screens show these steps as they happen. In this recording, each stock
 a card, so you can see what the AI asked for and what came back.
 
 ![Tool calls shown as cards](../images/tool-call-cards.webp)  
-*Each card is one tool use: what the AI asked for (a stock) and what the tool answered. The AI writes its reply only after both cards are done. Recorded from a demo in CopilotKit's AG-UI Dojo.*
+*Each card is one tool use: what the AI asked for (a stock) and what the tool answered. There is one card for each stock. Recorded from a demo in CopilotKit's AG-UI Dojo.*
 
 ## Example Tools
 

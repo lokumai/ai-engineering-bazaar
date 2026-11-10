@@ -361,7 +361,7 @@ happen because someone typed *let us think step by step*. It happens because the
 to reason before it answers. It always does this, whether you asked or not.
 
 Some chat screens show this reasoning as the model writes it. In the recording below, the prompt asks
-for a step by step explanation.
+the model to explain why the sky looks blue by day and red at sunset.
 
 ![A model's reasoning, streamed](./images/reasoning-stream.webp)  
 *The reasoning appears first, under "Thinking...", before any of the answer. When the answer starts, the reasoning folds into "Thought for a few seconds".*

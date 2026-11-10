@@ -2,7 +2,7 @@
 
 *(Placeholder module: a short overview for now; full lesson content is coming soon.)*
 
-Everything in agentic UI beyond streaming: the human steering the agent mid-run, state shared between the screen and the agent, and interface the agent generates itself. The Agentic UI module covered the base: streaming a run as events, and AG-UI.
+Everything in agentic UI beyond streaming and human in the loop: the human steering the agent mid-run, state shared between the screen and the agent, and interface the agent generates itself. The Agentic UI module covered the base: streaming a run as events, AG-UI, and human in the loop.
 
 **Topics this module will cover**:
 - Generative UI: the agent producing the interface itself, not only the text inside it, and the ways to do it, each with its trade-offs

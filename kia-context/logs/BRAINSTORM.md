@@ -955,7 +955,8 @@ summary and in the For Everyone version and both translations of each.
   now Agentic UI's and the steering stays as its own item. That split is the reading of this decision:
   a pause the agent asks for is a basic topic, a redirect the user starts is not yet taught.
 - **Stable pages only.** AG-UI documents the pause as an `interrupt` outcome of `RunFinished` and a
-  `resume` list on the next run; the 1.0 spec carries the same pattern. The section names only the
+  `resume` list on the next run; the 1.0 spec describes the same pattern on its "Interrupts and Resume"
+  page (`docs.ag-ui.com/spec/1.0/basic/patterns/interrupt-resume`). The section names only the
   fields and events those pages name.
 - **Rejected:** keeping a one-line mention in "Beyond Streaming" (a topic cannot be both taught and
   deferred); a new module for it (the author asked for a section of the module that already owns the

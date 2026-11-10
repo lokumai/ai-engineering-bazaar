@@ -274,7 +274,7 @@ categories:
         status: draft
         notes: >-
           agent server, langchain agent protocol, the tech stack for UI REDIS
-          WORKER etc, Human-in-the-Lopp (Interrupt, Steering), Runtime
+          WORKER etc, Steering, Runtime
           (Checkpoints, Fault Tolerance, Time Travel)
       - name: advanced_agent_servers
         title: Advanced Agent Servers

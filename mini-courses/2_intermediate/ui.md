@@ -211,18 +211,18 @@ and waits. A person approves the step, changes it, or chooses between options. T
 continues from that answer. The agent still does the routine steps by itself, so the person only
 decides where a decision is needed.
 
-This matters most for steps with real consequences. LangGraph's documentation names API calls,
-database changes and financial transactions as the steps to pause before. A person who sees the
-step before it runs can reject it or fix it. So a mistake is caught while it is still cheap, which
-is the same reason that streaming shows the steps.
+This matters most for steps with real consequences. LangGraph's [Interrupts](https://docs.langchain.com/oss/python/langgraph/interrupts) page gives
+API calls, database changes and financial transactions as examples of critical actions to pause
+before. A person who sees the step before it runs can reject it or fix it. A mistake caught early
+costs less. That is also why the screen shows the steps.
 
 An agentic UI does this in four steps. AG-UI calls the pause an **interrupt**, and its
 [Interrupts](https://docs.ag-ui.com/concepts/interrupts) page describes the steps:
 
 1. **The run stops.** The run ends with a `RunFinished` event, and the `outcome` of that event has
-   the type `interrupt`. It lists one or more interrupts. Each one has an `id`, a `reason`, and a
-   `message` written for the person.
-2. **The screen shows the pending step.** It draws the message, and the controls for the answer:
+   the type `interrupt`. It lists one or more interrupts. Each one has an `id` and a `reason`, and
+   usually a `message` written for the person.
+2. **The screen shows the pending step.** It draws the message, when there is one, and the controls for the answer:
    approve and reject buttons, or a list of choices.
 3. **The answer goes back.** The front end starts a new run on the same thread. This run carries a
    `resume` list with one entry for each interrupt. An entry has the `interruptId`, a `status` of
@@ -230,7 +230,7 @@ An agentic UI does this in four steps. AG-UI calls the pause an **interrupt**, a
 4. **The run continues.** The agent reads the answer and goes on from there.
 
 ![An agent that stops for a person's answer](./images/human-in-the-loop.webp)  
-*The agent proposes a booking and stops. The time buttons turn active only when it waits, and the run continues from the click. In the second run, "None of these work" ends the booking.*
+*The agent proposes a booking and stops. The time buttons appear while it waits, and the run continues from the click. In the second run, "None of these work" ends the booking.*
 
 AG-UI also has a simpler way, which its [Tools](https://docs.ag-ui.com/concepts/tools) page
 describes. The agent calls a tool that the front end owns, for example `confirmAction`. The front
@@ -239,9 +239,8 @@ that tool call.
 
 Agent frameworks have the same mechanism inside the agent. In LangGraph, calling `interrupt`
 suspends the graph at that point. LangGraph saves the state of the graph with a checkpointer. Then
-the graph waits, with no time limit. It continues when you call it again with
-`Command(resume=...)`, and the value that you pass in becomes the return value of the `interrupt`
-call.
+the graph waits, with no time limit. Call it again with `Command(resume=...)` to continue. The
+value you pass in becomes the return value of the `interrupt` call.
 
 ## Beyond Streaming
 
@@ -263,7 +262,7 @@ them, and the Expert module [Advanced Agentic UI](../3_expert/advanced_ui.md) wi
 - **AG-UI**: the Agent–User Interaction Protocol, one shared set of events that connects an agent to user-facing applications.
 - **A2A**: the protocol from Google that connects an agent to other agents.
 - **Human in the loop**: the agent stops at a step that matters and waits for a person to approve, change or choose before it continues.
-- **Interrupt**: in AG-UI, a run that ends with the outcome `interrupt`, so that a person can answer. The next run carries the answer in its `resume` list.
+- **Interrupt**: in AG-UI, a pause listed in a run's `interrupt` outcome, which a person answers and the next run carries back in its `resume` list.
 - **Shared state**: the screen and the agent read and write the same application state.
 - **Generative UI**: an interface that the agent generates itself, shown next to components that a developer built.
 

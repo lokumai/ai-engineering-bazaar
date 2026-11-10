@@ -101,7 +101,7 @@ Kullanacağın her AI agent'ı bu adımları tekrar tekrar uygular.
 Bazı chat ekranları bu adımları olurken gösterir. Bu kayıtta her hisse sorgusu bir kart olarak görünüyor; böylece yapay zekânın ne istediğini ve ne cevap geldiğini görebiliyorsun.
 
 ![Kart Olarak Gösterilen Tool Çağrıları](../images/tool-call-cards.webp)  
-*Her kart tek bir tool kullanımı: yapay zekânın ne istediği (bir hisse) ve tool'un ne cevap verdiği. Yapay zekâ cevabını, iki kart da bitince yazıyor. CopilotKit'in AG-UI Dojo'sundaki bir demodan kaydedildi.*
+*Her kart tek bir tool kullanımı: yapay zekânın ne istediği (bir hisse) ve tool'un ne cevap verdiği. Her hisse için bir kart var. CopilotKit'in AG-UI Dojo'sundaki bir demodan kaydedildi.*
 
 ## Örnek Tool'lar
 

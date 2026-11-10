@@ -154,21 +154,21 @@ Streaming, bir insanın agent'ı izlemesini sağlar. **Human in the loop** ise k
 
 Tek başına çalışan bir agent, bazen önemli bir adıma gelir: bir e-posta göndermek, bir veritabanını değiştirmek ya da bir şey için ödeme yapmak gibi. Human in the loop ile agent o adımda durur ve bekler. Bir insan adımı onaylar, değiştirir ya da seçeneklerden birini seçer. Sonra agent bu cevaptan devam eder. Agent rutin adımları yine kendi başına yapar; yani insan yalnızca karar gereken yerde karar verir.
 
-Bu en çok sonuçları gerçek olan adımlarda önemlidir. LangGraph'in dokümantasyonu, durulması gereken adımlar olarak API çağrılarını, veritabanı değişikliklerini ve finansal işlemleri sayıyor. Adımı çalışmadan önce gören bir insan onu reddedebilir ya da düzeltebilir. Böylece hata henüz ucuzken yakalanır. Streaming'in adımları göstermesinin sebebi de aynıdır.
+Bu en çok sonuçları gerçek olan adımlarda önemlidir. LangGraph'in [Interrupts](https://docs.langchain.com/oss/python/langgraph/interrupts) sayfası, duraklatılması gereken kritik işlemlere örnek olarak API çağrılarını, veritabanı değişikliklerini ve finansal işlemleri veriyor. Adımı çalışmadan önce gören bir insan onu reddedebilir ya da düzeltebilir. Erken yakalanan bir hata daha az maliyetlidir. Ekranın adımları göstermesinin sebebi de budur.
 
 Bir agentic UI bunu dört adımda yapar. AG-UI bu duraklamaya **interrupt** diyor ve adımları [Interrupts](https://docs.ag-ui.com/concepts/interrupts) sayfasında anlatıyor:
 
-1. **Run durur.** Run, bir `RunFinished` event'iyle biter ve bu event'in `outcome` alanının tipi `interrupt` olur. Alan bir ya da daha fazla interrupt listeler. Her birinin bir `id`'si, bir `reason`'ı ve insan için yazılmış bir `message`'ı vardır.
-2. **Ekran bekleyen adımı gösterir.** Mesajı ve cevap için gereken kontrolleri çizer: onayla ve reddet düğmeleri ya da bir seçenek listesi.
+1. **Run durur.** Run, bir `RunFinished` event'iyle biter ve bu event'in `outcome` alanının tipi `interrupt` olur. Alan bir ya da daha fazla interrupt listeler. Her birinin bir `id`'si ve bir `reason`'ı, çoğunlukla da insan için yazılmış bir `message`'ı vardır.
+2. **Ekran bekleyen adımı gösterir.** Varsa mesajı ve cevap için gereken kontrolleri çizer: onayla ve reddet düğmeleri ya da bir seçenek listesi.
 3. **Cevap geri gider.** Front end, aynı thread üzerinde yeni bir run başlatır. Bu run, her interrupt için bir girdi içeren bir `resume` listesi taşır. Bir girdide `interruptId`, `resolved` ya da `cancelled` olan bir `status` ve cevabın kendisi, yani `payload` bulunur.
 4. **Run devam eder.** Agent cevabı okur ve oradan yoluna devam eder.
 
 ![Bir İnsanın Cevabı İçin Duran Agent](./images/human-in-the-loop.webp)  
-*Agent bir randevu önerir ve durur. Saat düğmeleri yalnızca agent beklerken aktif olur ve run, tıklamadan devam eder. İkinci run'da "None of these work" randevuyu sonlandırır.*
+*Agent bir randevu önerir ve durur. Saat düğmeleri agent beklerken görünür ve run, tıklamadan devam eder. İkinci run'da "None of these work" randevuyu sonlandırır.*
 
 AG-UI'ın daha basit bir yolu da var; [Tools](https://docs.ag-ui.com/concepts/tools) sayfası bunu anlatıyor. Agent, front end'in sahip olduğu bir tool'u çağırır; örneğin `confirmAction`. Front end bir onay penceresi gösterir ve insanın kararı, o tool call'un sonucu olarak agent'a geri gider.
 
-Agent framework'lerinde de aynı mekanizma agent'ın içinde var. LangGraph'te `interrupt` çağırmak graph'ı o noktada askıya alır. LangGraph, graph'ın state'ini bir checkpointer ile kaydeder. Sonra graph süresiz bekler. Onu `Command(resume=...)` ile tekrar çağırdığında devam eder ve verdiğin değer, `interrupt` çağrısının dönüş değeri olur.
+Agent framework'lerinde de aynı mekanizma agent'ın içinde var. LangGraph'te `interrupt` çağırmak graph'ı o noktada askıya alır. LangGraph, graph'ın state'ini bir checkpointer ile kaydeder. Sonra graph süresiz bekler. Devam etmesi için onu `Command(resume=...)` ile tekrar çağır. Verdiğin değer, `interrupt` çağrısının dönüş değeri olur.
 
 ## Streaming'in Ötesi
 
@@ -189,7 +189,7 @@ Streaming ve human in the loop temeldir. Agentic UI tanımının geri kalanı bu
 - **AG-UI**: Agent–User Interaction Protocol; agent'ı kullanıcıya dönük uygulamalara bağlayan, ortak tek bir event kümesi.
 - **A2A**: agent'ı diğer agent'lara bağlayan protocol; Google'dan.
 - **Human in the loop**: agent önemli bir adımda durur ve devam etmeden önce bir insanın onaylamasını, değiştirmesini ya da seçmesini bekler.
-- **Interrupt**: AG-UI'da, bir insanın cevap verebilmesi için outcome'u `interrupt` olarak biten bir run. Sonraki run cevabı `resume` listesinde taşır.
+- **Interrupt**: AG-UI'da, bir run'ın `interrupt` outcome'unda listelenen ve bir insanın cevapladığı duraklama; sonraki run cevabı `resume` listesinde geri taşır.
 - **Shared state**: ekranın ve agent'ın aynı uygulama state'ini okuyup yazması.
 - **Generative UI**: agent'ın kendisinin ürettiği arayüz; geliştiricinin yazdığı bileşenlerin yanında gösterilir.
 

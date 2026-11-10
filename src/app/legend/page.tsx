@@ -223,13 +223,13 @@ export default function LegendPage() {
             company is meant, and they do not mean that the company endorses this site.
           </p>
           <p>
-            Some images come from articles and other public sources. They belong to their owners and are shown
-            to explain the point next to them. If you own a mark or an image shown here and want it credited or
-            removed, write to{' '}
+            Some images come from articles and other public sources, and we are sincerely grateful to their
+            authors. They remain the property of their owners, we claim no rights in them, and they are shown
+            only to explain the point next to them. If you own an image or a mark shown here, write to{' '}
             <a className="bz-link" href={`mailto:${SITE_OWNER.email}`}>
               {SITE_OWNER.email}
-            </a>
-            .
+            </a>{' '}
+            and we will gladly add your credit, or remove it, whichever you prefer.
           </p>
           <p>
             The{' '}

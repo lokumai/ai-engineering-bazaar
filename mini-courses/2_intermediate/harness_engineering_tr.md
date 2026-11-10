@@ -3,7 +3,7 @@ objectives:
   - "Prompt ve context çalışmasına rağmen bir agent'ın neden hâlâ deterministik olmadığını açıkla"
   - "Agent harness'in ne olduğunu ve neyden oluştuğunu söyle"
   - "Bir harness'i, agent'a önceden söylenenler ve işin nasıl gittiğini bildirenler olarak ayır"
-  - "Harness değişikliklerinden gerçek örnekler ver ve her birinin ne kazandırdığını açıkla"
+  - "Harness değişikliklerinden somut örnekler ver ve her birinin ne kazandırdığını açıkla"
   - "Her model için tek bir en iyi harness'in neden olmadığını açıkla"
 ---
 

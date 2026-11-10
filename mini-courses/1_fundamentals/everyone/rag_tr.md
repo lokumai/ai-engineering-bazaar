@@ -1,8 +1,8 @@
 ---
 objectives:
-  - "Şirket dokümanlarının neden hepsinin sohbete sığmadığını ve RAG'in bunun yerine ne yaptığını açıkla."
-  - "Embedding'i anlamın parmak izi olarak tarif et ve neden farklı kelimelerle yazılmış metni de bulabildiğini açıkla."
-  - "Şirket bilgisi için RAG'in neden genellikle fine-tuning'den daha iyi olduğunu söyle."
+  - "Şirket dokümanlarının neden hepsinin sohbete sığmadığını ve RAG'in bunun yerine ne yaptığını açıkla"
+  - "Embedding'i anlamın parmak izi olarak tarif et ve neden farklı kelimelerle yazılmış metni de bulabildiğini açıkla"
+  - "Şirket bilgisi için RAG'in neden genellikle fine-tuning'den daha iyi olduğunu söyle"
 ---
 
 # RAG & Embeddings

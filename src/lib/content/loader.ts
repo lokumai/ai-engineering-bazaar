@@ -130,11 +130,67 @@ export function readTranslationFile(
   english: readonly string[],
 ): { text: string; objectives: string[] | null } | null {
   if (!fs.existsSync(file)) return null
-  const parsed = matter(fs.readFileSync(file, 'utf8'))
+  const raw = fs.readFileSync(file, 'utf8')
+  checkFrontmatterPlacement(raw, source)
+  let parsed: ReturnType<typeof matter>
+  try {
+    parsed = matter(raw)
+  } catch (error) {
+    // gray-matter's YAMLException names a line and no file.
+    throw new Error(`Invalid frontmatter in ${source}:\n  ${(error as Error).message}`)
+  }
   return {
     text: stripBuildFurniture(parsed.content).trimStart(),
     objectives: parseTranslationFrontmatter(parsed.data, source, english),
   }
+}
+
+/**
+ * gray-matter reads a block only when `---` is the first line, and it fails in
+ * two silent ways: a block with anything before it (a blank line) stays in the
+ * body, and the page quietly falls back to English; a block that opens and never
+ * closes swallows the whole body. Both throw here, naming the file.
+ *
+ * A `---` that is a horizontal rule in the body is not a block: only a `---`
+ * line whose next non-blank line is a column-0 `objectives:` counts, and lines
+ * inside a code fence are skipped.
+ */
+function checkFrontmatterPlacement(raw: string, source: string): void {
+  const lines = raw.replace(/^\uFEFF/, '').split(/\r?\n/)
+  const isFence = (line: string) => /^\s*(```|~~~)/.test(line)
+  const isRule = (line: string) => /^---[ \t]*$/.test(line)
+
+  if (isRule(lines[0] ?? '') && !lines.slice(1).some(isRule)) {
+    throw new Error(`Invalid frontmatter in ${source}:\n  the block opened on line 1 is never closed with ---`)
+  }
+
+  let fenced = false
+  for (let i = 0; i < lines.length; i++) {
+    if (isFence(lines[i])) fenced = !fenced
+    if (fenced || i === 0 || !isRule(lines[i])) continue
+    const next = lines.slice(i + 1).find((line) => line.trim() !== '')
+    if (next !== undefined && /^objectives:/.test(next)) {
+      throw new Error(
+        `Invalid frontmatter in ${source}:\n  an objectives block starts on line ${i + 1}; `
+        + 'the frontmatter must open on line 1, with nothing before it',
+      )
+    }
+  }
+}
+
+/**
+ * A translated page's objectives: the translation file's own list, in the
+ * page's language, or the English list marked `en` where the file declares none.
+ * Pure, so the fallback is tested without a corpus that exercises it.
+ */
+export function chooseObjectives(
+  own: readonly string[] | null,
+  english: readonly string[],
+  lang: ReadingLang,
+): { objectives: string[]; objectivesLang: ReadingLang } {
+  return own === null
+    ? { objectives: [...english], objectivesLang: 'en' }
+    : { objectives: [...own], objectivesLang: lang }
 }
 
 /**
@@ -360,18 +416,17 @@ export function loadModuleIn(
   if (!english || lang === 'en') return english
   const body = english.translations[lang]
   if (body === null) return undefined
-  const own = english.objectivesIn[lang]
+  const chosen = chooseObjectives(english.objectivesIn[lang], english.frontmatter.objectives, lang)
 
   return {
     ...english,
     body,
-    objectivesLang: own === null ? 'en' : lang,
+    objectivesLang: chosen.objectivesLang,
     frontmatter: {
       ...english.frontmatter,
-      // **MEASURED: a `_tr.md` carries NO frontmatter at all** — the files open
-      // straight on their `# ` heading. So the translated title is in the body
-      // and nowhere else, and `render.ts` drops that heading from the tree
-      // (B6.1) exactly so the page can print it itself.
+      // **A translation's frontmatter is `objectives` at most**, so the translated
+      // title is in the body and nowhere else, and `render.ts` drops that heading
+      // from the tree (B6.1) exactly so the page can print it itself.
       title: headingOf(body) ?? english.frontmatter.title,
       // `objectives` are the translation file's own where it declares them (same
       // count and order as the English, checked at load), and then the card says
@@ -381,7 +436,7 @@ export function loadModuleIn(
       // read English in a Turkish voice. Marked English is the honest fallback, and
       // it is visible to the author as the next thing to translate.
       // `summary` stays English always: it feeds the English catalog (D113).
-      objectives: own ?? english.frontmatter.objectives,
+      objectives: chosen.objectives,
     },
     extent: extent(stripLeadIn(body)),
     figures: countFigures(body),
@@ -422,19 +477,19 @@ function everyoneIn(english: CourseModule | undefined, lang: ReadingLang): Cours
   if (!english || !version) return undefined
   const body = lang === 'en' ? version.body : version.translations[lang]
   if (body === null) return undefined
-  const own = lang === 'en' ? null : version.objectivesIn[lang]
+  const chosen = chooseObjectives(lang === 'en' ? null : version.objectivesIn[lang], version.objectives, lang)
   const frontmatter: ModuleFrontmatter = {
     ...english.frontmatter,
     status: 'ready',
     title: headingOf(body) ?? english.frontmatter.title,
     summary: version.summary,
-    objectives: own ?? version.objectives,
+    objectives: chosen.objectives,
   }
   const words = extent(stripLeadIn(body))
   return {
     ...english,
     frontmatter,
-    objectivesLang: own === null || lang === 'en' ? 'en' : lang,
+    objectivesLang: chosen.objectivesLang,
     objectivesIn: version.objectivesIn,
     body,
     extent: words,

@@ -1,10 +1,10 @@
 ---
 objectives:
-  - "Değişen gerçekler için retrieval'ın neden fine-tuning'den daha iyi olduğunu açıkla."
-  - "Bir metnin nasıl embedding'e dönüştüğünü ve iki embedding'in benzerliğinin cosine similarity ile nasıl ölçüldüğünü anlat."
-  - "RAG sürecini (retrieve-then-generate) baştan sona, adım adım gözden geçir."
-  - "Retrieval'ı Recall@k, Precision@k, MRR ve nDCG@k ile ölç."
-  - "Verilen bir problem için RAG mi yoksa fine-tuning mi istediğine karar ver."
+  - "Değişen gerçekler için retrieval'ın neden fine-tuning'den daha iyi olduğunu açıkla"
+  - "Bir metnin nasıl embedding'e dönüştüğünü ve iki embedding'in benzerliğinin cosine similarity ile nasıl ölçüldüğünü anlat"
+  - "RAG sürecini (retrieve-then-generate) baştan sona, adım adım gözden geçir"
+  - "Retrieval'ı Recall@k, Precision@k, MRR ve nDCG@k ile ölç"
+  - "Verilen bir problem için RAG mi yoksa fine-tuning mi istediğine karar ver"
 ---
 
 # Retrieval-Augmented Generation (RAG)

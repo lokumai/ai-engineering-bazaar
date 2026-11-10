@@ -1,6 +1,6 @@
 ---
 objectives:
-  - "Yapay zekânın yaptığı ekranların neden iki farklı şirketten gelmiş gibi göründüğünü açıkla"
+  - "Yapay zekânın yaptığı ekranların neden farklı şirketten gelmiş gibi göründüğünü açıkla"
   - "Design system'in ne olduğunu ve DESIGN.md'nin bunu yapay zekâya nasıl verdiğini söyle"
   - "Üretilen ekranların hâlâ neyi yanlış yaptığını say, özellikle erişilebilirlikte"
 ---

@@ -1,10 +1,10 @@
 ---
 objectives:
-  - "توضیح بده چرا برای اطلاعاتی که عوض می‌شن، retrieval از fine-tuning بهتره."
-  - "توضیح بده یه متن چطور به embedding تبدیل می‌شه، و نزدیکی دو embedding با cosine similarity چطور سنجیده می‌شه."
-  - "مراحل RAG رو (retrieve-then-generate) از اول تا آخر قدم به قدم توضیح بده."
-  - "Retrieval رو با Recall@k، Precision@k، MRR و nDCG@k بسنج."
-  - "برای یه مسئله‌ی مشخص تصمیم بگیر که RAG می‌خوای یا fine-tuning."
+  - "توضیح بده چرا برای اطلاعاتی که عوض می‌شن، retrieval از fine-tuning بهتره"
+  - "توضیح بده یه متن چطور به embedding تبدیل می‌شه، و نزدیکی دو embedding با cosine similarity چطور سنجیده می‌شه"
+  - "مراحل RAG رو (retrieve-then-generate) از اول تا آخر قدم به قدم توضیح بده"
+  - "Retrieval رو با Recall@k، Precision@k، MRR و nDCG@k بسنج"
+  - "برای یه مسئله‌ی مشخص تصمیم بگیر که RAG می‌خوای یا fine-tuning"
 ---
 
 # RAG و Embedding‌ها

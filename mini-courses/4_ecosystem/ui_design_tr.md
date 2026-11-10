@@ -1,6 +1,6 @@
 ---
 objectives:
-  - "Bir açıklamayı ekrana dönüştüren iki aracın adını say"
+  - "Bir açıklamayı gerçek bir arayüze dönüştüren iki aracın adını say"
   - "Design system'in ne olduğunu ve agent'ın bunu neden bir dosyada bulması gerektiğini söyle"
   - "DESIGN.md'nin ne olduğunu ve nereye konduğunu açıkla"
   - "Markdown'ın bu iş için de neden doğru format olduğunu anlat"

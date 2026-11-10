@@ -1,8 +1,8 @@
 ---
 objectives:
-  - "Context rot'u ve modelin pencere dolmadan önce neden kötüleştiğini açıkla"
+  - "Context rot'u ve modelin context window'u dolmadan önce neden kötüleştiğini açıkla"
   - "Context engineering'in neye karar verdiğini ve bu kararın neden her turda yeniden verildiğini açıkla"
-  - "Context summarization (compaction), context offloading, subagent'lar, explicit planning (TODO'lar) ve explorable context olarak knowledge base tekniklerini bir görevde uygula"
+  - "Context summarization (compaction), context offloading, subagent'lar, explicit planning (TODO'lar) ve explorable context olarak knowledge base tekniklerini uygula"
   - "Bir deep agent'ın neye sahip olması gerektiğini söyle ve kodlama agent'larının neden zaten birer deep agent olduğunu açıkla"
   - "Chain of thought'un uzun bir oturumu nasıl yolunda tuttuğunu açıkla"
 ---

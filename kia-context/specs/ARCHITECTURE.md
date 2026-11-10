@@ -200,6 +200,15 @@ ones, marked `lang="en"`; that stays only as the fallback. On the page the card 
 (its heading says `en`, being the interface's) and the list alone carries `dir="rtl"` on a Persian
 page; the card is never mirrored.
 
+Three failures that would otherwise be silent throw, naming the file: a block that does not start on
+line 1 (gray-matter reads a block only there, so a blank line before it leaves it in the body and the
+page falls back to English), a block opened and never closed (it empties the body), and a YAML
+syntax error. `objectives: []` throws too, being a declared list with nothing in it; a `---`
+horizontal rule in the body is left alone. A For Everyone translation is read only when its English
+For Everyone page is written (`everyoneVersion` returns before reading the siblings), so a bad block
+in a translation of an unwritten page is not seen until that page exists. The own-or-English choice
+is `chooseObjectives` in `loader.ts`, a pure function.
+
 **A retired address still answers (D94).** When `curriculum.yaml` renames a level or moves a module,
 the old address is listed in `src/lib/content/moved.ts`, and the catalog, the `/courses/<level>/`
 stub and the module routes (both tracks) prerender it as a forward (`MovedTo`, `noindex`). The list

@@ -97,6 +97,10 @@ describe('parseTranslationFrontmatter', () => {
       .toThrow(/llms_tr\.md/)
   })
 
+  it('rejects an item that is not a string', () => {
+    expect(() => parseTranslationFrontmatter({ objectives: [1, 2] }, 'llms_tr.md', english)).toThrow(/llms_tr\.md/)
+  })
+
   it('rejects objectives that are not a list of strings', () => {
     expect(() => parseTranslationFrontmatter({ objectives: 'one' }, 'llms_tr.md', english)).toThrow(/llms_tr\.md/)
   })

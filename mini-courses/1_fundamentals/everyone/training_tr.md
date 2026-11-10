@@ -1,8 +1,8 @@
 ---
 objectives:
-  - "Training'i, yavaş yavaş öğrenen boş bir beyin resmiyle açıkla."
-  - "Pre-training ile fine-tuning'i birbirinden ayırt et: kim yapar, hangi veriyle ve ne kadara mal olur?"
-  - "Fine-tuning'in ne zaman yanlış bir seçim olduğunu ve onun yerine ne kullanman gerektiğini söyle."
+  - "Training'i, yavaş yavaş öğrenen boş bir beyin resmiyle açıkla"
+  - "Pre-training ile fine-tuning'i birbirinden ayırt et: kimin yaptığını, hangi veriyi ve ne kadara mal olduğunu söyle"
+  - "Fine-tuning'in ne zaman yanlış bir seçim olduğunu ve onun yerine ne kullanman gerektiğini söyle"
 ---
 
 # Training LLMs

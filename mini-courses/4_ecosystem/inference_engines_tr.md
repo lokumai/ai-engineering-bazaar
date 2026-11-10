@@ -1,6 +1,6 @@
 ---
 objectives:
-  - "Inference engine'in ne yaptığını ve bir provider'ın bunu senden nasıl sakladığını söyle"
+  - "Bir provider'ın senden sakladığı işin, yani inference engine'in ne yaptığını söyle"
   - "Modeli kendin çalıştırmanın üç gerçek nedenini say"
   - "Tek bir makine, bir GPU sunucusu ya da bir cluster için uygun engine'i seç"
   - "Batching'in throughput'u neden belirlediğini açıkla"

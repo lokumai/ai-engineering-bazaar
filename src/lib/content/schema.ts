@@ -97,10 +97,11 @@ export function parseFrontmatter(
  * count is compared with the English file's own list (already validated), and a
  * mismatch names the file and both counts.
  *
- * **Absent is a valid answer.** A file with no block, or with an empty one,
- * returns `null` and the page falls back to the English list, marked `lang="en"`
+ * **Absent is a valid answer.** A file with no block, or a block with no keys
+ * at all (`{}`), returns `null` and the page falls back to the English list, marked `lang="en"`
  * (M19). Rejected: requiring the block, which would fail the build for every
- * translation written before this rule.
+ * translation written before this rule. A block that names `objectives` and
+ * leaves it empty (`objectives: []`) is not absent: it throws.
  */
 const translationFrontmatterSchema = z.strictObject({
   objectives: z.array(z.string().min(1)).min(1),

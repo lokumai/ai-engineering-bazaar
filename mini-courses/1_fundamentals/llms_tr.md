@@ -1,10 +1,10 @@
 ---
 objectives:
-  - "LLM'in bir prompt'a ne yaptığını ve neden bir sonraki kelimeyi tahmin eden (next-token predictor) bir model olduğunu açıkla."
-  - "Context window'u ve neden her şeyi şekillendiren sınır olduğunu açıkla."
-  - "Bir context'in hangi mesaj türlerinden oluştuğunu ve her birini kimin yazdığını say."
-  - "Bir turn'ün ne olduğunu, düz bir sohbette ve bir agent'ta açıkla."
-  - "Bir modeli yerelde (local) çalıştırmak ile bir bulut sağlayıcısını çağırmak arasında seçim yap."
+  - "LLM'in bir prompt'a ne yaptığını ve neden bir sonraki kelimeyi tahmin eden (next-token predictor) bir model olduğunu açıkla"
+  - "Context window'u ve neden her şeyi şekillendiren sınır olduğunu açıkla"
+  - "Bir context'in hangi mesaj türlerinden oluştuğunu ve her birini kimin yazdığını say"
+  - "Bir turn'ün ne olduğunu, düz bir sohbette ve bir agent'ta açıkla"
+  - "Bir modeli yerelde (local) çalıştırmak ile bir bulut sağlayıcısını çağırmak arasında seçim yap"
 ---
 
 # LLM Temelleri

@@ -51,8 +51,8 @@ test('every translated module is served in Turkish at its own address', async ({
     }
 
     /* **The PROSE is the proof, and the title is not** — which took a red test
-       to find out. A `_tr.md` carries no frontmatter, so the Turkish title is
-       the body's own `# ` heading, and the first draft of this asserted that
+       to find out. A `_tr.md` carries at most an `objectives` block, so the Turkish
+       title is the body's own `# ` heading, and the first draft of this asserted that
        heading differs from the English one. **MEASURED: 11 of the 19 are
        identical**, because the author leaves the technical term alone — `#
        Memory`, `# Security`, `# Prompt Engineering`, `# Context Engineering`
@@ -420,7 +420,7 @@ test.describe('the objectives card', () => {
 
   test('falls back to the English list, marked en, where a translation declares none', async ({ page }) => {
     test.skip(fallbackTr.length === 0,
-      'every Turkish module declares objectives; the fallback is held by the loader tests in tests/unit/content/loader.test.ts')
+      'every Turkish module declares objectives, so this page-level fallback is not run; `chooseObjectives` is unit-tested in tests/unit/content/loader.test.ts and the page marks what the loader returns')
     for (const sheet of fallbackTr.slice(0, 3)) {
       await page.goto(tr(sheet.slug))
       await expect(page.locator(CARD), sheet.slug).toHaveAttribute('lang', 'en')

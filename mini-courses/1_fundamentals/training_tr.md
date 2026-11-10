@@ -1,10 +1,10 @@
 ---
 objectives:
-  - "Training'in bir modelin içinde, parametreleri bakımından neyi değiştirdiğini açıkla."
-  - "Pre-training ile fine-tuning'i, her birinin ihtiyaç duyduğu veriye bakarak birbirinden ayır."
-  - "Fine-tuning'in maliyetine ne zaman değdiğini, ne zaman değmediğini açıkla."
-  - "PEFT'in neyi değiştirdiğini ve neden en yaygın tercih olduğunu açıkla."
-  - "Gerçekten kullanacağın araçları say: Unsloth ve Hugging Face."
+  - "Training'in bir modelin içinde, parametreleri bakımından neyi değiştirdiğini açıkla"
+  - "Pre-training ile fine-tuning'i, her birinin ihtiyaç duyduğu veriye bakarak birbirinden ayır"
+  - "Fine-tuning'in maliyetine ne zaman değdiğini, ne zaman değmediğini açıkla"
+  - "PEFT'in neyi değiştirdiğini ve neden en yaygın tercih olduğunu açıkla"
+  - "Gerçekten kullanacağın araçları say: Unsloth ve Hugging Face"
 ---
 
 # Training LLMs

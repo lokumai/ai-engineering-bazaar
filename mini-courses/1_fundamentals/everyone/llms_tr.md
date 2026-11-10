@@ -1,9 +1,9 @@
 ---
 objectives:
-  - "LLM'in sana verdiğin metinle ne yaptığını sade bir dille anlat."
-  - "Context window'u, telefondaki bir sohbeti örnek alarak açıkla."
-  - "Bir sohbetteki üç tür mesajı say ve her birini kimin yazdığını söyle."
-  - "Bir modeli bulutta çalıştırmakla kendi bilgisayarında çalıştırmayı birbirinden ayırt et."
+  - "LLM'in sana verdiğin metinle ne yaptığını sade bir dille anlat"
+  - "Context window'u, telefondaki bir sohbeti örnek alarak açıkla"
+  - "Bir sohbetteki üç tür mesajı say ve her birini kimin yazdığını söyle"
+  - "Bir modeli bulutta çalıştırmakla kendi bilgisayarında çalıştırmayı birbirinden ayırt et"
 ---
 
 # LLM Temelleri

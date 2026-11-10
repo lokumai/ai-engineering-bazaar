@@ -11,6 +11,7 @@ import {
   loadAllModules,
   loadCategoryIntro,
   loadModule,
+  chooseObjectives,
   loadModuleIn,
   readTranslationFile,
 } from '@/lib/content/loader'
@@ -275,6 +276,63 @@ describe('readTranslationFile', () => {
   it('rejects a count that differs from the English file\'s', () => {
     const file = write('d_fa.md', '---\nobjectives:\n  - "یک"\n---\n\n# عنوان\n')
     expect(() => readTranslationFile(file, 'd_fa.md', english)).toThrow(/d_fa\.md[\s\S]*has 1/)
+  })
+
+  it('rejects a block with a blank line before it, which would silently read as no block', () => {
+    const file = write('e_tr.md', '\n---\nobjectives:\n  - "Bir"\n  - "İki"\n---\n\n# Başlık\n')
+    expect(() => readTranslationFile(file, 'e_tr.md', english)).toThrow(/e_tr\.md[\s\S]*line 2[\s\S]*line 1/)
+  })
+
+  it('rejects a block that is never closed, which would empty the body', () => {
+    const file = write('f_tr.md', '---\nobjectives:\n  - "Bir"\n  - "İki"\n\n# Başlık\n\nMetin.\n')
+    expect(() => readTranslationFile(file, 'f_tr.md', english)).toThrow(/f_tr\.md[\s\S]*never closed/)
+  })
+
+  it('does not take a --- horizontal rule in the body for a block', () => {
+    const plain = readTranslationFile(write('g_tr.md', '# Başlık\n\nBir.\n\n---\n\nİki.\n'), 'g_tr.md', english)!
+    expect(plain.objectives).toBeNull()
+    expect(plain.text).toContain('---')
+
+    const withBlock = readTranslationFile(
+      write('h_tr.md', '---\nobjectives:\n  - "Bir"\n  - "İki"\n---\n\n# Başlık\n\nBir.\n\n---\n\nİki.\n'),
+      'h_tr.md',
+      english,
+    )!
+    expect(withBlock.objectives).toEqual(['Bir', 'İki'])
+    expect(withBlock.text).toContain('---')
+
+    // A rule inside a code fence is not looked at either.
+    const fenced = write('i_tr.md', '# Başlık\n\n```yaml\n---\nobjectives:\n  - x\n```\n')
+    expect(readTranslationFile(fenced, 'i_tr.md', english)!.objectives).toBeNull()
+  })
+
+  it('names the file when the YAML in the block is broken', () => {
+    const file = write('j_tr.md', '---\nobjectives: [unclosed\n  - "Bir"\n---\n\n# Başlık\n')
+    expect(() => readTranslationFile(file, 'j_tr.md', english)).toThrow(/Invalid frontmatter in j_tr\.md/)
+  })
+
+  it('rejects an objective that is not a string', () => {
+    const file = write('k_tr.md', '---\nobjectives:\n  - 1\n  - 2\n---\n\n# Başlık\n')
+    expect(() => readTranslationFile(file, 'k_tr.md', english)).toThrow(/k_tr\.md/)
+  })
+})
+
+describe('chooseObjectives', () => {
+  const english = ['One', 'Two']
+
+  it('takes the translation\'s own list, in the page\'s language', () => {
+    expect(chooseObjectives(['Bir', 'İki'], english, 'tr')).toEqual({ objectives: ['Bir', 'İki'], objectivesLang: 'tr' })
+    expect(chooseObjectives(['یک', 'دو'], english, 'fa').objectivesLang).toBe('fa')
+  })
+
+  it('falls back to the English list, marked en, where the file declares none', () => {
+    expect(chooseObjectives(null, english, 'tr')).toEqual({ objectives: english, objectivesLang: 'en' })
+    expect(chooseObjectives(null, english, 'fa').objectivesLang).toBe('en')
+  })
+
+  it('hands back a copy, so a page cannot change the loader\'s list', () => {
+    const chosen = chooseObjectives(null, english, 'tr')
+    expect(chosen.objectives).not.toBe(english)
   })
 })
 

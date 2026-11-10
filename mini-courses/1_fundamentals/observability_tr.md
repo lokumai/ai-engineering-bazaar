@@ -4,7 +4,7 @@ objectives:
   - "Kodun artık sistemin ne yaptığını neden söylemediğini açıkla"
   - "Observability araçlarını ve her birinin ne işe yaradığını say"
   - "Bir trace'ten başlayan iyileştirme döngüsünü anlat"
-  - "Neden kimsenin 100,000 trace'i okumadığını ve onları bunun yerine neyin okuduğunu açıkla"
+  - "Neden kimsenin 100.000 trace'i okumadığını ve onları bunun yerine neyin okuduğunu açıkla"
 ---
 
 # Observability
@@ -66,7 +66,7 @@ graph LR
 
 ## Agent'ları Başka Agent'larla İzlemek
 
-Ekipler trace toplamada iyice ustalaşınca, bu sefer öbür uçta bir sorunla karşılaştılar. [From Traces to Insights](https://www.langchain.com/blog/from-traces-to-insights-understanding-agent-behavior-at-scale) yazısında bir geliştirici kendi durumunu anlatıyor. Her gün 100,000'den fazla trace kaydediyor. Peki bu trace'lerle ne yapıyor? Kelimenin tam anlamıyla hiçbir şey.
+Ekipler trace toplamada iyice ustalaşınca, bu sefer öbür uçta bir sorunla karşılaştılar. [From Traces to Insights](https://www.langchain.com/blog/from-traces-to-insights-understanding-agent-behavior-at-scale) yazısında bir geliştirici kendi durumunu anlatıyor. Her gün 100.000'den fazla trace kaydediyor. Peki bu trace'lerle ne yapıyor? Kelimenin tam anlamıyla hiçbir şey.
 
 Kimse yüz bin şeyi okuyamaz, üstelik alışılmış ölçüm yöntemleri de seni bu noktada kurtarmaz. Ürün analitiği ve online evaluator'lar, ikisi de zaten sormayı düşündüğün soruları yanıtlar. Yazdığın kontroldeki hata oranını söylerler, ama hiç hayal etmediğin bir hata türü hakkında bir şey söyleyemezler. Kullanıcılarına mal olan hata ise tam da bu türdendir.
 

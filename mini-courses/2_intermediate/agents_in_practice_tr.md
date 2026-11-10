@@ -1,6 +1,6 @@
 ---
 objectives:
-  - "Gerçek bir agent'la pratik yapmanın, bir agent hakkında okumanın öğretemediği şeyi neden öğrettiğini söyle"
+  - "Bir agent hakkında okumanın öğretemediğini, gerçek bir agent'la pratik yapmanın neden öğrettiğini söyle"
   - "Dört Claude Academy kursunu adlarıyla say ve bunları hangi sırayla alman gerektiğini söyle"
   - "Claude Cowork'ü Claude Code'dan ve Claude Duet'ten ayırt et"
 ---

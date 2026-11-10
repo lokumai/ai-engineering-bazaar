@@ -3,7 +3,7 @@ objectives:
   - "Inference provider'ın ne olduğunu ve ondan neyi satın aldığını söyle"
   - "Bir gateway'in, altındaki provider'ların üstüne ne eklediğini açıkla"
   - "LLM üreticilerinden doğrudan inference almanın nedenlerini say"
-  - "Provider'ları fiyatın ötesinde neye göre karşılaştıracağını listele"
+  - "Provider'ları token başına fiyatın ötesinde neye göre karşılaştıracağını listele"
   - "Ücretsiz katmanla başla ve ücretsiz katmanın sana neyi söylemediğini bil"
 ---
 

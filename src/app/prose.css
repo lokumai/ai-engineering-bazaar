@@ -658,14 +658,6 @@
 
   .bz-prose [dir="rtl"] ul.contains-task-list { padding-right: 0; }
 
-  /* The objectives card's list carries its own `dir` (the card is the
-     interface's and is never mirrored), so the rule above, which wants an
-     ancestor, does not reach it. */
-  .bz-card-list[dir="rtl"] {
-    padding-left: 0;
-    padding-right: 22px;
-  }
-
   .bz-prose [dir="rtl"] .bz-tablefig :is(th, td) { text-align: right; }
 
   .bz-prose [dir="rtl"] .bz-subsection .bz-anchor {

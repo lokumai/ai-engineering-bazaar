@@ -47,6 +47,11 @@ const Lang = z
   .refine((value) => LANGUAGE_IDS.includes(value), { message: 'not en or a languages.ts translation' })
   .describe('A language id: en, or one of the translations the index lists.')
 
+const TranslatedLang = z
+  .string()
+  .refine((value) => TRANSLATIONS.some((one) => one.id === value), { message: 'not a languages.ts translation' })
+  .describe('A translation id from languages.ts: never en.')
+
 const Dir = z.enum(['ltr', 'rtl'])
 
 const TrackId = z
@@ -318,6 +323,10 @@ export const ModuleDoc = z.strictObject({
   dir: Dir,
   title: z.string().min(1).describe('The title in this document\'s track and language.'),
   objectives: z.strictObject({ lang: z.literal('en'), items: z.array(z.string().min(1)) }),
+  translatedObjectives: z
+    .strictObject({ lang: TranslatedLang, items: z.array(z.string().min(1)).min(1) })
+    .nullable()
+    .describe('The objectives in this document\'s language, from its own file; null in English and where the file declares none (D124).'),
   prerequisites: z.array(Ref),
   previous: Ref.nullable(),
   next: Ref.nullable(),

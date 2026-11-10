@@ -1780,6 +1780,36 @@
         ],
         "additionalProperties": false
       },
+      "translatedObjectives": {
+        "anyOf": [
+          {
+            "type": "object",
+            "properties": {
+              "lang": {
+                "type": "string",
+                "description": "A translation id from languages.ts: never en."
+              },
+              "items": {
+                "minItems": 1,
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              }
+            },
+            "required": [
+              "lang",
+              "items"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "description": "The objectives in this document's language, from its own file; null in English and where the file declares none (D124)."
+      },
       "prerequisites": {
         "type": "array",
         "items": {
@@ -2063,6 +2093,7 @@
       "dir",
       "title",
       "objectives",
+      "translatedObjectives",
       "prerequisites",
       "previous",
       "next",

@@ -117,10 +117,11 @@ export async function buildModuleDoc(
     dir: dirOf(lang),
     // The translated heading (`loadModuleIn`); `ModuleRenderInput` carries no title.
     title: sheet.frontmatter.title,
-    // v1 carries the English objectives in every document (`lang: 'en'`, ARCHITECTURE §13). The site
-    // now shows translated objectives, but the bundle keeps its contract until the mobile reader
-    // agrees an additive field for them; see D123.
+    // v1 carries the English objectives in every document (`lang: 'en'`, ARCHITECTURE §13), and the
+    // document's own list beside them as the additive field the mobile reader agreed (D123, D124).
     objectives: { lang: 'en', items: [...englishObjectives(slug, track, input.objectives, lang)] },
+    translatedObjectives:
+      lang !== 'en' && input.objectivesLang === lang ? { lang, items: [...input.objectives] } : null,
     prerequisites: input.prerequisites.map(refOf),
     previous: input.previous === null ? null : refOf(input.previous),
     next: input.next === null ? null : refOf(input.next),

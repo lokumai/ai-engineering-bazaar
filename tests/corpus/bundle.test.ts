@@ -133,6 +133,21 @@ describe('the bundle, over the real corpus', () => {
       .toBeGreaterThan(0)
   })
 
+  it('carries a translated document\'s own objectives beside the English, and null where it has none (D124)', () => {
+    let carried = 0
+    for (const [path, doc] of modules) {
+      const own = doc.lang === 'en' ? null : loadModuleIn(doc.key, doc.lang as ReadingLang, doc.track)!
+      if (own === null || own.objectivesLang === 'en') {
+        expect(doc.translatedObjectives, path).toBeNull()
+        continue
+      }
+      expect(doc.translatedObjectives, path).toEqual({ lang: doc.lang, items: own.frontmatter.objectives })
+      expect(doc.translatedObjectives!.items.length, path).toBe(doc.objectives.items.length)
+      carried++
+    }
+    expect(carried, 'no translated document declares its own objectives, so the field could not be seen').toBeGreaterThan(0)
+  })
+
   it('names each level document at its own path', () => {
     for (const level of draft.levels) {
       if (level.readme !== null) expect(level.readme).toBe(levelDocPath(level.slug))

@@ -36,6 +36,7 @@ function moduleDoc(body: unknown[] | null) {
     dir: 'ltr',
     title: 'Module',
     objectives: { lang: 'en', items: [] },
+    translatedObjectives: null,
     prerequisites: [],
     previous: null,
     next: null,

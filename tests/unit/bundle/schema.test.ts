@@ -36,6 +36,7 @@ const moduleDoc = {
   dir: 'ltr',
   title: 'First',
   objectives: { lang: 'en', items: ['One'] },
+  translatedObjectives: null,
   prerequisites: [ref],
   previous: null,
   next: ref,
@@ -55,6 +56,21 @@ describe('the bundle schema', () => {
 
   it('accepts a well-formed module document', () => {
     expect(() => ModuleDoc.parse(moduleDoc)).not.toThrow()
+  })
+
+  it('accepts a translated document with its own objectives beside the English (D124)', () => {
+    const translated = { ...moduleDoc, lang: 'tr', translatedObjectives: { lang: 'tr', items: ['Bir'] } }
+    expect(() => ModuleDoc.parse(translated)).not.toThrow()
+  })
+
+  it('refuses translated objectives in English, or with no item', () => {
+    expect(() => ModuleDoc.parse({ ...moduleDoc, translatedObjectives: { lang: 'en', items: ['One'] } })).toThrow()
+    expect(() => ModuleDoc.parse({ ...moduleDoc, translatedObjectives: { lang: 'tr', items: [] } })).toThrow()
+  })
+
+  it('refuses a module document without translatedObjectives, which is null rather than absent', () => {
+    const { translatedObjectives: _, ...without } = moduleDoc
+    expect(() => ModuleDoc.parse(without)).toThrow()
   })
 
   it('refuses a module document with an extra key', () => {

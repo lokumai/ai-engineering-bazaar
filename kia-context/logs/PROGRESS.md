@@ -11,7 +11,7 @@ description: >
   backgrounds and copy (M81), Agentic UI (M82), the cast's colours (M83), and M84 to M90 (content
   and site fixes, the home page in Turkish and Persian, Dariush's motif, block menus in the top layer,
   and About, the story of the Bazaar); Caravan built (M91), its real trends waiting (M92) and its second
-  round (M93); multilingual SEO (M96); translated objectives on the site (M98) and in the bundle (M99); the story in the bundle (M100); three screen recordings and Human in the Loop moved into Agentic UI (M101); a laptop section in Inference Engines (M103); and M41, the content bundle for the mobile reader. Each milestone carries its deliverables and acceptance
+  round (M93); multilingual SEO (M96); translated objectives on the site (M98) and in the bundle (M99); the story in the bundle (M100); three screen recordings and Human in the Loop moved into Agentic UI (M101); the search filters applied by a button (M102); a laptop section in Inference Engines (M103); and M41, the content bundle for the mobile reader. Each milestone carries its deliverables and acceptance
   criteria as `- [ ]` checkboxes, ticked as the work lands, and closes with a dated report; the loop
   that governs that is below, in this file.
   NOT here: why a choice was made (BRAINSTORM.md), or any rule that outlives the milestone
@@ -1015,8 +1015,8 @@ a Sonnet High subagent on top of M70, on the same pull request.
 
 - [x] A closed-by-default "Filters" disclosure (`<button aria-expanded aria-controls>`, chevron)
       holding M70's chips and Reset link unchanged.
-- [x] Shut, the search covers every track, level and language; open, the chips apply; closing stops
-      the filtering.
+- [x] ~~Shut, the search covers every track, level and language; open, the chips apply; closing stops
+      the filtering.~~ Superseded by D127 (M102): the applied filters hold while the panel is shut.
 - [x] Keyboard: field, Close, Filters, then the chips only when open, then the results; Escape still
       closes the dialog; the Tab trap ignores hidden chips.
 
@@ -1976,6 +1976,51 @@ in the proper format and again, update kia-context and review and merge"*
 - [x] **Gate:** 1,594 unit tests, typecheck, build, link check, bundle check (the bundle's content
       changes, its shape does not); each image name found in the built pages of every language and
       track; each new figure and the new section screenshotted at 1440 and read.
+
+## 🏁 Milestone M102: The search filters apply with an Apply button, and a shut disclosure keeps them (D127) — DONE
+
+The author, 2026-11-10: *"also found a bug: in the search bar the filter works only if the dropdown or
+accordion is open. When I close it, the filter does not work which is bad behaviour and UX. instead, we
+should add a button named Apply with a distinct color and when user does a diff, the button appears and
+it applies and when applied, the button is gone."* This reverses D104's "a shut panel searches
+everything" (M71).
+
+- [x] **Applied apart from pending** (`SearchDialog.tsx`): the results use the applied choice, panel open
+      or shut; a chip changes the pending one; the two are compared as sets.
+- [x] **The Apply button**: gold (`.bz-btn-apply`, `caution` with `on-caution` type, 5.11:1, DESIGN.md's
+      thirteenth deviation), in the panel under the last row, shown while pending
+      differs from applied and gone when they match (also when a chip is pressed back); after it, the
+      live region says "Filters applied." and the count, and focus moves to the last chip. A group with
+      every member pressed is "no filter" for the comparison and the count.
+- [x] **The shut toggle tells the truth**: "Filters (n)" with the number of applied chips, and a Reset
+      filters button beside it that applies the defaults at once ("Filters reset." in the live region).
+- [x] **Shutting the panel, or the whole window, discards a pending change** (D127 says why); the query
+      still searches as you type, and a chip press announces nothing.
+- [x] **Tests** (`tests/e2e/search.spec.ts`): the two tests that asserted "shut searches everything" are
+      replaced; new ones for pending against applied, reverting, applied filters under a shut panel with
+      the count, discarding on shut, Reset from the shut state, the keyboard (Tab to Apply, ring, Enter),
+      the primary style, and 390px.
+- [x] **Gate:** typecheck, unit tests, build, link check, bundle check unchanged; the browser suite.
+
+**Report, 2026-11-10.** `SearchDialog.tsx` keeps `chosen` (what the chips show) and `applied` (what the
+search uses, with a full group normalised to none); `shell.css` gains `.bz-search-filter-bar` (the hover is on
+the bar), `.bz-search-apply` and `.bz-search-reset` (`bz-btn bz-btn-quiet`, 44px on a phone), and `bazaar.css`
+gains `.bz-btn-apply`, gold with `on-caution` type at 5.11:1 in both themes (white on `caution` 3.20:1, white
+on `success` 4.03:1, both refused), recorded as DESIGN.md's thirteenth deviation; no `DEVIATIONS` entry in
+`transcription.test.ts`, because no value changed and that list is about values. ARCHITECTURE's "The filters"
+paragraph is rewritten to match. **Review round (two reviews of PR #111):** the numbers moved from M101 and D126
+to **M102 and D127**, because PR #109 took M101 and D126; a full group is no filter; leaving the window drops
+a draft; a chip press does not touch the live region; focus after Apply goes to the last chip; the hover covers
+Reset; Reset is 44px on a phone; Apply has no `aria-label`; the older shut-panel rules in D103 and M71 are struck
+through with a link. **Mutations, each seen failing a named test** (built, served and run against `search.spec.ts`;
+one build per mutation): first round: results using the pending chips; the applied filters ignored while the
+panel is shut; Apply kept once anything is pressed; the pending check sensitive to press order (this one
+**survived**, so a test was added, and it then failed); shutting the panel keeping the draft; focus not moved after
+Apply; the count missing from the toggle; the live region's note removed; Reset clearing only the draft; Apply drawn
+as a quiet button; Apply never shown; Apply's accessible name changed. Second round: a full group not normalised;
+closing the window keeping the draft; a chip press clearing the live-region note; focus after Apply on the toggle;
+an `aria-label` on Apply; Apply cobalt again; the hover on the toggle alone; Reset at 33px on a phone.
+**Gate, measured 2026-11-10:** typecheck clean; 1,594 unit tests in 98 files; the build, link check and bundle check pass (bundle unchanged); `search`, `responsive`, `accessibility` and `colour-not-alone`: 122 passed, 2 skipped; `fidelity`: 50 passed; `search.spec.ts` holds 35 tests.
 
 ## 🏁 Milestone M103: Run a model on your laptop, in Inference Engines — DONE
 

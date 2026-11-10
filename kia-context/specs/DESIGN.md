@@ -11,8 +11,8 @@ source: playground/01-theme-T4-ground-G3-powder.html (light) · playground/01-th
 authority: blueprint
 writes: agent, as the language evolves
 status: active
-covers: "the Bazaar language, transcribed from T4 on ground G3, with its derived dark sibling, plus the six primitives M16 derived from the component mockups — 2026-09-13, with twelve recorded deviations (the sixth and seventh, the logo and the rail group, 2026-10-11; the eighth, the pager, the ninth, the Bazaar Street front door, and the tenth, a right-to-left script, 2026-10-12; the eleventh, the diagram frame's ground, 2026-11-08; the twelfth, the About page, 2026-11-09), the three reader palettes for code, the ten Mermaid themes for diagrams, the call-out card, and the end of a reading page"
-last_updated: 2026-11-09
+covers: "the Bazaar language, transcribed from T4 on ground G3, with its derived dark sibling, plus the six primitives M16 derived from the component mockups — 2026-09-13, with thirteen recorded deviations (the sixth and seventh, the logo and the rail group, 2026-10-11; the eighth, the pager, the ninth, the Bazaar Street front door, and the tenth, a right-to-left script, 2026-10-12; the eleventh, the diagram frame's ground, 2026-11-08; the twelfth, the About page, 2026-11-09), the three reader palettes for code, the ten Mermaid themes for diagrams, the call-out card, and the end of a reading page"
+last_updated: 2026-11-10
 ---
 
 ---
@@ -705,6 +705,20 @@ pager's look and the front door were chosen.
 The rule stands: the mockup outranks this document, a measured accessibility floor outranks the
 mockup (**D34**), and the author outranks all three — stated here so a third entry cannot be added
 by an agent reading the first two as precedent.
+
+**A THIRTEENTH DEVIATION, AND THE AUTHOR'S: ONE FILLED CONTROL IS GOLD, NOT COBALT.** On 2026-11-10
+the author asked for the search window's Apply button to be "a distinct color". Every filled control
+in the language is cobalt, and a pressed filter chip is the same cobalt fill, so a cobalt Apply
+beside the chips read as one more chip. It takes the language's gold, with `on-caution` type.
+**White type was measured and refused**: white on `caution` is 3.20:1 and white on `success` is
+4.03:1, from the shipped values, and a text floor is 4.5:1; `on-caution` on `caution` is **5.11:1**,
+and because both tokens have one value for both themes, so does that ratio. `on-caution` is the
+token that exists for exactly this, so no colour is added and none dropped, and
+`transcription.test.ts` needs no `DEVIATIONS` entry (that list is about values, as the entry below
+says); `contrast.test.ts` already holds the pair at the text floor. The scope is one control: the
+Apply button of the search window, which exists only while a filter choice is waiting to be applied.
+The geometry, the hover and the focus ring are the ordinary button's, and the label says what it is,
+so colour is never the only signal (D127).
 
 **And one departure of SCOPE rather than of value, recorded here so it is not mistaken for a
 transcription error.** `01:64` states the focus ring once, globally —

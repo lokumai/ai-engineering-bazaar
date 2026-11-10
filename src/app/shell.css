@@ -649,19 +649,34 @@
      draws them. The chips are the catalog's (`.bz-chip`, its key and its `Level:` label),
      not a second kind; this arranges them. A hairline under the block, as under the field. */
   .bz-search-filter {
+    /* `.bz-chip` and the Reset button read the catalog's control height, which that surface
+       declares on its own root; the window is outside it */
+    --bz-control: 33px;
     border-bottom: 1px solid var(--color-line);
   }
 
-  /* D104: the disclosure that holds the chips, shut by default. A full-width row so the
-     whole line is the target, 44px tall as the field and Close are; the chevron follows the
-     label on its end side (it sits on the left of a right-to-left row) and turns instantly
-     when open, since the language refuses a transition on a transform. The ring is drawn
-     inside the row because the window clips what leaves it. */
-  .bz-search-toggle {
+  /* D104, D127: the bar that holds the disclosure and, beside it, Reset filters. The toggle
+     fills the line to Reset's edge, so the whole line is the target and the hover is drawn
+     on the bar, not on the toggle: a fill that stopped at Reset's edge read as two things.
+     44px tall as the field and Close are; the toggle's chevron follows its label on its end
+     side (the left of a right-to-left row) and turns instantly when open, since the language
+     refuses a transition on a transform. The ring is drawn inside the toggle because the
+     window clips what leaves it. */
+  .bz-search-filter-bar {
     display: flex;
     align-items: center;
+  }
+
+  .bz-search-filter-bar:hover {
+    background: var(--color-surface-sunken);
+  }
+
+  .bz-search-toggle {
+    display: flex;
+    flex: 1;
+    align-items: center;
     gap: 6px;
-    inline-size: 100%;
+    min-inline-size: 0;
     min-block-size: 44px;
     padding: 0 16px;
     border: 0;
@@ -673,7 +688,6 @@
   }
 
   .bz-search-toggle:hover {
-    background: var(--color-surface-sunken);
     color: var(--color-on-surface);
   }
 
@@ -690,9 +704,6 @@
   }
 
   .bz-search-filters {
-    /* `.bz-chip` reads the catalog's control height, which that surface declares on its own
-       root; the window is outside it */
-    --bz-control: 33px;
     display: flex;
     flex-direction: column;
     gap: 8px;
@@ -724,9 +735,22 @@
     min-width: 0;
   }
 
+  /* D127: `.bz-btn .bz-btn-quiet` (its edge, radius and type), made compact, beside the toggle
+     so the applied filters can be cleared with the panel shut. */
   .bz-search-reset {
-    min-height: 33px;
+    flex: none;
+    min-height: var(--bz-control);
+    margin-block: 4px;
+    margin-inline: 0 12px;
+    padding: 0 12px;
     font-size: var(--text-meta);
+  }
+
+  /* D127: `.bz-btn-apply`, the gold button, under the rows it applies, on the start edge. It
+     is in the panel only while the draft differs from what the results use. */
+  .bz-search-apply {
+    display: flex;
+    padding-block-start: 4px;
   }
 
   .bz-search-status {
@@ -836,6 +860,9 @@
     }
 
     .bz-search-chips { inline-size: 100%; }
+
+    /* §10.4's touch floor, as `.bz-btn` and the chips take it */
+    .bz-search-reset { min-height: 44px; }
 
     .bz-search {
       margin-top: 64px;

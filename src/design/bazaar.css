@@ -1958,6 +1958,20 @@
     filter: none;
   }
 
+  /* THE SEARCH WINDOW'S APPLY BUTTON (D127, the thirteenth deviation in DESIGN.md): a
+     filled button in the language's gold, because the author asked for it in "a distinct
+     color" and every filled control here is cobalt, the same fill a pressed filter chip has.
+     The label is `on-caution`, not white, which is what that token exists for: MEASURED from
+     the values above, `on-caution` on `caution` is 5.11:1 and the same in both themes, as
+     both tokens are; white on `caution` is 3.20:1, and white on `success` is 4.03:1, so
+     neither of those clears a 4.5:1 text floor. Geometry, hover (`.bz-btn:hover`) and the
+     focus ring are `.bz-btn`'s. Only the search window uses it. */
+  .bz-btn-apply {
+    border-color: var(--color-caution);
+    background: var(--color-caution);
+    color: var(--color-on-caution);
+  }
+
   /* -- the table ----------------------------------------------------------
      IN THE LANGUAGE because four surfaces draw one: the catalog, the two level
      listings, the organisation roster and the sign-in doors. It was authored in

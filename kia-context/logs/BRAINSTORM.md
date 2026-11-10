@@ -9,7 +9,7 @@ description: >
 authority: reasoning
 writes: agent, when a decision is taken
 status: active
-covers: "D97 to D126 so far, and D89, which part 2 held for PR #57 — 2026-11-06 onward"
+covers: "D97 to D127 so far, and D89, which part 2 held for PR #57 — 2026-11-06 onward"
 last_updated: 2026-11-10
 ---
 
@@ -162,11 +162,12 @@ all five levels, so the filter runs on stored fields. The level bar follows the 
 so a Persian row has it on the right. At 390px the chips keep the catalog's touch size, with the labels
 above them, so the filters take a large share of a phone's window and the results scroll under them;
 a smaller chip was not drawn so as not to deviate from §10.4 inside one dialog. **The defaults
-above are superseded by D104** (the filters behind a closed disclosure; shut, everything is searched).
+above are superseded by D104** (the filters behind a closed disclosure; ~~shut, everything is searched~~, which
+D127 then replaced: the applied filters hold while the panel is shut; see [D127](#d127--the-search-filters-apply-with-an-apply-button-and-a-shut-disclosure-keeps-them--2026-11-10)).
 
 ### D104 · The search filters sit behind a closed Filters disclosure, and ~~a shut panel searches everything~~ — 2026-11-07
 
-> **Partly superseded by [D126](#d126--the-search-filters-apply-with-an-apply-button-and-a-shut-disclosure-keeps-them--2026-11-10) (2026-11-10):** a shut panel no longer drops the filters; they are applied with a button and hold, open or shut. The disclosure itself stands.
+> **Partly superseded by [D127](#d127--the-search-filters-apply-with-an-apply-button-and-a-shut-disclosure-keeps-them--2026-11-10) (2026-11-10):** a shut panel no longer drops the filters; they are applied with a button and hold, open or shut. The disclosure itself stands.
 
 **Asked by the author:** "make the filter an accordion-like dropdown, meaning that when we search
 normally it searches all, but if I click on the accordion, I can open filters and use them."
@@ -184,7 +185,7 @@ a phone's window: shut, the results have the room.
 
 **Rejected:** `<details>`, because Chrome does not close one on Escape and Escape inside the dialog
 must keep closing the dialog; keeping hidden filtering with a count on the closed toggle, which asks a
-reader to notice a number to understand their results (D126 later chose a count, with the filters applied by a button
+reader to notice a number to understand their results (D127 later chose a count, with the filters applied by a button
 and never dropped, so the count is what the results use).
 
 ### D105 · Every company a module introduces carries its logo, which reverses M69's rule on uneven lists — 2026-11-07
@@ -941,7 +942,7 @@ the same, the design may differ).
   nothing more and would let the two drift); an optional `story` field absent when no story exists (the
   build already fails without STORY.md, and the index's fields are always present).
 
-### D126 · The search filters apply with an Apply button, and a shut disclosure keeps them — 2026-11-10
+### D127 · The search filters apply with an Apply button, and a shut disclosure keeps them — 2026-11-10
 status: active
 
 **Asked by the author:** "also found a bug: in the search bar the filter works only if the dropdown or
@@ -956,18 +957,31 @@ disclosure, closed by default, nothing pressed on opening, `<button aria-expande
 **Chose: a draft and an applied choice, kept apart.**
 - The results always use the *applied* choice, whether the panel is open or shut. A chip changes only the
   *pending* choice. While the two differ (compared as sets, so pressing chips in another order changes
-  nothing) an **Apply** button appears in the panel, under the last row, in the primary style (`.bz-btn`,
-  the accent; no new colour). Pressing a chip back to its applied state makes it go again.
+  nothing) an **Apply** button appears in the panel, under the last row. Pressing a chip back to its
+  applied state makes it go again. **A group with every member pressed is the same as a group with none**
+  (it narrows nothing), so it is normalised to "no filter" before the comparison and before the count:
+  pressing both tracks shows no Apply, and applying all three languages leaves "Filters" with no count and
+  no Reset.
 - **The shut toggle tells the truth**: it reads "Filters (2)", the number of applied chips, and a
   **Reset filters** button beside it applies the defaults at once, so a filter can be cleared without
   opening the panel. Both are text, so the state is never carried by colour alone.
 - The query still searches as you type; only the filters wait for Apply.
 - After Apply or Reset the live region says "Filters applied." or "Filters reset." before the count, so
-  the announcement changes even when the count does not. The button that was pressed leaves the page, so
-  focus moves to the Filters toggle instead of falling to nothing.
+  the announcement changes even when the count does not. A chip press leaves the live region alone (it
+  changes no result, so it announces nothing); the note clears only when the query changes.
+- The button that was pressed leaves the page, so focus is placed. After Apply it goes to the last chip of
+  the panel, which is where Apply sat after in the Tab order, so the next Tab reaches the results; the
+  toggle was rejected because Tab from it walks back through every chip. After Reset (before the chips,
+  beside the toggle) it goes to the toggle.
+- **Apply is gold, not cobalt.** The author asked for "a distinct color"; a cobalt button beside cobalt
+  pressed chips was not. White on the language's `success` measures 4.03:1 and on `caution` 3.20:1, both under
+  the 4.5:1 text floor, so it is `caution` with `on-caution` type, 5.11:1 in both themes (the two tokens have
+  one value for both); it is DESIGN.md's thirteenth deviation, and `.bz-btn-apply` in `bazaar.css`, the
+  language's own file, carries it so no surface stylesheet defines a colour.
 - The other languages' indexes load on Apply (a Language chip being pending fetches nothing).
 
-**Shutting the panel discards a pending change.** Kept pending, a shut panel would hide a draft the results
+**Shutting the panel, or the whole window, discards a pending change** (Escape, Close, the backdrop, Ctrl+K
+and a new page all fire the dialog's `close`, which resets the draft to the applied choice). Kept pending, a shut panel would hide a draft the results
 do not use, which is the class of surprise the author reported (state that cannot be seen disagreeing with
 the results), and the reader would have to remember it. Discarded, the shut panel and the results always
 agree, and reopening shows exactly what is applied. The cost is that a reader who presses chips and shuts

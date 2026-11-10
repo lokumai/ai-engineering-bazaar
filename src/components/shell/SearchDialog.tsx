@@ -25,17 +25,19 @@ import { href } from '@/lib/url'
  *
  * **What it searches by default is everything** (D104, which replaces D97's own-track,
  * own-language default): every track, level and language. The reader's own language's index
- * loads when the window opens and the other two on the first search, never with the page.
+ * loads when the window opens and the other two with the first search of two or more characters
+ * or when a Language filter is applied, never with the page.
  * **Filters** are a disclosure under the field, closed by default (D104): a chip per track,
  * per level and per language, where a pressed chip narrows and a group with nothing pressed
- * does not. **A chip is a draft until Apply** (D126, which replaces D104's "the chips count only
+ * does not. **A chip is a draft until Apply** (D127, which replaces D104's "the chips count only
  * while the panel is open"): the results always use the *applied* filters, whether the panel is
  * open or shut, and pressing a chip only changes the pending ones. An Apply button, the
- * primary `.bz-btn`, appears in the panel while the two differ and goes when they match, so
- * pressing a chip back to its applied state removes it. The shut toggle counts the applied
+ * gold `.bz-btn-apply`, appears in the panel while the two differ and goes when they match, so
+ * pressing a chip back to its applied state removes it, and a group with every member pressed
+ * is the same as one with none (it narrows nothing). The shut toggle counts the applied
  * chips ("Filters (2)") and a Reset filters button beside it applies the defaults at once.
- * **Shutting the panel discards a pending change**: the shut panel then always shows what the
- * results use, and nothing unapplied hides behind it. The query text still searches as you
+ * **Shutting the panel, or the whole window, discards a pending change**: what is shut then
+ * always shows what the results use, and nothing unapplied hides behind it. The query text still searches as you
  * type. The reader's own track and language still decide order, as a tie-break. Each result
  * carries a bar in its level's hue, on its start edge; the level is also written in its meta
  * line. Results are links: ↓ from the field moves into them, ↑ and ↓ move between them, Enter
@@ -76,6 +78,13 @@ const TRACK_CHOICES: readonly Track[] = ['engineers', 'everyone']
 
 /** The languages a choice searches: none pressed is all of them. */
 const searched = (langs: readonly SearchLang[]): readonly SearchLang[] => (langs.length > 0 ? langs : SEARCH_LANGS)
+
+/** A group with every member pressed narrows nothing, so it is the same as a group with none. */
+const normalised = (c: Chosen, levels: readonly SearchLevel[]): Chosen => {
+  const whole = <T,>(group: readonly T[] | undefined, all: readonly T[]): T[] =>
+    group === undefined || all.every((one) => group.includes(one)) ? [] : [...group]
+  return { tracks: whole(c.tracks, TRACK_CHOICES), levels: whole(c.levels, levels.map((l) => l.slug)), langs: whole(c.langs, SEARCH_LANGS) }
+}
 
 /** Two choices are the same when each group holds the same members, whatever order they were pressed in. */
 const sameChoice = (a: Chosen, b: Chosen): boolean => {
@@ -151,6 +160,7 @@ export function SearchDialog({ levels }: { levels: readonly SearchLevel[] }) {
   const dialog = useRef<HTMLDialogElement>(null)
   const field = useRef<HTMLInputElement>(null)
   const toggleButton = useRef<HTMLButtonElement>(null)
+  const filtersPanel = useRef<HTMLDivElement>(null)
   const list = useRef<HTMLUListElement>(null)
   const downOnBackdrop = useRef(false)
   const indexes = useRef<Partial<Record<SearchLang, MiniSearch<Doc>>>>({})
@@ -169,7 +179,7 @@ export function SearchDialog({ levels }: { levels: readonly SearchLevel[] }) {
   const tracks = chosen.tracks ?? []
   const langs = chosen.langs ?? []
   const chosenLevels = chosen.levels ?? []
-  const pending = !sameChoice(chosen, applied)
+  const pending = !sameChoice(normalised(chosen, levels), applied)
   /* what the search uses: the applied choice, panel open or shut */
   const useTracks: readonly Track[] = applied.tracks ?? []
   const useLangs: readonly SearchLang[] = applied.langs ?? []
@@ -288,28 +298,31 @@ export function SearchDialog({ levels }: { levels: readonly SearchLevel[] }) {
   const typed = useMemo(() => query.trim().split(/\s+/), [query])
   const loading = !failed && !searchedLangs.every((l) => ready[l])
 
-  /* a chip only changes the draft; the results wait for Apply */
-  const choose = (next: Chosen) => {
+  /* a chip only changes the draft; the results wait for Apply. It leaves the live region
+     alone: a press changes no result, so it announces nothing. */
+  const choose = (next: Chosen) => setChosen(next)
+  /* The choice applied is the normalised one (a full group is none), and an index an applied
+     language needs is fetched now rather than at the next keystroke. The button that was
+     pressed leaves the page, so focus is placed: Apply sits after the last chip, so the last
+     chip is where the next Tab reaches the results; Reset sits before the chips, beside the
+     toggle, so focus goes to the toggle. */
+  const settle = (next: Chosen, said: string, focus: () => void) => {
+    const now = normalised(next, levels)
     setChosen(next)
-    setNote(null)
-  }
-  /* an index an applied language needs is fetched now, never earlier. The button that was
-     pressed leaves the page, so focus goes to the toggle rather than to nowhere. */
-  const settle = (next: Chosen, said: string) => {
-    setChosen(next)
-    setApplied(next)
+    setApplied(now)
     setNote(said)
-    void load(searched(next.langs ?? []))
-    toggleButton.current?.focus()
+    void load(searched(now.langs ?? []))
+    focus()
   }
-  const apply = () => settle(chosen, 'Filters applied.')
-  const reset = () => settle({}, 'Filters reset.')
+  const apply = () =>
+    settle(chosen, 'Filters applied.', () => {
+      const chips = filtersPanel.current?.querySelectorAll<HTMLElement>('.bz-chip')
+      chips?.[chips.length - 1]?.focus()
+    })
+  const reset = () => settle({}, 'Filters reset.', () => toggleButton.current?.focus())
   /* shutting the panel drops a draft: what is shut is what the results use */
   const toggleFilters = () => {
-    if (filtersOpen) {
-      setChosen(applied)
-      setNote(null)
-    }
+    if (filtersOpen) setChosen(applied)
     setFiltersOpen(!filtersOpen)
   }
 
@@ -395,6 +408,8 @@ export function SearchDialog({ levels }: { levels: readonly SearchLevel[] }) {
         className="bz-search"
         aria-label="Search"
         onKeyDown={onDialogKey}
+        /* every way out (Escape, Close, the backdrop, Ctrl+K, a new page) drops a draft, as shutting the panel does */
+        onClose={() => setChosen(applied)}
         /* the backdrop closes it, but not a drag that began in the field and ended there */
         onMouseDown={(event) => {
           downOnBackdrop.current = event.target === dialog.current
@@ -426,7 +441,7 @@ export function SearchDialog({ levels }: { levels: readonly SearchLevel[] }) {
               Close
             </button>
           </div>
-          {/* D103/D104/D126: a pressed chip is a draft, a group with nothing applied does not
+          {/* D103/D104/D127: a pressed chip is a draft, a group with nothing applied does not
               narrow, and the results use the applied filters whether this panel is open or shut. */}
           <div className="bz-search-filter">
             <div className="bz-search-filter-bar">
@@ -442,12 +457,12 @@ export function SearchDialog({ levels }: { levels: readonly SearchLevel[] }) {
                 <Chevron />
               </button>
               {appliedCount > 0 ? (
-                <button type="button" className="bz-btn-quiet bz-search-reset" onClick={reset}>
+                <button type="button" className="bz-btn bz-btn-quiet bz-search-reset" onClick={reset}>
                   Reset filters
                 </button>
               ) : null}
             </div>
-            <div className="bz-search-filters" id="bz-search-filters" role="group" aria-label="Narrow the results" hidden={!filtersOpen}>
+            <div ref={filtersPanel} className="bz-search-filters" id="bz-search-filters" role="group" aria-label="Narrow the results" hidden={!filtersOpen}>
               <div className="bz-chip-row" role="group" aria-labelledby="bz-search-f-track">
                 <span className="bz-chip-label" id="bz-search-f-track">
                   Track:
@@ -507,7 +522,7 @@ export function SearchDialog({ levels }: { levels: readonly SearchLevel[] }) {
               </div>
               {pending ? (
                 <div className="bz-search-apply">
-                  <button type="button" className="bz-btn" aria-label="Apply filters" onClick={apply}>
+                  <button type="button" className="bz-btn bz-btn-apply" onClick={apply}>
                     Apply
                   </button>
                 </div>

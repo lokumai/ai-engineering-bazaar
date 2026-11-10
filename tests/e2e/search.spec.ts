@@ -73,7 +73,7 @@ test('a Persian page searches its own language first, and pressing English narro
   await page.keyboard.press('Control+k')
   await field(page).fill(PERSIAN!.frontmatter.title)
   // Its own language first. The page itself need not top the list: a module's For Everyone
-  // version shares its title, and with no filter applied a search covers both tracks (D104, D126).
+  // version shares its title, and with no filter applied a search covers both tracks (D104, D127).
   await expect(results(page).first()).toHaveAttribute('lang', 'fa')
   await expect(hit(page, persian)).toBeVisible()
   await openFilters(page)
@@ -86,12 +86,12 @@ test('a Persian page searches its own language first, and pressing English narro
   await expect(hit(page, persian)).toBeVisible()
 })
 
-/* ---- D103/D104/D126: the filters behind a disclosure, applied by a button, and the bar on each result ---- */
+/* ---- D103/D104/D127: the filters behind a disclosure, applied by a button, and the bar on each result ---- */
 
 const chip = (page: Page, name: string) => dialog(page).getByRole('button', { name, exact: true })
 /** The toggle's name carries the applied count when there is one: `Filters (2)`. */
 const toggle = (page: Page) => dialog(page).getByRole('button', { name: /^Filters( \(\d+\))?$/ })
-const apply = (page: Page) => dialog(page).getByRole('button', { name: 'Apply filters', exact: true })
+const apply = (page: Page) => dialog(page).getByRole('button', { name: 'Apply', exact: true })
 const status = (page: Page) => dialog(page).locator('.bz-search-status')
 const results = (page: Page) => dialog(page).locator('.bz-search-results a')
 const hit = (page: Page, href: string) => dialog(page).locator(`.bz-search-results a[href="${href}"]`)
@@ -232,7 +232,7 @@ test('a changed chip is pending: Apply appears, the results stay as they were un
   await expect(status(page)).toHaveText(/^Filters applied\. (No results|\d+\+? results?)$/)
 })
 
-test('pressing a chip back to the applied state takes Apply away again, in any order', async ({ page }) => {
+test('pressing a chip back to the applied state, or undoing a further change, takes Apply away again', async ({ page }) => {
   await openWith(page, '/', WRITTEN.frontmatter.title)
   await openFilters(page)
   await chip(page, OTHER_LEVEL.title).click()
@@ -333,10 +333,10 @@ test('Reset filters is beside the shut toggle, applies the defaults at once and 
   await expect(apply(page)).toHaveCount(0)
 })
 
-test('from the keyboard: Tab from the last filter control reaches Apply, with a focus ring, and Enter applies it', async ({ page }) => {
+test('from the keyboard: Tab from the last filter control reaches Apply, with a focus ring; Enter applies it and the next Tab reaches the results', async ({ page }) => {
   await openWith(page, '/', WRITTEN.frontmatter.title)
   await openFilters(page)
-  await chip(page, OTHER_LEVEL.title).focus()
+  await chip(page, 'English').focus()
   await page.keyboard.press('Space')
   await expect(apply(page)).toBeVisible()
   await chip(page, 'فارسی').focus()
@@ -350,39 +350,150 @@ test('from the keyboard: Tab from the last filter control reaches Apply, with a 
   expect(ring.width).toBeGreaterThan(0)
   await page.keyboard.press('Enter')
   await expect(apply(page)).toHaveCount(0)
-  await expect(hit(page, WRITTEN_HREF())).toHaveCount(0)
-  /* the button that was pressed has left; focus stays inside the window, on the toggle */
-  await expect(toggle(page)).toBeFocused()
-  /* Escape still closes the window from there */
+  await expect(toggle(page)).toHaveText('Filters (1)')
+  await expect(hit(page, WRITTEN_HREF())).toBeVisible()
+  /* the button that was pressed has left: focus is on the last chip, so the next Tab
+     is the first result and not the start of the panel */
+  await expect(chip(page, 'فارسی')).toBeFocused()
+  await page.keyboard.press('Tab')
+  await expect(results(page).first()).toBeFocused()
+  /* Escape still closes the window */
   await page.keyboard.press('Escape')
   await expect(dialog(page)).toBeHidden()
 })
 
-test('Apply is the primary button, not a chip or a quiet one, and it is told apart by more than colour', async ({ page }) => {
+test('Apply is the language\'s gold button, a different fill from a pressed chip and a quiet button, and it says Apply', async ({ page }) => {
   await openWith(page, '/', WRITTEN.frontmatter.title)
   await openFilters(page)
   await expect(apply(page)).toHaveCount(0)
   await chip(page, OTHER_LEVEL.title).click()
   await expect(apply(page)).toBeVisible()
   const look = await page.evaluate(() => {
-    const probe = document.createElement('div')
-    probe.style.background = 'var(--color-primary)'
-    probe.style.color = 'var(--color-on-primary)'
-    document.body.append(probe)
-    const primary = { background: getComputedStyle(probe).backgroundColor, color: getComputedStyle(probe).color }
-    probe.remove()
+    const paint = (background: string, color: string) => {
+      const probe = document.createElement('div')
+      probe.style.background = background
+      probe.style.color = color
+      document.body.append(probe)
+      const result = { background: getComputedStyle(probe).backgroundColor, color: getComputedStyle(probe).color }
+      probe.remove()
+      return result
+    }
     const get = (el: Element) => ({ background: getComputedStyle(el).backgroundColor, color: getComputedStyle(el).color })
     const d = document.querySelector('dialog.bz-search')!
     return {
-      primary,
-      apply: get(d.querySelector('button[aria-label="Apply filters"]')!),
-      chip: get(d.querySelector('.bz-chip')!),
+      gold: paint('var(--color-caution)', 'var(--color-on-caution)'),
+      apply: get(d.querySelector('.bz-search-apply button')!),
+      pressed: get(d.querySelector('.bz-chip[aria-pressed="true"]')!),
       close: get(d.querySelector('.bz-search-close')!),
     }
   })
-  expect(look.apply).toEqual(look.primary)
-  expect(look.apply.background).not.toBe(look.chip.background)
+  expect(look.apply).toEqual(look.gold)
+  expect(look.apply.background).not.toBe(look.pressed.background)
   expect(look.apply.background).not.toBe(look.close.background)
+  /* the name is the visible word, so no label overrides it */
+  await expect(apply(page)).not.toHaveAttribute('aria-label', /.+/)
+})
+
+test('a group with every member pressed is no filter: no Apply, no count, no Reset', async ({ page }) => {
+  await openWith(page, '/', WRITTEN.frontmatter.title)
+  await openFilters(page)
+  await chip(page, 'For Engineers').click()
+  await expect(apply(page)).toBeVisible()
+  await chip(page, 'For Everyone').click()
+  await expect(apply(page), 'both tracks pressed is the default, not a change').toHaveCount(0)
+  for (const lang of ['English', 'Türkçe', 'فارسی']) await chip(page, lang).click()
+  await expect(apply(page)).toHaveCount(0)
+  /* a real filter beside a full group counts the real one only */
+  await chip(page, OTHER_LEVEL.title).click()
+  await apply(page).click()
+  await expect(toggle(page)).toHaveText('Filters (1)')
+  /* a full group applied is none: take the real one off and the count and Reset go */
+  await chip(page, OTHER_LEVEL.title).click()
+  await apply(page).click()
+  await expect(toggle(page)).toHaveText('Filters')
+  await expect(chip(page, 'Reset filters')).toHaveCount(0)
+  await expect(hit(page, WRITTEN_HREF())).toBeVisible()
+})
+
+test('every way out of the window drops an unapplied change', async ({ page }) => {
+  const exits: Array<[string, () => Promise<void>]> = [
+    ['Escape', () => page.keyboard.press('Escape')],
+    ['Close', () => dialog(page).getByRole('button', { name: 'Close' }).click()],
+    ['the backdrop', () => page.mouse.click(5, 5)],
+    ['Ctrl+K', () => page.keyboard.press('Control+k')],
+  ]
+  await openWith(page, '/', WRITTEN.frontmatter.title)
+  for (const [how, leave] of exits) {
+    if (!(await dialog(page).isVisible())) await page.keyboard.press('Control+k')
+    await openFilters(page)
+    await chip(page, OTHER_LEVEL.title).click()
+    await expect(apply(page)).toBeVisible()
+    await leave()
+    await expect(dialog(page)).toBeHidden()
+    await page.keyboard.press('Control+k')
+    await expect(dialog(page)).toBeVisible()
+    await openFilters(page)
+    await expect(chip(page, OTHER_LEVEL.title), `after leaving with ${how}`).toHaveAttribute('aria-pressed', 'false')
+    await expect(apply(page), `after leaving with ${how}`).toHaveCount(0)
+  }
+  /* an applied filter survives leaving, as before */
+  await chip(page, OTHER_LEVEL.title).click()
+  await apply(page).click()
+  await page.keyboard.press('Escape')
+  await page.keyboard.press('Control+k')
+  await expect(toggle(page)).toHaveText('Filters (1)')
+  await expect(chip(page, OTHER_LEVEL.title)).toHaveAttribute('aria-pressed', 'true')
+})
+
+test('pressing a chip does not touch the live region; Apply and Reset do', async ({ page }) => {
+  await openWith(page, '/', WRITTEN.frontmatter.title)
+  await expect(status(page)).toHaveText(/^\d+\+? results?$/)
+  await openFilters(page)
+  await status(page).evaluate((el) => {
+    const w = window as unknown as { __live: number }
+    w.__live = 0
+    new MutationObserver((records) => { w.__live += records.length }).observe(el, { childList: true, characterData: true, subtree: true })
+  })
+  const mutations = () => page.evaluate(() => (window as unknown as { __live: number }).__live)
+  await chip(page, OTHER_LEVEL.title).click()
+  await chip(page, 'English').click()
+  await chip(page, OTHER_LEVEL.title).click()
+  await page.waitForTimeout(300)
+  expect(await mutations(), 'a chip press changed the live region').toBe(0)
+  await apply(page).click()
+  await expect(status(page)).toHaveText(/^Filters applied\. /)
+  expect(await mutations()).toBeGreaterThan(0)
+  /* a press after Apply leaves the announcement as it was, not cleared and said again */
+  const said = await status(page).textContent()
+  const before = await mutations()
+  await chip(page, 'Türkçe').click()
+  await page.waitForTimeout(300)
+  expect(await mutations(), 'a chip press changed the live region after Apply').toBe(before)
+  expect(await status(page).textContent()).toBe(said)
+})
+
+test('the hover covers the whole Filters bar, Reset included', async ({ page }) => {
+  await openWith(page, '/', WRITTEN.frontmatter.title)
+  await openFilters(page)
+  await chip(page, OTHER_LEVEL.title).click()
+  await apply(page).click()
+  const sunken = await page.evaluate(() => {
+    const probe = document.createElement('div')
+    probe.style.background = 'var(--color-surface-sunken)'
+    document.body.append(probe)
+    const c = getComputedStyle(probe).backgroundColor
+    probe.remove()
+    return c
+  })
+  const bar = dialog(page).locator('.bz-search-filter-bar')
+  const bg = () => bar.evaluate((el) => getComputedStyle(el).backgroundColor)
+  await page.mouse.move(5, 5)
+  expect(await bg()).not.toBe(sunken)
+  await toggle(page).hover()
+  expect(await bg(), 'hovering the toggle does not fill the bar').toBe(sunken)
+  expect(await toggle(page).evaluate((el) => getComputedStyle(el).backgroundColor), 'the toggle is filled alone, stopping at Reset').toBe('rgba(0, 0, 0, 0)')
+  await chip(page, 'Reset filters').hover()
+  expect(await bg()).toBe(sunken)
 })
 
 test('the language chip narrows to one language, and a second press widens it again', async ({ page }) => {
@@ -625,6 +736,7 @@ test('on a phone the shut panel leaves the results more room, the open one wraps
   await expect(chip(page, 'Reset filters')).toBeVisible()
   const reset = (await chip(page, 'Reset filters').boundingBox())!
   expect(reset.x + reset.width).toBeLessThanOrEqual(box.x + box.width + 1)
+  expect(reset.height, 'Reset is under the touch floor').toBeGreaterThanOrEqual(44)
   expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(390)
   expect(await dialog(page).evaluate((d) => d.scrollWidth <= d.clientWidth)).toBe(true)
 })

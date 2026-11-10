@@ -281,6 +281,12 @@ is "thinking", that is chain of thought, built into the model. How much it think
 setting, often called **effort**, from low to max. More thinking gives better answers on hard
 problems, but it costs more and takes longer.
 
+Some chat screens let you watch this thinking. Here the AI writes its steps first, and the answer
+comes after.
+
+![An AI's thinking, shown as it is written](../images/reasoning-stream.webp)  
+*The AI's thinking appears first, under "Thinking...". When the answer starts, the thinking folds into "Thought for a few seconds".*
+
 > **NOTE: more thinking is not always better.** Like people, models can overthink, and their
 > answers get worse. Research on this is collected in
 > [Stop Overthinking](https://arxiv.org/abs/2503.16419). The skill is matching the thinking to how

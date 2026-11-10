@@ -942,6 +942,31 @@ the same, the design may differ).
   nothing more and would let the two drift); an optional `story` field absent when no story exists (the
   build already fails without STORY.md, and the index's fields are always present).
 
+### D126 · Human in the loop is taught in Agentic UI, not in the Expert module — 2026-11-10
+status: active
+
+The author, after M82 had put it in the "later" list: *"no need to wait for advance since it is a basic
+topic."* Agentic UI had said it comes in the Expert level, in its opening, in "Beyond Streaming", in its
+summary and in the For Everyone version and both translations of each.
+
+- **Moved, not copied.** `## Human in the Loop` is a section of Agentic UI, written from AG-UI's
+  Interrupts and Tools pages and LangGraph's Interrupts page, and every mention of it as "later" is
+  gone in three languages and two tracks. The Advanced Agentic UI placeholder and the `curriculum.yaml`
+  note drop it too.
+- **What stays deferred.** Steering a run while it works, shared state, generative UI and its
+  specifications (A2UI, MCP Apps, OpenUI, json-render), and the rest of the placeholder's list. The
+  placeholder said "the agent pausing for approval, steering a run mid-way" in one line; the pause is
+  now Agentic UI's and the steering stays as its own item. That split is the reading of this decision:
+  a pause the agent asks for is a basic topic, a redirect the user starts is not yet taught.
+- **Stable pages only.** AG-UI documents the pause as an `interrupt` outcome of `RunFinished` and a
+  `resume` list on the next run; the 1.0 spec describes the same pattern on its "Interrupts and Resume"
+  page (`docs.ag-ui.com/spec/1.0/basic/patterns/interrupt-resume`). The section names only the
+  fields and events those pages name.
+- **Rejected:** keeping a one-line mention in "Beyond Streaming" (a topic cannot be both taught and
+  deferred); a new module for it (the author asked for a section of the module that already owns the
+  screen); teaching the `interrupt()` API of LangGraph in depth (one short paragraph links the idea
+  to the framework; the page owns the rest).
+
 ### D127 · The search filters apply with an Apply button, and a shut disclosure keeps them — 2026-11-10
 status: active
 

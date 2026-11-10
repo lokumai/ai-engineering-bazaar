@@ -190,6 +190,11 @@ It's currently 34°C and clear in Istanbul.
 - یه اجرا که کار توئه
 - یه نتیجه که تو برمی‌گردونی
 
+یه صفحه‌ی chat می‌تونه هر قدم این loop رو بکشه. توی ضبطی که پایین هست، هر استعلام سهام یه tool call هست و به شکل یه کارت نشون داده می‌شه. اینکه صفحه این قدم‌ها رو چطور می‌گیره رو درس [Agentic UI](../2_intermediate/ui_fa.md) توضیح می‌ده.
+
+![tool call‌ها به شکل کارت](./images/tool-call-cards.webp)  
+*هر call به `get_stock_price` یه کارته، با آرگومان‌هایی که مدل نوشته (ticker) و نتیجه‌ای که host برگردونده. برای هر ticker یه کارت هست. از دموی «Generative UI: Tool calls + reasoning» توی AG-UI Dojo مال CopilotKit ضبط شده.*
+
 ## چند تا tool نمونه
 
 هر چیزی که بشه به شکل تابع نوشتش، می‌تونه یه tool باشه. این‌ها چند تا نمونه‌ی واقعی‌ان:

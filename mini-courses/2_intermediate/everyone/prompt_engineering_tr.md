@@ -242,6 +242,11 @@ Bu neden işe yarıyor? Model her seferinde tek bir kelime yazar ve yazdığı h
 
 Bugün "adım adım düşün" cümlesini neredeyse hiç kendin yazmıyorsun. ChatGPT ya da Claude "düşünüyor" gösterdiğinde, bu modelin içine yerleştirilmiş chain of thought'tur. Ne kadar düşüneceği de artık bir ayar ve çoğunlukla **effort** (çaba) deniyor; düşükten en yükseğe kadar gidiyor. Daha fazla düşünmek zor problemlerde daha iyi cevap demek, ama aynı zamanda daha pahalı ve daha yavaş demek.
 
+Bazı chat ekranları bu düşünmeyi izlemene izin verir. Burada yapay zekâ önce adımlarını yazıyor, cevap sonra geliyor.
+
+![Yazıldıkça Gösterilen Bir Yapay Zekânın Düşünmesi](../images/reasoning-stream.webp)  
+*Yapay zekânın düşünmesi önce, "Thinking..." başlığının altında görünür. Cevap başlayınca düşünme "Thought for a few seconds" satırına katlanır.*
+
 > **NOT: daha fazla düşünmek her zaman daha iyi değil.** İnsanlar gibi modeller de fazla düşünebilir ve cevapları kötüleşir. Bu konudaki araştırmalar [Stop Overthinking](https://arxiv.org/abs/2503.16419) makalesinde toplanmış. Asıl beceri, düşünme miktarını işin zorluğuna göre ayarlamak.
 
 ## Role Prompting

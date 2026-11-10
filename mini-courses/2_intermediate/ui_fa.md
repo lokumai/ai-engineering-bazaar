@@ -5,6 +5,7 @@ objectives:
   - "اسم نوع event‌های اصلی رو بیار که یه run تولید می‌کنه: lifecycle، text، reasoning، tool call، subagent و state"
   - "توضیح بده مشکل coupling رو که یه قرارداد مشترک event برطرف می‌کنه"
   - "AG-UI رو توی Protocol Stack برای Agent کنار MCP و A2A بذار"
+  - "بگو human in the loop چیه و یه agentic UI چطوری یه run رو برای جواب یه آدم متوقف می‌کنه"
 ---
 
 # Agentic UI
@@ -23,7 +24,7 @@ CopilotKit توی [What Is Agentic UI?](https://www.copilotkit.ai/learning/what-
 - **رابط chat** فرض می‌کنه یه سؤال هست و یه جواب. می‌نویسی، صبر می‌کنی و یه پاسخ نشون داده می‌شه.
 - **Agentic UI** فرض می‌کنه یه agent هست که همین الان داره کار می‌کنه. agent کلی تصمیم می‌گیره و کلی tool صدا می‌زنه، و آدم وسط کار نگاهش می‌کنه، هدایتش می‌کنه و اصلاحش می‌کنه.
 
-این درس سراغ بخش اول این تعریف می‌ره، یعنی همون چیزی که هر agentic UI روش ساخته می‌شه: **stream کردن کار agent همون لحظه که اتفاق می‌افته**، و protocol‌ای که این کار رو استاندارد می‌کنه. هدایت کردن، تأیید گرفتن، state مشترک و رابطی که خود agent می‌سازه مال درس Expert‌ه: [Advanced Agentic UI](../3_expert/advanced_ui.md).
+این درس سراغ بخش‌هایی از این تعریف می‌ره که هر agentic UI روشون ساخته می‌شه: **stream کردن کار agent همون لحظه که اتفاق می‌افته**، protocol‌ای که این کار رو استاندارد می‌کنه، و تأیید گرفتن، یعنی **human in the loop**. هدایت کردن یه run وسط کارش، state مشترک و رابطی که خود agent می‌سازه مال درس Expert‌ه: [Advanced Agentic UI](../3_expert/advanced_ui.md).
 
 ## چرا run رو stream می‌کنیم؟
 
@@ -147,11 +148,33 @@ AG-UI یکی از سه protocol‌ه، و هر کدوم یه طرف agent رو �
 
 این سه تا رو با هم قاطی نکن. هر کدوم یه طرف متفاوت agent رو وصل می‌کنه، و دو تای دیگه رو قبلاً دیدی: MCP توی [Code Agent‌ها](coding_agents_fa.md) و A2A توی [Multi-Agent Systems](../1_fundamentals/multi_agent_fa.md).
 
+## Human in the Loop
+
+streaming به یه آدم اجازه می‌ده agent رو تماشا کنه. **Human in the loop** تصمیم گرفتن رو هم می‌ذاره دست آدم.
+
+agent‌ای که تنها کار می‌کنه، گاهی به یه قدم مهم می‌رسه، مثلاً فرستادن یه ایمیل، عوض کردن یه دیتابیس یا پرداخت پول برای یه چیزی. با human in the loop، agent همون‌جا وایمیسه و منتظر می‌مونه. یه آدم قدم رو تأیید می‌کنه، تغییرش می‌ده یا بین چند تا گزینه یکی رو انتخاب می‌کنه. بعد agent از همون جواب ادامه می‌ده. agent قدم‌های روتین رو هنوز خودش انجام می‌ده، پس آدم فقط جایی تصمیم می‌گیره که تصمیم لازمه.
+
+این برای قدم‌هایی که عواقب واقعی دارن از همه مهم‌تره. صفحه‌ی [Interrupts](https://docs.langchain.com/oss/python/langgraph/interrupts) توی مستندات LangGraph، call‌های API و تغییر دیتابیس و تراکنش‌های مالی رو مثال می‌زنه برای کارهای حساسی که باید قبلشون وایستاد. آدمی که قدم رو قبل از اجرا می‌بینه می‌تونه ردش کنه یا درستش کنه. اشتباهی که زود گرفته بشه ارزون‌تر تموم می‌شه، و دلیل نشون دادن قدم‌ها توی streaming هم همینه.
+
+یه agentic UI این کار رو توی چهار قدم انجام می‌ده. AG-UI اسم این توقف رو **interrupt** گذاشته و قدم‌ها رو توی صفحه‌ی [Interrupts](https://docs.ag-ui.com/concepts/interrupts) توضیح می‌ده:
+
+1. **run متوقف می‌شه.** run با یه event از نوع `RunFinished` تموم می‌شه و `outcome` اون event از نوع `interrupt` می‌شه. این outcome یه یا چند interrupt رو لیست می‌کنه. هر کدوم یه `id` و یه `reason` داره، و معمولاً یه `message` هم که برای آدم نوشته شده.
+2. **صفحه قدمِ منتظر رو نشون می‌ده.** message (اگه باشه) و کنترل‌های جواب دادن رو می‌کشه: دکمه‌های تأیید و رد، یا یه لیست از گزینه‌ها.
+3. **جواب برمی‌گرده.** front end روی همون thread یه run تازه شروع می‌کنه. این run یه لیست `resume` می‌بره که برای هر interrupt یه ورودی داره. هر ورودی یه `interruptId` داره، یه `status` که مقدارش `resolved` یا `cancelled` هست، و خود جواب توی `payload`.
+4. **run ادامه پیدا می‌کنه.** agent جواب رو می‌خونه و از همون‌جا ادامه می‌ده.
+
+![agent‌ای که برای جواب یه آدم می‌ایسته](./images/human-in-the-loop.webp)  
+*agent یه رزرو پیشنهاد می‌ده و می‌ایسته. دکمه‌های ساعت وقتی میان که agent منتظره، و run از روی کلیک ادامه پیدا می‌کنه. توی run دوم، «None of these work» رزرو رو تموم می‌کنه.*
+
+AG-UI یه راه ساده‌تر هم داره که صفحه‌ی [Tools](https://docs.ag-ui.com/concepts/tools) توضیحش می‌ده. agent یه tool رو صدا می‌زنه که مال front end هست، مثلاً `confirmAction`. front end یه پنجره‌ی تأیید نشون می‌ده و تصمیم آدم، به‌عنوان نتیجه‌ی اون tool call، برمی‌گرده سمت agent.
+
+framework‌های agent هم همین مکانیزم رو داخل خود agent دارن. توی LangGraph، صدا زدن `interrupt` graph رو توی همون نقطه معلق می‌کنه. LangGraph state‌ی graph رو با یه checkpointer ذخیره می‌کنه. بعد graph بدون محدودیت زمانی منتظر می‌مونه. برای ادامه دادن، دوباره با `Command(resume=...)` صداش بزن. مقداری که می‌دی می‌شه مقدار برگشتی خود `interrupt`.
+
 ## فراتر از Streaming
 
-streaming پایه‌ست. بقیه‌ی تعریف agentic UI روی همین بنا می‌شه و درس Expert، [Advanced Agentic UI](../3_expert/advanced_ui.md)، بهش می‌رسه:
+streaming و human in the loop پایه‌ست. بقیه‌ی تعریف agentic UI روی همین‌ها بنا می‌شه و درس Expert، [Advanced Agentic UI](../3_expert/advanced_ui.md)، بهش می‌رسه:
 
-- **Human in the loop**: agent وایمیسه و از کاربر می‌خواد یه قدم رو قبل از اجرا تأیید کنه.
+- **Steering**: کاربر یه run رو وقتی هنوز داره کار می‌کنه به یه سمت دیگه می‌چرخونه.
 - **Shared state**: صفحه و agent هر دو روی یه state مشترک می‌خونن و می‌نویسن.
 - **Generative UI** و specification‌های مربوط بهش: A2UI، MCP Apps، OpenUI و json-render.
 
@@ -165,7 +188,8 @@ streaming پایه‌ست. بقیه‌ی تعریف agentic UI روی همین �
 - **MCP**: protocol‌ای که agent رو به tool‌ها و داده وصل می‌کنه؛ از Anthropic.
 - **AG-UI**: Agent–User Interaction Protocol؛ یه مجموعه event مشترک که agent رو به برنامه‌های رو‌به‌کاربر وصل می‌کنه.
 - **A2A**: protocol‌ای که agent رو به agent‌های دیگه وصل می‌کنه؛ از Google.
-- **Human in the loop**: agent قبل از اجرای یه قدم وایمیسه و از کاربر تأیید می‌گیره.
+- **Human in the loop**: agent سر یه قدم مهم وایمیسه و قبل از ادامه منتظر می‌مونه یه آدم تأیید کنه، تغییر بده یا انتخاب کنه.
+- **Interrupt**: توی AG-UI، یه توقف که توی outcome از نوع `interrupt` یه run لیست می‌شه و یه آدم بهش جواب می‌ده؛ run بعدی جواب رو توی لیست `resume` برمی‌گردونه.
 - **Shared state**: صفحه و agent هر دو روی یه state برنامه می‌خونن و می‌نویسن.
 - **Generative UI**: رابطی که خود agent می‌سازه و کنار component‌های برنامه‌نویس نشون داده می‌شه.
 
@@ -192,11 +216,11 @@ graph LR
 
 ## خلاصه
 
-Agentic UI رابطیه که توش یه آدم و یه agent‌ی در حال اجرا توی یه برنامه‌ی مشترک کار می‌کنن. پایه‌ش streaming‌ه: کار agent قدم‌به‌قدم ساخته می‌شه، پس قدم‌به‌قدم هم به صفحه فرستاده می‌شه، به‌شکل event‌هایی با نوع مشخص برای lifecycle، متن، reasoning، tool call‌ها، subagent‌ها و state‌ی run. هر framework فرمت event خودش رو داره و همین frontend رو به یه backend گره می‌زنه. AG-UI با یه مجموعه event باز و مشترک این گره رو باز می‌کنه، همون‌طور که MCP برای tool‌ها کرد، و خیلی از framework‌های agent ازش پشتیبانی می‌کنن. کنار MCP (برای tool‌ها) و A2A (برای agent‌های دیگه)، AG-UI protocol سومین طرف agent‌ه: کاربرهاش.
+Agentic UI رابطیه که توش یه آدم و یه agent‌ی در حال اجرا توی یه برنامه‌ی مشترک کار می‌کنن. پایه‌ش streaming‌ه: کار agent قدم‌به‌قدم ساخته می‌شه، پس قدم‌به‌قدم هم به صفحه فرستاده می‌شه، به‌شکل event‌هایی با نوع مشخص برای lifecycle، متن، reasoning، tool call‌ها، subagent‌ها و state‌ی run. هر framework فرمت event خودش رو داره و همین frontend رو به یه backend گره می‌زنه. AG-UI با یه مجموعه event باز و مشترک این گره رو باز می‌کنه، همون‌طور که MCP برای tool‌ها کرد، و خیلی از framework‌های agent ازش پشتیبانی می‌کنن. کنار MCP (برای tool‌ها) و A2A (برای agent‌های دیگه)، AG-UI protocol سومین طرف agent‌ه: کاربرهاش. همین protocol اجازه می‌ده یه run سر یه قدم مهم وایسه و منتظر یه آدم بمونه، که همون human in the loop هست: run با یه interrupt تموم می‌شه و run بعدی جواب آدم رو می‌بره.
 
 قدم بعدی: هر چیزی که نظارت روی agent رو سخت‌تر کرد، اون رو به یه هدف باارزش‌تر برای حمله هم تبدیل کرد. این موضوع [Security](security_fa.md) هست.
 
-**بررسی سریع**: چرا یه agentic UI به‌جای اینکه منتظر جواب نهایی بمونه، event‌ها رو stream می‌کنه؟ AG-UI چه مشکلی رو حل می‌کنه که فرمت event خودِ هر framework حل نمی‌کنه؟ و MCP و A2A و AG-UI هر کدوم کدوم طرف agent رو وصل می‌کنن؟
+**بررسی سریع**: چرا یه agentic UI به‌جای اینکه منتظر جواب نهایی بمونه، event‌ها رو stream می‌کنه؟ AG-UI چه مشکلی رو حل می‌کنه که فرمت event خودِ هر framework حل نمی‌کنه؟ و MCP و A2A و AG-UI هر کدوم کدوم طرف agent رو وصل می‌کنن؟ وقتی یه agent به جواب یه آدم نیاز داره، چه اتفاقی برای run می‌افته؟
 
 ## منابع
 
@@ -206,6 +230,9 @@ Agentic UI رابطیه که توش یه آدم و یه agent‌ی در حال �
 - [Event streaming](https://docs.langchain.com/oss/python/langchain/event-streaming): اینکه LangChain چطور message‌ها، tool call‌ها، subagent‌ها و state‌ی یه run رو stream می‌کنه
 - [AG-UI Overview](https://docs.ag-ui.com/introduction): protocol چیه، کدوم framework‌ها ازش پشتیبانی می‌کنن، و کنار MCP و A2A کجا می‌شینه
 - [Events](https://docs.ag-ui.com/concepts/events): همه‌ی event‌های AG-UI، با field‌هاشون
+- [Interrupts](https://docs.ag-ui.com/concepts/interrupts): AG-UI چطور یه run رو برای جواب یه آدم متوقف می‌کنه و ادامه می‌ده
+- [Tools](https://docs.ag-ui.com/concepts/tools): یه tool که مال front end هست چطور می‌تونه از یه آدم بخواد یه کار رو تأیید کنه
+- [Interrupts](https://docs.langchain.com/oss/python/langgraph/interrupts): LangGraph چطور یه graph رو سر یه قدم متوقف می‌کنه و با یه مقدار ادامه می‌ده
 
 ### 🛠️ ابزارها
 
@@ -218,4 +245,4 @@ Agentic UI رابطیه که توش یه آدم و یه agent‌ی در حال �
 
 ### 🧭 ماژول‌ها
 
-- [Advanced Agentic UI](../3_expert/advanced_ui.md): human in the loop، shared state، generative UI و specification‌های مربوط بهش
+- [Advanced Agentic UI](../3_expert/advanced_ui.md): steering یه run، shared state، generative UI و specification‌های مربوط بهش

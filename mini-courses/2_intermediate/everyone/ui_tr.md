@@ -3,6 +3,7 @@ objectives:
   - "Agentic UI'ın ne olduğunu, normal bir uygulamadan ve bir chat kutusundan nasıl farklı olduğunu söyle"
   - "Bir agent'ın işinin neden sonda tek seferde değil, adım adım gösterildiğini açıkla"
   - "Code Agents modülündeki evrensel şarj fişi benzetmesiyle AG-UI'ın ne işe yaradığını açıkla"
+  - "Human in the loop'un ne demek olduğunu ve bir agent'ın önemli bir adımdan önce neden durup sana sorduğunu söyle"
 ---
 
 # Agentic UI
@@ -26,7 +27,7 @@ Sade bir dille söylersek, fark işi kimin yaptığında:
 - **Bir chat kutusu** bir kez cevap verir. Bir soru yazarsın, beklersin ve tek bir cevap görünür.
 - **Bir agentic UI** zaten çalışmakta olan bir agent'ı gösterir. Agent birçok karar verir ve birçok tool kullanır; sen de o çalışırken onu izler, yönlendirir ve düzeltirsin.
 
-Bu modül, bunların hepsinin temelini anlatıyor: **agent'ın işini gerçekleştikçe göstermek**. Adımları onayladığın ya da agent'ın ekranı kendisinin tasarladığı kısımlar Expert seviyesinde geliyor.
+Bu modül, bunların hepsinin temelini anlatıyor: **agent'ın işini gerçekleştikçe göstermek** ve agent'ın önemli bir adımdan önce **durup sana sorması**. Agent çalışırken onu yönlendirdiğin ya da agent'ın ekranı kendisinin tasarladığı kısımlar Expert seviyesinde geliyor.
 
 ## Run'ı Neden Stream Ederiz
 
@@ -124,11 +125,24 @@ AG-UI, ortak üç protocol'den biridir ve her biri agent'ı farklı bir tarafa b
 
 Birlikte çalışırlar. Gerçek bir ürün çoğu zaman üçünü birden kullanır. Karıştırma: MCP ile [Code Agents](coding_agents_tr.md) modülünde, A2A ile [Multi-Agent Systems](../1_fundamentals/multi_agent_tr.md) modülünde tanıştın; AG-UI ise üçüncüsü, insanlara bakan.
 
+## Human in the Loop
+
+Bir agent'ı izlemek faydalıdır. O harekete geçmeden önce "evet" ya da "hayır" diyebilmek ise daha da faydalıdır. Buna **human in the loop** denir: işin döngüsünde sen de kalırsın.
+
+Senin için bir e-posta yazan yeni bir asistan düşün. İyi bir asistan onu hemen göndermez. Sana gösterir; sen onaylarsın, değiştirirsin ya da hayır dersin. Sonra devam eder. Bir agent de aynı şekilde çalışabilir. Rutin adımları kendi başına yapar. Bir e-posta göndermek, bir kaydı değiştirmek ya da bir şey için ödeme yapmak gibi önemli bir adımda ise durur ve seni bekler.
+
+Bu, en çok bir adımın gerçek sonuçları olduğunda önemlidir. Adımı çalışmadan önce görürsen onu durdurabilir ya da düzeltebilirsin. Erken yakalanan bir hata daha az maliyetlidir. Ekranın adımları göstermesinin sebebi de budur.
+
+Ekranda bu şöyle işler. Agent durur. Ekran, agent'ın ne yapmak istediğini gösterir; yanında onaylamak, reddetmek ya da bir seçeneği seçmek için düğmeler vardır. Cevabın agent'a geri gider ve agent oradan devam eder. AG-UI bunu yapmanın standart bir yolunu tanımlıyor; böylece her ekran en azından mesajın metnini gösterebilir.
+
+![Cevabın İçin Duran Bir Yapay Zekâ](../images/human-in-the-loop.webp)  
+*Yapay zekâ bir toplantı için saatler önerir ve durur. Sen birini seçtikten sonra randevuyu oluşturur. İkinci denemede kişi "None of these work" seçiyor ve yapay zekâ randevuyu oluşturamadığını söylüyor.*
+
 ## Streaming'in Ötesi
 
-Streaming temeldir. Expert seviyesi üç şeyi daha anlatacak:
+Streaming ve human in the loop temeldir. Expert seviyesi daha fazlasını anlatacak:
 
-- Agent durup önemli bir adım için senden onay isteyebilir (**human in the loop**).
+- Agent çalışırken onu yönlendirebilirsin.
 - Ekran ve agent aynı bilgiyi paylaşabilir.
 - Agent ekranın bazı kısımlarını kendisi tasarlayabilir (**generative UI**).
 
@@ -141,13 +155,13 @@ Streaming temeldir. Expert seviyesi üç şeyi daha anlatacak:
 - **Protocol**: iki sistemin nasıl konuşacağını belirleyen, üzerinde anlaşılmış kurallar.
 - **AG-UI**: agent ile ekran arasındaki ortak protocol.
 - **MCP** ve **A2A**: agent ile tool'ları arasındaki ve agent'lar arasındaki ortak protocol'ler.
-- **Human in the loop**: agent durur ve bir insanın onayını bekler.
+- **Human in the loop**: agent önemli bir adımda durur ve bir insanın onaylamasını, değiştirmesini ya da seçmesini bekler.
 
 ## Özet
 
-Agentic UI, sen ve çalışan bir agent'ın aynı uygulamayı paylaştığı ekrandır. Temeli streaming: agent işi adım adım yaptığı için ekran da onu adım adım gösterir, tıpkı bir yemek uygulamasının siparişinin her aşamasını göstermesi gibi. Her agent ürünü kendi formatını kullandı ve bu, ekranı tek bir agent'a bağladı. AG-UI, evrensel bir fiş gibi ortak bir format; böylece her ekran her agent'la çalışabiliyor. MCP (tool'lar) ve A2A'in (diğer agent'lar) yanında, agent'ı onu kullanan insanlara bağlıyor.
+Agentic UI, sen ve çalışan bir agent'ın aynı uygulamayı paylaştığı ekrandır. Temeli streaming: agent işi adım adım yaptığı için ekran da onu adım adım gösterir, tıpkı bir yemek uygulamasının siparişinin her aşamasını göstermesi gibi. Her agent ürünü kendi formatını kullandı ve bu, ekranı tek bir agent'a bağladı. AG-UI, evrensel bir fiş gibi ortak bir format; böylece her ekran her agent'la çalışabiliyor. MCP (tool'lar) ve A2A'in (diğer agent'lar) yanında, agent'ı onu kullanan insanlara bağlıyor. Bir adım önemliyse agent önce durup sana soruyor: human in the loop budur.
 
-**Hızlı Kontrol**: Bir agentic UI agent'ın işini neden adım adım gösterir? AG-UI hangi sorunu çözer?
+**Hızlı Kontrol**: Bir agentic UI agent'ın işini neden adım adım gösterir? AG-UI hangi sorunu çözer? Bir agent neden bazen durup seni bekler?
 
 ## Kaynaklar
 
@@ -155,6 +169,7 @@ Agentic UI, sen ve çalışan bir agent'ın aynı uygulamayı paylaştığı ekr
 
 - [What Is Agentic UI?](https://www.copilotkit.ai/learning/what-is-agentic-ui): bu modülün kullandığı tanım
 - [AG-UI Overview](https://docs.ag-ui.com/introduction): protocol'ün ne olduğu ve onu kimin desteklediği
+- [Interrupts](https://docs.ag-ui.com/concepts/interrupts): AG-UI bir agent'ı bir insanın cevabı için nasıl durduruyor
 
 ### 🛠️ Araçlar
 

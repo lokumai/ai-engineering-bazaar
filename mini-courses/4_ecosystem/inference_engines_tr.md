@@ -5,6 +5,7 @@ objectives:
   - "Tek bir makine, bir GPU sunucusu ya da bir cluster için uygun engine'i seç"
   - "Batching'in throughput'u neden belirlediğini açıkla"
   - "Yerel bir modelin önüne bir chat arayüzü koy"
+  - "Ollama ile kendi dizüstü bilgisayarında küçük bir model çalıştır"
 ---
 
 # Inference Engine'ler
@@ -48,7 +49,7 @@ graph TD
     B --> C["Çok makine<br/>Kubernetes üzerinde llm-d"]
 ```
 
-**Kendi makinende** sarmalayıcıları (wrapper) kullanmak en doğrusudur. [LLM Temelleri](../1_fundamentals/llms_tr.md) modülünde anlatılan [Ollama](https://ollama.com/) ve [LM Studio](https://lmstudio.ai/) bu durumda doğru seçimdir. İkisi de engine'i gizler ve birkaç dakika içinde çalıştırmanı sağlar; altlarında ise ![](./images/logos/llamacpp.svg)**[llama.cpp](https://github.com/ggml-org/llama.cpp)** bulunur. llama.cpp, C ve C++ ile yazılmış bir LLM inference projesidir ve quantize edilmiş bir modelin dizüstü bilgisayarda bile çalışabilmesinin nedeni de budur. llama.cpp'yi doğrudan kullanmak iki durumda mantıklıdır: sarmalayıcının açmadığı bir build flag'ine ihtiyacın olduğunda ya da kimsenin desteklemediği bir donanıma model koyacağın zaman.
+**Kendi makinende** sarmalayıcıları (wrapper) kullanmak en doğrusudur. [LLM Temelleri](../1_fundamentals/llms_tr.md) modülünde anlatılan ![](./images/logos/ollama-mono.svg)**[Ollama](https://ollama.com/)** ve ![](./images/logos/lmstudio-mono.svg)**[LM Studio](https://lmstudio.ai/)** bu durumda doğru seçimdir. İkisi de engine'i gizler ve birkaç dakika içinde çalıştırmanı sağlar; altlarında ise ![](./images/logos/llamacpp.svg)**[llama.cpp](https://github.com/ggml-org/llama.cpp)** bulunur. llama.cpp, C ve C++ ile yazılmış bir LLM inference projesidir ve quantize edilmiş bir modelin dizüstü bilgisayarda bile çalışabilmesinin nedeni de budur. llama.cpp'yi doğrudan kullanmak iki durumda mantıklıdır: sarmalayıcının açmadığı bir build flag'ine ihtiyacın olduğunda ya da kimsenin desteklemediği bir donanıma model koyacağın zaman.
 
 **Gerçek kullanıcılara hizmet veren bir GPU sunucusunda** sarmalayıcılar artık yetmez ve burada bir serving engine'e ihtiyacın olur.
 
@@ -62,6 +63,40 @@ Bütün bu araçların nerede durduğunu, provider'ların da onların yanında n
 
 ![LLM Inference Haritası](./images/llm-inference-landscape.webp)  
 *Wing'in LLM inference altyapısı haritası, aşağıdan yukarı okunuyor: kiralık GPU'lar, onları yöneten araçlar, engine'ler, en üstte de cache ve routing. Inference-as-a-service sütunu provider yolu, integrated stacks sütunu ise birkaç katmanı tek bir ürüne topluyor.*
+
+## Dizüstü Bilgisayarında Bir Model Çalıştır
+
+Bir modeli kendi bilgisayarında çalıştırabilirsin ve **[Ollama](https://ollama.com/)** bunu çok kolaylaştırır. Bir terminal aç ve Ollama'yı kur. macOS ya da Linux'ta ilk komutu, Windows'ta PowerShell'de ikinci komutu çalıştır:
+
+```bash
+# macOS and Linux
+curl -fsSL https://ollama.com/install.sh | sh
+
+# Windows, in PowerShell
+irm https://ollama.com/install.ps1 | iex
+```
+
+Linux'ta sunucu zaten çalışmıyorsa, ayrı bir terminalde `ollama serve` ile başlat. İstersen [Ollama indirme sayfasından](https://ollama.com/download) bir kurulum dosyası da indirebilirsin. Sonra şu komutları kullan:
+
+```bash
+ollama pull llama3.2:3b   # download the model to your disk
+ollama list               # show the models you have downloaded
+ollama run llama3.2:3b    # chat with the model; it pulls the model first if needed
+ollama ps                 # show the models that are loaded in memory
+ollama stop llama3.2:3b   # unload the model from memory
+```
+
+Örnekteki `llama3.2:3b` yaklaşık 2 GB'lık küçük bir modeldir. Bir sohbetin içindeyken çıkmak için `/bye` yaz. Ollama varsayılan olarak bir modeli son kullanımından sonra beş dakika boyunca bellekte tutar. `ollama stop` komutu o belleği hemen boşaltır. Bütün komutların listesi [CLI Reference](https://docs.ollama.com/cli) sayfasında, bir modelin bellekte ne kadar kalacağı ise [FAQ](https://docs.ollama.com/faq) sayfasında anlatılıyor.
+
+![Ollama'nın Listelediği Modeller](./images/ollama-list.webp)
+*`ollama list` çıktısı. Çektiğin her model diskinde bir dosyadır. Boyut sütunu o dosyanın ne kadar yer kapladığını gösterir; böylece makinene neyin sığacağını kontrol edebilirsin. İki `llama3.2` adı aynı ID'yi paylaşıyor, çünkü ikisi de aynı model.*
+
+**[LM Studio](https://lmstudio.ai/)** aynı işi terminal yerine bir masaüstü uygulamasıyla yapar. Modelleri uygulamanın içinden indirir ve kendi penceresinde onlarla sohbet edersin. Daha yeni ve ayrı bir uygulaması olan [LM Studio Bionic](https://lmstudio.ai/docs/bionic) ise açık modellerle agentic işler yapmak için geliştirildi; aşağıdaki görsel onu gösteriyor.
+
+![LM Studio Bionic](./images/lm-studio.webp)
+*LM Studio Bionic bir masaüstü uygulaması. Sohbet, proje listesi ve canlı önizleme tek bir pencerede duruyor, bu yüzden terminale ihtiyacın yok. Burada tek bir istekle bir code repository içinde bir landing page yaptırılmış.*
+
+Bu araçları birbirine karıştırma. Ollama, terminalden yönettiğin bir wrapper'dır. LM Studio, içinde hem engine hem de sohbet penceresi olan tek bir uygulamadır. Open WebUI'ı bu modülün sonunda anlatıyoruz ve o bir web arayüzüdür. Modeli kendisi çalıştırmaz: Ollama'ya ya da OpenAI uyumlu bir API sunan başka bir sunucuya bağlanır. `:ollama` Docker image'ı Ollama ile birlikte paketlenmiştir, ama modeli yine Ollama çalıştırır.
 
 ## Sayıları Açıklayan Tek Fikir
 
@@ -90,6 +125,8 @@ Bir engine sana bir API verir, ama bakabileceğin bir şey vermez. ![](./images/
 - **Crossover point**: kiralık bir GPU'nun, aynı işi token satın almaktan daha ucuza geldiği hacim eşiği.
 - **Self-hosting**: modeli kendi altyapında çalıştırmak; bu gerçek bir operasyon işidir.
 - **Wrapper**: Ollama ya da LM Studio gibi, engine'i gizleyip modeli birkaç dakika içinde çalıştıran araç.
+- **Ollama**: terminalden yönettiğin bir wrapper; `ollama pull`, `ollama list`, `ollama run` ve `ollama stop` gibi komutları vardır.
+- **LM Studio**: içinde hem engine hem de sohbet penceresi bulunan bir masaüstü uygulaması.
 - **Serving engine**: gerçek kullanıcıların olduğu bir GPU sunucusunda gereken engine; örneğin vLLM.
 - **Batching**: birçok isteği birlikte çalıştırmak; GPU weight'leri bellekten bir kez okur ve gruptaki tüm istekler için kullanır.
 - **Throughput**: aynı anda çok sayıda kullanıcıyla ölçülen, sunucunun tamamladığı iş miktarı.
@@ -129,11 +166,19 @@ Bunlardan biri geçerli değilse, bir provider kullan, çünkü self-hosting bir
 
 Engine'i problemin büyüklüğüne göre seçmelisin. Kendi makinende, altlarında llama.cpp çalışan Ollama ya da LM Studio'yu kullan. Gerçek kullanıcılara hizmet veren bir GPU sunucusunda ise vLLM, SGLang ya da TensorRT-LLM'den birini seç. SGLang, ortak bir uzun prefix paylaşan istekler için uygundur; TensorRT-LLM ise NVIDIA donanımından en fazla verimi alır. Problem bir cluster'a dönüştüğünde llm-d'ye geçersin.
 
+Bunu dizüstü bilgisayarında denemek için Ollama'yı kur ve `ollama pull` ile `ollama run` komutlarını kullan. LM Studio aynı işi bir masaüstü uygulamasında yapar. Open WebUI'ın arkasında Ollama gibi bir engine'in olması gerekir.
+
 Batching, bu modüldeki her sayıyı açıklayan fikirdir. Tek bir isteğe hizmet veren bir GPU çoğunlukla boştadır ve continuous batching onu dolu tutar. Bu yüzden tek istekle yapılan bir benchmark, sana neredeyse hiçbir şey söylemez.
 
 **Hızlı Kontrol**: Kendi altyapında çalıştırdığın modeli her seferinde tek istekle ölçüyorsun ve hızlı görünüyor. Peki elli kullanıcıyla neden çökebilir? Bunun yerine neyi ölçmen gerekirdi?
 
 ## Kaynaklar
+
+### 📄 Makaleler
+
+- [Welcome to LM Studio Bionic](https://lmstudio.ai/docs/bionic): LM Studio'dan ayrı olan, daha yeni Bionic uygulamasının dokümanları.
+- [CLI Reference](https://docs.ollama.com/cli): Ollama'nın sunduğu komutlar ve her birinin ne yaptığı.
+- [FAQ](https://docs.ollama.com/faq): Ollama'nın bir modeli bellekte ne kadar tuttuğu ve onu hemen nasıl boşaltacağın.
 
 ### 🛠️ Araçlar
 

@@ -188,6 +188,11 @@ Alan adları sağlayıcıdan sağlayıcıya biraz değişse de yapı değişmez:
 - senin yaptığın bir çalıştırma
 - geri verdiğin bir sonuç
 
+Bir chat ekranı bu döngünün her adımını çizebilir. Aşağıdaki kayıtta her hisse sorgusu tek bir tool call ve bir kart olarak görünüyor. Ekranın bu adımları nasıl aldığını [Agentic UI](../2_intermediate/ui_tr.md) modülü anlatıyor.
+
+![Kart Olarak Gösterilen Tool Call'lar](./images/tool-call-cards.webp)  
+*Her `get_stock_price` çağrısı bir kart: modelin yazdığı argümanlar (ticker) ve host'un döndürdüğü sonuç. Her ticker için bir kart var. CopilotKit'in AG-UI Dojo'sundaki "Generative UI: Tool calls + reasoning" demosundan kaydedildi.*
+
 ## Örnek Tool'lar
 
 Fonksiyon olarak yazabildiğin her şey bir tool olabilir. İşte birkaç gerçekçi örnek:

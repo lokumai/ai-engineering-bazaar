@@ -222,6 +222,13 @@ The exact field names differ a little between providers. But the shape does not 
 - an execution that you perform
 - a result that you give back
 
+A chat screen can draw each step of this loop. In the recording below, each stock lookup is one
+tool call, shown as a card. [Agentic UI](../2_intermediate/ui.md) explains how the screen receives
+these steps.
+
+![Tool calls shown as cards](./images/tool-call-cards.webp)  
+*Each `get_stock_price` call is a card with the arguments the model wrote (the ticker) and the result the host returned. There is one card for each ticker. Recorded from the "Generative UI: Tool calls + reasoning" demo in CopilotKit's AG-UI Dojo.*
+
 ## Example Tools
 
 Anything that you can write as a function can be a tool. Here are a few real ones:

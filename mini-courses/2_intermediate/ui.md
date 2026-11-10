@@ -6,6 +6,7 @@ objectives:
   - "Name the main kinds of event a run produces: lifecycle, text, reasoning, tool call, subagent, state"
   - "Explain the coupling problem that a shared event contract removes"
   - "Place AG-UI next to MCP and A2A in the agent protocol stack"
+  - "Say what human in the loop is, and how an agentic UI pauses a run for a person's answer"
 ---
 
 # Agentic UI
@@ -33,10 +34,10 @@ The difference from the interfaces you already know is who is doing the work.
 - **An agentic UI** assumes an agent that is already running. The agent makes many decisions and
   calls many tools, and the human watches, directs, and corrects it while it works.
 
-This module covers the first part of that definition, the one every agentic UI is built on:
-**streaming the agent's work as it happens**, and the protocol that standardises it. Steering,
-approvals, shared state and interface that the agent generates itself belong to the Expert module,
-[Advanced Agentic UI](../3_expert/advanced_ui.md).
+This module covers the parts of that definition that every agentic UI is built on: **streaming
+the agent's work as it happens**, the protocol that standardises it, and **human in the loop**,
+the approvals. Steering a run while it works, shared state and interface that the agent generates
+itself belong to the Expert module, [Advanced Agentic UI](../3_expert/advanced_ui.md).
 
 ## Why Stream the Run
 
@@ -200,12 +201,53 @@ part of the work to another agent over A2A, and streams everything it does to th
 Do not confuse the three. Each connects a different side, and you have met the other two already: MCP in
 [Code Agents](coding_agents.md) and A2A in [Multi-Agent Systems](../1_fundamentals/multi_agent.md).
 
+## Human in the Loop
+
+Streaming lets a person watch an agent. **Human in the loop** lets the person decide.
+
+An agent that works alone will sometimes reach a step that matters, such as sending an email,
+changing a database or paying for something. With human in the loop, the agent stops at that step
+and waits. A person approves the step, changes it, or chooses between options. Then the agent
+continues from that answer. The agent still does the routine steps by itself, so the person only
+decides where a decision is needed.
+
+This matters most for steps with real consequences. LangGraph's [Interrupts](https://docs.langchain.com/oss/python/langgraph/interrupts) page gives
+API calls, database changes and financial transactions as examples of critical actions to pause
+before. A person who sees the step before it runs can reject it or fix it. A mistake caught early
+costs less. That is also why the screen shows the steps.
+
+An agentic UI does this in four steps. AG-UI calls the pause an **interrupt**, and its
+[Interrupts](https://docs.ag-ui.com/concepts/interrupts) page describes the steps:
+
+1. **The run stops.** The run ends with a `RunFinished` event, and the `outcome` of that event has
+   the type `interrupt`. It lists one or more interrupts. Each one has an `id` and a `reason`, and
+   usually a `message` written for the person.
+2. **The screen shows the pending step.** It draws the message, when there is one, and the controls for the answer:
+   approve and reject buttons, or a list of choices.
+3. **The answer goes back.** The front end starts a new run on the same thread. This run carries a
+   `resume` list with one entry for each interrupt. An entry has the `interruptId`, a `status` of
+   `resolved` or `cancelled`, and the answer in a `payload`.
+4. **The run continues.** The agent reads the answer and goes on from there.
+
+![An agent that stops for a person's answer](./images/human-in-the-loop.webp)  
+*The agent proposes a booking and stops. The time buttons appear while it waits, and the run continues from the click. In the second run, "None of these work" ends the booking.*
+
+AG-UI also has a simpler way, which its [Tools](https://docs.ag-ui.com/concepts/tools) page
+describes. The agent calls a tool that the front end owns, for example `confirmAction`. The front
+end shows a confirmation dialog, and the person's decision goes back to the agent as the result of
+that tool call.
+
+Agent frameworks have the same mechanism inside the agent. In LangGraph, calling `interrupt`
+suspends the graph at that point. LangGraph saves the state of the graph with a checkpointer. Then
+the graph waits, with no time limit. Call it again with `Command(resume=...)` to continue. The
+value you pass in becomes the return value of the `interrupt` call.
+
 ## Beyond Streaming
 
-Streaming is the base. The rest of the agentic UI definition builds on it, and the Expert module
-[Advanced Agentic UI](../3_expert/advanced_ui.md) will cover it:
+Streaming and human in the loop are the base. The rest of the agentic UI definition builds on
+them, and the Expert module [Advanced Agentic UI](../3_expert/advanced_ui.md) will cover it:
 
-- **Human in the loop**: the agent pauses and asks the user to approve a step before it runs it.
+- **Steering**: the user redirects a run while it is still working.
 - **Shared state**: the screen and the agent read and write the same application state.
 - **Generative UI**, and the specifications for it: A2UI, MCP Apps, OpenUI and json-render.
 
@@ -219,7 +261,8 @@ Streaming is the base. The rest of the agentic UI definition builds on it, and t
 - **MCP**: the protocol from Anthropic that connects an agent to tools and data.
 - **AG-UI**: the Agent–User Interaction Protocol, one shared set of events that connects an agent to user-facing applications.
 - **A2A**: the protocol from Google that connects an agent to other agents.
-- **Human in the loop**: the agent pauses and asks the user to approve a step before it runs it.
+- **Human in the loop**: the agent stops at a step that matters and waits for a person to approve, change or choose before it continues.
+- **Interrupt**: in AG-UI, a pause listed in a run's `interrupt` outcome, which a person answers and the next run carries back in its `resume` list.
 - **Shared state**: the screen and the agent read and write the same application state.
 - **Generative UI**: an interface that the agent generates itself, shown next to components that a developer built.
 
@@ -252,14 +295,17 @@ step, as typed events for the run's lifecycle, its text, its reasoning, its tool
 subagents and its state. Every framework has its own event format, and that ties the front end to
 one backend. AG-UI removes that tie with one open set of events, the same way MCP did for tools, and
 many agent frameworks support it. Next to MCP (tools) and A2A (other agents), it is the protocol for
-the third side of an agent: its users.
+the third side of an agent: its users. The same protocol lets a run stop at a step that matters and
+wait for a person, which is human in the loop: the run ends with an interrupt, and the next run
+carries the person's answer.
 
 Next: everything that made the agent harder to supervise also made it a more valuable target to
 attack. That is the subject of [Security](security.md).
 
 **Quick Check**: Why does an agentic UI stream events instead of waiting for the final answer? What
-problem does AG-UI solve that each framework's own event format does not? And which side of an agent
-does each of MCP, A2A and AG-UI connect?
+problem does AG-UI solve that each framework's own event format does not? Which side of an agent
+does each of MCP, A2A and AG-UI connect? And what happens to a run when an agent needs a person's
+answer?
 
 ## References
 
@@ -269,6 +315,9 @@ does each of MCP, A2A and AG-UI connect?
 - [Event streaming](https://docs.langchain.com/oss/python/langchain/event-streaming): how LangChain streams the messages, tool calls, subagents and state of a run
 - [AG-UI Overview](https://docs.ag-ui.com/introduction): what the protocol is, the frameworks that support it, and where it sits next to MCP and A2A
 - [Events](https://docs.ag-ui.com/concepts/events): every AG-UI event, with its fields
+- [Interrupts](https://docs.ag-ui.com/concepts/interrupts): how AG-UI pauses a run for a person's answer and resumes it
+- [Tools](https://docs.ag-ui.com/concepts/tools): how a tool that the front end owns can ask a person to confirm an action
+- [Interrupts](https://docs.langchain.com/oss/python/langgraph/interrupts): how LangGraph pauses a graph at a step, and resumes it with a value
 
 ### 🛠️ Tools
 
@@ -281,4 +330,4 @@ does each of MCP, A2A and AG-UI connect?
 
 ### 🧭 Modules
 
-- [Advanced Agentic UI](../3_expert/advanced_ui.md): human in the loop, shared state, generative UI, and the specifications for it
+- [Advanced Agentic UI](../3_expert/advanced_ui.md): steering a run, shared state, generative UI, and the specifications for it

@@ -50,7 +50,7 @@ Aşağıdaki harita, bütün bunların nerede durduğunu ve provider'ların onla
 
 ## Dizüstü Bilgisayarında Bir Model Çalıştır
 
-Bir yapay zekâ modelini kendi bilgisayarında çalıştırabilirsin. En kolay yolu ![](../images/logos/lmstudio-mono.svg)**[LM Studio](https://lmstudio.ai/)**. Bu bir masaüstü uygulaması ve diğer programlar gibi kurulur. Modelleri uygulamanın içinden indirir ve kendi penceresinde onlarla sohbet edersin. Güncel uygulamasının adı LM Studio Bionic.
+Bir yapay zekâ modelini kendi bilgisayarında çalıştırabilirsin. En kolay yolu ![](../images/logos/lmstudio-mono.svg)**[LM Studio](https://lmstudio.ai/)**. Bu bir masaüstü uygulaması ve diğer programlar gibi kurulur. Modelleri uygulamanın içinden indirir ve kendi penceresinde onlarla sohbet edersin. Daha yeni ve ayrı bir uygulaması olan LM Studio Bionic ise senin yerine görevleri yapan bir yapay zekâ agent'ı için geliştirildi; aşağıdaki görsel onu gösteriyor.
 
 ![LM Studio Bionic](../images/lm-studio.webp)  
 *Sıradan bir uygulama penceresi: solda projelerin, ortada sohbet, sağda sonucun önizlemesi var. Terminal yok.*
@@ -68,7 +68,7 @@ ollama stop llama3.2:3b   # unload the model from memory
 ![Ollama'nın Listelediği Modeller](../images/ollama-list.webp)  
 *İndirdiğin her model bilgisayarında bir dosyadır ve bu liste her birinin ne kadar büyük olduğunu gösterir. Daha büyük bir dosya genellikle daha güçlü bir bilgisayar ister.*
 
-İsimleri birbirine karıştırma. Open WebUI'ı bu modülün sonunda anlatıyoruz ve o yalnızca bir sohbet ekranıdır: modeli kendisi çalıştırmaz, Ollama'ya ya da modeli çalıştıran benzer bir programa bağlanır. LM Studio farklıdır, çünkü modeli çalıştıran program ile sohbet ekranı tek bir uygulamanın içindedir.
+İsimleri birbirine karıştırma. Open WebUI'ı bu modülün sonunda anlatıyoruz ve o sohbet etmek için bir web sayfasıdır: modeli kendisi çalıştırmaz, Ollama'ya ya da modeli çalıştıran benzer bir programa bağlanır. Ollama ile birlikte paketlenmiş bir sürümü de var, ama modeli yine Ollama çalıştırır. LM Studio farklıdır, çünkü modeli çalıştıran program ile sohbet ekranı tek bir uygulamanın içindedir.
 
 ## Sayıları Açıklayan Tek Fikir
 

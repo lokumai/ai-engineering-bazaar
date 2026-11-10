@@ -62,7 +62,7 @@ The map below shows where all of these sit, and where providers sit next to them
 
 ## Run a Model on Your Laptop
 
-You can run an AI model on your own computer. The easiest way is ![](../images/logos/lmstudio-mono.svg)**[LM Studio](https://lmstudio.ai/)**. It is a desktop app, and you install it like any other program. You download models inside it and chat with them in its own window. Its current app is called LM Studio Bionic.
+You can run an AI model on your own computer. The easiest way is ![](../images/logos/lmstudio-mono.svg)**[LM Studio](https://lmstudio.ai/)**. It is a desktop app, and you install it like any other program. You download models inside it and chat with them in its own window. Its newer, separate app, LM Studio Bionic, is built for an AI agent that does tasks for you, and the picture below shows it.
 
 ![LM Studio Bionic](../images/lm-studio.webp)  
 *A normal app window: your projects on the left, the chat in the middle, and a preview of the result on the right. There is no terminal.*
@@ -80,7 +80,7 @@ ollama stop llama3.2:3b   # unload the model from memory
 ![Models Listed by Ollama](../images/ollama-list.webp)  
 *Every model you download is a file on your computer, and this list shows how big each one is. A bigger file usually needs a more powerful computer.*
 
-Do not mix up the names. Open WebUI, described at the end of this module, is only a chat screen. It does not run a model itself, and it connects to Ollama or to a similar program that does. LM Studio is different, because the program that runs the model and the chat screen are in one app.
+Do not mix up the names. Open WebUI, described at the end of this module, is a web page for chatting. It does not run a model itself: it connects to Ollama or to a similar program that does. A version of it is packaged together with Ollama, but Ollama still does the running. LM Studio is different, because the program that runs the model and the chat screen are in one app.
 
 ## The One Idea That Explains the Numbers
 

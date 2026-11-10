@@ -30,7 +30,7 @@ inference provider، که موضوع [Inference Provider‌ها](inference_provi
 
 **داده نباید بیرون بره.** مثل پرونده‌های پزشکی، اسناد حقوقی، و هر چیزی که طبق قانون باید روی زیرساخت خودت بمونه. این رایج‌ترین دلیله، خیلی رایج‌تر از دو تای دیگه، و اگه شامل حال تو می‌شه، به‌تنهایی تکلیف رو روشن می‌کنه.
 
-**حجم کار، خودت اجرا کردن رو ارزون‌تر می‌کنه.** قیمت‌گذاری به ازای هر token عالیه، ولی تا یه جایی. یه نقطه‌ی سربه‌سر (crossover) هست که از اون به بعد، یه GPU اجاره‌ای که کل روز کار می‌کنه، از همون حجم کار که token به token بخری ارزون‌تر درمیاد. اگه از اون نقطه رد شده باشی، فرقش ناچیز نیست، خیلی زیاده.
+**حجم کار، خودت اجرا کردن رو ارزون‌تر می‌کنه.** قیمت‌گذاری به ازای هر token عالیه، ولی تا یه جایی. یه نقطه‌ی سربه‌سر (crossover) هست که از اون به بعد، یه GPU اجاره‌ای که کل روز کار می‌کنه، از همون حجم کار که به ازای هر token می‌خری ارزون‌تر درمیاد. اگه از اون نقطه رد شده باشی، فرقش ناچیز نیست، خیلی زیاده.
 
 **چیزی لازم داری که provider بهت نمی‌ده.** مثلاً:
 
@@ -49,7 +49,7 @@ graph TD
     B --> C["چند تا سرور<br/>llm-d روی Kubernetes"]
 ```
 
-**روی سیستم خودت**، سراغ wrapper‌ها برو. [مبانی LLM](../1_fundamentals/llms_fa.md) درباره‌ی [Ollama](https://ollama.com/) و [LM Studio](https://lmstudio.ai/) گفت، و اینجا هم جواب درست همین‌هان: engine رو پشت خودشون قایم می‌کنن و ظرف چند دقیقه کارت رو راه می‌ندازن.
+**روی سیستم خودت**، سراغ wrapper‌ها برو. [مبانی LLM](../1_fundamentals/llms_fa.md) درباره‌ی ![](./images/logos/ollama-mono.svg)**[Ollama](https://ollama.com/)** و ![](./images/logos/lmstudio-mono.svg)**[LM Studio](https://lmstudio.ai/)** گفت، و اینجا هم جواب درست همین‌هان: engine رو پشت خودشون قایم می‌کنن و ظرف چند دقیقه کارت رو راه می‌ندازن.
 
 زیر هر دوشون ![](./images/logos/llamacpp.svg)**[llama.cpp](https://github.com/ggml-org/llama.cpp)** خوابیده، یعنی inference مدل‌های زبانی که با C و C++ نوشته شده، و اصلاً به لطف همینه که یه مدل quantize‌شده می‌تونه روی لپ‌تاپ اجرا بشه. llama.cpp رو فقط توی دو حالت مستقیم استفاده کن: وقتی یه build flag می‌خوای که wrapper دستت نمی‌ده، یا وقتی داری مدل رو روی سخت‌افزاری می‌بری که هیچ‌کس دیگه پشتیبانیش نمی‌کنه.
 
@@ -68,7 +68,17 @@ graph TD
 
 ## یه مدل رو روی لپ‌تاپت اجرا کن
 
-می‌تونی یه مدل رو روی کامپیوتر خودت اجرا کنی، و ![](./images/logos/ollama-mono.svg)**[Ollama](https://ollama.com/)** کار رو خیلی راحت می‌کنه. یه terminal باز کن و Ollama رو نصب کن. روی macOS و Linux این دستور رو اجرا کن: `curl -fsSL https://ollama.com/install.sh | sh`. روی Windows هم توی PowerShell این رو اجرا کن: `irm https://ollama.com/install.ps1 | iex`. می‌تونی از [صفحه‌ی دانلود Ollama](https://ollama.com/download) هم یه installer دانلود کنی. بعد از اون، این دستورها رو بزن:
+می‌تونی یه مدل رو روی کامپیوتر خودت اجرا کنی، و **[Ollama](https://ollama.com/)** کار رو خیلی راحت می‌کنه. یه terminal باز کن و Ollama رو نصب کن. روی macOS یا Linux خط اول رو اجرا کن، و روی Windows خط دوم رو توی PowerShell اجرا کن:
+
+```bash
+# macOS and Linux
+curl -fsSL https://ollama.com/install.sh | sh
+
+# Windows, in PowerShell
+irm https://ollama.com/install.ps1 | iex
+```
+
+روی Linux، اگه server از قبل بالا نیومده، اون رو توی یه terminal جدا با `ollama serve` راه بنداز. می‌تونی از [صفحه‌ی دانلود Ollama](https://ollama.com/download) هم یه installer دانلود کنی. بعد از اون، این دستورها رو بزن:
 
 ```bash
 ollama pull llama3.2:3b   # download the model to your disk
@@ -80,15 +90,15 @@ ollama stop llama3.2:3b   # unload the model from memory
 
 مدل مثال، یعنی `llama3.2:3b`، یه مدل کوچیکه و حدود 2 GB حجم داره. وسط یه چت با نوشتن `/bye` میای بیرون. Ollama به‌طور پیش‌فرض یه مدل رو تا پنج دقیقه بعد از آخرین استفاده توی حافظه نگه می‌داره، و دستور `ollama stop` اون حافظه رو همون لحظه آزاد می‌کنه. لیست همه‌ی دستورها توی [CLI Reference](https://docs.ollama.com/cli) هست، و اینکه یه مدل چقدر توی حافظه می‌مونه رو [FAQ](https://docs.ollama.com/faq) توضیح می‌ده.
 
-![مدل‌هایی که Ollama لیست کرده](./images/ollama-list.webp)  
-*خروجی `ollama list`. هر مدلی که pull می‌کنی یه فایل روی دیسکته، و ستون size نشون می‌ده چقدر جا می‌گیره، پس می‌تونی ببینی چی روی سیستمت جا می‌شه. دو اسم `llama3.2` یه ID دارن، چون هر دو یه مدل هستن.*
+![مدل‌هایی که Ollama لیست کرده](./images/ollama-list.webp)
+*خروجی `ollama list`. هر مدلی که pull می‌کنی یه فایل روی دیسکته. ستون size نشون می‌ده چقدر جا می‌گیره، پس می‌تونی ببینی چی روی سیستمت جا می‌شه. دو اسم `llama3.2` یه ID دارن، چون هر دو یه مدل هستن.*
 
-![](./images/logos/lmstudio-mono.svg)**[LM Studio](https://lmstudio.ai/)** همین کار رو به جای terminal با یه اپ دسکتاپ انجام می‌ده. اپ فعلی‌ش اسمش LM Studio Bionic هست. مدل‌ها رو از داخل خود اپ دانلود می‌کنی و توی پنجره‌ی خودش باهاشون چت می‌کنی.
+**[LM Studio](https://lmstudio.ai/)** همین کار رو به جای terminal با یه اپ دسکتاپ انجام می‌ده. مدل‌ها رو از داخل خود اپ دانلود می‌کنی و توی پنجره‌ی خودش باهاشون چت می‌کنی. اپ جدیدتر و جداش، [LM Studio Bionic](https://lmstudio.ai/docs/bionic)، برای کارهای agentic با open model‌ها ساخته شده، و تصویر پایین همون رو نشون می‌ده.
 
-![LM Studio Bionic](./images/lm-studio.webp)  
-*LM Studio Bionic یه اپ دسکتاپه. چت، لیست پروژه‌ها و پیش‌نمایش زنده توی یه پنجره هستن، پس terminal لازم نداری. اینجا با یه درخواست ازش خواستن یه سایت portfolio بسازه.*
+![LM Studio Bionic](./images/lm-studio.webp)
+*LM Studio Bionic یه اپ دسکتاپه. چت، لیست پروژه‌ها و پیش‌نمایش زنده توی یه پنجره هستن، پس terminal لازم نداری. اینجا با یه درخواست ازش خواستن توی یه code repository یه landing page بسازه.*
 
-این ابزارها رو با هم قاطی نکن. Ollama یه engine هست که از terminal کنترلش می‌کنی. LM Studio فقط یه اپه که هم engine و هم پنجره‌ی چت توشه. Open WebUI رو آخر همین درس توضیح می‌دیم، و اون فقط یه رابط چته: خودش هیچ مدلی اجرا نمی‌کنه و به Ollama یا یه engine دیگه که پشتیبانی می‌کنه وصل می‌شه.
+این ابزارها رو با هم قاطی نکن. Ollama یه wrapper هست که از terminal کنترلش می‌کنی. LM Studio فقط یه اپه که هم engine و هم پنجره‌ی چت توشه. Open WebUI رو آخر همین درس توضیح می‌دیم، و اون یه رابط وبه. خودش هیچ مدلی اجرا نمی‌کنه: به Ollama یا یه server دیگه که API سازگار با OpenAI داره وصل می‌شه. image `:ollama` توی Docker با Ollama بسته‌بندی شده، ولی اجرای مدل باز هم کار خود Ollama هست.
 
 ## ایده‌ای که همه‌ی عددها رو توضیح می‌ده
 
@@ -156,7 +166,7 @@ provider هم یعنی یکی دیگه یه engine رو برات اجرا می�
 
 engine رو به اندازه‌ی مسئله انتخاب کن. روی سیستم خودت Ollama یا LM Studio، که llama.cpp زیرشونه. روی یه سرور GPU با کاربرهای واقعی vLLM، SGLang یا TensorRT-LLM: SGLang برای وقتی که درخواست‌ها یه prefix طولانی مشترک دارن، و TensorRT-LLM برای گرفتن حداکثر کارایی از سخت‌افزار NVIDIA. وقتی هم کار به cluster کشید، llm-d.
 
-برای امتحان کردنش روی لپ‌تاپت، Ollama رو نصب کن و از `ollama pull` و `ollama run` استفاده کن. LM Studio همین کار رو توی یه اپ دسکتاپ انجام می‌ده. Open WebUI فقط یه رابط چته، پس یه engine باید پشتش باشه.
+برای امتحان کردنش روی لپ‌تاپت، Ollama رو نصب کن و از `ollama pull` و `ollama run` استفاده کن. LM Studio همین کار رو توی یه اپ دسکتاپ انجام می‌ده. Open WebUI پشتش یه engine مثل Ollama می‌خواد.
 
 batching ایده‌ایه که همه‌ی عددهای این درس رو توضیح می‌ده. GPU‌ای که فقط یه درخواست رو جواب می‌ده بیشتر وقتش بیکاره، و continuous batching پر نگهش می‌داره. برای همینه که یه benchmark با یه درخواست در هر لحظه، تقریباً هیچی بهت نمی‌گه.
 
@@ -166,6 +176,7 @@ batching ایده‌ایه که همه‌ی عددهای این درس رو تو
 
 ### 📄 مقاله‌ها
 
+- [Welcome to LM Studio Bionic](https://lmstudio.ai/docs/bionic): مستندات Bionic، اپ جدیدتری که از LM Studio جداست
 - [CLI Reference](https://docs.ollama.com/cli): دستورهایی که Ollama بهت می‌ده، و اینکه هر کدوم چی کار می‌کنه
 - [FAQ](https://docs.ollama.com/faq): اینکه Ollama یه مدل رو چقدر توی حافظه نگه می‌داره، و چطور همون لحظه آزادش کنی
 

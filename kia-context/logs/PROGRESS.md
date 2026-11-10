@@ -11,7 +11,7 @@ description: >
   backgrounds and copy (M81), Agentic UI (M82), the cast's colours (M83), and M84 to M90 (content
   and site fixes, the home page in Turkish and Persian, Dariush's motif, block menus in the top layer,
   and About, the story of the Bazaar); Caravan built (M91), its real trends waiting (M92) and its second
-  round (M93); multilingual SEO (M96); translated objectives on the site (M98) and in the bundle (M99); the story in the bundle (M100); and M41, the content bundle for the mobile reader. Each milestone carries its deliverables and acceptance
+  round (M93); multilingual SEO (M96); translated objectives on the site (M98) and in the bundle (M99); the story in the bundle (M100); three screen recordings and Human in the Loop moved into Agentic UI (M101); and M41, the content bundle for the mobile reader. Each milestone carries its deliverables and acceptance
   criteria as `- [ ]` checkboxes, ticked as the work lands, and closes with a dated report; the loop
   that governs that is below, in this file.
   NOT here: why a choice was made (BRAINSTORM.md), or any rule that outlives the milestone
@@ -19,7 +19,7 @@ description: >
 authority: state
 writes: agent, every session
 status: active
-covers: "M50 to M100, 2026-11-06 onward, and M41, which part 2 held for PR #57"
+covers: "M50 to M101, 2026-11-06 onward, and M41, which part 2 held for PR #57"
 last_updated: 2026-11-10
 ---
 
@@ -1936,6 +1936,46 @@ first launch and in its Settings, from the bundle rather than from a copy in its
 - [x] **The guard**: the corpus test holds the document equal to what the About page reads and the index
       to its path; the route test holds it static; the browser suite parses it with `StoryDoc`.
 - [x] **Gate:** typecheck, 1,594 unit tests, build, link check, bundle check; the full browser suite in CI.
+
+## 🏁 Milestone M101: Three screen recordings, and Human in the Loop in Agentic UI (D126) — DONE
+
+The author, verbatim: *"lets add these 3 videos in the proper place of module. also add HITL or human
+in the loop to the agent ui section and no need to wait for advance since it is a basic topic. one
+video in tool calling module, one in the new hitl, and one in where we have chain of thought. do them
+in the proper format and again, update kia-context and review and merge"*
+
+- [x] **The recordings as animated WebP** (D87, D112), cropped to the chat, encoded from the GIF at
+      10 frames a second with identical neighbouring frames merged, so the files store about 8.4 to
+      9.5 frames a second. Report, measured on the files: `tool-call-cards.webp` in Tool Calling,
+      1020 x 808, 104 frames, 11.0 s, 820,756 bytes, lossless (from a 10,550,171-byte GIF of 28.7 s,
+      cut where the run ends); `human-in-the-loop.webp` in Agentic UI, 1200 x 926, 185 frames, 22.1 s,
+      847,524 bytes, quality 82 (from 6,928,436 bytes, the whole recording);
+      `reasoning-stream.webp` in Prompt Engineering's Chain of Thought, 1200 x 900, 75 frames, 8.0 s,
+      713,512 bytes, quality 82 (from a 69,511,921-byte GIF of 35.7 s, cut a few answer lines in).
+      Every WebP is smaller than its GIF, so no GIF is kept. SSIM against the GIF's own frame (same
+      crop and scale), five frames of each file decoded in Chrome: 0.992 to 0.995 and 0.9936 to 0.9948
+      at quality 82 for the second and third; the Tool Calling recording has 15 px text, and at
+      quality 82 and 90 its SSIM was 0.947 to 0.961 and 0.96 to 0.97, below the 0.985 floor, so it is
+      lossless, which measured 1.0 and is the smaller file of the two options that pass.
+- [x] **Placed with a caption**, in the technical module and its For Everyone twin, in all three
+      languages: Tool Calling after the four-part summary of the loop, Agentic UI inside the new section,
+      Prompt Engineering in "Chain of Thought is Also Why the Job Title Disappeared". The Tool Calling
+      caption credits CopilotKit's AG-UI Dojo, the demo title being listed on dojo.ag-ui.com; the other
+      two captions credit nothing, because their frames show no address bar or demo name. The Tool
+      Calling recording is cut where the run ends: after it, the cards move below the answer text,
+      and whether that is the Dojo's own reordering or a splice in the recording is for the author.
+- [x] **`## Human in the Loop` in Agentic UI**, after the protocol stack and before "Beyond Streaming",
+      sourced from AG-UI's Interrupts and Tools pages and LangGraph's Interrupts page (all three added
+      to References); a short plain-words version in the For Everyone module; the section in
+      Turkish and Persian under the same heading word for word (D109).
+- [x] **Removed from "later"**: Agentic UI's opening, "Beyond Streaming" and summary (all languages,
+      both tracks), and the Advanced Agentic UI placeholder and its `curriculum.yaml` note, which keep
+      steering a run mid-way as their own item. Key Terms (Human in the loop, and Interrupt) and the
+      objectives (a sixth technical objective and a fourth For Everyone one, in every language, same count and order) updated; one quiz question
+      added in English, Turkish and Persian.
+- [x] **Gate:** 1,594 unit tests, typecheck, build, link check, bundle check (the bundle's content
+      changes, its shape does not); each image name found in the built pages of every language and
+      track; each new figure and the new section screenshotted at 1440 and read.
 
 ---
 

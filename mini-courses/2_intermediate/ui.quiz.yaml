@@ -103,3 +103,29 @@ questions:
         - "MCP به agent‌های دیگه، A2A به کاربرها، و AG-UI به tool‌ها"
         - "هر سه‌تاشون agent رو به tool‌هاش وصل می‌کنن"
       explain: "MCP tool‌ها و داده رو وصل می‌کنه، A2A agent‌های دیگه رو، و AG-UI کاربرها رو. یه محصول واقعی معمولاً از هر سه استفاده می‌کنه."
+
+  - answer: 2
+    en:
+      question: "In AG-UI, how does a run stop when the agent needs a person's answer?"
+      options:
+        - "It ends with a RunError event, and the person must start over"
+        - "It keeps the run open and sends text events until the reply"
+        - "It ends with a RunFinished event whose outcome is interrupt"
+        - "It deletes the thread, and a new thread starts with the reply"
+      explain: "The run ends with an interrupt outcome. The next run, on the same thread, carries the person's answer in its resume list."
+    tr:
+      question: "AG-UI'da agent'ın bir insanın cevabına ihtiyacı olduğunda run nasıl durur?"
+      options:
+        - "RunError event'iyle biter ve kişinin baştan başlaması gerekir"
+        - "Run açık kalır ve cevap gelene kadar text event'leri gönderir"
+        - "Outcome'u interrupt olan bir RunFinished event'iyle biter"
+        - "Thread silinir ve cevapla birlikte yeni bir thread başlar"
+      explain: "Run, interrupt outcome'uyla biter. Aynı thread üzerindeki sonraki run, kişinin cevabını resume listesinde taşır."
+    fa:
+      question: "توی AG-UI وقتی agent به جواب یه آدم نیاز داره، run چطوری متوقف می‌شه؟"
+      options:
+        - "با یه RunError تموم می‌شه و آدم باید از اول شروع کنه"
+        - "run باز می‌مونه و تا رسیدن جواب مدام text event می‌فرسته"
+        - "با RunFinished تموم می‌شه که outcome‌اش interrupt هست"
+        - "thread پاک می‌شه و با جواب، یه thread تازه شروع می‌شه"
+      explain: "run با outcome از نوع interrupt تموم می‌شه. run بعدی، روی همون thread، جواب آدم رو توی لیست resume می‌بره."

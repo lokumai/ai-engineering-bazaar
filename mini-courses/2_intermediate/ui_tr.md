@@ -5,6 +5,7 @@ objectives:
   - "Bir run'ın ürettiği başlıca event türlerini say: lifecycle, text, reasoning, tool call, subagent ve state"
   - "Ortak bir event sözleşmesinin ortadan kaldırdığı coupling sorununu açıkla"
   - "AG-UI'ı Agent Protocol Stack'te MCP ve A2A'in yanına yerleştir"
+  - "Human in the loop'un ne olduğunu ve bir agentic UI'ın bir run'ı bir insanın cevabı için nasıl durdurduğunu söyle"
 ---
 
 # Agentic UI
@@ -24,7 +25,7 @@ Bildiğin arayüzlerden farkı, işi kimin yaptığında.
 - **Bir chat UI**, tek bir soru ve tek bir cevap varsayar. Yazarsın, beklersin ve bir cevap görünür.
 - **Bir agentic UI**, zaten çalışmakta olan bir agent varsayar. Agent çok sayıda karar verir ve çok sayıda tool çağırır; insan ise o çalışırken onu izler, yönlendirir ve düzeltir.
 
-Bu modül, tanımın her agentic UI'ın dayandığı ilk kısmını anlatıyor: **agent'ın işini gerçekleştikçe stream etmek** ve bunu standartlaştıran protocol. Yönlendirme, onaylar, ortak state ve agent'ın kendi ürettiği arayüz ise Expert modülün konusu: [İleri Seviye Agentic UI](../3_expert/advanced_ui_tr.md).
+Bu modül, tanımın her agentic UI'ın dayandığı kısımlarını anlatıyor: **agent'ın işini gerçekleştikçe stream etmek**, bunu standartlaştıran protocol ve onaylar, yani **human in the loop**. Bir run'ı çalışırken yönlendirmek, ortak state ve agent'ın kendi ürettiği arayüz ise Expert modülün konusu: [İleri Seviye Agentic UI](../3_expert/advanced_ui_tr.md).
 
 ## Run'ı Neden Stream Ederiz
 
@@ -147,11 +148,33 @@ Birbirleriyle rekabet etmezler. Gerçek bir üründe çoğu zaman üçü birden 
 
 Üçünü birbirine karıştırma. Her biri agent'ın farklı bir tarafını bağlar ve diğer ikisiyle zaten tanıştın: MCP'yi [Code Agent'lar](coding_agents_tr.md) modülünde, A2A'yı [Multi-Agent Systems](../1_fundamentals/multi_agent_tr.md) modülünde.
 
+## Human in the Loop
+
+Streaming, bir insanın agent'ı izlemesini sağlar. **Human in the loop** ise kararı insana bırakır.
+
+Tek başına çalışan bir agent, bazen önemli bir adıma gelir: bir e-posta göndermek, bir veritabanını değiştirmek ya da bir şey için ödeme yapmak gibi. Human in the loop ile agent o adımda durur ve bekler. Bir insan adımı onaylar, değiştirir ya da seçeneklerden birini seçer. Sonra agent bu cevaptan devam eder. Agent rutin adımları yine kendi başına yapar; yani insan yalnızca karar gereken yerde karar verir.
+
+Bu en çok sonuçları gerçek olan adımlarda önemlidir. LangGraph'in [Interrupts](https://docs.langchain.com/oss/python/langgraph/interrupts) sayfası, duraklatılması gereken kritik işlemlere örnek olarak API çağrılarını, veritabanı değişikliklerini ve finansal işlemleri veriyor. Adımı çalışmadan önce gören bir insan onu reddedebilir ya da düzeltebilir. Erken yakalanan bir hata daha az maliyetlidir. Ekranın adımları göstermesinin sebebi de budur.
+
+Bir agentic UI bunu dört adımda yapar. AG-UI bu duraklamaya **interrupt** diyor ve adımları [Interrupts](https://docs.ag-ui.com/concepts/interrupts) sayfasında anlatıyor:
+
+1. **Run durur.** Run, bir `RunFinished` event'iyle biter ve bu event'in `outcome` alanının tipi `interrupt` olur. Alan bir ya da daha fazla interrupt listeler. Her birinin bir `id`'si ve bir `reason`'ı, çoğunlukla da insan için yazılmış bir `message`'ı vardır.
+2. **Ekran bekleyen adımı gösterir.** Varsa mesajı ve cevap için gereken kontrolleri çizer: onayla ve reddet düğmeleri ya da bir seçenek listesi.
+3. **Cevap geri gider.** Front end, aynı thread üzerinde yeni bir run başlatır. Bu run, her interrupt için bir girdi içeren bir `resume` listesi taşır. Bir girdide `interruptId`, `resolved` ya da `cancelled` olan bir `status` ve cevabın kendisi, yani `payload` bulunur.
+4. **Run devam eder.** Agent cevabı okur ve oradan yoluna devam eder.
+
+![Bir İnsanın Cevabı İçin Duran Agent](./images/human-in-the-loop.webp)  
+*Agent bir randevu önerir ve durur. Saat düğmeleri agent beklerken görünür ve run, tıklamadan devam eder. İkinci run'da "None of these work" randevuyu sonlandırır.*
+
+AG-UI'ın daha basit bir yolu da var; [Tools](https://docs.ag-ui.com/concepts/tools) sayfası bunu anlatıyor. Agent, front end'in sahip olduğu bir tool'u çağırır; örneğin `confirmAction`. Front end bir onay penceresi gösterir ve insanın kararı, o tool call'un sonucu olarak agent'a geri gider.
+
+Agent framework'lerinde de aynı mekanizma agent'ın içinde var. LangGraph'te `interrupt` çağırmak graph'ı o noktada askıya alır. LangGraph, graph'ın state'ini bir checkpointer ile kaydeder. Sonra graph süresiz bekler. Devam etmesi için onu `Command(resume=...)` ile tekrar çağır. Verdiğin değer, `interrupt` çağrısının dönüş değeri olur.
+
 ## Streaming'in Ötesi
 
-Streaming temeldir. Agentic UI tanımının geri kalanı onun üstüne kurulur ve Expert modül [İleri Seviye Agentic UI](../3_expert/advanced_ui_tr.md) bunu anlatacak:
+Streaming ve human in the loop temeldir. Agentic UI tanımının geri kalanı bunların üstüne kurulur ve Expert modül [İleri Seviye Agentic UI](../3_expert/advanced_ui_tr.md) bunu anlatacak:
 
-- **Human in the loop**: agent durur ve bir adımı çalıştırmadan önce kullanıcıdan onay ister.
+- **Yönlendirme**: kullanıcı, run hâlâ çalışırken onu başka bir yöne çevirir.
 - **Shared state**: ekran ve agent aynı uygulama state'ini okur ve yazar.
 - **Generative UI** ve bunun specification'ları: A2UI, MCP Apps, OpenUI ve json-render.
 
@@ -165,7 +188,8 @@ Streaming temeldir. Agentic UI tanımının geri kalanı onun üstüne kurulur v
 - **MCP**: agent'ı tool'lara ve veriye bağlayan protocol; Anthropic'ten.
 - **AG-UI**: Agent–User Interaction Protocol; agent'ı kullanıcıya dönük uygulamalara bağlayan, ortak tek bir event kümesi.
 - **A2A**: agent'ı diğer agent'lara bağlayan protocol; Google'dan.
-- **Human in the loop**: agent, bir adımı çalıştırmadan önce kullanıcıdan onay isteyip durur.
+- **Human in the loop**: agent önemli bir adımda durur ve devam etmeden önce bir insanın onaylamasını, değiştirmesini ya da seçmesini bekler.
+- **Interrupt**: AG-UI'da, bir run'ın `interrupt` outcome'unda listelenen ve bir insanın cevapladığı duraklama; sonraki run cevabı `resume` listesinde geri taşır.
 - **Shared state**: ekranın ve agent'ın aynı uygulama state'ini okuyup yazması.
 - **Generative UI**: agent'ın kendisinin ürettiği arayüz; geliştiricinin yazdığı bileşenlerin yanında gösterilir.
 
@@ -192,11 +216,11 @@ graph LR
 
 ## Özet
 
-Agentic UI, bir insanın ve çalışan bir agent'ın aynı uygulamada birlikte çalıştığı arayüzdür. Temeli streaming'dir: agent'ın işi adım adım üretildiği için ekrana da adım adım gönderilir; run'ın lifecycle'ı, metni, reasoning'i, tool call'ları, subagent'ları ve state'i için tipli event'ler hâlinde. Her framework'ün kendi event formatı var ve bu, front end'i tek bir backend'e bağlıyor. AG-UI bu bağı, MCP'nin tool'lar için yaptığı gibi, açık ve ortak tek bir event kümesiyle ortadan kaldırıyor ve birçok agent framework'ü onu destekliyor. MCP (tool'lar) ve A2A'in (diğer agent'lar) yanında, bir agent'ın üçüncü tarafı için, yani kullanıcıları için olan protocol bu.
+Agentic UI, bir insanın ve çalışan bir agent'ın aynı uygulamada birlikte çalıştığı arayüzdür. Temeli streaming'dir: agent'ın işi adım adım üretildiği için ekrana da adım adım gönderilir; run'ın lifecycle'ı, metni, reasoning'i, tool call'ları, subagent'ları ve state'i için tipli event'ler hâlinde. Her framework'ün kendi event formatı var ve bu, front end'i tek bir backend'e bağlıyor. AG-UI bu bağı, MCP'nin tool'lar için yaptığı gibi, açık ve ortak tek bir event kümesiyle ortadan kaldırıyor ve birçok agent framework'ü onu destekliyor. MCP (tool'lar) ve A2A'in (diğer agent'lar) yanında, bir agent'ın üçüncü tarafı için, yani kullanıcıları için olan protocol bu. Aynı protocol, bir run'ın önemli bir adımda durup bir insanı beklemesini de sağlıyor; human in the loop budur: run bir interrupt ile biter ve sonraki run insanın cevabını taşır.
 
 Sıradaki konu: agent'ı denetlemeyi zorlaştıran her şey, onu saldırı için daha değerli bir hedef de yaptı. Bunu [Security](security_tr.md) modülü anlatıyor.
 
-**Hızlı Kontrol**: Bir agentic UI neden nihai cevabı beklemek yerine event'leri stream eder? AG-UI, her framework'ün kendi event formatının çözemediği hangi sorunu çözer? MCP, A2A ve AG-UI'ın her biri agent'ın hangi tarafını bağlar?
+**Hızlı Kontrol**: Bir agentic UI neden nihai cevabı beklemek yerine event'leri stream eder? AG-UI, her framework'ün kendi event formatının çözemediği hangi sorunu çözer? MCP, A2A ve AG-UI'ın her biri agent'ın hangi tarafını bağlar? Bir agent'ın bir insanın cevabına ihtiyacı olduğunda run'a ne olur?
 
 ## Kaynaklar
 
@@ -206,6 +230,9 @@ Sıradaki konu: agent'ı denetlemeyi zorlaştıran her şey, onu saldırı için
 - [Event streaming](https://docs.langchain.com/oss/python/langchain/event-streaming): LangChain bir run'ın mesajlarını, tool call'larını, subagent'larını ve state'ini nasıl stream ediyor
 - [AG-UI Overview](https://docs.ag-ui.com/introduction): protocol'ün ne olduğu, onu destekleyen framework'ler ve MCP ile A2A'in yanındaki yeri
 - [Events](https://docs.ag-ui.com/concepts/events): bütün AG-UI event'leri, alanlarıyla birlikte
+- [Interrupts](https://docs.ag-ui.com/concepts/interrupts): AG-UI bir run'ı bir insanın cevabı için nasıl durduruyor ve nasıl devam ettiriyor
+- [Tools](https://docs.ag-ui.com/concepts/tools): front end'in sahip olduğu bir tool, bir insandan bir işlemi nasıl onaylamasını isteyebilir
+- [Interrupts](https://docs.langchain.com/oss/python/langgraph/interrupts): LangGraph bir graph'ı bir adımda nasıl durduruyor ve bir değerle nasıl devam ettiriyor
 
 ### 🛠️ Araçlar
 
@@ -218,4 +245,4 @@ Sıradaki konu: agent'ı denetlemeyi zorlaştıran her şey, onu saldırı için
 
 ### 🧭 Modüller
 
-- [İleri Seviye Agentic UI](../3_expert/advanced_ui_tr.md): human in the loop, shared state, generative UI ve bunların specification'ları
+- [İleri Seviye Agentic UI](../3_expert/advanced_ui_tr.md): bir run'ı yönlendirme, shared state, generative UI ve bunların specification'ları

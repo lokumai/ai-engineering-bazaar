@@ -4,6 +4,7 @@ objectives:
   - "Say what agentic UI is, and how it differs from a normal app and a chat box"
   - "Explain why an agent's work is shown step by step instead of all at the end"
   - "Explain what AG-UI is for, using the universal plug from Code Agents as the picture"
+  - "Say what human in the loop means, and why an agent stops to ask you before a step that matters"
 ---
 
 # Agentic UI
@@ -35,8 +36,9 @@ In plain words, the difference is who is doing the work:
 - **An agentic UI** shows an agent that is already working. It makes many decisions and uses many
   tools, and you watch it, guide it, and correct it while it works.
 
-This module covers the base of all of this: **showing the agent's work as it happens**. The parts
-where you approve steps, or where the agent designs the screen itself, come in the Expert level.
+This module covers the base of all of this: **showing the agent's work as it happens**, and the
+agent **stopping to ask you** before a step that matters. The parts where you steer the agent
+while it works, or where the agent designs the screen itself, come in the Expert level.
 
 ## Why Stream the Run
 
@@ -160,11 +162,33 @@ They work together. A real product often uses all three at once. Do not mix them
 [Code Agents](coding_agents.md) and A2A in [Multi-Agent Systems](../1_fundamentals/multi_agent.md),
 and AG-UI is the third, the one that faces the people.
 
+## Human in the Loop
+
+Watching an agent is useful. Being able to say "yes" or "no" before it acts is even more useful.
+This is called **human in the loop**: you stay in the loop of the work.
+
+Think of a new assistant who writes an email for you. A good assistant does not send it at once.
+They show it to you, and you approve it, change it, or say no. Then they continue. An agent can work
+in the same way. It does the routine steps by itself. At a step that matters, such as sending an
+email, changing a record or paying for something, it stops and waits for you.
+
+This matters most when a step has real consequences. If you see the step before it runs, you can
+stop it or fix it. A mistake caught early costs less. That is also why the screen shows the
+steps.
+
+On the screen, it works like this. The agent stops. The screen shows what the agent wants to do,
+with buttons to approve it, to reject it, or to pick one option. Your answer goes back to the
+agent, and the agent continues from there. AG-UI has a standard way to do this, so any screen can
+at least show the message text.
+
+![An AI that stops for your answer](../images/human-in-the-loop.webp)  
+*The AI offers times for a meeting and stops. It books only after you pick one. In the second try, the person picks "None of these work", and the AI says that it could not book.*
+
 ## Beyond Streaming
 
-Streaming is the base. The Expert level will cover three more things:
+Streaming and human in the loop are the base. The Expert level will cover more:
 
-- The agent can stop and ask you to approve an important step (**human in the loop**).
+- You can steer the agent while it works.
 - The screen and the agent can share the same information.
 - The agent can design parts of the screen itself (**generative UI**).
 
@@ -177,7 +201,7 @@ Streaming is the base. The Expert level will cover three more things:
 - **Protocol**: an agreed set of rules for how two systems talk.
 - **AG-UI**: the shared protocol between an agent and the screen.
 - **MCP** and **A2A**: the shared protocols between an agent and its tools, and between agents.
-- **Human in the loop**: the agent stops and waits for a person's approval.
+- **Human in the loop**: the agent stops at a step that matters and waits for a person to approve, change or choose.
 
 ## Summary
 
@@ -185,10 +209,11 @@ Agentic UI is the screen where you and a working agent share an app. Its base is
 works step by step, so the screen shows it step by step, like a delivery app showing each stage of
 your order. Each agent product used its own format, which tied the screen to one agent. AG-UI is a
 shared format, like a universal plug, so any screen can work with any agent. Next to MCP (tools) and
-A2A (other agents), it connects the agent to the people using it.
+A2A (other agents), it connects the agent to the people using it. And when a step matters, the agent
+stops and asks you first: that is human in the loop.
 
-**Quick check**: Why does an agentic UI show the agent's work step by step? And what problem does
-AG-UI solve?
+**Quick check**: Why does an agentic UI show the agent's work step by step? What problem does
+AG-UI solve? And why does an agent sometimes stop and wait for you?
 
 ## References
 
@@ -196,6 +221,7 @@ AG-UI solve?
 
 - [What Is Agentic UI?](https://www.copilotkit.ai/learning/what-is-agentic-ui): the definition this module uses
 - [AG-UI Overview](https://docs.ag-ui.com/introduction): what the protocol is, and who supports it
+- [Interrupts](https://docs.ag-ui.com/concepts/interrupts): how AG-UI stops an agent for a person's answer
 
 ### 🛠️ Tools
 

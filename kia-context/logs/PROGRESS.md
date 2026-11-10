@@ -11,7 +11,7 @@ description: >
   backgrounds and copy (M81), Agentic UI (M82), the cast's colours (M83), and M84 to M90 (content
   and site fixes, the home page in Turkish and Persian, Dariush's motif, block menus in the top layer,
   and About, the story of the Bazaar); Caravan built (M91), its real trends waiting (M92) and its second
-  round (M93); multilingual SEO (M96); translated objectives on the site (M98) and in the bundle (M99); the story in the bundle (M100); and M41, the content bundle for the mobile reader. Each milestone carries its deliverables and acceptance
+  round (M93); multilingual SEO (M96); translated objectives on the site (M98) and in the bundle (M99); the story in the bundle (M100); the search filters applied by a button (M101); and M41, the content bundle for the mobile reader. Each milestone carries its deliverables and acceptance
   criteria as `- [ ]` checkboxes, ticked as the work lands, and closes with a dated report; the loop
   that governs that is below, in this file.
   NOT here: why a choice was made (BRAINSTORM.md), or any rule that outlives the milestone
@@ -19,7 +19,7 @@ description: >
 authority: state
 writes: agent, every session
 status: active
-covers: "M50 to M100, 2026-11-06 onward, and M41, which part 2 held for PR #57"
+covers: "M50 to M101, 2026-11-06 onward, and M41, which part 2 held for PR #57"
 last_updated: 2026-11-10
 ---
 
@@ -1936,6 +1936,42 @@ first launch and in its Settings, from the bundle rather than from a copy in its
 - [x] **The guard**: the corpus test holds the document equal to what the About page reads and the index
       to its path; the route test holds it static; the browser suite parses it with `StoryDoc`.
 - [x] **Gate:** typecheck, 1,594 unit tests, build, link check, bundle check; the full browser suite in CI.
+
+## 🏁 Milestone M101: The search filters apply with an Apply button, and a shut disclosure keeps them (D126) — DONE
+
+The author, 2026-11-10: *"also found a bug: in the search bar the filter works only if the dropdown or
+accordion is open. When I close it, the filter does not work which is bad behaviour and UX. instead, we
+should add a button named Apply with a distinct color and when user does a diff, the button appears and
+it applies and when applied, the button is gone."* This reverses D104's "a shut panel searches
+everything" (M71).
+
+- [x] **Applied apart from pending** (`SearchDialog.tsx`): the results use the applied choice, panel open
+      or shut; a chip changes the pending one; the two are compared as sets.
+- [x] **The Apply button**: the primary `.bz-btn`, in the panel under the last row, shown while pending
+      differs from applied and gone when they match (also when a chip is pressed back); after it, the
+      live region says "Filters applied." and the count, and focus moves to the Filters toggle.
+- [x] **The shut toggle tells the truth**: "Filters (n)" with the number of applied chips, and a Reset
+      filters button beside it that applies the defaults at once ("Filters reset." in the live region).
+- [x] **Shutting the panel discards a pending change** (D126 says why); the query still searches as you type.
+- [x] **Tests** (`tests/e2e/search.spec.ts`): the two tests that asserted "shut searches everything" are
+      replaced; new ones for pending against applied, reverting, applied filters under a shut panel with
+      the count, discarding on shut, Reset from the shut state, the keyboard (Tab to Apply, ring, Enter),
+      the primary style, and 390px.
+- [x] **Gate:** typecheck, unit tests, build, link check, bundle check unchanged; the browser suite.
+
+**Report, 2026-11-10.** `SearchDialog.tsx` keeps `chosen` (what the chips show) and `applied` (what the
+search uses); `shell.css` gains `.bz-search-filter-bar`, `.bz-search-apply` and a border on the Reset
+button, defining no colour (Apply is `.bz-btn`). ARCHITECTURE's "The filters" paragraph is rewritten to
+match; DESIGN.md says nothing of the window and is unchanged. **Numbers taken:** M101 and D126, the next
+free after main's M100 and D125, with no pull request open. **Mutations, each seen failing a named test**
+(built, served and run against `search.spec.ts`; one build per mutation): results using the pending chips;
+the applied filters ignored while the panel is shut; Apply kept once anything is pressed; the pending check
+sensitive to the order chips were pressed in (this one **survived**, so a test of that was added, and it
+then failed); shutting the panel keeping the draft; focus not moved after Apply; the count missing from the
+toggle; the live region's note removed; Reset clearing only the draft; Apply drawn as a quiet button; Apply
+never shown; Apply's accessible name changed. **Gate, measured 2026-11-10:** typecheck clean; 1,594 unit tests
+in 98 files; the build, its link check and the bundle check (unchanged); 699 browser tests passed and 11 skipped
+(`search.spec.ts` holds 31 tests: 9 new, 1 removed, 7 edited).
 
 ---
 

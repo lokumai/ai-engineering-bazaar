@@ -9,7 +9,7 @@ description: >
 authority: reasoning
 writes: agent, when a decision is taken
 status: active
-covers: "D97 to D125 so far, and D89, which part 2 held for PR #57 — 2026-11-06 onward"
+covers: "D97 to D126 so far, and D89, which part 2 held for PR #57 — 2026-11-06 onward"
 last_updated: 2026-11-10
 ---
 
@@ -164,25 +164,28 @@ above them, so the filters take a large share of a phone's window and the result
 a smaller chip was not drawn so as not to deviate from §10.4 inside one dialog. **The defaults
 above are superseded by D104** (the filters behind a closed disclosure; shut, everything is searched).
 
-### D104 · The search filters sit behind a closed Filters disclosure, and a shut panel searches everything — 2026-11-07
+### D104 · The search filters sit behind a closed Filters disclosure, and ~~a shut panel searches everything~~ — 2026-11-07
+
+> **Partly superseded by [D126](#d126--the-search-filters-apply-with-an-apply-button-and-a-shut-disclosure-keeps-them--2026-11-10) (2026-11-10):** a shut panel no longer drops the filters; they are applied with a button and hold, open or shut. The disclosure itself stands.
 
 **Asked by the author:** "make the filter an accordion-like dropdown, meaning that when we search
 normally it searches all, but if I click on the accordion, I can open filters and use them."
 
 **Chose:** a "Filters" `<button aria-expanded aria-controls>` with a chevron between the field and
-the results, the panel hidden by default. **Closed, the search covers every track, level and
-language**, and the chips are ignored; the other languages' indexes load on the first search of two
+the results, the panel hidden by default. ~~**Closed, the search covers every track, level and
+language**, and the chips are ignored;~~ the other languages' indexes load on the first search of two
 or more characters, the page's own on opening. **Opening presses nothing**, which means all, so
 opening alone changes no result; the page's own track and language now only break ties in the
-ranking, by a small boost. **Closing the panel stops the filtering**: the pressed chips are kept and
+ranking, by a small boost. ~~**Closing the panel stops the filtering**: the pressed chips are kept and
 apply again when it reopens, so a reader can never be filtered by chips they cannot see, and the
-closed toggle needs no count badge. A new page resets both. This supersedes D103's default (the
+closed toggle needs no count badge.~~ A new page resets both. This supersedes D103's default (the
 page's own track and language pressed) and answers M70's open question about the filters' share of
 a phone's window: shut, the results have the room.
 
 **Rejected:** `<details>`, because Chrome does not close one on Escape and Escape inside the dialog
 must keep closing the dialog; keeping hidden filtering with a count on the closed toggle, which asks a
-reader to notice a number to understand their results.
+reader to notice a number to understand their results (D126 later chose a count, with the filters applied by a button
+and never dropped, so the count is what the results use).
 
 ### D105 · Every company a module introduces carries its logo, which reverses M69's rule on uneven lists — 2026-11-07
 
@@ -937,6 +940,46 @@ the same, the design may differ).
   rule); the text as `inlines` (STORY.md's reader drops its marks to text, so inlines would carry
   nothing more and would let the two drift); an optional `story` field absent when no story exists (the
   build already fails without STORY.md, and the index's fields are always present).
+
+### D126 · The search filters apply with an Apply button, and a shut disclosure keeps them — 2026-11-10
+status: active
+
+**Asked by the author:** "also found a bug: in the search bar the filter works only if the dropdown or
+accordion is open. When I close it, the filter does not work which is bad behaviour and UX. instead, we
+should add a button named Apply with a distinct color and when user does a diff, the button appears and
+it applies and when applied, the button is gone".
+
+**Supersedes D104's "a shut panel searches everything"** (struck through there, with a link here): closing
+the panel silently dropped the filters, which is what the author met. D104's other choices stand: the
+disclosure, closed by default, nothing pressed on opening, `<button aria-expanded>` rather than `<details>`.
+
+**Chose: a draft and an applied choice, kept apart.**
+- The results always use the *applied* choice, whether the panel is open or shut. A chip changes only the
+  *pending* choice. While the two differ (compared as sets, so pressing chips in another order changes
+  nothing) an **Apply** button appears in the panel, under the last row, in the primary style (`.bz-btn`,
+  the accent; no new colour). Pressing a chip back to its applied state makes it go again.
+- **The shut toggle tells the truth**: it reads "Filters (2)", the number of applied chips, and a
+  **Reset filters** button beside it applies the defaults at once, so a filter can be cleared without
+  opening the panel. Both are text, so the state is never carried by colour alone.
+- The query still searches as you type; only the filters wait for Apply.
+- After Apply or Reset the live region says "Filters applied." or "Filters reset." before the count, so
+  the announcement changes even when the count does not. The button that was pressed leaves the page, so
+  focus moves to the Filters toggle instead of falling to nothing.
+- The other languages' indexes load on Apply (a Language chip being pending fetches nothing).
+
+**Shutting the panel discards a pending change.** Kept pending, a shut panel would hide a draft the results
+do not use, which is the class of surprise the author reported (state that cannot be seen disagreeing with
+the results), and the reader would have to remember it. Discarded, the shut panel and the results always
+agree, and reopening shows exactly what is applied. The cost is that a reader who presses chips and shuts
+the panel without Apply loses the draft; the toggle's count has not changed, so that is visible.
+
+**Rejected:** (a) live filtering on every chip press: the filters would never be a draft, results would
+move under the reader while they pick two or three chips, and the language chips would fetch an index per
+press; (b) filters only while the panel is open (D104): the reported bug; (c) keeping the draft when the
+panel is shut, with a marker on the toggle: a second state to explain for no gain; (d) Enter on a chip
+applying: Enter activates the focused chip, as it must for a button, so the way to apply from the
+keyboard is Tab to Apply and Enter; (e) the applied values written out on the shut toggle: they wrap on a
+phone and the panel is one press away.
 
 ---
 

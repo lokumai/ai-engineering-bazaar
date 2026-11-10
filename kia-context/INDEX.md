@@ -76,6 +76,7 @@ and the same explanation given in person for the third time. See `genesis/GENESI
 | 2026-11-10 | The site owner, a contact row in the footer, and the privacy and legal notes on the legend page | M97 (D122) |
 | 2026-11-10 | Translated objectives: on the Turkish and Persian pages, then in the content bundle as an additive field for the mobile reader | M98 (D123), M99 (D124) |
 | 2026-11-10 | The About page's story in the content bundle, for the mobile reader | M100 (D125) |
+| 2026-11-10 | The search filters apply with an Apply button and hold while their panel is shut | M101 (D126) |
 
 **The harness itself was installed on 2026-09-08**, 107 commits in (`git rev-list --count 4832e2a^`). Everything before that date was
 reconstructed from git and is labelled as inferred inside each file.
@@ -221,7 +222,7 @@ every other file.
 and 2 are `closed` (`PROGRESS_1.md`, `PROGRESS_2.md`, `BRAINSTORM_1.md`, `BRAINSTORM_2.md`) and point
 forward; part 3 is where the next entry goes, and it keeps the bare name (`PROGRESS.md`,
 `BRAINSTORM.md`). The
-numbering runs straight through — `M1…M100`, `D1…D125` — so a citation never has
+numbering runs straight through — `M1…M101`, `D1…D126` — so a citation never has
 to say which part it means, only the number.
 
 The heaviest edges, measured with `grep` on 2026-11-06 rather than estimated (the two `PROGRESS_2.md` rows re-measured 2026-11-07; the two rows into part 3 re-measured 2026-11-09):

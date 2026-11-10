@@ -657,11 +657,17 @@
      label on its end side (it sits on the left of a right-to-left row) and turns instantly
      when open, since the language refuses a transition on a transform. The ring is drawn
      inside the row because the window clips what leaves it. */
-  .bz-search-toggle {
+  .bz-search-filter-bar {
     display: flex;
     align-items: center;
+  }
+
+  .bz-search-toggle {
+    display: flex;
+    flex: 1;
+    align-items: center;
     gap: 6px;
-    inline-size: 100%;
+    min-inline-size: 0;
     min-block-size: 44px;
     padding: 0 16px;
     border: 0;
@@ -724,9 +730,23 @@
     min-width: 0;
   }
 
+  /* D126: beside the toggle, so the applied filters can be cleared with the panel shut. */
   .bz-search-reset {
+    flex: none;
     min-height: 33px;
-    font-size: var(--text-meta);
+    margin-inline-end: 12px;
+    padding: 0 12px;
+    border: 1px solid var(--color-line-strong);
+    border-radius: var(--radius-base);
+    font: 600 var(--text-meta) / 1.2 var(--font-sans);
+    cursor: pointer;
+  }
+
+  /* D126: the primary button, under the rows it applies, on the start edge. It is in the
+     panel only while the draft differs from what the results use. */
+  .bz-search-apply {
+    display: flex;
+    padding-block-start: 4px;
   }
 
   .bz-search-status {

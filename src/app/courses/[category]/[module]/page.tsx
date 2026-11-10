@@ -34,7 +34,7 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { category, module } = await params
   const to = movedModuleOf(category, module)
-  if (to) return Promise.resolve(movedMetadata(movedTitle(to)))
+  if (to) return Promise.resolve(movedMetadata(movedTitle(to), moduleRoute(to, 'engineers')))
   return sheetMetadata(params, 'en')
 }
 

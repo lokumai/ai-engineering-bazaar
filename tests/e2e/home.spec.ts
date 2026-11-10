@@ -3,7 +3,7 @@ import { CAST } from '@/components/home/street/cast'
 import { HOME_LANGUAGE_PICKER_LABEL } from '@/components/shell/LanguageMenu'
 import { type ReadingLang, TRANSLATED_LANGS, TRANSLATIONS, dirOf, homeRoute } from '@/lib/content/languages'
 import { HOME_COPY } from '@/lib/home-copy'
-import { SITE_NAME } from '@/lib/site'
+import { SITE_NAME, SITE_ORIGIN } from '@/lib/site'
 import {
   type RecordSeed,
   firstPaint,
@@ -466,9 +466,11 @@ for (const [lang, path] of TRANSLATED) {
       copy.tracks.all.teller.story,
     ])
 
-    // The language is on the words: the document keeps its own language and direction.
-    expect(await page.locator('html').getAttribute('lang')).toBe('en')
+    // D119: the document says the page's own language and never a direction; the bar and the footer
+    // around the words say they are English. The words carry their language as well, checked below.
+    expect(await page.locator('html').getAttribute('lang')).toBe(lang)
     expect(await page.locator('html').getAttribute('dir')).toBeNull()
+    expect(await page.locator('header').getAttribute('lang')).toBe('en')
     expect(await page.locator('body').getAttribute('dir')).toBeNull()
     for (const text of ['h1', '.bz-lede', '.stall .sign h2', '.stall .sign p', '#track-q', '.sg-p', '.who-cloud']) {
       // The mark may sit on the element or on the button that holds it (a story's cloud).
@@ -521,13 +523,18 @@ for (const [lang, path] of TRANSLATED) {
 
   test(`${path} is a page of its own: a title, a description and hreflang links to the other two`, async ({ page }) => {
     await page.goto(path)
-    await expect(page).toHaveTitle(SITE_NAME)
+    // D119: the title is the headline in the page's own words, then the site's name.
+    const title = await page.title()
+    expect(title).toContain(HOME_COPY[lang].hero.first)
+    expect(title).toContain(SITE_NAME)
+    expect(title).not.toBe(SITE_NAME)
     await expect(page.locator('meta[name="description"]')).toHaveAttribute('content', HOME_COPY[lang].description)
     const alternates = await page.locator('link[rel="alternate"][hreflang]').evaluateAll((els) =>
       Object.fromEntries(els.map((el) => [el.getAttribute('hreflang'), el.getAttribute('href')])))
-    for (const [other, there] of READINGS) expect(alternates[other], `no hreflang for ${other}`).toBe(there)
-    expect(alternates['x-default']).toBe('/')
-    await expect(page.locator('link[rel="canonical"]')).toHaveAttribute('href', path)
+    // D119: absolute, through `metadataBase`.
+    for (const [other, there] of READINGS) expect(alternates[other], `no hreflang for ${other}`).toBe(`${SITE_ORIGIN}${there}`)
+    expect(alternates['x-default']).toBe(`${SITE_ORIGIN}/`)
+    await expect(page.locator('link[rel="canonical"]')).toHaveAttribute('href', `${SITE_ORIGIN}${path}`)
   })
 
   test(`${path}: every link leaves for the same English address it leaves for from /`, async ({ page }) => {

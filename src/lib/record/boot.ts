@@ -92,6 +92,7 @@
  * bundle targets, in whatever browser the reader brought.
  */
 
+import { TRANSLATED_LANGS } from '../content/languages'
 import {
   CATALOG_VIEWS,
   DIAGRAM_THEME_IDS,
@@ -114,10 +115,21 @@ function embed(value: unknown): string {
  *   denominator the `-complete` class needs.
  * @param slugToModule the module number each slug prints as, for
  *   `hl-signed-<n>`.
+ * @param basePath the deploy's base path, stripped from the address before the
+ *   language is read off it.
+ *
+ * It also sets `<html lang>` from the address (D119): the root layout is one
+ * for every language and renders `en`, and the exported HTML already says the
+ * right value (`scripts/lib/html-lang.mjs`), so on a deployed page this writes
+ * what is there; it is what makes `next dev` and a copy of the page right too.
+ * The same rule as `languageOfPath`, which `RecordStateSync` applies after a
+ * client navigation, and `boot.test.ts` compares the two. It runs before the
+ * storage gate below, because the language is no part of the record.
  */
 export function recordBootScript(
   categoryTotals: Record<string, number>,
   slugToModule: Record<string, number>,
+  basePath: string = process.env.NEXT_PUBLIC_SITE_BASE_PATH ?? '',
 ): string {
   return `(function(){try{
 var T=${embed(categoryTotals)},M=${embed(slugToModule)},V=${embed(CATALOG_VIEWS)},P=${embed(PALETTE_IDS)},G=${embed(DIAGRAM_THEME_IDS)};
@@ -142,6 +154,10 @@ var dwell=function(v){return typeof v==="number"&&fin(v)&&Math.round(v)>0?1:0};
 var kept=function(rec){return inst(rec.signedOff)||pat(rec.signedRevision,H)||rec.reachedEnd===true
 ||dwell(rec.dwellSeconds)||ticked(rec.checklist)?1:0};
 var sg=String(window.location&&window.location.pathname||"").split("/"),tk=inL(sg,"everyone")?"everyone":(inL(sg,"courses")||inL(sg,"sheets")?"engineers":null);
+var pa=String(window.location&&window.location.pathname||""),bp=${embed(basePath)},lg;
+if(bp&&pa.indexOf(bp)===0)pa=pa.slice(bp.length);
+lg=pa.split("/")[1];if(!inL(${embed(TRANSLATED_LANGS)},lg))lg="en";
+r.setAttribute("lang",lg);
 var tm=null;try{tm=window.sessionStorage.getItem("hl-track")}catch(e){}
 r.setAttribute("data-bz-track",tk||(tm==="everyone"?"everyone":"engineers"));
 var raw=null,ok=1;

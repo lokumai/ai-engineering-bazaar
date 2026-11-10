@@ -11,7 +11,7 @@ description: >
   backgrounds and copy (M81), Agentic UI (M82), the cast's colours (M83), and M84 to M90 (content
   and site fixes, the home page in Turkish and Persian, Dariush's motif, block menus in the top layer,
   and About, the story of the Bazaar); Caravan built (M91), its real trends waiting (M92) and its second
-  round (M93); and M41, the content bundle for the mobile reader. Each milestone carries its deliverables and acceptance
+  round (M93); multilingual SEO (M96); and M41, the content bundle for the mobile reader. Each milestone carries its deliverables and acceptance
   criteria as `- [ ]` checkboxes, ticked as the work lands, and closes with a dated report; the loop
   that governs that is below, in this file.
   NOT here: why a choice was made (BRAINSTORM.md), or any rule that outlives the milestone
@@ -19,7 +19,7 @@ description: >
 authority: state
 writes: agent, every session
 status: active
-covers: "M50 to M95, 2026-11-06 onward, and M41, which part 2 held for PR #57"
+covers: "M50 to M96, 2026-11-06 onward, and M41, which part 2 held for PR #57"
 last_updated: 2026-11-10
 ---
 
@@ -1760,6 +1760,70 @@ with six of his own files. No decision was rejected, so there is no D entry.
 - [x] **Checks**: `npm test` green; `npm run build`, the link gate and `check-bundle-out.mjs` green;
       each file name found under `out/courses/`; the figures screenshotted at 1440 px in
       `playground/2026-11-round-5/shots-inference-images/`.
+
+## 🏁 Milestone M96: Multilingual SEO: html lang, absolute hreflang and canonical, sitemap, robots — DONE, PR #105
+
+The author asked whether menus that stay English hurt search ranking (D113 says they stay), and then:
+*"Open SEO PR"*. Five gaps were measured on the built `out/` of `main` before any change: no absolute
+`hreflang` (module pages and the home page had relative ones, no module page had `x-default`);
+`<html lang="en">` on every Turkish and Persian page; no `sitemap.xml` and no `robots.txt`; relative
+`canonical` links; and the English title on `/tr/` and `/fa/`. D113 stays; no interface string changed.
+Reasoning and rejected options: D119 and D120.
+
+**Built, measured and reverted in this PR.** The first version gave each language its own root layout
+(`src/app/(en)`, `tr`, `fa`) to set `<html lang>` in the static HTML. Review measured that 49 of the 80
+internal links on a Turkish module page and 29 of 30 on `/tr/` and `/fa/` leave the tree, each a full
+document load, and that it needed `experimental.globalNotFound` and left `/tr/` and `/fa/` without a
+`not-found`. All of it was removed (the routes are back under `src/app/`, one root layout, no
+`global-not-found`, no `RootShell`, `prose.css` untouched); D119 has the numbers.
+
+- [x] **`<html lang>` per page, on one root layout.** `scripts/lib/html-lang.mjs`, run by the finaliser,
+      rewrites it in the 43 `tr` and 43 `fa` exported pages; the boot script sets it before first paint
+      and `RecordStateSync` after a client navigation, all by `languageOfPath`. Never a `dir`. The bar,
+      the skip link, `<main>` and the footer say `lang="en"`. Measured in the browser suite
+      (`tests/e2e/html-lang.spec.ts`): a load says the page's language; a client navigation (document
+      not reloaded) from `/tr/…` and from `/fa/…` to `/` says `en`, and one through the language picker
+      into Turkish says `tr`; the console has no error and no request fails, so there is no hydration
+      mismatch.
+- [x] **hreflang and `x-default`, absolute, derived.** `src/lib/content/seo.ts` asks `loadModuleIn` which
+      languages a page exists in, in both tracks. In the built sitemap, **129 of 143 pages carry the full
+      alternate set** (43 per language: the home page, 21 For Engineers modules, 21 For Everyone
+      modules); the other 14 are English-only (`/about/`, `/legend/`, the two catalogs and their ten level
+      pages) and declare none. Every alternate resolves to an indexable file in `out/` and names the page
+      back.
+- [x] **Absolute canonical.** `SITE_ORIGIN` in `src/lib/site.ts` is the one place the address is written;
+      the root layout's `metadataBase` is set from it. Every one of the 143 sitemap pages has one
+      `canonical`, equal to its own address; a forward names its destination.
+- [x] **`sitemap.xml` and `robots.txt`**, static in `out/`: 143 URLs with `xhtml:link` alternates where
+      there are any. `robots.txt` is `User-Agent: *`, `Allow: /` and the sitemap's address.
+- [x] **Translated home titles**: `/tr/` is `AI Mühendisliği, onu inşa edenlerin kaleminden · AI Engineering
+      Bazaar`, `/fa/` likewise, both from `HOME_COPY[lang].hero`. `/` is unchanged.
+- [x] **Kept out of search (D120).** 64 of the 207 exported pages say `noindex` and none is in the
+      sitemap or an `hreflang` list: the 23 planned modules, 36 unwritten For Everyone pages, forwards
+      and stubs together, `/profile/`, `/caravan/` (it draws its sample; `showsSample` is the page's own
+      test), and the 404's three files. The sitemap had 168 URLs before this and 143 now.
+- [x] **Small.** `MovedTo` forwards emit a canonical to their destination; the stale-test-name and the
+      "Thirty-two modules" count in the site description are fixed (the description no longer states a
+      number); no escaped backticks were left in comments I wrote; `ARCHITECTURE.md`'s search path is
+      correct again after the revert.
+- [x] **Tests.** `tests/unit/seo.test.ts` (21), `tests/unit/html-lang.test.ts` (5), `tests/e2e/seo.spec.ts`
+      (11, reads `out/` and measures the page set itself) and `tests/e2e/html-lang.spec.ts` (4).
+      Four older browser assertions that pinned `html lang` `en` on `/tr/`, `/fa/` and a Persian module
+      page, the English home title and relative hreflang were changed to the new rule. Proofs that each
+      check fails: 13 single-fault copies of `out/` (`SEO_OUT`: html lang wrong, `dir` added, the bar's
+      `lang` dropped, a body `lang` added, a draft module, the profile or a `noindex` page in the sitemap,
+      a sitemap alternate and an `hreflang` pointing at a `noindex` page, a draft page losing `noindex`,
+      relative canonical, `x-default` removed, `hreflang` to a missing page, no `Sitemap:` line) each
+      failed the check written for it; and five source faults, each restored from a copy: the finaliser
+      not rewriting failed the lang check on the rebuilt export; removing the client-navigation write
+      failed the three navigation tests in the browser; the boot script ignoring the language list failed
+      the unit comparison; `isIndexableModule` ignoring `draft` failed the draft rule; the caravan always
+      listed failed the caravan rule.
+- [x] **Gate**: typecheck, `npm test` (98 files, 1,556 tests), build, `check-links-out.mjs` and
+      `check-bundle-out.mjs` pass; `out/api/` equals the build of `main` (same commit as `origin/main`,
+      built earlier in this session) in every file except `index.json`'s `publishedAt`, which is the
+      commit's time and is left out of `contentVersion`, itself unchanged. The full browser suite:
+      662 passed, 10 skipped.
 
 ---
 

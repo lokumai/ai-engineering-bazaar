@@ -17,6 +17,7 @@
  */
 
 import type { Metadata } from 'next'
+import { alternatesOf, isIndexableModule, moduleLanguageRoutes } from '@/lib/content/seo'
 import { notFound } from 'next/navigation'
 import { Prose } from '@/components/course/Prose'
 import { SignOff } from '@/components/record/SignOff'
@@ -44,7 +45,6 @@ import { moduleGraph } from '@/lib/content/edges'
 import { railLevels } from '@/lib/content/rail'
 import { type CourseModule, loadAllModules, loadModuleIn } from '@/lib/content/loader'
 import { moduleRenderInput } from '@/lib/content/module-render'
-import { href } from '@/lib/url'
 import { type Track, catalogRoute, moduleRoute } from '@/lib/tracks'
 import Link from 'next/link'
 import { summarySentence } from '@/lib/content/schedule'
@@ -132,8 +132,12 @@ export async function sheetMetadata(
 
   const slug = `${category}/${module}`
   const translatedPage = lang !== 'en'
-  const pathIn = (one: ReadingLang) => moduleRoute(slug, track, one)
-  const available = TRANSLATED_LANGS.filter((one) => sheet.translations[one] !== null)
+
+  // D120 — a planned module's page names itself and is kept out of search, as an unwritten
+  // For Everyone page is above; it has no translation, so there is nothing to alternate.
+  if (!isIndexableModule(sheet)) {
+    return { title: sheet.frontmatter.title, robots: { index: false, follow: true } }
+  }
 
   return {
     title: sheet.frontmatter.title,
@@ -149,27 +153,17 @@ export async function sheetMetadata(
     /* **Nineteen pairs of near-duplicate pages with nothing saying they are
        translations of each other**, which a review caught. `hreflang` is how
        one says so, and `canonical` is how each says it is the original of
-       itself rather than a copy of its sibling. Emitted on BOTH trees and
-       pointing at both, because an alternate declared in one direction only is
-       the half of it a crawler ignores.
+       itself rather than a copy of its sibling. Emitted on every version and
+       naming every version, because an alternate declared in one direction only
+       is the half of it a crawler ignores.
 
-       Only where there IS a pair: a module with no translation declares
-       nothing, for the same reason it has no picker. */
-    /* **`href()` and not a bare path.** MEASURED on the base-path build:
-       these three went out as `/courses/…` on every one of the 19 pairs —
-       **114 of 5,274 internal references missing the prefix**, where every
-       other reference on the site carries it. Next applies `basePath` to the
-       router and to `<Link>`, and NOT to a string in `alternates`; `lib/url.ts`
-       is what the rest of the codebase uses for exactly this reason, and this
-       is the one place M19 reached past it. */
-    alternates: available.length === 0
-      ? undefined
-      : {
-          canonical: href(pathIn(lang)),
-          languages: Object.fromEntries(
-            (['en', ...available] as ReadingLang[]).map((one) => [one, href(pathIn(one))]),
-          ),
-        },
+       D119 — the languages come from `moduleLanguageRoutes`, which asks the
+       loader the question the route asked to render this page, so a version
+       that does not exist is not named; `x-default` is the English one; and
+       `metadataBase` (`shellMetadata`) makes every one of them absolute, which a
+       crawler requires of an `hreflang` and the relative strings before it were
+       not. A module with one language still says where it is (`canonical`). */
+    alternates: alternatesOf(moduleLanguageRoutes(slug, track), lang),
   }
 }
 

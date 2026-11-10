@@ -11,7 +11,7 @@ description: >
 authority: blueprint
 writes: agent, when explicitly refactoring
 status: active
-covers: the whole system as built on 2026-09-10, with M16 shipped — every route on the design language; the record, channel A and the render step corrected for M24 on 2026-10-11, and the quiz and the end of a module for M25 on 2026-10-12, the Bazaar Street front door for M27 and the Persian pages for M28 the same day, and the progress page slimmed to its circles and its data row for M38 on 2026-11-05, and the account layer, role paths, record of work and two thirds of the test suite removed for M40 the same day, and the two tracks (For Engineers, For Everyone) and their per-track record for M43 the same day; the custom domain (D92), the fifth level, Emerging (first named Emerging Trends), and moved addresses (D94) on 2026-11-06, and the people at the gate (M58), search (M59) and the catalog without its Sources count (M55) the same day; and for M64 to M69 the same night, a planned module that renders the sections it already has (D102), inline vendor logos, and the first For Everyone module; and the search filters and the level bar on a result (M70, D103), folded behind a Filters disclosure (M71, D104), and the stories at the gate kept until everyone has turned (M72), on 2026-11-07; and call-out cards in a module (D106), the reader's choice of Mermaid theme (D107), Mihrî in Leyla's place at the gate and the fifth level titled Emerging (M75), on 2026-11-08; and For Everyone versions of the nineteen other written modules of Fundamentals, Intermediate and Ecosystem, in three languages (M77, M78, D108), the same day; and one heading per shared section (D109), technical terms kept English in translations, and more vendor marks (M80), and each diagram theme on Mermaid's own ground with a copy control (M81), the same day; and the content bundle for the mobile reader, §13 (M41, D89, D111), on 2026-11-09, and Caravan's address in the bar (M62) the same day, and the About page (M90, D115) the same day, and Caravan's page, its two data files and their validation (§14, M91, D116) that evening, and its second round, a closer stage and the trends browsed like the catalog (§14, M93, D117), on 2026-11-10
+covers: the whole system as built on 2026-09-10, with M16 shipped — every route on the design language; the record, channel A and the render step corrected for M24 on 2026-10-11, and the quiz and the end of a module for M25 on 2026-10-12, the Bazaar Street front door for M27 and the Persian pages for M28 the same day, and the progress page slimmed to its circles and its data row for M38 on 2026-11-05, and the account layer, role paths, record of work and two thirds of the test suite removed for M40 the same day, and the two tracks (For Engineers, For Everyone) and their per-track record for M43 the same day; the custom domain (D92), the fifth level, Emerging (first named Emerging Trends), and moved addresses (D94) on 2026-11-06, and the people at the gate (M58), search (M59) and the catalog without its Sources count (M55) the same day; and for M64 to M69 the same night, a planned module that renders the sections it already has (D102), inline vendor logos, and the first For Everyone module; and the search filters and the level bar on a result (M70, D103), folded behind a Filters disclosure (M71, D104), and the stories at the gate kept until everyone has turned (M72), on 2026-11-07; and call-out cards in a module (D106), the reader's choice of Mermaid theme (D107), Mihrî in Leyla's place at the gate and the fifth level titled Emerging (M75), on 2026-11-08; and For Everyone versions of the nineteen other written modules of Fundamentals, Intermediate and Ecosystem, in three languages (M77, M78, D108), the same day; and one heading per shared section (D109), technical terms kept English in translations, and more vendor marks (M80), and each diagram theme on Mermaid's own ground with a copy control (M81), the same day; and the content bundle for the mobile reader, §13 (M41, D89, D111), on 2026-11-09, and Caravan's address in the bar (M62) the same day, and the About page (M90, D115) the same day, and Caravan's page, its two data files and their validation (§14, M91, D116) that evening, and its second round, a closer stage and the trends browsed like the catalog (§14, M93, D117), on 2026-11-10; and `<html lang>` per language, absolute canonicals and hreflang, the sitemap and robots.txt, and what is kept out of search (§7, M96, D119, D120) the same day
 last_updated: 2026-11-10
 ---
 
@@ -611,6 +611,26 @@ renders `MovedTo` instead — an inline script (the only one of the three mechan
 fragment), a `<meta http-equiv="refresh">` for a reader with scripting off, and a visible link. The
 target goes through `lib/url.ts`'s `href()`, because `basePath` rewrites only what the router touches
 and a hardcoded path would work locally and 404 on GitHub Pages. `logs/BRAINSTORM_1.md` **D24**.
+
+**What a search engine reads (D119, D120).** There is one root layout. `<html lang>` is rendered `en`
+and set to the page's own language by three writers that share one rule, the first path segment
+(`languageOfPath`, `src/lib/content/languages.ts`): `scripts/lib/html-lang.mjs`, called by the
+finaliser, rewrites it in the exported HTML under `out/tr/` and `out/fa/`; `recordBootScript` sets it
+before first paint; `RecordStateSync` sets it after a client navigation. It never carries `dir`. The
+bar, the skip link, `<main>` and the footer say `lang="en"` themselves (D113), and translated text says
+its own language where it is written. Three root layouts, one per language, were built and rejected
+(D119): a link across them is a full page load.
+
+`src/lib/site.ts` holds the site's address (`SITE_ORIGIN`) and `absoluteUrl()`; the root layout's
+`metadataBase` is set from it, which makes every relative `canonical` and `hreflang` leave the page
+absolute. `src/lib/content/seo.ts` answers "which pages exist, in which languages" from the loader's own
+test (`loadModuleIn`), and three readers use it: a page's `alternates` (`alternatesOf`: `canonical`, an
+`hreflang` for each version that exists and `x-default`, English), `app/sitemap.ts` and the tests. Every
+page in the sitemap has a `canonical`; a page with one language declares no `hreflang`. **The sitemap
+omits every page that says `noindex`:** the forwards (which name their destination as canonical), an
+unwritten For Everyone page, a planned (`draft`) module, `/profile/`, `/caravan/` while it draws its
+sample (`showsSample`, the page's own test) and the 404; and `/api/`. `app/robots.ts` allows everything
+and names the sitemap. Both are static files in `out/`.
 
 ---
 

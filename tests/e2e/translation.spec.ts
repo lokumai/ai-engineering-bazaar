@@ -214,9 +214,10 @@ test('the English tree links to no Turkish address', async ({ page }) => {
 /**
  * A Turkish module page is a MIXED-LANGUAGE document — the bar, the rail, the
  * footer and the objectives card are all still English — so the language is an
- * attribute on the run of text that is Turkish, not a stamp on `<html>`.
- * Stamping the document would have a screen reader read every English control
- * in a Turkish voice, which is the defect the attribute exists to prevent.
+ * attribute on the run of text that is Turkish, and the chrome says `en` itself.
+ * `<html lang>` says `tr` since D119 (`html-lang.spec.ts`), so an unmarked English
+ * control would be read in a Turkish voice, which is what the chrome's own `lang`
+ * prevents.
  */
 test('says which language each run of text is in', async ({ page }) => {
   await page.goto(tr(TRANSLATED[0].slug))
@@ -302,10 +303,12 @@ test.describe('the Persian tree', () => {
     const direction = (selector: string) =>
       page.locator(selector).first().evaluate((element) => getComputedStyle(element).direction)
 
-    // The document is English: the bar, the rail and the objectives card are
-    // the interface's own words and stay left-to-right (the author: content
-    // level only, "not website level such as navbars").
-    await expect(page.locator('html')).toHaveAttribute('lang', 'en')
+    // The document says Persian (D119) and is never mirrored; the bar, the rail
+    // and the objectives card are the interface's own words, English, and stay
+    // left-to-right (the author: content level only, "not website level such as
+    // navbars"), so the bar says English.
+    await expect(page.locator('html')).toHaveAttribute('lang', 'fa')
+    await expect(page.locator('header')).toHaveAttribute('lang', 'en')
     await expect(page.locator('html')).not.toHaveAttribute('dir', 'rtl')
     expect(await direction('header')).toBe('ltr')
     expect(await direction('.bz-rail')).toBe('ltr')

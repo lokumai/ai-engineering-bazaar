@@ -1,9 +1,25 @@
+import { href } from '@/lib/url'
+
 /** Constants the shell needs in more than one place. */
 
 export const SITE_NAME = 'AI Engineering Bazaar'
 
+/**
+ * Where the site is served from (D92), the ONE place its address is written.
+ *
+ * Three things need an absolute URL and read it from here: `metadataBase` in the
+ * root layouts (which turns every relative `canonical` and `hreflang` into one), the
+ * sitemap, and `robots.txt`. No trailing slash; a path is appended to it.
+ */
+export const SITE_ORIGIN = 'https://ai-bazaar.lokum.dev'
+
+/** An app route as the absolute URL a crawler is told: base path included (`href`), origin in front. */
+export function absoluteUrl(route: string): string {
+  return `${SITE_ORIGIN}${href(route)}`
+}
+
 export const SITE_DESCRIPTION =
-  'Thirty-two modules on becoming an AI-powered software engineer.'
+  'A short course on becoming an AI-powered software engineer.'
 
 export const REPO_URL = 'https://github.com/lokumai/ai-engineering-bazaar'
 

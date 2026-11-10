@@ -85,6 +85,16 @@ export interface CaravanView {
   measured: boolean
 }
 
+/**
+ * D120 — whether the page draws the sample: no trend has been written yet. The page
+ * chooses its input with this and the sitemap and the page's `robots` ask it too, so
+ * the page becomes indexable the day the first real trend lands, with nothing to
+ * remember to change.
+ */
+export function showsSample(trends: TrendsFile): boolean {
+  return trends.trends.length === 0
+}
+
 export function caravanView(input: CaravanInput): CaravanView {
   let last = input.through
   for (const trend of input.trends) {

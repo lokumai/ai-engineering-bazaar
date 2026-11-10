@@ -7,11 +7,18 @@ import { curriculumFacts } from '@/lib/content/facts'
 import { RecordStateSync } from '@/components/record/RecordStateSync'
 import { recordBootScript } from '@/lib/record/boot'
 import { diagramGroundCss } from '@/lib/reading/diagram-themes'
-import { SITE_DESCRIPTION, SITE_NAME } from '@/lib/site'
+import { SITE_DESCRIPTION, SITE_NAME, SITE_ORIGIN } from '@/lib/site'
 import { THEME_BOOT_SCRIPT } from '@/lib/theme'
 import './globals.css'
 
+/**
+ * `metadataBase` is what makes a relative `canonical` or `hreflang` leave the page as an
+ * absolute URL, which a crawler requires of an `hreflang`. The pages build their addresses
+ * with `href()` (it carries the base path, which Next does not apply to `alternates`); the
+ * origin is `SITE_ORIGIN`, the one place the site's address is written (D119).
+ */
 export const metadata: Metadata = {
+  metadataBase: new URL(SITE_ORIGIN),
   title: { default: SITE_NAME, template: `%s · ${SITE_NAME}` },
   description: SITE_DESCRIPTION,
 }
@@ -88,7 +95,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <style dangerouslySetInnerHTML={{ __html: diagramGroundCss() }} />
       </head>
       <body className="flex min-h-screen flex-col">
-        <a href="#main" className="skip-link">
+        {/* The interface is English on every page (D113), and `<html lang>` is the page's
+            own language (D119), so each piece of chrome says it is English itself. */}
+        <a href="#main" className="skip-link" lang="en">
           Skip to content
         </a>
         {/* The bar's language menu needs to know which modules HAVE a second

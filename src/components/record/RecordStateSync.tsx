@@ -4,6 +4,7 @@ import { usePathname } from 'next/navigation'
 import { useEffect } from 'react'
 import { type StampFacts, TRACK_ATTR, currentTrack, stampRecordState } from '@/lib/record/stamp'
 import { snapshot, subscribe } from '@/lib/record/store'
+import { languageOfPath } from '@/lib/content/languages'
 import { lastTrack, rememberTrack, trackOfPath } from '@/lib/tracks'
 
 /**
@@ -36,6 +37,16 @@ export function RecordStateSync({ facts }: { facts: StampFacts }) {
   useEffect(() => {
     const track = trackOfPath(pathname)
     if (track !== null) rememberTrack(track)
+  }, [pathname])
+
+  /* D119 — `<html lang>` is the page's own language. The layout renders `en` for every
+     address (`<html>` carries `suppressHydrationWarning`, so a different value in the
+     document is no mismatch), the exported HTML and the boot script already hold the
+     right one for a loaded page, and a client transition into or out of a translated
+     page lands here. React never rewrites the attribute itself: its own prop does not change. */
+  useEffect(() => {
+    const lang = languageOfPath(pathname)
+    if (document.documentElement.lang !== lang) document.documentElement.lang = lang
   }, [pathname])
 
   useEffect(() => {

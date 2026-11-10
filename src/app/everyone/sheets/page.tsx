@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import { canonicalOf } from '@/lib/content/seo'
 import { Catalog } from '@/components/catalog/Catalog'
 import { SignOffMarks } from '@/components/record/SignOffMarks'
 import { PageShell } from '@/components/shell/PageShell'
@@ -9,6 +10,7 @@ export const metadata: Metadata = {
   title: 'Catalog, For Everyone',
   description:
     'Every module in the course in plain words, for readers with no technical background.',
+  alternates: canonicalOf('/everyone/sheets/'),
 }
 
 /**

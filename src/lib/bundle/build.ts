@@ -5,6 +5,7 @@ import { type ReadingLang, TRANSLATIONS } from '@/lib/content/languages'
 import { type CourseModule, loadAllModules, loadModuleIn } from '@/lib/content/loader'
 import { type RenderRef, levelRenderInput, moduleRenderInput } from '@/lib/content/module-render'
 import { MOVED_LEVELS, MOVED_MODULES } from '@/lib/content/moved'
+import { loadStory } from '@/lib/content/story'
 import { quizFor } from '@/lib/content/quiz'
 import { TRACKS, type Track, moduleRoute } from '@/lib/tracks'
 import { addressOf } from './address'
@@ -18,6 +19,7 @@ import {
   LevelDoc,
   ModuleDoc,
   type Ref,
+  StoryDoc,
   Tokens,
 } from './schema'
 
@@ -63,6 +65,15 @@ export function moduleDocPath(slug: string, lang: ReadingLang, track: Track = 'e
 
 export function levelDocPath(slug: string): string {
   return `api/v1/levels/${slug}.json`
+}
+
+/** The story document, site-relative. STORY.md is written in English only, so it is the one language (D125). */
+export const STORY_DOC_PATH = 'api/v1/story/en.json'
+
+/** The About page's story, as the page reads it (D115), in the bundle's shape (D125). */
+export function buildStoryDoc(): StoryDoc {
+  const { title, stalls, motto } = loadStory()
+  return StoryDoc.parse({ schemaVersion: BUNDLE_MAJOR, lang: 'en', dir: 'ltr', title, stalls, motto })
 }
 
 /** The English page in a track, site-relative, for "Open on the web". */
@@ -117,10 +128,11 @@ export async function buildModuleDoc(
     dir: dirOf(lang),
     // The translated heading (`loadModuleIn`); `ModuleRenderInput` carries no title.
     title: sheet.frontmatter.title,
-    // v1 carries the English objectives in every document (`lang: 'en'`, ARCHITECTURE §13). The site
-    // now shows translated objectives, but the bundle keeps its contract until the mobile reader
-    // agrees an additive field for them; see D123.
+    // v1 carries the English objectives in every document (`lang: 'en'`, ARCHITECTURE §13), and the
+    // document's own list beside them as the additive field the mobile reader agreed (D123, D124).
     objectives: { lang: 'en', items: [...englishObjectives(slug, track, input.objectives, lang)] },
+    translatedObjectives:
+      lang !== 'en' && input.objectivesLang === lang ? { lang, items: [...input.objectives] } : null,
     prerequisites: input.prerequisites.map(refOf),
     previous: input.previous === null ? null : refOf(input.previous),
     next: input.next === null ? null : refOf(input.next),
@@ -271,6 +283,7 @@ export async function buildIndexDraft(inputs: {
     levels,
     modules,
     moved: { levels: { ...MOVED_LEVELS }, modules: { ...MOVED_MODULES } },
+    story: { en: STORY_DOC_PATH },
     files: {},
     images: {},
     diagrams: uniqueDiagrams(diagrams),

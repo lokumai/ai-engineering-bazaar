@@ -1,7 +1,7 @@
 import { expect, test } from '@playwright/test'
 import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
-import { Index, LevelDoc, ModuleDoc, Tokens } from '@/lib/bundle/schema'
+import { Index, LevelDoc, ModuleDoc, StoryDoc, Tokens } from '@/lib/bundle/schema'
 
 /**
  * Spec 2.13 guard 13: the published bundle, read from the export on disk, meets
@@ -28,6 +28,7 @@ function schemaFor(path: string) {
   if (path.startsWith('api/v1/levels/')) return LevelDoc
   if (path.startsWith('api/v1/modules/')) return ModuleDoc
   if (path === 'api/v1/tokens.json') return Tokens
+  if (path.startsWith('api/v1/story/')) return StoryDoc
   throw new Error(`bundle.spec: no schema for the listed document ${path}`)
 }
 

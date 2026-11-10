@@ -9,7 +9,7 @@ description: >
 authority: reasoning
 writes: agent, when a decision is taken
 status: active
-covers: "D97 to D123 so far, and D89, which part 2 held for PR #57 — 2026-11-06 onward"
+covers: "D97 to D125 so far, and D89, which part 2 held for PR #57 — 2026-11-06 onward"
 last_updated: 2026-11-10
 ---
 
@@ -885,6 +885,58 @@ So a `_tr.md` or `_fa.md` may now carry an `objectives`-only frontmatter block (
   document's language. ARCHITECTURE §13 counts a new value in a closed set as a retyping, which needs
   `api/v2/`, and the mobile reader may check `en`. So v1 keeps `{ lang: 'en', items: <English> }`;
   translated objectives reach the app later as an additive field, once its developer agrees.
+
+### D124 · The bundle carries translated objectives in an additive field, `translatedObjectives` — 2026-11-10
+status: active
+
+D123 kept the bundle's `objectives` English and left a translated list to *"an additive field, once its
+developer agrees"*. The mobile reader's developer agreed and asked for it in this pull request, at the
+author's invitation: the app shows the "what you will learn" card in English on a Turkish or Persian
+module, the gap a manager reported on the site in M98.
+
+- **The field.** Every module document gains `translatedObjectives`: `{ lang, items }` with the list the
+  document's own translation file declares, `lang` being the document's language, and `null` in English
+  and where a translation file declares none (the site's M19 fallback). `objectives` is unchanged, so a
+  reader that knows only v1 as it was still reads English. **MEASURED** on the built bundle: 42 Turkish
+  and 42 Persian documents carry a list, the 84 of M98, and all 65 English documents carry `null`.
+- **Additive, so v1** (ARCHITECTURE §13): a new field, not a new value in a closed set. The mobile reader
+  ignores keys it does not know (its parser tests say so), so its released version reads the new bundle
+  as before.
+- **Always present, `null` when empty**, as `previous`, `next`, `draft` and `quiz` are, so a document's
+  shape does not depend on its content and the strict schema refuses a document that forgot it.
+- **The schema holds what the loader already holds**: `lang` is a translation, never `en`, and the list
+  is not empty; the same count and order as the English is the loader's rule (M98), and the corpus test
+  checks it again on every built document.
+- **Rejected:** `objectives.lang` set to the document's language (a new value in a closed set, a
+  retyping that needs `api/v2/`, which is what D123 avoided); the translated items under
+  `objectives` with `lang: 'en'` kept (a document that lies about its language); an optional field
+  absent when empty (the only optional-by-absence key in a module document would be this one);
+  translating `summary` as well (it feeds the English catalog, D113, D123).
+
+### D125 · The bundle carries the About page's story, `api/v1/story/en.json` — 2026-11-10
+status: active
+
+The mobile reader's developer asked for it in the same pull request as D124: the app shows the story of
+the Bazaar to a reader on the first launch, in place of its own guide, and in its Settings, and its words
+must be the author's, not a copy in the app's code that drifts when STORY.md changes (D111: the content is
+the same, the design may differ).
+
+- **One document, the page's own reading.** `buildStoryDoc` returns what `loadStory` returns to the About
+  page (D115): the `#` title, one stall per `##` section with its paragraphs, and the motto split into its
+  sentences, as plain strings. So the page and the app cannot disagree about a word, and STORY.md's
+  rules (no `###`, the `Our motto:` line) hold for both.
+- **Per language in its path, English only today.** The document is `api/v1/story/en.json` and the
+  index's `story` maps a language to its document, `{ en: ... }`, so a Turkish or Persian story is a new
+  key and a new file, additive in v1, the day the author writes one. `files` lists it with its hash like
+  every other document, so the reader fetches and checks it as it does a module.
+- **Additive, so v1** (ARCHITECTURE §13): a new document and a new index field; the released app ignores
+  both.
+- **Not the scenes.** The five scenes are the page's art, drawn in its code (D115); the app draws its own
+  pictures for the stalls, so nothing of them is in the bundle.
+- **Rejected:** a `story.json` with no language in the path (a translation would need a second naming
+  rule); the text as `inlines` (STORY.md's reader drops its marks to text, so inlines would carry
+  nothing more and would let the two drift); an optional `story` field absent when no story exists (the
+  build already fails without STORY.md, and the index's fields are always present).
 
 ---
 

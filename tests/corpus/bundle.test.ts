@@ -5,6 +5,7 @@ import {
   buildIndexDraft,
   buildLevelDoc,
   buildModuleDoc,
+  buildStoryDoc,
   docLanguages,
   levelDocPath,
   moduleDocPath,
@@ -18,7 +19,9 @@ import {
   LevelDoc,
   type LinkTarget,
   ModuleDoc,
+  StoryDoc,
 } from '@/lib/bundle/schema'
+import { loadStory } from '@/lib/content/story'
 import type { ReadingLang } from '@/lib/content/languages'
 import { loadAllModules, loadModule, loadModuleIn } from '@/lib/content/loader'
 import { CONTENT_ROOT } from '@/lib/content/paths'
@@ -131,6 +134,30 @@ describe('the bundle, over the real corpus', () => {
     }
     expect(translatedChecked, 'no translated document declares its own objectives, so a leak could not be seen')
       .toBeGreaterThan(0)
+  })
+
+  it('carries a translated document\'s own objectives beside the English, and null where it has none (D124)', () => {
+    let carried = 0
+    for (const [path, doc] of modules) {
+      const own = doc.lang === 'en' ? null : loadModuleIn(doc.key, doc.lang as ReadingLang, doc.track)!
+      if (own === null || own.objectivesLang === 'en') {
+        expect(doc.translatedObjectives, path).toBeNull()
+        continue
+      }
+      expect(doc.translatedObjectives, path).toEqual({ lang: doc.lang, items: own.frontmatter.objectives })
+      expect(doc.translatedObjectives!.items.length, path).toBe(doc.objectives.items.length)
+      carried++
+    }
+    expect(carried, 'no translated document declares its own objectives, so the field could not be seen').toBeGreaterThan(0)
+  })
+
+  it('carries STORY.md as the About page reads it, and the index names that document (D125)', () => {
+    const story = loadStory()
+    const doc = StoryDoc.parse(buildStoryDoc())
+    expect(doc).toEqual({ schemaVersion: 1, lang: 'en', dir: 'ltr', ...story })
+    expect(doc.stalls.length, 'STORY.md has no ## section').toBeGreaterThan(0)
+    expect(doc.motto, 'STORY.md has no motto line').not.toBeNull()
+    expect(draft.story).toEqual({ en: 'api/v1/story/en.json' })
   })
 
   it('names each level document at its own path', () => {

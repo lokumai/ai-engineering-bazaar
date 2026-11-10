@@ -11,7 +11,7 @@ description: >
   backgrounds and copy (M81), Agentic UI (M82), the cast's colours (M83), and M84 to M90 (content
   and site fixes, the home page in Turkish and Persian, Dariush's motif, block menus in the top layer,
   and About, the story of the Bazaar); Caravan built (M91), its real trends waiting (M92) and its second
-  round (M93); multilingual SEO (M96); and M41, the content bundle for the mobile reader. Each milestone carries its deliverables and acceptance
+  round (M93); multilingual SEO (M96); translated objectives on the site (M98) and in the bundle (M99); the story in the bundle (M100); and M41, the content bundle for the mobile reader. Each milestone carries its deliverables and acceptance
   criteria as `- [ ]` checkboxes, ticked as the work lands, and closes with a dated report; the loop
   that governs that is below, in this file.
   NOT here: why a choice was made (BRAINSTORM.md), or any rule that outlives the milestone
@@ -19,7 +19,7 @@ description: >
 authority: state
 writes: agent, every session
 status: active
-covers: "M50 to M98, 2026-11-06 onward, and M41, which part 2 held for PR #57"
+covers: "M50 to M100, 2026-11-06 onward, and M41, which part 2 held for PR #57"
 last_updated: 2026-11-10
 ---
 
@@ -1902,6 +1902,40 @@ author: *"Ok translate the objectives also to each language. And merge in the en
       documents say `en`. A translated list for the app waits on an additive field agreed with its
       developer (D123).
 - [x] **Gate:** typecheck, 1,577 unit tests, build, link check, bundle check; the full browser suite in CI.
+
+## 🏁 Milestone M99: Translated objectives in the content bundle (D124) — DONE
+
+The author, to the mobile reader's developer, after M98: the frontmatter is multilingual now and the
+bundle still English, *"onu da çevirmek istersen bir PR açabilirsin"*. The app agreed the additive field
+D123 left open.
+
+- [x] **The field**: every module document carries `translatedObjectives`, the document's own list as
+      `{ lang, items }`, or `null` in English and where the translation file declares none
+      (`src/lib/bundle/build.ts`, `src/lib/bundle/schema.ts`). `objectives` is unchanged.
+      Report: on the built bundle, 42 Turkish and 42 Persian documents carry a list and 65 English
+      documents carry `null`.
+- [x] **The contract**: ARCHITECTURE §13 names the field; `bundle-schema.json` shows it as an addition
+      and nothing else; the schema refuses `en`, an empty list, and a document without the key.
+- [x] **The guard**: the corpus test checks every built document against its own translation file and
+      the English count, and fails if none carries a list. Mutation-tested: with the field always
+      `null` the test fails.
+- [x] **Gate:** typecheck, 1,591 unit tests, build, link check, bundle check; the full browser suite in CI.
+
+## 🏁 Milestone M100: The About page's story in the content bundle (D125) — DONE
+
+The mobile reader's developer, in the pull request of M99: the app shows the story of the Bazaar on the
+first launch and in its Settings, from the bundle rather than from a copy in its code.
+
+- [x] **The document**: `api/v1/story/en.json`, STORY.md as `loadStory` reads it for the About page
+      (`buildStoryDoc` in `src/lib/bundle/build.ts`, the route `src/app/api/v1/story/en.json/route.ts`,
+      `StoryDoc` in `src/lib/bundle/schema.ts`). Report: on the built bundle, the title, 5 stalls and
+      the motto in two lines; `files` lists it with its hash.
+- [x] **The index**: `story` names the document per language, `{ en: "api/v1/story/en.json" }`.
+- [x] **The contract**: ARCHITECTURE §13 names both; `bundle-schema.json` shows them as additions and
+      nothing else; the schema refuses a story with no stall, an empty heading or a key it does not name.
+- [x] **The guard**: the corpus test holds the document equal to what the About page reads and the index
+      to its path; the route test holds it static; the browser suite parses it with `StoryDoc`.
+- [x] **Gate:** typecheck, 1,594 unit tests, build, link check, bundle check; the full browser suite in CI.
 
 ---
 

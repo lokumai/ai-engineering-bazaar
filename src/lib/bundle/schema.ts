@@ -47,6 +47,11 @@ const Lang = z
   .refine((value) => LANGUAGE_IDS.includes(value), { message: 'not en or a languages.ts translation' })
   .describe('A language id: en, or one of the translations the index lists.')
 
+const TranslatedLang = z
+  .string()
+  .refine((value) => TRANSLATIONS.some((one) => one.id === value), { message: 'not a languages.ts translation' })
+  .describe('A translation id from languages.ts: never en.')
+
 const Dir = z.enum(['ltr', 'rtl'])
 
 const TrackId = z
@@ -119,9 +124,39 @@ export const Index = z.strictObject({
   levels: z.array(IndexLevel),
   modules: z.array(IndexModule),
   moved: Moved,
+  story: z
+    .record(Lang, SITE_PATH)
+    .describe('The About page\'s story document per language it is written in: STORY.md, English only for now (D125).'),
   files: z.record(SITE_PATH, SHA256).describe('Every file under api/v1/ except index.json and record-conformance.json.'),
   images: z.record(SITE_PATH, SHA256).describe('Every image a level or module document names.'),
 })
+
+/**
+ * The About page's words (D115, D125): `mini-courses/STORY.md` as `lib/content/story.ts` reads it for the
+ * page, so the reader and the page show the same story. Plain strings, as the page sets them: STORY.md's
+ * inline marks are dropped to their text by the same reader.
+ */
+export const StoryDoc = z.strictObject({
+  schemaVersion: SCHEMA_VERSION,
+  lang: Lang,
+  dir: Dir,
+  title: z.string().min(1).nullable().describe('The file\'s # heading, or null when it has none.'),
+  stalls: z
+    .array(z.strictObject({
+      heading: z.string().min(1).describe('A ## heading of STORY.md.'),
+      paragraphs: z.array(z.string().min(1)).describe('The paragraphs under it, up to the next ## heading.'),
+    }))
+    .min(1)
+    .describe('One per ## section, in file order.'),
+  motto: z
+    .strictObject({
+      lead: z.string().min(1).describe('What introduces it, without its colon: Our motto.'),
+      lines: z.array(z.string().min(1)).min(1).describe('The quotation, one sentence per entry, with curly quotation marks at its two ends.'),
+    })
+    .nullable()
+    .describe('The closing line when it reads `Our motto: **"..."**`, or null.'),
+})
+export type StoryDoc = z.infer<typeof StoryDoc>
 
 export const DIAGRAM_VARIANTS = ['light', 'dark'] as const
 
@@ -318,6 +353,10 @@ export const ModuleDoc = z.strictObject({
   dir: Dir,
   title: z.string().min(1).describe('The title in this document\'s track and language.'),
   objectives: z.strictObject({ lang: z.literal('en'), items: z.array(z.string().min(1)) }),
+  translatedObjectives: z
+    .strictObject({ lang: TranslatedLang, items: z.array(z.string().min(1)).min(1) })
+    .nullable()
+    .describe('The objectives in this document\'s language, from its own file; null in English and where the file declares none (D124).'),
   prerequisites: z.array(Ref),
   previous: Ref.nullable(),
   next: Ref.nullable(),

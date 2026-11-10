@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import { canonicalOf } from '@/lib/content/seo'
 import { Catalog } from '@/components/catalog/Catalog'
 import { SignOffMarks } from '@/components/record/SignOffMarks'
 import { PageShell } from '@/components/shell/PageShell'
@@ -11,6 +12,7 @@ export const metadata: Metadata = {
     'Every module in the course, in three views over one list: the levels in '
     + 'order, a card for each module, or every column at once. Filter by level, '
     + 'by state or by language.',
+  alternates: canonicalOf('/sheets/'),
 }
 
 /**

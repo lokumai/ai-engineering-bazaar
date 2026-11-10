@@ -1,6 +1,6 @@
 import { renderToStaticMarkup } from 'react-dom/server'
 import { describe, expect, it } from 'vitest'
-import ProfilePage from '@/app/profile/page'
+import ProfilePage from '@/app/(en)/profile/page'
 import { DataPanel } from '@/components/record/DataPanel'
 import { ERASE_COPY, EraseDialog } from '@/components/record/EraseDialog'
 import { ERASE_WORD } from '@/lib/record/erase'

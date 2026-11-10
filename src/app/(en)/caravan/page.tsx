@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import { canonicalOf } from '@/lib/content/seo'
 import { CaravanPage } from '@/components/caravan/CaravanPage'
 import { sampleInput } from '@/components/caravan/sample-trends'
 import { PageShell } from '@/components/shell/PageShell'
@@ -35,6 +36,7 @@ const view = caravanView(
 export const metadata: Metadata = {
   title: 'Caravan',
   description: 'What was trending in AI engineering, month by month since the chatbot moment.',
+  alternates: canonicalOf('/caravan/'),
 }
 
 export default function CaravanRoute() {

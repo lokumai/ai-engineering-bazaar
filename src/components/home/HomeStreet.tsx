@@ -5,40 +5,38 @@ import { BazaarStreetMotion } from '@/components/home/BazaarStreetMotion'
 import { CastAtGate, CastRow } from '@/components/home/Cast'
 import { art, type ArtName } from '@/components/home/street/art'
 import { PageShell } from '@/components/shell/PageShell'
+import { alternatesOf, homeLanguageRoutes } from '@/lib/content/seo'
 import { CATEGORIES } from '@/lib/content/curriculum-file'
-import { type ReadingLang, TRANSLATED_LANGS, dirOf, homeRoute, langAttr } from '@/lib/content/languages'
+import { type ReadingLang, dirOf, langAttr } from '@/lib/content/languages'
 import { HOME_COPY, type StallId, type TrackId } from '@/lib/home-copy'
 import { INDEX_ROUTE, levelRoute } from '@/lib/route-labels'
 import { SITE_NAME } from '@/lib/site'
-import { href } from '@/lib/url'
 
 /**
  * §15.2.2 — one document, so one title, and it claims nothing about the reader.
  *
- * `title.absolute`, because the root layout's template would print the site's
- * name twice, and the name is the site's in every language: the title does not
- * translate. The description says what the place is and states no number, and it
- * is the language's own (`lib/home-copy.ts`).
+ * English is `title.absolute`, because the root layout's template would print the
+ * site's name twice. **Turkish and Persian carry their own headline** (D119): it is
+ * the line the page opens on, `hero.first` and `hero.second` of `lib/home-copy.ts`
+ * with the full stop taken off, so a result in a search page says what the page
+ * says and not a name no Turkish or Persian reader searched for; the site's name
+ * follows it, as it does on a module page (`absolute`, because the page shares its
+ * segment with the layout that holds the template, which then does not apply). The
+ * description says what the place is and states no number, and it is the
+ * language's own.
  *
  * **Each address names the other two**, the way a module's pages do
- * (`sheetMetadata`): `hreflang` says the three are translations of each other and
- * `canonical` says each is the original of itself. Emitted on all three and
- * pointing at all three, because an alternate declared in one direction only is
- * the half a crawler ignores; `x-default` is English, the address a reader with no
- * preference is sent to. `href()` and not a bare path, for the module pages'
- * reason: Next applies `basePath` to links and not to a string in `alternates`.
+ * (`sheetMetadata`), through the same `alternatesOf`: `hreflang` says the three are
+ * translations of each other and `canonical` says each is the original of itself,
+ * absolute through `metadataBase`; `x-default` is English, the address a reader
+ * with no preference is sent to.
  */
 export function homeMetadata(lang: ReadingLang): Metadata {
+  const { hero, description } = HOME_COPY[lang]
   return {
-    title: { absolute: SITE_NAME },
-    description: HOME_COPY[lang].description,
-    alternates: {
-      canonical: href(homeRoute(lang)),
-      languages: {
-        ...Object.fromEntries((['en', ...TRANSLATED_LANGS] as ReadingLang[]).map((one) => [one, href(homeRoute(one))])),
-        'x-default': href(homeRoute('en')),
-      },
-    },
+    title: lang === 'en' ? { absolute: SITE_NAME } : { absolute: `${hero.first} ${hero.second}`.replace(/[.。]$/, '') + ` · ${SITE_NAME}` },
+    description,
+    alternates: alternatesOf(homeLanguageRoutes(), lang),
   }
 }
 

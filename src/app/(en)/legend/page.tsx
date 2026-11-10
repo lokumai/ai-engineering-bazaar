@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import { canonicalOf } from '@/lib/content/seo'
 import { RECORD_SCOPE } from '@/lib/record/scope'
 import { AFFILIATION, LICENCE_LABEL } from '@/lib/site'
 import Link from 'next/link'
@@ -10,6 +11,7 @@ import { SHORTCUTS } from '@/lib/record/keys'
 export const metadata: Metadata = {
   title: 'Legend',
   description: 'The keyboard shortcuts, where this browser keeps your progress, and who publishes this site.',
+  alternates: canonicalOf('/legend/'),
 }
 
 /**

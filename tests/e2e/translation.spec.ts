@@ -302,10 +302,12 @@ test.describe('the Persian tree', () => {
     const direction = (selector: string) =>
       page.locator(selector).first().evaluate((element) => getComputedStyle(element).direction)
 
-    // The document is English: the bar, the rail and the objectives card are
-    // the interface's own words and stay left-to-right (the author: content
-    // level only, "not website level such as navbars").
-    await expect(page.locator('html')).toHaveAttribute('lang', 'en')
+    // The document says Persian (D119) and is never mirrored; the bar, the rail
+    // and the objectives card are the interface's own words, English, and stay
+    // left-to-right (the author: content level only, "not website level such as
+    // navbars"), so the body says English.
+    await expect(page.locator('html')).toHaveAttribute('lang', 'fa')
+    await expect(page.locator('body')).toHaveAttribute('lang', 'en')
     await expect(page.locator('html')).not.toHaveAttribute('dir', 'rtl')
     expect(await direction('header')).toBe('ltr')
     expect(await direction('.bz-rail')).toBe('ltr')

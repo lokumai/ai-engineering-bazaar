@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import { canonicalOf } from '@/lib/content/seo'
 import { LevelCatalog } from '@/components/catalog/LevelCatalog'
 import { CATEGORIES, categoryBySlug } from '@/lib/content/curriculum-file'
 import { MOVED_LEVELS } from '@/lib/content/moved'
@@ -24,7 +25,11 @@ export async function generateMetadata({
   if (MOVED_LEVELS[asked]) return movedMetadata(categoryBySlug(MOVED_LEVELS[asked])?.title ?? asked)
   const category = categoryBySlug(asked)
   if (!category) return {}
-  return { title: `${category.title}, For Everyone`, description: category.blurb }
+  return {
+    title: `${category.title}, For Everyone`,
+    description: category.blurb,
+    alternates: canonicalOf(catalogRoute('everyone', asked)),
+  }
 }
 
 export default async function EveryoneLevelPage({

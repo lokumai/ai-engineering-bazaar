@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import { canonicalOf } from '@/lib/content/seo'
 import { CourseCompletion, type CompletionLevel } from '@/components/record/CourseCompletion'
 import { DataPanel } from '@/components/record/DataPanel'
 import { ProgressTabs } from '@/components/record/ProgressTabs'
@@ -23,6 +24,7 @@ export const metadata: Metadata = {
   description:
     'Every module in both tracks and whether you have completed it, and how to '
     + 'back up, restore or reset your progress.',
+  alternates: canonicalOf('/profile/'),
 }
 
 /**

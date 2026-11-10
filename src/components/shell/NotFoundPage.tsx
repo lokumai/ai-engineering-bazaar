@@ -8,7 +8,7 @@ import {
   NOT_FOUND_TITLE,
 } from '@/lib/route-labels'
 
-export const metadata = { title: NOT_FOUND_TITLE }
+export const NOT_FOUND_METADATA = { title: NOT_FOUND_TITLE }
 
 /** §8.4 fixes the wording of the exploded drawing's caption on this page. */
 const CAPTION = 'PAGE NOT FOUND · NO SUCH MODULE IN THIS CURRICULUM'
@@ -28,7 +28,7 @@ const CAPTION = 'PAGE NOT FOUND · NO SUCH MODULE IN THIS CURRICULUM'
  * in the system where the disassembled mark says something true. The caption
  * says the rest. No "oops", no search box that searches nothing (§11.30).
  */
-export default function NotFound() {
+export function NotFoundPage() {
   return (
     <PageShell sheet={NOT_FOUND_SHEET_LABEL} trailLabel={NOT_FOUND_TITLE}>
       <h1 className="bz-display">{NOT_FOUND_TITLE}</h1>

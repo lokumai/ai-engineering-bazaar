@@ -646,7 +646,10 @@
      body's family already resolved to the system stack. MEASURED on the first
      build with only the first line: the h2s were Vazirmatn and every
      paragraph was "Avenir Next". */
-  [lang="fa"] {
+  /* `:where(body)`: `<html>` says `lang="fa"` on a Persian page too, and the bar and the
+     footer around the Persian text are English and keep their own face. Specificity is
+     the bare attribute's, as it was. */
+  :where(body) [lang="fa"] {
     --font-sans: var(--font-persian);
     font-family: var(--font-sans);
   }

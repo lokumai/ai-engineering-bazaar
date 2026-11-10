@@ -9,7 +9,7 @@ description: >
 authority: reasoning
 writes: agent, when a decision is taken
 status: active
-covers: "D97 to D118 so far, and D89, which part 2 held for PR #57 — 2026-11-06 onward"
+covers: "D97 to D119 so far, and D89, which part 2 held for PR #57 — 2026-11-06 onward"
 last_updated: 2026-11-10
 ---
 
@@ -694,6 +694,50 @@ fact from the module itself. The rule lives in `mini-courses/CLAUDE.md`.
 - **Before the series map, after the content.** The series map and References are navigation, so the
   recap sits where the reading ends. Rejected: after References (it would follow the links out).
 - **No quiz or test change.** The section restates the module, so it adds no fact a quiz could ask.
+
+### D119 · `<html lang>` from three root layouts, absolute canonicals and hreflang, a generated sitemap — 2026-11-10
+status: active
+
+**Asked by the author**, who wondered whether English-only menus hurt search ranking, and, once five
+gaps were measured on the built `out/` of `main`, said: *"Open SEO PR"*. **D113 stays:** menus, the bar and
+the catalog are English on every page, and no interface string was translated. The gaps were in what a
+crawler reads: `<html lang="en">` on Turkish and Persian pages, relative `canonical` and `hreflang` (a
+crawler needs an absolute `hreflang`, and no module page named `x-default`), no sitemap, no `robots.txt`,
+and the English title on `/tr/` and `/fa/`.
+
+- **`<html lang>`: one root layout per language tree.** `src/app/(en)/layout.tsx` (a route group, no URL
+  segment), `src/app/tr/layout.tsx` and `src/app/fa/layout.tsx`, each rendering the one `RootShell`. The
+  English routes moved under `(en)/` with `git mv`; no URL changed. The price, all measured or checked in
+  the build: `experimental.globalNotFound` for `404.html` (three roots leave no layout to compose it
+  from); a link from one tree to another is a full page load; `prose.css`'s `[lang="fa"]` rule now reads
+  `:where(body) [lang="fa"]`, or `<html lang="fa">` would have set the Persian face on the English bar;
+  and a few test paths (`@/app/(en)/api/…`, the copy register's roots). **Rejected:** a script in `<head>`
+  that sets the attribute from `location.pathname`, because the served HTML still says `en`, which is
+  what a crawler without scripts reads; patching `out/**/*.html` after the build, because the source then
+  says one thing and the files another, `next dev` shows `en`, and a soft navigation leaves the old value;
+  `app/[lang]/layout.tsx` with root params, because English has no prefix and would need `/en/` and a
+  redirect from every English URL, which a static export cannot serve; a language read from `headers()`,
+  because a static export has no request.
+- **`<body lang="en">` on translated pages, and no `dir` on `<html>`.** The interface around the
+  translated text is English (D113) and a screen reader must keep reading it as English, so the body
+  says so and the translated content says its own language where it is written, as it did before.
+  **Rejected:** marking each English component (the bar, the rails, the footer, the objectives) one by one,
+  which is a longer list that a new component would forget. The layout never mirrors (D80).
+- **One address, written once.** `SITE_ORIGIN` in `src/lib/site.ts` feeds `metadataBase`, the sitemap
+  and `robots.txt`. Pages keep building their addresses with `href()`, which carries the base path that
+  Next does not apply to `alternates`. **Rejected:** absolute strings built in each page.
+- **Which versions exist is the loader's answer.** `src/lib/content/seo.ts` asks `loadModuleIn` per
+  language and track, the function the route renders from, so a module with no `_fa.md` has no Persian
+  alternate and an unwritten For Everyone page is in no list. `x-default` is the English version. Every
+  indexable page has a `canonical`.
+- **Sitemap from `app/sitemap.ts`, not from a script that walks `out/`.** A walker is a second
+  implementation of "what is indexable"; `tests/e2e/seo.spec.ts` is the one that reads `out/`, and it
+  compares the two. No `lastmod`: no measured date exists for a page, and a wrong one is worse than none.
+  The single pages and the catalog are listed by route in `seo.ts` (they are not content); a page added
+  without being listed fails that test.
+- **The `/tr/` and `/fa/` titles are the home copy's headline** (`hero.first` and `hero.second`, full stop
+  removed) followed by the site name. This replaces §15.2.2's "the title does not translate" for those two
+  pages; `/` is unchanged.
 
 ---
 

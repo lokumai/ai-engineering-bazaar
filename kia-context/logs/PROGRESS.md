@@ -11,7 +11,7 @@ description: >
   backgrounds and copy (M81), Agentic UI (M82), the cast's colours (M83), and M84 to M90 (content
   and site fixes, the home page in Turkish and Persian, Dariush's motif, block menus in the top layer,
   and About, the story of the Bazaar); Caravan built (M91), its real trends waiting (M92) and its second
-  round (M93); and M41, the content bundle for the mobile reader. Each milestone carries its deliverables and acceptance
+  round (M93); multilingual SEO (M96); and M41, the content bundle for the mobile reader. Each milestone carries its deliverables and acceptance
   criteria as `- [ ]` checkboxes, ticked as the work lands, and closes with a dated report; the loop
   that governs that is below, in this file.
   NOT here: why a choice was made (BRAINSTORM.md), or any rule that outlives the milestone
@@ -19,7 +19,7 @@ description: >
 authority: state
 writes: agent, every session
 status: active
-covers: "M50 to M95, 2026-11-06 onward, and M41, which part 2 held for PR #57"
+covers: "M50 to M96, 2026-11-06 onward, and M41, which part 2 held for PR #57"
 last_updated: 2026-11-10
 ---
 
@@ -1760,6 +1760,58 @@ with six of his own files. No decision was rejected, so there is no D entry.
 - [x] **Checks**: `npm test` green; `npm run build`, the link gate and `check-bundle-out.mjs` green;
       each file name found under `out/courses/`; the figures screenshotted at 1440 px in
       `playground/2026-11-round-5/shots-inference-images/`.
+
+## 🏁 Milestone M96: Multilingual SEO: html lang, absolute hreflang and canonical, sitemap, robots — DONE
+
+The author asked whether menus that stay English hurt search ranking (D113 says they stay), and then:
+*"Open SEO PR"*. Five gaps were measured on the built `out/` of `main` before any change: no absolute
+`hreflang` (module pages and the home page had relative ones, no module page had `x-default`);
+`<html lang="en">` on every Turkish and Persian page; no `sitemap.xml` and no `robots.txt`; relative
+`canonical` links; and the English title on `/tr/` and `/fa/`. D113 stays; no interface string changed.
+Reasoning and rejected options: D119.
+
+- [x] **`<html lang>` per page**: three root layouts (`src/app/(en)`, `tr`, `fa`) over one `RootShell`;
+      the English routes moved under `(en)/` with no URL change. Measured on the build: `<html lang>` is
+      `tr` on every `/tr/` page, `fa` on every `/fa/` page and `en` elsewhere, with no `dir`; `<body>`
+      says `lang="en"` on the translated pages. A click from a Turkish page to the home page reloaded the
+      document (full load) and the new `<html lang>` was `en`; a click between two English pages did not.
+      On a Persian module page the header's computed `font-family` stayed the system stack and the prose
+      took Vazirmatn (`prose.css`'s `[lang="fa"]` rule is now `:where(body) [lang="fa"]`). Both boot
+      scripts are in the `<head>` of every one of the 207 pages (`seo.spec.ts`). `404.html` comes from
+      `src/app/global-not-found.tsx` (`experimental.globalNotFound`).
+- [x] **hreflang and `x-default`, absolute, derived**: `src/lib/content/seo.ts` asks `loadModuleIn` which
+      languages a page exists in, for both tracks. Measured in the sitemap: 168 pages, **129 of them
+      (43 per language: the home page, 21 For Engineers modules, 21 For Everyone modules) carry the full
+      alternate set**; the other 39 are English-only (the single pages, the catalogs, the planned modules,
+      and the For Everyone catalogs) and declare none. Every alternate resolves to a file in `out/` and
+      names the page back.
+- [x] **Absolute canonical**: `SITE_ORIGIN` in `src/lib/site.ts` is the one place the address is written;
+      `shellMetadata` sets `metadataBase` from it. Every one of the 168 indexable pages has one
+      `canonical`, equal to its own address (the single pages and the catalogs gained one).
+- [x] **`sitemap.xml` and `robots.txt`**: `src/app/sitemap.ts` and `robots.ts`, static files in `out/`.
+      168 URLs, each with `xhtml:link` alternates where it has any; the forwards (`/courses/`, the
+      level stubs, the moved addresses), the unwritten For Everyone pages, the 404 and `/api/` are out.
+      `robots.txt` is `User-Agent: *`, `Allow: /`, and the sitemap's address.
+- [x] **Translated home titles**: `/tr/` is `AI Mühendisliği, onu inşa edenlerin kaleminden · AI Engineering
+      Bazaar`, `/fa/` likewise from the Persian headline; both from `HOME_COPY[lang].hero`. `/` unchanged.
+- [x] **Tests**: `tests/unit/seo.test.ts` (14) and `tests/e2e/seo.spec.ts` (10, reads `out/`, which it
+      measures itself rather than asking the code that writes the alternates). Five older browser
+      assertions pinned the old behaviour (`html lang` `en` on `/tr/`, `/fa/` and a Persian module, the
+      English home title, relative hreflang) and were changed to the new rule; the copy register's roots
+      and two imports follow the `(en)` move. Proofs that each check fails: 16 single-fault copies of
+      `out/` (`SEO_OUT`: html lang wrong, `dir` added, body lang dropped, relative canonical, canonical on
+      another page, `x-default` removed, one alternate removed, relative hreflang, hreflang to a page
+      that does not exist, a `noindex` page in the sitemap, a page dropped, a sitemap alternate dropped,
+      no `Sitemap:` line, a `Disallow`, a boot script gone, a translated home titled in English): each
+      failed the check written for it. Three source faults with a rebuild or the unit run: `RootShell`
+      forcing `lang="en"` failed the lang check; dropping `x-default` in `alternatesOf` failed two
+      browser checks and three unit tests; making the language list ignore the loader failed the unit
+      test that compares it. Each source fault was restored from a copy.
+- [x] **Gate**: typecheck, `npm test` (97 files, 1,544 tests), build, `check-links-out.mjs` and
+      `check-bundle-out.mjs` pass; `diff -r` of `out/api/` against the `main` build is empty (the bundle,
+      its `contentVersion` included, is unchanged); the file list of `out/` differs only by the new
+      `sitemap.xml`, `robots.txt` and the renamed `__next.*.txt` payloads of the root segment. The full
+      browser suite: 657 passed, 10 skipped.
 
 ---
 

@@ -4,7 +4,7 @@ import { AboutStory } from '@/components/about/AboutStory'
 import { PageShell } from '@/components/shell/PageShell'
 import { loadStory } from '@/lib/content/story'
 import { ABOUT_ROUTE, ABOUT_TITLE } from '@/lib/route-labels'
-import { href } from '@/lib/url'
+import { canonicalOf } from '@/lib/content/seo'
 
 /**
  * M90, D115 — About: why the Bazaar exists, in five stalls and a motto.
@@ -20,7 +20,7 @@ const story = loadStory()
 export const metadata: Metadata = {
   title: ABOUT_TITLE,
   description: story.stalls[0]?.heading,
-  alternates: { canonical: href(ABOUT_ROUTE) },
+  alternates: canonicalOf(ABOUT_ROUTE),
 }
 
 /**

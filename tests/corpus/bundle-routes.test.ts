@@ -8,6 +8,7 @@ import * as levelRoute from '@/app/api/v1/levels/[file]/route'
 import * as moduleRoute from '@/app/api/v1/modules/[level]/[module]/[file]/route'
 import * as everyoneRoute from '@/app/api/v1/modules/[level]/[module]/everyone/[file]/route'
 import * as tokensRoute from '@/app/api/v1/tokens.json/route'
+import * as storyRoute from '@/app/api/v1/story/en.json/route'
 import { docLanguages } from '@/lib/bundle/build'
 import { VARIANT_THEMES, diagramFont, diagramRenderConfig, diagramThemes } from '@/lib/bundle/diagrams'
 import { ModuleDoc } from '@/lib/bundle/schema'
@@ -26,6 +27,7 @@ import { DIAGRAM_FONT } from '../../scripts/lib/diagram-font.mjs'
 const ROUTES = {
   'api/index.json': apiIndexRoute,
   'api/v1/tokens.json': tokensRoute,
+  'api/v1/story/en.json': storyRoute,
   'api/v1/levels/[file]': levelRoute,
   'api/v1/modules/[level]/[module]/[file]': moduleRoute,
   'api/v1/index.draft.json': indexDraftRoute,

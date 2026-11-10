@@ -377,6 +377,19 @@
         ],
         "additionalProperties": false
       },
+      "story": {
+        "type": "object",
+        "propertyNames": {
+          "type": "string",
+          "description": "A language id: en, or one of the translations the index lists."
+        },
+        "additionalProperties": {
+          "type": "string",
+          "pattern": "^[^/\\s][^\\s]*$",
+          "description": "A path relative to the site root: no base path and no leading slash."
+        },
+        "description": "The About page's story document per language it is written in: STORY.md, English only for now (D125)."
+      },
       "files": {
         "type": "object",
         "propertyNames": {
@@ -418,6 +431,7 @@
       "levels",
       "modules",
       "moved",
+      "story",
       "files",
       "images"
     ],
@@ -781,6 +795,19 @@
         ],
         "additionalProperties": false
       },
+      "story": {
+        "type": "object",
+        "propertyNames": {
+          "type": "string",
+          "description": "A language id: en, or one of the translations the index lists."
+        },
+        "additionalProperties": {
+          "type": "string",
+          "pattern": "^[^/\\s][^\\s]*$",
+          "description": "A path relative to the site root: no base path and no leading slash."
+        },
+        "description": "The About page's story document per language it is written in: STORY.md, English only for now (D125)."
+      },
       "files": {
         "type": "object",
         "properties": {},
@@ -846,6 +873,7 @@
       "levels",
       "modules",
       "moved",
+      "story",
       "files",
       "images",
       "diagrams",
@@ -886,6 +914,108 @@
       "schemaVersion",
       "light",
       "dark"
+    ],
+    "additionalProperties": false
+  },
+  "StoryDoc": {
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "type": "object",
+    "properties": {
+      "schemaVersion": {
+        "type": "number",
+        "const": 1
+      },
+      "lang": {
+        "type": "string",
+        "description": "A language id: en, or one of the translations the index lists."
+      },
+      "dir": {
+        "type": "string",
+        "enum": [
+          "ltr",
+          "rtl"
+        ]
+      },
+      "title": {
+        "anyOf": [
+          {
+            "type": "string",
+            "minLength": 1
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "description": "The file's # heading, or null when it has none."
+      },
+      "stalls": {
+        "minItems": 1,
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "heading": {
+              "type": "string",
+              "minLength": 1,
+              "description": "A ## heading of STORY.md."
+            },
+            "paragraphs": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1
+              },
+              "description": "The paragraphs under it, up to the next ## heading."
+            }
+          },
+          "required": [
+            "heading",
+            "paragraphs"
+          ],
+          "additionalProperties": false
+        },
+        "description": "One per ## section, in file order."
+      },
+      "motto": {
+        "anyOf": [
+          {
+            "type": "object",
+            "properties": {
+              "lead": {
+                "type": "string",
+                "minLength": 1,
+                "description": "What introduces it, without its colon: Our motto."
+              },
+              "lines": {
+                "minItems": 1,
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "description": "The quotation, one sentence per entry, with curly quotation marks at its two ends."
+              }
+            },
+            "required": [
+              "lead",
+              "lines"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "description": "The closing line when it reads `Our motto: **\"...\"**`, or null."
+      }
+    },
+    "required": [
+      "schemaVersion",
+      "lang",
+      "dir",
+      "title",
+      "stalls",
+      "motto"
     ],
     "additionalProperties": false
   },

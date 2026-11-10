@@ -12,6 +12,7 @@ import {
   LinkTarget,
   ModuleDoc,
   Ref,
+  StoryDoc,
   Tokens,
 } from '@/lib/bundle/schema'
 
@@ -23,7 +24,7 @@ import {
  */
 
 const SCHEMAS = {
-  ApiIndex, Index, IndexDraft, Tokens, LevelDoc, ModuleDoc, Ref, Block, Inline, LinkTarget, Cell, DiagramSource,
+  ApiIndex, Index, IndexDraft, Tokens, StoryDoc, LevelDoc, ModuleDoc, Ref, Block, Inline, LinkTarget, Cell, DiagramSource,
 }
 
 const ref = { key: 'alpha/first', number: 1, title: 'First', drawn: true, track: 'engineers', lang: 'en' }
@@ -46,12 +47,32 @@ const moduleDoc = {
   quiz: null,
 }
 
+const storyDoc = {
+  schemaVersion: 1,
+  lang: 'en',
+  dir: 'ltr',
+  title: 'Our Story',
+  stalls: [{ heading: 'One', paragraphs: ['Hello.'] }],
+  motto: { lead: 'Our motto', lines: ['\u201cFirst.', 'Second.\u201d'] },
+}
+
 describe('the bundle schema', () => {
   it('exports the JSON Schema it exported last time', async () => {
     const exported = Object.fromEntries(
       Object.entries(SCHEMAS).map(([name, schema]) => [name, z.toJSONSchema(schema, { io: 'output' })]),
     )
     await expect(JSON.stringify(exported, null, 2) + '\n').toMatchFileSnapshot('./__snapshots__/bundle-schema.json')
+  })
+
+  it('accepts a well-formed story document, with or without a title and a motto (D125)', () => {
+    expect(() => StoryDoc.parse(storyDoc)).not.toThrow()
+    expect(() => StoryDoc.parse({ ...storyDoc, title: null, motto: null })).not.toThrow()
+  })
+
+  it('refuses a story with no stall, an empty heading, or a key it does not name', () => {
+    expect(() => StoryDoc.parse({ ...storyDoc, stalls: [] })).toThrow()
+    expect(() => StoryDoc.parse({ ...storyDoc, stalls: [{ heading: '', paragraphs: [] }] })).toThrow()
+    expect(() => StoryDoc.parse({ ...storyDoc, extra: true })).toThrow()
   })
 
   it('accepts a well-formed module document', () => {

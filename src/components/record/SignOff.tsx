@@ -6,6 +6,8 @@ import { sheetsOf } from '@/lib/record/schema'
 import type { Track } from '@/lib/tracks'
 import { SIGN_OFF_ATTR } from '@/lib/record/keys'
 import { useHydrated, useRecord, useWriteState } from '@/lib/record/store'
+import { PAGE_COPY, type RefusalKind, translatedAttrs } from '@/lib/content/page-copy'
+import type { ReadingLang } from '@/lib/content/languages'
 
 /**
  * The end of a module, part one: ONE familiar control that marks it complete
@@ -41,17 +43,11 @@ import { useHydrated, useRecord, useWriteState } from '@/lib/record/store'
  * line says so, with the way out.
  */
 
-const REFUSED: Record<string, string> = {
-  quota: "This browser's storage is full",
-  blocked: 'This browser is not storing data for this site',
-  'too-large': 'The record is larger than this page will write',
-}
-
-/** `2026-10-11` → `11 Oct 2026`, in the reader's own calendar order. */
-function shortDate(iso: string): string {
-  const date = new Date(`${iso.slice(0, 10)}T00:00:00Z`)
-  if (Number.isNaN(date.getTime())) return iso.slice(0, 10)
-  return date.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric', timeZone: 'UTC' })
+/* D133 — every word below comes from `PAGE_COPY` in the language the page is read in;
+   the date is written out by `PAGE_COPY[lang].date` (`2026-10-11` is `11 Oct 2026`,
+   `11 Eki 2026`, `11 اکتبر 2026`) and not by `Intl`, whose Persian is Jalali with Persian digits. */
+function isRefusal(write: string): write is RefusalKind {
+  return write === 'quota' || write === 'blocked' || write === 'too-large'
 }
 
 export function SignOff({
@@ -59,12 +55,15 @@ export function SignOff({
   revision,
   drawn,
   track = 'engineers',
+  lang = 'en',
 }: {
   slug: string
   revision: string | null
   drawn: boolean
   /** D91 — whose completion this box writes: completion is per track. */
   track?: Track
+  /** D133 — the language the page is read in; its words and its dates follow it. */
+  lang?: ReadingLang
 }) {
   const record = useRecord()
   const hydrated = useHydrated()
@@ -74,11 +73,12 @@ export function SignOff({
 
   const signedOff = hydrated ? (sheetsOf(record, track)[slug]?.signedOff ?? null) : null
   const done = signedOff !== null
-  const refused = REFUSED[write] ?? null
+  const copy = PAGE_COPY[lang].completion
+  const refused = isRefusal(write) ? copy.refused[write] : null
   const id = `hl-complete-${slug.replace(/[^A-Za-z0-9]+/g, '-')}`
 
   return (
-    <section className="bz-complete" aria-label="Module completion" data-done={done ? '' : undefined}>
+    <section className="bz-complete" aria-label={copy.region} data-done={done ? '' : undefined} {...translatedAttrs(lang)}>
       <label className="bz-complete-row" htmlFor={id}>
         <input
           id={id}
@@ -95,15 +95,15 @@ export function SignOff({
           </svg>
         </span>
         <span className="bz-complete-text">
-          <span className="bz-complete-label">Mark this module as complete</span>
-          {done && <span className="bz-complete-when">Completed {shortDate(signedOff)}</span>}
+          <span className="bz-complete-label">{copy.label}</span>
+          {done && <span className="bz-complete-when">{copy.completedOn(PAGE_COPY[lang].date(signedOff))}</span>}
         </span>
       </label>
 
       {refused !== null && (
         <p className="bz-complete-refused" role="alert">
-          Not saved: {refused}.{' '}
-          <Link href="/profile/" className="bz-link">Export your record</Link> to keep it.
+          {copy.notSaved(refused)}{' '}
+          <Link href="/profile/" className="bz-link">{copy.exportLink}</Link>{copy.exportAfter}
         </p>
       )}
     </section>

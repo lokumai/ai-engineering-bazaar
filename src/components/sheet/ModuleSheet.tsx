@@ -49,6 +49,7 @@ import { type Track, catalogRoute, moduleRoute } from '@/lib/tracks'
 import Link from 'next/link'
 import { summarySentence } from '@/lib/content/schedule'
 import { sheetFacts } from '@/lib/content/title-block'
+import { PAGE_COPY, wordsAttrs } from '@/lib/content/page-copy'
 import {
   type ReadingLang,
   type TranslatedLang,
@@ -353,7 +354,7 @@ export async function ModuleSheet({
             depends on which rails this format has, so the drawer is told:
             `wide` opens at the point the contents rail goes, `narrow` at the
             point the curriculum list does. */}
-        <ContentsDrawer at={drawn ? 'wide' : 'narrow'}>
+        <ContentsDrawer at={drawn ? 'wide' : 'narrow'} lang={lang}>
           {rail && <div className="bz-drawer-contents">{rail}</div>}
           <div className="bz-drawer-curriculum">{curriculum}</div>
         </ContentsDrawer>
@@ -418,11 +419,11 @@ export async function ModuleSheet({
           {sheet.frontmatter.title}
         </h1>
 
-        <FactsStrip facts={facts} />
+        <FactsStrip facts={facts} lang={lang} />
 
         {/* What to read first, before the reader starts rather than after they
             finish (`Prerequisites`). Nothing where there is nothing. */}
-        <Prerequisites targets={prerequisites} />
+        <Prerequisites targets={prerequisites} lang={lang} />
 
         {/* M19 — **THE LANGUAGE IS AN ATTRIBUTE ON THE PROSE, not on `<html>`,
             and that is more accurate rather than a compromise.**
@@ -446,6 +447,7 @@ export async function ModuleSheet({
               <Objectives
                 items={input.objectives}
                 lang={translated ? input.objectivesLang : undefined}
+                pageLang={lang}
               />
             }
           />
@@ -454,6 +456,7 @@ export async function ModuleSheet({
             <Objectives
               items={input.objectives}
               lang={translated ? input.objectivesLang : undefined}
+              pageLang={lang}
             />
             {summary && <p className="bz-lead" lang={translated ? 'en' : undefined}>{summary}</p>}
             <ScheduleOfParts parts={input.parts} />
@@ -472,20 +475,20 @@ export async function ModuleSheet({
             counter — left the page on the author's word: *"I DO NOT NEED ANY
             SUCH THING"*. The record still holds what they wrote; the profile
             page still shows it. A draft has no completion and no quiz. */}
-        <SignOff slug={slug} revision={sheet.revision?.hash ?? null} drawn={drawn} track={track} />
+        <SignOff slug={slug} revision={sheet.revision?.hash ?? null} drawn={drawn} track={track} lang={lang} />
 
-        <PrevNext previous={target(previous, localise)} next={target(next, localise)} />
+        <PrevNext previous={target(previous, localise)} next={target(next, localise)} lang={lang} />
 
         {quiz !== null && (
           /* Hidden until asked for: a native disclosure, so it opens with no
              script, and its questions are the island inside it. */
           <details className="bz-quiz">
-            <summary className="bz-quiz-head" lang="en">
+            <summary className="bz-quiz-head" {...wordsAttrs(lang)}>
               <span className="bz-quiz-icon" aria-hidden="true">?</span>
               <span className="bz-quiz-head-text">
-                <span className="bz-quiz-title">Want a quick quiz?</span>
+                <span className="bz-quiz-title">{PAGE_COPY[lang].quizHead.title}</span>
                 <span className="bz-quiz-sub">
-                  {quiz.length} questions on the main points of this module
+                  {PAGE_COPY[lang].quizHead.sub(quiz.length)}
                 </span>
               </span>
               <svg className="bz-quiz-caret" width="16" height="16" viewBox="0 0 16 16" fill="none"
@@ -522,13 +525,13 @@ function NotWritten({ slug, lang }: { slug: string; lang: SheetLang }) {
     <PageShell track="everyone" trailLeaf={english.frontmatter.title}>
       <div className="bz-sheet" data-format="A4">
         <h1 className="bz-display">{english.frontmatter.title}</h1>
-        <p className="bz-lead">
-          The For Everyone version of this module is not written yet.
+        <p className="bz-lead" {...wordsAttrs(lang)}>
+          {PAGE_COPY[lang].notWritten.lead}
         </p>
-        <div className="bz-actions">
-          <Link className="bz-btn" href={engineers}>Read it For Engineers</Link>
+        <div className="bz-actions" {...wordsAttrs(lang)}>
+          <Link className="bz-btn" href={engineers}>{PAGE_COPY[lang].notWritten.readEngineers}</Link>
           <Link className="bz-btn bz-btn-quiet" href={catalogRoute('everyone', english.category.slug)}>
-            See what is written For Everyone
+            {PAGE_COPY[lang].notWritten.seeWritten}
           </Link>
         </div>
       </div>

@@ -969,4 +969,23 @@
   @media print {
     .bz-no-print { display: none; }
   }
+
+  /* -- right to left (D133) -------------------------------------------------
+     The completion row, the quiz and its controls are the page's own words, so
+     in Persian they are laid out right to left as whole blocks: the box on the
+     reading side, the leading edge of the refusal notice on the right, and the
+     arrows turned to point the way a Persian reader moves. */
+  .bz-complete[dir="rtl"] .bz-complete-refused {
+    border-left: 0;
+    border-right: 2px solid var(--color-fault);
+  }
+
+  .bz-quiz-body[dir="rtl"] .bz-btn svg { scale: -1 1; }
+
+  /* The pager, in the same way: Previous on the right, Next on the left, the
+     chevrons turned with them, and the title (English: a module's name) held
+     at the reading side of its tile. */
+  .bz-pager[dir="rtl"] .bz-pager-arrow { scale: -1 1; }
+  .bz-pager[dir="rtl"] .bz-pager-item[data-dir="next"] { text-align: left; }
+  .bz-pager[dir="rtl"] .bz-pager-text { align-items: flex-start; }
 }

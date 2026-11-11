@@ -11,7 +11,7 @@ description: >
   backgrounds and copy (M81), Agentic UI (M82), the cast's colours (M83), and M84 to M90 (content
   and site fixes, the home page in Turkish and Persian, Dariush's motif, block menus in the top layer,
   and About, the story of the Bazaar); Caravan built (M91), its real trends waiting (M92) and its second
-  round (M93); multilingual SEO (M96); translated objectives on the site (M98) and in the bundle (M99); the story in the bundle (M100); three screen recordings and Human in the Loop moved into Agentic UI (M101); the search filters applied by a button (M102); a laptop section in Inference Engines (M103); the word count in the bundle (M105); the footer without its first row (M111); and M41, the content bundle for the mobile reader. Each milestone carries its deliverables and acceptance
+  round (M93); multilingual SEO (M96); translated objectives on the site (M98) and in the bundle (M99); the story in the bundle (M100); three screen recordings and Human in the Loop moved into Agentic UI (M101); the search filters applied by a button (M102); a laptop section in Inference Engines (M103); the word count in the bundle (M105); the module page's own words in Turkish and Persian (M110); the footer without its first row (M111); and M41, the content bundle for the mobile reader. Each milestone carries its deliverables and acceptance
   criteria as `- [ ]` checkboxes, ticked as the work lands, and closes with a dated report; the loop
   that governs that is below, in this file.
   NOT here: why a choice was made (BRAINSTORM.md), or any rule that outlives the milestone
@@ -19,7 +19,7 @@ description: >
 authority: state
 writes: agent, every session
 status: active
-covers: "M50 to M105 and M111, 2026-11-06 onward, and M41, which part 2 held for PR #57"
+covers: "M50 to M105, M110 and M111, 2026-11-06 onward, and M41, which part 2 held for PR #57"
 last_updated: 2026-11-11
 ---
 
@@ -2104,6 +2104,57 @@ the bundle has no count to print. The repository's owner asked for the pull requ
       holds the index to the documents. Mutation-tested: with every translation given its English count,
       the test fails on the first Turkish document (2,754 where the page prints 2,356).
 - [x] **Gate:** typecheck, 1,599 unit tests, build, link check, bundle check; the full browser suite in CI.
+
+## 🏁 Milestone M110: The module page's own words in Turkish and Persian (D133), DONE
+
+The author, 2026-11-11: on a module page, `Before you start`, `What you will be able to do`, `On this
+page`, `Mark this module as complete`, Previous and Next, `Want a quick quiz?`, `Start over`, `Question 1
+of 5`, `5 questions on the main points of this module` and `30 min · 2,931 words` become the page's
+language, *"this way the menus remain english, but the content page becomes fully translated"*, and the
+module and level names stay as they are.
+
+- [x] **A scroller that arrives late is faded too** (found by this branch's CI): `Affordances` lives in the root layout and mounts once, so it measured only the first page's scrollers; a code block on the next module reached by a client-side link, or one laid out late on a slow machine, kept no right-edge fade (`responsive.spec.ts` failed on an unmarked `bz-slab-code` at 390, on main once in six runs as well). A third observer watches the document for added scrollers. New test: a scroller added after load is marked; mutation: with the old `Affordances.tsx` it failed at both widths, restored from a copy it passed.
+- [x] **Wording read as a native reader would see it** (the author's rule for every translation, restated 2026-11-11: the conventional wording, never literal): Turkish offers a test to solve (`Kısa bir test çözmek ister misin?`, `… ana konularına dair 5 soru`); Persian writes the ezafe as `ـه‌ی` as the course does, never the bookish `ـهٔ`, and the completed state is `تکمیل شد`, the routine UI word.
+- [x] **One table**: `src/lib/content/page-copy.ts`, `PAGE_COPY: Record<ReadingLang, PageCopy>`, so a key
+      missing from `tr` or `fa` fails `tsc`. Counts are functions (`progress`, `sub`, `readingTime`,
+      `score`, `wrong`); Turkish groups thousands with `.` (`2.931 kelime`), Persian keeps ASCII digits
+      and `,`; dates are written from a month table (`11 Eki 2026`, `11 اکتبر 2026`) because `Intl` gives
+      Persian digits and the Jalali calendar.
+- [x] **Wired**: `SignOff` (region, label, `Completed <date>`, the refusal notice and its export link),
+      `Prerequisites` (title, `Planned` tag), `Objectives` (heading, new `pageLang`), `SheetRail` and
+      `TableOfContents` (`On this page`, the list's `aria-label`), `PrevNext` (labels, `Planned`, the two
+      ends of the course), `FactsStrip`, `QuickQuiz` (progress, Start over, Previous, Next, See results,
+      Back to the questions, verdicts, score, the screen-reader `correct` and `not correct`), the quiz
+      header in `ModuleSheet`, `ContentsDrawer` (`Contents`, `Close`), and the For Everyone not-written
+      notice. All take `lang`; the English tree renders the same words as before.
+- [x] **Right to left**: in Persian the completion row, the prerequisites box, the pager and the quiz are
+      laid out right to left as blocks (`dir="rtl"`), with the arrows turned and the box's leading edge
+      moved (`completion.css`); the module titles inside them say `lang="en" dir="ltr"`.
+- [x] **Channel A**: nothing changed. The completion words on this page are React markup, not CSS
+      content stamped from `<html>`, so there is no English frame before hydration; `boot.ts` is untouched.
+- [x] **Left English, on purpose**: the bar, footer, catalog, profile, search, breadcrumb, language menu,
+      every module and level name, and the words the build writes into the prose (`Copy`, `Expand
+      diagram`, `Link to "…"`, code and diagram menus), which are part of the markup the content bundle
+      carries too. Bundle: unchanged, nothing under `src/lib/bundle/` or the renderer was edited, and a
+      search of `out/api/` for the page's English strings finds only authored prose.
+- [x] **Tests**: `tests/unit/page-copy.test.ts` (8 tests: the same keys in every language, no string left
+      in English, the register's bans in Turkish and Persian, ASCII digits, no tatweel, number and date
+      formats); `copy-register.test.ts` scans `page-copy.ts` (two exemptions with reasons);
+      `tests/e2e/module-page-i18n.spec.ts` (8 tests, the page picked from the corpus: each control shows
+      the table's string and not the English one in `tr` and `fa`, the date and the quiz, names and menus
+      stay English, the English page is unchanged, catalog and profile stay English);
+      `translation.spec.ts` now expects the objectives heading in the page's language.
+      Mutation-tested: `SignOff` reading the English table made 4 of the 8 fail (Received `Mark this module
+      as complete`), restored from a copy.
+- [x] **Gate, 2026-11-11:** typecheck; 1,607 unit tests in 99 files; build; link check and bundle check;
+      browser specs `module-page-i18n`, `translation`, `module-end`, `html-lang`, `record-sheet`,
+      `completion`, `features`, `module-sheets`, `title-block`, `colour-not-alone`, `anatomy`,
+      `accessibility`, `responsive`, `containment`. `cast.spec` failed once on each of two runs on
+      different tests and passed on the third, and one 390 px `responsive` test failed once and passed on
+      rerun, none of it a page this milestone touched. Screenshots in
+      `playground/2026-11-round-5/shots-module-i18n/`.
+
+---
 
 ## 🏁 Milestone M111: The footer without its first row (D134), DONE
 

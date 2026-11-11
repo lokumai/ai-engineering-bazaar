@@ -675,4 +675,11 @@
     unicode-bidi: isolate;
   }
 
+
+  /* D133 — the prerequisites box in Persian: the cobalt leading edge is on the
+     side a reader begins from. */
+  .bz-prereq[dir="rtl"] {
+    border-left: 1px solid var(--color-line);
+    border-right: 3px solid var(--color-primary);
+  }
 }

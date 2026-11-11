@@ -11,7 +11,7 @@ description: >
   backgrounds and copy (M81), Agentic UI (M82), the cast's colours (M83), and M84 to M90 (content
   and site fixes, the home page in Turkish and Persian, Dariush's motif, block menus in the top layer,
   and About, the story of the Bazaar); Caravan built (M91), its real trends waiting (M92) and its second
-  round (M93); multilingual SEO (M96); translated objectives on the site (M98) and in the bundle (M99); the story in the bundle (M100); three screen recordings and Human in the Loop moved into Agentic UI (M101); the search filters applied by a button (M102); a laptop section in Inference Engines (M103); the word count in the bundle (M105), the checklist index (M106), the diagrams without empty rects (M107) and five logos without CSS (M108); the About page in Turkish and Persian (M109); the module page's own words in Turkish and Persian (M110); the footer without its first row (M111); and M41, the content bundle for the mobile reader. Each milestone carries its deliverables and acceptance
+  round (M93); multilingual SEO (M96); translated objectives on the site (M98) and in the bundle (M99); the story in the bundle (M100); three screen recordings and Human in the Loop moved into Agentic UI (M101); the search filters applied by a button (M102); a laptop section in Inference Engines (M103); the word count in the bundle (M105), the checklist index (M106), the diagrams without empty rects (M107) and five logos without CSS (M108); the About page in Turkish and Persian (M109); the module page's own words in Turkish and Persian (M110); the footer without its first row (M111); the tool-call recording cropped to the chat and the reasoning recording sped up (M112); and M41, the content bundle for the mobile reader. Each milestone carries its deliverables and acceptance
   criteria as `- [ ]` checkboxes, ticked as the work lands, and closes with a dated report; the loop
   that governs that is below, in this file.
   NOT here: why a choice was made (BRAINSTORM.md), or any rule that outlives the milestone
@@ -19,7 +19,7 @@ description: >
 authority: state
 writes: agent, every session
 status: active
-covers: "M50 to M111, 2026-11-06 onward, and M41, which part 2 held for PR #57"
+covers: "M50 to M112, 2026-11-06 onward, and M41, which part 2 held for PR #57"
 last_updated: 2026-11-11
 ---
 
@@ -2278,6 +2278,24 @@ a compact readout of the reader's record. Removed end to end, not hidden (CLAUDE
       suite on a private port: 705 passed, 11 skipped, 0 failed (716). The footer at 1440 and 390, on
       `/`, a module and `/profile/`, in `playground/2026-11-round-5/shots-footer/`: 94 px tall at 1440
       (was 134), 225 px at 390 (was 265).
+
+---
+
+## 🏁 Milestone M112: The tool-call recording cropped to the chat, the reasoning recording sped up, and no "meme" in Turkish, DONE
+
+The author, 2026-11-11: the tool-call recording still showed the CopilotKit Dojo's left sidebar, and only the
+chat should appear; the reasoning recording (Prompt Engineering's figure) should play seconds 5 to 14 at 2x and
+the rest at normal speed; and Turkish must not say "meme", which reads as "breast" there.
+
+- [x] **Tool calls** (`1_fundamentals/images/tool-call-cards.webp`): from the author's 1920x1080 recording, the
+      chat column only (x 655 to 1645, y 217 to 1011): no browser chrome and no sidebar. Still the full 28.7 s
+      (287 frames at 10 fps), animated WebP at q82 with `img2webp -mixed`: 990x794, 1,671,776 bytes.
+- [x] **Reasoning** (`2_intermediate/images/reasoning-stream.webp`): 0 to 5 s at 1x, 5 to 14 s at 2x, 14 s to the
+      end at 1x, so 35.7 s plays in 31.2 s (187 frames at 6 fps), 1200x676 at q75: 2,651,602 bytes. Nothing is
+      cut (the author's rule that a recording is shown in full holds: every second is shown, part of it faster, on the author's word).
+- [x] **Turkish**: `STORY_tr.md` and the home page's Turkish stall copy write `eğlenceli görsel (mim)` and then
+      `mim`, and `çerezlik içerik (brainrot)` for brainrot; the rule is in `mini-courses/CLAUDE.md` ("Translating a module", Turkish), and `AGENTS.md` is
+      copied from it again.
 
 ---
 

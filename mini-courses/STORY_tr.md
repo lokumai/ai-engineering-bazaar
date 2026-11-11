@@ -14,7 +14,7 @@ Neden mi? Çünkü bu alan, yapay zekânın eğitim verilerinin yetişemeyeceği
 
 ## Her konu emekle ve sevgiyle hazırlandı.
 
-Neyi tutup neyi atacağımıza karar vermek için saatler harcadık. Taslaklarımızı gerçek yeni başlayanlarla paylaştık, geri bildirimlerini dinledik ve her şey yerine oturana kadar baştan yazdık. Yalnızca en iyilerini seçmek için yüzlerce makaleyi taradık, kelimelerin yetmediği yerde diyagramları elle çizdik. Okurken keyif alasın diye Gen-Z tarzı meme'ler bile ekledik. Yapay zekâ biz insanların yaptığı pek çok şeyi yapabilir, ama güzel bir brainrot'tan keyif alamaz. İşte bu yüzden.
+Neyi tutup neyi atacağımıza karar vermek için saatler harcadık. Taslaklarımızı gerçek yeni başlayanlarla paylaştık, geri bildirimlerini dinledik ve her şey yerine oturana kadar baştan yazdık. Yalnızca en iyilerini seçmek için yüzlerce makaleyi taradık, kelimelerin yetmediği yerde diyagramları elle çizdik. Okurken keyif alasın diye Gen-Z tarzı eğlenceli görseller (mim) bile ekledik. Yapay zekâ biz insanların yaptığı pek çok şeyi yapabilir, ama güzel bir çerezlik içerikten (brainrot) keyif alamaz. İşte bu yüzden.
 
 ## Bir prompt'un saniyeler içinde üretebileceği bir şeye neden bu kadar insan emeği harcayalım?
 

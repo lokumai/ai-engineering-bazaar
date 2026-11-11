@@ -4,11 +4,8 @@ import { describe, expect, it } from 'vitest'
 import {
   WITHOUT_A_PAGE,
   NOT_FOUND_SEGMENT,
-  NOT_FOUND_SHEET_LABEL,
   NOT_FOUND_TITLE,
   breadcrumbFor,
-  markTokens,
-  sheetLabelFor,
 } from '@/lib/route-labels'
 
 /**
@@ -128,57 +125,6 @@ describe('breadcrumbFor on the not-found route', () => {
   })
 })
 
-describe('NOT_FOUND_SHEET_LABEL', () => {
-  it('is the page\'s own name, in the case §3.4 writes chrome labels in', () => {
-    expect(NOT_FOUND_SHEET_LABEL).toBe(NOT_FOUND_TITLE.toUpperCase())
-  })
-
-  it('carries no machine-derived value, because nothing was counted', () => {
-    expect(markTokens(NOT_FOUND_SHEET_LABEL).some((token) => token.value)).toBe(false)
-  })
-})
-
-describe('sheetLabelFor', () => {
-  it('names the catalog', () => {
-    expect(sheetLabelFor('/', CATEGORIES)).toBe('HOME')
-    // §15.1 — the register moved, and its label went with it.
-    expect(sheetLabelFor('/sheets/', CATEGORIES)).toBe('CATALOG')
-  })
-
-  it('numbers a category by its position in the curriculum', () => {
-    expect(sheetLabelFor('/fundamentals/', CATEGORIES)).toBe('LEVEL 01')
-    expect(sheetLabelFor('/expert/', CATEGORIES)).toBe('LEVEL 03')
-  })
-
-  it('names other top-level pages after themselves', () => {
-    expect(sheetLabelFor('/dashboard/', CATEGORIES)).toBe('DASHBOARD')
-  })
-
-  it('returns nothing for a module page, whose module number comes from content', () => {
-    expect(sheetLabelFor('/intermediate/ai-security/', CATEGORIES)).toBeNull()
-  })
-
-  it('names the curriculum', () => {
-    expect(sheetLabelFor('/courses/', CATEGORIES)).toBe('CURRICULUM')
-  })
-
-  it('numbers a level at the route the site actually serves it from', () => {
-    expect(sheetLabelFor('/courses/fundamentals/', CATEGORIES)).toBe('LEVEL 01')
-    expect(sheetLabelFor('/courses/protocols/', CATEGORIES)).toBe('LEVEL 05')
-  })
-
-  it('still returns nothing for a module page under that route', () => {
-    expect(sheetLabelFor('/courses/intermediate/security/', CATEGORIES)).toBeNull()
-  })
-
-  it('labels a For Everyone page as its For Engineers twin (D91)', () => {
-    for (const path of ['/sheets/', '/sheets/fundamentals/', '/courses/protocols/']) {
-      expect(sheetLabelFor(`/everyone${path}`, CATEGORIES)).toBe(sheetLabelFor(path, CATEGORIES))
-      expect(sheetLabelFor(`/everyone${path}`, CATEGORIES)).not.toBeNull()
-    }
-  })
-})
-
 describe('an ancestor segment with no page of its own (§15.1)', () => {
 
   /* M17 — the ancestor does still have a page and it is a FORWARD, so the
@@ -228,36 +174,5 @@ describe('an ancestor segment with no page of its own (§15.1)', () => {
     for (const claimed of WITHOUT_A_PAGE) {
       expect(exported.has(claimed), `${claimed} has a page, so the crumb should link`).toBe(false)
     }
-  })
-})
-
-describe('markTokens', () => {
-  it('separates the machine-derived values from the label words', () => {
-    expect(markTokens('MODULE 13 OF 32')).toEqual([
-      { text: 'MODULE ', value: false },
-      { text: '13', value: true },
-      { text: ' OF ', value: false },
-      { text: '32', value: true },
-    ])
-  })
-
-  it('keeps a value that carries punctuation in one piece', () => {
-    expect(markTokens('MODULES 11/32')).toEqual([
-      { text: 'MODULES ', value: false },
-      { text: '11/32', value: true },
-    ])
-  })
-
-  it('returns a label with no values as a single word token', () => {
-    // A label the site actually prints. `INDEX SHEET` stood here until §15.1
-    // moved the register: `sheetLabelFor` returns `HOME` and `SHEET INDEX`
-    // today and nothing anywhere renders the old string, so the case was
-    // tokenising a fixture rather than a label.
-    expect(sheetLabelFor('/sheets/', CATEGORIES)).toBe('CATALOG')
-    expect(markTokens('CATALOG')).toEqual([{ text: 'CATALOG', value: false }])
-  })
-
-  it('returns nothing for an empty label', () => {
-    expect(markTokens('')).toEqual([])
   })
 })

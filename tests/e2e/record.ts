@@ -336,14 +336,10 @@ export interface FirstPaint {
   /** `data-hl-storage` — §12.13's class 1 told from class 4. */
   storage: string | null
   /**
-   * The proof that this reading is pre-React, taken in the same frame.
-   *
-   * `Readout` publishes which of §12.2's two states it is in, and channel B has
-   * not run yet at this point: MEASURED here as `document.readyState` of
-   * `"interactive"` with `data-hydrated="false"` on a page whose stored record
-   * says several sheets are signed off. So a class list that is already correct
-   * in this frame cannot have come from an effect — the effect that would have
-   * set it has demonstrably not run. `null` where the page draws no readout.
+   * The proof that this reading is pre-React, taken in the same frame: `<html data-hl-read>`,
+   * which the store stamps once it has read storage, so `null` here means channel B has not run.
+   * A class list that is already correct in a frame where this is `null` cannot have come from an
+   * effect — the effect that would have set it has demonstrably not run.
    */
   hydrated: string | null
 }
@@ -374,7 +370,7 @@ export async function probeFirstPaint(page: Page): Promise<void> {
       ;(window as unknown as PaintWindow).__hlRecordFirstPaint = {
         className: root.className,
         storage: root.getAttribute('data-hl-storage'),
-        hydrated: document.querySelector('.bz-readout')?.getAttribute('data-hydrated') ?? null,
+        hydrated: root.getAttribute('data-hl-read'),
       }
     })
   })
@@ -436,36 +432,23 @@ export function documentLoads(page: Page): Promise<number> {
 }
 
 // ---------------------------------------------------------------------------
-// Channel B — the readout, once the store has answered
+// Channel B — once the store has answered
 // ---------------------------------------------------------------------------
 
 /**
  * §12.2 channel B renders the honest empty form and fills it in after the
- * hydration commit, and `Readout` publishes which of the two is on screen:
- * `data-hydrated="false"` prints `--` ("not yet known"), `"true"` prints
- * `00/32` ("nothing recorded"). Only one of those is a fact about the reader,
- * so a spec that means the second has to wait for it.
+ * hydration commit. The store stamps `<html data-hl-read="true">` the moment it
+ * has read storage (M111, D134: the footer readout used to carry this signal).
+ * Only after it is "nothing recorded" a fact about the reader rather than "not
+ * yet known", so a spec that means the first has to wait for the stamp. Two
+ * animation frames follow it, so the islands that subscribed to the same store
+ * have rendered what it told them.
  */
-export async function waitForHydratedReadout(page: Page): Promise<void> {
-  await expect(page.locator('.bz-readout[data-hydrated="true"]').first()).toBeAttached()
-}
-
-/**
- * §7.1's readout, cell by cell, with the `aria-hidden` separators left out.
- *
- * The strip's own text is uppercased by CSS, so `innerText` reads `SIGNED OFF`
- * where the component wrote `Signed off`. Reading the cells as a list keeps the
- * assertions in the case the source states — and it fails loudly if a cell is
- * added, removed or reordered, which a substring match on one long string would
- * not.
- */
-export function readoutCells(page: Page, scope = 'footer'): Locator {
-  return page.locator(`${scope} .bz-readout > span:not(.bz-readout-sep)`)
-}
-
-/** One cell of the readout, found by the label it prints (`XP`, `Class`). */
-export function readoutCell(page: Page, label: RegExp, scope = 'footer'): Locator {
-  return readoutCells(page, scope).filter({ hasText: label })
+export async function waitForRecordRead(page: Page): Promise<void> {
+  await expect(page.locator('html[data-hl-read="true"]')).toBeAttached()
+  await page.evaluate(
+    () => new Promise<void>((done) => requestAnimationFrame(() => requestAnimationFrame(() => done()))),
+  )
 }
 
 // ---------------------------------------------------------------------------

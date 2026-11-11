@@ -167,6 +167,8 @@ run of short sentences is the failure, and so is a dense line packed with clause
 - **Turkish** is natural, professional Turkish, the register of a good Turkish tech blog, with the
   reader as `sen`. Technical vocabulary stays English with Turkish suffixes (`context'in`,
   `weight'ler`); words Turks say in Turkish stay Turkish (`model`, `veri`, `kod`).
+  Never `meme`: in Turkish it reads as "breast". Write `eğlenceli görsel (mim)` the first time and
+  `mim` after it; and `brainrot` is `çerezlik içerik (brainrot)` (the author, 2026-11-11).
 - **Translate a teaching example, keep a data example.** "The capital of Turkey" becomes
   "Türkiye'nin başkenti"; a record of what a model was shown stays in English.
 

@@ -33,8 +33,9 @@
  * - **The words painted on the scenes** (`Prompt`, `Model`, `Answer` on the
  *   lantern, `Articles`, `Sources`, `Videos` on the signpost, `AI` on Bit's
  *   chest) are drawing, and the drawing does not change with the language.
- * - **Technical words** (AI, LLM, meme, brain rot) are not translated, the way a
- *   module keeps them (`mini-courses/CLAUDE.md`, "Translating a module").
+ * - **Technical words** (AI, LLM, brain rot) are not translated, the way a
+ *   module keeps them (`mini-courses/CLAUDE.md`, "Translating a module"). Turkish is the
+ *   exception for `meme` and `brain rot`; the same file says what it writes instead.
  *
  * ## Why this file is outside `components/home`
  *
@@ -236,8 +237,8 @@ const TR: HomeCopy = {
     lantern: {
       title: 'İşin çoğunu resimler yapıyor.',
       body:
-        'Her modülde resimler, diyagramlar ve kod var. Çoğu zaman meme\'ler de çıkar, bazen biraz brain rot '
-        + 'bile, çünkü iyi bir meme bir fikri tek bakışta anlatabilir.',
+        'Her modülde resimler, diyagramlar ve kod var. Çoğu zaman eğlenceli görseller (mim) de çıkar, bazen biraz çerezlik içerik (brainrot) '
+        + 'bile, çünkü iyi bir mim bir fikri tek bakışta anlatabilir.',
     },
     signpost: {
       title: 'Her modül seni bir sonrakine yönlendirir.',

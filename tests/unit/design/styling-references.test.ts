@@ -174,7 +174,7 @@ function utilitiesIn(source: string): string[] {
  * whole file exists to prevent. The old pattern accepted exactly three shapes —
  * `className="…"`, a bare template and a bare single-quoted string — so every
  * `className={expression}` was skipped: sixteen sites, two of them carrying a
- * real colour utility in a ternary (`SheetLabel.tsx` and `PersonDetail.tsx`,
+ * real colour utility in a ternary (`SheetLabel.tsx`, deleted in M111, and `PersonDetail.tsx`,
  * `text-on-surface` and `text-on-surface-muted`). Rename either token and those
  * two go inert with this suite green, which is the precise failure the file was
  * written for.

@@ -43,18 +43,15 @@ for (const sheet of SHEETS) {
       This assertion used to read `.bz-facts` and pin `MODULE n OF 33`: a
       tracked-out all-caps meta line above the title, which DESIGN.md names as
       a tell and stage 5 removed. The module's place in the WHOLE SET is still
-      stated, by the footer, and `site-footer.spec.ts` asserts it on every one
-      of the thirty-three — so pinning it a second time here would be one fact
-      with two tests and one of them would be about the wrong surface. What is
+      stated, by the rail's list (the footer's `MODULE n OF m` went in M111). What is
       checked here is that the strip is populated and says which level this is.
     */
     /* M21 — the strip is `25 min · 2,317 words` and nothing else. The author
        asked for plain text under the title, so the two tags went with the
        level and the position they carried. Both facts are still stated:
        the level by the trail, which is checked here because it is the carrier
-       the tag handed off to, and the position by the footer, which
-       `site-footer.spec.ts` asserts on all thirty-three — pinning it a second
-       time here would be one fact with two tests. */
+       the tag handed off to, and the position by the rail's list (the footer's
+       `MODULE n OF m` went in M111). */
     if (sheet.drawn) {
       await expect(page.locator('.bz-facts')).toHaveText(/^\d+ min · [\d,]+ words$/)
     } else {

@@ -11,7 +11,7 @@ description: >
   backgrounds and copy (M81), Agentic UI (M82), the cast's colours (M83), and M84 to M90 (content
   and site fixes, the home page in Turkish and Persian, Dariush's motif, block menus in the top layer,
   and About, the story of the Bazaar); Caravan built (M91), its real trends waiting (M92) and its second
-  round (M93); multilingual SEO (M96); translated objectives on the site (M98) and in the bundle (M99); the story in the bundle (M100); three screen recordings and Human in the Loop moved into Agentic UI (M101); the search filters applied by a button (M102); a laptop section in Inference Engines (M103); the word count in the bundle (M105); and M41, the content bundle for the mobile reader. Each milestone carries its deliverables and acceptance
+  round (M93); multilingual SEO (M96); translated objectives on the site (M98) and in the bundle (M99); the story in the bundle (M100); three screen recordings and Human in the Loop moved into Agentic UI (M101); the search filters applied by a button (M102); a laptop section in Inference Engines (M103); the word count in the bundle (M105); the footer without its first row (M111); and M41, the content bundle for the mobile reader. Each milestone carries its deliverables and acceptance
   criteria as `- [ ]` checkboxes, ticked as the work lands, and closes with a dated report; the loop
   that governs that is below, in this file.
   NOT here: why a choice was made (BRAINSTORM.md), or any rule that outlives the milestone
@@ -19,7 +19,7 @@ description: >
 authority: state
 writes: agent, every session
 status: active
-covers: "M50 to M105, 2026-11-06 onward, and M41, which part 2 held for PR #57"
+covers: "M50 to M105 and M111, 2026-11-06 onward, and M41, which part 2 held for PR #57"
 last_updated: 2026-11-11
 ---
 
@@ -2104,6 +2104,39 @@ the bundle has no count to print. The repository's owner asked for the pull requ
       holds the index to the documents. Mutation-tested: with every translation given its English count,
       the test fails on the first Turkish document (2,754 where the page prints 2,356).
 - [x] **Gate:** typecheck, 1,599 unit tests, build, link check, bundle check; the full browser suite in CI.
+
+## 🏁 Milestone M111: The footer without its first row (D134), DONE
+
+The author, on the footer: *"remove the 'HOME / Completed 00/44 · Reading time 0 m' row. it is useless"*.
+That row held the page's sheet label (`HOME`, `MODULE n OF m`), on a module page the file's revision, and
+a compact readout of the reader's record. Removed end to end, not hidden (CLAUDE.md, D88).
+
+- [x] **The row and what only fed it**: `SiteFooter` takes no props and renders the provenance row and the
+      owner's row. Deleted `src/components/record/Readout.tsx` (231 lines) and
+      `src/components/shell/SheetLabel.tsx` (41 lines); removed `sheet` and `revision` from `PageShell`
+      and its three callers; `sheetLabelFor`, `markTokens`, `NOT_FOUND_SHEET_LABEL` from `route-labels.ts`;
+      `readingMinutes` and `uptime` from `record/derive.ts`; `hoursMinutes` from `text.ts`; `duration`
+      and `traces` from the record and content `CurriculumFacts` (they were serialised into every page for
+      the readout alone); the `.bz-readout*` rules from `progress.css`. Each name grepped afterwards.
+- [x] **Kept, because something else uses it**: `sheet.revision` still goes to `SignOff`, which records
+      it as `signedRevision`; `sheetLabel` stays in `title-block.ts` (the eyebrow uses it);
+      `signedCount` and `useReadingTrack` (the profile page and the bar); the record's `days`; everything
+      `/profile/` shows.
+- [x] **One new signal**: the readout's `data-hydrated` was every browser test's "the store has answered".
+      The store now stamps `<html data-hl-read="true">` once it has read storage (`stampRead`,
+      ARCHITECTURE §12.2 text); `waitForRecordRead` replaces `waitForHydratedReadout` in 11 specs.
+- [x] **Tests**: `site-footer.spec.ts` rewritten as the guard (two blocks, a row of links with one plain
+      cell, no instrument, 32px at 1440, identical text on 7 routes), by structure and not by English.
+      Deleted the `sheetLabelFor`, `markTokens` and `NOT_FOUND_SHEET_LABEL` unit tests. Re-pointed:
+      the sign-off revision check reads `api/v1/index.json` instead of the footer; the feature test
+      reads the stored record instead of the footer tally; the catalog test uses the Completed chip;
+      the two first-frame probes read `data-hl-read` (null before the store reads).
+      Mutation-tested: a footer with a readout-shaped row put back in front of the provenance row fails
+      the guard on the pages it was put on (3 failed, 6 passed on the mutated copy of `out/`).
+- [x] **Gate:** typecheck; 98 unit files, 1,585 tests; build; link check; bundle check; full browser
+      suite on a private port: 705 passed, 11 skipped, 0 failed (716). The footer at 1440 and 390, on
+      `/`, a module and `/profile/`, in `playground/2026-11-round-5/shots-footer/`: 94 px tall at 1440
+      (was 134), 225 px at 390 (was 265).
 
 ---
 

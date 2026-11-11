@@ -45,9 +45,7 @@ import { type ReadingLang, dirOf } from '@/lib/content/languages'
  * trail on `/404/` printed `Home / 404`, which is the URL segment the test
  * §5.1 exists to forbid.
  *
- * So the page that knows it is the not-found page says so, exactly as it
- * already does for the footer's sheet slot — `not-found.tsx` has passed
- * `NOT_FOUND_SHEET_LABEL` all along, and that half never broke. An explicit
+ * So the page that knows it is the not-found page says so. An explicit
  * name from the one route that cannot derive one beats an inference that is
  * correct only from one position in the component tree.
  */

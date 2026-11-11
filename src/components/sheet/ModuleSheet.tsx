@@ -48,7 +48,7 @@ import { moduleRenderInput } from '@/lib/content/module-render'
 import { type Track, catalogRoute, moduleRoute } from '@/lib/tracks'
 import Link from 'next/link'
 import { summarySentence } from '@/lib/content/schedule'
-import { sheetFacts, sheetLabel } from '@/lib/content/title-block'
+import { sheetFacts } from '@/lib/content/title-block'
 import {
   type ReadingLang,
   type TranslatedLang,
@@ -319,8 +319,6 @@ export async function ModuleSheet({
   const { previous, next } = neighbours(slug)
 
   return (
-    // §5.2 — the footer's own row of facts, which only this page knows: the
-    // sheet's number in the set, and the commit that last touched its file.
     /*
       M16 stage 1 part 2 — the three columns are `PageShell`'s slots now, not
       three divs this page builds. `bleed` is gone with the 1152px box it used
@@ -330,8 +328,6 @@ export async function ModuleSheet({
     */
     <PageShell
       track={track}
-      sheet={sheetLabel(facts)}
-      revision={sheet.revision}
       rail={curriculum}
       aside={rail ?? undefined}
       /* M21 — **the trail's last crumb was the raw slug.** `breadcrumbFor`

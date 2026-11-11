@@ -109,9 +109,9 @@ interface ControlCPaint {
   /** How many module rows had been parsed when the reading was taken. */
   rows: number
   /**
-   * `.bz-readout`'s channel-B flag, read in the same frame. `"false"` is the
-   * prerendered state, and it is the proof that everything above was drawn
-   * before React.
+   * `<html data-hl-read>`, the store's channel-B flag, read in the same frame. `null` is the
+   * state before the store has read storage, and it is the proof that everything above was
+   * drawn before React.
    */
   hydrated: string | null
   /** How many frames the parser took. Reported on failure, never asserted. */
@@ -130,14 +130,11 @@ async function probeControlCPaint(page: Page): Promise<void> {
       const look = () => {
         frames += 1
         const rows = document.querySelectorAll(row)
-        // The readout sits in the HTML some 13 KB after the last module row,
-        // so a frame can land between the two: the rows parsed, the readout not
-        // yet. Waiting for both is still a wait for the parser, never for state.
-        // 240 frames is four seconds, after which the reading is taken anyway
-        // and its emptiness fails loudly rather than the probe silently never
-        // producing one.
-        const readout = document.querySelector('.bz-readout')
-        if ((rows.length === 0 || readout === null) && frames < 240) {
+        // A frame can land mid-parse, with some of the rows in and the rest not. Waiting for the
+        // parser to finish is still a wait for the parser, never for state. 240 frames is four
+        // seconds, after which the reading is taken anyway and its emptiness fails loudly rather
+        // than the probe silently never producing one.
+        if ((rows.length === 0 || document.readyState === 'loading') && frames < 240) {
           requestAnimationFrame(look)
           return
         }
@@ -150,7 +147,7 @@ async function probeControlCPaint(page: Page): Promise<void> {
         ;(window as unknown as ControlCPaintWindow).__hlControlCPaint = {
           ticked: ticked.sort((a, b) => a - b),
           rows: rows.length,
-          hydrated: readout?.getAttribute('data-hydrated') ?? null,
+          hydrated: document.documentElement.getAttribute('data-hl-read'),
           frames,
         }
       }
@@ -200,11 +197,11 @@ test('a reader’s completions are ticked in frame one, with no JavaScript at al
   expect(painted!.ticked, `after ${painted!.frames} frame(s)`).toEqual(
     [SEEDED.module, second.module].sort((a, b) => a - b),
   )
-  // And it is genuinely pre-React: the footer's strip still publishes the
-  // prerendered `false`, which is the state channel B leaves. It cannot say
+  // And it is genuinely pre-React: the store has stamped nothing on
+  // `<html>`, which is the state channel B leaves. It cannot say
   // anything else here — every module was refused — which is what makes the
   // readings above statements about frame one.
-  expect(painted!.hydrated).toBe('false')
+  expect(painted!.hydrated).toBeNull()
 
   // The same thing said as a reader would meet it, on a page where JavaScript
   // never ran.
@@ -221,7 +218,7 @@ test('the counts arrive after mount, and the ticks do not move', async ({ page }
   // right. A React island that re-decided the ticks would show up here as one
   // flipping once the store answered, and the frame-one test above cannot see
   // that because it never lets React run.
-  await expect(page.locator('.bz-readout[data-hydrated="true"]').first()).toBeAttached()
+  await expect(page.locator('html[data-hl-read="true"]')).toBeAttached()
   await expect(page.locator(`${MODULE_ROW}[data-module="${SEEDED.module}"] ${TICK}`)).toBeVisible()
 
   // The tab's count, which is `--` until the store has answered (M39 F2).
@@ -242,7 +239,7 @@ test('control C completes a module from the progress page, and takes it back', a
 }) => {
   const target = sheetByModule(1)
   await page.goto(CONTROL_C)
-  await expect(page.locator('.bz-readout[data-hydrated="true"]').first()).toBeAttached()
+  await expect(page.locator('html[data-hl-read="true"]')).toBeAttached()
 
   const toggle = toggleFor(page, target.title)
   // The contract, asserted so that putting `aria-pressed` back turns this red:
@@ -370,7 +367,7 @@ test('a planned module has no completion control at all', async ({ page }) => {
 
 test('control C is reachable and operable from the keyboard', async ({ page }) => {
   await page.goto(CONTROL_C)
-  await expect(page.locator('.bz-readout[data-hydrated="true"]').first()).toBeAttached()
+  await expect(page.locator('html[data-hl-read="true"]')).toBeAttached()
 
   const toggle = toggleFor(page, SHEETS[0].title)
   // Pressed with the key, not clicked: a control that answers a click and not
@@ -439,7 +436,7 @@ test('a completion made on the progress page is the same one the module page sho
 }) => {
   const target = sheetByModule(1)
   await page.goto(CONTROL_C)
-  await expect(page.locator('.bz-readout[data-hydrated="true"]').first()).toBeAttached()
+  await expect(page.locator('html[data-hl-read="true"]')).toBeAttached()
   await toggleFor(page, target.title).click()
   await waitForRecord(
     page,

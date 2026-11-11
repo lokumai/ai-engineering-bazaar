@@ -470,10 +470,8 @@ function factsOf(index: SyntheticIndex, track: Track): CurriculumFacts {
       drawn: module.tracks[track].drawn,
       hasQuickCheck: false,
       checklistItems: 0,
-      duration: 0,
     })),
     categories: index.levels.map((level) => ({ slug: level.slug, total: level.total })),
-    traces: 0,
   }
 }
 

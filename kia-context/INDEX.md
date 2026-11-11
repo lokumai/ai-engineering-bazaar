@@ -74,6 +74,7 @@ and the same explanation given in person for the third time. See `genesis/GENESI
 | 2026-11-10 | Caravan's second round: a taller, closer stage with the puppets on long rods, the two head rows removed, and the trends browsed by search, year, Cards or List, twelve to a page | M93 (D117) |
 | 2026-11-10 | Multilingual SEO: `<html lang>` per language on one root layout, absolute hreflang and canonical, a sitemap and robots.txt, planned modules and the sample caravan kept out of search; menus stay English | M96 (D119, D120) |
 | 2026-11-10 | The site owner, a contact row in the footer, and the privacy and legal notes on the legend page | M97 (D122) |
+| 2026-11-11 | The footer's first row (sheet label, revision, reading record) removed | M111 (D134) |
 | 2026-11-10 | Translated objectives: on the Turkish and Persian pages, then in the content bundle as an additive field for the mobile reader | M98 (D123), M99 (D124) |
 | 2026-11-10 | The About page's story in the content bundle, for the mobile reader | M100 (D125) |
 | 2026-11-10 | Three screen recordings added to the course, and Human in the Loop moved from the Expert level into Agentic UI | M101 (D126) |

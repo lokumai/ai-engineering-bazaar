@@ -20,7 +20,7 @@ import type { CategorySlug } from '@/lib/content/categories'
  *
  * **The count is text, so the count is channel B.** `n/m` is a tally, and a
  * tally is exactly what channel A may not carry, so this component prints the
- * `--` no-reading form the instruments elsewhere use (`Readout`) and
+ * `--` no-reading form the instruments elsewhere use (the footer readout, until M111) and
  * `CategoryTally` fills it in after mount. The split is the same one
  * `ModuleRow` and `SignOffMarks` already make: the server writes the honest
  * empty form and a contract into the markup, and one island per document

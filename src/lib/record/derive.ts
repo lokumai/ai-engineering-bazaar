@@ -37,12 +37,8 @@ export interface CurriculumFacts {
     drawn: boolean
     hasQuickCheck: boolean
     checklistItems: number
-    /** M13 — the module's own declared minutes, which `readingMinutes` sums. */
-    duration: number
   }>
   categories: ReadonlyArray<{ slug: string; total: number }>
-  /** §7.1 `TRACES n/32`. Carried for the readout; no selector here uses it. */
-  traces: number
 }
 
 type SheetFact = CurriculumFacts['sheets'][number]
@@ -68,42 +64,6 @@ export function signedCount(
   const of = facts.sheets.length
   const signed = facts.sheets.filter((fact) => isSigned(data, fact)).length
   return { signed, toGo: of - signed, of }
-}
-
-/**
- * M13 / O2 — the reading time behind the modules a reader has completed, and
- * the whole course's, in minutes.
- *
- * **This is the number that replaced `XP` on every instrument.** O2 asked what
- * XP measures and the answer was nothing a reader can name: 100 for a
- * completion, 60 for a quick check, 40 for a checklist, summed. Minutes are the
- * one quantity on this site that answers "how far in am I" in a unit the reader
- * already thinks in, and both halves of it are derived.
- *
- * **Whose minutes, and the honest answer.** The module's own declared duration,
- * not the reader's time on the page. Nothing writes `dwellSeconds` — no
- * observer was ever shipped, which `attention.ts` records — so a reader-measured
- * reading time would be `0 m` for everybody, which is worse than an estimate
- * that says it is one. The surfaces that print this say whose estimate it is.
- *
- * `of` counts the DRAWN modules only, and that is the one place this denominator
- * differs from `signedCount`'s: a draft declares no duration (the curriculum
- * validator only requires one of a `ready` module), so counting the drafts in
- * would add nothing to the total and would still be a claim about minutes
- * nobody has written.
- */
-export function readingMinutes(
-  data: RecordData,
-  facts: CurriculumFacts,
-): { done: number; of: number } {
-  let done = 0
-  let of = 0
-  for (const fact of facts.sheets) {
-    if (!fact.drawn) continue
-    of += fact.duration
-    if (isSigned(data, fact)) done += fact.duration
-  }
-  return { done, of }
 }
 
 /**
@@ -137,69 +97,6 @@ export function categoryProgress(
     if (isSigned(data, fact)) entry.approved += 1
   }
   return out
-}
-
-// ---------------------------------------------------------------------------
-// §7.3 — UPTIME
-// ---------------------------------------------------------------------------
-
-/** §7.3 — one tick per day, last 14 days. Dashboard only, no flame, no modal. */
-export const UPTIME_DAYS = 14
-const DAY_MS = 86_400_000
-
-function dayNumber(day: string): number | null {
-  const parsed = new Date(`${day}T00:00:00.000Z`)
-  const time = parsed.getTime()
-  if (!Number.isFinite(time) || parsed.toISOString().slice(0, 10) !== day) return null
-  return time
-}
-
-function dayString(time: number): string {
-  return new Date(time).toISOString().slice(0, 10)
-}
-
-/**
- * The 14-day strip and the run of consecutive days ending at it.
- *
- * A day the reader has not written on YET does not break the run: the day is
- * not over, and printing `0d` at 09:00 to a reader who wrote on each of the
- * previous six days would render an empty tick as a deficit, which §12.5.5
- * forbids. A genuinely missed day does break it, and the visible gap is the
- * entire message (§7.3).
- *
- * `lastActive` looks at the whole record, not the window, so `LAST 3d AGO` can
- * be true for a day that has scrolled off the strip. A day in the future is
- * ignored: only a skewed device clock produces one, and the record's own
- * timestamps are not attested by any authority (§12.12.3).
- */
-export function uptime(
-  data: RecordData,
-  today: string,
-): { days: Array<{ date: string; active: boolean; today: boolean }>; streak: number; lastActive: string | null } {
-  const todayMs = dayNumber(today)
-  if (todayMs === null) return { days: [], streak: 0, lastActive: null }
-
-  const active = new Set<string>()
-  for (const day of data.days) {
-    const time = dayNumber(day)
-    if (time !== null && time <= todayMs) active.add(day)
-  }
-
-  const days: Array<{ date: string; active: boolean; today: boolean }> = []
-  for (let back = UPTIME_DAYS - 1; back >= 0; back -= 1) {
-    const date = dayString(todayMs - back * DAY_MS)
-    days.push({ date, active: active.has(date), today: back === 0 })
-  }
-
-  let cursor = active.has(today) ? todayMs : todayMs - DAY_MS
-  let streak = 0
-  while (active.has(dayString(cursor))) {
-    streak += 1
-    cursor -= DAY_MS
-  }
-
-  const lastActive = [...active].sort().pop() ?? null
-  return { days, streak, lastActive }
 }
 
 // ---------------------------------------------------------------------------

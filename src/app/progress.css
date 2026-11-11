@@ -6,40 +6,14 @@
    The continue card, the statistics row and the settings register that the
    earlier `07`-A page carried are gone (M38, M43), removed rather than hidden.
 
-   This sheet also holds the footer readout and the erase dialog, which other
-   pages use. (`/dashboard/`, `/path/` and `/report/` forwarded here until M40
+   This sheet also holds the erase dialog, which other pages use. (`/dashboard/`,
+   `/path/` and `/report/` forwarded here until M40
    removed them.)
 
    D31: colour from `01`, geometry from `07`.
    =========================================================================== */
 
 @layer components {
-  /* -- the readout strip -------------------------------------------------- */
-
-  .bz-readout {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: baseline;
-    gap: 8px;
-    margin: 0;
-    color: var(--color-on-surface-muted);
-    font-size: var(--text-mark);
-    font-variant-numeric: tabular-nums;
-  }
-
-  .bz-readout-value {
-    color: var(--color-on-surface);
-    font-weight: 600;
-  }
-
-  .bz-readout-sep {
-    color: var(--color-on-surface-faint);
-  }
-
-  .bz-readout-togo {
-    color: var(--color-on-surface-muted);
-  }
-
   /* -- §12.15 the erase dialog -------------------------------------------
      Derived (**D30**): `07` draws no dialog, and the language's one elevation
      is the menu's. A confirmation is genuinely temporary, which is the only

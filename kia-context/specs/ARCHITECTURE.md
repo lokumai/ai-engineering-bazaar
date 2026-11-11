@@ -11,8 +11,8 @@ description: >
 authority: blueprint
 writes: agent, when explicitly refactoring
 status: active
-covers: the whole system as built on 2026-09-10, with M16 shipped — every route on the design language; the record, channel A and the render step corrected for M24 on 2026-10-11, and the quiz and the end of a module for M25 on 2026-10-12, the Bazaar Street front door for M27 and the Persian pages for M28 the same day, and the progress page slimmed to its circles and its data row for M38 on 2026-11-05, and the account layer, role paths, record of work and two thirds of the test suite removed for M40 the same day, and the two tracks (For Engineers, For Everyone) and their per-track record for M43 the same day; the custom domain (D92), the fifth level, Emerging (first named Emerging Trends), and moved addresses (D94) on 2026-11-06, and the people at the gate (M58), search (M59) and the catalog without its Sources count (M55) the same day; and for M64 to M69 the same night, a planned module that renders the sections it already has (D102), inline vendor logos, and the first For Everyone module; and the search filters and the level bar on a result (M70, D103), folded behind a Filters disclosure (M71, D104), and the stories at the gate kept until everyone has turned (M72), on 2026-11-07; and call-out cards in a module (D106), the reader's choice of Mermaid theme (D107), Mihrî in Leyla's place at the gate and the fifth level titled Emerging (M75), on 2026-11-08; and For Everyone versions of the nineteen other written modules of Fundamentals, Intermediate and Ecosystem, in three languages (M77, M78, D108), the same day; and one heading per shared section (D109), technical terms kept English in translations, and more vendor marks (M80), and each diagram theme on Mermaid's own ground with a copy control (M81), the same day; and the content bundle for the mobile reader, §13 (M41, D89, D111), on 2026-11-09, and Caravan's address in the bar (M62) the same day, and the About page (M90, D115) the same day, and Caravan's page, its two data files and their validation (§14, M91, D116) that evening, and its second round, a closer stage and the trends browsed like the catalog (§14, M93, D117), on 2026-11-10; and `<html lang>` per language, absolute canonicals and hreflang, the sitemap and robots.txt, and what is kept out of search (§7, M96, D119, D120) the same day; and the search filters applied by a button, held while the panel is shut (M102, D127)
-last_updated: 2026-11-10
+covers: the whole system as built on 2026-09-10, with M16 shipped — every route on the design language; the record, channel A and the render step corrected for M24 on 2026-10-11, and the quiz and the end of a module for M25 on 2026-10-12, the Bazaar Street front door for M27 and the Persian pages for M28 the same day, and the progress page slimmed to its circles and its data row for M38 on 2026-11-05, and the account layer, role paths, record of work and two thirds of the test suite removed for M40 the same day, and the two tracks (For Engineers, For Everyone) and their per-track record for M43 the same day; the custom domain (D92), the fifth level, Emerging (first named Emerging Trends), and moved addresses (D94) on 2026-11-06, and the people at the gate (M58), search (M59) and the catalog without its Sources count (M55) the same day; and for M64 to M69 the same night, a planned module that renders the sections it already has (D102), inline vendor logos, and the first For Everyone module; and the search filters and the level bar on a result (M70, D103), folded behind a Filters disclosure (M71, D104), and the stories at the gate kept until everyone has turned (M72), on 2026-11-07; and call-out cards in a module (D106), the reader's choice of Mermaid theme (D107), Mihrî in Leyla's place at the gate and the fifth level titled Emerging (M75), on 2026-11-08; and For Everyone versions of the nineteen other written modules of Fundamentals, Intermediate and Ecosystem, in three languages (M77, M78, D108), the same day; and one heading per shared section (D109), technical terms kept English in translations, and more vendor marks (M80), and each diagram theme on Mermaid's own ground with a copy control (M81), the same day; and the content bundle for the mobile reader, §13 (M41, D89, D111), on 2026-11-09, and Caravan's address in the bar (M62) the same day, and the About page (M90, D115) the same day, and Caravan's page, its two data files and their validation (§14, M91, D116) that evening, and its second round, a closer stage and the trends browsed like the catalog (§14, M93, D117), on 2026-11-10; and `<html lang>` per language, absolute canonicals and hreflang, the sitemap and robots.txt, and what is kept out of search (§7, M96, D119, D120) the same day; and the search filters applied by a button, held while the panel is shut (M102, D127); and the footer without its first row, the sheet label, revision and reading record (M111, D134), on 2026-11-11
+last_updated: 2026-11-11
 ---
 
 # 🏗️ ARCHITECTURE — How this project is built
@@ -409,7 +409,7 @@ module orphans its progress, but moving it does not.
 │ zero React, correct in frame one                         │
 └──────────────────────────────────────────────────────────┘
 ┌─ Channel B ──────────────────────────────────────────────┐
-│ React islands, post-mount: readouts, panels, dialogs     │
+│ React islands, post-mount: panels, dialogs               │
 │ getServerSnapshot returns the frozen empty record        │
 └──────────────────────────────────────────────────────────┘
 ```
@@ -428,7 +428,10 @@ Both are needed and neither replaces the other.
   (M12), the diagram theme `data-hl-diagram` (2026-11-08) and the code palette `data-hl-code` (M24) are stamped before it for
   the same reason, each matched against its id list first because the value came out of storage.
 - **Channel B** — React islands after mount. `getServerSnapshot` returns a frozen empty record,
-  because the prerendered HTML has never met the reader.
+  because the prerendered HTML has never met the reader. Once the store has read storage it stamps
+  `<html data-hl-read="true">` (`stampRead` in `store.ts`, M111): absent in the served document and in
+  the frame channel A paints, present after, so a test or a script can tell "not read yet" from
+  "nothing recorded" without an island to ask. The footer's readout used to be that signal.
 
 **Channel A stamps one NUMBER, and everything else it stamps is a class.** The reason every other
 reading is a class is that **CSS cannot count**: a rule can match `html.hl-signed-13` against
@@ -694,7 +697,7 @@ uses the left.**
 | the drafter | the reader | **you** / **Account** |
 | index sheet | the flat list of all modules, at `/sheets` | **Catalog** |
 | extent | length in words and minutes | **Length** |
-| uptime | days in a row | ~~**Streak**~~ — shown nowhere since M38, which removed the readout row |
+| uptime | days in a row | ~~**Streak**~~ — shown nowhere since M38, which removed the readout row; the `uptime` selector went with the footer's readout (M111). The record still keeps `days` |
 | submittal register | the repositories a reader has linked to a module | ~~**What you built**~~ — shown nowhere since M38; the record still carries `submittals` |
 | unsigned | a module the reader has not completed | **Not completed** |
 | A0 / A4 | the two page anatomies, chosen by `status` | — internal |
@@ -840,7 +843,7 @@ fast-forward, and `gh pr merge --admin` is refused while a check is still runnin
 `repos/.../branches/main/protection` returns 404 for this repository, which is misleading; use
 `gh api repos/.../rulesets`.
 
-**What the site tells a visitor about itself (M97, D122).** The footer's third row names the site's
+**What the site tells a visitor about itself (M97, D122).** The footer's second row (below the provenance row; the reading-record row that stood above both went in M111, D134) names the site's
 owner in law (the company's registered trade name), its address and a contact email, and links `/legend/#privacy`
 and `/legend/#legal`. The facts are one object, `SITE_OWNER` in `src/lib/site.ts`, with each source and the date it
 was read; the footer and the legend's Legal section both read it. The Privacy section promises no

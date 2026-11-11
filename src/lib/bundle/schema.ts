@@ -252,7 +252,7 @@ const FIGURE_NUMBER = z.string().regex(/^\d+(?:\.\d+)?$/).describe(
 export type Block =
   | { type: 'paragraph'; inlines: Inline[]; lead?: boolean }
   | { type: 'heading'; depth: 2 | 3 | 4; id: string; mark?: string; inlines: Inline[] }
-  | { type: 'list'; ordered: boolean; start?: number; items: { task?: { checked: boolean }; blocks: Block[] }[] }
+  | { type: 'list'; ordered: boolean; start?: number; items: { task?: { checked: boolean; index: number }; blocks: Block[] }[] }
   | { type: 'quote'; label?: string; blocks: Block[] }
   | {
     type: 'callout'
@@ -289,7 +289,14 @@ export const Block: z.ZodType<Block> = z.discriminatedUnion('type', [
     ordered: z.boolean(),
     start: z.number().int().optional(),
     items: z.array(z.strictObject({
-      task: z.strictObject({ checked: z.boolean() }).optional(),
+      task: z.strictObject({
+        checked: z.boolean(),
+        index: z
+          .number()
+          .int()
+          .nonnegative()
+          .describe('The item\'s place in the module\'s one checklist, from 0: the key the record stores its tick under (D129).'),
+      }).optional(),
       get blocks() { return z.array(Block) },
     })),
   }),

@@ -21,6 +21,7 @@ import {
   ModuleDoc,
   StoryDoc,
 } from '@/lib/bundle/schema'
+import { checklistOf } from '@/lib/content/checklist'
 import { extent } from '@/lib/content/derive'
 import { loadStory } from '@/lib/content/story'
 import { stripLeadIn } from '@/lib/content/strip'
@@ -171,6 +172,27 @@ describe('the bundle, over the real corpus', () => {
     expect(translatedDiffers, 'no translation differs from its English in length, so a copied count could not be seen')
       .toBeGreaterThan(0)
     expect(drafts, 'no draft document, so the null could not be seen').toBeGreaterThan(0)
+  })
+
+  it('keys every task item by the index checklistOf gives it in the page\'s own body (D129)', () => {
+    const indexesOf = (blocks: readonly Block[]): number[] => blocks.flatMap((block) => {
+      if (block.type === 'list') {
+        return block.items.flatMap((item) => [...(item.task ? [item.task.index] : []), ...indexesOf(item.blocks)])
+      }
+      if (block.type === 'quote' || block.type === 'callout') return indexesOf(block.blocks)
+      return []
+    })
+    let keyed = 0
+    let translated = 0
+    for (const [path, doc] of modules) {
+      const sheet = loadModuleIn(doc.key, doc.lang as ReadingLang, doc.track)!
+      const found = indexesOf([...(doc.body ?? []), ...(doc.draft?.written ?? [])])
+      expect(found, path).toEqual(doc.body === null ? [] : checklistOf(sheet.body).map((item) => item.index))
+      keyed += found.length
+      if (doc.lang !== 'en' && found.length > 0) translated++
+    }
+    expect(keyed, 'no document has a task item, so the index could not be seen').toBeGreaterThan(0)
+    expect(translated, 'no translated document has a task item').toBeGreaterThan(0)
   })
 
   it('lists in the index the word count of every document that prints one, per track and language (D128)', () => {

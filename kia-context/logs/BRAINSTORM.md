@@ -9,7 +9,7 @@ description: >
 authority: reasoning
 writes: agent, when a decision is taken
 status: active
-covers: "D97 to D128 and D133 so far, and D89, which part 2 held for PR #57 — 2026-11-06 onward"
+covers: "D97 to D128, D133 and D134 so far, and D89, which part 2 held for PR #57 — 2026-11-06 onward"
 last_updated: 2026-11-11
 ---
 
@@ -1085,6 +1085,30 @@ inside a Turkish or Persian page.
   v1 change to a published contract (ARCHITECTURE §13) and they are not on the author's list; (e) the
   `Contents` drawer left English: translated, because it is a control of this page, while the curriculum
   it also holds stays English as a menu.
+
+---
+
+### D134 · The footer has no readout row · 2026-11-11
+status: active
+
+The author, looking at the footer: the first row, `HOME` on the left and `Completed 00/44 · Reading
+time 0 m` on the right, is useless. It was three cells: a sheet label (`HOME`, `LEVEL 02`,
+`MODULE 13 OF 44`), on a module page `Rev <hash> · <date>`, and a compact reading record. It said the
+same thing on every page for a new reader (`00/44`, `0 m`), and the page already names itself in the
+trail and the title.
+
+- **The whole row goes, all three cells.** Removed end to end (D88), with the code that only fed it.
+- **Where the reading record lives**: `/profile/`, which shows each track's completed count per level. The
+  record itself is unchanged.
+- **The revision is still recorded** (`signedRevision`, from the sheet's revision) and is in the bundle
+  index for the mobile reader; it is no longer printed on the page.
+- **A test signal moved**: with the readout gone nothing marked "the store has answered", so the store
+  stamps `<html data-hl-read="true">` (ARCHITECTURE, channel B).
+- **Rejected:** keeping only the revision hash (a hash nobody reads, on the module pages only, and a
+  footer that differs by page); keeping only the sheet label (the trail says it); hiding the row with CSS
+  (the island would still run and the record fields stay unread in the page); keeping the reading time
+  as a profile figure (the profile never showed it, and it was the module's declared minutes, not the
+  reader's, so it claimed more than it measured).
 
 ---
 

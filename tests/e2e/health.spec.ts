@@ -63,7 +63,7 @@ test('the manifest survives being used', async ({ page }) => {
  * is watched twice. M13 made it one document rather than two blocks with one
  * hidden, but the islands on it still read the record in both states —
  * `ContinueLine`, `CourseCompletion`'s thirty-three toggles, `CategoryTally`
- * and the footer's strip — and a throw inside any of them looks like a clean
+ * and the rest — and a throw inside any of them looks like a clean
  * page to every assertion that reads the DOM. Only this watchdog would notice.
  *
  * The way out is the same for both states now, which is itself the M13 change:

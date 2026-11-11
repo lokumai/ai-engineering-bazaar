@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test'
-import { readRawRecord, seedRecord, signedSheet, slugOf, waitForHydratedReadout } from './record'
+import { readRawRecord, seedRecord, signedSheet, slugOf, waitForRecordRead } from './record'
 import { A0, INDEX_SHEET } from './sheets'
 
 /**
@@ -153,7 +153,7 @@ test('a module completed For Engineers is not completed For Everyone, in frame o
   expect(await shown('everyone'), 'the For Engineers completion is drawn For Everyone').toBe(false)
   await page.unroute('**/*.js')
 
-  // After hydration: the counts in the tabs and the footer agree.
+  // After hydration: the counts in the tabs are read from the record.
   await page.goto('/profile/')
   await expect(page.locator('.bz-ptab[data-track-id="engineers"] .bz-ptab-count')).toHaveText(/^1 of \d+$/)
   await expect(page.locator('.bz-ptab[data-track-id="everyone"] .bz-ptab-count')).toHaveText(/^0 of \d+$/)
@@ -162,7 +162,7 @@ test('a module completed For Engineers is not completed For Everyone, in frame o
 
 test('on a page of neither track the switch changes the track in place, and records nothing', async ({ page }) => {
   await page.goto('/profile/')
-  await waitForHydratedReadout(page)
+  await waitForRecordRead(page)
   const track = page.getByRole('navigation', { name: 'Track' })
   await track.getByRole('link', { name: /For Everyone/ }).click()
   await expect(page).toHaveURL(/\/profile\/$/)
@@ -180,7 +180,7 @@ test('on a page of neither track the switch changes the track in place, and reco
 
 test('both track tablists follow the ARIA tabs pattern: one tab stop, arrows move and select', async ({ page }) => {
   await page.goto('/profile/')
-  await waitForHydratedReadout(page)
+  await waitForRecordRead(page)
   const progress = page.getByRole('tablist', { name: 'Progress by track' })
   await expect(progress.locator('[role="tab"][tabindex="0"]')).toHaveCount(1)
   await progress.getByRole('tab', { name: /For Engineers/ }).focus()
@@ -205,7 +205,7 @@ test('both track tablists follow the ARIA tabs pattern: one tab stop, arrows mov
 test('the home page\'s signs and the bar agree, both ways, and a sign keeps nothing', async ({ page }) => {
   await page.emulateMedia({ reducedMotion: 'reduce' })
   await page.goto('/')
-  await waitForHydratedReadout(page)
+  await waitForRecordRead(page)
   const bar = page.getByRole('navigation', { name: 'Track' })
   const doors = () => page.locator('.bz-street .door').evaluateAll((all) =>
     all.map((door) => new URL((door as HTMLAnchorElement).href).pathname))

@@ -142,7 +142,7 @@ test('names stay English on a translated page: the prerequisites, the pager and 
     // The bar and the footer are not the page's own words.
     await expect(page.locator('header').getByText('Catalog', { exact: true })).toBeVisible()
     await expect(page.locator('header').getByText('Progress', { exact: true })).toBeVisible()
-    await expect(page.locator('footer')).toContainText('Reading time')
+    await expect(page.locator('footer').getByText('Repository', { exact: true })).toBeVisible()
   }
 })
 

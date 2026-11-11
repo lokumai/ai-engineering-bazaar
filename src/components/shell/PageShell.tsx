@@ -1,10 +1,8 @@
 import { RailTab } from '@/components/curriculum/RailFold'
-import { Readout } from '@/components/record/Readout'
 import type { Track } from '@/lib/tracks'
 import { categoryLabels } from '@/lib/content/chrome'
-import { curriculumFacts } from '@/lib/content/facts'
 import { Breadcrumb } from './Breadcrumb'
-import { type Revision, SiteFooter } from './SiteFooter'
+import { SiteFooter } from './SiteFooter'
 
 /**
  * The frame every route sits in — M16 stage 1 part 2.
@@ -47,15 +45,13 @@ import { type Revision, SiteFooter } from './SiteFooter'
  * asking — and it is why `Breadcrumb` is a client leaf held by a server
  * component that can measure the corpus for it.
  *
- * The footer stays here for the reason it always did: §5.2's first row prints
- * this page's own sheet number and revision, and a layout has no page data in
- * scope. A page that forgets the shell loses its `<main>` as well as its
- * footer, which `accessibility.spec.ts` fails loudly on.
+ * The footer stays here so a page that forgets the shell loses its `<main>` as
+ * well as its footer, which `accessibility.spec.ts` fails loudly on. It takes no
+ * page data: since M111 (D134) it has no row that prints this page's sheet
+ * number, revision or reading record.
  */
 export function PageShell({
   children,
-  sheet,
-  revision,
   rail,
   aside,
   column = true,
@@ -73,10 +69,6 @@ export function PageShell({
    * page (the generated stylesheet and `category.css`).
    */
   track?: Track
-  /** §5.2 — `MODULE 13 OF 33`. Omitted, the footer names the route instead. */
-  sheet?: string | null
-  /** §5.2, §11.26 — this file's last-touching commit, never repo HEAD. */
-  revision?: Revision | null
   /**
    * The leading column. Passing one turns the page into the three-column
    * grid; omitting it leaves the reading column the whole window.
@@ -107,9 +99,6 @@ export function PageShell({
    */
   trailLabel?: string
 }) {
-  const facts = curriculumFacts(track ?? 'engineers')
-  const everyoneFacts = curriculumFacts('everyone')
-
   const inner = (
     <>
       {/*
@@ -187,11 +176,7 @@ export function PageShell({
         </div>
       )}
 
-      <SiteFooter
-        sheet={sheet}
-        revision={revision}
-        readout={<Readout variant="compact" facts={facts} everyoneFacts={everyoneFacts} track={track} />}
-      />
+      <SiteFooter />
     </>
   )
 }

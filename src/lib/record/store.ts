@@ -90,6 +90,22 @@ function stampStorage(state: 'ok' | 'blocked'): void {
   }
 }
 
+/**
+ * M111, D134 — `<html data-hl-read="true">` once the store has read storage. The footer's readout
+ * used to be the page-wide proof that channel B had answered (`data-hydrated` on it); with the
+ * readout gone the answer is stamped on the element channel A already stamps, so a test, or a
+ * script, can tell "not read yet" from "nothing recorded" without an island to ask. Absent in the
+ * prerender and in the frame channel A paints.
+ */
+function stampRead(): void {
+  try {
+    if (typeof document === 'undefined') return
+    document.documentElement.setAttribute('data-hl-read', 'true')
+  } catch {
+    // An attribute this page could not set is not worth an exception.
+  }
+}
+
 /** Take a record another tab produced (§12.1.5). */
 function adopt(data: RecordData): void {
   current = data
@@ -237,6 +253,7 @@ function start(): void {
     quarantined = result.reason
   }
   hydrated = true
+  stampRead()
 
   window.addEventListener('pagehide', flushNow)
   document.addEventListener('visibilitychange', onVisibilityChange)

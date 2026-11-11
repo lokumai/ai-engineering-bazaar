@@ -2,11 +2,10 @@ import { type Page, expect, test } from '@playwright/test'
 import {
   probeFirstPaint,
   firstPaint,
-  readoutCells,
   seedRecord,
   signedSheet,
   slugOf,
-  waitForHydratedReadout,
+  waitForRecordRead,
 } from './record'
 import { A0, DRAWN_COUNT, INDEX_SHEET, SHEETS, SHEET_COUNT, sheetByModule } from './sheets'
 import { showTable } from './views'
@@ -226,7 +225,7 @@ test('the Completed and Not completed chips filter on the reader’s own asserti
   })
   await page.goto(INDEX_SHEET)
   await showTable(page)
-  await waitForHydratedReadout(page)
+  await waitForRecordRead(page)
 
   await chip(page, 'Completed').click()
   await expect(rows(page)).toHaveCount(signed.length)
@@ -247,7 +246,7 @@ test('the count of what is shown is announced, not implied (§12.13, SC 4.1.3)',
 }) => {
   await seedRecord(page, { sheets: { [SEEDED_SLUG]: signedSheet('b7225f8') } })
   await page.goto(INDEX_SHEET)
-  await waitForHydratedReadout(page)
+  await waitForRecordRead(page)
 
   // One region, rendered in both states, so the announcement comes from an
   // element the reader's software has already seen rather than from one that
@@ -288,7 +287,7 @@ test('All is active on load and the first client render emits the prerender’s 
   expect(prerendered).toBe(SHEET_COUNT)
 
   await page.goto(INDEX_SHEET)
-  await waitForHydratedReadout(page)
+  await waitForRecordRead(page)
 
   await expect(chip(page, 'All')).toHaveAttribute('aria-pressed', 'true')
   // M20 — five chips, all of them states, which is what lets the row be
@@ -302,9 +301,10 @@ test('All is active on load and the first client render emits the prerender’s 
   expect(problems.consoleErrors).toEqual([])
   expect(problems.failedRequests).toEqual([])
 
-  // The readout on the same page reads the same record (§12.2 channel B), so a
-  // painted column and a printed count cannot disagree.
-  await expect(readoutCells(page).first()).toHaveText(`Completed 02/${SHEET_COUNT}`)
+  // The Completed chip reads the same record (§12.2 channel B): the two sheets
+  // seeded as signed are the two it lists.
+  await chip(page, 'Completed').click()
+  await expect(rows(page)).toHaveCount(2)
 })
 
 test('the boot script stamps the index before its first paint too (§12.2 channel A)', async ({

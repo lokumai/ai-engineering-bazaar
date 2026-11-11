@@ -1,13 +1,9 @@
 /**
- * The header breadcrumb and the footer's sheet label are the only two pieces
- * of the shell that change per page, and the header is rendered once in the
- * root layout — where no page data is in scope. So they are derived from the
- * route itself, which is a fact, rather than guessed at.
- *
- * What a route cannot tell us, these functions refuse to invent: a module's
- * sheet number lives in the content, so `sheetLabelFor` returns null on a
- * module page and the module page passes the real number to `PageShell`, which
- * hands it to the footer (spec §5.2).
+ * The header breadcrumb is the piece of the shell that changes per page, and
+ * the header is rendered once in the root layout — where no page data is in
+ * scope. So it is derived from the route itself, which is a fact, rather than
+ * guessed at. (Until M111 (D134) the footer's sheet label was the second; the
+ * footer's first row is gone and `sheetLabelFor` with it.)
  *
  * **The category labels arrive as an argument, and that is a constraint rather
  * than a style.** A subsystem's title and its position live in
@@ -62,20 +58,11 @@ export interface Crumb {
 export const NOT_FOUND_SEGMENT = '/_not-found'
 
 /**
- * What that route calls itself, in the trail (§5.1), in the footer's sheet
- * slot (§5.2) and as the page title. It is not a sheet in the set, and the
- * one honest thing it can say is that no such sheet exists — never the URL
+ * What that route calls itself, in the trail (§5.1) and as the page title. It
+ * is not a sheet in the set, and the one honest thing it can say is that no such sheet exists — never the URL
  * that was asked for, which names nothing.
  */
 export const NOT_FOUND_TITLE = 'No such module'
-
-/**
- * The same name in the case chrome labels are written in (§3.4). The footer
- * takes it as `PageShell`'s `sheet` override rather than reading the route:
- * `SheetLabel` sits below the page boundary, where the layout segment is the
- * page's own and no longer names the not-found route.
- */
-export const NOT_FOUND_SHEET_LABEL = NOT_FOUND_TITLE.toUpperCase()
 
 /**
  * M19 — **a language prefix is not a place, so it is not a crumb.**
@@ -241,13 +228,6 @@ function titleFor(segment: string, categories: readonly CategoryLabel[]): string
     ?? segment.replaceAll('-', ' ')
 }
 
-function subsystemLabel(slug: string, categories: readonly CategoryLabel[]): string {
-  const category = categories.find((candidate) => candidate.slug === slug)
-  return category
-    ? `LEVEL ${String(category.order).padStart(2, '0')}`
-    : titleFor(slug, categories).toUpperCase()
-}
-
 /**
  * `segment` is `useSelectedLayoutSegment()`. It is only ever consulted to
  * recognise the not-found route, where the pathname is not the page's.
@@ -315,57 +295,4 @@ function retargetCourseAncestors(crumbs: Crumb[], segments: string[], track: Tra
     crumbs[2] = { label: crumbs[2].label, href: catalogRoute(track, segments[1]) }
   }
   return crumbs
-}
-
-export function sheetLabelFor(
-  pathname: string,
-  categories: readonly CategoryLabel[],
-): string | null {
-  // D91 — a For Everyone page is labelled as its For Engineers twin is.
-  const all = segmentsOf(pathname)
-  const segments = all[0] === EVERYONE_SEGMENT ? all.slice(1) : all
-  // §15.1 — `/` is the home screen. `INDEX SHEET` moved with the register it
-  // named, to `/sheets/`, where the last branch of this function derives it
-  // from `ROUTE_TITLES`.
-  if (segments.length === 0) return 'HOME'
-
-  if (segments[0] === SET_SEGMENT) {
-    const rest = segments.slice(1)
-    if (rest.length === 0) return titleFor(SET_SEGMENT, categories).toUpperCase()
-    // Two segments past `/courses/` is a module sheet, and its number is a
-    // fact about the content, not about the route.
-    return rest.length === 1 ? subsystemLabel(rest[0], categories) : null
-  }
-
-  // M17 — `/sheets/<level>/` is the catalog opened at one level, so the footer
-  // names the level exactly as the retired `/courses/<level>/` did. Without
-  // this branch the last `segments.length > 1` guard below returns null and a
-  // reader on a level page gets no sheet label at all.
-  if (segments[0] === INDEX_SEGMENT && segments.length === 2) {
-    return subsystemLabel(segments[1], categories)
-  }
-
-  if (segments.length > 1) return null
-  return subsystemLabel(segments[0], categories)
-}
-
-/** A chrome label split into its words and its machine-derived values. */
-export interface MarkToken {
-  text: string
-  value: boolean
-}
-
-/** Digits and the punctuation that holds a value together: 11/32, 1,240. */
-const VALUE = /(\d[\d,./:-]*)/
-
-/**
- * Spec §5.2 gives a footer label two inks: `--color-on-surface-muted` for the words,
- * `--color-on-surface` for the values. Splitting is the only way to paint both from
- * one string.
- */
-export function markTokens(label: string): MarkToken[] {
-  return label
-    .split(VALUE)
-    .filter((part) => part.length > 0)
-    .map((part) => ({ text: part, value: VALUE.test(part) }))
 }

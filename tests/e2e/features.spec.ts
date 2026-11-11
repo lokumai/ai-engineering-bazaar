@@ -1,7 +1,7 @@
 import { existsSync, readFileSync } from 'node:fs'
 import { join } from 'node:path'
 import { type Page, expect, test } from '@playwright/test'
-import { waitForHydratedReadout } from './record'
+import { slugOf, waitForRecordRead, waitForSheet } from './record'
 import { SHEETS } from './sheets'
 
 /**
@@ -27,33 +27,30 @@ test('the reader can sign a module off, and it is still signed after a reload', 
 }) => {
   const sheet = DRAWN[0]
   await page.goto(sheet.path)
-  await waitForHydratedReadout(page)
+  await waitForRecordRead(page)
 
-  const readout = page.locator('footer .bz-readout').first()
-  const before = await readout.innerText()
   await expect(completion(page)).not.toBeChecked()
 
   await completion(page).check()
 
-  // The control flips, and the running tally in the footer moves with it.
+  // The control flips, and the record the profile page reads holds the sign-off.
   await expect(completion(page)).toBeChecked()
-  await expect.poll(async () => readout.innerText()).not.toBe(before)
-  const after = await readout.innerText()
+  await waitForSheet(page, slugOf(sheet), (stored) => (stored?.signedOff ?? null) !== null, 'the sign-off')
 
   // The point of the feature: it survives leaving the page.
   await page.reload()
-  await waitForHydratedReadout(page)
+  await waitForRecordRead(page)
   await expect(completion(page)).toBeChecked()
-  await expect.poll(async () => readout.innerText()).toBe(after)
 
   // And it can be taken back.
   await completion(page).uncheck()
   await expect(completion(page)).not.toBeChecked()
+  await waitForSheet(page, slugOf(sheet), (stored) => (stored?.signedOff ?? null) === null, 'the sign-off taken back')
 })
 
 test('the reader is given a name and a mark once there is a record', async ({ page }) => {
   await page.goto(DRAWN[0].path)
-  await waitForHydratedReadout(page)
+  await waitForRecordRead(page)
   await completion(page).check()
   await expect(completion(page)).toBeChecked()
 

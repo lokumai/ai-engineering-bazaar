@@ -1,6 +1,5 @@
 import { CATEGORIES } from './curriculum-file'
 import { checklistOf } from './checklist'
-import { moduleGraph } from './edges'
 import { loadAllModules } from './loader'
 import { quickCheckOf } from './quickcheck'
 import type { Track } from '../tracks'
@@ -50,19 +49,6 @@ export interface SheetFact {
   hasQuickCheck: boolean
   /** §12.7 — how many `- [ ]` items. 8 on one sheet, 0 on the other 31. */
   checklistItems: number
-  /**
-   * M13 — the module's own declared reading time, in minutes.
-   *
-   * It is the only duration on the site anybody measured: nothing writes
-   * `dwellSeconds` (no observer was ever shipped, which `attention.ts` records),
-   * so a reading time derived from the reader's own time on the page would be
-   * zero for every reader on every surface. The module declares its minutes in
-   * frontmatter, the curriculum validator refuses a `ready` module with a
-   * duration of zero, and a draft declares none — so `readingMinutes` sums this
-   * over the modules a reader has COMPLETED and the number is honest about
-   * whose estimate it is.
-   */
-  duration: number
   /** §12.4.3 — the REV short hash a sign-off is recorded against, or null. */
   revision: string | null
 }
@@ -93,8 +79,6 @@ export interface AttainableCounts {
 export interface CurriculumFacts {
   sheets: readonly SheetFact[]
   categories: readonly CategoryFact[]
-  /** §5.8 / §12.5.2 — the REQUIRES + SEE ALSO edge count. The `TRACES` total. */
-  traces: number
   attainable: AttainableCounts
 }
 
@@ -124,7 +108,6 @@ export function curriculumFacts(track: Track = 'engineers'): CurriculumFacts {
       drawn: track === 'everyone' ? everyone !== null : m.frontmatter.status === 'ready',
       hasQuickCheck: track === 'engineers' && quickCheckOf(body) !== null,
       checklistItems: track === 'everyone' && everyone === null ? 0 : checklistOf(body).length,
-      duration: m.frontmatter.duration,
       revision: (everyone ? everyone.revision : m.revision)?.hash ?? null,
     }
   })
@@ -139,7 +122,6 @@ export function curriculumFacts(track: Track = 'engineers'): CurriculumFacts {
       order: category.order,
       total: sheets.filter((sheet) => sheet.category === category.slug).length,
     })),
-    traces: moduleGraph().edges.length,
     attainable: {
       signOff: drawn.length,
       quiz: drawn.filter((sheet) => sheet.hasQuickCheck).length,

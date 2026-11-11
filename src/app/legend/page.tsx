@@ -43,7 +43,7 @@ export const metadata: Metadata = {
  */
 export default function LegendPage() {
   return (
-    <PageShell sheet="MODULE 00">
+    <PageShell>
       <h1 className="bz-display">Legend</h1>
 
       <hr className="bz-rule" aria-hidden="true" />

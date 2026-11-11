@@ -6,13 +6,11 @@ import {
   probeFirstPaint,
   readRawRecord,
   readRecord,
-  readoutCell,
-  readoutCells,
   seedRecord,
   seedTheme,
   signedSheet,
   slugOf,
-  waitForHydratedReadout,
+  waitForRecordRead,
   waitForRecord,
   waitForSheet,
 } from './record'
@@ -66,30 +64,17 @@ const OTHER = sheetByModule(1)
 const OTHER_SLUG = slugOf(OTHER)
 
 /**
- * §12.13 class 1 — what the readout prints when nothing has been recorded.
+ * The hash a sign-off is recorded against, from the published bundle (`api/v1/index.json`).
  *
- * M13 / O2 — two cells, not four. `XP`, `Rank` and the next threshold left the
- * strip when nobody could name the question they answered, and `Reading time`
- * arrived in XP's place: the modules' own declared minutes over the modules the
- * reader has completed, which is `0 m` for a record that holds nothing. The
- * exact cell list is asserted rather than a subset, so a cell put back is a red
- * test rather than a strip that quietly grew again.
+ * Until M111 (D134) this was read off the footer, the one place the page printed it. The page no
+ * longer prints a revision at all, so the independent witness is the bundle's own index, which the
+ * app's other half depends on to name the same hash (`signedRevision`).
  */
-const EMPTY_READOUT = [`Completed 00/${SHEETS.length}`, 'Reading time 0 m']
-/** §12.2 — what it prints before the store has answered at all. */
-const NO_READING = [`Completed --/${SHEETS.length}`, 'Reading time --']
-
-/**
- * The hash the page prints for THIS FILE, read off the footer.
- *
- * It used to be the title block's `REVISION` row. M16 stage 5 replaced that
- * twelve-row panel with `01`'s three spans and stopped printing the revision
- * twice — §5.2 already gives it to the footer, which is where a drawing's
- * revision belongs. So this reads the one printer that is left, and the
- * sign-off still signs against the same hash it always did.
- */
-function printedRevision(page: Page) {
-  return page.locator('footer')
+async function bundleRevision(page: Page, key: string): Promise<string> {
+  const index = (await (await page.request.get('/api/v1/index.json')).json()) as {
+    modules: Array<{ key: string; tracks: { engineers: { revision: { hash: string } | null } } }>
+  }
+  return index.modules.find((module) => module.key === key)?.tracks.engineers.revision?.hash ?? ''
 }
 
 /**
@@ -169,25 +154,24 @@ test('the module as exported is the honest empty form (§12.2, §12.13 class 1)'
   // card on 2026-10-12.
   await expect(page.locator('.bz-stamp')).toHaveCount(0)
 
-  // §12.2 — `--` is not `00/32`. The first says "no reading", the second says
-  // "nothing recorded", and only the second is a fact about the reader.
-  await expect(readoutCells(page)).toHaveText(NO_READING)
-  await expect(page.locator('footer .bz-readout')).toHaveAttribute('data-hydrated', 'false')
+  // §12.2 — with no script the store never read storage, so the page says nothing about the reader
+  // and `<html>` carries no read stamp. "No reading" is not "nothing recorded".
+  await expect(page.locator('html')).not.toHaveAttribute('data-hl-read', /.*/)
 
   await context.close()
 })
 
-test('with nothing recorded the module settles on 00/32, not on -- (§12.2 channel B)', async ({
+test('with nothing recorded the module settles unchecked, and the hydration is clean (§12.2 channel B)', async ({
   page,
 }) => {
   const problems = watchPage(page)
   await page.goto(SHEET.path)
-  await waitForHydratedReadout(page)
+  await waitForRecordRead(page)
 
-  await expect(readoutCells(page)).toHaveText(EMPTY_READOUT)
+  await expect(page.locator('html')).toHaveAttribute('data-hl-read', 'true')
   await expect(completion(page)).not.toBeChecked()
 
-  // A channel-B readout that mismatched its own prerender would be logged here
+  // A channel-B island that mismatched its own prerender would be logged here
   // as a recoverable hydration error, which is the failure `suppressHydrationWarning`
   // would hide rather than fix (§12.2).
   expect(problems.consoleErrors).toEqual([])
@@ -221,11 +205,12 @@ test('a seeded record stamps <html> inside the first frame (§12.2 channel A)', 
   // and that proxy is wrong** — kept here in full because the reason is the
   // useful part.
   //
-  // The argument was: `hydrated` comes off `.bz-readout`, 82.5 KB into a 211 KB
+  // The argument was: `hydrated` came off the footer's readout, 82.5 KB into a 211 KB
   // document, and the probe fires on the first `requestAnimationFrame`, so the
   // browser can paint before that element is parsed; `null` is therefore a
   // STRONGER reading than `false`, and only an already-published `true` could
-  // contradict §12.2.
+  // contradict §12.2. (Since M111 it comes off `<html data-hl-read>` instead, which the store
+  // stamps; the argument about scheduler load is unchanged.)
   //
   // It can. MEASURED under eight parallel workers, twice out of two runs, with
   // a warm HTTP cache: all three stamps above were correct in the pre-paint
@@ -251,13 +236,12 @@ test('a seeded record stamps <html> inside the first frame (§12.2 channel A)', 
   expect(head, 'the boot script is deferred, so it is no longer pre-paint')
     .not.toMatch(/<script[^>]+(defer|async)[^>]*>[^<]*hl-record/)
 
-  // The corroboration, taken where there is no race: `data-hydrated` is a real
-  // two-state signal, so the `false` the prerender ships is a state the page
-  // leaves rather than one it never had. Without this, nothing above would
-  // notice an attribute that was hardcoded and meant nothing.
-  await expect(page.locator('footer .bz-readout')).toHaveAttribute('data-hydrated', /true|false/)
-  await waitForHydratedReadout(page)
-  await expect(page.locator('footer .bz-readout')).toHaveAttribute('data-hydrated', 'true')
+  // The corroboration, taken where there is no race: the read stamp is a real two-state signal,
+  // absent in the document as served and present once the store has read. Without this, nothing
+  // above would notice a stamp that was hardcoded and meant nothing.
+  expect(html, 'the served document already claims the record was read').not.toContain('data-hl-read')
+  await waitForRecordRead(page)
+  await expect(page.locator('html')).toHaveAttribute('data-hl-read', 'true')
   await expect(completion(page)).toBeChecked()
 })
 
@@ -417,7 +401,7 @@ test('channel A stays true across a client transition (§12.2)', async ({ page }
   await seedRecord(page, {})
 
   await page.goto(SHEET.path)
-  await waitForHydratedReadout(page)
+  await waitForRecordRead(page)
   await completion(page).check()
   await expect(completion(page)).toBeChecked()
   expect(await hasRootClass(page, `hl-signed-${SHEET.module}`)).toBe(true)
@@ -492,11 +476,10 @@ test('sign-off records the module’s own revision and survives a reload (§12.4
 }) => {
   await seedRecord(page, {})
   await page.goto(SHEET.path)
-  await waitForHydratedReadout(page)
+  await waitForRecordRead(page)
 
-  const printed = await printedRevision(page).innerText()
-  const revision = printed.match(/Rev ([0-9a-f]{7,40})/i)?.[1] ?? ''
-  expect(revision, 'the module printed no revision to sign against').toMatch(/^[0-9a-f]{7,40}$/)
+  const revision = await bundleRevision(page, SLUG)
+  expect(revision, 'the bundle names no revision to sign against').toMatch(/^[0-9a-f]{7,40}$/)
 
   await completion(page).check()
 
@@ -507,7 +490,7 @@ test('sign-off records the module’s own revision and survives a reload (§12.4
   await expect(page.locator('.bz-complete-when')).toHaveText(/^Completed \d{1,2} \w{3} \d{4}$/)
 
   // §12.4.3 — the hash AT sign-off, which is what makes the drift line possible
-  // later. The record must hold the sheet's own printed REV, not HEAD.
+  // later. The record must hold the sheet's own revision, not HEAD.
   const stored = await waitForSheet(page, SLUG, (sheet) => sheet?.signedOff != null)
   expect(stored.signedRevision).toBe(revision)
   expect(stored.signedOff).toMatch(/^\d{4}-\d{2}-\d{2}T/)
@@ -525,7 +508,7 @@ test('un-complete reverses the assertion and clears its channel-A stamp (§12.4.
     sheets: { [SLUG]: signedSheet('b7225f8') },
   })
   await page.goto(SHEET.path)
-  await waitForHydratedReadout(page)
+  await waitForRecordRead(page)
   expect(await hasRootClass(page, `hl-signed-${SHEET.module}`)).toBe(true)
 
   await completion(page).uncheck()
@@ -546,7 +529,7 @@ test('neither sign-off nor un-complete raises a confirmation (§12.4.1, §12.15)
   const raised = watchDialogs(page)
   await seedRecord(page, {})
   await page.goto(SHEET.path)
-  await waitForHydratedReadout(page)
+  await waitForRecordRead(page)
 
   await completion(page).check()
   await expect(completion(page)).toBeChecked()
@@ -572,7 +555,7 @@ test('neither sign-off nor un-complete raises a confirmation (§12.4.1, §12.15)
 test('there is no first-run gate anywhere on the index (§12.3.2)', async ({ page }) => {
   const problems = watchPage(page)
   await page.goto('/')
-  await waitForHydratedReadout(page)
+  await waitForRecordRead(page)
 
   // No modal, no tour, no coach marks, no name prompt before the index: a
   // controlled study of 70 users across 4 apps found tutorial-viewers rated
@@ -622,19 +605,16 @@ test('ticking every item moves no instrument, and a ticked item is not struck th
   page,
 }) => {
   await page.goto(SHEET.path)
-  await waitForHydratedReadout(page)
+  await waitForRecordRead(page)
 
   const boxes = page.locator('[data-hl-prose]').getByRole('checkbox')
   const total = await boxes.count()
   for (let index = 0; index < total; index += 1) await boxes.nth(index).check()
 
-  // M13 / O2 — the checklist used to pay a flat 40 and this line read
-  // `XP 40`. The points are gone from every instrument on the site, so what
-  // is asserted now is that the checklist moves NEITHER cell: ticking eight
-  // boxes is not completing a module and is not reading time either. The
-  // record below is where the eight ticks are checked.
-  await expect(readoutCell(page, /^Completed/)).toHaveText(`Completed 00/${SHEETS.length}`)
-  await expect(readoutCell(page, /^Reading time/)).toHaveText('Reading time 0 m')
+  // M13 / O2 — the checklist used to pay a flat 40 and this line read `XP 40`. The points are
+  // gone, so what is asserted now is that ticking eight boxes is not completing a module: the
+  // control stays unchecked. The record below is where the eight ticks are checked.
+  await expect(completion(page)).not.toBeChecked()
   const stored = await waitForSheet(page, SLUG, (sheet) =>
     Object.keys(sheet?.checklist ?? {}).length === total,
   )
@@ -659,7 +639,7 @@ test('g is a mode rather than a race, and Escape clears it (§12.16, SC 2.1.1)',
   page,
 }) => {
   await page.goto(SHEET.path)
-  await waitForHydratedReadout(page)
+  await waitForRecordRead(page)
 
   await page.keyboard.press('g')
   // The mode is VISIBLE while it is held, in `role="status"` — SC 4.1.3 covers
@@ -677,7 +657,7 @@ test('g is a mode rather than a race, and Escape clears it (§12.16, SC 2.1.1)',
 
 test('g p reaches the one progress route (§12.16)', async ({ page }) => {
   await page.goto(SHEET.path)
-  await waitForHydratedReadout(page)
+  await waitForRecordRead(page)
 
   // M14 — it was `g d`, for the dashboard. Three of the seven `g` chords named
   // routes that folded into `/profile/`, and the honest thing to do with a
@@ -692,7 +672,7 @@ test('g p reaches the one progress route (§12.16)', async ({ page }) => {
 
 test('the three chords M14 retired navigate nowhere (§12.16)', async ({ page }) => {
   await page.goto(SHEET.path)
-  await waitForHydratedReadout(page)
+  await waitForRecordRead(page)
 
   // A mistyped chord does nothing at all, which is the whole difference between
   // a mode and a race — and it is what an unbound second key has always done.
@@ -709,7 +689,7 @@ test('the three chords M14 retired navigate nowhere (§12.16)', async ({ page })
 
 test('? opens the keyboard shortcuts and Escape closes it (§12.16)', async ({ page }) => {
   await page.goto(SHEET.path)
-  await waitForHydratedReadout(page)
+  await waitForRecordRead(page)
 
   await page.keyboard.press('?')
   const sheet = anyDialog(page)
@@ -734,7 +714,7 @@ test('. toggles the theme and s signs off the current module (§12.16)', async (
   await seedTheme(page, 'light')
   await seedRecord(page, {})
   await page.goto(SHEET.path)
-  await waitForHydratedReadout(page)
+  await waitForRecordRead(page)
   expect(await hasRootClass(page, 'dark')).toBe(false)
 
   await page.keyboard.press('.')
@@ -755,7 +735,7 @@ test('. toggles the theme and s signs off the current module (§12.16)', async (
 test('no character shortcut fires with a modifier held (§12.16)', async ({ page }) => {
   await seedTheme(page, 'light')
   await page.goto(SHEET.path)
-  await waitForHydratedReadout(page)
+  await waitForRecordRead(page)
   await page.locator('main h1').click()
 
   // The modifier guard returns FIRST, before SC 2.1.4's off switch, because a
@@ -775,7 +755,7 @@ test('prefs.charKeys off silences every character shortcut (§12.16, SC 2.1.4)',
   await seedTheme(page, 'light')
   await seedRecord(page, { prefs: { charKeys: false } })
   await page.goto(SHEET.path)
-  await waitForHydratedReadout(page)
+  await waitForRecordRead(page)
   await page.locator('main h1').click()
 
   for (const key of ['s', '.', '?', 'g']) await page.keyboard.press(key)

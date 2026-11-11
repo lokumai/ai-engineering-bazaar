@@ -4,7 +4,6 @@ import { PageShell } from '@/components/shell/PageShell'
 import {
   INDEX_ROUTE,
   INDEX_TITLE,
-  NOT_FOUND_SHEET_LABEL,
   NOT_FOUND_TITLE,
 } from '@/lib/route-labels'
 
@@ -30,7 +29,7 @@ const CAPTION = 'PAGE NOT FOUND · NO SUCH MODULE IN THIS CURRICULUM'
  */
 export default function NotFound() {
   return (
-    <PageShell sheet={NOT_FOUND_SHEET_LABEL} trailLabel={NOT_FOUND_TITLE}>
+    <PageShell trailLabel={NOT_FOUND_TITLE}>
       <h1 className="bz-display">{NOT_FOUND_TITLE}</h1>
 
       <p className="bz-lead">

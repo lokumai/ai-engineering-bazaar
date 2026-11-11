@@ -125,6 +125,14 @@ describe('profileViolations', () => {
     expect(violations.some((message: string) => message.includes('viewBox')), violations.join('\n')).toBe(true)
   })
 
+  it('refuses a <rect> with no area, which the reader would stroke as a dot', () => {
+    for (const rect of ['<rect fill="#000000"/>', '<rect width="4"/>', '<rect height="4"/>', '<rect width="0" height="4"/>']) {
+      const violations = profileViolations(svg(rect))
+      expect(violations.some((message: string) => message.includes('no width or height')), rect).toBe(true)
+    }
+    expect(profileViolations(svg('<rect x="0" y="0" width="0.1" height="0.1"/>'))).toEqual([])
+  })
+
   it('refuses a < that opens no tag', () => {
     const violations = profileViolations(svg('<text>1 < 2</text>'))
     expect(violations.some((message: string) => message.includes('unmatched <')), violations.join('\n')).toBe(true)
@@ -176,6 +184,15 @@ describe('stripNonPainting', () => {
   it('still refuses a <use>, so a symbol that would have painted cannot vanish quietly', () => {
     const stripped = stripNonPainting(svg('<defs><symbol id="s"><path d="M0 0"/></symbol></defs><use href="#s"/>'))
     expect(profileViolations(stripped).some((message: string) => message.includes('<use>'))).toBe(true)
+  })
+
+  it('removes a <rect> with no area and keeps one that has one', () => {
+    const stripped = stripNonPainting(svg(
+      '<g><rect fill="#ececff" stroke="#9370db" stroke-width="1" visibility="visible"/>'
+      + '<rect x="1" y="1" width="4" height="0"></rect><rect x="0" y="0" width="5" height="5" fill="#ffffff"/></g>',
+    ))
+    expect(stripped).toBe(svg('<g><rect x="0" y="0" width="5" height="5" fill="#ffffff"/></g>'))
+    expect(profileViolations(stripped)).toEqual([])
   })
 
   it('leaves text content alone', () => {

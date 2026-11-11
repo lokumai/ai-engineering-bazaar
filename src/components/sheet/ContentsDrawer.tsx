@@ -1,6 +1,8 @@
 'use client'
 
 import * as Dialog from '@radix-ui/react-dialog'
+import { PAGE_COPY, translatedAttrs } from '@/lib/content/page-copy'
+import type { ReadingLang } from '@/lib/content/languages'
 
 /**
  * §4.7 — below the width where a rail can sit beside the prose, the rail's
@@ -41,16 +43,19 @@ import * as Dialog from '@radix-ui/react-dialog'
  */
 export function ContentsDrawer({
   at,
+  lang = 'en',
   children,
 }: {
   /** Which breakpoint reveals this control. See the note above. */
   at: 'wide' | 'narrow'
+  /** D133 — the language the page is read in; the trigger and the close button follow it. */
+  lang?: ReadingLang
   children: React.ReactNode
 }) {
   return (
     <Dialog.Root>
       <div className="bz-drawer-bar" data-bz-at={at}>
-        <Dialog.Trigger className="bz-btn bz-btn-quiet">Contents</Dialog.Trigger>
+        <Dialog.Trigger className="bz-btn bz-btn-quiet" {...translatedAttrs(lang)}>{PAGE_COPY[lang].contents}</Dialog.Trigger>
       </div>
       <Dialog.Portal>
         <Dialog.Overlay className="bz-drawer-backdrop" />
@@ -58,8 +63,8 @@ export function ContentsDrawer({
             otherwise warn about a `Description` this dialog does not need. */}
         <Dialog.Content className="bz-drawer" aria-describedby={undefined}>
           <div className="bz-drawer-head">
-            <Dialog.Title className="bz-drawer-title">Contents</Dialog.Title>
-            <Dialog.Close className="bz-btn bz-btn-quiet">Close</Dialog.Close>
+            <Dialog.Title className="bz-drawer-title" {...translatedAttrs(lang)}>{PAGE_COPY[lang].contents}</Dialog.Title>
+            <Dialog.Close className="bz-btn bz-btn-quiet" {...translatedAttrs(lang)}>{PAGE_COPY[lang].close}</Dialog.Close>
           </div>
           {children}
         </Dialog.Content>

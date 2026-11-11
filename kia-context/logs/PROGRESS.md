@@ -11,7 +11,7 @@ description: >
   backgrounds and copy (M81), Agentic UI (M82), the cast's colours (M83), and M84 to M90 (content
   and site fixes, the home page in Turkish and Persian, Dariush's motif, block menus in the top layer,
   and About, the story of the Bazaar); Caravan built (M91), its real trends waiting (M92) and its second
-  round (M93); multilingual SEO (M96); translated objectives on the site (M98) and in the bundle (M99); the story in the bundle (M100); three screen recordings and Human in the Loop moved into Agentic UI (M101); the search filters applied by a button (M102); a laptop section in Inference Engines (M103); the word count in the bundle (M105); the About page in Turkish and Persian (M109); and M41, the content bundle for the mobile reader. Each milestone carries its deliverables and acceptance
+  round (M93); multilingual SEO (M96); translated objectives on the site (M98) and in the bundle (M99); the story in the bundle (M100); three screen recordings and Human in the Loop moved into Agentic UI (M101); the search filters applied by a button (M102); a laptop section in Inference Engines (M103); the word count in the bundle (M105), the checklist index (M106), the diagrams without empty rects (M107) and five logos without CSS (M108); the About page in Turkish and Persian (M109); the module page's own words in Turkish and Persian (M110); the footer without its first row (M111); and M41, the content bundle for the mobile reader. Each milestone carries its deliverables and acceptance
   criteria as `- [ ]` checkboxes, ticked as the work lands, and closes with a dated report; the loop
   that governs that is below, in this file.
   NOT here: why a choice was made (BRAINSTORM.md), or any rule that outlives the milestone
@@ -19,7 +19,7 @@ description: >
 authority: state
 writes: agent, every session
 status: active
-covers: "M50 to M105 and M109, 2026-11-06 onward, and M41, which part 2 held for PR #57"
+covers: "M50 to M111, 2026-11-06 onward, and M41, which part 2 held for PR #57"
 last_updated: 2026-11-11
 ---
 
@@ -2105,6 +2105,43 @@ the bundle has no count to print. The repository's owner asked for the pull requ
       the test fails on the first Turkish document (2,754 where the page prints 2,356).
 - [x] **Gate:** typecheck, 1,599 unit tests, build, link check, bundle check; the full browser suite in CI.
 
+## 🏁 Milestone M106: The checklist index in the content bundle (D129), DONE
+
+The mobile reader's developer, in the pull request of M105: a task item in the bundle says whether it is
+checked and not which record key it is.
+
+- [x] **The field**: every task item carries `task.index`, read off the `data-hl-check` the page stamps
+      (`src/lib/bundle/blocks.ts`, `src/lib/bundle/schema.ts`). The site's pages are unchanged.
+- [x] **The contract**: ARCHITECTURE §13 names it; `bundle-schema.json` and the kitchen-sink snapshot
+      show it as an addition and nothing else; an unnumbered item fails the build.
+- [x] **The guard**: the corpus test holds every document's indexes equal to `checklistOf` of its own
+      page body, in every language and track. Mutation-tested: with the index taken modulo 4, it fails
+      on Security in English (`[0, 1, 2, 3, 0]` for `[0, 1, 2, 3, 4]`).
+
+## 🏁 Milestone M107: The bundle's diagrams without empty rects (D130), DONE
+
+- [x] **The strip**: `stripNonPainting` removes a `<rect>` with no width or height, and `profileViolations`
+      refuses one, so `check-bundle-out.mjs` does too (`scripts/lib/svg-profile.mjs`). Report: 2,758
+      removed across 192 files.
+- [x] **The proof**: every diagram, old and new, drawn by Chromium at 1x and 2x: 384 renders, 0
+      differing pixels. A copy with one rect given a size differs, so the comparison sees a change.
+- [x] **The guard**: unit tests for the strip and the profile. Mutation-tested: with the rule switched
+      off, both fail.
+
+## 🏁 Milestone M108: Five logos without CSS (D131), DONE
+
+- [x] `llamacpp.svg` (both copies), `promptfoo.svg`, `lightrag.svg` and `pentagi-mono.svg` carry no
+      `<style>`, `class=`, `style=`, filter, nested `<svg>` or `color(`. Report: 42 renders each against
+      the old file (seven heights, three densities, both grounds), 0 differing pixels.
+- [x] `antigravity.svg` and `context7.svg` left unchanged, with the measured difference (D131).
+- [x] **Site unchanged**: the 207 exported pages, scripts and Next's chunk names aside, are the same
+      markup before and after, apart from a `<meta name="next-size-adjust">` that changes place on a few
+      pages between any two builds.
+- [x] **Gate (M105 to M108):** typecheck, 1,604 unit tests, build, link check, bundle check, and the
+      full browser suite locally and in CI.
+
+---
+
 ## 🏁 Milestone M109: The About page in Turkish and Persian (D132), DONE
 
 The author asked for the About page to be multilingual the way the home page is: `/about/`, `/tr/about/`,
@@ -2155,6 +2192,92 @@ and `STORY_fa.md`, written by another agent beside STORY.md; this milestone is t
       4 failed, all four in `cast.spec.ts` while two other worktrees ran their suites, and `cast.spec.ts`
       alone then passed 26 of 26. Screenshots at 1440 and 390 are in
       `playground/2026-11-round-5/shots-about-i18n/`; neither page scrolls sideways.
+
+---
+
+## 🏁 Milestone M110: The module page's own words in Turkish and Persian (D133), DONE
+
+The author, 2026-11-11: on a module page, `Before you start`, `What you will be able to do`, `On this
+page`, `Mark this module as complete`, Previous and Next, `Want a quick quiz?`, `Start over`, `Question 1
+of 5`, `5 questions on the main points of this module` and `30 min · 2,931 words` become the page's
+language, *"this way the menus remain english, but the content page becomes fully translated"*, and the
+module and level names stay as they are.
+
+- [x] **A scroller that arrives late is faded too** (found by this branch's CI): `Affordances` lives in the root layout and mounts once, so it measured only the first page's scrollers; a code block on the next module reached by a client-side link, or one laid out late on a slow machine, kept no right-edge fade (`responsive.spec.ts` failed on an unmarked `bz-slab-code` at 390, on main once in six runs as well). A third observer watches the document for added scrollers. New test: a scroller added after load is marked; mutation: with the old `Affordances.tsx` it failed at both widths, restored from a copy it passed.
+- [x] **Wording read as a native reader would see it** (the author's rule for every translation, restated 2026-11-11: the conventional wording, never literal): Turkish offers a test to solve (`Kısa bir test çözmek ister misin?`, `… ana konularına dair 5 soru`); Persian writes the ezafe as `ـه‌ی` as the course does, never the bookish `ـهٔ`, and the completed state is `تکمیل شد`, the routine UI word.
+- [x] **One table**: `src/lib/content/page-copy.ts`, `PAGE_COPY: Record<ReadingLang, PageCopy>`, so a key
+      missing from `tr` or `fa` fails `tsc`. Counts are functions (`progress`, `sub`, `readingTime`,
+      `score`, `wrong`); Turkish groups thousands with `.` (`2.931 kelime`), Persian keeps ASCII digits
+      and `,`; dates are written from a month table (`11 Eki 2026`, `11 اکتبر 2026`) because `Intl` gives
+      Persian digits and the Jalali calendar.
+- [x] **Wired**: `SignOff` (region, label, `Completed <date>`, the refusal notice and its export link),
+      `Prerequisites` (title, `Planned` tag), `Objectives` (heading, new `pageLang`), `SheetRail` and
+      `TableOfContents` (`On this page`, the list's `aria-label`), `PrevNext` (labels, `Planned`, the two
+      ends of the course), `FactsStrip`, `QuickQuiz` (progress, Start over, Previous, Next, See results,
+      Back to the questions, verdicts, score, the screen-reader `correct` and `not correct`), the quiz
+      header in `ModuleSheet`, `ContentsDrawer` (`Contents`, `Close`), and the For Everyone not-written
+      notice. All take `lang`; the English tree renders the same words as before.
+- [x] **Right to left**: in Persian the completion row, the prerequisites box, the pager and the quiz are
+      laid out right to left as blocks (`dir="rtl"`), with the arrows turned and the box's leading edge
+      moved (`completion.css`); the module titles inside them say `lang="en" dir="ltr"`.
+- [x] **Channel A**: nothing changed. The completion words on this page are React markup, not CSS
+      content stamped from `<html>`, so there is no English frame before hydration; `boot.ts` is untouched.
+- [x] **Left English, on purpose**: the bar, footer, catalog, profile, search, breadcrumb, language menu,
+      every module and level name, and the words the build writes into the prose (`Copy`, `Expand
+      diagram`, `Link to "…"`, code and diagram menus), which are part of the markup the content bundle
+      carries too. Bundle: unchanged, nothing under `src/lib/bundle/` or the renderer was edited, and a
+      search of `out/api/` for the page's English strings finds only authored prose.
+- [x] **Tests**: `tests/unit/page-copy.test.ts` (8 tests: the same keys in every language, no string left
+      in English, the register's bans in Turkish and Persian, ASCII digits, no tatweel, number and date
+      formats); `copy-register.test.ts` scans `page-copy.ts` (two exemptions with reasons);
+      `tests/e2e/module-page-i18n.spec.ts` (8 tests, the page picked from the corpus: each control shows
+      the table's string and not the English one in `tr` and `fa`, the date and the quiz, names and menus
+      stay English, the English page is unchanged, catalog and profile stay English);
+      `translation.spec.ts` now expects the objectives heading in the page's language.
+      Mutation-tested: `SignOff` reading the English table made 4 of the 8 fail (Received `Mark this module
+      as complete`), restored from a copy.
+- [x] **Gate, 2026-11-11:** typecheck; 1,607 unit tests in 99 files; build; link check and bundle check;
+      browser specs `module-page-i18n`, `translation`, `module-end`, `html-lang`, `record-sheet`,
+      `completion`, `features`, `module-sheets`, `title-block`, `colour-not-alone`, `anatomy`,
+      `accessibility`, `responsive`, `containment`. `cast.spec` failed once on each of two runs on
+      different tests and passed on the third, and one 390 px `responsive` test failed once and passed on
+      rerun, none of it a page this milestone touched. Screenshots in
+      `playground/2026-11-round-5/shots-module-i18n/`.
+
+---
+
+## 🏁 Milestone M111: The footer without its first row (D134), DONE
+
+The author, on the footer: *"remove the 'HOME / Completed 00/44 · Reading time 0 m' row. it is useless"*.
+That row held the page's sheet label (`HOME`, `MODULE n OF m`), on a module page the file's revision, and
+a compact readout of the reader's record. Removed end to end, not hidden (CLAUDE.md, D88).
+
+- [x] **The row and what only fed it**: `SiteFooter` takes no props and renders the provenance row and the
+      owner's row. Deleted `src/components/record/Readout.tsx` (231 lines) and
+      `src/components/shell/SheetLabel.tsx` (41 lines); removed `sheet` and `revision` from `PageShell`
+      and its three callers; `sheetLabelFor`, `markTokens`, `NOT_FOUND_SHEET_LABEL` from `route-labels.ts`;
+      `readingMinutes` and `uptime` from `record/derive.ts`; `hoursMinutes` from `text.ts`; `duration`
+      and `traces` from the record and content `CurriculumFacts` (they were serialised into every page for
+      the readout alone); the `.bz-readout*` rules from `progress.css`. Each name grepped afterwards.
+- [x] **Kept, because something else uses it**: `sheet.revision` still goes to `SignOff`, which records
+      it as `signedRevision`; `sheetLabel` stays in `title-block.ts` (the eyebrow uses it);
+      `signedCount` and `useReadingTrack` (the profile page and the bar); the record's `days`; everything
+      `/profile/` shows.
+- [x] **One new signal**: the readout's `data-hydrated` was every browser test's "the store has answered".
+      The store now stamps `<html data-hl-read="true">` once it has read storage (`stampRead`,
+      ARCHITECTURE §12.2 text); `waitForRecordRead` replaces `waitForHydratedReadout` in 11 specs.
+- [x] **Tests**: `site-footer.spec.ts` rewritten as the guard (two blocks, a row of links with one plain
+      cell, no instrument, 32px at 1440, identical text on 7 routes), by structure and not by English.
+      Deleted the `sheetLabelFor`, `markTokens` and `NOT_FOUND_SHEET_LABEL` unit tests. Re-pointed:
+      the sign-off revision check reads `api/v1/index.json` instead of the footer; the feature test
+      reads the stored record instead of the footer tally; the catalog test uses the Completed chip;
+      the two first-frame probes read `data-hl-read` (null before the store reads).
+      Mutation-tested: a footer with a readout-shaped row put back in front of the provenance row fails
+      the guard on the pages it was put on (3 failed, 6 passed on the mutated copy of `out/`).
+- [x] **Gate:** typecheck; 98 unit files, 1,585 tests; build; link check; bundle check; full browser
+      suite on a private port: 705 passed, 11 skipped, 0 failed (716). The footer at 1440 and 390, on
+      `/`, a module and `/profile/`, in `playground/2026-11-round-5/shots-footer/`: 94 px tall at 1440
+      (was 134), 225 px at 390 (was 265).
 
 ---
 

@@ -73,7 +73,7 @@ async function storedData(page: Page): Promise<RecordData | null> {
 /**
  * Waits until the store has read storage, then returns what is in it.
  *
- * The signal is the footer readout flipping to `data-hydrated="true"`, which is
+ * The signal is `<html data-hl-read="true">`, which is
  * the store's own report that it has read the record and the page is showing it
  * rather than the honest empty form the build shipped (§12.2).
  *
@@ -88,7 +88,7 @@ async function storedData(page: Page): Promise<RecordData | null> {
  * from a side effect.
  */
 async function settled(page: Page): Promise<RecordData> {
-  await expect(page.locator('.bz-readout[data-hydrated="true"]').first()).toBeAttached()
+  await expect(page.locator('html[data-hl-read="true"]')).toBeAttached()
   return (await storedData(page)) as RecordData
 }
 

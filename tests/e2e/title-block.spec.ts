@@ -77,9 +77,8 @@ for (const sheet of DRAWN) {
     /* M21 — the strip is `25 min · 2,317 words` and nothing else. It was two
        tags and a third span carrying the language as well; the author asked
        for plain text, and every fact that left is still stated somewhere:
-       the level by the trail below, the position by the footer (which
-       `site-footer.spec.ts` asserts on all thirty-three), and the language by
-       nothing, because the site cannot serve it (M19).
+       the level by the trail below, the position by the rail (the footer's
+       `MODULE n OF m` went in M111), and the language by nothing, because the site cannot serve it (M19).
 
        A drawn module has been counted, so it prints what it counted, and
        every term of it is non-empty. The dash means "nobody counted this" and

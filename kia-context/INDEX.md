@@ -74,12 +74,14 @@ and the same explanation given in person for the third time. See `genesis/GENESI
 | 2026-11-10 | Caravan's second round: a taller, closer stage with the puppets on long rods, the two head rows removed, and the trends browsed by search, year, Cards or List, twelve to a page | M93 (D117) |
 | 2026-11-10 | Multilingual SEO: `<html lang>` per language on one root layout, absolute hreflang and canonical, a sitemap and robots.txt, planned modules and the sample caravan kept out of search; menus stay English | M96 (D119, D120) |
 | 2026-11-10 | The site owner, a contact row in the footer, and the privacy and legal notes on the legend page | M97 (D122) |
+| 2026-11-11 | The footer's first row (sheet label, revision, reading record) removed | M111 (D134) |
 | 2026-11-10 | Translated objectives: on the Turkish and Persian pages, then in the content bundle as an additive field for the mobile reader | M98 (D123), M99 (D124) |
 | 2026-11-10 | The About page's story in the content bundle, for the mobile reader | M100 (D125) |
 | 2026-11-10 | Three screen recordings added to the course, and Human in the Loop moved from the Expert level into Agentic UI | M101 (D126) |
 | 2026-11-10 | The search filters apply with an Apply button and hold while their panel is shut | M102 (D127) |
 | 2026-11-10 | A short section on running a model on your laptop, with Ollama and LM Studio, in Inference Engines | M103 |
 | 2026-11-11 | Each module page's word count in the content bundle, for the mobile reader's `25 min · 4,812 words` line | M105 (D128) |
+| 2026-11-11 | In the same pull request: each checklist item's record index in the bundle, the empty rects out of the bundle's diagrams, and five logos without CSS | M106 (D129), M107 (D130), M108 (D131) |
 | 2026-11-11 | The About page in Turkish and Persian, at `/tr/about/` and `/fa/about/`, and its story in the bundle in both | M109 (D132) |
 
 **The harness itself was installed on 2026-09-08**, 107 commits in (`git rev-list --count 4832e2a^`). Everything before that date was
@@ -226,7 +228,7 @@ every other file.
 and 2 are `closed` (`PROGRESS_1.md`, `PROGRESS_2.md`, `BRAINSTORM_1.md`, `BRAINSTORM_2.md`) and point
 forward; part 3 is where the next entry goes, and it keeps the bare name (`PROGRESS.md`,
 `BRAINSTORM.md`). The
-numbering runs straight through — `M1…M105`, `D1…D128` — so a citation never has
+numbering runs straight through — `M1…M108`, `D1…D131` — so a citation never has
 to say which part it means, only the number.
 
 The heaviest edges, measured with `grep` on 2026-11-06 rather than estimated (the two `PROGRESS_2.md` rows re-measured 2026-11-07; the two rows into part 3 re-measured 2026-11-09):

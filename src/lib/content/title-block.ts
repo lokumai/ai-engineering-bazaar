@@ -105,7 +105,7 @@ export function eyebrow(facts: SheetFacts): string {
   ].join(' · ')
 }
 
-/** §5.2 — `SHEET 13 OF 33`, the footer's left cell. */
+/** `MODULE 13 OF 33`, the last part of the eyebrow. */
 export function sheetLabel(facts: SheetFacts): string {
   return `MODULE ${facts.module} OF ${facts.sheets}`
 }

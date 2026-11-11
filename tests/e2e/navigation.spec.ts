@@ -63,8 +63,8 @@ test('next walks 1 to 32 straight through every category boundary', async ({ pag
     await expect(next).toContainText(expected.title)
     // ITS HREF, and not a module number printed inside the tile. `01`'s pager
     // tile is a faint label over a titled destination and nothing else; the
-    // retired cell printed the number too, which the trail, the footer and the
-    // rail all already carry. The destination is the stronger claim anyway.
+    // retired cell printed the number too, which the trail and the
+    // rail already carry. The destination is the stronger claim anyway.
     await expect(next).toHaveAttribute('href', new RegExp(`${expected.path}$`))
 
     // A sheet that is not drawn says so on the link, not only on arrival — in

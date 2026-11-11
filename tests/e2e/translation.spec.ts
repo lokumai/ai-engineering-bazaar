@@ -413,8 +413,8 @@ test.describe('the objectives card', () => {
       await expect(page.locator(CARD), sheet.slug).not.toHaveAttribute('dir', /.+/)
       expect(await cardItems(page), sheet.slug).toEqual(sheet.objectivesIn.tr)
       expect(await cardItems(page), sheet.slug).not.toEqual(sheet.frontmatter.objectives)
-      // The heading is the interface's, English, and says so inside a `tr` card.
-      await expect(page.locator(`${CARD} .bz-card-title`), sheet.slug).toHaveAttribute('lang', 'en')
+      // D133 — the heading is the page's own word, so it is Turkish and says so.
+      await expect(page.locator(`${CARD} .bz-card-title`), sheet.slug).toHaveAttribute('lang', 'tr')
     }
   })
 

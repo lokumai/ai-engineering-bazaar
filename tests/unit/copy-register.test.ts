@@ -80,6 +80,9 @@ const ROOTS: readonly string[] = [
   // scanned is the copy the page adds round them: the notice, the controls and the card.
   'components/caravan',
   'app/caravan',
+  // D133 — the module page's own words, in three languages. The English strings are scanned here;
+  // `page-copy.test.ts` holds the same bans for the Turkish and the Persian.
+  'lib/content/page-copy.ts',
 ]
 
 function walk(target: string): string[] {
@@ -284,6 +287,29 @@ const ALLOWED: ReadonlyArray<{ text: RegExp; ban: string; why: string }> = [
       + 'one state where a name is expected — a chip, a row, a key, a band. Prose that explains '
       + 'the state it has already named is the case the ban is not about, and rewording it to '
       + 'avoid the phrase would make the sentence worse to read for no gain in consistency.',
+  },
+  {
+    text: /[çğıöşüÇĞİÖŞÜ\u0600-\u06FF]/,
+    ban: 'anthropomorphism (first person)',
+    why: 'D133 — the Turkish and Persian strings of `page-copy.ts`. The ban is an English regex whose '
+      + '`\\b` is ASCII-only, so the Turkish `i` beside `ş` or `ı` reads as the pronoun `I`. Exempt '
+      + 'only for this ban and only for a string with a letter English does not have; '
+      + '`tests/unit/page-copy.test.ts` holds the Turkish and Persian bans themselves.',
+  },
+  {
+    text: /^The For Everyone version of this module is not written yet\.$/,
+    ban: 'PLANNED',
+    why: 'D133 — a SENTENCE on the page of a module whose For Everyone version does not exist, which '
+      + 'it has said since D91 and which is now one of the strings of `page-copy.ts`. Like the path '
+      + 'description above, it explains the state rather than naming it.',
+  },
+  {
+    text: /^Want a quick quiz\?$/,
+    ban: 'condescension',
+    why: 'D133 — the title of the quiz block under every module, in the author\'s own words since '
+      + '2026-10-12 (`Want a quick quiz?`). The ban is on telling a reader a task is trivial; this '
+      + 'names how long the quiz is and promises nothing about how hard it is. Exempt by the whole '
+      + 'string, so the word anywhere else is still caught.',
   },
   {
     text: /^MY ATTENTION SPAN:$/,

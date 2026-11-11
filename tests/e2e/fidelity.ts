@@ -915,7 +915,7 @@ export const APP_SELECTORS: SelectorMap = {
 
   /* Stage 8 — progress and account, read off `/profile/`. The hero is channel
      B and renders only once the store has answered, which is why the stage's
-     comparison waits for the readout before extracting. */
+     comparison waits for the store's read stamp before extracting. */
   panel: '.bz-panel',
   field: '.bz-field',
   fieldLabel: '.bz-field-label',
@@ -1179,7 +1179,7 @@ export const DELIBERATELY_ABSENT: Readonly<Partial<Record<Role, string>>> = {
     'text: *"Remove all just keep the minutes and words as pure text."* The ' +
     'two tags were the only `.bz-tag` in the product, so nothing renders one ' +
     'any more. Every fact they carried is still stated — the level by the ' +
-    'breadcrumb and the rail, the position by the footer, and the language by ' +
+    'breadcrumb and the rail, the position by the footer until M111 removed that row, and the language by ' +
     'nothing, because the site cannot serve it (M19). `.bz-tag` stays in the ' +
     'language as the transcription of `01`\'s own `.tag` and ' +
     '`transcription.test.ts` still compares it, which is the same bargain ' +

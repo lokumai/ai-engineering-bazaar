@@ -344,7 +344,6 @@ const FACTS: CurriculumFacts = {
       drawn: true,
       hasQuickCheck: true,
       checklistItems: 8,
-      duration: 30,
     },
     {
       slug: 'expert/advanced-architectures',
@@ -353,14 +352,12 @@ const FACTS: CurriculumFacts = {
       drawn: false,
       hasQuickCheck: false,
       checklistItems: 0,
-      duration: 0,
     },
   ],
   categories: [
     { slug: 'intermediate', total: 1 },
     { slug: 'expert', total: 1 },
   ],
-  traces: 0,
 }
 
 /**

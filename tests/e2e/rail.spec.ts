@@ -1,6 +1,6 @@
 import { type Page, expect, test } from '@playwright/test'
 import { A0, A4, SHEETS } from './sheets'
-import { seedRecord, signedSheet, waitForHydratedReadout } from './record'
+import { seedRecord, signedSheet, waitForRecordRead } from './record'
 
 /**
  * M10 — the curriculum rail, its accordion, its fold, and the tick.
@@ -170,7 +170,7 @@ test.describe('the fold', () => {
     // `load`-resolved `goto` is early enough to hit it — this test is the one
     // an independent review caught red in a full run at 8 workers (railWidth
     // 203, expected 0) while it passed 6/6 alone.
-    await waitForHydratedReadout(page)
+    await waitForRecordRead(page)
 
     const open = await railTrack(page)
     const openColumn = await columnWidth(page)
@@ -216,7 +216,7 @@ test.describe('the fold', () => {
    */
   test('folding and restoring returns the rail to the box it had', async ({ page }) => {
     await page.goto(A0.path)
-    await waitForHydratedReadout(page)
+    await waitForRecordRead(page)
 
     const box = () => page.evaluate(() => {
       const rail = document.querySelector('.bz-rail')
@@ -267,7 +267,7 @@ test.describe('the fold', () => {
     // `load`-resolved `goto` is early enough to hit it — this test is the one
     // an independent review caught red in a full run at 8 workers (railWidth
     // 203, expected 0) while it passed 6/6 alone.
-    await waitForHydratedReadout(page)
+    await waitForRecordRead(page)
     await page.locator('[data-bz-rail-toggle]').click()
     await expect.poll(() => railTrack(page), { timeout: 2_000 }).toBe(0)
 
@@ -328,11 +328,11 @@ test.describe('the fold', () => {
       // workers a `load`-resolved `goto` is early enough to hit that, which is
       // what turned this red in a full run and green run alone.
       //
-      // `.bz-readout[data-hydrated="true"]` is the footer island's own signal,
-      // so it says React has hydrated this document rather than guessing how
+      // `html[data-hl-read="true"]` is the store's own signal (it reads storage
+      // once React has subscribed), so it says React has hydrated this document rather than guessing how
       // long that takes; the two frames after it are what put a laid-out width
       // on the rail.
-      await waitForHydratedReadout(page)
+      await waitForRecordRead(page)
       await expect.poll(() => railTrack(page), { timeout: 3_000 }).toBeGreaterThan(0)
       await page.evaluate(() => new Promise(requestAnimationFrame))
       await page.evaluate(() => new Promise(requestAnimationFrame))
@@ -548,7 +548,7 @@ test.describe('the fold', () => {
     // nobody asked to fold. Third of the three fold tests to need this — the
     // full suite at 8 workers produced a different one of them red on each of
     // four runs until all three waited.
-    await waitForHydratedReadout(page)
+    await waitForRecordRead(page)
     await page.locator('[data-bz-rail-toggle]').click()
     await expect.poll(() => railTrack(page), { timeout: 2_000 }).toBe(0)
 

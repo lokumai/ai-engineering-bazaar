@@ -11,8 +11,8 @@ description: >
 authority: blueprint
 writes: agent, when explicitly refactoring
 status: active
-covers: the whole system as built on 2026-09-10, with M16 shipped — every route on the design language; the record, channel A and the render step corrected for M24 on 2026-10-11, and the quiz and the end of a module for M25 on 2026-10-12, the Bazaar Street front door for M27 and the Persian pages for M28 the same day, and the progress page slimmed to its circles and its data row for M38 on 2026-11-05, and the account layer, role paths, record of work and two thirds of the test suite removed for M40 the same day, and the two tracks (For Engineers, For Everyone) and their per-track record for M43 the same day; the custom domain (D92), the fifth level, Emerging (first named Emerging Trends), and moved addresses (D94) on 2026-11-06, and the people at the gate (M58), search (M59) and the catalog without its Sources count (M55) the same day; and for M64 to M69 the same night, a planned module that renders the sections it already has (D102), inline vendor logos, and the first For Everyone module; and the search filters and the level bar on a result (M70, D103), folded behind a Filters disclosure (M71, D104), and the stories at the gate kept until everyone has turned (M72), on 2026-11-07; and call-out cards in a module (D106), the reader's choice of Mermaid theme (D107), Mihrî in Leyla's place at the gate and the fifth level titled Emerging (M75), on 2026-11-08; and For Everyone versions of the nineteen other written modules of Fundamentals, Intermediate and Ecosystem, in three languages (M77, M78, D108), the same day; and one heading per shared section (D109), technical terms kept English in translations, and more vendor marks (M80), and each diagram theme on Mermaid's own ground with a copy control (M81), the same day; and the content bundle for the mobile reader, §13 (M41, D89, D111), on 2026-11-09, and Caravan's address in the bar (M62) the same day, and the About page (M90, D115) the same day, and Caravan's page, its two data files and their validation (§14, M91, D116) that evening, and its second round, a closer stage and the trends browsed like the catalog (§14, M93, D117), on 2026-11-10; and `<html lang>` per language, absolute canonicals and hreflang, the sitemap and robots.txt, and what is kept out of search (§7, M96, D119, D120) the same day; and the search filters applied by a button, held while the panel is shut (M102, D127)
-last_updated: 2026-11-10
+covers: the whole system as built on 2026-09-10, with M16 shipped — every route on the design language; the record, channel A and the render step corrected for M24 on 2026-10-11, and the quiz and the end of a module for M25 on 2026-10-12, the Bazaar Street front door for M27 and the Persian pages for M28 the same day, and the progress page slimmed to its circles and its data row for M38 on 2026-11-05, and the account layer, role paths, record of work and two thirds of the test suite removed for M40 the same day, and the two tracks (For Engineers, For Everyone) and their per-track record for M43 the same day; the custom domain (D92), the fifth level, Emerging (first named Emerging Trends), and moved addresses (D94) on 2026-11-06, and the people at the gate (M58), search (M59) and the catalog without its Sources count (M55) the same day; and for M64 to M69 the same night, a planned module that renders the sections it already has (D102), inline vendor logos, and the first For Everyone module; and the search filters and the level bar on a result (M70, D103), folded behind a Filters disclosure (M71, D104), and the stories at the gate kept until everyone has turned (M72), on 2026-11-07; and call-out cards in a module (D106), the reader's choice of Mermaid theme (D107), Mihrî in Leyla's place at the gate and the fifth level titled Emerging (M75), on 2026-11-08; and For Everyone versions of the nineteen other written modules of Fundamentals, Intermediate and Ecosystem, in three languages (M77, M78, D108), the same day; and one heading per shared section (D109), technical terms kept English in translations, and more vendor marks (M80), and each diagram theme on Mermaid's own ground with a copy control (M81), the same day; and the content bundle for the mobile reader, §13 (M41, D89, D111), on 2026-11-09, and Caravan's address in the bar (M62) the same day, and the About page (M90, D115) the same day, and Caravan's page, its two data files and their validation (§14, M91, D116) that evening, and its second round, a closer stage and the trends browsed like the catalog (§14, M93, D117), on 2026-11-10; and `<html lang>` per language, absolute canonicals and hreflang, the sitemap and robots.txt, and what is kept out of search (§7, M96, D119, D120) the same day; and the search filters applied by a button, held while the panel is shut (M102, D127); the About page in Turkish and Persian (M109, D132); the module page's own words in Turkish and Persian (M110, D133); and the footer without its first row, the sheet label, revision and reading record (M111, D134), on 2026-11-11
+last_updated: 2026-11-11
 ---
 
 # 🏗️ ARCHITECTURE — How this project is built
@@ -189,7 +189,7 @@ never a module of its own, so it changes no count, no number and no record key.
 
 **A translation file may carry `objectives`, and only that (frontmatter, same count and order).**
 The objectives card is content, so a Turkish or Persian page shows the translated list (D113: content
-is multilingual, the interface is not). `parseTranslationFrontmatter` (`src/lib/content/schema.ts`)
+is multilingual, the menus are not; D133 below says where the line falls). `parseTranslationFrontmatter` (`src/lib/content/schema.ts`)
 is the rule and `loader.ts` applies it to every `_tr.md` and `_fa.md` that exists, in both tracks,
 usable or not: any other key (`summary`, `module`, `status`) fails the build naming the file, and so
 does a count different from the English file's own list. A file with no block builds as before, and
@@ -197,8 +197,22 @@ its page shows the English list, `loadModuleIn` marking the language of `frontma
 `objectivesLang` (`tr`, `fa` or `en`). `summary` stays English on every page, because it feeds the
 English catalog. This replaces M19's rule that a translated page's objectives are always the English
 ones, marked `lang="en"`; that stays only as the fallback. On the page the card carries `lang`
-(its heading says `en`, being the interface's) and the list alone carries `dir="rtl"` on a Persian
+(its heading follows the page's language, D133) and the list alone carries `dir="rtl"` on a Persian
 page; the card is never mirrored.
+
+**The words a module page prints itself (D133).** They are one typed table, `PAGE_COPY` in
+`src/lib/content/page-copy.ts` (`Record<ReadingLang, PageCopy>`), and every component of the reading page
+takes `lang` and reads it: the prerequisites box, the objectives heading, the contents rail, the completion
+control (`SignOff`), the pager's labels, the quiz and its header, the reading-time line, the drawer's two
+words and the For Everyone not-written notice. A string that depends on a number is a function; Turkish
+groups thousands with `.`, Persian keeps ASCII digits, and dates come from a month table, not `Intl`. The
+words carry `lang` and, in Persian, `dir="rtl"` on their own block, with the arrows turned in
+`completion.css`; a module or level name inside them is `lang="en" dir="ltr"`. What stays English: the
+bar, footer, catalog, progress page, search, breadcrumb, language menu, every module and level name, and the
+words the build writes into the prose (`Copy`, `Expand diagram`, `Link to …`), which the content bundle
+carries. The completion words are React markup, not CSS content stamped by `boot.ts`, so channel A has no
+English frame to flash. `tests/unit/page-copy.test.ts` holds the table (same keys, nothing left in English,
+the register's bans in each language) and `tests/e2e/module-page-i18n.spec.ts` the page.
 
 Three failures that would otherwise be silent throw, naming the file: a block that does not start on
 line 1 (gray-matter reads a block only there, so a blank line before it leaves it in the body and the
@@ -409,7 +423,7 @@ module orphans its progress, but moving it does not.
 │ zero React, correct in frame one                         │
 └──────────────────────────────────────────────────────────┘
 ┌─ Channel B ──────────────────────────────────────────────┐
-│ React islands, post-mount: readouts, panels, dialogs     │
+│ React islands, post-mount: panels, dialogs               │
 │ getServerSnapshot returns the frozen empty record        │
 └──────────────────────────────────────────────────────────┘
 ```
@@ -428,7 +442,10 @@ Both are needed and neither replaces the other.
   (M12), the diagram theme `data-hl-diagram` (2026-11-08) and the code palette `data-hl-code` (M24) are stamped before it for
   the same reason, each matched against its id list first because the value came out of storage.
 - **Channel B** — React islands after mount. `getServerSnapshot` returns a frozen empty record,
-  because the prerendered HTML has never met the reader.
+  because the prerendered HTML has never met the reader. Once the store has read storage it stamps
+  `<html data-hl-read="true">` (`stampRead` in `store.ts`, M111): absent in the served document and in
+  the frame channel A paints, present after, so a test or a script can tell "not read yet" from
+  "nothing recorded" without an island to ask. The footer's readout used to be that signal.
 
 **Channel A stamps one NUMBER, and everything else it stamps is a class.** The reason every other
 reading is a class is that **CSS cannot count**: a rule can match `html.hl-signed-13` against
@@ -697,7 +714,7 @@ uses the left.**
 | the drafter | the reader | **you** / **Account** |
 | index sheet | the flat list of all modules, at `/sheets` | **Catalog** |
 | extent | length in words and minutes | **Length** |
-| uptime | days in a row | ~~**Streak**~~ — shown nowhere since M38, which removed the readout row |
+| uptime | days in a row | ~~**Streak**~~ — shown nowhere since M38, which removed the readout row; the `uptime` selector went with the footer's readout (M111). The record still keeps `days` |
 | submittal register | the repositories a reader has linked to a module | ~~**What you built**~~ — shown nowhere since M38; the record still carries `submittals` |
 | unsigned | a module the reader has not completed | **Not completed** |
 | A0 / A4 | the two page anatomies, chosen by `status` | — internal |
@@ -843,7 +860,7 @@ fast-forward, and `gh pr merge --admin` is refused while a check is still runnin
 `repos/.../branches/main/protection` returns 404 for this repository, which is misleading; use
 `gh api repos/.../rulesets`.
 
-**What the site tells a visitor about itself (M97, D122).** The footer's third row names the site's
+**What the site tells a visitor about itself (M97, D122).** The footer's second row (below the provenance row; the reading-record row that stood above both went in M111, D134) names the site's
 owner in law (the company's registered trade name), its address and a contact email, and links `/legend/#privacy`
 and `/legend/#legal`. The facts are one object, `SITE_OWNER` in `src/lib/site.ts`, with each source and the date it
 was read; the footer and the legend's Legal section both read it. The Privacy section promises no
@@ -886,11 +903,13 @@ A module document comes from `src/lib/content/module-render.ts`, the same render
 So the page and the bundle cannot drift (rule 4); a link's track and language are read back off the address that map returned (`src/lib/bundle/address.ts`).
 A module document's `objectives` stays `{ lang: 'en', items }` with the English list in every language: v1 pins `lang` to `en` (D123). Beside it, `translatedObjectives` is `{ lang, items }` with the document's own list where its translation file declares one, and `null` in English and where the file falls back to the English list; it is always present, as `previous`, `next` and `draft` are (D124).
 A module document's `words` is the word count its web page prints under the title, and `null` for a planned module, whose page prints none; the index's track entry carries the same counts as `words`, language to count, empty where nothing is written. Both come from `printedWords` in `src/lib/content/title-block.ts`, which `FactsStrip` prints from, over the sheet the page renders (D128).
+A task item in a list carries `task: { checked, index }`, where `index` is the item's place in the module's one checklist, read off the `data-hl-check` the page stamps and its island stores a tick under (`record.sheets[key].checklist[index]`), so a translated page keys its items as its own page does (D129).
 The About page's story, `mini-courses/STORY.md`, is `api/v1/story/en.json`, read by `src/lib/content/story.ts` as the page reads it (stalls of a heading and its paragraphs, and the motto, as plain strings), and the index's `story` names its document per language; a translation is `api/v1/story/tr.json` or `fa.json` (`lang` and `dir` set) and exists exactly when `STORY_tr.md` or `STORY_fa.md` does, so `story` lists every language that is written (D125, D132).
 The index lists each module once with an entry per track, and the record key `<level>/<module>` is the same in both of the record's maps (§5).
 The finaliser is the `postbuild` of `npm run build` and writes what needs a browser or the hash of another file.
 It draws every diagram the draft lists in Playwright's bundled Chromium, twice, in Mermaid's own themes (D107): `light` in the web's default theme and `dark` in `dark`, with the theme stamped on `<html>` as the site stamps a reader's choice, and the index names each variant's theme and the ground Mermaid gives it (`src/lib/bundle/diagrams.ts`).
 Each drawing is flattened into the SVG profile of `scripts/lib/svg-profile.mjs`, with labels set in the one pinned Vazirmatn face that `scripts/lib/diagram-font.mjs` names and the index records by hash.
+A `<rect>` with no width or no height paints nothing in a browser and a dot in the reader, so the finaliser removes it and the profile refuses it (D130).
 Then it hashes every bundle file and image, writes `index.json` and deletes the draft.
 It exits 1, naming the diagram, module, track and language, on any render error, profile violation, moved label or unloaded font, and writes no `index.json`; without Chromium it exits 1 and prints `npx playwright install chromium`.
 The two scripts are plain `.mjs` and import only `node:`, packages and `scripts/lib/`, so neither restates a TypeScript definition.

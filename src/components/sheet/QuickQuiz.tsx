@@ -3,6 +3,7 @@
 import { useRef, useState } from 'react'
 import type { QuizItem } from '@/lib/content/quiz'
 import { type ReadingLang, dirOf, langAttr } from '@/lib/content/languages'
+import { PAGE_COPY, wordsAttrs } from '@/lib/content/page-copy'
 
 /**
  * The quick quiz's questions, one at a time.
@@ -28,8 +29,10 @@ import { type ReadingLang, dirOf, langAttr } from '@/lib/content/languages'
  * cannot separate the two hues and a reader who cannot see either. The
  * question takes focus when it changes, so a screen reader reads the new one.
  *
- * The questions are in the page's language; the controls are in English, as
- * the rest of the interface still is (M23), and they say so with `lang`.
+ * The questions are in the page's language, and since D133 so are the controls
+ * (`PAGE_COPY`): the quiz is part of the page a reader reads, not of the menus.
+ * The words carry `lang` and, in Persian, `dir`, so the block lays out right to
+ * left as a whole.
  */
 
 const LETTERS = ['A', 'B', 'C', 'D'] as const
@@ -75,6 +78,9 @@ export function QuickQuiz({ items, lang }: { items: readonly QuizItem[]; lang: R
   const score = picked.filter((one, at) => one === items[at].answer).length
   const content = langAttr(lang)
   const contentDir = dirOf(lang)
+  const copy = PAGE_COPY[lang].quiz
+  const words = wordsAttrs(lang)
+  const [scoreBefore, scoreStrong, scoreAfter] = copy.score(score, total)
 
   /** Move to a question and give it focus, so it is read out. */
   function go(next: number): void {
@@ -95,10 +101,10 @@ export function QuickQuiz({ items, lang }: { items: readonly QuizItem[]; lang: R
 
   if (results) {
     return (
-      <div className="bz-quiz-body" lang="en">
+      <div className="bz-quiz-body" {...words}>
         <div className="bz-quiz-result" role="status">
           <p className="bz-quiz-score">
-            <b>{score} of {total}</b> answered correctly
+            {scoreBefore}<b>{scoreStrong}</b>{scoreAfter}
           </p>
           <ol className="bz-quiz-recap">
             {items.map((one, at) => {
@@ -108,7 +114,7 @@ export function QuickQuiz({ items, lang }: { items: readonly QuizItem[]; lang: R
                   <button type="button" className="bz-quiz-recap-item" onClick={() => go(at)}>
                     <span className="bz-quiz-recap-mark">{ok ? <Check /> : <Cross />}</span>
                     <span lang={content} dir={contentDir}>{one.question}</span>
-                    <span className="sr-only">{ok ? ', correct' : ', not correct'}</span>
+                    <span className="sr-only">{ok ? copy.right : copy.notRight}</span>
                   </button>
                 </li>
               )
@@ -118,10 +124,10 @@ export function QuickQuiz({ items, lang }: { items: readonly QuizItem[]; lang: R
         <div className="bz-quiz-nav">
           <button type="button" className="bz-btn bz-btn-quiet" onClick={() => go(total - 1)}>
             <Arrow back />
-            Back to the questions
+            {copy.backToQuestions}
           </button>
           <button type="button" className="bz-btn" onClick={restart}>
-            Start over
+            {copy.startOver}
           </button>
         </div>
       </div>
@@ -129,10 +135,10 @@ export function QuickQuiz({ items, lang }: { items: readonly QuizItem[]; lang: R
   }
 
   return (
-    <div className="bz-quiz-body" lang="en">
+    <div className="bz-quiz-body" {...words}>
       <div className="bz-quiz-top">
         <span className="bz-quiz-progress">
-          Question {index + 1} of {total}
+          {copy.progress(index + 1, total)}
         </span>
         {/* One step per question: filled when answered, in the verdict's
             colour and with its own shape, ringed where the reader is. */}
@@ -147,7 +153,7 @@ export function QuickQuiz({ items, lang }: { items: readonly QuizItem[]; lang: R
           ))}
         </span>
         <button type="button" className="bz-quiz-restart" onClick={restart}>
-          Start over
+          {copy.startOver}
         </button>
       </div>
 
@@ -190,7 +196,7 @@ export function QuickQuiz({ items, lang }: { items: readonly QuizItem[]; lang: R
           <>
             <p className="bz-quiz-verdict">
               {right ? <Check /> : <Cross />}
-              {right ? 'Correct.' : `Not this one. The answer is ${LETTERS[item.answer]}.`}
+              {right ? copy.correct : copy.wrong(LETTERS[item.answer])}
             </p>
             <p className="bz-quiz-explain" lang={content} dir={contentDir}>{item.explain}</p>
           </>
@@ -205,16 +211,16 @@ export function QuickQuiz({ items, lang }: { items: readonly QuizItem[]; lang: R
           disabled={index === 0}
         >
           <Arrow back />
-          Previous
+          {copy.previous}
         </button>
         {index < total - 1 ? (
           <button type="button" className="bz-btn" onClick={() => go(index + 1)} disabled={!answered}>
-            Next
+            {copy.next}
             <Arrow />
           </button>
         ) : (
           <button type="button" className="bz-btn" onClick={() => setResults(true)} disabled={!answered}>
-            See results
+            {copy.seeResults}
             <Arrow />
           </button>
         )}

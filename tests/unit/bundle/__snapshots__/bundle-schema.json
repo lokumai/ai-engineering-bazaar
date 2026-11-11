@@ -1174,10 +1174,17 @@
                       "properties": {
                         "checked": {
                           "type": "boolean"
+                        },
+                        "index": {
+                          "type": "integer",
+                          "minimum": 0,
+                          "maximum": 9007199254740991,
+                          "description": "The item's place in the module's one checklist, from 0: the key the record stores its tick under (D129)."
                         }
                       },
                       "required": [
-                        "checked"
+                        "checked",
+                        "index"
                       ],
                       "additionalProperties": false
                     },
@@ -2372,10 +2379,17 @@
                       "properties": {
                         "checked": {
                           "type": "boolean"
+                        },
+                        "index": {
+                          "type": "integer",
+                          "minimum": 0,
+                          "maximum": 9007199254740991,
+                          "description": "The item's place in the module's one checklist, from 0: the key the record stores its tick under (D129)."
                         }
                       },
                       "required": [
-                        "checked"
+                        "checked",
+                        "index"
                       ],
                       "additionalProperties": false
                     },
@@ -3221,10 +3235,17 @@
                   "properties": {
                     "checked": {
                       "type": "boolean"
+                    },
+                    "index": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 9007199254740991,
+                      "description": "The item's place in the module's one checklist, from 0: the key the record stores its tick under (D129)."
                     }
                   },
                   "required": [
-                    "checked"
+                    "checked",
+                    "index"
                   ],
                   "additionalProperties": false
                 },

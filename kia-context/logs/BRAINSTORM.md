@@ -9,7 +9,7 @@ description: >
 authority: reasoning
 writes: agent, when a decision is taken
 status: active
-covers: "D97 to D128 and D132 so far, and D89, which part 2 held for PR #57 — 2026-11-06 onward"
+covers: "D97 to D134 so far, and D89, which part 2 held for PR #57 — 2026-11-06 onward"
 last_updated: 2026-11-11
 ---
 
@@ -1051,6 +1051,74 @@ would not match the site's anyway: the site counts the markdown after the lead-i
   per module beside `minutes` rather than per track (the two tracks are different files of different
   lengths); `0` for a planned module (a page that prints nothing is not a page of no words).
 
+### D129 · A checklist item in the bundle carries the index the record keys its tick by · 2026-11-11
+status: active
+
+The mobile reader's developer: the bundle gives a task item `{ checked }` and nothing else, so the app
+would have to count the items itself to store a tick, and a count the app makes is the second count
+`render.ts` warns about (§12.7).
+
+- **Read, not recounted.** `render.ts` stamps each task item with `data-hl-check`, its place in the
+  module's one index space (straight through every list of the page), and `ChecklistIsland` stores a tick
+  under that number in `record.sheets[key].checklist`. The bundle's converter reads the same attribute off
+  the same tree, so `task.index` is the number the web writes, by construction.
+- **Per language, as the web does.** A translated page numbers its own items and ticks the same record
+  key, so its document carries its own page's numbers. **MEASURED:** the only checklist is Security's, in
+  three languages; each document's indexes equal `checklistOf` of its own body.
+- **Required inside `task`.** An item the page did not number fails the build, naming the module, rather
+  than reaching the reader with no key. `checked` is unchanged.
+- **Additive, so v1** (ARCHITECTURE §13).
+- **Rejected:** the app counting items (two counts that drift the day a list nests); an index per list
+  (the record has one space per module); a separate list of indexes beside the blocks (the item and its
+  key would travel apart).
+
+### D130 · The bundle's diagrams carry no rect without a size · 2026-11-11
+status: active
+
+The mobile reader's developer: every flowchart node label in the app had a 1px dot above it. Mermaid
+writes a `<rect>` behind each label with no `x`, `y`, `width` or `height`; the flattener copies its
+computed fill and stroke onto it. A browser draws nothing for a rect with no area, and `flutter_svg`
+strokes it as a dot.
+
+- **Removed in the finaliser's strip** (`stripNonPainting` in `scripts/lib/svg-profile.mjs`): a `<rect>`
+  whose `width` or `height` is missing or not a positive number. **MEASURED:** 2,758 such rects across the
+  192 diagram files, every one with neither size; the 1,050 sized ones, the smallest 0.1 by 0.1, stay.
+- **Refused by the profile**, so `check-bundle-out.mjs` stops a bundle that carries one, as it stops a
+  `<style>`.
+- **Nothing on the site changes by construction**: the site draws its diagrams itself, and these files are
+  the bundle's copies. **MEASURED:** all 192 files, old and new, drawn by Chromium at 1x and 2x with the
+  pinned Vazirmatn face: 384 renders, 0 differing pixels.
+- **Rejected:** a zero size written onto the rect (a tag that paints nothing is still a tag the reader
+  must skip); asking the app to skip it (the reader derives nothing, D111).
+
+### D131 · Five logos drawn without CSS, and two left as they are · 2026-11-11
+status: active
+
+The mobile reader's developer: `flutter_svg` ignores `<style>`, filters, a nested `<svg>` and
+`color(display-p3 ...)`, so six marks drew wrong in the app. The repository's owner set the condition:
+nothing on the site may change.
+
+- **Changed, pixel for pixel the same in a browser:** `llamacpp.svg` (both copies), `promptfoo.svg` and
+  `lightrag.svg` (each class rule and inline style written onto its element as a presentation attribute,
+  the `<style>` removed, `enable-background` dropped since it paints nothing), and `pentagi-mono.svg` (the
+  nested `<svg>`, at the same origin and viewBox as the root, became a `<g>` with its fill). **MEASURED:**
+  each old and new file drawn as an `<img>` the way prose.css draws a logo, at heights 14.3, 17.6, 19.8, 24,
+  64, 180 and 512 px, at 1x, 2x and 3x, on a light and a dark ground with a `-mono.svg` inverted on the
+  dark one: 42 renders each, 0 differing pixels.
+- **Left unchanged:** `antigravity.svg`, whose colour is ten Gaussian blurs inside a mask; the same file
+  without filters differs in 1,090,948 pixels over the 42 renders, and a blur cannot be written without a
+  filter. `context7.svg`, whose ground is `color(display-p3 0.0196 0.5882 0.4118)`, outside sRGB: Chromium
+  shows it as `#009965`, and that hex matches every flat pixel, but Chromium blends the anti-aliased edges
+  in the unclipped colour, so 8,083 edge pixels over the 42 renders differ by one or two levels. The
+  owner's rule is zero, so both stay, and the app needs its own answer for them.
+- **Not a bundle check yet**, because those two files would fail it; it can be added once they are
+  settled. Three more marks were not in the report and are left alone: `agno.svg` and
+  `llamaindex.svg` carry a `style=`, and `bolt-mono.svg` a filter.
+- **Rejected:** a raster fallback for the two (a second file to keep in step with the first); editing the
+  two anyway with the small difference (the owner's condition is zero).
+
+---
+
 ### D132 · The About page is translated by files beside STORY.md, and its art stays English · 2026-11-11
 status: active
 
@@ -1087,6 +1155,67 @@ The author asked for `/tr/about/` and `/fa/about/`, as the home page has `/tr/` 
 - **Persian is typeset as Persian print is**: the motto is quoted «…», not with curly quotes
   (`QUOTES` in `story.ts`), and the page's three italic accents stand upright under `:lang(fa)`, since
   Persian has no italic and a browser only slants the letters.
+
+---
+
+### D133 · A module page's own words translate; the menus and the names do not · 2026-11-11
+status: active
+
+The author: *"in content page, also convert "Before you start" … "Mark this module as complete" …
+"Previous-Next" … "Want a quick quiz" … "Start over" … "Question 1 of 5" … "30 min · 2,931 words". meaning
+that this way the menus remain english, but the content page becomes fully translated. this way the module
+names or Level names remain the same, and the only thing that becomes multilingual is the content page that
+people read and interact with but the catalog and progress page remain english since they are menu and not
+content."* D113 had made the content multilingual and the interface not, and left these words English
+inside a Turkish or Persian page.
+
+- **The boundary is who the words belong to.** What the reading column and its own controls say is part of
+  the thing being read: the prerequisites box title, the objectives heading, `On this page`, the completion
+  control with its date and its refusal notice, the pager's labels, the quiz from its title to its score,
+  the reading-time line, the page's drawer and its screen-reader names. Those follow the page's language.
+  The bar, footer, catalog, progress page, search, breadcrumb and language menu are the site's, and every
+  module and level name is a proper noun that the catalog prints too: they stay English, so the pager and
+  the prerequisite list translate their label words and keep the titles they link to.
+- **One typed table, no library**: `PAGE_COPY` in `src/lib/content/page-copy.ts`, `Record<ReadingLang,
+  PageCopy>`, so a missing key fails `tsc`. Counts and dates are functions. Turkish groups thousands with
+  `.`, Persian keeps ASCII digits (the corpus rule); the register's bans are held in all three languages.
+- **Dates from a month table.** `Intl.DateTimeFormat('fa')` answers in Persian digits and the Jalali
+  calendar, which the ASCII-digit rule rules out, and a table gives one answer wherever it runs.
+- **Persian is laid out right to left as blocks**, with the pager's and the quiz's arrows turned, because
+  a Persian sentence in a left-to-right box with its checkbox on the wrong side reads as unfinished.
+- **Rejected:** (a) translating the module and level names: the catalog and the pager would name one
+  module two ways, and the titles are what a reader searches for; (b) translating the whole chrome, which
+  is what D113 declined and the author's *"menus remain english"* keeps declined; (c) a message-catalog
+  library (`next-intl` and its kind): about thirty strings in three languages, read at build time, no
+  runtime switching; (d) translating the words the build writes into the prose (`Copy`, `Expand
+  diagram`, `Link to "…"`): they are in the markup the content bundle carries too, so changing them is a
+  v1 change to a published contract (ARCHITECTURE §13) and they are not on the author's list; (e) the
+  `Contents` drawer left English: translated, because it is a control of this page, while the curriculum
+  it also holds stays English as a menu.
+
+---
+
+### D134 · The footer has no readout row · 2026-11-11
+status: active
+
+The author, looking at the footer: the first row, `HOME` on the left and `Completed 00/44 · Reading
+time 0 m` on the right, is useless. It was three cells: a sheet label (`HOME`, `LEVEL 02`,
+`MODULE 13 OF 44`), on a module page `Rev <hash> · <date>`, and a compact reading record. It said the
+same thing on every page for a new reader (`00/44`, `0 m`), and the page already names itself in the
+trail and the title.
+
+- **The whole row goes, all three cells.** Removed end to end (D88), with the code that only fed it.
+- **Where the reading record lives**: `/profile/`, which shows each track's completed count per level. The
+  record itself is unchanged.
+- **The revision is still recorded** (`signedRevision`, from the sheet's revision) and is in the bundle
+  index for the mobile reader; it is no longer printed on the page.
+- **A test signal moved**: with the readout gone nothing marked "the store has answered", so the store
+  stamps `<html data-hl-read="true">` (ARCHITECTURE, channel B).
+- **Rejected:** keeping only the revision hash (a hash nobody reads, on the module pages only, and a
+  footer that differs by page); keeping only the sheet label (the trail says it); hiding the row with CSS
+  (the island would still run and the record fields stay unread in the page); keeping the reading time
+  as a profile figure (the profile never showed it, and it was the module's declared minutes, not the
+  reader's, so it claimed more than it measured).
 
 ---
 

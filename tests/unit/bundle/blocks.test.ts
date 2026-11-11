@@ -213,12 +213,35 @@ describe('toBlocks', () => {
       type: 'list',
       ordered: false,
       items: [
-        { task: { checked: false }, blocks: [{ type: 'paragraph', inlines: [text('open')] }] },
-        { task: { checked: true }, blocks: [{ type: 'paragraph', inlines: [text('done')] }] },
+        { task: { checked: false, index: 0 }, blocks: [{ type: 'paragraph', inlines: [text('open')] }] },
+        { task: { checked: true, index: 1 }, blocks: [{ type: 'paragraph', inlines: [text('done')] }] },
       ],
     }
     expect(await only('- [ ] open\n- [x] done')).toEqual(expected)
     expect(await only('- [ ] open\n\n- [x] done')).toEqual(expected)
+  })
+
+  it('numbers task items straight through the sheet, across lists, as the page keys a tick (D129)', async () => {
+    const blocks = await blocksOf('- [ ] one\n- [ ] two\n\nBetween.\n\n- [ ] three\n  - [ ] nested')
+    const indexes: number[] = []
+    const walk = (list: Block[]) => {
+      for (const block of list) {
+        if (block.type !== 'list') continue
+        for (const item of block.items) {
+          if (item.task) indexes.push(item.task.index)
+          walk(item.blocks)
+        }
+      }
+    }
+    walk(blocks)
+    expect(indexes).toEqual([0, 1, 2, 3])
+  })
+
+  it('fails on a task item the page did not number, rather than inventing a key', async () => {
+    const root = await tree('- [ ] open')
+    const item = firstElement(root, (node) => node.tagName === 'li')
+    delete item.properties['data-hl-check']
+    expect(() => toBlocks(root, context())).toThrow(/checklist index/)
   })
 
   it('converts a labelled quote and a plain one', async () => {

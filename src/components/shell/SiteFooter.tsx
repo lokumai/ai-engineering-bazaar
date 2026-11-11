@@ -1,6 +1,5 @@
 import Link from 'next/link'
 import { Fragment } from 'react'
-import { categoryLabels } from '@/lib/content/chrome'
 import { ABOUT_ROUTE } from '@/lib/route-labels'
 import {
   AFFILIATION,
@@ -11,88 +10,32 @@ import {
   REPO_URL,
   SITE_OWNER,
 } from '@/lib/site'
-import { SheetLabel } from './SheetLabel'
-
-/** The file's last-touching commit — never repo HEAD (spec §5.2, §11.26). */
-export interface Revision {
-  hash: string
-  date: string
-}
-
-export interface SiteFooterProps {
-  /** Overrides the route-derived sheet label, e.g. `SHEET 13 OF 32`. */
-  sheet?: string | null
-  revision?: Revision | null
-  /**
-   * §5.2, §7.1 — the compact readout, rendered by whoever measured the corpus.
-   *
-   * It is a node rather than a list of label/value pairs, and that is §12.2's
-   * doing: the values are reader state, so they arrive on channel B and the
-   * element that prints them has to be a client island holding
-   * `useSyncExternalStore`. A server-rendered array of strings could only ever
-   * carry the build-time reading, which is to say a lie with a number in it.
-   */
-  readout?: React.ReactNode
-}
 
 /**
- * Site footer (spec §5.2). Two rows, 72px total, one hairline top rule; and since M94 a third,
+ * Site footer (spec §5.2). A provenance row of 32px under one hairline top rule, and since M94
  * the site owner's row, which is as tall as its text needs.
  *
- * Costume budget (§4.3): the sheet / revision / readout line and nothing else.
- * No stamps, no registration marks, no gauges.
- *
- * Every cell is omitted when its value is unknown. A revision hash is a fact
- * about a file, and a page with no revision to print prints none of it rather
- * than a placeholder (§1, §11.25). The readout is the one cell that stays: its
- * denominators are build-time facts and its numerators dash to `--` until the
- * record has been read, which is a reading rather than an absence (§12.2).
+ * M111, D134 — there was a first row above these, 40px: the page's sheet label (`HOME`, `MODULE 13
+ * OF 33`), the file's revision, and a compact readout of the reader's record (`Completed 07/33 ·
+ * Reading time 3 h 10 m`). The author called it useless and it was removed end to end, not hidden.
+ * The footer therefore takes no props and holds no reader state: it is the same server-rendered
+ * markup on every route. The reading record lives on `/profile/`.
  */
-export function SiteFooter({ sheet, revision, readout }: SiteFooterProps) {
+export function SiteFooter() {
   return (
     <footer role="contentinfo" className="border-t border-line-strong bg-surface" lang="en">
       <div className="w-full px-[22px]">
-        {/* §5.2 row 1 — the three-part flex, which is what puts the sheet
-            label left, the revision centre and the readout right. On a page
-            with no revision the two survivors take the two ends, which is the
-            same flex doing the same thing.
-
-            §5.2 gives the row 40px and §4.7 gives the page one absolute rule:
-            the body never scrolls horizontally at any width. Three cells whose
-            own values must not wrap (§3.4) do not fit across 342px, so the ROW
-            wraps instead — `min-h-10` holds it at exactly 40px wherever the
-            three fit on one line, and below that the readout takes a second
-            line rather than pushing the document sideways. `gap-x-4` and not
-            `gap-4`, so a wrapped line costs its own height and nothing more. */}
-        <div className="flex min-h-10 flex-wrap items-center justify-between gap-x-4">
-          <SheetLabel sheet={sheet} categories={categoryLabels()} />
-
-          {/* §3.4 — a machine-derived value never wraps. At 390px the row is
-              342px wide and `MODULE 13 OF 32` broken after the number reads as
-              two facts instead of one. */}
-          {revision && (
-            <span className="text-mark whitespace-nowrap text-on-surface-muted">
-              Rev <span className="normal-case">{revision.hash}</span>
-              <span aria-hidden="true"> · </span>
-              {revision.date}
-            </span>
-          )}
-
-          {readout}
-        </div>
-
-        {/* §5.2 row 2 — provenance. The repository, the licence, the hand that
+        {/* Row 1 — provenance. The repository, the licence, the hand that
             drew it, and the organisations behind it: six cells that are all the
             same KIND of fact, which is why they share one rule rather than
             earning a third row.
 
-            `min-h-8` and `flex-wrap`, where row 2 used to be a fixed `h-8`.
+            `min-h-8` and `flex-wrap`, where the row used to be a fixed `h-8`.
             Six cells do not fit across 342px, and §4.7 allows exactly one
             answer to that: the row takes a second line. A fixed height would
             have clipped the wrapped line instead, and a `nowrap` row would have
             pushed the document sideways — the one thing no page may do. On any
-            width where the six fit, `min-h-8` is 32px and §5.2's 72px total is
-            unchanged. */}
+            width where the six fit, `min-h-8` is 32px. */}
         <div className="flex min-h-8 flex-wrap items-center gap-x-3 text-meta text-on-surface-muted">
           {/* M90, D115 — why the Bazaar exists. In the footer and not the bar: the phone bar is full
               (`MainNav.tsx`, `data-bar-edge`), and a page about the project is the footer's kind of

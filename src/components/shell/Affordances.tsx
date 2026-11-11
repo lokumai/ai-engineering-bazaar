@@ -117,12 +117,35 @@ export function Affordances() {
       }
     })
 
-    for (const box of scrollers) {
+    const watched = new WeakSet<HTMLElement>()
+    const watch = (box: HTMLElement) => {
+      if (watched.has(box)) return
+      watched.add(box)
       mark(box)
       box.addEventListener('scroll', () => mark(box), { passive: true })
       observer.observe(box)
       grew.observe(box, { childList: true, subtree: true })
     }
+    for (const box of scrollers) watch(box)
+
+    /*
+      A THIRD OBSERVER, for scrollers that arrive after this effect ran. This island lives in the root
+      layout and mounts once, so the list above is the first page's: a code block on the next module,
+      reached by a client-side link, was never measured and never faded. And on a slow machine a scroller
+      can land after the first measurement (CI's 390px run of `responsive.spec.ts` failed on an unmarked
+      `bz-slab-code`, on main as well as on M110's branch). So the document is watched for added nodes,
+      and any scroller among them is measured and observed like the first page's.
+    */
+    const arrived = new MutationObserver((records) => {
+      for (const record of records) {
+        for (const node of Array.from(record.addedNodes)) {
+          if (!(node instanceof HTMLElement)) continue
+          if (node.matches(SCROLLERS)) watch(node)
+          for (const box of Array.from(node.querySelectorAll<HTMLElement>(SCROLLERS))) watch(box)
+        }
+      }
+    })
+    arrived.observe(document.body, { childList: true, subtree: true })
 
     document.addEventListener('click', onClick)
 
@@ -130,6 +153,7 @@ export function Affordances() {
       instances -= 1
       observer.disconnect()
       grew.disconnect()
+      arrived.disconnect()
       document.removeEventListener('click', onClick)
     }
   }, [])

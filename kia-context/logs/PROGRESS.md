@@ -2113,6 +2113,7 @@ of 5`, `5 questions on the main points of this module` and `30 min · 2,931 word
 language, *"this way the menus remain english, but the content page becomes fully translated"*, and the
 module and level names stay as they are.
 
+- [x] **A scroller that arrives late is faded too** (found by this branch's CI): `Affordances` lives in the root layout and mounts once, so it measured only the first page's scrollers; a code block on the next module reached by a client-side link, or one laid out late on a slow machine, kept no right-edge fade (`responsive.spec.ts` failed on an unmarked `bz-slab-code` at 390, on main once in six runs as well). A third observer watches the document for added scrollers. New test: a scroller added after load is marked; mutation: with the old `Affordances.tsx` it failed at both widths, restored from a copy it passed.
 - [x] **Wording read as a native reader would see it** (the author's rule for every translation, restated 2026-11-11: the conventional wording, never literal): Turkish offers a test to solve (`Kısa bir test çözmek ister misin?`, `… ana konularına dair 5 soru`); Persian writes the ezafe as `ـه‌ی` as the course does, never the bookish `ـهٔ`, and the completed state is `تکمیل شد`, the routine UI word.
 - [x] **One table**: `src/lib/content/page-copy.ts`, `PAGE_COPY: Record<ReadingLang, PageCopy>`, so a key
       missing from `tr` or `fa` fails `tsc`. Counts are functions (`progress`, `sub`, `readingTime`,

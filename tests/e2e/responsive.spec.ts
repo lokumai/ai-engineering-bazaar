@@ -280,6 +280,26 @@ for (const [name, path] of [['manifest', INDEX_SHEET], ['longest module', LONGES
  * one collapsed, an empty page cannot be dragged either and this would pass
  * while proving nothing.
  */
+/**
+ * A scroller that arrives after the page has loaded is measured too. The affordance island lives in the
+ * root layout and mounts once, so a scroller added later (the next module's code, reached by a
+ * client-side link, or one a slow machine lays out late) used to keep no fade (M110). The box is made
+ * here, so the rule holds for any content.
+ */
+test('a scroller added after the page loads is marked when it continues', async ({ page }) => {
+  await page.goto(LONGEST.path)
+  await page.waitForLoadState('networkidle')
+  await page.evaluate(() => {
+    const box = document.createElement('div')
+    box.setAttribute('data-hl-scroller', '')
+    box.id = 'late-scroller'
+    box.style.cssText = 'overflow-x:auto;width:120px'
+    box.innerHTML = '<div style="width:600px;height:10px"></div>'
+    document.querySelector('main')!.append(box)
+  })
+  await expect(page.locator('#late-scroller')).toHaveAttribute('data-hl-overflow', 'right')
+})
+
 test('the home screen cannot be nudged sideways at any width', async ({ page }) => {
   await page.goto('/')
   await page.waitForLoadState('networkidle')

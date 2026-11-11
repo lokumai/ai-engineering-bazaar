@@ -1,4 +1,5 @@
 import { type ReadingLang, dirOf } from '@/lib/content/languages'
+import { PAGE_COPY, wordsAttrs } from '@/lib/content/page-copy'
 
 /**
  * §6.3 — what the reader will be able to do, as the mockup's `leaf` card.
@@ -29,6 +30,7 @@ import { type ReadingLang, dirOf } from '@/lib/content/languages'
 export function Objectives({
   items,
   lang,
+  pageLang = 'en',
 }: {
   items: readonly string[]
   /**
@@ -43,13 +45,19 @@ export function Objectives({
    * same rule as the prose (M28).
    */
   lang?: ReadingLang
+  /**
+   * D133 — the language the PAGE is read in, which the heading follows whatever the list
+   * is in: a translated page that falls back to the English list still says its heading in
+   * its own language, because the heading is the page's word and the list is the author's.
+   */
+  pageLang?: ReadingLang
 }) {
   if (items.length === 0) return null
 
   return (
     <section className="bz-card" aria-labelledby="objectives" lang={lang}>
-      <b id="objectives" className="bz-card-title" lang={lang === undefined || lang === 'en' ? undefined : 'en'}>
-        What you will be able to do
+      <b id="objectives" className="bz-card-title" {...(pageLang === 'en' ? (lang === undefined || lang === 'en' ? {} : { lang: 'en' as const }) : wordsAttrs(pageLang))}>
+        {PAGE_COPY[pageLang].objectives}
       </b>
       <ul className="bz-card-list" dir={dirOf(lang)}>
         {items.map((item) => (

@@ -1,4 +1,6 @@
 import Link from 'next/link'
+import { PAGE_COPY, type PageCopy, wordsAttrs } from '@/lib/content/page-copy'
+import type { ReadingLang } from '@/lib/content/languages'
 
 /**
  * §5.7 — the module either side of this one, kept as M11 found it and in the
@@ -83,11 +85,11 @@ function Chevron({ back = false }: { back?: boolean }) {
 
 function Cell({
   target,
-  label,
+  copy,
   rel,
 }: {
   target: PrevNextTarget | null
-  label: string
+  copy: PageCopy['pager']
   rel: 'prev' | 'next'
 }) {
   if (target === null) {
@@ -99,7 +101,7 @@ function Cell({
             title beside it says where you are going. Here there is no title:
             this sentence is the whole tile, and MEASURED at 3.30:1 in the
             faint ink it did not clear the floor a sentence takes. */}
-        <b>{rel === 'prev' ? 'Start of the course' : 'End of the course'}</b>
+        <b>{rel === 'prev' ? copy.start : copy.end}</b>
       </div>
     )
   }
@@ -124,10 +126,11 @@ function Cell({
           stays out: it is in the trail, the footer and the rail. */}
       <span className="bz-pager-text">
         <small>
-          {label}
-          {target.draft && ' · Planned'}
+          {rel === 'prev' ? copy.previous : copy.next}
+          {target.draft && ` · ${copy.planned}`}
         </small>
-        <b>{target.title}</b>
+        {/* D133 — a module's name is the name the catalog prints, so it stays English. */}
+        <b lang="en" dir="ltr">{target.title}</b>
       </span>
       {!back && <Chevron />}
     </Link>
@@ -137,22 +140,18 @@ function Cell({
 export function PrevNext({
   previous,
   next,
+  lang = 'en',
 }: {
   previous: PrevNextTarget | null
   next: PrevNextTarget | null
+  /** D133 — the labels follow the page's language; the titles never do. */
+  lang?: ReadingLang
 }) {
+  const copy = PAGE_COPY[lang].pager
   return (
-    <div className="bz-pager">
-      <Cell
-        target={previous}
-        rel="prev"
-        label="Previous"
-      />
-      <Cell
-        target={next}
-        rel="next"
-        label="Next"
-      />
+    <div className="bz-pager" {...(lang === 'en' ? {} : wordsAttrs(lang))}>
+      <Cell target={previous} rel="prev" copy={copy} />
+      <Cell target={next} rel="next" copy={copy} />
     </div>
   )
 }

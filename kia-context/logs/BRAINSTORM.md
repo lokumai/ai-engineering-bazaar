@@ -9,7 +9,7 @@ description: >
 authority: reasoning
 writes: agent, when a decision is taken
 status: active
-covers: "D97 to D131 and D134 so far, and D89, which part 2 held for PR #57 — 2026-11-06 onward"
+covers: "D97 to D131, D133 and D134 so far, and D89, which part 2 held for PR #57 — 2026-11-06 onward"
 last_updated: 2026-11-11
 ---
 
@@ -1116,6 +1116,43 @@ nothing on the site may change.
   `llamaindex.svg` carry a `style=`, and `bolt-mono.svg` a filter.
 - **Rejected:** a raster fallback for the two (a second file to keep in step with the first); editing the
   two anyway with the small difference (the owner's condition is zero).
+
+---
+
+### D133 · A module page's own words translate; the menus and the names do not · 2026-11-11
+status: active
+
+The author: *"in content page, also convert "Before you start" … "Mark this module as complete" …
+"Previous-Next" … "Want a quick quiz" … "Start over" … "Question 1 of 5" … "30 min · 2,931 words". meaning
+that this way the menus remain english, but the content page becomes fully translated. this way the module
+names or Level names remain the same, and the only thing that becomes multilingual is the content page that
+people read and interact with but the catalog and progress page remain english since they are menu and not
+content."* D113 had made the content multilingual and the interface not, and left these words English
+inside a Turkish or Persian page.
+
+- **The boundary is who the words belong to.** What the reading column and its own controls say is part of
+  the thing being read: the prerequisites box title, the objectives heading, `On this page`, the completion
+  control with its date and its refusal notice, the pager's labels, the quiz from its title to its score,
+  the reading-time line, the page's drawer and its screen-reader names. Those follow the page's language.
+  The bar, footer, catalog, progress page, search, breadcrumb and language menu are the site's, and every
+  module and level name is a proper noun that the catalog prints too: they stay English, so the pager and
+  the prerequisite list translate their label words and keep the titles they link to.
+- **One typed table, no library**: `PAGE_COPY` in `src/lib/content/page-copy.ts`, `Record<ReadingLang,
+  PageCopy>`, so a missing key fails `tsc`. Counts and dates are functions. Turkish groups thousands with
+  `.`, Persian keeps ASCII digits (the corpus rule); the register's bans are held in all three languages.
+- **Dates from a month table.** `Intl.DateTimeFormat('fa')` answers in Persian digits and the Jalali
+  calendar, which the ASCII-digit rule rules out, and a table gives one answer wherever it runs.
+- **Persian is laid out right to left as blocks**, with the pager's and the quiz's arrows turned, because
+  a Persian sentence in a left-to-right box with its checkbox on the wrong side reads as unfinished.
+- **Rejected:** (a) translating the module and level names: the catalog and the pager would name one
+  module two ways, and the titles are what a reader searches for; (b) translating the whole chrome, which
+  is what D113 declined and the author's *"menus remain english"* keeps declined; (c) a message-catalog
+  library (`next-intl` and its kind): about thirty strings in three languages, read at build time, no
+  runtime switching; (d) translating the words the build writes into the prose (`Copy`, `Expand
+  diagram`, `Link to "…"`): they are in the markup the content bundle carries too, so changing them is a
+  v1 change to a published contract (ARCHITECTURE §13) and they are not on the author's list; (e) the
+  `Contents` drawer left English: translated, because it is a control of this page, while the curriculum
+  it also holds stays English as a menu.
 
 ---
 

@@ -1,4 +1,6 @@
-import { printedWords, thousands, type SheetFacts } from '@/lib/content/title-block'
+import { printedWords, type SheetFacts } from '@/lib/content/title-block'
+import { PAGE_COPY, translatedAttrs } from '@/lib/content/page-copy'
+import type { ReadingLang } from '@/lib/content/languages'
 
 /**
  * The module's own facts, under its title — M16 stage 5, cut back by M21.
@@ -45,13 +47,13 @@ import { printedWords, thousands, type SheetFacts } from '@/lib/content/title-bl
  * fidelity role moves to `DELIBERATELY_ABSENT` with this reason, which is the
  * bargain `node` already makes there.
  */
-export function FactsStrip({ facts }: { facts: SheetFacts }) {
+export function FactsStrip({ facts, lang = 'en' }: { facts: SheetFacts; lang?: ReadingLang }) {
   const words = printedWords(facts)
   if (words === null) return null
 
   return (
-    <p className="bz-facts">
-      {facts.duration} min · {thousands(words)} words
+    <p className="bz-facts" {...translatedAttrs(lang)}>
+      {PAGE_COPY[lang].readingTime(facts.duration, words)}
     </p>
   )
 }

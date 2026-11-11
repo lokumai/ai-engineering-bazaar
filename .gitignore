@@ -47,3 +47,16 @@ supabase-access-tokens
 # it is the whole of §14.2 and §14.4 and nothing else describes them.
 supabase/.temp/
 supabase/.branches/
+
+# Intellica's program documents: the plan, the kick-off email, the guide and its PDFs, screenshots and the
+# guide video. They stay local because this repository is public. Listed one by one, not docs/ as a whole,
+# so a human-facing document added later is not ignored by accident.
+/docs/PROGRAM.md
+/docs/OVERVIEW.md
+/docs/EMAIL-1.md
+/docs/EMAIL-1.pdf
+/docs/GUIDE.md
+/docs/GUIDE-EN.pdf
+/docs/REHBER-TR.pdf
+/docs/images/
+/docs/video/

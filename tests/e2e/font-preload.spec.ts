@@ -20,8 +20,15 @@ const PAGES = ['/', '/tr/', '/fa/', '/about/', '/tr/about/', '/fa/about/']
 
 for (const route of PAGES) {
   test(`${route} preloads only the faces it draws`, async ({ page }) => {
+    // The preloads are read from the document the server sent, not from the live DOM: once loaded, Next
+    // prefetches the pages this one links to and adds THEIR font preloads, which are not this page's.
+    const html = await (await page.request.get(route)).text()
+    const sent = [...html.matchAll(/<link rel="preload" href="([^"]+)" as="font"/g)].map((m) => m[1])
     await page.goto(route)
-    const { preloaded, unused } = await page.evaluate(async () => {
+    // A subset file loads only once a glyph in its range is laid out, which can be after `fonts.ready` first
+    // settles: wait for the page's requests to finish before reading which faces loaded (flaked on `/tr/`).
+    await page.waitForLoadState('networkidle')
+    const { preloaded, unused } = await page.evaluate(async (sent) => {
       await document.fonts.ready
       const norm = (value: string) => value.replace(/["'\s]/g, '').toLowerCase()
       // A file is named by its content hash; the preload and the @font-face rule may spell the rest of
@@ -46,12 +53,12 @@ for (const route of PAGES) {
           .filter((font) => font.status === 'loaded')
           .map((font) => `${norm(font.family)}|${norm(font.unicodeRange)}`),
       )
-      const hrefs = Array.from(document.querySelectorAll<HTMLLinkElement>('link[rel="preload"][as="font"]')).map((link) => link.href)
+      const hrefs = sent.map((href) => new URL(href, location.href).href)
       return {
         preloaded: hrefs.length,
         unused: hrefs.filter((href) => !drawn.has(faces.get(key(href)) ?? '')).map((href) => `${faces.get(key(href)) ?? '?'} ${href}`),
       }
-    })
+    }, sent)
     expect(preloaded, 'every page listed here draws a downloaded face, so it preloads one').toBeGreaterThan(0)
     expect(unused, 'a preloaded font file the page never drew with').toEqual([])
   })

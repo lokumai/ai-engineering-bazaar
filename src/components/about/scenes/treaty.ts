@@ -20,11 +20,12 @@ import { STALL_GROUNDS } from '../palette'
 export const STALL1 = {
   QUESTION: 'Is the coffee ready?',
   ANSWER: 'yes',
-  REVEAL: 'Page 412: in short, {answer}.',
+  /** The treaty's name, over its page tally, so the joke names the document it is made of. */
+  TITLE: 'Treaty of Versailles',
   ARTICLES: ['On the Nature of Coffee', 'On Beans, Considered Holistically', 'On the Temperature of Water', 'On Personal Preference', 'On What Was Not Asked'],
 } as const
 
-/** The treaty's length, which the tally counts to and the reveal names. */
+/** The treaty's length, which the tally counts to. */
 export const PAGES = 412
 
 /** The art's colours, from the playground's tokens; the fades at the top and bottom meet stall 1's own ground. */
@@ -93,7 +94,7 @@ export interface Frame {
   tally: { page: number; on: boolean }
   /** The bubbles, placed in percent of the stage. */
   ask: { left: number; top: number; on: boolean }
-  reply: { left: number; top: number; on: boolean; text: string; reveal: boolean }
+  reply: { left: number; top: number; on: boolean; text: string }
 }
 
 function lead(t: number): { j: number; x: number; f?: number } {
@@ -135,11 +136,9 @@ export function frame(t: number): Frame {
   const pages = t < T0 ? 1 : Math.min(PAGES, Math.round(1 + (PAGES - 1) * Math.pow(clamp((t - T0) / (END - T0), 0, 1), 1.3)))
   const place = (wx: number, wy: number) => ({ left: clamp(((wx - CAM) * SC) / 10, 24, 76), top: (OY + wy * SC) / 10 })
 
-  let reply: Frame['reply'] = { ...place(640, 330), on: false, text: '', reveal: false }
+  let reply: Frame['reply'] = { ...place(640, 330), on: false, text: '' }
   if (ld.j >= 0 && ld.j < N) {
-    reply = { ...place(XD(N - 1 - ld.j), 400), on: (ld.f ?? 0) < 0.72, text: `Article ${roman(Math.round(pages / 3) || 1)}. ${STALL1.ARTICLES[ld.j % STALL1.ARTICLES.length]}.`, reveal: false }
-  } else if (t > END) {
-    reply = { ...place(640, 330), on: t > END + 0.5 && t < LOOP - 0.4, text: STALL1.REVEAL, reveal: true }
+    reply = { ...place(XD(N - 1 - ld.j), 400), on: (ld.f ?? 0) < 0.72, text: `Article ${roman(Math.round(pages / 3) || 1)}. ${STALL1.ARTICLES[ld.j % STALL1.ARTICLES.length]}.` }
   }
 
   return {
@@ -369,8 +368,3 @@ export function treatyMarkup(f: Frame, display: string): string {
 
 /** The tally's words, around the page it has reached. */
 export const tallyWords = (page: number) => ({ before: 'PAGE ', page: String(page), after: ` OF ${PAGES}` })
-/** The reveal split round its answer. */
-export function revealParts(): [string, string] {
-  const [a, b] = STALL1.REVEAL.split('{answer}')
-  return [a, b ?? '']
-}

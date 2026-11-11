@@ -1138,6 +1138,9 @@ The author asked for `/tr/about/` and `/fa/about/`, as the home page has `/tr/` 
   (`src/lib/about-copy.ts`), because on a translated page it is content, and the crumb, which is
   chrome, stays `About the Bazaar`. The STORY file's `#` title ("Our Story") is a different thing from
   the page's name and is not used for it.
+  **Changed the same day (M114):** the names were first `Hakkımızda` and `درباره‌ی ما`, the routine "about
+  us" of each language's sites; the author rejected them, because the English page is about the Bazaar, not
+  about us. They are `Pazar Hakkında` and `درباره‌ی بازار`.
 - **Language and direction on the words only (D80)**: the layout and the scenes are drawn the same in all
   three, so a Persian reader gets the English page's composition with right-to-left text in it.
 - **Only languages whose file exists are offered**: `storyLanguages()` feeds the language menu, the SEO

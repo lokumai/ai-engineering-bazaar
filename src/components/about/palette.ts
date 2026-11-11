@@ -49,12 +49,10 @@ const PROPERTIES: Readonly<Record<string, string>> = {
   vignette: 'rgba(4, 4, 12, 0.55)',
   shade: 'rgba(0, 0, 0, 0.55)',
 
-  /* 1B6, the treaty: the speech bubbles, the highlighted answer and the page tally */
+  /* 1B6, the treaty: the speech bubbles and the page tally */
   bubble: '#f6eedf',
   'bubble-ink': '#1b1b47',
   'bubble-edge': 'rgba(27, 27, 71, 0.18)',
-  yes: '#ddb46a',
-  'yes-ink': '#241a0e',
   tally: '#ddb46a',
   'tally-shade': 'rgba(0, 0, 0, 0.8)',
 

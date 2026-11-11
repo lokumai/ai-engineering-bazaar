@@ -314,6 +314,19 @@
                     },
                     "description": "Language id to its module document; empty where the module is not written in this track."
                   },
+                  "words": {
+                    "type": "object",
+                    "propertyNames": {
+                      "type": "string",
+                      "description": "A language id: en, or one of the translations the index lists."
+                    },
+                    "additionalProperties": {
+                      "type": "integer",
+                      "exclusiveMinimum": 0,
+                      "maximum": 9007199254740991
+                    },
+                    "description": "Language id to the word count its web page prints under the title; empty where the module is not written in this track (D128)."
+                  },
                   "webPath": {
                     "type": "string",
                     "pattern": "^[^/\\s][^\\s]*$",
@@ -327,6 +340,7 @@
                   "hasQuiz",
                   "revision",
                   "docs",
+                  "words",
                   "webPath"
                 ],
                 "additionalProperties": false
@@ -732,6 +746,19 @@
                     },
                     "description": "Language id to its module document; empty where the module is not written in this track."
                   },
+                  "words": {
+                    "type": "object",
+                    "propertyNames": {
+                      "type": "string",
+                      "description": "A language id: en, or one of the translations the index lists."
+                    },
+                    "additionalProperties": {
+                      "type": "integer",
+                      "exclusiveMinimum": 0,
+                      "maximum": 9007199254740991
+                    },
+                    "description": "Language id to the word count its web page prints under the title; empty where the module is not written in this track (D128)."
+                  },
                   "webPath": {
                     "type": "string",
                     "pattern": "^[^/\\s][^\\s]*$",
@@ -745,6 +772,7 @@
                   "hasQuiz",
                   "revision",
                   "docs",
+                  "words",
                   "webPath"
                 ],
                 "additionalProperties": false
@@ -1889,6 +1917,19 @@
         "minLength": 1,
         "description": "The title in this document's track and language."
       },
+      "words": {
+        "anyOf": [
+          {
+            "type": "integer",
+            "exclusiveMinimum": 0,
+            "maximum": 9007199254740991
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "description": "The word count the web page prints under the title; null for a draft, whose page prints none (D128)."
+      },
       "objectives": {
         "type": "object",
         "properties": {
@@ -2222,6 +2263,7 @@
       "lang",
       "dir",
       "title",
+      "words",
       "objectives",
       "translatedObjectives",
       "prerequisites",

@@ -7,6 +7,7 @@ import { type RenderRef, levelRenderInput, moduleRenderInput } from '@/lib/conte
 import { MOVED_LEVELS, MOVED_MODULES } from '@/lib/content/moved'
 import { loadStory } from '@/lib/content/story'
 import { quizFor } from '@/lib/content/quiz'
+import { printedWords } from '@/lib/content/title-block'
 import { TRACKS, type Track, moduleRoute } from '@/lib/tracks'
 import { addressOf } from './address'
 import { type BlockContext, toBlocks } from './blocks'
@@ -100,6 +101,11 @@ function dirOf(lang: ReadingLang): 'ltr' | 'rtl' {
   return translation.dir
 }
 
+/** The word count the module page prints under its title, from the sheet it renders (D128). */
+function wordsOf(sheet: CourseModule): number | null {
+  return printedWords({ status: sheet.frontmatter.status, extent: sheet.extent })
+}
+
 /** The English objectives of a module, which v1 documents carry in every language. */
 function englishObjectives(slug: string, track: Track, own: readonly string[], lang: ReadingLang): readonly string[] {
   if (lang === 'en') return own
@@ -128,6 +134,8 @@ export async function buildModuleDoc(
     dir: dirOf(lang),
     // The translated heading (`loadModuleIn`); `ModuleRenderInput` carries no title.
     title: sheet.frontmatter.title,
+    // The `loadModuleIn` sheet the page's `FactsStrip` prints from, so the two numbers are one (D128).
+    words: wordsOf(sheet),
     // v1 carries the English objectives in every document (`lang: 'en'`, ARCHITECTURE §13), and the
     // document's own list beside them as the additive field the mobile reader agreed (D123, D124).
     objectives: { lang: 'en', items: [...englishObjectives(slug, track, input.objectives, lang)] },
@@ -204,7 +212,13 @@ async function trackEntry(
   diagrams: DiagramSource[][],
 ): Promise<IndexDraft['modules'][number]['tracks'][Track]> {
   const languages = docLanguages(module, track)
-  for (const lang of languages) diagrams.push((await buildModuleDoc(module.slug, lang, courseImageSize, track)).diagrams)
+  // Each language's count is read off the document just built, so the index and the document agree.
+  const words: Record<string, number> = {}
+  for (const lang of languages) {
+    const built = await buildModuleDoc(module.slug, lang, courseImageSize, track)
+    diagrams.push(built.diagrams)
+    if (built.doc.words !== null) words[lang] = built.doc.words
+  }
 
   if (track === 'everyone') {
     const english = loadModuleIn(module.slug, 'en', 'everyone')
@@ -216,6 +230,7 @@ async function trackEntry(
       hasQuiz: false,
       revision: module.everyone?.revision ?? null,
       docs: Object.fromEntries(languages.map((lang) => [lang, moduleDocPath(module.slug, lang, track)])),
+      words,
       webPath: webPathOf(module.slug, track),
     }
   }
@@ -227,6 +242,7 @@ async function trackEntry(
     hasQuiz: drawn && quizFor(module.category.dir, module.name, 'en') !== null,
     revision: module.revision,
     docs: Object.fromEntries(languages.map((lang) => [lang, moduleDocPath(module.slug, lang, track)])),
+    words,
     webPath: webPathOf(module.slug, track),
   }
 }

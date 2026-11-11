@@ -9,8 +9,8 @@ description: >
 authority: reasoning
 writes: agent, when a decision is taken
 status: active
-covers: "D97 to D127 so far, and D89, which part 2 held for PR #57 — 2026-11-06 onward"
-last_updated: 2026-11-10
+covers: "D97 to D128 so far, and D89, which part 2 held for PR #57 — 2026-11-06 onward"
+last_updated: 2026-11-11
 ---
 
 # 🧠 BRAINSTORM, part 3 — D97 onward
@@ -1019,6 +1019,37 @@ panel is shut, with a marker on the toggle: a second state to explain for no gai
 applying: Enter activates the focused chip, as it must for a button, so the way to apply from the
 keyboard is Tab to Apply and Enter; (e) the applied values written out on the shut toggle: they wrap on a
 phone and the panel is one press away.
+
+### D128 · The bundle carries the word count the module page prints, `words` · 2026-11-11
+status: active
+
+The mobile reader's developer asked for it, and the repository's owner asked for this pull request: the
+app's module page and catalog card print `25 min`, and the site prints `25 min · 4,812 words`. The app
+derives nothing (D111), so it cannot count the words of the blocks it is given, and a count it made
+would not match the site's anyway: the site counts the markdown after the lead-in, not the rendered text.
+
+- **One number, asked of one function.** `printedWords` in `src/lib/content/title-block.ts` is what
+  `FactsStrip` prints under the title, and what the bundle carries: the sheet's `extent` (the words of
+  the body after the frontmatter and the lead-in, `extent(stripLeadIn(body))`), or `null` for a planned
+  module, whose page prints no line. The bundle reads it off the same `loadModuleIn(slug, lang, track)`
+  sheet the module page renders, so each track (D91) and each language (M19, M28) gets its own page's
+  count. **MEASURED** on the built bundle: all 126 documents that print a line carry the number their
+  page prints in `out/`, and the 23 that print none carry `null`.
+- **In two places, both additive.** Every module document gains `words`, a positive whole number or
+  `null`. Every track entry of the index gains `words`, a map from a language to its document's count,
+  holding only the languages whose page prints one, so it is empty for a planned module, as `docs` is
+  keyed by language. The catalog card can print the length without opening a document; a reader with a
+  document open has it there too. Both are read from the document just built, so they cannot disagree.
+- **Always present**: `null` in a document and an empty map in the index, never absent, as D124 holds for
+  `translatedObjectives`, so the strict schema refuses a builder that forgot it.
+- **The schema holds the gate**: a document's `words` is `null` exactly when its `draft` is not, and an
+  index entry's `words` names only languages its `docs` names.
+- **Additive, so v1** (ARCHITECTURE §13). The released app ignores keys it does not know.
+- **Rejected:** a count of the bundle's own blocks (a second rule that would disagree with the site by
+  the words of every code block and table cell the two count differently); `words` in the index only
+  (a reader that opened a document from a link would need the index to print its line); a `words` map
+  per module beside `minutes` rather than per track (the two tracks are different files of different
+  lengths); `0` for a planned module (a page that prints nothing is not a page of no words).
 
 ---
 

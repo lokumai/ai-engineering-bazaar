@@ -53,6 +53,22 @@ describe('moduleRenderInput', () => {
     expect(input.objectives).toEqual(sheet.frontmatter.objectives)
   })
 
+  it('a module has one quiz, whatever the track and the language it is read in (D137)', async () => {
+    let everyone = 0
+    for (const module of all) {
+      for (const track of ['engineers', 'everyone'] as const) {
+        for (const lang of ['en', 'tr', 'fa'] as const) {
+          const sheet = loadModuleIn(module.slug, lang, track)
+          if (!sheet || sheet.sheetFormat === 'A4') continue
+          const input = await moduleRenderInput(sheet, lang, track)
+          expect(input.quiz, `${module.slug} ${track} ${lang}`).toEqual(quizFor(module.category.dir, module.name, lang))
+          if (track === 'everyone' && input.quiz !== null) everyone += 1
+        }
+      }
+    }
+    if (everyone === 0) throw new Error('precondition: no For Everyone page has a quiz to compare')
+  })
+
   it('a draft gets no body, no quiz, its summary and its parts', async () => {
     const draft = all.find((m) => m.sheetFormat === 'A4')
     if (!draft) throw new Error('precondition: the loader yields no draft module')

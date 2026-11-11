@@ -231,8 +231,7 @@ async function trackEntry(
       title: english?.frontmatter.title ?? module.frontmatter.title,
       drawn: module.everyone !== null,
       summary: module.everyone?.summary ?? null,
-      // The quiz file asks about the For Engineers text (`moduleRenderInput`).
-      hasQuiz: false,
+      hasQuiz: module.everyone !== null && quizFor(module.category.dir, module.name, 'en') !== null,
       revision: module.everyone?.revision ?? null,
       docs: Object.fromEntries(languages.map((lang) => [lang, moduleDocPath(module.slug, lang, track)])),
       words,

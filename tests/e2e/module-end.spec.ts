@@ -116,6 +116,21 @@ test('a Turkish page asks in Turkish, and says it does', async ({ page }) => {
   await expect(question).toHaveAttribute('lang', 'tr')
 })
 
+test('a For Everyone page shows the same quiz as its For Engineers page, in each language', async ({ page }) => {
+  const module = loadModule(slugOfPath(SHORT.path))!
+  if (module.everyone === null) throw new Error('precondition: SHORT has no For Everyone version')
+  for (const [prefix, lang] of [['', 'en'], ['/tr', 'tr']] as const) {
+    const items = quizFor(module.category.dir, module.name, lang)!
+    await page.goto(`${prefix}/everyone${SHORT.path}`)
+    const quiz = page.locator('.bz-quiz')
+    await expect(quiz).toHaveCount(1)
+    await expect(quiz.locator('summary')).toContainText(String(items.length))
+    await openQuiz(page)
+    await expect(quiz.locator('.bz-quiz-question')).toHaveText(items[0].question)
+    await expect(quiz.locator('.bz-quiz-option')).toHaveCount(items[0].options.length)
+  }
+})
+
 test('a planned module has no quiz and no completion', async ({ page }) => {
   await page.goto(A4.path)
   await expect(page.locator('.bz-quiz')).toHaveCount(0)

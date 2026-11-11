@@ -122,6 +122,25 @@ export const STRIPPED_ATTRIBUTES = Object.freeze({
   name: 'Mermaid\'s actor bookkeeping on a sequence diagram\'s boxes and lifelines, never paint.',
 })
 
+/**
+ * Whether a tag is a `<rect>` with no area: no `width` or no `height`, or one that is not a positive
+ * number. Mermaid writes such rects as label backgrounds it never sizes (2,758 of them across the
+ * bundle when measured). A browser draws nothing for a rect with no area (SVG 2, `auto` is 0 for a
+ * rect), but `flutter_svg` strokes one as a 1px dot above every node label, so the finaliser removes
+ * it and the profile refuses it. Rejected: giving it a zero size, which keeps a tag that paints
+ * nothing; removing every unsized element, which would reach shapes that size by other attributes (D130).
+ *
+ * @param {{ name: string, closing: boolean, attributes: { name: string, value: string }[] }} tag
+ */
+function isSizelessRect(tag) {
+  if (tag.name !== 'rect' || tag.closing) return false
+  const size = (name) => {
+    const attribute = tag.attributes.find((one) => one.name === name)
+    return attribute === undefined ? NaN : Number.parseFloat(attribute.value)
+  }
+  return !(size('width') > 0 && size('height') > 0)
+}
+
 /** One start, end or self-closing tag, with its attributes captured whole. */
 const TAG = /<(\/?)([A-Za-z][\w:.-]*)((?:\s+[^\s=/>]+\s*=\s*(?:"[^"]*"|'[^']*'))*)\s*(\/?)>/y
 const ATTRIBUTE = /\s+([^\s=/>]+)\s*=\s*("([^"]*)"|'([^']*)')/g
@@ -216,7 +235,7 @@ export function stripNonPainting(svg) {
     out += svg.slice(at, tag.start)
     at = tag.end
 
-    if (Object.hasOwn(STRIPPED_ELEMENTS, tag.name)) {
+    if (Object.hasOwn(STRIPPED_ELEMENTS, tag.name) || isSizelessRect(tag)) {
       if (tag.closing) throw new Error(`svg-profile: </${tag.name}> closes nothing`)
       if (!tag.selfClosing) {
         skipping = tag.name
@@ -276,6 +295,7 @@ export function profileViolations(svg) {
   for (const tag of tags) {
     if (tag.closing) continue
     if (!ALLOWED_ELEMENTS.includes(tag.name)) violations.push(`element <${tag.name}> is not in the profile`)
+    if (isSizelessRect(tag)) violations.push('a <rect> with no width or height, which the reader draws as a dot')
     for (const { name, value } of tag.attributes) {
       if (!Object.hasOwn(ALLOWED_ATTRIBUTES, name)) {
         violations.push(`attribute ${name} on <${tag.name}> is not in the profile`)

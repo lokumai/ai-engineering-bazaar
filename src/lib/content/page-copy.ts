@@ -48,6 +48,8 @@ export interface PageCopy {
   /** The drawer that holds the rail below the width where it fits beside the prose. */
   contents: string
   close: string
+  /** The replay control an animated recording carries, over its top-right corner. */
+  replay: string
   completion: {
     region: string
     label: string
@@ -119,6 +121,7 @@ export const PAGE_COPY: Record<ReadingLang, PageCopy> = {
     sections: 'Sections',
     contents: 'Contents',
     close: 'Close',
+    replay: 'Replay',
     completion: {
       region: 'Module completion',
       label: 'Mark this module as complete',
@@ -166,6 +169,7 @@ export const PAGE_COPY: Record<ReadingLang, PageCopy> = {
     sections: 'Bölümler',
     contents: 'İçindekiler',
     close: 'Kapat',
+    replay: 'Baştan oynat',
     completion: {
       region: 'Modül tamamlama',
       label: 'Bu modülü tamamlandı olarak işaretle',
@@ -213,6 +217,7 @@ export const PAGE_COPY: Record<ReadingLang, PageCopy> = {
     sections: 'بخش‌ها',
     contents: 'فهرست',
     close: 'بستن',
+    replay: 'پخش دوباره',
     completion: {
       region: 'تکمیل ماژول',
       label: 'این ماژول رو تمام‌شده علامت بزن',

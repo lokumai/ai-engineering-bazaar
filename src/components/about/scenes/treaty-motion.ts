@@ -1,5 +1,5 @@
 import type { SceneHandle } from './scene'
-import { LOOP, STALL1, STILL_AT, type Frame, frame, revealParts } from './treaty'
+import { LOOP, STILL_AT, type Frame, frame } from './treaty'
 
 /**
  * Stall 1 in motion: `frame(t)` applied to the nodes the server drew, every animation frame while the
@@ -23,11 +23,17 @@ export function createTreaty(scene: HTMLElement): SceneHandle {
     arm: one('.t-arm'), steam: one('.t-steam'),
   }
   const ask = scene.querySelector<HTMLElement>('[data-t="ask"]')!
-  const reply = scene.querySelector<HTMLElement>('[data-t="reply"]')!
+  /* The reading diplomats' bubble exists only while the scene moves: the still shows the question and the
+     paper that answers it, and a bubble with nothing in it would be a hidden element in the no-script page
+     (M114). It takes the question's look, without the "earlier" size. */
+  const reply = document.createElement('div')
+  reply.className = ask.className.replace(/\bt-earlier\b/, '').trim()
+  reply.dataset.t = 'reply'
+  reply.setAttribute('aria-hidden', 'true')
+  reply.style.opacity = '0'
+  ask.after(reply)
   const tally = scene.querySelector<HTMLElement>('[data-t="tally"]')!
   const tallyPage = tally.querySelector('b')!
-  const replyNodes = [...reply.childNodes]
-  const [before, after] = revealParts()
 
   const vis = (el: Element, on: boolean) => el.setAttribute('visibility', on ? 'visible' : 'hidden')
   const fade = { ask: 0, reply: 0, tally: 0 }
@@ -77,15 +83,9 @@ export function createTreaty(scene: HTMLElement): SceneHandle {
     reply.style.top = `${f.reply.top}%`
     reply.style.opacity = fade.reply.toFixed(3)
     tally.style.opacity = fade.tally.toFixed(3)
-    const text = f.reply.reveal ? STALL1.REVEAL : f.reply.text
-    if (text !== replyText) {
-      replyText = text
-      if (f.reply.reveal) {
-        const yes = document.createElement('span')
-        yes.className = 't-yes'
-        yes.textContent = STALL1.ANSWER
-        reply.replaceChildren(before, yes, after)
-      } else reply.replaceChildren(f.reply.text)
+    if (f.reply.text !== replyText) {
+      replyText = f.reply.text
+      reply.replaceChildren(f.reply.text)
     }
   }
 
@@ -125,7 +125,7 @@ export function createTreaty(scene: HTMLElement): SceneHandle {
       fade.reply = f.reply.on ? 1 : 0
       fade.tally = f.tally.on ? 1 : 0
       apply(f, 0)
-      reply.replaceChildren(...replyNodes)
+      reply.remove()
       ask.setAttribute('class', askClass)
       if (askStyle === null) ask.removeAttribute('style')
       else ask.setAttribute('style', askStyle)

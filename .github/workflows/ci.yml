@@ -54,6 +54,11 @@ jobs:
       # The bundle's finaliser draws every diagram in the bundled Chromium, not
       # in Chrome, so the build cannot run without it: it exits 1 naming this
       # command rather than fall back to a browser whose metrics differ.
+      # 2026-11-11: the runners could not resolve security.ubuntu.com, and every `--with-deps` install
+      # failed before a test ran. The main archive the runners already use carries the same security
+      # pocket, so apt is pointed there; nothing else about the install changes.
+      - name: Fetch Ubuntu security updates from the runner's main archive
+        run: sudo sed -i 's|https\?://security.ubuntu.com|http://azure.archive.ubuntu.com|g' /etc/apt/sources.list /etc/apt/sources.list.d/*.sources 2>/dev/null || true
       - run: npx playwright install --with-deps chromium
       - run: npm run build
       - run: node scripts/check-links-out.mjs out

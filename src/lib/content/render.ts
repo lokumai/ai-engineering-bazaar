@@ -17,6 +17,7 @@ import { courseRouteFor, isCourseLink, sheetSource } from './links'
 import { isSafeHref } from './safe-href'
 import { assertNoRawHex, remapMermaidFills } from './mermaid'
 import { CODE_TOKEN_ROLES, codeThemes, readDesignToken, toHex } from './code-theme'
+import { isAnimatedCourseImage } from './animated'
 import { copyControl, diagramThemeMenu, icon, paletteMenu } from './tools'
 
 export interface TocEntry {
@@ -880,9 +881,17 @@ function rehypeFigures(options: RenderOptions) {
       if (image) {
         figures += 1
         const number = figureNumber(sheet, figures)
+        /* M115 (D136): an animated recording is marked, and `Affordances` adds the replay
+           button to a marked figure. The mark is read from the file's bytes (`animated.ts`). */
+        const imagePath = image.image.data?.imagePath
+        const animated = imagePath !== undefined && isAnimatedCourseImage(imagePath)
         parent.children[index] = element(
           'figure',
-          { className: ['bz-fig', 'bz-image'], 'data-hl-width': 'prose' },
+          {
+            className: ['bz-fig', 'bz-image'],
+            'data-hl-width': 'prose',
+            ...(animated ? { 'data-hl-animated': '' } : {}),
+          },
           [image.image, caption('FIG.', number, image.label ?? section, { note: image.note })],
         )
         return [SKIP, index + 1]

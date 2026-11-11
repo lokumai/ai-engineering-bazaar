@@ -297,6 +297,36 @@
   }
 
   /* ---------------------------------------------------------------------------
+     THE REPLAY CONTROL on an animated recording (M115, D136).
+
+     Added by `Affordances` to a figure `render.ts` marked `data-hl-animated`, in the
+     image's top-right corner. It is the same `.bz-tool` (32px, the 44px hit area
+     above), but over a PICTURE and not over a slab, so it cannot be transparent:
+     an unknown frame sits behind it. It takes the page's raised surface and hairline
+     at rest, which is how every raised thing on this ground is told apart, and the
+     page's ink; the ring is the page's own, not the slab's. The picture keeps the
+     corner it had, so nothing reflows when the button arrives.
+     --------------------------------------------------------------------------- */
+  .bz-image[data-hl-animated] { position: relative; }
+
+  .bz-replay {
+    --bz-ring: var(--color-focus);
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    z-index: 2;
+    border-color: var(--color-line);
+    background: var(--color-surface-raised);
+    color: var(--color-on-surface);
+  }
+
+  .bz-replay:hover {
+    border-color: var(--color-on-surface-muted);
+    background: var(--color-surface-raised);
+    color: var(--color-on-surface);
+  }
+
+  /* ---------------------------------------------------------------------------
      5. THE CODE SLAB'S HEAD.
 
      The language's `.bz-slab-head` puts its LAST child on the trailing edge,

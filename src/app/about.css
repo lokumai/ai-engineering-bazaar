@@ -72,8 +72,6 @@
     --about-bubble: var(--color-surface);
     --about-bubble-ink: var(--color-on-surface-title);
     --about-bubble-edge: var(--color-line);
-    --about-yes: var(--color-caution);
-    --about-yes-ink: var(--color-on-caution);
     --about-tally: var(--color-caution);
     --about-tally-shade: transparent;
     --about-desk-a: var(--color-bar);
@@ -564,13 +562,6 @@
     font-size: clamp(11px, 1vw, 14px);
   }
 
-  .bz-about .t-yes {
-    padding: 0 0.3em;
-    border-radius: var(--radius-xs);
-    background: var(--about-yes);
-    color: var(--about-yes-ink);
-    font-weight: 700;
-  }
 
   .bz-about .t-tally {
     position: absolute;
@@ -584,9 +575,20 @@
     letter-spacing: 0.14em;
     font-variant-numeric: tabular-nums;
     white-space: nowrap;
+    text-align: center;
     text-shadow: 0 1px 8px var(--about-tally-shade);
     transform: translate(-50%, -50%);
     pointer-events: none;
+  }
+
+  /* the treaty's name over its tally, on a line of its own, in the display face, without the tally's spacing */
+  .bz-about .t-tally .t-title {
+    display: block;
+    margin-bottom: 0.45em;
+    color: var(--about-title);
+    font-size: 1.35em;
+    font-weight: 600;
+    letter-spacing: 0.02em;
   }
 
   .bz-about .t-tally b {

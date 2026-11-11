@@ -132,13 +132,13 @@ export const Index = z.strictObject({
   moved: Moved,
   story: z
     .record(Lang, SITE_PATH)
-    .describe('The About page\'s story document per language it is written in: STORY.md, English only for now (D125).'),
+    .describe('The About page\'s story document per language it is written in: STORY.md, and STORY_tr.md and STORY_fa.md where they are written (D125, D132).'),
   files: z.record(SITE_PATH, SHA256).describe('Every file under api/v1/ except index.json and record-conformance.json.'),
   images: z.record(SITE_PATH, SHA256).describe('Every image a level or module document names.'),
 })
 
 /**
- * The About page's words (D115, D125): `mini-courses/STORY.md` as `lib/content/story.ts` reads it for the
+ * The About page's words (D115, D125, D132): `mini-courses/STORY.md` or a translation beside it as `lib/content/story.ts` reads it for the
  * page, so the reader and the page show the same story. Plain strings, as the page sets them: STORY.md's
  * inline marks are dropped to their text by the same reader.
  */

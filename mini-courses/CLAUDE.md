@@ -192,6 +192,13 @@ planned module gets none. Everything above holds, plus:
 - **Code blocks and the series map's mermaid stay byte-identical**; other diagrams translate labels
   only, and `node scripts/check-mermaid.mjs <file>_fa.md` must pass. Alt text is translated.
 
+## The About story's translations
+
+`STORY_tr.md` and `STORY_fa.md` mirror `STORY.md`: the same `##` sections in the same order with the same
+number of paragraphs in each, and the closing line is the motto with its language's lead, `Mottomuz:` in
+Turkish and `شعار ما:` in Persian, in place of `Our motto:`. The About page and the bundle read them
+(D132), and a story file with a different shape fails `tests/unit/content/story.test.ts`.
+
 ## Visuals
 
 Rule 5 of the manifest: a module without a picture is usually unfinished. In order of cost:

@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react'
 import type { Story } from '@/lib/content/story'
-import { ABOUT_TITLE } from '@/lib/route-labels'
+import { ABOUT_TITLES } from '@/lib/about-copy'
+import { type ReadingLang, dirOf, langAttr } from '@/lib/content/languages'
 import { AboutMotion } from './AboutMotion'
 import { aboutPaletteCss } from './palette'
 import { BrainrotScene } from './scenes/BrainrotScene'
@@ -62,11 +63,21 @@ function Arch({ finial }: { finial: boolean }) {
   )
 }
 
-/** The page's name is its crumb's (`lib/route-labels.ts`); its first word is set apart, as F1 draws it. */
-const [TITLE_LEAD, ...TITLE_REST] = ABOUT_TITLE.split(' ')
+/**
+ * The page's name is its crumb's on the English page (`lib/route-labels.ts`) and its own in each
+ * translation (`lib/about-copy.ts`); its first word is set apart, as F1 draws it.
+ */
+function titleParts(lang: ReadingLang): [string, string] {
+  const [lead, ...rest] = ABOUT_TITLES[lang].split(' ')
+  return [lead, rest.join(' ')]
+}
 
-export function AboutStory({ story, fonts }: { story: Story; fonts: AboutFonts }) {
+export function AboutStory({ story, fonts, lang = 'en' }: { story: Story; fonts: AboutFonts; lang?: ReadingLang }) {
   const art = scenes(fonts)
+  const [titleLead, titleRest] = titleParts(lang)
+  // D80: language and direction sit on the elements that hold the story's words, never on the page
+  // or the scenes, which are drawn the same in every language.
+  const text = { lang: langAttr(lang), dir: dirOf(lang) }
   const { motto } = story
   return (
     <>
@@ -77,8 +88,8 @@ export function AboutStory({ story, fonts }: { story: Story; fonts: AboutFonts }
         <section className="hero" data-sec="hero" aria-labelledby="about-title">
           <div className="hero-in">
             <Arch finial />
-            <h1 id="about-title" className={fonts.displayClass}>
-              <span className="h1a">{TITLE_LEAD}</span> <span className="h1b">{TITLE_REST.join(' ')}</span>
+            <h1 id="about-title" className={fonts.displayClass} {...text}>
+              <span className="h1a">{titleLead}</span> <span className="h1b">{titleRest}</span>
             </h1>
           </div>
           <span className="cue" aria-hidden="true" />
@@ -98,11 +109,13 @@ export function AboutStory({ story, fonts }: { story: Story; fonts: AboutFonts }
                   <i className="num-d" />
                   <span className={`num-n ${fonts.displayClass}`}>{i + 1}</span>
                 </span>
-                <h2 id={`stall-${i + 1}-h`} className={fonts.displayClass}>
+                <h2 id={`stall-${i + 1}-h`} className={fonts.displayClass} {...text}>
                   {stall.heading}
                 </h2>
                 {stall.paragraphs.map((paragraph, j) => (
-                  <p key={j}>{paragraph}</p>
+                  <p key={j} {...text}>
+                    {paragraph}
+                  </p>
                 ))}
               </div>
               <div className="obj">
@@ -117,10 +130,10 @@ export function AboutStory({ story, fonts }: { story: Story; fonts: AboutFonts }
             <div className="motto-in">
               <Arch finial={false} />
               <div className="motto-t">
-                <p className={`motto-k ${fonts.displayClass}`} id="about-motto">
+                <p className={`motto-k ${fonts.displayClass}`} id="about-motto" {...text}>
                   {motto.lead}:
                 </p>
-                <p className={`motto-q ${fonts.displayClass}`}>
+                <p className={`motto-q ${fonts.displayClass}`} {...text}>
                   <span className="m1">{motto.lines[0]}</span>
                   {motto.lines.length > 1 && (
                     <>
@@ -149,7 +162,9 @@ export function AboutStory({ story, fonts }: { story: Story; fonts: AboutFonts }
           {story.stalls.map((stall, i) => (
             <a key={i} href={`#stall-${i + 1}`} data-k={i + 1}>
               <span className="rail-mark" aria-hidden="true" />
-              <span className="sr-only">{stall.heading}</span>
+              <span className="sr-only" {...text}>
+                {stall.heading}
+              </span>
             </a>
           ))}
         </nav>

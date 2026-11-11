@@ -802,6 +802,15 @@
     font-weight: 480;
   }
 
+  /* Persian has no italic: a browser only slants the letters, which Persian print never does (M109). The
+     three italic accents a Persian reader meets, the title's first word, the motto's lead and its second
+     line, stand upright and keep their colour and weight. */
+  .bz-about .h1a:lang(fa),
+  .bz-about .motto-k:lang(fa),
+  .bz-about .m2:lang(fa) {
+    font-style: normal;
+  }
+
   /* the hand-drawn line under it, a little uneven on purpose (R5's close) */
   .bz-about .motto-line {
     display: block;

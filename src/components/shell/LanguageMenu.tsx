@@ -3,6 +3,7 @@
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useEffect, useId, useMemo, useRef } from 'react'
+import { aboutRoute } from '@/lib/about-copy'
 import { EVERYONE_SEGMENT, type Track, moduleRoute } from '@/lib/tracks'
 import {
   type ReadingLang,
@@ -39,7 +40,8 @@ import {
  * ## Where it appears
  *
  * On a module page that HAS a second address — the same rule the picker
- * kept in the column — and on the home page, which has one in every language
+ * kept in the column — on the About page (M109, D132: `/about/`, `/tr/about/`,
+ * `/fa/about/`, for each language its story is written in), and on the home page, which has one in every language
  * (`/`, `/tr/`, `/fa/`: the author's 2026-11-09 rule is that content is
  * multilingual and menus are not, so this menu is the one control that carries
  * a reader between the three). Everywhere else it renders nothing rather than a
@@ -61,6 +63,9 @@ const MODULE = new RegExp(`^/(?:(${TRANSLATED_LANGS.join('|')})/)?(?:(${EVERYONE
 /** `/`, `/tr/` and `/fa/`, and nothing that is not one of them. */
 const HOME = new RegExp(`^/(?:(${TRANSLATED_LANGS.join('|')})/?)?$`)
 
+/** `/about/` and its translated twins. M109, D132: the About page has an address in every language its story is written in. */
+const ABOUT = new RegExp(`^/(?:(${TRANSLATED_LANGS.join('|')})/)?about/?$`)
+
 /**
  * Every address of the module at `pathname` — English first, then each
  * language it has a page in — or null where there is only the one.
@@ -73,12 +78,21 @@ const HOME = new RegExp(`^/(?:(${TRANSLATED_LANGS.join('|')})/?)?$`)
 export function alternatesOf(
   pathname: string,
   translated: Readonly<Record<TranslatedLang, ReadonlySet<string>>>,
+  aboutLangs: readonly ReadingLang[] = ['en', ...TRANSLATED_LANGS],
 ): { slug: string | null; track: Track | null; current: ReadingLang; available: readonly ReadingLang[] } | null {
   /* The home page: translated whole, so every language has it, whichever modules do.
      There is no module and so no track, and `slug` is null. */
   const home = HOME.exec(pathname)
   if (home) {
     return { slug: null, track: null, current: (home[1] as TranslatedLang | undefined) ?? 'en', available: ['en', ...TRANSLATED_LANGS] }
+  }
+  /* The About page: it is a page and not a module, so `slug` is null again, and `available` is
+     the languages its story is written in (`STORY_<lang>.md`), which the layout reads at build time. */
+  const about = ABOUT.exec(pathname)
+  if (about) {
+    const current = (about[1] as TranslatedLang | undefined) ?? 'en'
+    if (!aboutLangs.includes(current)) return null
+    return { slug: null, track: null, current, available: aboutLangs }
   }
   const match = MODULE.exec(pathname)
   if (!match) return null
@@ -164,8 +178,11 @@ const LANGUAGES: readonly { id: ReadingLang; label: string }[] = [
 
 export function LanguageMenu({
   translated,
+  aboutLangs,
 }: {
   translated: Readonly<Record<TranslatedLang, readonly string[]>>
+  /** The languages the About page's story is written in, read from the corpus at build time. */
+  aboutLangs: readonly ReadingLang[]
 }) {
   const pathname = usePathname() ?? '/'
   const panel = useRef<HTMLDetailsElement>(null)
@@ -176,7 +193,8 @@ export function LanguageMenu({
       ) as unknown as Record<TranslatedLang, ReadonlySet<string>>,
     [translated],
   )
-  const here = alternatesOf(pathname, sets)
+  const onAbout = ABOUT.test(pathname)
+  const here = alternatesOf(pathname, sets, aboutLangs)
 
   // Arriving at the other language is a client transition and the bar is not
   // re-rendered from scratch, so the panel would stay open over the new page.
@@ -236,7 +254,7 @@ export function LanguageMenu({
             <Link
               key={one.id}
               className="bz-menu-item"
-              href={here.slug === null ? homeRoute(one.id) : moduleRoute(here.slug, here.track ?? 'engineers', one.id)}
+              href={here.slug === null ? (onAbout ? aboutRoute(one.id) : homeRoute(one.id)) : moduleRoute(here.slug, here.track ?? 'engineers', one.id)}
               hrefLang={one.id}
               lang={one.id}
               dir={dirOf(one.id)}

@@ -1,7 +1,9 @@
 import { existsSync, readdirSync } from 'node:fs'
 import { join } from 'node:path'
 import { expect, test } from '@playwright/test'
+import { aboutRoute } from '@/lib/about-copy'
 import { TRANSLATED_LANGS, homeRoute } from '@/lib/content/languages'
+import { ABOUT_TITLE } from '@/lib/route-labels'
 import { levelTitlePattern } from './levels'
 import { A0, INDEX_SHEET, SHEETS } from './sheets'
 
@@ -358,6 +360,13 @@ PARTS.forEach((routes, part) => {
       // heading — fails here rather than passing on two nulls.
       if (found.last === null || found.heading === null) {
         wrong.push(`${route}: trail ${found.last}, heading ${found.heading}`)
+        continue
+      }
+      // M109, D132: on a translated About page the h1 is the story's, in its language, and the crumb is
+      // chrome, which stays English: it names the English page, and the translated heading is not it.
+      const translatedAbout = TRANSLATED_LANGS.some((lang) => route === aboutRoute(lang))
+      if (translatedAbout) {
+        if (found.last !== ABOUT_TITLE) wrong.push(`${route}: crumb "${found.last}" is not the English page name "${ABOUT_TITLE}"`)
         continue
       }
       if (found.last !== found.heading) wrong.push(`${route}: "${found.last}" vs "${found.heading}"`)

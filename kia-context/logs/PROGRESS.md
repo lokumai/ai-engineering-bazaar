@@ -11,7 +11,7 @@ description: >
   backgrounds and copy (M81), Agentic UI (M82), the cast's colours (M83), and M84 to M90 (content
   and site fixes, the home page in Turkish and Persian, Dariush's motif, block menus in the top layer,
   and About, the story of the Bazaar); Caravan built (M91), its real trends waiting (M92) and its second
-  round (M93); multilingual SEO (M96); translated objectives on the site (M98) and in the bundle (M99); the story in the bundle (M100); three screen recordings and Human in the Loop moved into Agentic UI (M101); the search filters applied by a button (M102); a laptop section in Inference Engines (M103); the word count in the bundle (M105), the checklist index (M106), the diagrams without empty rects (M107) and five logos without CSS (M108); the module page's own words in Turkish and Persian (M110); the footer without its first row (M111); and M41, the content bundle for the mobile reader. Each milestone carries its deliverables and acceptance
+  round (M93); multilingual SEO (M96); translated objectives on the site (M98) and in the bundle (M99); the story in the bundle (M100); three screen recordings and Human in the Loop moved into Agentic UI (M101); the search filters applied by a button (M102); a laptop section in Inference Engines (M103); the word count in the bundle (M105), the checklist index (M106), the diagrams without empty rects (M107) and five logos without CSS (M108); the About page in Turkish and Persian (M109); the module page's own words in Turkish and Persian (M110); the footer without its first row (M111); and M41, the content bundle for the mobile reader. Each milestone carries its deliverables and acceptance
   criteria as `- [ ]` checkboxes, ticked as the work lands, and closes with a dated report; the loop
   that governs that is below, in this file.
   NOT here: why a choice was made (BRAINSTORM.md), or any rule that outlives the milestone
@@ -19,7 +19,7 @@ description: >
 authority: state
 writes: agent, every session
 status: active
-covers: "M50 to M108, M110 and M111, 2026-11-06 onward, and M41, which part 2 held for PR #57"
+covers: "M50 to M111, 2026-11-06 onward, and M41, which part 2 held for PR #57"
 last_updated: 2026-11-11
 ---
 
@@ -2139,6 +2139,59 @@ checked and not which record key it is.
       pages between any two builds.
 - [x] **Gate (M105 to M108):** typecheck, 1,604 unit tests, build, link check, bundle check, and the
       full browser suite locally and in CI.
+
+---
+
+## 🏁 Milestone M109: The About page in Turkish and Persian (D132), DONE
+
+The author asked for the About page to be multilingual the way the home page is: `/about/`, `/tr/about/`,
+`/fa/about/`. (M106 to M108 belong to an open pull request.) The translations are `mini-courses/STORY_tr.md`
+and `STORY_fa.md`, written by another agent beside STORY.md; this milestone is the code.
+
+- [x] **The reader**: `loadStory(lang)` reads `STORY.md`, `STORY_tr.md` or `STORY_fa.md`
+      (`src/lib/content/story.ts`); the motto's marker is one named lead per language (`MOTTO_LEADS`:
+      `Our motto`, `Mottomuz`, `شعار ما`); the motto's sentences also split on `؟`; `storyLanguages()`
+      lists the languages whose file exists.
+- [x] **The routes**: `src/app/tr/about/page.tsx` and `src/app/fa/about/page.tsx` beside `/about/`, all three
+      through `components/about/AboutRoute.tsx`; fonts as on the home routes (Turkish Fraunces with
+      `latin-ext`, Persian Vazirmatn as `--font-persian` and no display class), with Fraunces (latin) and
+      Caveat still loaded for the scenes' English captions. `lang` and `dir` sit on the h1, the h2s, the
+      paragraphs, the motto and the rail's hidden names, and on nothing around them or in the scenes (D80).
+- [x] **The h1** is the page's name per language from `src/lib/about-copy.ts` (`Hakkımızda`,
+      `درباره‌ی ما`, the routine names of each language's sites); the crumb stays English. Title metadata per language; the description is the
+      story's first heading.
+- [x] **The language menu** shows on all three addresses (`alternatesOf` in `LanguageMenu.tsx` takes the
+      story's languages from the layout, `SiteHeader` passes them), labelled `Language of this page`.
+- [x] **SEO**: `aboutLanguageRoutes()` in `seo.ts`, only for languages whose story file exists; `/about/`
+      left `SINGLE_PAGES`; the three pages carry canonical, hreflang and `x-default` and are in the sitemap.
+      `<html lang>` needed no new code: the finaliser and the boot script read the first path segment
+      (`finalize-bundle: set <html lang> on 44 tr, 44 fa pages`, which includes the two new ones).
+- [x] **The bundle, additively**: `api/v1/story/tr.json` and `fa.json` with `lang` and `dir` set, the index's
+      `story` lists every language that exists, `en.json` unchanged; the schema's description no longer says
+      English only (the schema snapshot changed in that one string and nothing else).
+- [x] **Tests**: `story.test.ts` holds each translation to STORY.md's stall count, paragraphs per stall and a
+      motto iff English has one, and each motto lead to its language (inline fixtures);
+      `language-menu.test.ts`, `bundle.test.ts`; `about.spec.ts` renders `/tr/about/` and `/fa/about/` with
+      the right `lang`/`dir` and the menu, at 1440 and 390; both pages are in `accessibility.spec.ts`.
+      Mutation: with Turkish's lead changed to another word the Turkish story test failed (red), and restored
+      from a copy it passed (16 passed).
+- [x] **One existing spec changed because a rule it held was about English**: `navigation.spec.ts`
+      compares a crumb with the h1, which on a translated About page is content, so there it checks the crumb
+      is the English page name.
+- [x] **Font preloads**: each About route calls its faces with a `fallback` no other route's call has (D132).
+      MEASURED on the build, files preloaded: `/` Fraunces; `/tr/` Fraunces and its Latin Extended file;
+      `/fa/` the two Vazirmatn files; `/about/` and `/tr/about/` Caveat and both Fraunces files; `/fa/about/`
+      those and the two Vazirmatn files. Before, the English home page preloaded Caveat (live) and, with
+      `/fa/about/` added, both Vazirmatn files. Guarded by `tests/e2e/font-preload.spec.ts`; mutation: with
+      `/fa/about/`'s Fraunces call made identical to `/about/`'s again, `/about/` preloaded both Vazirmatn
+      files and the guard failed on it (1 failed, 5 passed); restored from a copy.
+- [x] **Persian typesetting**: the motto is quoted «…» (`QUOTES` in `story.ts`), and the title's first word,
+      the motto's lead and its second line stand upright under `:lang(fa)`.
+- [x] **Gate** (measured 2026-11-11): typecheck clean; `npm test` 98 files, 1,608 tests; build, the link
+      check and `check-bundle-out` pass; the full browser suite on a private port, 714 passed, 11 skipped and
+      4 failed, all four in `cast.spec.ts` while two other worktrees ran their suites, and `cast.spec.ts`
+      alone then passed 26 of 26. Screenshots at 1440 and 390 are in
+      `playground/2026-11-round-5/shots-about-i18n/`; neither page scrolls sideways.
 
 ---
 

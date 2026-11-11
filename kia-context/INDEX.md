@@ -82,6 +82,7 @@ and the same explanation given in person for the third time. See `genesis/GENESI
 | 2026-11-10 | A short section on running a model on your laptop, with Ollama and LM Studio, in Inference Engines | M103 |
 | 2026-11-11 | Each module page's word count in the content bundle, for the mobile reader's `25 min · 4,812 words` line | M105 (D128) |
 | 2026-11-11 | In the same pull request: each checklist item's record index in the bundle, the empty rects out of the bundle's diagrams, and five logos without CSS | M106 (D129), M107 (D130), M108 (D131) |
+| 2026-11-11 | The About page in Turkish and Persian, at `/tr/about/` and `/fa/about/`, and its story in the bundle in both | M109 (D132) |
 
 **The harness itself was installed on 2026-09-08**, 107 commits in (`git rev-list --count 4832e2a^`). Everything before that date was
 reconstructed from git and is labelled as inferred inside each file.

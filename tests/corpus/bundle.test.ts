@@ -23,7 +23,7 @@ import {
 } from '@/lib/bundle/schema'
 import { checklistOf } from '@/lib/content/checklist'
 import { extent } from '@/lib/content/derive'
-import { loadStory } from '@/lib/content/story'
+import { loadStory, storyLanguages } from '@/lib/content/story'
 import { stripLeadIn } from '@/lib/content/strip'
 import type { ReadingLang } from '@/lib/content/languages'
 import { loadAllModules, loadModule, loadModuleIn } from '@/lib/content/loader'
@@ -215,7 +215,16 @@ describe('the bundle, over the real corpus', () => {
     expect(doc).toEqual({ schemaVersion: 1, lang: 'en', dir: 'ltr', ...story })
     expect(doc.stalls.length, 'STORY.md has no ## section').toBeGreaterThan(0)
     expect(doc.motto, 'STORY.md has no motto line').not.toBeNull()
-    expect(draft.story).toEqual({ en: 'api/v1/story/en.json' })
+    expect(draft.story).toEqual(Object.fromEntries(storyLanguages().map((lang) => [lang, `api/v1/story/${lang}.json`])))
+  })
+
+  it('carries each translated story with its own language and direction (D132)', () => {
+    const langs = storyLanguages().filter((lang) => lang !== 'en')
+    expect(langs.length, 'no STORY_<lang>.md exists, so the rule was not exercised').toBeGreaterThan(0)
+    for (const lang of langs) {
+      const doc = StoryDoc.parse(buildStoryDoc(lang))
+      expect(doc).toEqual({ schemaVersion: 1, lang, dir: lang === 'fa' ? 'rtl' : 'ltr', ...loadStory(lang) })
+    }
   })
 
   it('names each level document at its own path', () => {

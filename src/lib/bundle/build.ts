@@ -5,7 +5,7 @@ import { type ReadingLang, TRANSLATIONS } from '@/lib/content/languages'
 import { type CourseModule, loadAllModules, loadModuleIn } from '@/lib/content/loader'
 import { type RenderRef, levelRenderInput, moduleRenderInput } from '@/lib/content/module-render'
 import { MOVED_LEVELS, MOVED_MODULES } from '@/lib/content/moved'
-import { loadStory } from '@/lib/content/story'
+import { loadStory, storyLanguages } from '@/lib/content/story'
 import { quizFor } from '@/lib/content/quiz'
 import { printedWords } from '@/lib/content/title-block'
 import { TRACKS, type Track, moduleRoute } from '@/lib/tracks'
@@ -68,13 +68,18 @@ export function levelDocPath(slug: string): string {
   return `api/v1/levels/${slug}.json`
 }
 
-/** The story document, site-relative. STORY.md is written in English only, so it is the one language (D125). */
+/** The English story document, site-relative (D125). The translations sit beside it (`storyDocPath`, D132). */
 export const STORY_DOC_PATH = 'api/v1/story/en.json'
 
+/** A story document's site-relative path in `lang`: `api/v1/story/<lang>.json`. */
+export function storyDocPath(lang: ReadingLang): string {
+  return `api/v1/story/${lang}.json`
+}
+
 /** The About page's story, as the page reads it (D115), in the bundle's shape (D125). */
-export function buildStoryDoc(): StoryDoc {
-  const { title, stalls, motto } = loadStory()
-  return StoryDoc.parse({ schemaVersion: BUNDLE_MAJOR, lang: 'en', dir: 'ltr', title, stalls, motto })
+export function buildStoryDoc(lang: ReadingLang = 'en'): StoryDoc {
+  const { title, stalls, motto } = loadStory(lang)
+  return StoryDoc.parse({ schemaVersion: BUNDLE_MAJOR, lang, dir: dirOf(lang), title, stalls, motto })
 }
 
 /** The English page in a track, site-relative, for "Open on the web". */
@@ -299,7 +304,7 @@ export async function buildIndexDraft(inputs: {
     levels,
     modules,
     moved: { levels: { ...MOVED_LEVELS }, modules: { ...MOVED_MODULES } },
-    story: { en: STORY_DOC_PATH },
+    story: Object.fromEntries(storyLanguages().map((lang) => [lang, storyDocPath(lang)])),
     files: {},
     images: {},
     diagrams: uniqueDiagrams(diagrams),

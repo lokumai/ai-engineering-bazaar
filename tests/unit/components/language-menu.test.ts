@@ -43,6 +43,16 @@ describe('alternatesOf', () => {
     expect(alternatesOf('/sheets/', both)).toBeNull()
   })
 
+  it('offers the About page in the languages its story is written in, and none it is not written in (M109)', () => {
+    const all = ['en', 'tr', 'fa'] as const
+    for (const [path, current] of [['/about/', 'en'], ['/tr/about/', 'tr'], ['/fa/about/', 'fa'], ['/fa/about', 'fa']] as const) {
+      expect(alternatesOf(path, sets([], []), all), path).toEqual({ slug: null, track: null, current, available: all })
+    }
+    expect(alternatesOf('/about/', sets([], []), ['en', 'tr'])?.available).toEqual(['en', 'tr'])
+    expect(alternatesOf('/fa/about/', sets([], []), ['en', 'tr'])).toBeNull()
+    expect(alternatesOf('/de/about/', sets([], []), all)).toBeNull()
+  })
+
   it('offers the home page in every language, whichever modules are translated', () => {
     // The front door is translated whole, so it has an address in every language the registry
     // lists even when no module has a translation at all.

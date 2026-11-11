@@ -1,9 +1,14 @@
-import { readFileSync } from 'node:fs'
+import { existsSync, readFileSync } from 'node:fs'
 import path from 'node:path'
+import { type ReadingLang, TRANSLATED_LANGS } from './languages'
 import { CONTENT_ROOT } from './paths'
 
 /**
  * M90, D115 — the About page's words, read from `mini-courses/STORY.md`.
+ *
+ * M109, D132 — and, beside it, `STORY_tr.md` and `STORY_fa.md`, which `loadStory(lang)` reads the
+ * same way. A translation mirrors the English file's sections; its motto is introduced by its own
+ * language's lead (`MOTTO_LEADS`), still a named marker and not a generic `X: **"…"**`.
  *
  * The story is the author's and final, and it lives in the corpus beside MANIFEST and ROADMAP, so the
  * page restates none of it: this module reads the file at build time and the page renders what it
@@ -48,16 +53,36 @@ export interface Story {
 
 export const STORY_FILE = path.join(CONTENT_ROOT, 'STORY.md')
 
+/** The file a story is written in: `STORY.md`, `STORY_tr.md`, `STORY_fa.md`. */
+export function storyFile(lang: ReadingLang = 'en'): string {
+  return lang === 'en' ? STORY_FILE : path.join(CONTENT_ROOT, `STORY_${lang}.md`)
+}
+
+/** What introduces the motto, per language: the file's own marker for it. */
+export const MOTTO_LEADS: Readonly<Record<ReadingLang, string>> = {
+  en: 'Our motto',
+  tr: 'Mottomuz',
+  fa: 'شعار ما',
+}
+
+/** The languages the story is written in: English always, and each translation whose file exists. */
+export function storyLanguages(): ReadingLang[] {
+  return ['en', ...TRANSLATED_LANGS.filter((lang) => existsSync(storyFile(lang)))]
+}
+
 /** A heading's closing hashes count only after a space, so `## Why C#` keeps its `#`. */
 const H1 = /^#[ \t]+(.+?)(?:[ \t]+#+)?[ \t]*$/
 const H2 = /^##[ \t]+(.+?)(?:[ \t]+#+)?[ \t]*$/
 const DEEPER = /^#{3,}[ \t]/
 /**
- * `Our motto: **quotation**`, the whole paragraph. The lead is named, the way `intro.ts` names its
- * `## Modules` heading: it is the file's marker for the motto, and without it any closing line shaped
- * `Note: **…**` would have been taken for one.
+ * `Our motto: **quotation**`, the whole paragraph, with the language's own lead. The lead is named,
+ * the way `intro.ts` names its `## Modules` heading: it is the file's marker for the motto, and
+ * without it any closing line shaped `Note: **…**` would have been taken for one.
  */
-const MOTTO = /^(Our motto):\s*\*\*(.+)\*\*\s*$/i
+function mottoPattern(lang: ReadingLang): RegExp {
+  const lead = MOTTO_LEADS[lang].replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+  return new RegExp(`^(${lead}):\\s*\\*\\*(.+)\\*\\*\\s*$`, 'i')
+}
 
 /** A paragraph's text with its inline marks dropped and its lines joined. */
 function plain(text: string): string {
@@ -69,15 +94,22 @@ function plain(text: string): string {
     .trim()
 }
 
-/** Straight double quotation marks to curly ones: opening after a space or at the start, closing elsewhere. */
-function curly(text: string): string {
-  return text.replace(/(^|[\s(])"/g, '$1“').replace(/"/g, '”')
+/**
+ * The language's own quotation marks for the file's straight ones: opening after a space or at the start,
+ * closing elsewhere. Persian quotes with guillemets, «…», as Persian print does (M109); English and
+ * Turkish take curly double quotes.
+ */
+export const QUOTES: Readonly<Record<ReadingLang, readonly [string, string]>> = { en: ['“', '”'], tr: ['“', '”'], fa: ['«', '»'] }
+
+function curly(text: string, lang: ReadingLang): string {
+  const [open, close] = QUOTES[lang]
+  return text.replace(/(^|[\s(])"/g, `$1${open}`).replace(/"/g, close)
 }
 
 /** A quotation's sentences, each keeping its own punctuation and the quotation marks at the two ends. */
-function sentences(quote: string): string[] {
-  return curly(quote)
-    .split(/(?<=[.?!])\s+(?=\S)/)
+function sentences(quote: string, lang: ReadingLang): string[] {
+  return curly(quote, lang)
+    .split(/(?<=[.?!؟])\s+(?=\S)/)
     .map((one) => one.trim())
     .filter(Boolean)
 }
@@ -91,7 +123,7 @@ function blocks(markdown: string): string[] {
     .filter(Boolean)
 }
 
-export function parseStory(markdown: string): Story {
+export function parseStory(markdown: string, lang: ReadingLang = 'en', file = 'STORY.md'): Story {
   let title: string | null = null
   const stalls: StoryStall[] = []
   const all = blocks(markdown)
@@ -99,9 +131,9 @@ export function parseStory(markdown: string): Story {
   // The motto is read off the end first, so it can never be mistaken for a stall's last paragraph.
   let motto: StoryMotto | null = null
   const last = all.at(-1)
-  const quoted = last && !H2.test(last) && !H1.test(last) ? MOTTO.exec(last.replace(/\s*\n\s*/g, ' ')) : null
+  const quoted = last && !H2.test(last) && !H1.test(last) ? mottoPattern(lang).exec(last.replace(/\s*\n\s*/g, ' ')) : null
   if (quoted) {
-    motto = { lead: plain(quoted[1]), lines: sentences(plain(quoted[2])) }
+    motto = { lead: plain(quoted[1]), lines: sentences(plain(quoted[2]), lang) }
     all.pop()
   }
 
@@ -110,7 +142,7 @@ export function parseStory(markdown: string): Story {
     // A stall is one `##` section and has no place for a sub-heading, so one fails the build rather
     // than being folded silently into its stall's text.
     if (DEEPER.test(first)) {
-      throw new Error(`STORY.md: "${first}" is a sub-heading, and a stall on the About page is one ## section of paragraphs. Make it a ## section or a sentence.`)
+      throw new Error(`${file}: "${first}" is a sub-heading, and a stall on the About page is one ## section of paragraphs. Make it a ## section or a sentence.`)
     }
     const h2 = H2.exec(first)
     if (h2) {
@@ -131,6 +163,7 @@ export function parseStory(markdown: string): Story {
   return { title, stalls, motto }
 }
 
-export function loadStory(): Story {
-  return parseStory(readFileSync(STORY_FILE, 'utf8'))
+export function loadStory(lang: ReadingLang = 'en'): Story {
+  const file = storyFile(lang)
+  return parseStory(readFileSync(file, 'utf8'), lang, path.basename(file))
 }

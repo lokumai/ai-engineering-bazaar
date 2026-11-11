@@ -9,7 +9,7 @@ description: >
 authority: reasoning
 writes: agent, when a decision is taken
 status: active
-covers: "D97 to D128 so far, and D89, which part 2 held for PR #57 — 2026-11-06 onward"
+covers: "D97 to D128 and D132 so far, and D89, which part 2 held for PR #57 — 2026-11-06 onward"
 last_updated: 2026-11-11
 ---
 
@@ -1050,6 +1050,43 @@ would not match the site's anyway: the site counts the markdown after the lead-i
   (a reader that opened a document from a link would need the index to print its line); a `words` map
   per module beside `minutes` rather than per track (the two tracks are different files of different
   lengths); `0` for a planned module (a page that prints nothing is not a page of no words).
+
+### D132 · The About page is translated by files beside STORY.md, and its art stays English · 2026-11-11
+status: active
+
+The author asked for `/tr/about/` and `/fa/about/`, as the home page has `/tr/` and `/fa/` (M109).
+
+- **The words are two corpus files, `mini-courses/STORY_tr.md` and `STORY_fa.md`**, the same sections as
+  STORY.md, each ending on its language's motto lead (`Mottomuz`, `شعار ما`). `loadStory(lang)` reads
+  them with the English file's own reader. **Rejected:** the story as a table in `home-copy.ts`: that
+  table is for the home page's strings, and the story is the author's text, which lives in the corpus,
+  next to the files a module's translations sit beside (`_tr.md`, `_fa.md`), and the bundle publishes it
+  from there (D125).
+- **The scenes stay as drawn, English captions included.** The memes, "lol", the seal's ring and
+  Nietzsche's name are part of the drawing, as the home page's painted words are (`home-copy.ts`).
+  **Rejected:** per-language SVG text, which would be six more drawings kept in step with five scenes.
+  Fraunces (latin) and Caveat are therefore still loaded on the Persian page.
+- **The h1 is the page's name per language** from a small table beside the home copy
+  (`src/lib/about-copy.ts`), because on a translated page it is content, and the crumb, which is
+  chrome, stays `About the Bazaar`. The STORY file's `#` title ("Our Story") is a different thing from
+  the page's name and is not used for it.
+- **Language and direction on the words only (D80)**: the layout and the scenes are drawn the same in all
+  three, so a Persian reader gets the English page's composition with right-to-left text in it.
+- **Only languages whose file exists are offered**: `storyLanguages()` feeds the language menu, the SEO
+  alternates, the sitemap and the bundle's `story` map, so a translation not yet written is never
+  linked.
+- **Each About route calls its fonts with a `fallback` no other route's call has**, and that is
+  load-bearing. `next/font` turns each call into a module keyed on its arguments, and Turbopack shares a
+  module two routes request identically, carrying the sharing route's other faces with it. MEASURED on
+  the build: with the About pages' Fraunces call identical to `/`'s, the English home page preloaded
+  Caveat (already so on the live site before M109) and, once `/fa/about/` existed, both Vazirmatn files.
+  **Rejected:** one shared module per face (`src/fonts/…`), the usual advice: every page then preloaded
+  all five files. Guarded by `tests/e2e/font-preload.spec.ts`: every preloaded file is a face the page
+  drew with (a `FontFace` that loaded), mutation-tested; a check on computed `font-family` passed with the
+  leak in place, because every Persian label names Vazirmatn in its stack.
+- **Persian is typeset as Persian print is**: the motto is quoted «…», not with curly quotes
+  (`QUOTES` in `story.ts`), and the page's three italic accents stand upright under `:lang(fa)`, since
+  Persian has no italic and a browser only slants the letters.
 
 ---
 

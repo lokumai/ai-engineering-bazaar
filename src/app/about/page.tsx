@@ -1,43 +1,32 @@
-import type { Metadata } from 'next'
 import { Caveat, Fraunces } from 'next/font/google'
-import { AboutStory } from '@/components/about/AboutStory'
-import { PageShell } from '@/components/shell/PageShell'
-import { loadStory } from '@/lib/content/story'
-import { ABOUT_ROUTE, ABOUT_TITLE } from '@/lib/route-labels'
-import { canonicalOf } from '@/lib/content/seo'
+import { AboutRoute, aboutMetadata } from '@/components/about/AboutRoute'
 
 /**
- * M90, D115 — About: why the Bazaar exists, in five stalls and a motto.
- *
- * The words are `mini-courses/STORY.md`, read here at build time (`lib/content/story.ts` reaches
- * `node:fs`, so this server route reads it and the island only ever receives strings). The page is
- * `components/about/AboutStory.tsx`; it is linked from the footer and last in the bar.
- *
- * The description is the story's own first heading, so the page states nothing the file does not.
+ * M90, D115 — About: why the Bazaar exists, in five stalls and a motto. Since M109 (D132) it is one of
+ * three routes, `/about/`, `/tr/about/` and `/fa/about/`, sharing `components/about/AboutRoute.tsx`;
+ * this one reads `mini-courses/STORY.md`.
  */
-const story = loadStory()
-
-export const metadata: Metadata = {
-  title: ABOUT_TITLE,
-  description: story.stalls[0]?.heading,
-  alternates: canonicalOf(ABOUT_ROUTE),
-}
+export const metadata = aboutMetadata('en')
 
 /**
- * The display face, as on the home page (D79): `next/font` fetches Fraunces at build time and serves
- * it from the site, so a reader's browser makes no request to Google. F1 sets every heading in it.
- * Caveat is the hand stall 4's doodles are written in (4E); it is loaded at the one weight drawn.
+ * The display face, as on the home page (D79), and Caveat, the hand stall 4's doodles are written in.
+ *
+ * The About routes' calls carry a `fallback` the home page's do not, and that is load-bearing.
+ * `next/font` turns each call into a module keyed on its arguments, and Turbopack shares a module two
+ * routes request IDENTICALLY, carrying the other faces of the sharing route with it. MEASURED on the
+ * build (M109): with this file's Fraunces call identical to `/`'s, the English home page preloaded
+ * Caveat, and once `/fa/about/` called Fraunces the same way it preloaded both Vazirmatn files too.
+ * Moving every call into one shared module per face was worse: every page preloaded all five files.
+ * The fallback is also real: it is the face the scenes' SVG captions fall back to.
  */
-const display = Fraunces({ subsets: ['latin'], axes: ['SOFT', 'opsz'], display: 'swap' })
-const hand = Caveat({ subsets: ['latin'], weight: '700', display: 'swap' })
+const display = Fraunces({ subsets: ['latin'], axes: ['SOFT', 'opsz'], display: 'swap', fallback: ['Georgia', 'serif'] })
+const hand = Caveat({ subsets: ['latin'], weight: '700', display: 'swap', fallback: ['cursive'] })
 
 export default function AboutPage() {
   return (
-    <PageShell column={false}>
-      <AboutStory
-        story={story}
-        fonts={{ displayClass: display.className, display: display.style.fontFamily, hand: hand.style.fontFamily }}
-      />
-    </PageShell>
+    <AboutRoute
+      lang="en"
+      fonts={{ displayClass: display.className, display: display.style.fontFamily, hand: hand.style.fontFamily }}
+    />
   )
 }

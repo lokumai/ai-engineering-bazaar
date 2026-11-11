@@ -555,8 +555,11 @@ producing 207 HTML pages and 161 JSON files (measured 2026-11-09, after M90's Ab
 mostly the mobile bundle, §13). `/caravan/` is the trends timeline's address (M62): in the bar beside
 Progress, with its content under maintenance until the timeline is built.
 
-**About (M90, D115).** `/about/` tells why the project exists, and its words are
-`mini-courses/STORY.md`: `src/lib/content/story.ts` reads the file at build time (`node:fs`, so the route
+**About (M90, D115; translated in M109, D132).** `/about/` tells why the project exists, and its words are
+`mini-courses/STORY.md` (with `STORY_tr.md` and `STORY_fa.md` beside it, read by `loadStory(lang)`; the same
+component is also routed at `/tr/about/` and `/fa/about/` through `components/about/AboutRoute.tsx`, with `lang` and
+`dir` on the story's words only, the scenes' art unchanged, the h1 from `lib/about-copy.ts`, and the language menu
+listing the languages `storyLanguages()` finds): `src/lib/content/story.ts` reads the file at build time (`node:fs`, so the route
 reads it and passes strings down), one stall per `##` section in order and the motto from the closing
 line. The page is `src/components/about/AboutStory.tsx`, server-rendered complete: every word, and each
 stall's scene as a still picture (SVG or CSS; stall 2 is drawn on a canvas while it moves; a scene
@@ -883,7 +886,7 @@ A module document comes from `src/lib/content/module-render.ts`, the same render
 So the page and the bundle cannot drift (rule 4); a link's track and language are read back off the address that map returned (`src/lib/bundle/address.ts`).
 A module document's `objectives` stays `{ lang: 'en', items }` with the English list in every language: v1 pins `lang` to `en` (D123). Beside it, `translatedObjectives` is `{ lang, items }` with the document's own list where its translation file declares one, and `null` in English and where the file falls back to the English list; it is always present, as `previous`, `next` and `draft` are (D124).
 A module document's `words` is the word count its web page prints under the title, and `null` for a planned module, whose page prints none; the index's track entry carries the same counts as `words`, language to count, empty where nothing is written. Both come from `printedWords` in `src/lib/content/title-block.ts`, which `FactsStrip` prints from, over the sheet the page renders (D128).
-The About page's story, `mini-courses/STORY.md`, is `api/v1/story/en.json`, read by `src/lib/content/story.ts` as the page reads it (stalls of a heading and its paragraphs, and the motto, as plain strings), and the index's `story` names its document per language; STORY.md is English only, so `story` holds `en` alone until a translation is written (D125).
+The About page's story, `mini-courses/STORY.md`, is `api/v1/story/en.json`, read by `src/lib/content/story.ts` as the page reads it (stalls of a heading and its paragraphs, and the motto, as plain strings), and the index's `story` names its document per language; a translation is `api/v1/story/tr.json` or `fa.json` (`lang` and `dir` set) and exists exactly when `STORY_tr.md` or `STORY_fa.md` does, so `story` lists every language that is written (D125, D132).
 The index lists each module once with an entry per track, and the record key `<level>/<module>` is the same in both of the record's maps (§5).
 The finaliser is the `postbuild` of `npm run build` and writes what needs a browser or the hash of another file.
 It draws every diagram the draft lists in Playwright's bundled Chromium, twice, in Mermaid's own themes (D107): `light` in the web's default theme and `dark` in `dark`, with the theme stamped on `<html>` as the site stamps a reader's choice, and the index names each variant's theme and the ground Mermaid gives it (`src/lib/bundle/diagrams.ts`).

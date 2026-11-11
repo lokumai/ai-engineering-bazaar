@@ -1,4 +1,5 @@
 import { readFileSync } from 'node:fs'
+import { existsSync } from 'node:fs'
 import { join } from 'node:path'
 import { type Page, expect, test } from '@playwright/test'
 
@@ -299,3 +300,64 @@ test('at 1440 the stalls pin, and the motion leaves no trace when it stops', asy
   expect(await page.evaluate(() => document.body.getAttribute('style'))).toBeNull()
   expect(errors).toEqual([])
 })
+
+/**
+ * M109, D132 — the translated About pages. Each language whose `STORY_<lang>.md` exists is read from
+ * that file at test time (its `##` headings, never written down) and held to the same rules: the
+ * stalls in file order, `lang` and `dir` on the elements that hold the words and on nothing around
+ * them, the language menu linking the three addresses, and a phone that never scrolls sideways.
+ */
+const TRANSLATIONS = (['tr', 'fa'] as const).filter((lang) => existsSync(join(process.cwd(), `mini-courses/STORY_${lang}.md`)))
+
+test('at least one translated story exists to hold to the rule', () => {
+  expect(TRANSLATIONS.length, 'no STORY_<lang>.md exists, so the translated pages were not checked').toBeGreaterThan(0)
+})
+
+for (const lang of TRANSLATIONS) {
+  const headings = readFileSync(join(process.cwd(), `mini-courses/STORY_${lang}.md`), 'utf8')
+    .split('\n')
+    .filter((line) => /^## /.test(line))
+    .map((line) => line.slice(3).trim())
+  const dir = lang === 'fa' ? 'rtl' : null
+
+  test.describe(`/${lang}/about/`, () => {
+    test('renders its file\'s stalls with lang and dir on the words only, and the language menu', async ({ page }) => {
+      await page.goto(`/${lang}/about/`)
+      await expect(page.locator('html')).toHaveAttribute('lang', lang)
+      await expect(page.locator('.bz-about section.stall h2')).toHaveText(headings)
+      await expect(page.locator('.bz-about section.stall .slot')).toHaveCount(headings.length)
+      const text = '.bz-about h1, .bz-about h2, .bz-about .copy p, .bz-about .motto-k, .bz-about .motto-q'
+      const marks = await page.locator(text).evaluateAll((all) => all.map((el) => [el.getAttribute('lang'), el.getAttribute('dir')]))
+      expect(marks.length).toBeGreaterThan(headings.length)
+      for (const mark of marks) expect(mark).toEqual([lang, dir])
+      // The page around the words and the scenes are drawn as on /about/: no direction of their own.
+      expect(await page.locator('.bz-about').getAttribute('dir')).toBeNull()
+      expect(await page.locator('.bz-about [data-scene]').evaluateAll((all) => all.filter((el) => el.closest('[dir]')).length)).toBe(0)
+      const menu = page.getByRole('navigation', { name: 'Language of this page' })
+      await expect(menu.locator('a')).toHaveCount(1 + TRANSLATIONS.length)
+      await expect(menu.locator('a[aria-current="page"]')).toHaveAttribute('hreflang', lang)
+      const hrefs = await menu.locator('a').evaluateAll((all) => all.map((a) => a.getAttribute('href')))
+      expect(hrefs).toEqual(expect.arrayContaining(['/about/', `/${lang}/about/`]))
+    })
+
+    test.describe('at a phone\'s width', () => {
+      test.use({ viewport: { width: 390, height: 844 } })
+
+      test('nothing scrolls sideways, and the copy is aligned to its language\'s start', async ({ page }) => {
+        await page.goto(`/${lang}/about/`)
+        await page.waitForLoadState('networkidle')
+        for (const at of [0, 0.5, 1]) {
+          await page.evaluate((f) => scrollTo(0, (document.documentElement.scrollHeight - innerHeight) * f), at)
+          const width = await page.evaluate(() => [document.documentElement.scrollWidth, document.documentElement.clientWidth])
+          expect(width[0]).toBeLessThanOrEqual(width[1])
+        }
+        const overflow = await page.locator('.bz-about .copy p, .bz-about h2').evaluateAll((all) =>
+          all.filter((el) => el.getBoundingClientRect().right > innerWidth + 1 || el.getBoundingClientRect().left < -1).length,
+        )
+        expect(overflow).toBe(0)
+        const align = await page.locator('.bz-about .copy p').first().evaluate((el) => getComputedStyle(el).direction)
+        expect(align).toBe(lang === 'fa' ? 'rtl' : 'ltr')
+      })
+    })
+  })
+}

@@ -402,7 +402,7 @@
           "pattern": "^[^/\\s][^\\s]*$",
           "description": "A path relative to the site root: no base path and no leading slash."
         },
-        "description": "The About page's story document per language it is written in: STORY.md, English only for now (D125)."
+        "description": "The About page's story document per language it is written in: STORY.md, and STORY_tr.md and STORY_fa.md where they are written (D125, D132)."
       },
       "files": {
         "type": "object",
@@ -834,7 +834,7 @@
           "pattern": "^[^/\\s][^\\s]*$",
           "description": "A path relative to the site root: no base path and no leading slash."
         },
-        "description": "The About page's story document per language it is written in: STORY.md, English only for now (D125)."
+        "description": "The About page's story document per language it is written in: STORY.md, and STORY_tr.md and STORY_fa.md where they are written (D125, D132)."
       },
       "files": {
         "type": "object",

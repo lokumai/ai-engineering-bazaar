@@ -1,6 +1,6 @@
 import { readFileSync } from 'node:fs'
 import { describe, expect, it } from 'vitest'
-import { STORY_FILE, loadStory, parseStory } from '@/lib/content/story'
+import { MOTTO_LEADS, QUOTES, STORY_FILE, loadStory, parseStory, storyFile, storyLanguages } from '@/lib/content/story'
 
 /**
  * M90, D115 — the About page renders `mini-courses/STORY.md` and restates none of it.
@@ -41,11 +41,11 @@ describe('STORY.md becomes the About page', () => {
     const { lead, lines } = story.motto!
     expect(lastLine.startsWith(`${lead}:`)).toBe(true)
     // The quotation's words, with the curly marks put back to straight ones, are the line's words.
-    const words = lines.join(' ').replace(/[“”]/g, '"')
+    const words = lines.join(' ').replace(/[“”«»]/g, '"')
     expect(lastLine).toContain(words)
     // And it belongs to no stall: no stall's text holds the quotation, read with the file's own
     // straight quotation marks, which is how a stall's text keeps them.
-    const straight = lines[0].replace(/[\u201C\u201D]/g, '"')
+    const straight = lines[0].replace(/[\u201C\u201D«»]/g, '"')
     for (const stall of story.stalls) expect(stall.paragraphs.join(' ')).not.toContain(straight)
   })
 })
@@ -88,5 +88,48 @@ describe('the parser, on any story', () => {
   it('drops inline marks to their text', () => {
     const story = parseStory('## **Bold** heading\n\nSome *emphasis* and `code`.\n')
     expect(story.stalls[0]).toEqual({ heading: 'Bold heading', paragraphs: ['Some emphasis and code.'] })
+  })
+})
+
+describe('each translation mirrors STORY.md (M109, D132)', () => {
+  const english = loadStory()
+  const translations = storyLanguages().filter((lang) => lang !== 'en')
+
+  it('has at least one translation to hold to the rule', () => {
+    expect(translations.length, 'no STORY_<lang>.md exists, so nothing below was checked').toBeGreaterThan(0)
+  })
+
+  for (const lang of translations) {
+    it(`${lang}: parses, with the English file's stalls, paragraphs per stall, and a motto iff English has one`, () => {
+      const story = loadStory(lang)
+      expect(story.title, `${storyFile(lang)} has no # title`).not.toBeNull()
+      expect(story.stalls.length).toBe(english.stalls.length)
+      expect(story.stalls.map((stall) => stall.paragraphs.length)).toEqual(english.stalls.map((stall) => stall.paragraphs.length))
+      for (const stall of story.stalls) expect(stall.heading.length).toBeGreaterThan(0)
+      expect(story.motto !== null).toBe(english.motto !== null)
+      if (story.motto) {
+        expect(story.motto.lead).toBe(MOTTO_LEADS[lang])
+        expect(story.motto.lines.length).toBeGreaterThan(0)
+      }
+    })
+  }
+})
+
+describe('the motto\'s quotation marks', () => {
+  it('are guillemets in Persian, as Persian print quotes', () => {
+    expect(QUOTES.fa).toEqual(['«', '»'])
+  })
+})
+
+describe('the motto marker, per language', () => {
+  it.each(Object.entries(MOTTO_LEADS))('%s: reads its own lead and no other', (lang, lead) => {
+    const markdown = (leadIn: string) => `## One\n\nText.\n\n${leadIn}: **"Alpha beta. Gamma؟ Delta!"**\n`
+    const story = parseStory(markdown(lead), lang as 'en' | 'tr' | 'fa')
+    const [open, close] = QUOTES[lang as 'en' | 'tr' | 'fa']
+    expect(story.motto).toEqual({ lead, lines: [`${open}Alpha beta.`, 'Gamma؟', `Delta!${close}`] })
+    for (const other of Object.values(MOTTO_LEADS).filter((one) => one !== lead)) {
+      const read = parseStory(markdown(other), lang as 'en' | 'tr' | 'fa')
+      expect(read.motto, `${other} was taken for ${lang}'s motto`).toBeNull()
+    }
   })
 })

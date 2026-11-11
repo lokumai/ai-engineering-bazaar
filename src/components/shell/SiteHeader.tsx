@@ -9,7 +9,7 @@ import { TrackSwitch } from './TrackSwitch'
 import { LanguageMenu } from './LanguageMenu'
 import { MainNav } from './MainNav'
 import { ThemeToggle } from './ThemeToggle'
-import type { TranslatedLang } from '@/lib/content/languages'
+import type { ReadingLang, TranslatedLang } from '@/lib/content/languages'
 
 /**
  * The bar and the band — M16 stage 1.
@@ -124,8 +124,10 @@ function StarGlyph() {
 
 export function SiteHeader({
   translated,
+  aboutLangs,
 }: {
   translated: Readonly<Record<TranslatedLang, readonly string[]>>
+  aboutLangs: readonly ReadingLang[]
 }) {
   const { stars } = GITHUB
 
@@ -162,7 +164,7 @@ export function SiteHeader({
           {/* M59 (D95): search, before the switch, a window over the page. */}
           <SearchDialog levels={categoryLabels().map(({ slug, title }) => ({ slug, title }))} />
           <TrackSwitch translated={translated} />
-          <LanguageMenu translated={translated} />
+          <LanguageMenu translated={translated} aboutLangs={aboutLangs} />
           <ThemeToggle />
 
           <a

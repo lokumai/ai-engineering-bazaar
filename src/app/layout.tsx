@@ -4,6 +4,7 @@ import { ReadingOptions } from '@/components/shell/ReadingOptions'
 import { SiteHeader } from '@/components/shell/SiteHeader'
 import { translatedSlugs } from '@/components/sheet/ModuleSheet'
 import { curriculumFacts } from '@/lib/content/facts'
+import { storyLanguages } from '@/lib/content/story'
 import { RecordStateSync } from '@/components/record/RecordStateSync'
 import { recordBootScript } from '@/lib/record/boot'
 import { diagramGroundCss } from '@/lib/reading/diagram-themes'
@@ -104,7 +105,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             address, in which languages, and only the build can say: it is the
             list each language's route emits, measured here for the same reason
             the facts above are. */}
-        <SiteHeader translated={translatedSlugs()} />
+        <SiteHeader translated={translatedSlugs()} aboutLangs={storyLanguages()} />
         {children}
         {/* §6.5 / §6.7 — the overflow fade and the COPY control, once per
             document. In the shell rather than in the prose column because the

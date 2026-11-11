@@ -30,6 +30,9 @@ const PAGES = [
   A4.path,
   // M90 — the About page: a show page, and still a document like any other.
   '/about/',
+  // M109 — its translations, the same page in Turkish and in Persian (right to left on the words).
+  '/tr/about/',
+  '/fa/about/',
 ]
 
 /** What has focus, described the way a keyboard user would recognise it. */

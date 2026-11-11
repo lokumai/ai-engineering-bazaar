@@ -33,7 +33,9 @@ import { showsSample } from './caravan'
 import { loadCaravanFiles } from './caravan-file'
 import { CATEGORIES, CURRICULUM_MODULES } from './curriculum-file'
 import { type CourseModule, loadAllModules, loadModuleIn } from './loader'
+import { aboutRoute } from '../about-copy'
 import { type ReadingLang, TRANSLATED_LANGS, homeRoute } from './languages'
+import { storyLanguages } from './story'
 import { type Track, TRACK_IDS, catalogRoute, moduleRoute } from '../tracks'
 import { absoluteUrl } from '../site'
 import { href } from '../url'
@@ -67,6 +69,11 @@ export function moduleLanguageRoutes(slug: string, track: Track): LanguageRoutes
 /** The front door's three addresses: the one page translated whole. */
 export function homeLanguageRoutes(): LanguageRoutes {
   return Object.fromEntries(ALL_LANGS.map((lang) => [lang, homeRoute(lang)]))
+}
+
+/** The About page's addresses: English, and each translation whose `STORY_<lang>.md` exists (D132). */
+export function aboutLanguageRoutes(): LanguageRoutes {
+  return Object.fromEntries(storyLanguages().map((lang) => [lang, aboutRoute(lang)]))
 }
 
 /**
@@ -111,7 +118,7 @@ export interface IndexablePage {
  * purpose (D120): `/profile/`, which shows this browser's own record, and `/caravan/` while it
  * draws sample data (`showsSample`, the page's own test, so it joins the day a real trend lands).
  */
-const SINGLE_PAGES: readonly string[] = ['/about/', '/legend/']
+const SINGLE_PAGES: readonly string[] = ['/legend/']
 
 function caravanIsReal(): boolean {
   const files = loadCaravanFiles({
@@ -132,6 +139,7 @@ export function indexablePages(): IndexablePage[] {
   }
 
   add(homeLanguageRoutes())
+  add(aboutLanguageRoutes())
   for (const route of SINGLE_PAGES) add({ en: route })
   if (caravanIsReal()) add({ en: '/caravan/' })
   for (const track of TRACK_IDS) {

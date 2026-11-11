@@ -11,7 +11,7 @@ description: >
   backgrounds and copy (M81), Agentic UI (M82), the cast's colours (M83), and M84 to M90 (content
   and site fixes, the home page in Turkish and Persian, Dariush's motif, block menus in the top layer,
   and About, the story of the Bazaar); Caravan built (M91), its real trends waiting (M92) and its second
-  round (M93); multilingual SEO (M96); translated objectives on the site (M98) and in the bundle (M99); the story in the bundle (M100); three screen recordings and Human in the Loop moved into Agentic UI (M101); the search filters applied by a button (M102); a laptop section in Inference Engines (M103); the word count in the bundle (M105); and M41, the content bundle for the mobile reader. Each milestone carries its deliverables and acceptance
+  round (M93); multilingual SEO (M96); translated objectives on the site (M98) and in the bundle (M99); the story in the bundle (M100); three screen recordings and Human in the Loop moved into Agentic UI (M101); the search filters applied by a button (M102); a laptop section in Inference Engines (M103); the word count in the bundle (M105), the checklist index (M106), the diagrams without empty rects (M107) and five logos without CSS (M108); and M41, the content bundle for the mobile reader. Each milestone carries its deliverables and acceptance
   criteria as `- [ ]` checkboxes, ticked as the work lands, and closes with a dated report; the loop
   that governs that is below, in this file.
   NOT here: why a choice was made (BRAINSTORM.md), or any rule that outlives the milestone
@@ -19,7 +19,7 @@ description: >
 authority: state
 writes: agent, every session
 status: active
-covers: "M50 to M105, 2026-11-06 onward, and M41, which part 2 held for PR #57"
+covers: "M50 to M108, 2026-11-06 onward, and M41, which part 2 held for PR #57"
 last_updated: 2026-11-11
 ---
 
@@ -2104,6 +2104,41 @@ the bundle has no count to print. The repository's owner asked for the pull requ
       holds the index to the documents. Mutation-tested: with every translation given its English count,
       the test fails on the first Turkish document (2,754 where the page prints 2,356).
 - [x] **Gate:** typecheck, 1,599 unit tests, build, link check, bundle check; the full browser suite in CI.
+
+## 🏁 Milestone M106: The checklist index in the content bundle (D129), DONE
+
+The mobile reader's developer, in the pull request of M105: a task item in the bundle says whether it is
+checked and not which record key it is.
+
+- [x] **The field**: every task item carries `task.index`, read off the `data-hl-check` the page stamps
+      (`src/lib/bundle/blocks.ts`, `src/lib/bundle/schema.ts`). The site's pages are unchanged.
+- [x] **The contract**: ARCHITECTURE §13 names it; `bundle-schema.json` and the kitchen-sink snapshot
+      show it as an addition and nothing else; an unnumbered item fails the build.
+- [x] **The guard**: the corpus test holds every document's indexes equal to `checklistOf` of its own
+      page body, in every language and track. Mutation-tested: with the index taken modulo 4, it fails
+      on Security in English (`[0, 1, 2, 3, 0]` for `[0, 1, 2, 3, 4]`).
+
+## 🏁 Milestone M107: The bundle's diagrams without empty rects (D130), DONE
+
+- [x] **The strip**: `stripNonPainting` removes a `<rect>` with no width or height, and `profileViolations`
+      refuses one, so `check-bundle-out.mjs` does too (`scripts/lib/svg-profile.mjs`). Report: 2,758
+      removed across 192 files.
+- [x] **The proof**: every diagram, old and new, drawn by Chromium at 1x and 2x: 384 renders, 0
+      differing pixels. A copy with one rect given a size differs, so the comparison sees a change.
+- [x] **The guard**: unit tests for the strip and the profile. Mutation-tested: with the rule switched
+      off, both fail.
+
+## 🏁 Milestone M108: Five logos without CSS (D131), DONE
+
+- [x] `llamacpp.svg` (both copies), `promptfoo.svg`, `lightrag.svg` and `pentagi-mono.svg` carry no
+      `<style>`, `class=`, `style=`, filter, nested `<svg>` or `color(`. Report: 42 renders each against
+      the old file (seven heights, three densities, both grounds), 0 differing pixels.
+- [x] `antigravity.svg` and `context7.svg` left unchanged, with the measured difference (D131).
+- [x] **Site unchanged**: the 207 exported pages, scripts and Next's chunk names aside, are the same
+      markup before and after, apart from a `<meta name="next-size-adjust">` that changes place on a few
+      pages between any two builds.
+- [x] **Gate (M105 to M108):** typecheck, 1,604 unit tests, build, link check, bundle check, and the
+      full browser suite locally and in CI.
 
 ---
 

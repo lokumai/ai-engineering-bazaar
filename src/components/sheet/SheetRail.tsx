@@ -2,6 +2,7 @@ import type { TocEntry } from '@/lib/content/render'
 import { DependencyBlock, type DependencyRelation } from './DependencyBlock'
 import { SectionSpine } from './SectionSpine'
 import { type ReadingLang, langAttr } from '@/lib/content/languages'
+import { PAGE_COPY, translatedAttrs } from '@/lib/content/page-copy'
 
 /**
  * M11 — the RIGHT rail: what is on this page, and what this page depends on.
@@ -60,11 +61,11 @@ export function SheetRail({
   return (
     <>
       {toc.length > 0 && (
-        <b className="bz-aside-label" id="hl-on-this-page">
-          On this page
+        <b className="bz-aside-label" id="hl-on-this-page" {...translatedAttrs(lang ?? 'en')}>
+          {PAGE_COPY[lang ?? 'en'].onThisPage}
         </b>
       )}
-      <SectionSpine entries={toc} lang={lang === undefined ? undefined : langAttr(lang)} />
+      <SectionSpine entries={toc} lang={lang === undefined ? undefined : langAttr(lang)} label={PAGE_COPY[lang ?? 'en'].sections} />
     </>
   )
 }

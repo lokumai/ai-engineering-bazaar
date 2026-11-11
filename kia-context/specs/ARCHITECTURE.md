@@ -11,8 +11,8 @@ description: >
 authority: blueprint
 writes: agent, when explicitly refactoring
 status: active
-covers: the whole system as built on 2026-09-10, with M16 shipped — every route on the design language; the record, channel A and the render step corrected for M24 on 2026-10-11, and the quiz and the end of a module for M25 on 2026-10-12, the Bazaar Street front door for M27 and the Persian pages for M28 the same day, and the progress page slimmed to its circles and its data row for M38 on 2026-11-05, and the account layer, role paths, record of work and two thirds of the test suite removed for M40 the same day, and the two tracks (For Engineers, For Everyone) and their per-track record for M43 the same day; the custom domain (D92), the fifth level, Emerging (first named Emerging Trends), and moved addresses (D94) on 2026-11-06, and the people at the gate (M58), search (M59) and the catalog without its Sources count (M55) the same day; and for M64 to M69 the same night, a planned module that renders the sections it already has (D102), inline vendor logos, and the first For Everyone module; and the search filters and the level bar on a result (M70, D103), folded behind a Filters disclosure (M71, D104), and the stories at the gate kept until everyone has turned (M72), on 2026-11-07; and call-out cards in a module (D106), the reader's choice of Mermaid theme (D107), Mihrî in Leyla's place at the gate and the fifth level titled Emerging (M75), on 2026-11-08; and For Everyone versions of the nineteen other written modules of Fundamentals, Intermediate and Ecosystem, in three languages (M77, M78, D108), the same day; and one heading per shared section (D109), technical terms kept English in translations, and more vendor marks (M80), and each diagram theme on Mermaid's own ground with a copy control (M81), the same day; and the content bundle for the mobile reader, §13 (M41, D89, D111), on 2026-11-09, and Caravan's address in the bar (M62) the same day, and the About page (M90, D115) the same day, and Caravan's page, its two data files and their validation (§14, M91, D116) that evening, and its second round, a closer stage and the trends browsed like the catalog (§14, M93, D117), on 2026-11-10; and `<html lang>` per language, absolute canonicals and hreflang, the sitemap and robots.txt, and what is kept out of search (§7, M96, D119, D120) the same day; and the search filters applied by a button, held while the panel is shut (M102, D127)
-last_updated: 2026-11-10
+covers: the whole system as built on 2026-09-10, with M16 shipped — every route on the design language; the record, channel A and the render step corrected for M24 on 2026-10-11, and the quiz and the end of a module for M25 on 2026-10-12, the Bazaar Street front door for M27 and the Persian pages for M28 the same day, and the progress page slimmed to its circles and its data row for M38 on 2026-11-05, and the account layer, role paths, record of work and two thirds of the test suite removed for M40 the same day, and the two tracks (For Engineers, For Everyone) and their per-track record for M43 the same day; the custom domain (D92), the fifth level, Emerging (first named Emerging Trends), and moved addresses (D94) on 2026-11-06, and the people at the gate (M58), search (M59) and the catalog without its Sources count (M55) the same day; and for M64 to M69 the same night, a planned module that renders the sections it already has (D102), inline vendor logos, and the first For Everyone module; and the search filters and the level bar on a result (M70, D103), folded behind a Filters disclosure (M71, D104), and the stories at the gate kept until everyone has turned (M72), on 2026-11-07; and call-out cards in a module (D106), the reader's choice of Mermaid theme (D107), Mihrî in Leyla's place at the gate and the fifth level titled Emerging (M75), on 2026-11-08; and For Everyone versions of the nineteen other written modules of Fundamentals, Intermediate and Ecosystem, in three languages (M77, M78, D108), the same day; and one heading per shared section (D109), technical terms kept English in translations, and more vendor marks (M80), and each diagram theme on Mermaid's own ground with a copy control (M81), the same day; and the content bundle for the mobile reader, §13 (M41, D89, D111), on 2026-11-09, and Caravan's address in the bar (M62) the same day, and the About page (M90, D115) the same day, and Caravan's page, its two data files and their validation (§14, M91, D116) that evening, and its second round, a closer stage and the trends browsed like the catalog (§14, M93, D117), on 2026-11-10; and `<html lang>` per language, absolute canonicals and hreflang, the sitemap and robots.txt, and what is kept out of search (§7, M96, D119, D120) the same day; and the search filters applied by a button, held while the panel is shut (M102, D127); and the module page's own words in Turkish and Persian (M110, D133), on 2026-11-11
+last_updated: 2026-11-11
 ---
 
 # 🏗️ ARCHITECTURE — How this project is built
@@ -189,7 +189,7 @@ never a module of its own, so it changes no count, no number and no record key.
 
 **A translation file may carry `objectives`, and only that (frontmatter, same count and order).**
 The objectives card is content, so a Turkish or Persian page shows the translated list (D113: content
-is multilingual, the interface is not). `parseTranslationFrontmatter` (`src/lib/content/schema.ts`)
+is multilingual, the menus are not; D133 below says where the line falls). `parseTranslationFrontmatter` (`src/lib/content/schema.ts`)
 is the rule and `loader.ts` applies it to every `_tr.md` and `_fa.md` that exists, in both tracks,
 usable or not: any other key (`summary`, `module`, `status`) fails the build naming the file, and so
 does a count different from the English file's own list. A file with no block builds as before, and
@@ -197,8 +197,22 @@ its page shows the English list, `loadModuleIn` marking the language of `frontma
 `objectivesLang` (`tr`, `fa` or `en`). `summary` stays English on every page, because it feeds the
 English catalog. This replaces M19's rule that a translated page's objectives are always the English
 ones, marked `lang="en"`; that stays only as the fallback. On the page the card carries `lang`
-(its heading says `en`, being the interface's) and the list alone carries `dir="rtl"` on a Persian
+(its heading follows the page's language, D133) and the list alone carries `dir="rtl"` on a Persian
 page; the card is never mirrored.
+
+**The words a module page prints itself (D133).** They are one typed table, `PAGE_COPY` in
+`src/lib/content/page-copy.ts` (`Record<ReadingLang, PageCopy>`), and every component of the reading page
+takes `lang` and reads it: the prerequisites box, the objectives heading, the contents rail, the completion
+control (`SignOff`), the pager's labels, the quiz and its header, the reading-time line, the drawer's two
+words and the For Everyone not-written notice. A string that depends on a number is a function; Turkish
+groups thousands with `.`, Persian keeps ASCII digits, and dates come from a month table, not `Intl`. The
+words carry `lang` and, in Persian, `dir="rtl"` on their own block, with the arrows turned in
+`completion.css`; a module or level name inside them is `lang="en" dir="ltr"`. What stays English: the
+bar, footer, catalog, progress page, search, breadcrumb, language menu, every module and level name, and the
+words the build writes into the prose (`Copy`, `Expand diagram`, `Link to …`), which the content bundle
+carries. The completion words are React markup, not CSS content stamped by `boot.ts`, so channel A has no
+English frame to flash. `tests/unit/page-copy.test.ts` holds the table (same keys, nothing left in English,
+the register's bans in each language) and `tests/e2e/module-page-i18n.spec.ts` the page.
 
 Three failures that would otherwise be silent throw, naming the file: a block that does not start on
 line 1 (gray-matter reads a block only there, so a blank line before it leaves it in the body and the

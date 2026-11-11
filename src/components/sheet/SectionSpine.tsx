@@ -40,10 +40,13 @@ import { TableOfContents } from './TableOfContents'
 export function SectionSpine({
   entries,
   lang,
+  label,
 }: {
   entries: readonly TocEntry[]
   /** M19 — the entries are the module's own headings, so they follow its body. */
   lang?: string
+  /** D133 — the accessible name of the list, in the page's language. */
+  label?: string
 }) {
   const [activeId, setActiveId] = useState<string | null>(null)
 
@@ -98,5 +101,5 @@ export function SectionSpine({
     }
   }, [entries])
 
-  return <TableOfContents entries={entries} activeId={activeId} lang={lang} />
+  return <TableOfContents entries={entries} activeId={activeId} lang={lang} label={label} />
 }

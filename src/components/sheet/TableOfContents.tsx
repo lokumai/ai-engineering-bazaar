@@ -18,6 +18,7 @@ export function TableOfContents({
   entries,
   activeId,
   lang,
+  label = 'Sections',
 }: {
   entries: readonly TocEntry[]
   activeId: string | null
@@ -29,6 +30,8 @@ export function TableOfContents({
    * the objectives card already follow.
    */
   lang?: string
+  /** D133 — the nav's accessible name, `Sections` or its translation. */
+  label?: string
 }) {
   if (entries.length === 0) return null
 
@@ -41,7 +44,7 @@ export function TableOfContents({
   const marks = entries.some((entry) => entry.mark)
 
   return (
-    <nav aria-label="Sections">
+    <nav aria-label={label}>
       <ol
         role="list"
         className="bz-aside-list"

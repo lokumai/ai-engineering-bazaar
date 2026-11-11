@@ -1,5 +1,7 @@
 import Link from 'next/link'
 import type { SheetLink } from './DependencyBlock'
+import { PAGE_COPY, wordsAttrs } from '@/lib/content/page-copy'
+import type { ReadingLang } from '@/lib/content/languages'
 
 /**
  * The modules to read before this one, at the top of the page, by name.
@@ -20,25 +22,26 @@ import type { SheetLink } from './DependencyBlock'
  * `Unlocks` and `See also` did not come with it. Where a module leads next is
  * the pager's job at the end of the page, and the rail holds the whole course.
  */
-export function Prerequisites({ targets }: { targets: readonly SheetLink[] }) {
+export function Prerequisites({ targets, lang = 'en' }: { targets: readonly SheetLink[]; lang?: ReadingLang }) {
   if (targets.length === 0) return null
+  const copy = PAGE_COPY[lang]
 
   return (
-    <aside className="bz-prereq" aria-labelledby="bz-prereq-head" lang="en">
+    <aside className="bz-prereq" aria-labelledby="bz-prereq-head" {...wordsAttrs(lang)}>
       <svg className="bz-prereq-icon" width="18" height="18" viewBox="0 0 16 16" fill="none"
         stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
         <path d="M2.75 3.25h3.5a1.75 1.75 0 0 1 1.75 1.75v8a1.25 1.25 0 0 0-1.25-1.25h-4Z" />
         <path d="M13.25 3.25h-3.5A1.75 1.75 0 0 0 8 5v8a1.25 1.25 0 0 1 1.25-1.25h4Z" />
       </svg>
       <div className="bz-prereq-body">
-        <p id="bz-prereq-head" className="bz-prereq-title">Before you start</p>
+        <p id="bz-prereq-head" className="bz-prereq-title">{copy.beforeYouStart}</p>
         <ul className="bz-prereq-list">
           {targets.map((target) => (
             <li key={target.module}>
-              <Link href={target.path} className="bz-prereq-link" data-draft={target.draft ? '' : undefined}>
+              <Link href={target.path} className="bz-prereq-link" lang="en" dir="ltr" data-draft={target.draft ? '' : undefined}>
                 {target.title}
               </Link>
-              {target.draft && <span className="bz-prereq-tag">Planned</span>}
+              {target.draft && <span className="bz-prereq-tag">{copy.planned}</span>}
             </li>
           ))}
         </ul>

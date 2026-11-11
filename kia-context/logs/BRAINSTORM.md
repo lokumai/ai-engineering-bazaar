@@ -9,7 +9,7 @@ description: >
 authority: reasoning
 writes: agent, when a decision is taken
 status: active
-covers: "D97 to D134 so far, and D89, which part 2 held for PR #57 — 2026-11-06 onward"
+covers: "D97 to D135 so far, and D89, which part 2 held for PR #57 — 2026-11-06 onward"
 last_updated: 2026-11-11
 ---
 
@@ -1216,6 +1216,28 @@ trail and the title.
   (the island would still run and the record fields stay unread in the page); keeping the reading time
   as a profile figure (the profile never showed it, and it was the module's declared minutes, not the
   reader's, so it claimed more than it measured).
+
+### D135 · The Modules subsection of References is headed by the LokumAI mark, on the site only · 2026-11-11
+status: active
+
+The author asked for the LokumAI mark, drawn inline like the navbar's, in place of the 🧭 on the
+References' Modules subsection. Every module ends its references with `### 🧭 Modules` (and `Modüller`,
+`ماژول‌ها`); 36 files carry that line.
+
+- **Done in the site's render, not in the markdown.** `renderTree` stringifies a clone of its tree in which
+  the compass of that one heading is an inline `<img>` of `lokum-logo.svg` (through `href()`, `alt=""`,
+  1em); the returned `tree`, which the bundle is built from, is untouched, so `out/api/v1/` is byte for
+  byte what it was (identical `contentVersion` built with and without the swap). The Caravan page's
+  label is swapped the same way.
+- **Matched by structure and the glyph**, not by a language's word: the h3 after the last h2 whose title
+  starts with 🧭. Turkish and Persian work with no second rule. The id and accessible name keep the
+  text minus the emoji.
+- **Rejected:** replacing 🧭 in the markdown (it changes the bundle's content and the corpus rule
+  `tests/corpus/references.test.ts` pins, and markdown cannot carry an inline logo the app could draw in
+  its own design); an extra token or glyph in the markdown the site would recognise (a second spelling for
+  the author to remember); recolouring a CSS-drawn compass (not the mark asked for).
+- The html now differs from the tree by this one heading. The comment on `renderTree` said the two cannot
+  disagree; `swapModulesMark` states the exception.
 
 ---
 

@@ -195,10 +195,10 @@ class Converter {
     return { type: 'list', ordered, items }
   }
 
-  item(node: Element): { task?: { checked: boolean }; blocks: Block[] } {
+  item(node: Element): { task?: { checked: boolean; index: number }; blocks: Block[] } {
     this.expectClasses(node, ['task-list-item'])
     let children: ElementContent[] = node.children
-    let task: { checked: boolean } | undefined
+    let task: { checked: boolean; index: number } | undefined
 
     if (classesOf(node).includes('task-list-item')) {
       // A tight task item holds the box itself; a loose one holds it in its first paragraph.
@@ -210,7 +210,12 @@ class Converter {
         this.fail('a task-list item does not open with its checkbox')
       }
       this.expectClasses(box, [])
-      task = { checked: property(box, 'checked') === true }
+      // The index the page stamps on the item (`data-hl-check`, from `render.ts`) and its island stores a
+      // tick under, `record.sheets[slug].checklist[index]`: read, never recounted, so the reader and the
+      // web key a tick the same way in every language and track (D129).
+      const index = Number(property(node, 'data-hl-check'))
+      if (!Number.isInteger(index) || index < 0) this.fail('a task-list item carries no checklist index')
+      task = { checked: property(box, 'checked') === true, index }
       const rest = siblings.filter((child) => child !== box)
       children = inParagraph
         ? node.children.map((child) => (child === holder ? { ...holder, children: rest } : child))

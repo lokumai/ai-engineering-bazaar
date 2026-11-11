@@ -386,7 +386,8 @@
       "items": [
         {
           "task": {
-            "checked": false
+            "checked": false,
+            "index": 0
           },
           "blocks": [
             {
@@ -402,7 +403,8 @@
         },
         {
           "task": {
-            "checked": true
+            "checked": true,
+            "index": 1
           },
           "blocks": [
             {

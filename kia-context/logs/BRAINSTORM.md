@@ -9,7 +9,7 @@ description: >
 authority: reasoning
 writes: agent, when a decision is taken
 status: active
-covers: "D97 to D128, D133 and D134 so far, and D89, which part 2 held for PR #57 — 2026-11-06 onward"
+covers: "D97 to D131, D133 and D134 so far, and D89, which part 2 held for PR #57 — 2026-11-06 onward"
 last_updated: 2026-11-11
 ---
 
@@ -1050,6 +1050,74 @@ would not match the site's anyway: the site counts the markdown after the lead-i
   (a reader that opened a document from a link would need the index to print its line); a `words` map
   per module beside `minutes` rather than per track (the two tracks are different files of different
   lengths); `0` for a planned module (a page that prints nothing is not a page of no words).
+
+### D129 · A checklist item in the bundle carries the index the record keys its tick by · 2026-11-11
+status: active
+
+The mobile reader's developer: the bundle gives a task item `{ checked }` and nothing else, so the app
+would have to count the items itself to store a tick, and a count the app makes is the second count
+`render.ts` warns about (§12.7).
+
+- **Read, not recounted.** `render.ts` stamps each task item with `data-hl-check`, its place in the
+  module's one index space (straight through every list of the page), and `ChecklistIsland` stores a tick
+  under that number in `record.sheets[key].checklist`. The bundle's converter reads the same attribute off
+  the same tree, so `task.index` is the number the web writes, by construction.
+- **Per language, as the web does.** A translated page numbers its own items and ticks the same record
+  key, so its document carries its own page's numbers. **MEASURED:** the only checklist is Security's, in
+  three languages; each document's indexes equal `checklistOf` of its own body.
+- **Required inside `task`.** An item the page did not number fails the build, naming the module, rather
+  than reaching the reader with no key. `checked` is unchanged.
+- **Additive, so v1** (ARCHITECTURE §13).
+- **Rejected:** the app counting items (two counts that drift the day a list nests); an index per list
+  (the record has one space per module); a separate list of indexes beside the blocks (the item and its
+  key would travel apart).
+
+### D130 · The bundle's diagrams carry no rect without a size · 2026-11-11
+status: active
+
+The mobile reader's developer: every flowchart node label in the app had a 1px dot above it. Mermaid
+writes a `<rect>` behind each label with no `x`, `y`, `width` or `height`; the flattener copies its
+computed fill and stroke onto it. A browser draws nothing for a rect with no area, and `flutter_svg`
+strokes it as a dot.
+
+- **Removed in the finaliser's strip** (`stripNonPainting` in `scripts/lib/svg-profile.mjs`): a `<rect>`
+  whose `width` or `height` is missing or not a positive number. **MEASURED:** 2,758 such rects across the
+  192 diagram files, every one with neither size; the 1,050 sized ones, the smallest 0.1 by 0.1, stay.
+- **Refused by the profile**, so `check-bundle-out.mjs` stops a bundle that carries one, as it stops a
+  `<style>`.
+- **Nothing on the site changes by construction**: the site draws its diagrams itself, and these files are
+  the bundle's copies. **MEASURED:** all 192 files, old and new, drawn by Chromium at 1x and 2x with the
+  pinned Vazirmatn face: 384 renders, 0 differing pixels.
+- **Rejected:** a zero size written onto the rect (a tag that paints nothing is still a tag the reader
+  must skip); asking the app to skip it (the reader derives nothing, D111).
+
+### D131 · Five logos drawn without CSS, and two left as they are · 2026-11-11
+status: active
+
+The mobile reader's developer: `flutter_svg` ignores `<style>`, filters, a nested `<svg>` and
+`color(display-p3 ...)`, so six marks drew wrong in the app. The repository's owner set the condition:
+nothing on the site may change.
+
+- **Changed, pixel for pixel the same in a browser:** `llamacpp.svg` (both copies), `promptfoo.svg` and
+  `lightrag.svg` (each class rule and inline style written onto its element as a presentation attribute,
+  the `<style>` removed, `enable-background` dropped since it paints nothing), and `pentagi-mono.svg` (the
+  nested `<svg>`, at the same origin and viewBox as the root, became a `<g>` with its fill). **MEASURED:**
+  each old and new file drawn as an `<img>` the way prose.css draws a logo, at heights 14.3, 17.6, 19.8, 24,
+  64, 180 and 512 px, at 1x, 2x and 3x, on a light and a dark ground with a `-mono.svg` inverted on the
+  dark one: 42 renders each, 0 differing pixels.
+- **Left unchanged:** `antigravity.svg`, whose colour is ten Gaussian blurs inside a mask; the same file
+  without filters differs in 1,090,948 pixels over the 42 renders, and a blur cannot be written without a
+  filter. `context7.svg`, whose ground is `color(display-p3 0.0196 0.5882 0.4118)`, outside sRGB: Chromium
+  shows it as `#009965`, and that hex matches every flat pixel, but Chromium blends the anti-aliased edges
+  in the unclipped colour, so 8,083 edge pixels over the 42 renders differ by one or two levels. The
+  owner's rule is zero, so both stay, and the app needs its own answer for them.
+- **Not a bundle check yet**, because those two files would fail it; it can be added once they are
+  settled. Three more marks were not in the report and are left alone: `agno.svg` and
+  `llamaindex.svg` carry a `style=`, and `bolt-mono.svg` a filter.
+- **Rejected:** a raster fallback for the two (a second file to keep in step with the first); editing the
+  two anyway with the small difference (the owner's condition is zero).
+
+---
 
 ### D133 · A module page's own words translate; the menus and the names do not · 2026-11-11
 status: active

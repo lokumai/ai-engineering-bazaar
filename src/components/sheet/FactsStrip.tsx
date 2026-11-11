@@ -1,4 +1,4 @@
-import { thousands, type SheetFacts } from '@/lib/content/title-block'
+import { printedWords, thousands, type SheetFacts } from '@/lib/content/title-block'
 
 /**
  * The module's own facts, under its title — M16 stage 5, cut back by M21.
@@ -46,11 +46,12 @@ import { thousands, type SheetFacts } from '@/lib/content/title-block'
  * bargain `node` already makes there.
  */
 export function FactsStrip({ facts }: { facts: SheetFacts }) {
-  if (facts.status !== 'ready') return null
+  const words = printedWords(facts)
+  if (words === null) return null
 
   return (
     <p className="bz-facts">
-      {facts.duration} min · {thousands(facts.extent)} words
+      {facts.duration} min · {thousands(words)} words
     </p>
   )
 }

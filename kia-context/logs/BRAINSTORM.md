@@ -1138,6 +1138,9 @@ The author asked for `/tr/about/` and `/fa/about/`, as the home page has `/tr/` 
   (`src/lib/about-copy.ts`), because on a translated page it is content, and the crumb, which is
   chrome, stays `About the Bazaar`. The STORY file's `#` title ("Our Story") is a different thing from
   the page's name and is not used for it.
+  **Changed the same day (M114):** the names were first `Hakkımızda` and `درباره‌ی ما`, the routine "about
+  us" of each language's sites; the author rejected them, because the English page is about the Bazaar, not
+  about us. They are `Pazar Hakkında` and `درباره‌ی بازار`.
 - **Language and direction on the words only (D80)**: the layout and the scenes are drawn the same in all
   three, so a Persian reader gets the English page's composition with right-to-left text in it.
 - **Only languages whose file exists are offered**: `storyLanguages()` feeds the language menu, the SEO
@@ -1238,6 +1241,44 @@ References' Modules subsection. Every module ends its references with `### 🧭 
   the author to remember); recolouring a CSS-drawn compass (not the mark asked for).
 - The html now differs from the tree by this one heading. The comment on `renderTree` said the two cannot
   disagree; `swapModulesMark` states the exception.
+
+### D136 · Every animated recording gets a replay button, added by script on a figure the build marks · 2026-11-11
+status: active
+
+The author chose "Option A" for the course's animated recordings, which loop forever with no control: a
+small replay icon at the image's top-right corner that restarts the animation from its first frame.
+
+- **Option A, chosen: a replay button on the image.** The recordings stay animated WebP, so the content
+  bundle, its block types and the mobile reader are untouched.
+- **B, rejected for now: convert each recording to `<video>`** (controls, pause, scrubbing for free). It
+  needs a new bundle block type (ARCHITECTURE §13: a v1 addition the app must learn), build checks for
+  video files, a poster frame per recording, and the app developer's work in the other repository; the
+  author's recordings are also 10 to 30 seconds of screen capture, which is what an animated image
+  already carries. Reopen it if a recording needs pause or sound.
+- **C, rejected: leave as is.** A reader who looks away misses the start of a recording, and the only
+  way back to frame 0 was reloading the page.
+- **Which images are animated is read from the file's bytes at render time** (`src/lib/content/animated.ts`:
+  a WebP's VP8X animation flag or an ANIM chunk; a GIF with more than one image descriptor), not from a
+  list of names, a suffix or a front-matter flag. A recording added tomorrow gets its button with no code
+  change, and a test holds the rule for any content. The figure gets `data-hl-animated`.
+- **The button is added by `Affordances`, not emitted in the markup.** With JavaScript off there is no button
+  that does nothing, and the figure's markup in the tree the bundle is built from gains only an attribute
+  the bundle reader ignores.
+- **How it restarts was measured, not assumed.** With a two-frame test recording (red 1.5 s, then blue),
+  Chrome restarts on `img.src = img.src`, does NOT restart when the `<img>` is cloned and replaced (the
+  decoded resource and its playhead are shared), and a `?query` URL refetches. `src = src` is the only
+  one of those that restarts, and it is not a behaviour the HTML spec promises (Safari and Firefox were
+  not measured here). So a press fetches the file once, keeps the blob, and gives the image a new object
+  URL of the same bytes each time: a resource nobody has played, which starts at frame 0 in any browser,
+  and costs one request however often it is pressed.
+- **Label**: a module page's own controls are translated (D133), so the button's name comes from
+  `PAGE_COPY.replay` by the language of the text it sits in (`Replay`, `Baştan oynat`, `پخش دوباره`),
+  where `Copy` and `Expand diagram`, which are in the markup the bundle carries, stay English.
+- **Rejected: a canvas to prove the restart in the test.** `drawImage(img)` paints an animated image's first
+  frame whatever it is showing (24 samples over 24 s gave one hash), so the e2e spec compares screenshots
+  of the element and replaces the recording's bytes with the two-frame fixture.
+
+---
 
 ### D137 · The quiz is shared by both tracks and every language · 2026-11-11
 status: active

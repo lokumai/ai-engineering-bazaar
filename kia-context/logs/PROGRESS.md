@@ -11,7 +11,7 @@ description: >
   backgrounds and copy (M81), Agentic UI (M82), the cast's colours (M83), and M84 to M90 (content
   and site fixes, the home page in Turkish and Persian, Dariush's motif, block menus in the top layer,
   and About, the story of the Bazaar); Caravan built (M91), its real trends waiting (M92) and its second
-  round (M93); multilingual SEO (M96); translated objectives on the site (M98) and in the bundle (M99); the story in the bundle (M100); three screen recordings and Human in the Loop moved into Agentic UI (M101); the search filters applied by a button (M102); a laptop section in Inference Engines (M103); the word count in the bundle (M105), the checklist index (M106), the diagrams without empty rects (M107) and five logos without CSS (M108); the About page in Turkish and Persian (M109); the module page's own words in Turkish and Persian (M110); the footer without its first row (M111); the tool-call recording cropped to the chat and the reasoning recording sped up (M112); the LokumAI mark on the References' Modules subsection (M113); the quick quiz on both tracks (M116); and M41, the content bundle for the mobile reader. Each milestone carries its deliverables and acceptance
+  round (M93); multilingual SEO (M96); translated objectives on the site (M98) and in the bundle (M99); the story in the bundle (M100); three screen recordings and Human in the Loop moved into Agentic UI (M101); the search filters applied by a button (M102); a laptop section in Inference Engines (M103); the word count in the bundle (M105), the checklist index (M106), the diagrams without empty rects (M107) and five logos without CSS (M108); the About page in Turkish and Persian (M109); the module page's own words in Turkish and Persian (M110); the footer without its first row (M111); the tool-call recording cropped to the chat and the reasoning recording sped up (M112); the LokumAI mark on the References' Modules subsection (M113); stall 1 naming the treaty and the About page's name (M114); a replay button on every animated recording (M115); the quick quiz on both tracks (M116); and M41, the content bundle for the mobile reader. Each milestone carries its deliverables and acceptance
   criteria as `- [ ]` checkboxes, ticked as the work lands, and closes with a dated report; the loop
   that governs that is below, in this file.
   NOT here: why a choice was made (BRAINSTORM.md), or any rule that outlives the milestone
@@ -2329,6 +2329,65 @@ only; the markdown and the bundle are unchanged.
       `section-marks`, `module-page-i18n`, `bundle`, `containment` on a private port: 215 passed, 10
       skipped, 0 failed. Shots of the References block (en, tr, fa; light and dark; 1440 and 390) in
       `playground/2026-11-round-5/shots-modules-logo/`.
+
+
+---
+
+## 🏁 Milestone M114: Stall 1 names the treaty and ends on the paper; the About page's name says what the English says, DONE
+
+The author, 2026-11-11, on the About page's first scene: write "Treaty of Versailles" over the page tally, and
+"no need to open a cloud saying 'Page 412: Short answer yes'. just her having the paper in her hand which has yes
+written on it is enough". And the page's name: "in English it is about the Bazaar, so in Turkish or Farsi it
+should be the same, like Pazar Hakkında".
+
+- [x] **The title**: `STALL1.TITLE` ("Treaty of Versailles", art like the scene's other words) on a line of its
+      own over `PAGE n OF 412`, in the display face, centred with the tally (`.t-tally .t-title`).
+- [x] **No closing bubble**, removed end to end: `STALL1.REVEAL`, `revealParts`, the frame's `reveal` field and its
+      branch, the motion's reveal path, `.t-yes`, and the `yes` and `yes-ink` palette entries with their tokens.
+      The scene ends on her holding the last page, which says yes. The reading diplomats' bubble is now made by
+      the motion island and removed when it stops, so the still (no script, reduced motion) carries no empty,
+      invisible bubble (`about.spec.ts` caught it).
+- [x] **The page's name**: `Pazar Hakkında` and `درباره‌ی بازار` (`src/lib/about-copy.ts`); `Hakkımızda` ("about us")
+      was the earlier choice and changed what the page says (D132, amended).
+- [x] **The font guard** reads the preloads from the document the server sent: on a loaded page Next prefetches
+      the linked pages and adds their font preloads, which made it fail on `/tr/` once and on three pages after a
+      wait for the network. 6 of 6 in three runs after the change.
+- [x] **Gate**: typecheck; 1,607 unit tests; build; `about`, `font-preload`, `accessibility` and `responsive`
+      specs on a private port. Screenshots in `playground/2026-11-round-5/shots-treaty/`.
+
+
+---
+
+## 🏁 Milestone M115: A replay button on every animated recording (D136), DONE
+
+The author chose "Option A": a small replay icon at the top right of each animated recording that restarts
+it from its first frame. Reported 2026-11-11.
+
+- [x] **Detect, don't list**: `src/lib/content/animated.ts` reads a file's bytes (WebP: the VP8X animation flag
+      or an ANIM chunk; GIF: more than one image descriptor, walked block by block). `render.ts` marks an
+      image figure `data-hl-animated` when the file under `imagePath` is animated. No filename list.
+- [x] **The button**: `Affordances` adds a `.bz-tool.bz-replay` to each marked figure (also to figures that
+      arrive after mount), 32px with the existing 44px hit area, named `PAGE_COPY.replay` by the nearest
+      `[lang]` (`Replay`, `Baştan oynat`, `پخش دوباره`); styled in `prose.css` on the page's raised surface
+      and hairline, light and dark. No JavaScript, no button.
+- [x] **The restart**: the first press fetches the file once; every press gives the image a new object URL of
+      the same bytes, which starts at frame 0. Measured in Chrome with a two-frame recording: a clone-and-replace
+      does not restart, `src = src` does, a new object URL does; three presses made one request.
+- [x] **Tests**: `tests/unit/content/animated.test.ts` (7 cases: animated and still WebP, flag and ANIM
+      chunk alone, simple WebP, GIF of two and one frames, a 0x2c byte in pixel data, PNG, JPEG, empty and
+      truncated files), `tests/corpus/animated-recordings.test.ts` (every module, language and track: the mark
+      is on a figure exactly when its file is animated), and `tests/e2e/replay.spec.ts` (12 cases, with the
+      recording picked from the corpus by detection; the restart is proved against the 144-byte two-frame
+      fixture `tests/fixtures/two-frame.webp`, red then blue, by screenshots of the element). Mutation-tested,
+      each red: the VP8X flag test, the ANIM scan, the GIF frame count, the mark never set, the mark set on
+      every image, and the press that does not change the image's `src`.
+- [x] **The bundle is unchanged**: built with and without the change in a scratch clone, `out/api/` is identical
+      file for file (353 files), `contentVersion` `7e79b25e1235896c964947152ef05149df0ee120d211cb67135d818a588f3c7b`
+      in both; `scripts/check-bundle-out.mjs out` and `scripts/check-links-out.mjs out` pass.
+- [x] **Gate:** typecheck; 102 unit files, 1,616 tests; build; browser specs `replay`, `mermaid`, `prose-type`,
+      `module-sheets`, `section-marks`, `accessibility`, `responsive`, `containment`, `module-page-i18n`,
+      `reading-options`, `bundle`, `colour-not-alone`, `modules-mark` and `translation`: 277 passed, 11 skipped,
+      0 failed. Shots (en light, fa dark, both also at 390) in `playground/2026-11-round-5/shots-replay/`.
 
 ---
 

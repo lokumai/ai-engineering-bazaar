@@ -2,6 +2,8 @@
 
 import { useEffect } from 'react'
 import { COPIED_MS, overflowState } from '@/lib/affordance'
+import { PAGE_COPY } from '@/lib/content/page-copy'
+import { TRANSLATED_LANGS, type ReadingLang } from '@/lib/content/languages'
 
 /**
  * The two behaviours §6 asks for that CSS cannot express: the `COPY` control on
@@ -24,6 +26,8 @@ import { COPIED_MS, overflowState } from '@/lib/affordance'
 
 const SCROLLERS = '[data-hl-scroller]'
 const COPY = '[data-hl-copy]'
+const ANIMATED = 'figure[data-hl-animated]'
+const REPLAY = '[data-hl-replay]'
 
 /** One enhancer per document: two would copy a block twice on a single click. */
 let instances = 0
@@ -67,6 +71,87 @@ async function copyBlock(button: HTMLButtonElement): Promise<void> {
   }, COPIED_MS)
 }
 
+/**
+ * M115 (D136) — the replay control on an animated recording.
+ *
+ * `render.ts` marks a figure whose image is animated (`data-hl-animated`, read from the file's
+ * bytes); the button is added HERE and not in the markup, so with JavaScript off there is no
+ * button that does nothing, and the bundle's markup is untouched. It is a `.bz-tool` in the
+ * figure's top-right corner, its glyph the codebase's 16-unit stroke idiom (`tools.ts`, D53) and
+ * its name `aria-label`, in the language of the text it sits in: the nearest `[lang]` ancestor,
+ * which on a module page is the prose's own (`ModuleSheet`).
+ *
+ * RESTART. A browser keeps an animated image's playhead with the decoded resource, so setting
+ * `src` to the value it already has, or inserting a second `<img>` of the same URL, resumes
+ * where the animation was. What restarts it from frame 0 is a resource nobody has played: the
+ * file is fetched once, on the first press, and every press gives the image a new object URL
+ * for the same bytes. See `tests/e2e/replay.spec.ts` for the measurement.
+ */
+const REPLAY_GLYPH = [
+  'M13.25 8a5.25 5.25 0 1 1-1.54-3.71',
+  'M13.25 2.75v2.75h-2.75',
+]
+
+function replayLang(figure: Element): ReadingLang {
+  const found = figure.closest('[lang]')?.getAttribute('lang')
+  return TRANSLATED_LANGS.find((lang) => lang === found) ?? 'en'
+}
+
+function addReplay(figure: HTMLElement): void {
+  const img = figure.querySelector('img')
+  if (!img || figure.querySelector(REPLAY)) return
+  const lang = replayLang(figure)
+  const label = PAGE_COPY[lang].replay
+  const button = document.createElement('button')
+  button.type = 'button'
+  button.className = 'bz-tool bz-replay'
+  button.setAttribute('data-hl-replay', '')
+  button.setAttribute('aria-label', label)
+  button.title = label
+  if (lang !== 'en') button.lang = lang
+  const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg')
+  for (const [name, value] of Object.entries({
+    width: '16', height: '16', viewBox: '0 0 16 16', fill: 'none', stroke: 'currentColor',
+    'stroke-width': '1.5', 'stroke-linecap': 'round', 'stroke-linejoin': 'round',
+    'aria-hidden': 'true', focusable: 'false',
+  })) svg.setAttribute(name, value)
+  for (const d of REPLAY_GLYPH) {
+    const path = document.createElementNS('http://www.w3.org/2000/svg', 'path')
+    path.setAttribute('d', d)
+    svg.append(path)
+  }
+  button.append(svg)
+  img.after(button)
+}
+
+/** The bytes of each recording already fetched, by URL: one request per file however often it is replayed. */
+const fetched = new Map<string, Promise<Blob>>()
+const objectUrls = new WeakMap<HTMLImageElement, string>()
+
+async function replay(button: HTMLButtonElement): Promise<void> {
+  const img = button.closest(ANIMATED)?.querySelector('img')
+  if (!img) return
+  const source = img.currentSrc || img.src
+  let blob = fetched.get(source)
+  if (blob === undefined) {
+    blob = fetch(source).then((response) => response.blob())
+    fetched.set(source, blob)
+  }
+  let bytes: Blob
+  try {
+    bytes = await blob
+  } catch {
+    fetched.delete(source)
+    return
+  }
+  const url = URL.createObjectURL(bytes)
+  const previous = objectUrls.get(img)
+  img.src = url
+  img.removeAttribute('srcset')
+  objectUrls.set(img, url)
+  if (previous) URL.revokeObjectURL(previous)
+}
+
 export function Affordances() {
   useEffect(() => {
     instances += 1
@@ -81,6 +166,8 @@ export function Affordances() {
       if (!(target instanceof Element)) return
       const button = target.closest(COPY)
       if (button instanceof HTMLButtonElement) void copyBlock(button)
+      const again = target.closest(REPLAY)
+      if (again instanceof HTMLButtonElement) void replay(again)
     }
 
     const scrollers = [...document.querySelectorAll<HTMLElement>(SCROLLERS)]
@@ -127,6 +214,7 @@ export function Affordances() {
       grew.observe(box, { childList: true, subtree: true })
     }
     for (const box of scrollers) watch(box)
+    for (const figure of document.querySelectorAll<HTMLElement>(ANIMATED)) addReplay(figure)
 
     /*
       A THIRD OBSERVER, for scrollers that arrive after this effect ran. This island lives in the root
@@ -142,6 +230,8 @@ export function Affordances() {
           if (!(node instanceof HTMLElement)) continue
           if (node.matches(SCROLLERS)) watch(node)
           for (const box of Array.from(node.querySelectorAll<HTMLElement>(SCROLLERS))) watch(box)
+          if (node.matches(ANIMATED)) addReplay(node)
+          for (const figure of Array.from(node.querySelectorAll<HTMLElement>(ANIMATED))) addReplay(figure)
         }
       }
     })
@@ -162,4 +252,4 @@ export function Affordances() {
 }
 
 /** The contract with `render.ts` and `SheetIndex`; exported so a test can pin it. */
-export const AFFORDANCE_SELECTORS = { SCROLLERS, COPY }
+export const AFFORDANCE_SELECTORS = { SCROLLERS, COPY, ANIMATED, REPLAY }

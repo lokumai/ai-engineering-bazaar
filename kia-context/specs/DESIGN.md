@@ -12,7 +12,7 @@ authority: blueprint
 writes: agent, as the language evolves
 status: active
 covers: "the Bazaar language, transcribed from T4 on ground G3, with its derived dark sibling, plus the six primitives M16 derived from the component mockups — 2026-09-13, with thirteen recorded deviations (the sixth and seventh, the logo and the rail group, 2026-10-11; the eighth, the pager, the ninth, the Bazaar Street front door, and the tenth, a right-to-left script, 2026-10-12; the eleventh, the diagram frame's ground, 2026-11-08; the twelfth, the About page, 2026-11-09), the three reader palettes for code, the ten Mermaid themes for diagrams, the call-out card, and the end of a reading page"
-last_updated: 2026-11-10
+last_updated: 2026-11-11
 ---
 
 ---
@@ -863,7 +863,9 @@ TRANSPARENT at rest — the glyph alone, in the ground's muted ink — and takes
 on hover, on focus and while its menu is open. A figure's tools are a theme menu (ten rows), a copy control
 (the same one a slab has, copying the diagram's source) and an expand control, on a strip carrying the frame's own ground so an overflowing drawing's fade never sits under
 them; a slab's are a palette menu and a copy control whose glyph becomes a check for a moment. Every
-tool is named by a label and never by its glyph alone. The palette menu is a raised page surface even
+tool is named by a label and never by its glyph alone. An animated recording carries one tool of its own,
+a replay control in the image's top-right corner; over a picture and not a slab it is not transparent but takes the page's
+raised surface and hairline, since an unknown frame sits behind it. The palette menu is a raised page surface even
 over a dark block, as the bar's own menu is — a row per choice, each with a small diagonal swatch of its
 ground and ink (a theme's is Mermaid's own ground for that theme), the chosen one carrying a check.
 

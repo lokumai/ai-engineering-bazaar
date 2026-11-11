@@ -78,14 +78,20 @@ const IndexLevel = z.strictObject({
 })
 
 /** One module in one track: what the catalog shows and where its documents are. */
-const IndexModuleTrack = z.strictObject({
+export const IndexModuleTrack = z.strictObject({
   title: z.string().min(1).describe('The English title in this track.'),
   drawn: z.boolean().describe('Written in this track; an unwritten module has no documents.'),
   summary: z.string().nullable(),
   hasQuiz: z.boolean(),
   revision: Revision.nullable().describe('The commit that last touched this track\'s English file; signedRevision in this track\'s record map.'),
   docs: z.record(Lang, SITE_PATH).describe('Language id to its module document; empty where the module is not written in this track.'),
+  words: z
+    .record(Lang, z.number().int().positive())
+    .describe('Language id to the word count its web page prints under the title; empty where the module is not written in this track (D128).'),
   webPath: SITE_PATH.describe('The English web page in this track.'),
+}).refine((entry) => Object.keys(entry.words).every((lang) => lang in entry.docs), {
+  message: 'words names a language docs does not',
+  path: ['words'],
 })
 
 const IndexModule = z.strictObject({
@@ -352,6 +358,12 @@ export const ModuleDoc = z.strictObject({
   lang: Lang,
   dir: Dir,
   title: z.string().min(1).describe('The title in this document\'s track and language.'),
+  words: z
+    .number()
+    .int()
+    .positive()
+    .nullable()
+    .describe('The word count the web page prints under the title; null for a draft, whose page prints none (D128).'),
   objectives: z.strictObject({ lang: z.literal('en'), items: z.array(z.string().min(1)) }),
   translatedObjectives: z
     .strictObject({ lang: TranslatedLang, items: z.array(z.string().min(1)).min(1) })
@@ -378,6 +390,9 @@ export const ModuleDoc = z.strictObject({
     answer: z.number().int().nonnegative(),
     explain: z.string().min(1),
   })).nullable(),
+}).refine((doc) => (doc.words === null) === (doc.draft !== null), {
+  message: 'words is null exactly when the document is a draft',
+  path: ['words'],
 })
 
 export type ApiIndex = z.infer<typeof ApiIndex>

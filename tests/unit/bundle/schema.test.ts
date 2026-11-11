@@ -6,6 +6,7 @@ import {
   Cell,
   DiagramSource,
   Index,
+  IndexModuleTrack,
   IndexDraft,
   Inline,
   LevelDoc,
@@ -36,6 +37,7 @@ const moduleDoc = {
   lang: 'en',
   dir: 'ltr',
   title: 'First',
+  words: 120,
   objectives: { lang: 'en', items: ['One'] },
   translatedObjectives: null,
   prerequisites: [ref],
@@ -45,6 +47,17 @@ const moduleDoc = {
   body: [{ type: 'paragraph', inlines: [{ type: 'text', text: 'Hello' }] }],
   draft: null,
   quiz: null,
+}
+
+const trackEntry = {
+  title: 'First',
+  drawn: true,
+  summary: null,
+  hasQuiz: false,
+  revision: null,
+  docs: { en: 'api/v1/modules/alpha/first/en.json', tr: 'api/v1/modules/alpha/first/tr.json' },
+  words: { en: 120, tr: 110 },
+  webPath: 'courses/alpha/first/',
 }
 
 const storyDoc = {
@@ -92,6 +105,30 @@ describe('the bundle schema', () => {
   it('refuses a module document without translatedObjectives, which is null rather than absent', () => {
     const { translatedObjectives: _, ...without } = moduleDoc
     expect(() => ModuleDoc.parse(without)).toThrow()
+  })
+
+  it('accepts a draft without words and a written document with them (D128)', () => {
+    const draft = { ...moduleDoc, body: null, words: null, draft: { summary: null, parts: ['One'], written: null } }
+    expect(() => ModuleDoc.parse(draft)).not.toThrow()
+  })
+
+  it('refuses words on a draft, none on a written document, and a count that is not a positive whole number', () => {
+    const draft = { ...moduleDoc, body: null, draft: { summary: null, parts: ['One'], written: null } }
+    expect(ModuleDoc.safeParse(draft).success).toBe(false)
+    expect(ModuleDoc.safeParse({ ...moduleDoc, words: null }).success).toBe(false)
+    expect(ModuleDoc.safeParse({ ...moduleDoc, words: 0 }).success).toBe(false)
+    expect(ModuleDoc.safeParse({ ...moduleDoc, words: 1.5 }).success).toBe(false)
+    const { words: _, ...without } = moduleDoc
+    expect(ModuleDoc.safeParse(without).success).toBe(false)
+  })
+
+  it('accepts an index entry whose words name only languages it has documents in (D128)', () => {
+    expect(IndexModuleTrack.safeParse(trackEntry).success).toBe(true)
+    expect(IndexModuleTrack.safeParse({ ...trackEntry, words: {} }).success).toBe(true)
+    expect(IndexModuleTrack.safeParse({ ...trackEntry, words: { en: 120, fa: 90 } }).success).toBe(false)
+    expect(IndexModuleTrack.safeParse({ ...trackEntry, words: { xx: 120 } }).success).toBe(false)
+    const { words: _, ...without } = trackEntry
+    expect(IndexModuleTrack.safeParse(without).success).toBe(false)
   })
 
   it('refuses a module document with an extra key', () => {

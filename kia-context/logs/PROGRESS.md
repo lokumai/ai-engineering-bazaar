@@ -11,7 +11,7 @@ description: >
   backgrounds and copy (M81), Agentic UI (M82), the cast's colours (M83), and M84 to M90 (content
   and site fixes, the home page in Turkish and Persian, Dariush's motif, block menus in the top layer,
   and About, the story of the Bazaar); Caravan built (M91), its real trends waiting (M92) and its second
-  round (M93); multilingual SEO (M96); translated objectives on the site (M98) and in the bundle (M99); the story in the bundle (M100); three screen recordings and Human in the Loop moved into Agentic UI (M101); the search filters applied by a button (M102); a laptop section in Inference Engines (M103); and M41, the content bundle for the mobile reader. Each milestone carries its deliverables and acceptance
+  round (M93); multilingual SEO (M96); translated objectives on the site (M98) and in the bundle (M99); the story in the bundle (M100); three screen recordings and Human in the Loop moved into Agentic UI (M101); the search filters applied by a button (M102); a laptop section in Inference Engines (M103); the word count in the bundle (M105); and M41, the content bundle for the mobile reader. Each milestone carries its deliverables and acceptance
   criteria as `- [ ]` checkboxes, ticked as the work lands, and closes with a dated report; the loop
   that governs that is below, in this file.
   NOT here: why a choice was made (BRAINSTORM.md), or any rule that outlives the milestone
@@ -19,8 +19,8 @@ description: >
 authority: state
 writes: agent, every session
 status: active
-covers: "M50 to M104, 2026-11-06 onward, and M41, which part 2 held for PR #57"
-last_updated: 2026-11-10
+covers: "M50 to M105, 2026-11-06 onward, and M41, which part 2 held for PR #57"
+last_updated: 2026-11-11
 ---
 
 # 📈 PROGRESS, part 3 — M50 onward
@@ -2083,6 +2083,27 @@ recording where the run ends (11.0 s of 28.7) and the reasoning one a few answer
 
 **Rule for later recordings:** a recording the author supplies is shown in full; reduce the frame rate,
 the width or the quality to keep it light, never its length.
+
+## 🏁 Milestone M105: The word count in the content bundle (D128), DONE
+
+The mobile reader's developer: the app prints `25 min` where the site prints `25 min · 4,812 words`, and
+the bundle has no count to print. The repository's owner asked for the pull request.
+
+- [x] **The rule, once**: `printedWords` in `src/lib/content/title-block.ts`, which `FactsStrip` now
+      prints from, so the page and the bundle ask the same function.
+- [x] **The fields**: every module document carries `words` (a count, or `null` for a planned module),
+      and every index track entry carries `words`, language to count, empty where nothing is written
+      (`src/lib/bundle/build.ts`, `src/lib/bundle/schema.ts`). Report: on the built bundle, the 126
+      documents whose page prints a line carry that page's number, compared against every page in `out/`
+      (`fundamentals/llms` For Engineers: en 2,754, tr 2,356, fa 2,720; For Everyone: en 1,834, tr 1,510,
+      fa 1,736), and the 23 planned documents carry `null`.
+- [x] **The contract**: ARCHITECTURE §13 names both fields; `bundle-schema.json` shows them as additions
+      and nothing else; the schema refuses a count on a draft, none on a written document, a count that
+      is not a positive whole number, and an index language with no document.
+- [x] **The guard**: the corpus test recounts every built document from the body its page renders and
+      holds the index to the documents. Mutation-tested: with every translation given its English count,
+      the test fails on the first Turkish document (2,754 where the page prints 2,356).
+- [x] **Gate:** typecheck, 1,599 unit tests, build, link check, bundle check; the full browser suite in CI.
 
 ---
 

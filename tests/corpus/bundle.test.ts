@@ -21,7 +21,9 @@ import {
   ModuleDoc,
   StoryDoc,
 } from '@/lib/bundle/schema'
+import { extent } from '@/lib/content/derive'
 import { loadStory } from '@/lib/content/story'
+import { stripLeadIn } from '@/lib/content/strip'
 import type { ReadingLang } from '@/lib/content/languages'
 import { loadAllModules, loadModule, loadModuleIn } from '@/lib/content/loader'
 import { CONTENT_ROOT } from '@/lib/content/paths'
@@ -149,6 +151,40 @@ describe('the bundle, over the real corpus', () => {
       carried++
     }
     expect(carried, 'no translated document declares its own objectives, so the field could not be seen').toBeGreaterThan(0)
+  })
+
+  it('carries the word count the module page prints, and null where the page prints none (D128)', () => {
+    let translatedDiffers = 0
+    let drafts = 0
+    for (const [path, doc] of modules) {
+      const sheet = loadModuleIn(doc.key, doc.lang as ReadingLang, doc.track)!
+      // Recounted here from the body the page renders, rather than through the helper the builder calls,
+      // so a builder that counts the wrong text or skips the draft gate is seen.
+      const printed = sheet.frontmatter.status === 'ready' ? extent(stripLeadIn(sheet.body)) : null
+      expect(doc.words, path).toBe(printed)
+      if (printed === null) drafts++
+      if (doc.lang !== 'en' && printed !== null) {
+        const english = loadModuleIn(doc.key, 'en', doc.track)!
+        if (english.extent !== printed) translatedDiffers++
+      }
+    }
+    expect(translatedDiffers, 'no translation differs from its English in length, so a copied count could not be seen')
+      .toBeGreaterThan(0)
+    expect(drafts, 'no draft document, so the null could not be seen').toBeGreaterThan(0)
+  })
+
+  it('lists in the index the word count of every document that prints one, per track and language (D128)', () => {
+    for (const module of draft.modules) {
+      for (const [track, entry] of Object.entries(module.tracks)) {
+        const expected = Object.fromEntries(
+          Object.entries(entry.docs).flatMap(([lang, path]) => {
+            const words = modules.get(path)!.words
+            return words === null ? [] : [[lang, words]]
+          }),
+        )
+        expect(entry.words, `${module.key} ${track}`).toEqual(expected)
+      }
+    }
   })
 
   it('carries STORY.md as the About page reads it, and the index names that document (D125)', () => {

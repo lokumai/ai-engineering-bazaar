@@ -47,6 +47,19 @@ export function thousands(n: number): string {
   return String(n).replace(/\B(?=(\d{3})+(?!\d))/g, ',')
 }
 
+/**
+ * The word count a module page prints under its title, or `null` where it prints none.
+ *
+ * `FactsStrip` prints `25 min · 4,812 words` on a written page and nothing on a planned one, and the
+ * content bundle carries the same number for the mobile reader (D128). Both ask this one function, so
+ * the gate is `status` in one place: a planned module's words are its schedule of parts, which is not
+ * the length of anything a reader can read. Rejected: the bundle repeating the `status` check, which
+ * is the copy that drifts the day the strip learns a second condition.
+ */
+export function printedWords(facts: Pick<SheetFacts, 'status' | 'extent'>): number | null {
+  return facts.status === 'ready' ? facts.extent : null
+}
+
 function pad2(n: number): string {
   return String(n).padStart(2, '0')
 }

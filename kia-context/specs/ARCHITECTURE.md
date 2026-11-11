@@ -526,7 +526,8 @@ page prints none.
    an image plus its italic caption line, rewrites image paths to the copied `/course-images/`
    location (an image under `images/logos/` gets the class `bz-logo` and is drawn inline at text
    height, never as a figure; it must sit beside text, since an image alone in a paragraph becomes a
-   figure), and leaves mermaid as a `data-mermaid` source div. It also REMOVES what the page states
+   figure; an image figure whose file is animated, read from its bytes by `animated.ts`, carries
+   `data-hl-animated`, and `Affordances` adds the replay button to it, M115 / D136), and leaves mermaid as a `data-mermaid` source div. It also REMOVES what the page states
    elsewhere: the first `h1`, the category dek, the self-check paragraph, and since M24 the series map
    (`## Where this fits in the series` / `## Bu serinin neresindeyiz`), which stays in the file for a
    reader of raw markdown. `SERIES_HEADINGS` in `lines.ts` holds every language. And it turns each

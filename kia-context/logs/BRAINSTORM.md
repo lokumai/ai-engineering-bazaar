@@ -9,7 +9,7 @@ description: >
 authority: reasoning
 writes: agent, when a decision is taken
 status: active
-covers: "D97 to D135 so far, and D89, which part 2 held for PR #57 — 2026-11-06 onward"
+covers: "D97 to D137 so far, and D89, which part 2 held for PR #57 — 2026-11-06 onward"
 last_updated: 2026-11-11
 ---
 
@@ -1238,6 +1238,22 @@ References' Modules subsection. Every module ends its references with `### 🧭 
   the author to remember); recolouring a CSS-drawn compass (not the mark asked for).
 - The html now differs from the tree by this one heading. The comment on `renderTree` said the two cannot
   disagree; `swapModulesMark` states the exception.
+
+### D137 · The quiz is shared by both tracks and every language · 2026-11-11
+status: active
+
+The author: *"all languages and all tracks should share the same quiz. only the content of the module
+should be different."* The For Everyone page of a module shows the module's one `.quiz.yaml`, at the end
+of the page as the For Engineers page does, and the bundle's For Everyone documents carry it.
+
+- **One file per module, three languages already in it**, so nothing new is written and the two tracks
+  cannot drift apart. The record keeps no quiz state (answers are not stored), so there was no per-track
+  versus shared choice to make.
+- **Additive in the bundle's v1:** `quiz` and `hasQuiz` keep their types and meaning; only For Everyone
+  documents that held `null` and `false` now hold the quiz and `true` (§13).
+- **Rejected:** a separate plain-words quiz per For Everyone module (two quizzes per module to keep true
+  when the module changes, and the two tracks would test different things); keeping the gate and saying
+  the quiz asks about the technical text (the questions test facts both texts teach).
 
 ---
 

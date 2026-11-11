@@ -264,7 +264,7 @@ describe('the bundle, over the real corpus', () => {
           const doc = modules.get(path)
           expect(doc?.track, path).toBe(track)
           expect(doc?.lang, path).toBe(lang)
-          if (track === 'everyone') expect(doc?.quiz, path).toBeNull()
+          expect(doc?.quiz === null, path).toBe(!entry.hasQuiz)
         }
       }
     }

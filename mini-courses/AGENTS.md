@@ -317,14 +317,14 @@ function or a terminal is.
 - Explain the core in full (MANIFESTO rule 19 names it); for the rest, knowing the keyword and why
   it matters is enough, so the module comes out shorter than the technical one.
 - End with `## Words You Now Know` (each keyword, one plain line), `## Summary` with the quick check,
-  and `## References`, which may stay a little technical. No series map and no quiz.
+  and `## References`, which may stay a little technical. No series map, and no quiz of its own: it shows the technical module's one quiz (D137).
 - Prose links are written as in the technical module (they resolve against its folder) and point at
   the For Everyone page once that module has one.
 - A draft or planned module gets no For Everyone version.
 
 ## The quick quiz
 
-A written module carries `<name>.quiz.yaml` beside it, shown at the end of the module page. It is
+A written module carries `<name>.quiz.yaml` beside it, shown at the end of the module page, on both tracks and in every language: the For Everyone page of a module shows the same quiz, so write its questions from the facts both texts share. It is
 reinforcement, not assessment: nothing is scored or stored.
 
 - **3 to 5 questions**, 4 options each, exactly one correct, and an explanation of one or two short

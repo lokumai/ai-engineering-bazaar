@@ -102,9 +102,9 @@ export interface ModuleRenderInput {
    */
   written: RenderedTree | null
   /**
-   * The quick quiz in the page's language; null for a planned module, a module
-   * with none, and every For Everyone page, since the quiz file asks about the
-   * For Engineers text.
+   * The quick quiz in the page's language; null for a planned module and a
+   * module with none. It is the module's one quiz file in every track (D137):
+   * the tracks differ in the module text, not in what the reader is asked.
    */
   quiz: QuizItem[] | null
   /** §4.5 item 5, a planned module's one sentence; null when drawn. */
@@ -170,7 +170,7 @@ export async function moduleRenderInput(
     toc: rendered?.toc ?? [],
     checklist: rendered?.checklist ?? [],
     written,
-    quiz: drawn && track === 'engineers' ? quizFor(sheet.category.dir, sheet.name, lang) : null,
+    quiz: drawn ? quizFor(sheet.category.dir, sheet.name, lang) : null,
     // §4.5 item 5: the single descriptive sentence, read out of the source
     // rather than retyped, and absent rather than invented if it is not there.
     summary: drawn ? null : sheet.frontmatter.summary ?? summarySentence(sheet.body),

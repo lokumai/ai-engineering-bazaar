@@ -464,6 +464,60 @@ function rehypeHeadingAnchors() {
   }
 }
 
+/**
+ * D135 — the References' Modules subsection is headed by the LokumAI mark on the
+ * site, where the corpus writes a 🧭. The compass is the markdown's own word for
+ * "the course's own modules" and stays in the heading text, which the bundle
+ * ships and `tests/corpus/references.test.ts` pins; the app draws its own mark.
+ * So the swap happens on the HTML only, on a clone, and `tree` (what the bundle
+ * is built from) keeps the 🧭 byte for byte. Rejected: editing the markdown
+ * (changes the bundle's content, and markdown cannot carry an inline logo the app
+ * could draw differently).
+ *
+ * Matched by structure and by the glyph, not by a language's word: the h3 after
+ * the last h2 (the References section, `## Kaynaklar`, `## منابع`) whose title
+ * starts with 🧭. Its id and accessible name are untouched (`aria-labelledby`
+ * points at the title span, which loses only the emoji; the id was slugged from
+ * the original text earlier in the pipeline).
+ */
+const COMPASS = /^🧭\s*/
+
+function swapModulesMark(tree: Root): Root {
+  const copy = structuredClone(tree)
+  const top = copy.children.filter((n): n is Element => isElement(n))
+  let last = -1
+  top.forEach((n, i) => { if (n.tagName === 'h2') last = i })
+  if (last === -1) return copy
+  for (const node of top.slice(last + 1)) {
+    if (node.tagName !== 'h3') continue
+    const title = node.children.find((c): c is Element => isElement(c) && c.tagName === 'span')
+    const first = title?.children[0]
+    if (!title || first?.type !== 'text' || !COMPASS.test(first.value)) continue
+    first.value = first.value.replace(COMPASS, '')
+    // The anchor's label quotes the title; it loses the compass too, so no
+    // part of the heading speaks of one.
+    for (const child of node.children) {
+      const label = isElement(child) ? child.properties?.['aria-label'] : undefined
+      if (isElement(child) && typeof label === 'string') {
+        child.properties['aria-label'] = label.replace('“🧭 ', '“')
+      }
+    }
+    title.children.unshift(
+      element('img', {
+        className: ['bz-heading-mark'],
+        src: href('/lokum-logo.svg'),
+        alt: '',
+        'aria-hidden': 'true',
+        width: 32,
+        height: 32,
+        decoding: 'async',
+      }, []),
+      text(' '),
+    )
+  }
+  return copy
+}
+
 // ---------------------------------------------------------------------------
 // §6.9 images
 // ---------------------------------------------------------------------------
@@ -1267,7 +1321,7 @@ function rehypeCodeBlocks() {
  * (`CourseTarget`, `imagePath`, `CaptionData`).
  *
  * One processor runs once: the tree is parsed and transformed, and the HTML is
- * that same tree stringified, so the two cannot disagree and there is one
+ * that same tree stringified, so the two cannot disagree (bar the one heading `swapModulesMark` redraws, D135) and there is one
  * `assertNoRawHex` site. `renderMarkdown` is this with the tree dropped.
  */
 export async function renderTree(
@@ -1310,7 +1364,8 @@ export async function renderTree(
     .use(rehypeStringify, { allowDangerousHtml: true })
 
   const tree = await processor.run(processor.parse(markdown))
-  const html = processor.stringify(tree)
+  // D135: the site's HTML carries the LokumAI mark; `tree` keeps the corpus' own heading.
+  const html = processor.stringify(swapModulesMark(tree))
   assertNoRawHex(html, options.sheet === undefined ? 'prose' : `module ${options.sheet}`)
 
   return { tree, html, toc, checklist }

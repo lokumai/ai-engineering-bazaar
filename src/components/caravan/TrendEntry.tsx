@@ -1,4 +1,5 @@
 import type { CaravanGroup } from '@/lib/content/caravan'
+import { href } from '@/lib/url'
 
 /** One trend as the list draws it: its words and links, and the years its span touches. */
 export interface ListTrend {
@@ -25,7 +26,17 @@ export function TrendEntry({ trend, sample }: { trend: ListTrend; sample: boolea
       <div className="cv-entry-links">
         {trend.groups.map((group) => (
           <div className="cv-entry-group" key={group.kind}>
-            <h4>{group.heading}</h4>
+            <h4>
+              {group.kind === 'modules'
+                ? (
+                  <>
+                    {/* D135: the LokumAI mark where the label's 🧭 stands, as on the module pages. */}
+                    <img className="bz-heading-mark" src={href('/lokum-logo.svg')} alt="" aria-hidden="true" width={32} height={32} decoding="async" />
+                    {' '}{group.heading.replace(/^🧭\s*/, '')}
+                  </>
+                )
+                : group.heading}
+            </h4>
             <ul>
               {group.links.map((link) => (
                 <li key={`${link.title}-${link.href ?? ''}`}>

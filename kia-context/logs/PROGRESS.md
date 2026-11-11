@@ -11,7 +11,7 @@ description: >
   backgrounds and copy (M81), Agentic UI (M82), the cast's colours (M83), and M84 to M90 (content
   and site fixes, the home page in Turkish and Persian, Dariush's motif, block menus in the top layer,
   and About, the story of the Bazaar); Caravan built (M91), its real trends waiting (M92) and its second
-  round (M93); multilingual SEO (M96); translated objectives on the site (M98) and in the bundle (M99); the story in the bundle (M100); three screen recordings and Human in the Loop moved into Agentic UI (M101); the search filters applied by a button (M102); a laptop section in Inference Engines (M103); the word count in the bundle (M105), the checklist index (M106), the diagrams without empty rects (M107) and five logos without CSS (M108); the About page in Turkish and Persian (M109); the module page's own words in Turkish and Persian (M110); the footer without its first row (M111); and M41, the content bundle for the mobile reader. Each milestone carries its deliverables and acceptance
+  round (M93); multilingual SEO (M96); translated objectives on the site (M98) and in the bundle (M99); the story in the bundle (M100); three screen recordings and Human in the Loop moved into Agentic UI (M101); the search filters applied by a button (M102); a laptop section in Inference Engines (M103); the word count in the bundle (M105), the checklist index (M106), the diagrams without empty rects (M107) and five logos without CSS (M108); the About page in Turkish and Persian (M109); the module page's own words in Turkish and Persian (M110); the footer without its first row (M111); the LokumAI mark on the References' Modules subsection (M113); and M41, the content bundle for the mobile reader. Each milestone carries its deliverables and acceptance
   criteria as `- [ ]` checkboxes, ticked as the work lands, and closes with a dated report; the loop
   that governs that is below, in this file.
   NOT here: why a choice was made (BRAINSTORM.md), or any rule that outlives the milestone
@@ -19,7 +19,7 @@ description: >
 authority: state
 writes: agent, every session
 status: active
-covers: "M50 to M111, 2026-11-06 onward, and M41, which part 2 held for PR #57"
+covers: "M50 to M111 and M113, 2026-11-06 onward, and M41, which part 2 held for PR #57"
 last_updated: 2026-11-11
 ---
 
@@ -2278,6 +2278,39 @@ a compact readout of the reader's record. Removed end to end, not hidden (CLAUDE
       suite on a private port: 705 passed, 11 skipped, 0 failed (716). The footer at 1440 and 390, on
       `/`, a module and `/profile/`, in `playground/2026-11-round-5/shots-footer/`: 94 px tall at 1440
       (was 134), 225 px at 390 (was 265).
+
+---
+
+## 🏁 Milestone M113: The LokumAI mark heads the References' Modules subsection (D135), DONE
+
+The author: *"for the Modules subsection of references, instead of using an explore emoji, use the
+lokumai emoji (inline) similar to the one we used in our website navbar"*. Done in the site's rendering
+only; the markdown and the bundle are unchanged.
+
+- [x] **The render step**: `swapModulesMark` in `src/lib/content/render.ts` clones the tree and, in the h3
+      after the last h2 (the References section) whose title starts with 🧭, swaps the compass for an
+      `<img class="bz-heading-mark" src=href('/lokum-logo.svg') alt="" aria-hidden="true">`, the file and
+      the `href()` the navbar's `BrandMark` uses. `renderTree` stringifies the clone; the `tree` it returns
+      (what the bundle is built from) keeps the 🧭. The heading's id (`-modules`) and its accessible name
+      (the title span, minus the emoji) are as before; the `§` anchor's label drops the compass too.
+- [x] **The Caravan page**: `TrendEntry` draws the same mark for the `modules` group's `<h4>`, from the
+      same label (`LINK_HEADINGS.modules`, unchanged).
+- [x] **Style**: `.bz-heading-mark` in `src/app/prose.css`, 1em square, baseline-aligned like the emoji
+      beside it. Checked on the dark ground: the mark reads (shots below).
+- [x] **Tests**: `tests/corpus/modules-mark.test.ts` (every module, 3 languages, both tracks: the HTML has
+      the mark and no 🧭 in the Modules heading, the tree still has it, the other subsections keep their
+      emoji) and `tests/e2e/modules-mark.spec.ts` (built page in en, tr and fa: one marked heading,
+      `alt=""`, height within 1 px of its font size, no compass, other emoji present). Mutation-tested
+      three ways, each red: the swap removed, the clone replaced by the tree itself, the swap applied to
+      every h3. `tests/corpus/references.test.ts` still pins the heading names and passes unchanged.
+- [x] **The bundle is unchanged**: built twice, with and without the swap, `out/api/v1/` is identical
+      file for file (diagrams included), `contentVersion` `9247aac0021ad135d9b7d02f2a7076d9527e25440e31a186ed74b2fdd47c97a4`
+      in both; `scripts/check-bundle-out.mjs out` passes.
+- [x] **Gate:** typecheck; 100 unit files, 1,608 tests; build; link check; bundle check; browser specs
+      `modules-mark`, `caravan`, `accessibility`, `responsive`, `module-sheets`, `prose-type`,
+      `section-marks`, `module-page-i18n`, `bundle`, `containment` on a private port: 215 passed, 10
+      skipped, 0 failed. Shots of the References block (en, tr, fa; light and dark; 1440 and 390) in
+      `playground/2026-11-round-5/shots-modules-logo/`.
 
 ---
 

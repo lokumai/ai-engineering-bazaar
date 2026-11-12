@@ -327,6 +327,18 @@
                     },
                     "description": "Language id to the word count its web page prints under the title; empty where the module is not written in this track (D128)."
                   },
+                  "titles": {
+                    "type": "object",
+                    "propertyNames": {
+                      "type": "string",
+                      "description": "A language id: en, or one of the translations the index lists."
+                    },
+                    "additionalProperties": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "description": "Language id to the title its module document carries; one per language docs names, empty where the module is not written in this track (D139)."
+                  },
                   "webPath": {
                     "type": "string",
                     "pattern": "^[^/\\s][^\\s]*$",
@@ -341,6 +353,7 @@
                   "revision",
                   "docs",
                   "words",
+                  "titles",
                   "webPath"
                 ],
                 "additionalProperties": false
@@ -759,6 +772,18 @@
                     },
                     "description": "Language id to the word count its web page prints under the title; empty where the module is not written in this track (D128)."
                   },
+                  "titles": {
+                    "type": "object",
+                    "propertyNames": {
+                      "type": "string",
+                      "description": "A language id: en, or one of the translations the index lists."
+                    },
+                    "additionalProperties": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "description": "Language id to the title its module document carries; one per language docs names, empty where the module is not written in this track (D139)."
+                  },
                   "webPath": {
                     "type": "string",
                     "pattern": "^[^/\\s][^\\s]*$",
@@ -773,6 +798,7 @@
                   "revision",
                   "docs",
                   "words",
+                  "titles",
                   "webPath"
                 ],
                 "additionalProperties": false

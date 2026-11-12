@@ -77,7 +77,14 @@ const IndexLevel = z.strictObject({
   readme: SITE_PATH.nullable().describe('The level document, or null when the level has no introduction.'),
 })
 
-/** One module in one track: what the catalog shows and where its documents are. */
+/**
+ * One module in one track: what the catalog shows and where its documents are.
+ *
+ * `titles` (D139) is the translated title per language, read off the documents. Only titles: the web
+ * has no Turkish or Persian module summary (a translation's frontmatter is `objectives` at most) and
+ * no translated level title or blurb (page-copy.ts keeps every level name English), so no map exists
+ * for those, because a map of English alone would be a translation that is not there.
+ */
 export const IndexModuleTrack = z.strictObject({
   title: z.string().min(1).describe('The English title in this track.'),
   drawn: z.boolean().describe('Written in this track; an unwritten module has no documents.'),
@@ -88,11 +95,25 @@ export const IndexModuleTrack = z.strictObject({
   words: z
     .record(Lang, z.number().int().positive())
     .describe('Language id to the word count its web page prints under the title; empty where the module is not written in this track (D128).'),
+  titles: z
+    .record(Lang, z.string().min(1))
+    .describe('Language id to the title its module document carries; one per language docs names, empty where the module is not written in this track (D139).'),
   webPath: SITE_PATH.describe('The English web page in this track.'),
-}).refine((entry) => Object.keys(entry.words).every((lang) => lang in entry.docs), {
-  message: 'words names a language docs does not',
-  path: ['words'],
 })
+  .refine((entry) => Object.keys(entry.words).every((lang) => lang in entry.docs), {
+    message: 'words names a language docs does not',
+    path: ['words'],
+  })
+  .refine(
+    (entry) =>
+      Object.keys(entry.titles).length === Object.keys(entry.docs).length &&
+      Object.keys(entry.titles).every((lang) => lang in entry.docs),
+    { message: 'titles names exactly the languages docs names', path: ['titles'] },
+  )
+  .refine((entry) => !('en' in entry.titles) || entry.titles.en === entry.title, {
+    message: 'titles.en is title',
+    path: ['titles'],
+  })
 
 const IndexModule = z.strictObject({
   key: z.string().min(1).describe('The record key, <level>/<module>, in both tracks\' record maps.'),

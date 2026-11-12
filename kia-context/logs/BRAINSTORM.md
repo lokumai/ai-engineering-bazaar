@@ -1298,5 +1298,22 @@ of the page as the For Engineers page does, and the bundle's For Everyone docume
 
 ---
 
+### D138 · The site's privacy note covers the mobile app · 2026-11-12
+status: active
+
+The mobile reader is going to the App Store and Google Play, and each store asks for a public privacy policy
+that covers the app. The app collects nothing, as the site does, so the site's note (D122) gains one paragraph
+saying so, and the stores are given its address, `/legend/#privacy`.
+
+- **One note for the course, not two:** the app has no data practice the site lacks, and a second page would
+  repeat the first.
+- **What the paragraph claims is the app's to keep true.** `legal.spec.ts` can test only the site. If the app
+  ever sends anything, crash reports included, the paragraph changes in the same release.
+- **Rejected:** a `/privacy/` route for the stores (D122 rejected it for the site, and the footer's anchor is a
+  stable public address); a privacy page in the app's own repository (a second home for the same text, and the
+  stores want an address on the web).
+
+---
+
 > **← Part 2: [`BRAINSTORM_2.md`](BRAINSTORM_2.md)** — D26 to D96. **← Part 1:
 > [`BRAINSTORM_1.md`](BRAINSTORM_1.md)** — D1 to D25, the entry test, and the house style.

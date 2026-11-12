@@ -19,8 +19,8 @@ description: >
 authority: state
 writes: agent, every session
 status: active
-covers: "M50 to M116, 2026-11-06 onward, and M41, which part 2 held for PR #57"
-last_updated: 2026-11-11
+covers: "M50 to M116, M118, 2026-11-06 onward, and M41, which part 2 held for PR #57"
+last_updated: 2026-11-12
 ---
 
 # 📈 PROGRESS, part 3 — M50 onward
@@ -2420,6 +2420,36 @@ For Engineers page, in the page's language.
       browser specs `module-end`, `module-page-i18n`, `record-sheet`, `record-pages`, `completion`,
       `tracks` (71 passed) and `accessibility`, `responsive`, `bundle` (88 passed, 2 skipped), on port 3201.
       Shots in `playground/2026-11-round-5/shots-quiz-everyone/`.
+
+## 🏁 Milestone M118: Translated module titles in the content bundle's index (D139), DONE
+
+The mobile reader lists modules from the index, which carried English titles only, so a Turkish or
+Persian reader saw English in the catalog, Home and Quiz tab. The task: add, additively inside v1, the
+per-language module title and summary and the per-language level title and blurb, taking only text the
+web already has.
+
+- [x] **Measured first, what the web has.** Module titles: yes, in every written Turkish and Persian
+      document (the first heading of the translation file). Module summaries: no, a translation's
+      frontmatter is `objectives` at most and `loader.ts` says `summary` stays English (D113). Level
+      titles and blurbs: no, `curriculum.yaml` holds them in English only, there is no translated level
+      README, and `page-copy.ts` keeps every level name English. Those three are left out, not invented.
+- [x] **The field**: every index track entry gains `titles`, language to the title its document carries
+      (`src/lib/bundle/build.ts`, `src/lib/bundle/schema.ts`), read off the document just built as `words`
+      is (D128). The English `title` stays.
+- [x] **The contract**: ARCHITECTURE §13 names it; `bundle-schema.json` shows an addition and nothing
+      else. The schema refuses a title for a language with no document, a document with no title,
+      an empty title, and `titles.en` that is not `title`.
+- [x] **The guard**: the corpus test holds each entry's `titles` to the titles of its documents and
+      needs a translated title that differs from its English. Mutation-tested: with every language given
+      the English title, `bundle.test.ts` fails on `fundamentals/llms` (expected `LLM Temelleri`).
+- [x] **Built before and after** (`out/api/`, main against this branch): one file differs,
+      `v1/index.json`. Removing `titles` from it and blanking `files` and `contentVersion`, it is
+      identical to main's, so the change is additive. No file added or removed (350 files in `files`
+      both times). 44 modules, 88 track entries: 149 titles (en 65, tr 42, fa 42), and the 23 entries
+      of modules not written in their track have `{}`; 17 of the 42 Turkish titles differ from the
+      English (the rest are English names kept, as a module keeps technical terms).
+- [x] **Gate:** typecheck, 102 unit files and 1,619 tests, build, link check, bundle check; the browser
+      suite runs in CI.
 
 ---
 

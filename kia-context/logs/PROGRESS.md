@@ -2423,5 +2423,21 @@ For Engineers page, in the page's language.
 
 ---
 
-> **← Part 2: [`PROGRESS_2.md`](PROGRESS_2.md)** — M16 to M49. **← Part 1: [`PROGRESS_1.md`](PROGRESS_1.md)**
+## 🏁 Milestone M117: The privacy note covers the mobile app (D138), DONE
+
+The app goes to the App Store and Google Play, and both ask for the address of a privacy policy that covers
+it. The site's note spoke of the site alone. Asked for by the mobile reader's side, 2026-11-12.
+
+- [x] **One paragraph** in the Privacy section of `/legend/`, before the GitHub paragraph: the app collects no
+      personal data and has no analytics, no account and no form; progress and settings stay on the device, and
+      a backup leaves it only when the reader saves one; the course is downloaded from this site, so GitHub's
+      record covers those requests. Each claim was read from the app's code on 2026-11-12: no account, no
+      analytics or advertising package, the record and its settings under the app's own files, a backup only
+      through the system's save dialog, and crash reports off in every build it has made.
+- [x] **No new address**: the stores are given `https://ai-bazaar.lokum.dev/legend/#privacy`, the footer's own
+      Privacy link (D122).
+- [x] **Gate (2026-11-12):** typecheck; 102 unit files, 1,617 tests; build; link check (209 pages). The browser
+      suite, `legal.spec.ts` among it, runs in CI.
+
+ — M16 to M49. **← Part 1: [`PROGRESS_1.md`](PROGRESS_1.md)**
 > — M1 to M15. The loop is at the top of this file.

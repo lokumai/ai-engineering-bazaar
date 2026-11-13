@@ -152,7 +152,8 @@ export default function LegendPage() {
       {/* M94, D118 — every claim below was checked against the code and is held by
           `tests/e2e/legal.spec.ts`: no cookie, no form, no request to another origin. The
           fonts and the star count are fetched when the site is built, never by the reader's
-          browser. */}
+          browser. The paragraph on the mobile app (M117, D138) is held true by the app's own
+          repository, lokumai/ai-engineering-bazaar-mobile, which no test here can see. */}
       <section className="bz-panel" aria-labelledby="privacy">
         <div className="bz-panel-head">
           <h2 id="privacy" className="bz-panel-title">
@@ -172,6 +173,12 @@ export default function LegendPage() {
               progress page
             </Link>
             .
+          </p>
+          <p>
+            The AI Engineering Bazaar app for Android and iOS works the same way. It collects no personal data,
+            and it has no analytics, no account and no form. Your progress and your settings are saved on your
+            device only, and a backup leaves it only when you save one yourself. The app downloads the course
+            from this site, so GitHub's record below covers its requests too.
           </p>
           <p>
             The site is hosted on GitHub Pages. GitHub logs and stores the IP address of every visitor for

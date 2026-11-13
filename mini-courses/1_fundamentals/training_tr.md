@@ -49,7 +49,7 @@ graph LR
 
 Ortaya çıkan şey **genel amaçlı** bir model: birçok işte iyi, ama hiçbirinde uzmanlaşmış değil.
 
-> **NOT, bu konu ileri düzey.** Dikkat et, o internet metnini kimse etiketlemedi ve ortada bir
+> **Not, bu konu ileri düzey.** Modelin okuduğu internet metnini kimse etiketlemedi ve ortada bir
 > cevap anahtarı da yok. Model, kendi eğitim sinyalini kendisi üretiyor: bir sonraki kelimeyi
 > gizliyor, bir tahmin yapıyor ve bu tahmini gerçekte orada olan kelimeyle karşılaştırıyor. Yani
 > veri kendi kendini etiketliyor ve buna **self-supervised learning** denir. Diyagramlarda ise bu
@@ -58,7 +58,7 @@ Ortaya çıkan şey **genel amaçlı** bir model: birçok işte iyi, ama hiçbir
 
 ## Pre-training Yapmak Zorunda Değil misin?
 
-Pre-training'i kendin yapmak zorunda değilsin, çünkü milyonları harcayan biri bunu zaten yaptı. Sen
+Pre-training'i kendin yapmak zorunda değilsin, çünkü milyonlarca dolar harcayan biri bunu zaten yaptı. Sen
 onun bitmiş modelinden başlayıp **fine-tuning** yapabilirsin.
 
 **Fine-tuning**, pre-training'den geçmiş bir modeli alıp eğitime devam etmek demek. Bu kez veri seti
@@ -74,7 +74,7 @@ Kısaca, ikisi şöyle özetlenir:
 - **Pre-training**, internetin her yerinden toplanan **etiketsiz** metni yer. Cevapları kimse yazmaz, çünkü bir sonraki kelimenin *kendisi* cevaptır.
 - **Fine-tuning**, bir **çiftler koleksiyonu** yer: girdi ve çıktı, ya da prompt ve yanıt. Bu çiftleri genellikle insanlar yazar ya da kontrol eder. Yani bu, milyarlarca sayfa değil, binlerce çift demek.
 
-Bu fark, birinin neden milyonlara mal olduğunu ve ötekinin neden tek bir GPU'ya sığdığını açıklıyor.
+Aralarındaki fark, birinin neden milyonlarca dolara mal olduğunu; ötekinin ise neden tek bir GPU'ya sığdığını açıklıyor.
 
 ## Fine-tuning
 

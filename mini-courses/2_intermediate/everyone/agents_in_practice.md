@@ -36,6 +36,12 @@ the time of writing, we think it is the most capable assistant for this kind of 
 trusted, and the one with the most features. What you learn with it also helps you with other AI
 assistants.
 
+The picture below shows an AI agent at work. It comes from lot-map, a free add-on for Claude Code.
+Each time the agent reads a file, runs a command or asks the model, a light moves to that place on the map.
+
+![An AI agent at work, drawn live by lot-map](../images/lot-map-demo.webp)  
+*An example session, replayed. Each light is one step of the agent's work. From [lot-map](https://github.com/alexeyw/lot-map) by alexeyw (MIT licence).*
+
 ## Claude 101
 
 > [!IMPORTANT]

@@ -44,6 +44,13 @@ to practise, for three reasons:
 Everything you learn here is also useful with other agents. The parts have different names in different
 tools, but they do the same jobs.
 
+To see what an agent does while it works, look at the figure below. It shows lot-map, a free plugin
+for Claude Code: each tool call, model step, file read, shell command and subagent lights up on a map as
+it happens.
+
+![Claude Code at work, drawn live by lot-map](./images/lot-map-demo.webp)  
+*Each light goes from the centre to the station that is at work: Model, Files, Shell, Network, Agents or Skills. This is an example session, replayed by the plugin's own drawing code. From [lot-map](https://github.com/alexeyw/lot-map) by alexeyw (MIT licence).*
+
 ## Which Order to Take Them In
 
 ```mermaid

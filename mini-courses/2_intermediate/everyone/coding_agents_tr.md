@@ -155,3 +155,4 @@ Bir code agent eksik olan aracı kendisi yapabilir; bu yüzden kod, diğer becer
 
 - [awesome-mcp-servers](https://github.com/punkpeye/awesome-mcp-servers): ihtiyacın olan aracın zaten var olup olmadığını kontrol etmek için topluluk listesi
 - [anthropics/skills](https://github.com/anthropics/skills): resmi skill koleksiyonu
+- [lot-map](https://github.com/alexeyw/lot-map): Claude Code'un sohbetinin yanında, agent'ın işindeki her adımı gerçekleştiği anda gösteren canlı bir harita

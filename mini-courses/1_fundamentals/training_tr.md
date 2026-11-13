@@ -162,7 +162,7 @@ ve yalnızca az sayıda yeni, ek parametre eğitir.
 
 - Donmuş kısım, pre-training'in bıraktığı haliyle olduğu gibi kalır.
 - Yalnızca çok küçük bir parça değişir ve bu genellikle toplam parametrelerin %1'inin altındadır.
-- En yaygın PEFT tekniği **LoRA**'dır (Low-Rank Adaptation). Matematiğine girmene gerek yok; yalnızca LoRA'nın, neredeyse herkesin kullandığı ucuz bir fine-tuning yöntemi olduğunu bilmen yeterli.
+- En yaygın PEFT tekniği **LoRA**'dır (Low-Rank Adaptation). Matematiğini anlamana gerek yok: yalnızca LoRA'nın, neredeyse herkesin kullandığı ucuz bir fine-tuning yöntemi olduğunu bilmen yeterli.
 
 Bunun üç faydası var: tek bir tüketici GPU'sunda çalışır, çok daha hızlı eğitilir ve modelin
 tamamının yeni bir kopyası yerine yalnızca ek parametreleri tutan küçük bir dosya üretir. Gerçek
@@ -183,8 +183,8 @@ model.print_trainable_parameters()
 # something like: "trainable params: 0.3M || all params: 60M || trainable%: 0.5%"
 ```
 
-PEFT ile, [LLM Temelleri](llms_tr.md) modülünde anlatılan kuantizasyonu karıştırma. **PEFT ucuza
-eğitmekle ilgilidir. Kuantizasyon ise ucuza çalıştırmakla.** İkisi sık sık birlikte kullanılır.
+PEFT ile, [LLM Temelleri](llms_tr.md) modülünde anlatılan quantization'ı karıştırma. **PEFT ucuza
+eğitmekle ilgilidir. Quantization ise ucuza çalıştırmakla.** İkisi sık sık birlikte kullanılır.
 
 ## Unsloth
 
@@ -196,7 +196,7 @@ Kütüphanenin sana verdikleri şunlar:
 
 - **Sığan fine-tuning.** Eğitim kodunun en çok bellek ve zaman harcayan kısımlarını yeniden yazar. Bunun sonucunda LoRA ve quantized-LoRA çalıştırmaları çok daha az GPU belleğine ihtiyaç duyar ve daha hızlı biter. Çoğu zaman bir işin ücretsiz bir Colab GPU'sunda çalışıp çalışamayacağını bu belirler.
 - **Hazır notebook'lar.** [notebook koleksiyonu](https://unsloth.ai/docs/get-started/unsloth-notebooks) popüler açık modelleri kapsıyor. Birini açıp kendi veri setini ona verirsin ve çalıştırırsın. Bu, "elimde birkaç çift var" diyen birinin "elimde fine-tune edilmiş bir model var" diyebilmesinin en hızlı ve en dürüst yolu.
-- **Yalnızca eğitim için değil, çalıştırma için de önceden kuantize edilmiş modeller.** [LLM Temelleri](llms_tr.md) modülü, kuantizasyonu kendin nadiren yaptığını söylemişti. Modülün kastettiği sürümler de bunlardır. Yani aynı proje iki işi birden kapsıyor: bir modeli sıkıştırmak ve bir model eğitmek.
+- **Yalnızca eğitim için değil, çalıştırma için de önceden quantize edilmiş modeller.** [LLM Temelleri](llms_tr.md) modülü, quantization'ı kendin nadiren yaptığını söylemişti. Modülün kastettiği sürümler de bunlardır. Yani aynı proje iki işi birden kapsıyor: bir modeli sıkıştırmak ve bir model eğitmek.
 - **Bir rehber ve gerçekçi bir kontrol.** [fine-tuning rehberi](https://unsloth.ai/docs/get-started/fine-tuning-llms-guide) tüm süreci adım adım anlatıyor. Ama başlamadan **önce** FAQ'i, yani [is fine-tuning right for me](https://unsloth.ai/docs/get-started/fine-tuning-for-beginners/faq-+-is-fine-tuning-right-for-me) sayfasını oku. Dürüst cevap çoğu zaman hayırdır. Birçok problem fine-tuning problemi gibi görünür, ama daha iyi bir prompt ya da [Retrieval-Augmented Generation (RAG)](rag_tr.md) modülündeki retrieval bunların çoğunu çözer.
 
 ## Yan Yana Karşılaştırma
@@ -302,7 +302,7 @@ pahalı?
 ### 📄 Makaleler
 
 - [Unsloth: is fine-tuning right for me?](https://unsloth.ai/docs/get-started/fine-tuning-for-beginners/faq-+-is-fine-tuning-right-for-me): fine-tuning yapmadan önce mutlaka oku
-- [Unsloth notebooks](https://unsloth.ai/docs/get-started/unsloth-notebooks): eğitim için ve kuantize modelleri çalıştırmak için hazır notebook'lar
+- [Unsloth notebooks](https://unsloth.ai/docs/get-started/unsloth-notebooks): eğitim için ve quantize modelleri çalıştırmak için hazır notebook'lar
 - [Unsloth fine-tuning guide](https://unsloth.ai/docs/get-started/fine-tuning-llms-guide): başından sonuna tüm süreç
 - [Fine-tuning AI models](https://cloud.google.com/use-cases/fine-tuning-ai-models?hl=en#fine-tuning-llms-and-ai-models): Google Cloud'un genel bakışı, terimleri öğrenmek için faydalı
 

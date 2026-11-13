@@ -102,7 +102,7 @@ Agent'ların nasıl işlediğinin temeli tam olarak bu ayrımdır. Bunu [LLM Too
 
 ## LLM Hyperparameter'ları
 
-Modelin nasıl yanıt verdiğini **hiperparametre (hyperparameter)** ayarlarıyla değiştirebilirsin. Bu kelimedeki "hyper" kısmına dikkat et, çünkü bu kısım bunların yukarıdaki parametrelerle aynı şey olmadığını gösteriyor. Hiperparametreler üretimi etkiler. Yukarıda andığımız parametreler ise başka bir şeydir: onlar ağın içindeki sayılardır ve bu sayıların adedi modelin boyutunu belirler.
+Modelin nasıl yanıt verdiğini **hyperparameter** ayarlarıyla değiştirebilirsin. Bu kelimedeki "hyper" kısmına dikkat et, çünkü bu kısım bunların yukarıdaki parametrelerle aynı şey olmadığını gösteriyor. Hyperparameter'lar üretimi etkiler. Yukarıda andığımız parametreler ise başka bir şeydir: onlar ağın içindeki sayılardır ve bu sayıların adedi modelin boyutunu belirler.
 
 Bunlardan ikisini sürekli kullanacaksın:
 
@@ -141,7 +141,7 @@ Rakamlar bunu açıkça gösteriyor. Örnek olarak 32B'lik bir modele bakalım:
 | 16-bit (dağıtıldığı haliyle) | ~64 GB | Hayır |
 | 4-bit (quantized) | ~16 GB, bir miktar context için ek | Evet, 24 GB ya da 32 GB'lık bir kartta rahatlıkla |
 
-Model de ağırlıkları da aynı kalır, ama artık belleğin yalnızca dörtte birine ihtiyaç duyar. Aralarındaki fark, birini laptop'unda çalıştırabilirken diğerini çalıştıramamandır.
+Model de ağırlıkları da aynı kalır, ama artık belleğin yalnızca dörtte birine ihtiyaç duyar. 16-bit'i laptop'unda çalıştıramazken 4-bit'i çalıştırabilirsin.
 
 **Modelleri kendin quantize etmen gerekir mi?** Hayır, ve neredeyse hiç etmemelisin. ![](./images/logos/ollama-mono.svg)[Ollama](https://ollama.com/) ve ![](./images/logos/unsloth.svg)[Unsloth](https://unsloth.ai/), Qwen, Llama, Mistral, Gemma ve daha fazlası gibi popüler modellerin hazır quantize edilmiş sürümlerini zaten yayımlıyor. Bunlardan birini çekip çalıştırman yeterli.
 
@@ -191,7 +191,7 @@ Ayrıca günlük limitli ücretsiz modelleri de var. Başka bir modele geçmek i
 
 ## LLM'lere Prompt Yazmak
 
-**Prompt engineering**, istediğin çıktıyı alabilmek için girdiyi özenle yazma işidir. Bu, öğrencilere talimat vermeye benzer. Net bir talimatla öğrenciler ödevlerini düzgün yapar. Belirsiz bir talimatla öğrenciler ödevlerini canlarının istediği şekilde yapmasına yol açar.
+**Prompt engineering**, istediğin çıktıyı alabilmek için girdiyi özenle yazma işidir. Bu, öğrencilere talimat vermeye benzer. Net bir talimatla öğrenciler ödevlerini düzgün yapar. Belirsiz bir talimatla ise her öğrenci ödevini canının istediği gibi yapar.
 
 Modelin gerçekte ne hesapladığını hatırla. Model, context'teki her şeyi göz önünde bulundurarak bir sonraki token'ın olasılığını hesaplar:
 
@@ -202,7 +202,7 @@ P(next token | context)
 Senin prompt'un *tam olarak* bu context'tir. Bu yüzden senin işin, istediğin çıktıyı en olası hale getiren girdiyi bulmaktır:
 
 ```
-best prompt = the prompt that maximises P(the output you want | prompt)
+en iyi prompt = P(istediğin çıktı | prompt) değerini en yükseğe çıkaran prompt
 ```
 
 Prompt engineering'in bütün mantığı bu tek satırda özetlenebilir. Adı konmuş pek çok teknik var ve bunları [Prompt Engineering](../2_intermediate/prompt_engineering_tr.md) modülünde anlatıyoruz. Ama işin büyük kısmı deneyerek ilerler: bir ifadeyi dene, çıktıya bak, değiştir ve yeniden dene.
@@ -228,7 +228,7 @@ Gerçek ürünlerdeki prompt'lara ne kadar emek verildiğini görmek için şunl
 - **Tool schema**: modelin çağırabileceği tool'ların listesi; her tool'un adı ve argümanları yazılıdır.
 - **ToolCall**: modelin senin fonksiyonlarından birini çalıştırma isteği; bunu LLM üretir.
 - **ToolResult**: o fonksiyonun çıktısı; bunu LLM değil, fonksiyonu çalıştıran host makine üretir.
-- **Temperature**: yaratıcılığı ayarlayan, genellikle 0.0 ile 1.0 arasında bir hiperparametre; düşük değerler öngörülebilir cevaplar verir.
+- **Temperature**: yaratıcılığı ayarlayan, genellikle 0.0 ile 1.0 arasında bir hyperparameter; düşük değerler öngörülebilir cevaplar verir.
 - **Max output tokens**: cevabın uzunluğuna üst sınır koyar; maliyeti kontrol etmek için kullanılır.
 - **Inference**: bir modeli context üzerinde çalıştırıp cevabını üretmek; bu, bulutta da kendi bilgisayarında da yapılabilir.
 - **Quantization**: her 16-bit ağırlığı 4 bit'e indirmek; böylece modelin belleğe ihtiyacı yaklaşık dört kat azalır.

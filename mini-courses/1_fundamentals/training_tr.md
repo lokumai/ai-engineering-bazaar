@@ -22,8 +22,7 @@ GPU'nda çalıştırabilirsin.
 Başlangıçta model hiçbir şey bilmez. Her parametre rastgele bir sayıdır, bu yüzden modelin çıktısı
 da rastgeledir.
 
-Training, modele metin vermek ve o sayıları küçük miktarlarla değiştirmek demektir. Bunu tekrar
-tekrar yaparsın, tahminler rastgele olmaktan çıkıp doğru olmaya başlayana kadar.
+Training, modele metin vermek ve o sayıları küçük miktarlarda değiştirmek demektir. Tahminler rastgele olmaktan çıkıp doğru olmaya başlayana kadar, modeli tekrar tekrar train edersin.
 
 ![Eğitilmemiş ve Eğitilmiş Ağ](./images/training-network.webp)  
 *Aynı ağ, eğitimden önce ve sonra. Girdi "The students opened their". Soldaki rastgele ağırlıklar "Sun" üretiyor, sağdaki öğrenilmiş ağırlıklar ise "Laptops". Ağın yapısı değişmedi. Değişen yalnızca içindeki sayılar.*

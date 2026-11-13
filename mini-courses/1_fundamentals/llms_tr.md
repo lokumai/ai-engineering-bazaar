@@ -55,7 +55,7 @@ Her LLM'in bir **context window**'u vardır. Bu, modelin tek seferde işleyebild
 
 Bunu gözünde canlandırmanın en kolay yolu, ChatGPT ile yaptığın sohbet geçmişine bakmak. Yeni bir konuşmaya başladığında geçmiş boştur. Karşılıklı konuştukça hem senin her mesajın hem de modelin her yanıtı bu geçmişe eklenir ve zamanla geçmiş dolar.
 
-Yani **context** dediğimiz şey aslında bir **mesaj yığını (stack)**. Yığın her seferinde bir mesaj eklenerek oluşur ve sonra bütünüyle modele gönderilir. LLM bu yığının tamamını girdi olarak alır, işler ve bir sonraki mesajı üretir.
+Yani **context** (bağlam) dediğimiz şey aslında bir **mesaj yığını (stack)**. Yığın her seferinde bir mesaj eklenerek oluşur ve sonra bütünüyle modele gönderilir. LLM bu yığının tamamını girdi olarak alır, işler ve bir sonraki mesajı üretir.
 
 **Sınır aşılırsa ne olur?** Bir hata alırsın, hepsi bu. İstek başarısız olur.
 
@@ -74,16 +74,16 @@ Bu mesajlar, sistemi her kullandığında üst üste yığılır:
 ![Düz LLM sohbetinin context'i](./images/llm-context.webp)  
 *İki turn'lük düz bir sohbet: iki HumanMessage ve iki AIMessage. Hiçbir şey silinmez. Bu yüzden ikinci turn'de model birinci turn'deki her şeyi de okur.*
 
-Bir HumanMessage ile onu yanıtlayan AIMessage'a birlikte bir **turn** denir. Düz bir LLM sohbetinde bu ikisinin arasında başka bir şey yoktur: prompt'u gönderirsin, yanıtı alırsın. Yukarıdaki şekilde iki turn var.
+Bir HumanMessage ile onu yanıtlayan AIMessage'a birlikte bir **turn** (tur) denir. Düz bir LLM sohbetinde bu ikisinin arasında başka bir şey yoktur: prompt'u gönderirsin, yanıtı alırsın. Yukarıdaki şekilde iki turn var.
 
-Bu yığının birkaç adı var ve hangisinin kullanıldığı kimin konuştuğuna bağlı: **context**, **working memory**, **message history** ya da **short-term memory**. İsimlerin hepsini şimdiden ezberlemene gerek yok. Kısa süreli hafıza kendi modülünü hak ediyor: [Memory](memory_tr.md).
+Bu yığının (stack) birkaç adı var ve hangisinin kullanıldığı kimin konuştuğuna bağlı: **context**, **working memory**, **message history** ya da **short-term memory**. İsimlerin hepsini şimdiden ezberlemene gerek yok. Kısa süreli hafıza kendi modülünü hak ediyor: [Memory](memory_tr.md).
 
 SystemMessage'a daha yakından bakmak gerekiyor, çünkü o tek bir düz metin değil. Normalde hem davranış talimatlarını *hem de* **tool schema'larını** taşır. Tool schema'ları, modelin çağırmasına izin verilen tool'ların listesidir ve her birinin adını ile argümanlarını içerir:
 
 ![System prompt'un içi](./images/system-prompt-context.webp)  
 *Bir system prompt'un içinde davranış talimatları, tool schema'ları ve bazen sabit bir referans metin bloğu bulunur. Hepsi context'in en üstünde yer alır.*
 
-API'de tool schema'ları system metninin parçası değildir, ayrı bir alan olarak gelir. Ancak model bunları başta tek bir blok halinde alır. Bu yüzden onları birlikte hayal etmek makul.
+API'de tool schema'ları system metninin parçası değildir, ayrı bir alan olarak gelir. Ancak model bunları başta tek bir blok halinde alır. Bu yüzden onları birlikte hayal etmek makuldür.
 
 Birçok üründen sızdırılmış gerçek system prompt'ları şu adreste okuyabilirsin: [system_prompts_leaks](https://github.com/asgeirtj/system_prompts_leaks).
 
@@ -93,7 +93,7 @@ Diyelim ki İstanbul'daki hava durumunu soruyorsun. Model bunu kendi başına ö
 
 Burada hatırlaman gereken kısım şu: **ToolCall'u LLM üretir, ToolResult'u ise host makine üretir**. Host makine (host machine), senin laptop'un ya da bir sunucu olabilir. ToolResult'u o üretir, çünkü fonksiyonu gerçekten çalıştıran odur. Model sorar, iş başka bir şey tarafından yapılır.
 
-Bir agent turn'ünün içi daha kalabalıktır. HumanMessage'ından sonra model, sana cevap verebilmek için bir tool'a ihtiyacı olup olmadığına karar verir. İhtiyacı varsa ToolCall ve ToolResult de context'e eklenir. Model son cevabı ancak bundan sonra yazar. Bütün bunlar yine **tek bir turn**: bir HumanMessage, varsa tool mesajları ve en sonda bir AIMessage.
+Bir agent turn'ünün içi daha kalabalıktır. HumanMessage'ından sonra model, sana cevap verebilmek için bir tool'a ihtiyacı olup olmadığına karar verir. İhtiyacı varsa ToolCall ve ToolResult de context'e eklenir. Model son cevabı ancak bundan sonra yazar. Bütün bunlar yine **tek bir turn**'de gerçekleşir: bir HumanMessage, varsa tool mesajları ve en sonda bir AIMessage.
 
 ![Bir agent'ın context'i](./images/agent-context.webp)  
 *Bir agent'ın tek turn'ü: sen prompt'u yazarsın, AI düşünür, bir tool'u çağırır ve sonra cevap verir. Kimin neyi yazdığına bak. LLM düşünceyi, Tool Call'u ve cevabı üretir. Tool Result ise fonksiyonu çalıştıran host makineden gelir.*

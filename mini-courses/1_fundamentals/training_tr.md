@@ -81,7 +81,7 @@ Aralarındaki fark, birinin neden milyonlarca dolara mal olduğunu; ötekinin is
 Diyelim ki makaleleri çok iyi özetleyen bir model istiyorsun.
 
 1. Pre-training'den geçmiş bir base model ile başla.
-2. Örneklerden oluşan bir veri seti topla: `(long article, human-written short summary)` çiftleri. Çoğu zaman birkaç bin çift yeter.
+2. Örneklerden oluşan bir veri seti topla: `(uzun makale, insan tarafından yazılmış kısa özet)` çiftleri. Çoğu zaman birkaç bin çift yeter.
 3. Modeli bu çiftler üzerinde eğitmeye devam et. Böylece model "uzun metin gir, kısa ve doğru özet çıkar" kalıbını öğrenir.
 4. Sonuç, genel base modelden belirgin biçimde daha tutarlı özetler. Üstelik pre-training için para ödemiyorsun.
 

@@ -188,16 +188,15 @@ eğitmekle ilgilidir. Quantization ise ucuza çalıştırmakla.** İkisi sık s�
 
 ## Unsloth
 
-Training döngüsünü kendin yazarsan, pek çok parçayı elle birbirine bağlaman gerekir. Elindeki
-bellekte bir modeli sığdırmak da ayrı bir beceri. ![](./images/logos/unsloth.svg)[Unsloth](https://unsloth.ai/docs), bu iki işi de
+Training döngüsünü kendin yazarsan, pek çok parçayı elle birbirine bağlaman gerekir. Elindeki belleğe bir modeli sığdırmak da başlı başına ayrı bir beceri. ![](./images/logos/unsloth.svg)[Unsloth](https://unsloth.ai/docs), bu iki işi de
 yapan açık kaynaklı bir kütüphane.
 
 Kütüphanenin sana verdikleri şunlar:
 
 - **Sığan fine-tuning.** Eğitim kodunun en çok bellek ve zaman harcayan kısımlarını yeniden yazar. Bunun sonucunda LoRA ve quantized-LoRA çalıştırmaları çok daha az GPU belleğine ihtiyaç duyar ve daha hızlı biter. Çoğu zaman bir işin ücretsiz bir Colab GPU'sunda çalışıp çalışamayacağını bu belirler.
-- **Hazır notebook'lar.** [notebook koleksiyonu](https://unsloth.ai/docs/get-started/unsloth-notebooks) popüler açık modelleri kapsıyor. Birini açıp kendi veri setini ona verirsin ve çalıştırırsın. Bu, "elimde birkaç çift var" diyen birinin "elimde fine-tune edilmiş bir model var" diyebilmesinin en hızlı ve en dürüst yolu.
-- **Yalnızca eğitim için değil, çalıştırma için de önceden quantize edilmiş modeller.** [LLM Temelleri](llms_tr.md) modülü, quantization'ı kendin nadiren yaptığını söylemişti. Modülün kastettiği sürümler de bunlardır. Yani aynı proje iki işi birden kapsıyor: bir modeli sıkıştırmak ve bir model eğitmek.
-- **Bir rehber ve gerçekçi bir kontrol.** [fine-tuning rehberi](https://unsloth.ai/docs/get-started/fine-tuning-llms-guide) tüm süreci adım adım anlatıyor. Ama başlamadan **önce** FAQ'i, yani [is fine-tuning right for me](https://unsloth.ai/docs/get-started/fine-tuning-for-beginners/faq-+-is-fine-tuning-right-for-me) sayfasını oku. Dürüst cevap çoğu zaman hayırdır. Birçok problem fine-tuning problemi gibi görünür, ama daha iyi bir prompt ya da [Retrieval-Augmented Generation (RAG)](rag_tr.md) modülündeki retrieval bunların çoğunu çözer.
+- **Hazır notebook'lar.** [notebook koleksiyonu](https://unsloth.ai/docs/get-started/unsloth-notebooks) popüler açık modelleri kapsıyor. Birini açıp kendi veri setini ona verirsin ve çalıştırırsın. Bu, "elimde birkaç çift var" demekten "elimde fine-tune edilmiş bir model var" demeye geçmenin en hızlı ve güvenilir yolu.
+- **Yalnızca training için değil, çalıştırmak için de quantize modeller.** [LLM Temelleri](llms_tr.md) modülü, quantization'ı nadiren senin yapmanı gerektiğini anlatmıştı. Modülün kastettiği sürümler de tam olarak bunlardır. Yani aynı proje iki işi birden kapsıyor: bir modeli sıkıştırmak ve bir model eğitmek.
+- **Rehber ve gerçeklerle yüzleşme.** [fine-tuning rehberi](https://unsloth.ai/docs/get-started/fine-tuning-llms-guide) tüm süreci adım adım anlatıyor. Ama başlamadan **önce** FAQ'i, yani [is fine-tuning right for me](https://unsloth.ai/docs/get-started/fine-tuning-for-beginners/faq-+-is-fine-tuning-right-for-me) sayfasını oku. Dürüst cevap çoğu zaman hayırdır. Birçok problem fine-tuning problemi gibi görünür, ama daha iyi bir prompt ya da [Retrieval-Augmented Generation (RAG)](rag_tr.md) modülündeki retrieval bunların çoğunu çözer.
 
 ## Yan Yana Karşılaştırma
 

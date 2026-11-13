@@ -1,6 +1,6 @@
 # Hikayemiz
 
-## Üretmek artık bedava ve internet AI çöpüyle dolup taşıyor.
+## Üretmek artık bedava ve internet kalitesiz AI içerikleriyle dolu.
 
 Yapay zekâya basit bir soru soruyorsun ve sana net bir cevap vereceğine oturup Versay Antlaşması'nı yazıyor: sayfalar dolusu kibar, robotik bir metin. Her şeyi söylüyor ama hiçbir şeyi açıklamıyor. Bugün herkes üç saniyede binlerce kelime üretebiliyor, ama gerçek bir anlayış bulmak hiç bu kadar zor olmamıştı.
 

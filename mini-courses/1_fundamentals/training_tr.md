@@ -196,7 +196,7 @@ Kütüphanenin sana verdikleri şunlar:
 - **Sığan fine-tuning.** Eğitim kodunun en çok bellek ve zaman harcayan kısımlarını yeniden yazar. Bunun sonucunda LoRA ve quantized-LoRA çalıştırmaları çok daha az GPU belleğine ihtiyaç duyar ve daha hızlı biter. Çoğu zaman bir işin ücretsiz bir Colab GPU'sunda çalışıp çalışamayacağını bu belirler.
 - **Hazır notebook'lar.** [notebook koleksiyonu](https://unsloth.ai/docs/get-started/unsloth-notebooks) popüler açık modelleri kapsıyor. Birini açıp kendi veri setini ona verirsin ve çalıştırırsın. Bu, "elimde birkaç çift var" demekten "elimde fine-tune edilmiş bir model var" demeye geçmenin en hızlı ve güvenilir yolu.
 - **Yalnızca training için değil, çalıştırmak için de quantize modeller.** [LLM Temelleri](llms_tr.md) modülü, quantization'ı nadiren senin yapmanı gerektiğini anlatmıştı. Modülün kastettiği sürümler de tam olarak bunlardır. Yani aynı proje iki işi birden kapsıyor: bir modeli sıkıştırmak ve bir model eğitmek.
-- **Rehber ve gerçeklerle yüzleşme.** [fine-tuning rehberi](https://unsloth.ai/docs/get-started/fine-tuning-llms-guide) tüm süreci adım adım anlatıyor. Ama başlamadan **önce** FAQ'i, yani [is fine-tuning right for me](https://unsloth.ai/docs/get-started/fine-tuning-for-beginners/faq-+-is-fine-tuning-right-for-me) sayfasını oku. Dürüst cevap çoğu zaman hayırdır. Birçok problem fine-tuning problemi gibi görünür, ama daha iyi bir prompt ya da [Retrieval-Augmented Generation (RAG)](rag_tr.md) modülündeki retrieval bunların çoğunu çözer.
+- **Rehber ve gerçeklerle yüzleşme.** [fine-tuning rehberi](https://unsloth.ai/docs/get-started/fine-tuning-llms-guide) tüm süreci adım adım anlatıyor. Ama başlamadan **önce** FAQ'i, yani [is fine-tuning right for me](https://unsloth.ai/docs/get-started/fine-tuning-for-beginners/faq-+-is-fine-tuning-right-for-me) sayfasını oku. Dürüst cevap çoğu zaman hayırdır. Birçok problem fine-tuning problemi gibi görünür, ama daha iyi bir prompt ya da [RAG ve Embedding'ler](rag_tr.md) modülündeki retrieval bunların çoğunu çözer.
 
 ## Yan Yana Karşılaştırma
 
@@ -226,7 +226,7 @@ hayır olduğu üç durumu bilmek faydalı.
 tabanına yeni commit'ler gelir, sözleşmeler güncellenir, politikalar değişir. Fine-tuning ise bir
 anlık görüntüdür: verinin belirli bir gündeki halini yakalar ve sonra hiç değişmez. Saatler sürer ve gerçek para gerektirir, bu yüzden bir dosya her değiştiğinde
 yeniden yapamazsın. Bu nedenle burada ihtiyacın olan şey retrieval'dır ve bu konu,
-[Retrieval-Augmented Generation (RAG)](rag_tr.md) modülünde işleniyor.
+[RAG ve Embedding'ler](rag_tr.md) modülünde işleniyor.
 
 **Fine-tuning'i görevler için yap, doğrular için değil.** Fine-tuning, bir *davranışı* öğretmekte
 iyidir; örneğin belirli bir biçimde özetlemeyi ya da metinleri kendi kategorilerine ayırmayı

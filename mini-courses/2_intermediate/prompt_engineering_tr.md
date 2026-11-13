@@ -121,7 +121,7 @@ Bugünkü modellerin bu şablonlardan birine sıkı sıkıya uymanı gerektirmed
 
 Modeller, ağırlıklarında olmayan şeyleri öğrenebilir; bunu ne pre-training ile ne de fine-tuning ile yaparlar. Bilgiyi context'ten, yani [Memory](../1_fundamentals/memory_tr.md) modülünde anlatılan çalışma belleğinden alırlar. Buna **in-context learning** deniyor, kısaca ICL.
 
-RAG'in çalışmasının sebebi de bu: [Retrieval-Augmented Generation (RAG)](../1_fundamentals/rag_tr.md) modülünde ağırlıklar hiç değişmez, getirilen dokümanlar context'e girer ve model onları hemen kullanır. Kitaplık kapalı kalır, sen de ihtiyacın olanı masana koyarsın.
+RAG'in çalışmasının sebebi de bu: [RAG ve Embedding'ler](../1_fundamentals/rag_tr.md) modülünde ağırlıklar hiç değişmez, getirilen dokümanlar context'e girer ve model onları hemen kullanır. Kitaplık kapalı kalır, sen de ihtiyacın olanı masana koyarsın.
 
 İki şablona tekrar baktığında, ikisinde de bir context alanı olduğunu görürsün. Bu alan, modele daha önce bilmediği bir bilgiyi verebildiğin tek yerdir.
 

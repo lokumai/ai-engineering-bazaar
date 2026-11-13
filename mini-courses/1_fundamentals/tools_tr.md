@@ -9,7 +9,7 @@ objectives:
 
 # LLM Tool Calling
 
-[LLM Temelleri](llms_tr.md), [Training LLMs](training_tr.md) ve [Retrieval-Augmented Generation (RAG)](rag_tr.md) modüllerinde üç şeyi ele aldık: model nedir, nasıl eğitilir ve kendi verini modelin önüne nasıl koyarsın. Bu üç modülde model hâlâ yalnızca okuyordu, ama bu modülde bir şeyler *yapmaya* başlıyor: bir dosyayı okuyor, bir komut çalıştırıyor ya da bir API'yi çağırıyor.
+[LLM Temelleri](llms_tr.md), [Training LLMs](training_tr.md) ve [RAG ve Embedding'ler](rag_tr.md) modüllerinde üç şeyi ele aldık: model nedir, nasıl eğitilir ve kendi verini modelin önüne nasıl koyarsın. Bu üç modülde model hâlâ yalnızca okuyordu, ama bu modülde bir şeyler *yapmaya* başlıyor: bir dosyayı okuyor, bir komut çalıştırıyor ya da bir API'yi çağırıyor.
 
 Bu, her agent'in altında çalışan mekanizmadır, o yüzden onu tam olarak anlamak için biraz emek harcamaya değer.
 
@@ -236,7 +236,7 @@ API'si olan her şey modelin erişebileceği bir şeye dönüşebilir. Bu, bir a
 
 Bundan iki sonuç çıkar. Birincisi, bir tool ona verdiğin kimlik bilgileri kadar güçlüdür: hesabından mail gönderebilen bir tool, herkese her şeyi gönderebilir. İkincisi, bu tool'ları kendin yazmak zorunda kalman artık nadir. [Code Agent'lar](../2_intermediate/coding_agents_tr.md) MCP'yi anlatır. MCP, tool'ları paketlemenin standart bir yoludur ve bir kez yazılan bir tool'un her agent'ta çalışmasını sağlar. MCP ile, sarmalamak üzere olduğun API'yi biri çoktan sarmış olur.
 
-Dokümantasyon araması yapan tool'a da ikinci bir bakmaya değer, çünkü bu, [Retrieval-Augmented Generation (RAG)](rag_tr.md) modülündeki RAG akışının bir tool'a dönüştürülmüş hali. Artık *ne zaman* arama yapılacağına model karar veriyor ve her soruda arama yapmak zorunda değilsin. Bir RAG uygulamasını agent'ten ayıran şeyin büyük kısmı, işte bu küçük değişiklik.
+Dokümantasyon araması yapan tool'a da ikinci bir bakmaya değer, çünkü bu, [RAG ve Embedding'ler](rag_tr.md) modülündeki RAG akışının bir tool'a dönüştürülmüş hali. Artık *ne zaman* arama yapılacağına model karar veriyor ve her soruda arama yapmak zorunda değilsin. Bir RAG uygulamasını agent'ten ayıran şeyin büyük kısmı, işte bu küçük değişiklik.
 
 ```mermaid
 graph TD

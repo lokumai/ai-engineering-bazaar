@@ -141,7 +141,7 @@ Rakamlar bunu açıkça gösteriyor. Örnek olarak 32B'lik bir modele bakalım:
 | 16-bit (dağıtıldığı haliyle) | ~64 GB | Hayır |
 | 4-bit (quantized) | ~16 GB, bir miktar context için ek | Evet, 24 GB ya da 32 GB'lık bir kartta rahatlıkla |
 
-Model de ağırlıkları da aynı kalır, ama artık belleğin yalnızca dörtte birine ihtiyaç duyar. Fark, "bunu hiç çalıştıramam" ile "bu masaüstümde çalışıyor" arasındaki farktır.
+Model de ağırlıkları da aynı kalır, ama artık belleğin yalnızca dörtte birine ihtiyaç duyar. Aralarındaki fark, birini laptop'unda çalıştırabilirken diğerini çalıştıramamandır.
 
 **Modelleri kendin quantize etmen gerekir mi?** Hayır, ve neredeyse hiç etmemelisin. ![](./images/logos/ollama-mono.svg)[Ollama](https://ollama.com/) ve ![](./images/logos/unsloth.svg)[Unsloth](https://unsloth.ai/), Qwen, Llama, Mistral, Gemma ve daha fazlası gibi popüler modellerin hazır quantize edilmiş sürümlerini zaten yayımlıyor. Bunlardan birini çekip çalıştırman yeterli.
 

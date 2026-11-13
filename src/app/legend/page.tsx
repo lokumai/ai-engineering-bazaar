@@ -153,8 +153,8 @@ export default function LegendPage() {
           `tests/e2e/legal.spec.ts`: no cookie, no form, no request to another origin. The
           fonts and the star count are fetched when the site is built, never by the reader's
           browser. The paragraph on the mobile app (M117, D138) is held true by the app's own
-          repository, lokumai/ai-engineering-bazaar-mobile, which no test here can see; its crash
-          reports go to Sentry from a release built with the DSN (that repository's PR #8). */}
+          repository, lokumai/ai-engineering-bazaar-mobile, which no test here can see; what it
+          sends to Sentry is listed in that repository's docs/store-privacy.md (its PR #8). */}
       <section className="bz-panel" aria-labelledby="privacy">
         <div className="bz-panel-head">
           <h2 id="privacy" className="bz-panel-title">
@@ -176,13 +176,15 @@ export default function LegendPage() {
             .
           </p>
           <p>
-            The AI Engineering Bazaar app for Android and iOS works the same way. It collects no personal data,
-            and it has no analytics, no account and no form. Your progress and your settings are saved on your
-            device only, and a backup leaves it only when you save one yourself. When the app crashes, it sends a
-            crash report to Sentry so the fault can be fixed: the error, the app's version, and the device's model
-            and system. The app masks personal details in the report before it leaves the device, and Sentry keeps
-            no IP address. The app downloads the course from this site, so GitHub's record below covers its
-            requests too.
+            The AI Engineering Bazaar app for Android and iOS collects no personal data either, and it has no
+            analytics and no account. Your progress and your settings are saved on your device only, and a backup
+            leaves it only when you save one yourself. When the app crashes, it sends a crash report to Sentry so
+            the fault can be fixed. To follow the app's health by version, it also tells Sentry when it opens and
+            closes, how long it took to open and when it froze, with a random number for that installation. A
+            problem you report from the app's settings goes to Sentry too, with no name or email asked. None of
+            this holds your name, what you read or your quiz answers: the app masks personal details before they
+            leave the device, and Sentry keeps no IP address. The app downloads the course from this site, so
+            GitHub's record below covers its requests too.
           </p>
           <p>
             The site is hosted on GitHub Pages. GitHub logs and stores the IP address of every visitor for

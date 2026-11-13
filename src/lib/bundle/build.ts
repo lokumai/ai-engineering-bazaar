@@ -219,10 +219,12 @@ async function trackEntry(
   const languages = docLanguages(module, track)
   // Each language's count is read off the document just built, so the index and the document agree.
   const words: Record<string, number> = {}
+  const titles: Record<string, string> = {}
   for (const lang of languages) {
     const built = await buildModuleDoc(module.slug, lang, courseImageSize, track)
     diagrams.push(built.diagrams)
     if (built.doc.words !== null) words[lang] = built.doc.words
+    titles[lang] = built.doc.title
   }
 
   if (track === 'everyone') {
@@ -235,6 +237,7 @@ async function trackEntry(
       revision: module.everyone?.revision ?? null,
       docs: Object.fromEntries(languages.map((lang) => [lang, moduleDocPath(module.slug, lang, track)])),
       words,
+      titles,
       webPath: webPathOf(module.slug, track),
     }
   }
@@ -247,6 +250,7 @@ async function trackEntry(
     revision: module.revision,
     docs: Object.fromEntries(languages.map((lang) => [lang, moduleDocPath(module.slug, lang, track)])),
     words,
+    titles,
     webPath: webPathOf(module.slug, track),
   }
 }

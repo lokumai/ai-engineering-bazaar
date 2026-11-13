@@ -57,6 +57,7 @@ const trackEntry = {
   revision: null,
   docs: { en: 'api/v1/modules/alpha/first/en.json', tr: 'api/v1/modules/alpha/first/tr.json' },
   words: { en: 120, tr: 110 },
+  titles: { en: 'First', tr: 'Birinci' },
   webPath: 'courses/alpha/first/',
 }
 
@@ -128,6 +129,18 @@ describe('the bundle schema', () => {
     expect(IndexModuleTrack.safeParse({ ...trackEntry, words: { en: 120, fa: 90 } }).success).toBe(false)
     expect(IndexModuleTrack.safeParse({ ...trackEntry, words: { xx: 120 } }).success).toBe(false)
     const { words: _, ...without } = trackEntry
+    expect(IndexModuleTrack.safeParse(without).success).toBe(false)
+  })
+
+  it('accepts an index entry whose titles name exactly the languages its docs name, English being the title (D139)', () => {
+    expect(IndexModuleTrack.safeParse(trackEntry).success).toBe(true)
+    expect(IndexModuleTrack.safeParse({ ...trackEntry, drawn: false, docs: {}, words: {}, titles: {} }).success).toBe(true)
+    expect(IndexModuleTrack.safeParse({ ...trackEntry, titles: { en: 'First' } }).success).toBe(false)
+    expect(IndexModuleTrack.safeParse({ ...trackEntry, titles: { en: 'First', tr: 'Birinci', fa: 'اول' } }).success).toBe(false)
+    expect(IndexModuleTrack.safeParse({ ...trackEntry, titles: { en: 'First', fa: 'اول' } }).success).toBe(false)
+    expect(IndexModuleTrack.safeParse({ ...trackEntry, titles: { en: 'Other', tr: 'Birinci' } }).success).toBe(false)
+    expect(IndexModuleTrack.safeParse({ ...trackEntry, titles: { en: 'First', tr: '' } }).success).toBe(false)
+    const { titles: _, ...without } = trackEntry
     expect(IndexModuleTrack.safeParse(without).success).toBe(false)
   })
 

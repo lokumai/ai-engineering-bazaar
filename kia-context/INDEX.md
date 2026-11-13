@@ -9,7 +9,7 @@ authority: map
 writes: agent, when files move
 status: active
 covers: the whole harness
-last_updated: 2026-11-11
+last_updated: 2026-11-12
 harness: kiacontext v0.3
 ---
 
@@ -81,6 +81,7 @@ and the same explanation given in person for the third time. See `genesis/GENESI
 | 2026-11-10 | The search filters apply with an Apply button and hold while their panel is shut | M102 (D127) |
 | 2026-11-10 | A short section on running a model on your laptop, with Ollama and LM Studio, in Inference Engines | M103 |
 | 2026-11-11 | Each module page's word count in the content bundle, for the mobile reader's `25 min · 4,812 words` line | M105 (D128) |
+| 2026-11-12 | The translated module titles in the content bundle's index, so the app's catalog, Home and Quiz tab list modules in the reader's language | M118 (D139) |
 | 2026-11-11 | In the same pull request: each checklist item's record index in the bundle, the empty rects out of the bundle's diagrams, and five logos without CSS | M106 (D129), M107 (D130), M108 (D131) |
 | 2026-11-11 | The About page in Turkish and Persian, at `/tr/about/` and `/fa/about/`, and its story in the bundle in both | M109 (D132) |
 

@@ -209,6 +209,21 @@ describe('the bundle, over the real corpus', () => {
     }
   })
 
+  it('lists in the index the title of every document, per track and language, and a translation has its own (D139)', () => {
+    let translatedDiffers = 0
+    for (const module of draft.modules) {
+      for (const [track, entry] of Object.entries(module.tracks)) {
+        const expected = Object.fromEntries(Object.entries(entry.docs).map(([lang, path]) => [lang, modules.get(path)!.title]))
+        expect(entry.titles, `${module.key} ${track}`).toEqual(expected)
+        for (const [lang, title] of Object.entries(entry.titles)) {
+          if (lang !== 'en' && title !== entry.title) translatedDiffers++
+        }
+      }
+    }
+    expect(translatedDiffers, 'no translated title differs from the English one, so a copied title could not be seen')
+      .toBeGreaterThan(0)
+  })
+
   it('carries STORY.md as the About page reads it, and the index names that document (D125)', () => {
     const story = loadStory()
     const doc = StoryDoc.parse(buildStoryDoc())

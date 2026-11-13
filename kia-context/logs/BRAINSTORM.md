@@ -9,8 +9,8 @@ description: >
 authority: reasoning
 writes: agent, when a decision is taken
 status: active
-covers: "D97 to D137 so far, and D89, which part 2 held for PR #57 — 2026-11-06 onward"
-last_updated: 2026-11-11
+covers: "D97 to D137 and D139 so far, and D89, which part 2 held for PR #57 — 2026-11-06 onward"
+last_updated: 2026-11-12
 ---
 
 # 🧠 BRAINSTORM, part 3 — D97 onward
@@ -1295,6 +1295,35 @@ of the page as the For Engineers page does, and the bundle's For Everyone docume
 - **Rejected:** a separate plain-words quiz per For Everyone module (two quizzes per module to keep true
   when the module changes, and the two tracks would test different things); keeping the gate and saying
   the quiz asks about the technical text (the questions test facts both texts teach).
+
+### D139 · The index carries each module's translated title, `titles`, and nothing that does not exist · 2026-11-12
+
+status: active
+
+The mobile reader lists modules from the index, so a Turkish or Persian reader saw English titles in the
+catalog, Home and Quiz tab, though each module document already carried its translated `title`. The ask
+was the per-language title and summary of a module and title and blurb of a level, taken from text the
+web has and invented nowhere.
+
+- **MEASURED on the repository, what exists.** Module titles in Turkish and Persian: yes, 42 of each
+  across the 88 track entries (the first heading of each translation file). Module summaries: none, since a
+  translation's frontmatter is `objectives` at most and `summary` stays English by D113. Level titles and
+  blurbs: none, `curriculum.yaml` holds them once, in English, and `page-copy.ts` keeps level names
+  English as proper nouns. So only `titles` is added.
+- **Shape follows D128.** `titles` is a map from a language to a string on each index track entry, beside
+  `words`, holding exactly the languages in `docs` (a title is always there where a document is), read
+  off the document just built so the two cannot disagree. The English `title`, `summary` and `blurb` stay,
+  so the released app keeps working; additive in v1 (§13).
+- **The schema holds the gate**: `titles` names exactly the languages `docs` names, and `titles.en` is
+  `title`.
+- **Rejected:** `summaries` and level `titles`/`blurbs` maps holding `en` alone (a map of one language
+  is no translation, and would tell a reader a translation is coming); machine-translating the missing
+  summaries and blurbs (the author's text is not ours to write, and the register and the technical-terms
+  rule are the author's); a titles map per module rather than per track (the two tracks can title the
+  same module differently); a `titles` map that is absent where there are no documents (always present,
+  as `words` is).
+- **Open for the author:** translated summaries and level names, if wanted, are authored content; the
+  fields would then join the same maps, additively.
 
 ---
 

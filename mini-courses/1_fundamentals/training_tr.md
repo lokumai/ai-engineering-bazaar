@@ -228,9 +228,9 @@ anlık görüntüdür: verinin belirli bir gündeki halini yakalar ve sonra hiç
 yeniden yapamazsın. Bu nedenle burada ihtiyacın olan şey retrieval'dır ve bu konu,
 [RAG ve Embedding'ler](rag_tr.md) modülünde işleniyor.
 
-**Fine-tuning'i görevler için yap, doğrular için değil.** Fine-tuning, bir *davranışı* öğretmekte
+**Fine-tuning'i görevler için yap, doğru bilgi için değil.** Fine-tuning, bir *davranışı* öğretmekte
 iyidir; örneğin belirli bir biçimde özetlemeyi ya da metinleri kendi kategorilerine ayırmayı
-öğretebilir. *Doğruları* öğretmekte ise zayıftır, çünkü birkaç yüz sayfan milyarlarca parametrenin
+öğretebilir. *Doğru bilgiyi* öğretmekte ise zayıftır, çünkü birkaç yüz sayfan milyarlarca parametrenin
 arasında kaybolur ve bu parametreler modelin okuduğu diğer her şeyi zaten tutar.
 
 **Ve kiminle yarıştığını unutma.** Diyelim ki görevin için bir ay boyunca bir modeli fine-tune
@@ -242,7 +242,7 @@ training'de geçmeye çalıştığında ise kaybeder.
 
 ## Hugging Face Nedir?
 
-Yukarıdaki iki kod örneği de ondan import yapıyor, bu yüzden ona bir paragraf ayırmak istedim.
+Yukarıdaki iki kod örneği de ondan import yapıyor, bu yüzden ona bir paragraf ayırmak istedik.
 
 ![](./images/logos/huggingface.svg)[Hugging Face](https://huggingface.co/), açık kaynaklı makine öğrenmesi topluluğunun çalışmalarını
 tuttuğu yer. Pratikte **Models** sayfası, yalnızca LLM'ler değil, her türden açık modelin merkezi
@@ -257,7 +257,7 @@ veri için ise `datasets`.
 ## Temel Terimler
 
 - **Parameters**: ağın içindeki sayılar; bunlara weights da denir.
-- **Training**: modele metin verip parametreleri küçük miktarlarla değiştirme işi; bu, tahminler doğru olana kadar tekrarlanır.
+- **Training**: modele metin verip parametreleri küçük miktarlarda değiştirme işi; bu, tahminler doğru olana kadar tekrarlanır.
 - **Pre-training**: en büyük ilk adım; tüm parametreleri etiketsiz internet metniyle günceller ve büyük bir modelde milyonlarca dolara mal olur.
 - **Fine-tuning**: pre-training'den geçmiş bir modeli, girdi ve çıktı çiftlerinden oluşan küçük ve göreve özel bir veri setiyle eğitmeye devam etmek.
 - **Base model**: fine-tuning'e başlanan, pre-training'den geçmiş genel amaçlı model.
@@ -286,7 +286,7 @@ graph LR
 ## Özet
 
 Training, özünde modelin parametrelerini ayarlamaktır. Pre-training rastgele ağırlıklardan başlar,
-etiketsiz internet metnini kullanır ve milyonlara mal olur. Fine-tuning ise başkasının bitmiş
+etiketsiz internet metnini kullanır ve milyonlarca dolara mal olur. Fine-tuning ise başkasının bitmiş
 modelinden başlar, bir insanın yazdığı çiftleri kullanır ve çok az maliyetlidir. PEFT aynı işi yapar,
 ama parametrelerin %1'inin altını değiştirir. Projelerin çoğu bu yüzden PEFT kullanır.
 

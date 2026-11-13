@@ -228,21 +228,21 @@ anlık görüntüdür: verinin belirli bir gündeki halini yakalar ve sonra hiç
 yeniden yapamazsın. Bu nedenle burada ihtiyacın olan şey retrieval'dır ve bu konu,
 [Retrieval-Augmented Generation (RAG)](rag_tr.md) modülünde işleniyor.
 
-**Fine-tuning'i görevler için yap, gerçekler için değil.** Fine-tuning, bir *davranışı* öğretmekte
+**Fine-tuning'i görevler için yap, doğrular için değil.** Fine-tuning, bir *davranışı* öğretmekte
 iyidir; örneğin belirli bir biçimde özetlemeyi ya da metinleri kendi kategorilerine ayırmayı
-öğretebilir. *Gerçekleri* öğretmekte ise zayıftır, çünkü birkaç yüz sayfan milyarlarca parametrenin
+öğretebilir. *Doğruları* öğretmekte ise zayıftır, çünkü birkaç yüz sayfan milyarlarca parametrenin
 arasında kaybolur ve bu parametreler modelin okuduğu diğer her şeyi zaten tutar.
 
 **Ve kiminle yarıştığını unutma.** Diyelim ki görevin için bir ay boyunca bir modeli fine-tune
 ediyorsun. Bitirdiğinde bir sonraki öncü (frontier) model çıkmış olur. Bu modeli bir laboratuvar,
 senin sahip olmadığın kaynaklarla eğitmiştir. Büyük ihtimalle bu yeni model, hiçbir değişiklik
 yapılmadan bile, önceki nesil modelden fine-tune ettiğin sürümünden senin görevinde daha iyi olur.
-Fine-tuning, görev gerçekten sana ait ve gerçekten dar olduğunda hâlâ kazanır. Laboratuvarları
+Fine-tuning, görev gerçekten sana ait ve gerçekten dar olduğunda hâlâ daha yararlıdır. Laboratuvarları
 training'de geçmeye çalıştığında ise kaybeder.
 
 ## Hugging Face Nedir?
 
-Yukarıdaki iki kod örneği de ondan import yapıyor, o yüzden ona bir paragraf ayırmak yerinde olur.
+Yukarıdaki iki kod örneği de ondan import yapıyor, bu yüzden ona bir paragraf ayırmak istedim.
 
 ![](./images/logos/huggingface.svg)[Hugging Face](https://huggingface.co/), açık kaynaklı makine öğrenmesi topluluğunun çalışmalarını
 tuttuğu yer. Pratikte **Models** sayfası, yalnızca LLM'ler değil, her türden açık modelin merkezi

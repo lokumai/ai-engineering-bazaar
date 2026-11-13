@@ -2,7 +2,7 @@
 
 ## Üretmek artık bedava ve internet kalitesiz AI içerikleriyle dolu.
 
-Yapay zekâya basit bir soru sorduğunda bile sana net bir cevap vermektense destan yazıyor: uzun uzadıya yazılmış kibar, robotik bir metin. Kelimelerce açıklanmış ama hiçbir şeyi açıklamıyor. Artık herkes anında binlerce kelime üretebiliyor ve dolayısıyla gerçekten anlaşılır metin bulmak hiç bu kadar zor olmamıştı.
+Yapay zekâya basit bir soru sorduğunda bile sana net cevap vermektense destan yazıyor: uzun uzadıya yazılmış kibar, robotik bir metin. Kelimelerce anlatılmış ama hiçbir şeyi açıklamıyor. Artık herkes anında binlerce kelime üretebiliyor, dolayısıyla anlaşılır metin bulmak hiç bu kadar zor olmamıştı.
 
 ## AI Engineering Bazaar, bu gürültüden duyduğumuz bıkkınlıktan doğdu.
 
@@ -10,7 +10,7 @@ Ağır bir ders kitabı ya da 40 saatlik sıkıcı bir kurs daha istemiyorduk. B
 
 ## Bu içeriği hazırlarken tek şartımız: içeriği yapay zekânın yazmamasıydı.
 
-Neden mi? Çünkü bu alan, yapay zekânın eğitim verilerinin yetişemeyeceği kadar hızlı değişiyor. Makineler, araçların neden yapıldığının ardındaki gerçek hikâyeyi anlamıyor. En önemlisi de yapay zekânın empatisi yok. Bir makine, kafan karışıkken ne hissettiğini hatırlayamaz. Bir konuyu başka bir insana sade dille anlatmayı, ancak o problemle boğuşmuş biri yapabilir.
+Neden mi? Çünkü bu alan, yapay zekânın eğitim verilerinin yetişemeyeceği kadar hızlı değişiyor. Makineler, araçların neden yapıldığının ardındaki gerçek hikâyeyi anlamıyor. En önemlisi de yapay zekâ empati yapamıyor. Bir makine, kafan karışıkken ne hissettiğini hatırlayamaz. Bir konuyu başka bir insana sade dille anlatmayı, ancak o problemle boğuşmuş biri yapabilir.
 
 ## Her konu emek ve sevgiyle hazırlandı.
 

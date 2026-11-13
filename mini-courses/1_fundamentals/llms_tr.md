@@ -191,7 +191,7 @@ Ayrıca günlük limitli ücretsiz modelleri de var. Başka bir modele geçmek i
 
 ## LLM'lere Prompt Yazmak
 
-**Prompt engineering**, istediğin çıktıyı alabilmek için girdiyi özenle yazma işidir. Bu, öğrencilere talimat vermeye benzer. Net bir talimat ödevin düzgün yapılmasını sağlar. Belirsiz bir talimat ise her öğrencinin o an canının istediğini yapmasına yol açar.
+**Prompt engineering**, istediğin çıktıyı alabilmek için girdiyi özenle yazma işidir. Bu, öğrencilere talimat vermeye benzer. Net bir talimatla öğrenciler ödevlerini düzgün yapar. Belirsiz bir talimatla öğrenciler ödevlerini canlarının istediği şekilde yapmasına yol açar.
 
 Modelin gerçekte ne hesapladığını hatırla. Model, context'teki her şeyi göz önünde bulundurarak bir sonraki token'ın olasılığını hesaplar:
 

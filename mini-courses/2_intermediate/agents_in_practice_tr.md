@@ -32,6 +32,13 @@ Peki neden ![](./images/logos/claude.svg)**Claude**? Bu yazıyı yazdığımız 
 
 Burada öğrendiğin her şey başka agent'larla çalışırken de işine yarar. Parçaların adı araçtan araca değişir, ama yaptıkları iş aynıdır.
 
+Bir agent'ın çalışırken ne yaptığını görmek için aşağıdaki şekle bak. Şekil, Claude Code için ücretsiz
+bir plugin olan lot-map'i gösteriyor: her tool call, model adımı, dosya okuma, shell komutu ve subagent,
+gerçekleştiği anda haritada yanıyor.
+
+![lot-map'in canlı çizdiği, çalışan Claude Code](./images/lot-map-demo.webp)  
+*Her ışık merkezden o anda çalışan istasyona gidiyor: Model, Files, Shell, Network, Agents ya da Skills. Bu, plugin'in kendi çizim koduyla yeniden oynatılan örnek bir oturum. Kaynak: alexeyw'in [lot-map](https://github.com/alexeyw/lot-map) projesi (MIT lisansı).*
+
 ## Hangi Sırayla Almalısın
 
 ```mermaid

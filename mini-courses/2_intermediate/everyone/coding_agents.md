@@ -209,3 +209,4 @@ what is the difference between an instruction in AGENTS.md and a hook?
 
 - [awesome-mcp-servers](https://github.com/punkpeye/awesome-mcp-servers): the community list, to check whether the tool you need already exists
 - [anthropics/skills](https://github.com/anthropics/skills): the official skill collection
+- [lot-map](https://github.com/alexeyw/lot-map): a live map beside Claude Code's chat that shows each step of the agent's work as it happens

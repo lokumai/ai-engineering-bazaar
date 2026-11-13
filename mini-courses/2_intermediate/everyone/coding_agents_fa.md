@@ -156,3 +156,4 @@ agent حافظه‌ش رو از اصلاح‌هایی که بهش می‌دی م
 
 - [awesome-mcp-servers](https://github.com/punkpeye/awesome-mcp-servers): فهرست جامعه، که ببینی ابزاری که لازم داری از قبل هست یا نه
 - [anthropics/skills](https://github.com/anthropics/skills): مجموعه‌ی رسمی skill‌ها
+- [lot-map](https://github.com/alexeyw/lot-map): یه نقشه‌ی زنده کنار چت Claude Code که هر قدم از کار agent رو همون لحظه نشون می‌ده

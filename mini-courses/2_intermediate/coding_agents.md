@@ -293,3 +293,4 @@ Next: hooks were the first thing in this module that the model does not get a vo
 - [awesome-claude](https://github.com/webfuse-com/awesome-claude): a broader curated list of Claude tooling
 - [awesome-claude-code-subagents](https://github.com/VoltAgent/awesome-claude-code-subagents): more than a hundred subagent definitions to start from
 - [claude-plugins-official](https://github.com/anthropics/claude-plugins-official): the managed plugin directory
+- [lot-map](https://github.com/alexeyw/lot-map): a live map beside Claude Code's chat that lights up each tool call, model step, hook, skill and subagent as it happens

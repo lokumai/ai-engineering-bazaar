@@ -26,6 +26,13 @@ Aşağıdaki üç kurs ücretsiz ve kısa; yaparak öğreniyorsun. Hepsini araç
 
 Üçü de Anthropic'in geliştirdiği yapay zekâ asistanı ![](../images/logos/claude.svg)**Claude**'u kullanıyor. Bu yazıyı yazdığımız sırada bu tür işler için en yetenekli, en güvenilir ve en çok özelliğe sahip asistanın Claude olduğunu düşünüyoruz. Onunla öğrendiklerin başka yapay zekâ asistanlarında da işine yarar.
 
+Aşağıdaki resim, çalışan bir yapay zekâ agent'ını gösteriyor. Resim, Claude Code için ücretsiz bir
+eklenti olan lot-map'ten geliyor. Agent bir dosya okuduğunda, bir komut çalıştırdığında ya da modele bir
+şey sorduğunda, haritada o yere bir ışık gidiyor.
+
+![lot-map'in canlı çizdiği, çalışan bir yapay zekâ agent'ı](../images/lot-map-demo.webp)  
+*Yeniden oynatılan örnek bir oturum. Her ışık, agent'ın işindeki bir adımı gösteriyor. Kaynak: alexeyw'in [lot-map](https://github.com/alexeyw/lot-map) projesi (MIT lisansı).*
+
 ## Claude 101
 
 > [!IMPORTANT]

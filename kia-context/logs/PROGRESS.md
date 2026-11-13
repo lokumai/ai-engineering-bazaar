@@ -11,7 +11,7 @@ description: >
   backgrounds and copy (M81), Agentic UI (M82), the cast's colours (M83), and M84 to M90 (content
   and site fixes, the home page in Turkish and Persian, Dariush's motif, block menus in the top layer,
   and About, the story of the Bazaar); Caravan built (M91), its real trends waiting (M92) and its second
-  round (M93); multilingual SEO (M96); translated objectives on the site (M98) and in the bundle (M99); the story in the bundle (M100); three screen recordings and Human in the Loop moved into Agentic UI (M101); the search filters applied by a button (M102); a laptop section in Inference Engines (M103); the word count in the bundle (M105), the checklist index (M106), the diagrams without empty rects (M107) and five logos without CSS (M108); the About page in Turkish and Persian (M109); the module page's own words in Turkish and Persian (M110); the footer without its first row (M111); the tool-call recording cropped to the chat and the reasoning recording sped up (M112); the LokumAI mark on the References' Modules subsection (M113); stall 1 naming the treaty and the About page's name (M114); a replay button on every animated recording (M115); the quick quiz on both tracks (M116); and M41, the content bundle for the mobile reader. Each milestone carries its deliverables and acceptance
+  round (M93); multilingual SEO (M96); translated objectives on the site (M98) and in the bundle (M99); the story in the bundle (M100); three screen recordings and Human in the Loop moved into Agentic UI (M101); the search filters applied by a button (M102); a laptop section in Inference Engines (M103); the word count in the bundle (M105), the checklist index (M106), the diagrams without empty rects (M107) and five logos without CSS (M108); the About page in Turkish and Persian (M109); the module page's own words in Turkish and Persian (M110); the footer without its first row (M111); the tool-call recording cropped to the chat and the reasoning recording sped up (M112); the LokumAI mark on the References' Modules subsection (M113); stall 1 naming the treaty and the About page's name (M114); a replay button on every animated recording (M115); the quick quiz on both tracks (M116); the privacy note for the mobile app (M117); translated titles in the bundle's index (M118); lot-map in Code Agents and Agents in Practice (M119); and M41, the content bundle for the mobile reader. Each milestone carries its deliverables and acceptance
   criteria as `- [ ]` checkboxes, ticked as the work lands, and closes with a dated report; the loop
   that governs that is below, in this file.
   NOT here: why a choice was made (BRAINSTORM.md), or any rule that outlives the milestone
@@ -19,8 +19,8 @@ description: >
 authority: state
 writes: agent, every session
 status: active
-covers: "M50 to M116, M118, 2026-11-06 onward, and M41, which part 2 held for PR #57"
-last_updated: 2026-11-12
+covers: "M50 to M119, 2026-11-06 onward, and M41, which part 2 held for PR #57"
+last_updated: 2026-11-13
 ---
 
 # 📈 PROGRESS, part 3 — M50 onward
@@ -2421,6 +2421,26 @@ For Engineers page, in the page's language.
       `tracks` (71 passed) and `accessibility`, `responsive`, `bundle` (88 passed, 2 skipped), on port 3201.
       Shots in `playground/2026-11-round-5/shots-quiz-everyone/`.
 
+---
+
+## 🏁 Milestone M117: The privacy note covers the mobile app (D138), DONE
+
+The app goes to the App Store and Google Play, and both ask for the address of a privacy policy that covers
+it. The site's note spoke of the site alone. Asked for by the mobile reader's side, 2026-11-12.
+
+- [x] **One paragraph** in the Privacy section of `/legend/`, before the GitHub paragraph: the app collects no
+      personal data and has no analytics, no account and no form; progress and settings stay on the device, and
+      a backup leaves it only when the reader saves one; the course is downloaded from this site, so GitHub's
+      record covers those requests. Each claim was read from the app's code on 2026-11-12: no account, no
+      analytics or advertising package, the record and its settings under the app's own files, a backup only
+      through the system's save dialog, and crash reports off in every build it has made.
+- [x] **No new address**: the stores are given `https://ai-bazaar.lokum.dev/legend/#privacy`, the footer's own
+      Privacy link (D122).
+- [x] **Gate (2026-11-12):** typecheck; 102 unit files, 1,617 tests; build; link check (209 pages). The browser
+      suite, `legal.spec.ts` among it, runs in CI.
+
+---
+
 ## 🏁 Milestone M118: Translated module titles in the content bundle's index (D139), DONE
 
 The mobile reader lists modules from the index, which carried English titles only, so a Turkish or
@@ -2453,21 +2473,24 @@ web already has.
 
 ---
 
-## 🏁 Milestone M117: The privacy note covers the mobile app (D138), DONE
+## 🏁 Milestone M119: lot-map in Code Agents and Agents in Practice, DONE
 
-The app goes to the App Store and Google Play, and both ask for the address of a privacy policy that covers
-it. The site's note spoke of the site alone. Asked for by the mobile reader's side, 2026-11-12.
+The author, 2026-11-13: add [lot-map](https://github.com/alexeyw/lot-map) to Code Agents' references, and
+its demo, which shows Claude working in real time, briefly at the end of "Why Take These Courses" in Agents
+in Practice.
 
-- [x] **One paragraph** in the Privacy section of `/legend/`, before the GitHub paragraph: the app collects no
-      personal data and has no analytics, no account and no form; progress and settings stay on the device, and
-      a backup leaves it only when the reader saves one; the course is downloaded from this site, so GitHub's
-      record covers those requests. Each claim was read from the app's code on 2026-11-12: no account, no
-      analytics or advertising package, the record and its settings under the app's own files, a backup only
-      through the system's save dialog, and crash reports off in every build it has made.
-- [x] **No new address**: the stores are given `https://ai-bazaar.lokum.dev/legend/#privacy`, the footer's own
-      Privacy link (D122).
-- [x] **Gate (2026-11-12):** typecheck; 102 unit files, 1,617 tests; build; link check (209 pages). The browser
-      suite, `legal.spec.ts` among it, runs in CI.
+- [x] **The figure**: `2_intermediate/images/lot-map-demo.webp`, from the project's `docs/demo.gif` (MIT
+      licence, credited in the caption): all 270 frames at 15 fps (18 s), animated WebP at q82 with `img2webp -mixed`,
+      2,496,282 bytes (the GIF was 3,401,759). The 460x766 portrait is centred on a 920x766 canvas in its own
+      background colour (#0A0C11): every course image is drawn at column width, which made the portrait about
+      1,350 px tall and blurred; padded, it shows at about 680 px with the map near its own size. One short paragraph and the figure close
+      "Why Take These Courses" in Agents in Practice, EN/TR/FA, both tracks; the caption says it is a replayed
+      example session, as the project's own README does. The replay button (D136) finds it by its header.
+- [x] **The reference**: lot-map ends Code Agents' Repositories list, EN/TR/FA, both tracks.
+- [x] **The log's end restored**: the merge of M117 and M118 had cut the closing navigation line to
+      " — M16 to M49…" and left M118 before M117; both put back.
 
- — M16 to M49. **← Part 1: [`PROGRESS_1.md`](PROGRESS_1.md)**
+---
+
+> **← Part 2: [`PROGRESS_2.md`](PROGRESS_2.md)** — M16 to M49. **← Part 1: [`PROGRESS_1.md`](PROGRESS_1.md)**
 > — M1 to M15. The loop is at the top of this file.

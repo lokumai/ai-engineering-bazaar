@@ -291,3 +291,4 @@ coding agent خیلی قوی‌تر از چیزیه که از اسمش برمی�
 - [awesome-claude](https://github.com/webfuse-com/awesome-claude): یه لیست دست‌چین‌شده‌ی گسترده‌تر از ابزارهای Claude
 - [awesome-claude-code-subagents](https://github.com/VoltAgent/awesome-claude-code-subagents): بیشتر از صد تعریف subagent که می‌تونی ازشون شروع کنی
 - [claude-plugins-official](https://github.com/anthropics/claude-plugins-official): فهرست plugin‌هایی که خود Anthropic مدیریتش می‌کنه
+- [lot-map](https://github.com/alexeyw/lot-map): یه نقشه‌ی زنده کنار چت Claude Code که هر tool call، قدم مدل، hook، skill و subagent رو همون لحظه نشون می‌ده

@@ -291,3 +291,4 @@ Sırada: bu modülde modelin söz hakkı olmadığı ilk şey hook'lardı. Bu fi
 - [awesome-claude](https://github.com/webfuse-com/awesome-claude): Claude araçlarının daha geniş, derlenmiş bir listesi.
 - [awesome-claude-code-subagents](https://github.com/VoltAgent/awesome-claude-code-subagents): başlamak için yüzü aşkın subagent tanımı.
 - [claude-plugins-official](https://github.com/anthropics/claude-plugins-official): Anthropic'in yönettiği plugin dizini.
+- [lot-map](https://github.com/alexeyw/lot-map): Claude Code'un sohbetinin yanında, her tool call'ı, model adımını, hook'u, skill'i ve subagent'ı gerçekleştiği anda gösteren canlı bir harita

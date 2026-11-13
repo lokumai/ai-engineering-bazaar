@@ -11,7 +11,7 @@ objectives:
 
 Serideki diğer her şey bu modülün üzerine kurulu. Bir LLM'i anlatmak aslında kolay: içeri metin girer, dışarıya metin çıkar. Ancak seride ele alacağımız neredeyse her fikir, yani RAG, tool'lar, hafıza (memory) ve agent'lar, tek bir sınırın yüzünden ortaya çıktı. O sınıra birazdan geleceğiz.
 
-Önce modelin kendisine bakalım. Sonra o sınırı inceleyeceğiz, en sonunda da bir modeli nasıl çalıştırabileceğini göreceğiz.
+Önce modelin kendisine bakalım. Sonra sınırını inceleyeceğiz, en sonunda da bir modeli nasıl çalıştırabileceğini göreceğiz.
 
 ## LLM Nedir?
 
@@ -27,7 +27,7 @@ graph LR
 
 Yaptığı iş aslında bundan ibaret. Bir LLM'in yaptığı etkileyici her şey bu tek tahminin sonucudur. Model bu tahmini, bir seferde bir kelime olacak şekilde, tekrar tekrar yapar.
 
-## Bir LLM Ne Kadar Büyük?
+## LLM Ne Kadar Büyük?
 
 Bir LLM, son derece çok sayıda **parametre (parameter)** barındıran bir sinir ağıdır. Bu parametreleri bir beyindeki bağlantılara benzetebilirsin. Parametre sayısı ne kadar fazlaysa ağ o kadar çok şey tutabilir.
 

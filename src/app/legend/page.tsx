@@ -153,7 +153,8 @@ export default function LegendPage() {
           `tests/e2e/legal.spec.ts`: no cookie, no form, no request to another origin. The
           fonts and the star count are fetched when the site is built, never by the reader's
           browser. The paragraph on the mobile app (M117, D138) is held true by the app's own
-          repository, lokumai/ai-engineering-bazaar-mobile, which no test here can see. */}
+          repository, lokumai/ai-engineering-bazaar-mobile, which no test here can see; its crash
+          reports go to Sentry from a release built with the DSN (that repository's PR #8). */}
       <section className="bz-panel" aria-labelledby="privacy">
         <div className="bz-panel-head">
           <h2 id="privacy" className="bz-panel-title">
@@ -177,8 +178,11 @@ export default function LegendPage() {
           <p>
             The AI Engineering Bazaar app for Android and iOS works the same way. It collects no personal data,
             and it has no analytics, no account and no form. Your progress and your settings are saved on your
-            device only, and a backup leaves it only when you save one yourself. The app downloads the course
-            from this site, so GitHub's record below covers its requests too.
+            device only, and a backup leaves it only when you save one yourself. When the app crashes, it sends a
+            crash report to Sentry so the fault can be fixed: the error, the app's version, and the device's model
+            and system. The app masks personal details in the report before it leaves the device, and Sentry keeps
+            no IP address. The app downloads the course from this site, so GitHub's record below covers its
+            requests too.
           </p>
           <p>
             The site is hosted on GitHub Pages. GitHub logs and stores the IP address of every visitor for

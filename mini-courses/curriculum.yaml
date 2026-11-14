@@ -269,13 +269,26 @@ categories:
           generative UI (the agent producing the interface itself), shared
           state, steering a run mid-way, agentic GenUI, A2UI, MCP Apps, OpenUI,
           json-render, CopilotKit, Agent Client Protocol ACP, TUI for agents
-      - name: advanced_deployment
-        title: Advanced Deployment
+      - name: advanced_llm_deployment
+        title: Advanced LLM Deployment
         status: draft
         notes: >-
-          agent server, langchain agent protocol, the tech stack for UI REDIS
-          WORKER etc, Steering, Runtime
-          (Checkpoints, Fault Tolerance, Time Travel)
+          Serving a model to many users: the KV cache as the limit, MQA and GQA,
+          MLA, FlashAttention, PagedAttention (vLLM), prefix caching,
+          quantization for serving (FP8, INT8, 4-bit), tensor and pipeline
+          parallelism, prefill/decode disaggregation (llm-d), serving engines
+          (vLLM, SGLang, TensorRT-LLM). Split from Advanced Deployment (D140).
+      - name: advanced_agent_deployment
+        title: Advanced Agent Deployment
+        status: draft
+        notes: >-
+          agent server, langchain agent protocol, the tech stack for UI (API,
+          queue, REDIS WORKER), runtime (checkpoints, fault tolerance, time
+          travel), human in the loop in production (interrupts, steering),
+          computer use, sandboxes, containers vs microVMs (Firecracker, gVisor),
+          hosted sandboxes (E2B, Daytona). The deep comparison of agent
+          servers is Advanced Agent Servers. Split from Advanced Deployment
+          (D140); the old address forwards here.
       - name: advanced_agent_servers
         title: Advanced Agent Servers
         status: draft

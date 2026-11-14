@@ -11,7 +11,7 @@ description: >
   backgrounds and copy (M81), Agentic UI (M82), the cast's colours (M83), and M84 to M90 (content
   and site fixes, the home page in Turkish and Persian, Dariush's motif, block menus in the top layer,
   and About, the story of the Bazaar); Caravan built (M91), its real trends waiting (M92) and its second
-  round (M93); multilingual SEO (M96); translated objectives on the site (M98) and in the bundle (M99); the story in the bundle (M100); three screen recordings and Human in the Loop moved into Agentic UI (M101); the search filters applied by a button (M102); a laptop section in Inference Engines (M103); the word count in the bundle (M105), the checklist index (M106), the diagrams without empty rects (M107) and five logos without CSS (M108); the About page in Turkish and Persian (M109); the module page's own words in Turkish and Persian (M110); the footer without its first row (M111); the tool-call recording cropped to the chat and the reasoning recording sped up (M112); the LokumAI mark on the References' Modules subsection (M113); stall 1 naming the treaty and the About page's name (M114); a replay button on every animated recording (M115); the quick quiz on both tracks (M116); the privacy note for the mobile app (M117); translated titles in the bundle's index (M118); lot-map in Code Agents and Agents in Practice (M119); and M41, the content bundle for the mobile reader. Each milestone carries its deliverables and acceptance
+  round (M93); multilingual SEO (M96); translated objectives on the site (M98) and in the bundle (M99); the story in the bundle (M100); three screen recordings and Human in the Loop moved into Agentic UI (M101); the search filters applied by a button (M102); a laptop section in Inference Engines (M103); the word count in the bundle (M105), the checklist index (M106), the diagrams without empty rects (M107) and five logos without CSS (M108); the About page in Turkish and Persian (M109); the module page's own words in Turkish and Persian (M110); the footer without its first row (M111); the tool-call recording cropped to the chat and the reasoning recording sped up (M112); the LokumAI mark on the References' Modules subsection (M113); stall 1 naming the treaty and the About page's name (M114); a replay button on every animated recording (M115); the quick quiz on both tracks (M116); the privacy note for the mobile app (M117); translated titles in the bundle's index (M118); lot-map in Code Agents and Agents in Practice (M119); Advanced Deployment split into LLM and agent deployment (M120); and M41, the content bundle for the mobile reader. Each milestone carries its deliverables and acceptance
   criteria as `- [ ]` checkboxes, ticked as the work lands, and closes with a dated report; the loop
   that governs that is below, in this file.
   NOT here: why a choice was made (BRAINSTORM.md), or any rule that outlives the milestone
@@ -19,8 +19,8 @@ description: >
 authority: state
 writes: agent, every session
 status: active
-covers: "M50 to M119, 2026-11-06 onward, and M41, which part 2 held for PR #57"
-last_updated: 2026-11-13
+covers: "M50 to M120, 2026-11-06 onward, and M41, which part 2 held for PR #57"
+last_updated: 2026-11-14
 ---
 
 # 📈 PROGRESS, part 3 — M50 onward
@@ -2490,6 +2490,24 @@ in Practice.
 - [x] **The log's end restored**: the merge of M117 and M118 had cut the closing navigation line to
       " — M16 to M49…" and left M118 before M117; both put back.
 
+---
+
+## 🏁 Milestone M120: Advanced Deployment split into LLM and agent deployment (D140), DONE
+
+The author, 2026-11-14: "for the advanced level, instead of having advanced deployment, we must have advanced
+llm deployment (mentioning GQA, MLA, FlashAttention, PagedAttention, etc) and advanced agent deployment
+(mentioning agent server, computer use, sandbox, microVM, container, etc)".
+
+- [x] **Two planned modules** in Advanced Deployment's place in Expert, `advanced_llm_deployment` then
+      `advanced_agent_deployment`, each a placeholder page in English and Turkish with its topic list, and
+      notes in `curriculum.yaml`; `3_expert/advanced_deployment(_tr).md` removed.
+- [x] **The old address forwards**: `/courses/expert/advanced-deployment/` goes to Advanced Agent Deployment
+      (`MOVED_MODULES`), as Advanced Training's did (D101); the bundle's `moved` map gains the entry.
+- [x] **Scratchpad**: `topics.txt` entry 32 is now two entries, and every later entry is numbered one higher,
+      as the sheet numbers are; `tests/e2e/sheets.ts` follows; `lokum-modules.css` regenerated.
+- [x] **Gate (2026-11-14)**: typecheck; 102 unit files, 1,619 tests; build, link and bundle checks; the full
+      browser suite on a private port, 746 passed, 11 skipped, 1 failed (search's Ctrl+K timing test), which
+      then passed alone (35 of 35).
 ---
 
 > **← Part 2: [`PROGRESS_2.md`](PROGRESS_2.md)** — M16 to M49. **← Part 1: [`PROGRESS_1.md`](PROGRESS_1.md)**

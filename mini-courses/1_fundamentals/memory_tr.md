@@ -141,5 +141,5 @@ graph LR
 
 ### 🧭 Modüller
 
-- [Retrieval-Augmented Generation (RAG)](rag_tr.md): long-term memory'nin working memory'ye nasıl geri getirildiğini anlatır
+- [RAG ve Embedding'ler](rag_tr.md): long-term memory'nin working memory'ye nasıl geri getirildiğini anlatır
 - [İleri Seviye Hafıza](../3_expert/advanced_memory_tr.md): bu konunun devamı

@@ -2,7 +2,7 @@
 
 *(Bu bir placeholder modül: şimdilik kısa bir özet, tam ders içeriği yakında geliyor.)*
 
-Retrieval-Augmented Generation (RAG) modülü çalışan en basit pipeline'ı kurdu: chunk'la, embed et, ara, cevapla. Bu modül, o pipeline'ın gerçek dokümanlar üzerinde iyi çalışması gerektiğinde nelerin değiştiğini ve her adımın arkasındaki seçimleri anlatıyor.
+RAG ve Embedding'ler modülü çalışan en basit pipeline'ı kurdu: chunk'la, embed et, ara, cevapla. Bu modül, o pipeline'ın gerçek dokümanlar üzerinde iyi çalışması gerektiğinde nelerin değiştiğini ve her adımın arkasındaki seçimleri anlatıyor.
 
 **Bu modülde işlenecek konular**:
 - RAG, uzun context ve fine-tuning karşılaştırması

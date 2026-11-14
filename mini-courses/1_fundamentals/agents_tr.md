@@ -91,7 +91,7 @@ Serinin ana noktasına bu noktada varıyoruz: **LLM gerçekten sadece bir beyin.
 - birden fazla tur boyunca çalışabilir (bu modül)
 - kendi dışındaki dünyaya uzanabilir ([LLM Tool Calling](tools_tr.md))
 - hatırlayabilir ([Memory](memory_tr.md))
-- hiç eğitilmediği verileri okuyabilir ([Retrieval-Augmented Generation (RAG)](rag_tr.md))
+- hiç eğitilmediği verileri okuyabilir ([RAG ve Embedding'ler](rag_tr.md))
 
 [LLM Temelleri](llms_tr.md) modülünde işi basitleştirmiş değildik. Model gerçekten bu kadar basit ve geri kalan her şey, onun etrafındaki mühendislik.
 

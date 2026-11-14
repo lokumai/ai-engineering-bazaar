@@ -7,7 +7,7 @@ objectives:
   - "Verilen bir problem için RAG mi yoksa fine-tuning mi istediğine karar ver"
 ---
 
-# Retrieval-Augmented Generation (RAG)
+# RAG ve Embedding'ler
 
 [LLM Temelleri](llms_tr.md) modülünde context window'u gördün. Bu, modelin çalışma masası gibidir ve masadaki her şey bu masaya sığmak zorundadır. [Training LLMs](training_tr.md) modülünde de fine-tuning'i öğrendin, yani modelin kendisini değiştiren yöntemi. Bu modül üçüncü bir seçenekten bahsediyor ve bu seçenek, en sık kullanacağın seçenek olacak.
 

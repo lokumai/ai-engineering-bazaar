@@ -141,7 +141,7 @@ Bazı bilgiler gerçekten değerlidir ve sık sık değişmez; örneğin şirket
 ![Agent'ın keşfettiği bir bilgi tabanı](./images/explorable-knowledge-base.webp)  
 *Bilgi tabanı context window'un dışında durur ve her etkileşimle büyür. Agent yalnızca sorunun ihtiyaç duyduğu sayfayı okur; bildiği geri kalan her şey kullanılana kadar hiçbir maliyet çıkarmaz.*
 
-Agent dokümantasyona ihtiyaç duyduğuna karar verdiğinde onu çeker. Yalnızca önemli kısmı okur ve context'inde o kadarını öğrenmiş olur. Bu çekme işi [Retrieval-Augmented Generation (RAG)](../1_fundamentals/rag_tr.md) gibi tam bir RAG ile yapılabilir, ya da agent sadece dosyaları açar. Hangisi olursa olsun alternatif, tüm API referansını pencereye dökmek ve bunun bedelini her turda ödemektir.
+Agent dokümantasyona ihtiyaç duyduğuna karar verdiğinde onu çeker. Yalnızca önemli kısmı okur ve context'inde o kadarını öğrenmiş olur. Bu çekme işi [RAG ve Embedding'ler](../1_fundamentals/rag_tr.md) gibi tam bir RAG ile yapılabilir, ya da agent sadece dosyaları açar. Hangisi olursa olsun alternatif, tüm API referansını pencereye dökmek ve bunun bedelini her turda ödemektir.
 
 Her coding agent'ın er ya da geç karşılaştığı bir örnek var. Kütüphaneler sürekli değişir: yeni bir sürüm bir fonksiyonun adını değiştirir, bir seçeneği kaldırır ya da bir işi yapmanın daha iyi bir yolunu ekler. Ama model yalnızca training verisinde olanı bilir ve bu veri **knowledge cutoff** denen bir tarihte biter. Bu yüzden agent bir kütüphaneyle kod yazarken çoğu zaman o kütüphanenin hatırladığı sürümüne değil, güncel dokümantasyonuna ihtiyaç duyar. Sektör bu sorunu adım adım şöyle çözdü.
 

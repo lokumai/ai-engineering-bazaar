@@ -22,8 +22,7 @@ GPU'nda çalıştırabilirsin.
 Başlangıçta model hiçbir şey bilmez. Her parametre rastgele bir sayıdır, bu yüzden modelin çıktısı
 da rastgeledir.
 
-Training, modele metin vermek ve o sayıları küçük miktarlarla değiştirmek demektir. Bunu tekrar
-tekrar yaparsın, tahminler rastgele olmaktan çıkıp doğru olmaya başlayana kadar.
+Training, modele metin vermek ve o sayıları küçük miktarlarda değiştirmek demektir. Tahminler rastgele olmaktan çıkıp doğru olmaya başlayana kadar, modeli tekrar tekrar train edersin.
 
 ![Eğitilmemiş ve Eğitilmiş Ağ](./images/training-network.webp)  
 *Aynı ağ, eğitimden önce ve sonra. Girdi "The students opened their". Soldaki rastgele ağırlıklar "Sun" üretiyor, sağdaki öğrenilmiş ağırlıklar ise "Laptops". Ağın yapısı değişmedi. Değişen yalnızca içindeki sayılar.*
@@ -50,7 +49,7 @@ graph LR
 
 Ortaya çıkan şey **genel amaçlı** bir model: birçok işte iyi, ama hiçbirinde uzmanlaşmış değil.
 
-> **NOT, bu konu ileri düzey.** Dikkat et, o internet metnini kimse etiketlemedi ve ortada bir
+> **Not, bu konu ileri düzey.** Modelin okuduğu internet metnini kimse etiketlemedi ve ortada bir
 > cevap anahtarı da yok. Model, kendi eğitim sinyalini kendisi üretiyor: bir sonraki kelimeyi
 > gizliyor, bir tahmin yapıyor ve bu tahmini gerçekte orada olan kelimeyle karşılaştırıyor. Yani
 > veri kendi kendini etiketliyor ve buna **self-supervised learning** denir. Diyagramlarda ise bu
@@ -59,7 +58,7 @@ Ortaya çıkan şey **genel amaçlı** bir model: birçok işte iyi, ama hiçbir
 
 ## Pre-training Yapmak Zorunda Değil misin?
 
-Pre-training'i kendin yapmak zorunda değilsin, çünkü milyonları harcayan biri bunu zaten yaptı. Sen
+Pre-training'i kendin yapmak zorunda değilsin, çünkü milyonlarca dolar harcayan biri bunu zaten yaptı. Sen
 onun bitmiş modelinden başlayıp **fine-tuning** yapabilirsin.
 
 **Fine-tuning**, pre-training'den geçmiş bir modeli alıp eğitime devam etmek demek. Bu kez veri seti
@@ -75,14 +74,14 @@ Kısaca, ikisi şöyle özetlenir:
 - **Pre-training**, internetin her yerinden toplanan **etiketsiz** metni yer. Cevapları kimse yazmaz, çünkü bir sonraki kelimenin *kendisi* cevaptır.
 - **Fine-tuning**, bir **çiftler koleksiyonu** yer: girdi ve çıktı, ya da prompt ve yanıt. Bu çiftleri genellikle insanlar yazar ya da kontrol eder. Yani bu, milyarlarca sayfa değil, binlerce çift demek.
 
-Bu fark, birinin neden milyonlara mal olduğunu ve ötekinin neden tek bir GPU'ya sığdığını açıklıyor.
+Aralarındaki fark, birinin neden milyonlarca dolara mal olduğunu; ötekinin ise neden tek bir GPU'ya sığdığını açıklıyor.
 
 ## Fine-tuning
 
 Diyelim ki makaleleri çok iyi özetleyen bir model istiyorsun.
 
 1. Pre-training'den geçmiş bir base model ile başla.
-2. Örneklerden oluşan bir veri seti topla: `(long article, human-written short summary)` çiftleri. Çoğu zaman birkaç bin çift yeter.
+2. Örneklerden oluşan bir veri seti topla: `(uzun makale, insan tarafından yazılmış kısa özet)` çiftleri. Çoğu zaman birkaç bin çift yeter.
 3. Modeli bu çiftler üzerinde eğitmeye devam et. Böylece model "uzun metin gir, kısa ve doğru özet çıkar" kalıbını öğrenir.
 4. Sonuç, genel base modelden belirgin biçimde daha tutarlı özetler. Üstelik pre-training için para ödemiyorsun.
 
@@ -163,7 +162,7 @@ ve yalnızca az sayıda yeni, ek parametre eğitir.
 
 - Donmuş kısım, pre-training'in bıraktığı haliyle olduğu gibi kalır.
 - Yalnızca çok küçük bir parça değişir ve bu genellikle toplam parametrelerin %1'inin altındadır.
-- En yaygın PEFT tekniği **LoRA**'dır (Low-Rank Adaptation). Matematiğine girmene gerek yok; yalnızca LoRA'nın, neredeyse herkesin kullandığı ucuz bir fine-tuning yöntemi olduğunu bilmen yeterli.
+- En yaygın PEFT tekniği **LoRA**'dır (Low-Rank Adaptation). Matematiğini anlamana gerek yok: yalnızca LoRA'nın, neredeyse herkesin kullandığı ucuz bir fine-tuning yöntemi olduğunu bilmen yeterli.
 
 Bunun üç faydası var: tek bir tüketici GPU'sunda çalışır, çok daha hızlı eğitilir ve modelin
 tamamının yeni bir kopyası yerine yalnızca ek parametreleri tutan küçük bir dosya üretir. Gerçek
@@ -184,21 +183,20 @@ model.print_trainable_parameters()
 # something like: "trainable params: 0.3M || all params: 60M || trainable%: 0.5%"
 ```
 
-PEFT ile, [LLM Temelleri](llms_tr.md) modülünde anlatılan kuantizasyonu karıştırma. **PEFT ucuza
-eğitmekle ilgilidir. Kuantizasyon ise ucuza çalıştırmakla.** İkisi sık sık birlikte kullanılır.
+PEFT ile, [LLM Temelleri](llms_tr.md) modülünde anlatılan quantization'ı karıştırma. **PEFT ucuza
+eğitmekle ilgilidir. Quantization ise ucuza çalıştırmakla.** İkisi sık sık birlikte kullanılır.
 
 ## Unsloth
 
-Training döngüsünü kendin yazarsan, pek çok parçayı elle birbirine bağlaman gerekir. Elindeki
-bellekte bir modeli sığdırmak da ayrı bir beceri. ![](./images/logos/unsloth.svg)[Unsloth](https://unsloth.ai/docs), bu iki işi de
+Training döngüsünü kendin yazarsan, pek çok parçayı elle birbirine bağlaman gerekir. Elindeki belleğe bir modeli sığdırmak da başlı başına ayrı bir beceri. ![](./images/logos/unsloth.svg)[Unsloth](https://unsloth.ai/docs), bu iki işi de
 yapan açık kaynaklı bir kütüphane.
 
 Kütüphanenin sana verdikleri şunlar:
 
 - **Sığan fine-tuning.** Eğitim kodunun en çok bellek ve zaman harcayan kısımlarını yeniden yazar. Bunun sonucunda LoRA ve quantized-LoRA çalıştırmaları çok daha az GPU belleğine ihtiyaç duyar ve daha hızlı biter. Çoğu zaman bir işin ücretsiz bir Colab GPU'sunda çalışıp çalışamayacağını bu belirler.
-- **Hazır notebook'lar.** [notebook koleksiyonu](https://unsloth.ai/docs/get-started/unsloth-notebooks) popüler açık modelleri kapsıyor. Birini açıp kendi veri setini ona verirsin ve çalıştırırsın. Bu, "elimde birkaç çift var" diyen birinin "elimde fine-tune edilmiş bir model var" diyebilmesinin en hızlı ve en dürüst yolu.
-- **Yalnızca eğitim için değil, çalıştırma için de önceden kuantize edilmiş modeller.** [LLM Temelleri](llms_tr.md) modülü, kuantizasyonu kendin nadiren yaptığını söylemişti. Modülün kastettiği sürümler de bunlardır. Yani aynı proje iki işi birden kapsıyor: bir modeli sıkıştırmak ve bir model eğitmek.
-- **Bir rehber ve gerçekçi bir kontrol.** [fine-tuning rehberi](https://unsloth.ai/docs/get-started/fine-tuning-llms-guide) tüm süreci adım adım anlatıyor. Ama başlamadan **önce** FAQ'i, yani [is fine-tuning right for me](https://unsloth.ai/docs/get-started/fine-tuning-for-beginners/faq-+-is-fine-tuning-right-for-me) sayfasını oku. Dürüst cevap çoğu zaman hayırdır. Birçok problem fine-tuning problemi gibi görünür, ama daha iyi bir prompt ya da [Retrieval-Augmented Generation (RAG)](rag_tr.md) modülündeki retrieval bunların çoğunu çözer.
+- **Hazır notebook'lar.** [notebook koleksiyonu](https://unsloth.ai/docs/get-started/unsloth-notebooks) popüler açık modelleri kapsıyor. Birini açıp kendi veri setini ona verirsin ve çalıştırırsın. Bu, "elimde birkaç çift var" demekten "elimde fine-tune edilmiş bir model var" demeye geçmenin en hızlı ve güvenilir yolu.
+- **Yalnızca training için değil, çalıştırmak için de quantize modeller.** [LLM Temelleri](llms_tr.md) modülü, quantization'ı nadiren senin yapmanı gerektiğini anlatmıştı. Modülün kastettiği sürümler de tam olarak bunlardır. Yani aynı proje iki işi birden kapsıyor: bir modeli sıkıştırmak ve bir model eğitmek.
+- **Rehber ve gerçeklerle yüzleşme.** [fine-tuning rehberi](https://unsloth.ai/docs/get-started/fine-tuning-llms-guide) tüm süreci adım adım anlatıyor. Ama başlamadan **önce** FAQ'i, yani [is fine-tuning right for me](https://unsloth.ai/docs/get-started/fine-tuning-for-beginners/faq-+-is-fine-tuning-right-for-me) sayfasını oku. Dürüst cevap çoğu zaman hayırdır. Birçok problem fine-tuning problemi gibi görünür, ama daha iyi bir prompt ya da [RAG ve Embedding'ler](rag_tr.md) modülündeki retrieval bunların çoğunu çözer.
 
 ## Yan Yana Karşılaştırma
 
@@ -228,23 +226,23 @@ hayır olduğu üç durumu bilmek faydalı.
 tabanına yeni commit'ler gelir, sözleşmeler güncellenir, politikalar değişir. Fine-tuning ise bir
 anlık görüntüdür: verinin belirli bir gündeki halini yakalar ve sonra hiç değişmez. Saatler sürer ve gerçek para gerektirir, bu yüzden bir dosya her değiştiğinde
 yeniden yapamazsın. Bu nedenle burada ihtiyacın olan şey retrieval'dır ve bu konu,
-[Retrieval-Augmented Generation (RAG)](rag_tr.md) modülünde işleniyor.
+[RAG ve Embedding'ler](rag_tr.md) modülünde işleniyor.
 
-**Fine-tuning'i görevler için yap, gerçekler için değil.** Fine-tuning, bir *davranışı* öğretmekte
+**Fine-tuning'i görevler için yap, doğru bilgi için değil.** Fine-tuning, bir *davranışı* öğretmekte
 iyidir; örneğin belirli bir biçimde özetlemeyi ya da metinleri kendi kategorilerine ayırmayı
-öğretebilir. *Gerçekleri* öğretmekte ise zayıftır, çünkü birkaç yüz sayfan milyarlarca parametrenin
+öğretebilir. *Doğru bilgiyi* öğretmekte ise zayıftır, çünkü birkaç yüz sayfan milyarlarca parametrenin
 arasında kaybolur ve bu parametreler modelin okuduğu diğer her şeyi zaten tutar.
 
 **Ve kiminle yarıştığını unutma.** Diyelim ki görevin için bir ay boyunca bir modeli fine-tune
 ediyorsun. Bitirdiğinde bir sonraki öncü (frontier) model çıkmış olur. Bu modeli bir laboratuvar,
 senin sahip olmadığın kaynaklarla eğitmiştir. Büyük ihtimalle bu yeni model, hiçbir değişiklik
 yapılmadan bile, önceki nesil modelden fine-tune ettiğin sürümünden senin görevinde daha iyi olur.
-Fine-tuning, görev gerçekten sana ait ve gerçekten dar olduğunda hâlâ kazanır. Laboratuvarları
+Fine-tuning, görev gerçekten sana ait ve gerçekten dar olduğunda hâlâ daha yararlıdır. Laboratuvarları
 training'de geçmeye çalıştığında ise kaybeder.
 
 ## Hugging Face Nedir?
 
-Yukarıdaki iki kod örneği de ondan import yapıyor, o yüzden ona bir paragraf ayırmak yerinde olur.
+Yukarıdaki iki kod örneği de ondan import yapıyor, bu yüzden ona bir paragraf ayırmak istedik.
 
 ![](./images/logos/huggingface.svg)[Hugging Face](https://huggingface.co/), açık kaynaklı makine öğrenmesi topluluğunun çalışmalarını
 tuttuğu yer. Pratikte **Models** sayfası, yalnızca LLM'ler değil, her türden açık modelin merkezi
@@ -259,7 +257,7 @@ veri için ise `datasets`.
 ## Temel Terimler
 
 - **Parameters**: ağın içindeki sayılar; bunlara weights da denir.
-- **Training**: modele metin verip parametreleri küçük miktarlarla değiştirme işi; bu, tahminler doğru olana kadar tekrarlanır.
+- **Training**: modele metin verip parametreleri küçük miktarlarda değiştirme işi; bu, tahminler doğru olana kadar tekrarlanır.
 - **Pre-training**: en büyük ilk adım; tüm parametreleri etiketsiz internet metniyle günceller ve büyük bir modelde milyonlarca dolara mal olur.
 - **Fine-tuning**: pre-training'den geçmiş bir modeli, girdi ve çıktı çiftlerinden oluşan küçük ve göreve özel bir veri setiyle eğitmeye devam etmek.
 - **Base model**: fine-tuning'e başlanan, pre-training'den geçmiş genel amaçlı model.
@@ -288,7 +286,7 @@ graph LR
 ## Özet
 
 Training, özünde modelin parametrelerini ayarlamaktır. Pre-training rastgele ağırlıklardan başlar,
-etiketsiz internet metnini kullanır ve milyonlara mal olur. Fine-tuning ise başkasının bitmiş
+etiketsiz internet metnini kullanır ve milyonlarca dolara mal olur. Fine-tuning ise başkasının bitmiş
 modelinden başlar, bir insanın yazdığı çiftleri kullanır ve çok az maliyetlidir. PEFT aynı işi yapar,
 ama parametrelerin %1'inin altını değiştirir. Projelerin çoğu bu yüzden PEFT kullanır.
 
@@ -303,7 +301,7 @@ pahalı?
 ### 📄 Makaleler
 
 - [Unsloth: is fine-tuning right for me?](https://unsloth.ai/docs/get-started/fine-tuning-for-beginners/faq-+-is-fine-tuning-right-for-me): fine-tuning yapmadan önce mutlaka oku
-- [Unsloth notebooks](https://unsloth.ai/docs/get-started/unsloth-notebooks): eğitim için ve kuantize modelleri çalıştırmak için hazır notebook'lar
+- [Unsloth notebooks](https://unsloth.ai/docs/get-started/unsloth-notebooks): eğitim için ve quantize modelleri çalıştırmak için hazır notebook'lar
 - [Unsloth fine-tuning guide](https://unsloth.ai/docs/get-started/fine-tuning-llms-guide): başından sonuna tüm süreç
 - [Fine-tuning AI models](https://cloud.google.com/use-cases/fine-tuning-ai-models?hl=en#fine-tuning-llms-and-ai-models): Google Cloud'un genel bakışı, terimleri öğrenmek için faydalı
 

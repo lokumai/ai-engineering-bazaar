@@ -11,7 +11,7 @@ objectives:
 
 Serideki diğer her şey bu modülün üzerine kurulu. Bir LLM'i anlatmak aslında kolay: içeri metin girer, dışarıya metin çıkar. Ancak seride ele alacağımız neredeyse her fikir, yani RAG, tool'lar, hafıza (memory) ve agent'lar, tek bir sınırın yüzünden ortaya çıktı. O sınıra birazdan geleceğiz.
 
-Önce modelin kendisine bakalım. Sonra o sınırı inceleyeceğiz, en sonunda da bir modeli nasıl çalıştırabileceğini göreceğiz.
+Önce modelin kendisine bakalım. Sonra sınırını inceleyeceğiz, en sonunda da bir modeli nasıl çalıştırabileceğini göreceğiz.
 
 ## LLM Nedir?
 
@@ -27,7 +27,7 @@ graph LR
 
 Yaptığı iş aslında bundan ibaret. Bir LLM'in yaptığı etkileyici her şey bu tek tahminin sonucudur. Model bu tahmini, bir seferde bir kelime olacak şekilde, tekrar tekrar yapar.
 
-## Bir LLM Ne Kadar Büyük?
+## LLM Ne Kadar Büyük?
 
 Bir LLM, son derece çok sayıda **parametre (parameter)** barındıran bir sinir ağıdır. Bu parametreleri bir beyindeki bağlantılara benzetebilirsin. Parametre sayısı ne kadar fazlaysa ağ o kadar çok şey tutabilir.
 
@@ -55,7 +55,7 @@ Her LLM'in bir **context window**'u vardır. Bu, modelin tek seferde işleyebild
 
 Bunu gözünde canlandırmanın en kolay yolu, ChatGPT ile yaptığın sohbet geçmişine bakmak. Yeni bir konuşmaya başladığında geçmiş boştur. Karşılıklı konuştukça hem senin her mesajın hem de modelin her yanıtı bu geçmişe eklenir ve zamanla geçmiş dolar.
 
-Yani **context** dediğimiz şey aslında bir **mesaj yığını (stack)**. Yığın her seferinde bir mesaj eklenerek oluşur ve sonra bütünüyle modele gönderilir. LLM bu yığının tamamını girdi olarak alır, işler ve bir sonraki mesajı üretir.
+Yani **context** (bağlam) dediğimiz şey aslında bir **mesaj yığını (stack)**. Yığın her seferinde bir mesaj eklenerek oluşur ve sonra bütünüyle modele gönderilir. LLM bu yığının tamamını girdi olarak alır, işler ve bir sonraki mesajı üretir.
 
 **Sınır aşılırsa ne olur?** Bir hata alırsın, hepsi bu. İstek başarısız olur.
 
@@ -74,16 +74,16 @@ Bu mesajlar, sistemi her kullandığında üst üste yığılır:
 ![Düz LLM sohbetinin context'i](./images/llm-context.webp)  
 *İki turn'lük düz bir sohbet: iki HumanMessage ve iki AIMessage. Hiçbir şey silinmez. Bu yüzden ikinci turn'de model birinci turn'deki her şeyi de okur.*
 
-Bir HumanMessage ile onu yanıtlayan AIMessage'a birlikte bir **turn** denir. Düz bir LLM sohbetinde bu ikisinin arasında başka bir şey yoktur: prompt'u gönderirsin, yanıtı alırsın. Yukarıdaki şekilde iki turn var.
+Bir HumanMessage ile onu yanıtlayan AIMessage'a birlikte bir **turn** (tur) denir. Düz bir LLM sohbetinde bu ikisinin arasında başka bir şey yoktur: prompt'u gönderirsin, yanıtı alırsın. Yukarıdaki şekilde iki turn var.
 
-Bu yığının birkaç adı var ve hangisinin kullanıldığı kimin konuştuğuna bağlı: **context**, **working memory**, **message history** ya da **short-term memory**. İsimlerin hepsini şimdiden ezberlemene gerek yok. Kısa süreli hafıza kendi modülünü hak ediyor: [Memory](memory_tr.md).
+Bu yığının (stack) birkaç adı var ve hangisinin kullanıldığı kimin konuştuğuna bağlı: **context**, **working memory**, **message history** ya da **short-term memory**. İsimlerin hepsini şimdiden ezberlemene gerek yok. Kısa süreli hafıza kendi modülünü hak ediyor: [Memory](memory_tr.md).
 
 SystemMessage'a daha yakından bakmak gerekiyor, çünkü o tek bir düz metin değil. Normalde hem davranış talimatlarını *hem de* **tool schema'larını** taşır. Tool schema'ları, modelin çağırmasına izin verilen tool'ların listesidir ve her birinin adını ile argümanlarını içerir:
 
 ![System prompt'un içi](./images/system-prompt-context.webp)  
 *Bir system prompt'un içinde davranış talimatları, tool schema'ları ve bazen sabit bir referans metin bloğu bulunur. Hepsi context'in en üstünde yer alır.*
 
-API'de tool schema'ları system metninin parçası değildir, ayrı bir alan olarak gelir. Ancak model bunları başta tek bir blok halinde alır. Bu yüzden onları birlikte hayal etmek makul.
+API'de tool schema'ları system metninin parçası değildir, ayrı bir alan olarak gelir. Ancak model bunları başta tek bir blok halinde alır. Bu yüzden onları birlikte hayal etmek makuldür.
 
 Birçok üründen sızdırılmış gerçek system prompt'ları şu adreste okuyabilirsin: [system_prompts_leaks](https://github.com/asgeirtj/system_prompts_leaks).
 
@@ -93,7 +93,7 @@ Diyelim ki İstanbul'daki hava durumunu soruyorsun. Model bunu kendi başına ö
 
 Burada hatırlaman gereken kısım şu: **ToolCall'u LLM üretir, ToolResult'u ise host makine üretir**. Host makine (host machine), senin laptop'un ya da bir sunucu olabilir. ToolResult'u o üretir, çünkü fonksiyonu gerçekten çalıştıran odur. Model sorar, iş başka bir şey tarafından yapılır.
 
-Bir agent turn'ünün içi daha kalabalıktır. HumanMessage'ından sonra model, sana cevap verebilmek için bir tool'a ihtiyacı olup olmadığına karar verir. İhtiyacı varsa ToolCall ve ToolResult de context'e eklenir. Model son cevabı ancak bundan sonra yazar. Bütün bunlar yine **tek bir turn**: bir HumanMessage, varsa tool mesajları ve en sonda bir AIMessage.
+Bir agent turn'ünün içi daha kalabalıktır. HumanMessage'ından sonra model, sana cevap verebilmek için bir tool'a ihtiyacı olup olmadığına karar verir. İhtiyacı varsa ToolCall ve ToolResult de context'e eklenir. Model son cevabı ancak bundan sonra yazar. Bütün bunlar yine **tek bir turn**'de gerçekleşir: bir HumanMessage, varsa tool mesajları ve en sonda bir AIMessage.
 
 ![Bir agent'ın context'i](./images/agent-context.webp)  
 *Bir agent'ın tek turn'ü: sen prompt'u yazarsın, AI düşünür, bir tool'u çağırır ve sonra cevap verir. Kimin neyi yazdığına bak. LLM düşünceyi, Tool Call'u ve cevabı üretir. Tool Result ise fonksiyonu çalıştıran host makineden gelir.*
@@ -102,7 +102,7 @@ Agent'ların nasıl işlediğinin temeli tam olarak bu ayrımdır. Bunu [LLM Too
 
 ## LLM Hyperparameter'ları
 
-Modelin nasıl yanıt verdiğini **hiperparametre (hyperparameter)** ayarlarıyla değiştirebilirsin. Bu kelimedeki "hyper" kısmına dikkat et, çünkü bu kısım bunların yukarıdaki parametrelerle aynı şey olmadığını gösteriyor. Hiperparametreler üretimi etkiler. Yukarıda andığımız parametreler ise başka bir şeydir: onlar ağın içindeki sayılardır ve bu sayıların adedi modelin boyutunu belirler.
+Modelin nasıl yanıt verdiğini **hyperparameter** ayarlarıyla değiştirebilirsin. Bu kelimedeki "hyper" kısmına dikkat et, çünkü bu kısım bunların yukarıdaki parametrelerle aynı şey olmadığını gösteriyor. Hyperparameter'lar üretimi etkiler. Yukarıda andığımız parametreler ise başka bir şeydir: onlar ağın içindeki sayılardır ve bu sayıların adedi modelin boyutunu belirler.
 
 Bunlardan ikisini sürekli kullanacaksın:
 
@@ -141,7 +141,7 @@ Rakamlar bunu açıkça gösteriyor. Örnek olarak 32B'lik bir modele bakalım:
 | 16-bit (dağıtıldığı haliyle) | ~64 GB | Hayır |
 | 4-bit (quantized) | ~16 GB, bir miktar context için ek | Evet, 24 GB ya da 32 GB'lık bir kartta rahatlıkla |
 
-Model de ağırlıkları da aynı kalır, ama artık belleğin yalnızca dörtte birine ihtiyaç duyar. Fark, "bunu hiç çalıştıramam" ile "bu masaüstümde çalışıyor" arasındaki farktır.
+Model de ağırlıkları da aynı kalır, ama artık belleğin yalnızca dörtte birine ihtiyaç duyar. 16-bit'i laptop'unda çalıştıramazken 4-bit'i çalıştırabilirsin.
 
 **Modelleri kendin quantize etmen gerekir mi?** Hayır, ve neredeyse hiç etmemelisin. ![](./images/logos/ollama-mono.svg)[Ollama](https://ollama.com/) ve ![](./images/logos/unsloth.svg)[Unsloth](https://unsloth.ai/), Qwen, Llama, Mistral, Gemma ve daha fazlası gibi popüler modellerin hazır quantize edilmiş sürümlerini zaten yayımlıyor. Bunlardan birini çekip çalıştırman yeterli.
 
@@ -191,7 +191,7 @@ Ayrıca günlük limitli ücretsiz modelleri de var. Başka bir modele geçmek i
 
 ## LLM'lere Prompt Yazmak
 
-**Prompt engineering**, istediğin çıktıyı alabilmek için girdiyi özenle yazma işidir. Bu, öğrencilere talimat vermeye benzer. Net bir talimat ödevin düzgün yapılmasını sağlar. Belirsiz bir talimat ise her öğrencinin o an canının istediğini yapmasına yol açar.
+**Prompt engineering**, istediğin çıktıyı alabilmek için girdiyi özenle yazma işidir. Bu, öğrencilere talimat vermeye benzer. Net bir talimatla öğrenciler ödevlerini düzgün yapar. Belirsiz bir talimatla ise her öğrenci ödevini canının istediği gibi yapar.
 
 Modelin gerçekte ne hesapladığını hatırla. Model, context'teki her şeyi göz önünde bulundurarak bir sonraki token'ın olasılığını hesaplar:
 
@@ -202,7 +202,7 @@ P(next token | context)
 Senin prompt'un *tam olarak* bu context'tir. Bu yüzden senin işin, istediğin çıktıyı en olası hale getiren girdiyi bulmaktır:
 
 ```
-best prompt = the prompt that maximises P(the output you want | prompt)
+en iyi prompt = P(istediğin çıktı | prompt) değerini en yükseğe çıkaran prompt
 ```
 
 Prompt engineering'in bütün mantığı bu tek satırda özetlenebilir. Adı konmuş pek çok teknik var ve bunları [Prompt Engineering](../2_intermediate/prompt_engineering_tr.md) modülünde anlatıyoruz. Ama işin büyük kısmı deneyerek ilerler: bir ifadeyi dene, çıktıya bak, değiştir ve yeniden dene.
@@ -228,7 +228,7 @@ Gerçek ürünlerdeki prompt'lara ne kadar emek verildiğini görmek için şunl
 - **Tool schema**: modelin çağırabileceği tool'ların listesi; her tool'un adı ve argümanları yazılıdır.
 - **ToolCall**: modelin senin fonksiyonlarından birini çalıştırma isteği; bunu LLM üretir.
 - **ToolResult**: o fonksiyonun çıktısı; bunu LLM değil, fonksiyonu çalıştıran host makine üretir.
-- **Temperature**: yaratıcılığı ayarlayan, genellikle 0.0 ile 1.0 arasında bir hiperparametre; düşük değerler öngörülebilir cevaplar verir.
+- **Temperature**: yaratıcılığı ayarlayan, genellikle 0.0 ile 1.0 arasında bir hyperparameter; düşük değerler öngörülebilir cevaplar verir.
 - **Max output tokens**: cevabın uzunluğuna üst sınır koyar; maliyeti kontrol etmek için kullanılır.
 - **Inference**: bir modeli context üzerinde çalıştırıp cevabını üretmek; bu, bulutta da kendi bilgisayarında da yapılabilir.
 - **Quantization**: her 16-bit ağırlığı 4 bit'e indirmek; böylece modelin belleğe ihtiyacı yaklaşık dört kat azalır.

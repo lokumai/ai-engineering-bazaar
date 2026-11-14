@@ -9,8 +9,8 @@ description: >
 authority: reasoning
 writes: agent, when a decision is taken
 status: active
-covers: "D97 to D137 and D139 so far, and D89, which part 2 held for PR #57 — 2026-11-06 onward"
-last_updated: 2026-11-12
+covers: "D97 to D140 so far, and D89, which part 2 held for PR #57 — 2026-11-06 onward"
+last_updated: 2026-11-14
 ---
 
 # 🧠 BRAINSTORM, part 3 — D97 onward
@@ -1342,6 +1342,24 @@ saying so, and the stores are given its address, `/legend/#privacy`.
   stable public address); a privacy page in the app's own repository (a second home for the same text, and the
   stores want an address on the web).
 
+---
+
+### D140 · Advanced Deployment is split into Advanced LLM Deployment and Advanced Agent Deployment · 2026-11-14
+status: active
+
+Advanced Deployment mixed two different jobs: serving a model (the attention layer, the KV cache, GPUs) and
+running an agent as a service (servers, state, isolation). The author split it (M120).
+
+- **Advanced LLM Deployment** takes serving a model to many users: the KV cache as the limit, MQA and GQA,
+  MLA, FlashAttention, PagedAttention, prefix caching, quantization for serving, tensor and pipeline
+  parallelism, prefill/decode disaggregation and the serving engines. It sits after Advanced LLM, which
+  explains the inference loop these techniques speed up.
+- **Advanced Agent Deployment** keeps the old module's topics (agent server, the LangChain Agent Protocol, the
+  stack, runtime, steering) and adds computer use, sandboxes, and containers against microVMs. Advanced Agent
+  Servers stays as the deep comparison of four ways to run an agent server.
+- **The old address forwards to Advanced Agent Deployment**, the half that kept the topics, as D101 did for
+  Advanced Training. **Rejected:** forwarding to neither (a bookmark would 404), and keeping Advanced
+  Deployment as a parent with two children (the curriculum has no nesting below a level).
 ---
 
 > **← Part 2: [`BRAINSTORM_2.md`](BRAINSTORM_2.md)** — D26 to D96. **← Part 1:

@@ -24,6 +24,10 @@ export const MOVED_MODULES: Readonly<Record<string, string>> = {
   // Post-training (D101); its address goes to the second, which kept most of
   // its topics.
   'expert/advanced-training': 'expert/advanced-post-training',
+  // Advanced Deployment was split into Advanced LLM Deployment and Advanced
+  // Agent Deployment (D140); its address goes to the second, which kept its
+  // topics.
+  'expert/advanced-deployment': 'expert/advanced-agent-deployment',
 }
 
 export function movedModuleOf(category: string, module: string): string | null {

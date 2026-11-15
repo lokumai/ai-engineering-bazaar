@@ -11,7 +11,7 @@ description: >
   backgrounds and copy (M81), Agentic UI (M82), the cast's colours (M83), and M84 to M90 (content
   and site fixes, the home page in Turkish and Persian, Dariush's motif, block menus in the top layer,
   and About, the story of the Bazaar); Caravan built (M91), its real trends waiting (M92) and its second
-  round (M93); multilingual SEO (M96); translated objectives on the site (M98) and in the bundle (M99); the story in the bundle (M100); three screen recordings and Human in the Loop moved into Agentic UI (M101); the search filters applied by a button (M102); a laptop section in Inference Engines (M103); the word count in the bundle (M105), the checklist index (M106), the diagrams without empty rects (M107) and five logos without CSS (M108); the About page in Turkish and Persian (M109); the module page's own words in Turkish and Persian (M110); the footer without its first row (M111); the tool-call recording cropped to the chat and the reasoning recording sped up (M112); the LokumAI mark on the References' Modules subsection (M113); stall 1 naming the treaty and the About page's name (M114); a replay button on every animated recording (M115); the quick quiz on both tracks (M116); the privacy note for the mobile app (M117); translated titles in the bundle's index (M118); lot-map in Code Agents and Agents in Practice (M119); Advanced Deployment split into LLM and agent deployment (M120); a map of the generative AI stack in Agent Frameworks (M121); Advanced LLM Deployment moved after Advanced LLM (M122); and M41, the content bundle for the mobile reader. Each milestone carries its deliverables and acceptance
+  round (M93); multilingual SEO (M96); translated objectives on the site (M98) and in the bundle (M99); the story in the bundle (M100); three screen recordings and Human in the Loop moved into Agentic UI (M101); the search filters applied by a button (M102); a laptop section in Inference Engines (M103); the word count in the bundle (M105), the checklist index (M106), the diagrams without empty rects (M107) and five logos without CSS (M108); the About page in Turkish and Persian (M109); the module page's own words in Turkish and Persian (M110); the footer without its first row (M111); the tool-call recording cropped to the chat and the reasoning recording sped up (M112); the LokumAI mark on the References' Modules subsection (M113); stall 1 naming the treaty and the About page's name (M114); a replay button on every animated recording (M115); the quick quiz on both tracks (M116); the privacy note for the mobile app (M117); translated titles in the bundle's index (M118); lot-map in Code Agents and Agents in Practice (M119); Advanced Deployment split into LLM and agent deployment (M120); a map of the generative AI stack in Agent Frameworks (M121); Advanced LLM Deployment moved after Advanced LLM (M122); LLM Compression and offline/online post-training (M123); and M41, the content bundle for the mobile reader. Each milestone carries its deliverables and acceptance
   criteria as `- [ ]` checkboxes, ticked as the work lands, and closes with a dated report; the loop
   that governs that is below, in this file.
   NOT here: why a choice was made (BRAINSTORM.md), or any rule that outlives the milestone
@@ -19,7 +19,7 @@ description: >
 authority: state
 writes: agent, every session
 status: active
-covers: "M50 to M122, 2026-11-06 onward, and M41, which part 2 held for PR #57"
+covers: "M50 to M123, 2026-11-06 onward, and M41, which part 2 held for PR #57"
 last_updated: 2026-11-15
 ---
 
@@ -2534,6 +2534,44 @@ module.
       `lokum-modules.css` is unchanged (it covers written modules, and Expert has none yet).
 - [x] **Gate (2026-11-15)**: 1,619 unit tests; build, link and bundle checks; the full browser suite on a
       private port, 747 passed, 11 skipped, none failed.
+---
+
+## 🏁 Milestone M123: LLM Compression, and post-training split into offline and online (D141), DONE
+
+The author, 2026-11-15, approved this Expert layout: Advanced LLM, Advanced LLM Deployment, a new Advanced LLM
+Compression, Advanced Offline Post-training (was Advanced Fine-tuning) and Advanced Online Post-training (was
+Advanced Post-training). "Prefer moving content from scratchpad rather than generating new ones … and try to
+keep them in the right module"; no DPO relatives he did not ask for.
+
+- [x] **Advanced LLM Compression** (new, sheet 20): quantization (moved from Advanced LLM Deployment), pruning,
+      knowledge distillation (moved from Advanced Post-training), measuring the quality cost. EN and TR.
+- [x] **Advanced Offline Post-training** (sheet 21, renamed from Advanced Fine-tuning): its five topics kept,
+      plus SFT, and alignment, preference tuning, preference data, DPO and "SFT vs. DPO" moved from Advanced
+      Post-training; the Unsloth references kept.
+- [x] **Advanced Online Post-training** (sheet 22, renamed from Advanced Post-training): RLHF, the reward and
+      policy models, PPO, GRPO, PPO vs. GRPO and RLAIF kept, plus what "online" means and a note on online DPO
+      and on-policy distillation; the Unsloth references kept.
+- [x] **Addresses**: `/advanced-fine-tuning/` forwards to Offline Post-training; `/advanced-post-training/` and
+      the older `/advanced-training/` to Online Post-training (`MOVED_MODULES`). `curriculum.yaml`, `topics.txt`
+      (renumbered from 20), `tests/e2e/sheets.ts` and `lokum-modules.css` follow.
+- [x] **Advanced LLM Evaluation** moves, on the author's word ("advanced LLM Evaluation is the last order in
+      expert level which is wrong. put it in correct place"), from Expert's end to right after Advanced Online
+      Post-training (sheet 23), with the other model modules: its metrics judge a model's output, which is where a reader needs them
+      after training it. Advanced RAG and the rest are one place lower.
+- [x] **Two Haiku xhigh reviews** (references; placement and accuracy): nothing lost or duplicated, every
+      link into Expert resolves. Fixed from them: the online intro (answers are scored once finished, not as
+      written; AI judges too), the reward model trained before the loop, the offline intro in short sentences
+      and claiming only that online methods can use PEFT and LoRA, post-training quantization defined, two
+      Turkish lines and the Turkish title of Advanced LLM; Expert's count (17, already wrong on main) and topics
+      in README.md and index.md, its blurb in curriculum.yaml and 3_expert/README.md; 46 modules in INDEX.md and
+      ARCHITECTURE.md; the stale "1..33" and "module 32" in sheets.ts and navigation.spec.ts; a Turkish link
+      label and a "LoRa" typo. A second round on the Evaluation move: its intro ("Once you train or change a
+      model"), "(issue #46)" out of the public pages, its Turkish heading, BERTScore described, ROUGE worded the
+      same everywhere, and ROADMAP.md's Expert range now ending at Advanced Agent Servers.
+- [x] **MANIFESTO revised** on the author's word (D142): no module count or minutes; the one sentence, the
+      North Star, the reader groups, rule 11 and the account question brought up to date; rule numbers kept.
+- [x] **Gate (2026-11-15)**: typecheck; 1,619 unit tests; build, link and bundle checks; the three forwards
+      checked in the export.
 ---
 
 > **← Part 2: [`PROGRESS_2.md`](PROGRESS_2.md)** — M16 to M49. **← Part 1: [`PROGRESS_1.md`](PROGRESS_1.md)**

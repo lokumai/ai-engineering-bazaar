@@ -9,8 +9,8 @@ description: >
 authority: reasoning
 writes: agent, when a decision is taken
 status: active
-covers: "D97 to D140 so far, and D89, which part 2 held for PR #57 — 2026-11-06 onward"
-last_updated: 2026-11-14
+covers: "D97 to D142 so far, and D89, which part 2 held for PR #57 — 2026-11-06 onward"
+last_updated: 2026-11-15
 ---
 
 # 🧠 BRAINSTORM, part 3 — D97 onward
@@ -1360,6 +1360,48 @@ running an agent as a service (servers, state, isolation). The author split it (
 - **The old address forwards to Advanced Agent Deployment**, the half that kept the topics, as D101 did for
   Advanced Training. **Rejected:** forwarding to neither (a bookmark would 404), and keeping Advanced
   Deployment as a parent with two children (the curriculum has no nesting below a level).
+---
+
+### D141 · Post-training is split into offline and online, and compression gets its own module · 2026-11-15
+status: active
+
+The author proposed renaming Advanced Fine-tuning to Advanced Offline Post-training and Advanced
+Post-training to Advanced Online Post-training, with DPO moved to the first, and a new module for
+quantization, pruning and distillation (M123).
+
+- **Offline against online is where the training data comes from.** Offline methods (SFT, DPO) learn from a
+  fixed dataset collected before training; online methods (RLHF with PPO, GRPO, RLAIF) generate answers from
+  the current model during training and score them. DPO sat beside PPO and GRPO, but it trains on fixed pairs
+  with no sampling and no reward model, so it belongs with SFT. Online variants of DPO exist, so the line is
+  the data, not an algorithm; the online module says so in one note.
+- **Full fine-tuning, PEFT and LoRA stay in the offline module**, where SFT first needs them, and are named as
+  tools both modules use: they describe how weights change, not where the data comes from.
+- **Compression is its own module**, after Advanced LLM Deployment: quantization moves out of Deployment and
+  knowledge distillation out of post-training, because all three make a model smaller and a reader looks for
+  them together. **Rejected names:** Advanced LLM Efficiency (suggests caching and batching, which Advanced
+  LLM and Deployment hold) and Advanced Model Optimization (also means training optimizers); the author picked
+  Advanced LLM Compression.
+- **Old addresses forward**: Advanced Fine-tuning's to the offline module; Advanced Post-training's, and
+  Advanced Training's before it (D101), to the online module, which keeps RLHF, the old module's core.
+---
+
+### D142 · The MANIFESTO states no counts or durations · 2026-11-15
+status: active
+
+The author, reviewing the stale "Thirty-three short modules": "do not include things in MANIFESTO such as
+these numbers that get stale quickly. review MANIFESTO carefully and revise it a little."
+
+- **No module count and no minutes in the MANIFESTO.** §3 and rule 4 had both drifted (33 modules against
+  46; a duration corrected once already, D65). A promise that carries a number is a promise that goes
+  stale; rule 12 already says counts and durations are derived from the material, so the MANIFESTO now
+  points there instead. Rule 4 keeps its point, short on purpose and read in one sitting, and its number.
+- **The revision also corrected what had stopped being true:** the one sentence (Persian is no longer
+  partial, and there are two tracks), the North Star (no accounts since D88; "ten minutes" contradicted
+  rule 4), "three groups" over a list of four, "rules 8 to 18" over nineteen, rule 11 against the quick
+  quiz (it is the reader's own, ungraded), and the account question in §7. Rule numbers are unchanged.
+- **Rejected:** updating the numbers to today's values, which would only move the drift forward.
+- **Left for the author:** `mini-courses/MANIFEST.md`, his public document, still says "five to ten" minutes
+  a module, and the MANIFESTO defers to it where they disagree.
 ---
 
 > **← Part 2: [`BRAINSTORM_2.md`](BRAINSTORM_2.md)** — D26 to D96. **← Part 1:

@@ -27,7 +27,7 @@ last_updated: 2026-11-12
 
 ## What this is
 
-A course site built **from** markdown rather than **around** it. The 44 modules in `mini-courses/`
+A course site built **from** markdown rather than **around** it. The 46 modules in `mini-courses/`
 are the corpus, and everything a page shows — the progress marks, the figure numbers, the source
 counts, the revision hashes, the dependency graph — is derived from those files at build time. The
 output is a static export: HTML, CSS and JS on GitHub Pages, no server.
@@ -825,7 +825,7 @@ red and teaches nobody anything. The suite was cut from 1,948 tests that pinned 
 few hundred rule-checking ones in September 2026, and four more pinned assertions were replaced on
 2026-09-08.
 
-The one deliberate exception is `tests/e2e/sheets.ts`, which types out all 44 modules, their routes,
+The one deliberate exception is `tests/e2e/sheets.ts`, which types out all 46 modules, their routes,
 titles and formats **by hand**, precisely so that a renumber, a slug change or a stub being written
 fails a test and someone has to look. `tests/e2e/index-sheet.spec.ts` reconciles that list against the
 manifest the site actually renders, which is what keeps the duplication honest.

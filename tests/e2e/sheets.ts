@@ -24,7 +24,7 @@
 export type SheetFormat = 'A0' | 'A4'
 
 export interface Sheet {
-  /** Position in the set, 1..33. The prev/next chain walks this order. */
+  /** Position in the set, from 1. The prev/next chain walks this order. */
   module: number
   path: string
   title: string
@@ -70,32 +70,33 @@ export const SHEETS: readonly Sheet[] = [
   sheet(17, '/courses/intermediate/personal-agents/', 'Personal Agents', 'A0'),
   sheet(18, '/courses/expert/advanced-llm/', 'Advanced LLM', 'A4'),
   sheet(19, '/courses/expert/advanced-llm-deployment/', 'Advanced LLM Deployment', 'A4'),
-  sheet(20, '/courses/expert/advanced-fine-tuning/', 'Advanced Fine-tuning', 'A4'),
-  sheet(21, '/courses/expert/advanced-post-training/', 'Advanced Post-training', 'A4'),
-  sheet(22, '/courses/expert/advanced-rag/', 'Advanced RAG & Embeddings', 'A4'),
-  sheet(23, '/courses/expert/advanced-tools/', 'Advanced Tools', 'A4'),
-  sheet(24, '/courses/expert/advanced-memory/', 'Advanced Memory', 'A4'),
-  sheet(25, '/courses/expert/advanced-multiagent/', 'Advanced Multi-Agent', 'A4'),
-  sheet(26, '/courses/expert/advanced-prompting/', 'Advanced Prompting', 'A4'),
-  sheet(27, '/courses/expert/advanced-context-engineering/', 'Advanced Context Engineering', 'A4'),
-  sheet(28, '/courses/expert/advanced-coding-agents/', 'Advanced Coding Agents', 'A4'),
-  sheet(29, '/courses/expert/advanced-harness-engineering/', 'Advanced Harness Engineering', 'A4'),
-  sheet(30, '/courses/expert/advanced-loop-engineering/', 'Advanced Loop Engineering', 'A4'),
-  sheet(31, '/courses/expert/advanced-agent-architectures/', 'Advanced Agent Architectures', 'A4'),
-  sheet(32, '/courses/expert/advanced-ui/', 'Advanced Agentic UI', 'A4'),
-  sheet(33, '/courses/expert/advanced-agent-deployment/', 'Advanced Agent Deployment', 'A4'),
-  sheet(34, '/courses/expert/advanced-agent-servers/', 'Advanced Agent Servers', 'A4'),
-  sheet(35, '/courses/expert/advanced-llm-evaluation/', 'Advanced LLM Evaluation', 'A4'),
-  sheet(36, '/courses/ecosystem/agent-frameworks/', 'Agent Frameworks', 'A0'),
-  sheet(37, '/courses/ecosystem/inference-providers/', 'Inference Providers', 'A0'),
-  sheet(38, '/courses/ecosystem/inference-engines/', 'Inference Engines', 'A0'),
-  sheet(39, '/courses/ecosystem/ui-design/', 'UI Design', 'A0'),
-  sheet(40, '/courses/ecosystem/choosing-tech-stack/', 'Choosing a Tech Stack', 'A4'),
-  sheet(41, '/courses/ecosystem/protocols-reference/', 'Protocols Reference', 'A4'),
-  sheet(42, '/courses/trends/llms-cant-jump/', "LLMs Can't Jump", 'A4'),
-  sheet(43, '/courses/trends/video-rendering/', 'Video Rendering', 'A4'),
-  sheet(44, '/courses/trends/recursive-self-improvement/', 'Recursive Self-Improvement', 'A4'),
-  sheet(45, '/courses/trends/decision-models/', 'Decision Models', 'A4'),
+  sheet(20, '/courses/expert/advanced-llm-compression/', 'Advanced LLM Compression', 'A4'),
+  sheet(21, '/courses/expert/advanced-offline-post-training/', 'Advanced Offline Post-training', 'A4'),
+  sheet(22, '/courses/expert/advanced-online-post-training/', 'Advanced Online Post-training', 'A4'),
+  sheet(23, '/courses/expert/advanced-llm-evaluation/', 'Advanced LLM Evaluation', 'A4'),
+  sheet(24, '/courses/expert/advanced-rag/', 'Advanced RAG & Embeddings', 'A4'),
+  sheet(25, '/courses/expert/advanced-tools/', 'Advanced Tools', 'A4'),
+  sheet(26, '/courses/expert/advanced-memory/', 'Advanced Memory', 'A4'),
+  sheet(27, '/courses/expert/advanced-multiagent/', 'Advanced Multi-Agent', 'A4'),
+  sheet(28, '/courses/expert/advanced-prompting/', 'Advanced Prompting', 'A4'),
+  sheet(29, '/courses/expert/advanced-context-engineering/', 'Advanced Context Engineering', 'A4'),
+  sheet(30, '/courses/expert/advanced-coding-agents/', 'Advanced Coding Agents', 'A4'),
+  sheet(31, '/courses/expert/advanced-harness-engineering/', 'Advanced Harness Engineering', 'A4'),
+  sheet(32, '/courses/expert/advanced-loop-engineering/', 'Advanced Loop Engineering', 'A4'),
+  sheet(33, '/courses/expert/advanced-agent-architectures/', 'Advanced Agent Architectures', 'A4'),
+  sheet(34, '/courses/expert/advanced-ui/', 'Advanced Agentic UI', 'A4'),
+  sheet(35, '/courses/expert/advanced-agent-deployment/', 'Advanced Agent Deployment', 'A4'),
+  sheet(36, '/courses/expert/advanced-agent-servers/', 'Advanced Agent Servers', 'A4'),
+  sheet(37, '/courses/ecosystem/agent-frameworks/', 'Agent Frameworks', 'A0'),
+  sheet(38, '/courses/ecosystem/inference-providers/', 'Inference Providers', 'A0'),
+  sheet(39, '/courses/ecosystem/inference-engines/', 'Inference Engines', 'A0'),
+  sheet(40, '/courses/ecosystem/ui-design/', 'UI Design', 'A0'),
+  sheet(41, '/courses/ecosystem/choosing-tech-stack/', 'Choosing a Tech Stack', 'A4'),
+  sheet(42, '/courses/ecosystem/protocols-reference/', 'Protocols Reference', 'A4'),
+  sheet(43, '/courses/trends/llms-cant-jump/', "LLMs Can't Jump", 'A4'),
+  sheet(44, '/courses/trends/video-rendering/', 'Video Rendering', 'A4'),
+  sheet(45, '/courses/trends/recursive-self-improvement/', 'Recursive Self-Improvement', 'A4'),
+  sheet(46, '/courses/trends/decision-models/', 'Decision Models', 'A4'),
 ]
 
 /**

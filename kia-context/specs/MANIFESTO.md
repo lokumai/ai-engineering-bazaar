@@ -10,7 +10,7 @@ authority: law
 writes: agent, from what the human decided
 status: active
 covers: the whole product
-last_updated: "2026-11-10"
+last_updated: "2026-11-15"
 ---
 
 # 📜 MANIFESTO — What we are building, and why
@@ -24,28 +24,24 @@ last_updated: "2026-11-10"
 
 ## 1. One sentence
 
-A short, human-written course on how modern AI systems are actually built, free to read, in English
-and Turkish, and in Persian wherever a module is written.
+A short, human-written course on how modern AI systems are actually built, free to read, in English,
+Turkish and Persian, for engineers and for everyone else.
 
 ## 2. The North Star
 
-**A reader finishes a module in ten minutes and understands something they could not have got from
-searching.** Everything else — the site, the progress tracking, the accounts — exists only to get them
-to that and out again. If a feature does not serve that, it is decoration.
+**A reader finishes a module in one sitting and understands something they could not have got from
+searching.** Everything else, the site and the progress tracking included, exists only to get them to
+that and out again. If a feature does not serve that, it is decoration.
 
 ## 3. What it does
 
-Thirty-three short modules, ordered from beginner to expert, each twenty to thirty minutes long,
-each ending with links out to the real sources. It remembers where a reader got to, in their own
-browser, without asking them for anything.
+Short modules, ordered from beginner to expert, each written twice: For Engineers, with the code and
+the numbers, and For Everyone, in plain words. Each ends with links out to the real sources and a
+short quiz the reader takes for themselves. It remembers where a reader got to, in their own browser,
+without asking them for anything.
 
-> **The figure was `five to ten` until 2026-09-11 and it was never true.** MEASURED against the
-> corpus this document describes: nineteen modules declare a duration, the shortest twenty minutes
-> and the longest thirty, average twenty-six. The author named it as wrong; **D65** records the
-> correction and what it does not settle. The home page stated the same figure by COUNTING the
-> modules rather than by quoting this line until 2026-10-12, when the author's Bazaar Street front
-> door (**D79**) dropped every count from it; it now states no duration at all, so only this document
-> can drift.
+How many modules there are and how long each takes are counted from the material, never written here
+(rule 12).
 
 ## 4. Who it is for
 
@@ -53,7 +49,7 @@ browser, without asking them for anything.
 Experienced engineers are not stuck and were never the audience: they keep learning regardless. The
 reader this is written for has no shortage of material and no way to tell which of it matters.
 
-Three groups, in the order they created the need:
+Four groups, in the order they created the need:
 
 1. **Interns and new joiners** at the author's own company, who currently get a scattered reading
    list instead of a curriculum.
@@ -84,28 +80,28 @@ reason, and so does a Persian version of every written one (**D80**). See `genes
    straight answer in normal words. That is the register.
 3. **It stays simple.** Simple and high level everywhere. A module may cover a lot; no single part of
    it may go deep.
-4. **Twenty to thirty minutes a module.** Short on purpose, then links out. (Corrected 2026-09-11
-   from `five to ten`, which no module has ever been — **D65**. The rule number is unchanged, which
-   is rule 1 of the harness: a number is cited elsewhere and never renumbered.)
+4. **Short on purpose.** A module is read in one sitting, then it links out. How long each one takes
+   is measured from the module itself, not promised here (**D65**, **D142**).
 5. **Pictures do a lot of the work.** People want to see, not read. A module with no visual is usually
    unfinished.
 6. **Every module points somewhere next.** Written to leave a reader curious rather than full.
 7. **Only what matters.** A cheatsheet, not a textbook. Knowing what to leave out comes from building
    things.
 
-**Rules 8 to 18 came out of the work, and each one exists because breaking it cost something.**
+**Rules 8 to 19 came out of the work, and each one exists because breaking it cost something.**
 
 8. **Never dense. Being concise is not a goal here.** Plain English and compressed English are not the
    same thing, and compression is the failure mode this project keeps hitting. Loosening a module makes
    it longer, and that is the correct outcome.
 9. **Nothing is gated.** No sign-up wall, no paywall, no feature a reader has to register for. There
-   are no accounts at all since 2026-11-05 (D88).
+   are no accounts at all (D88).
 10. **A reader's progress is theirs.** It lives in their browser by default, they can download it,
     restore it and erase it, and none of it is required to read anything.
     In the mobile app their progress lives on the device, and erasing it there cannot reach a copy the
     device has already backed up, which the erase screen says (**D89**).
-11. **Completion is the reader's own claim.** There is no test, no grade and no assessment. Nobody
-    else marks a module done, and a reader can undo it at any time.
+11. **Completion is the reader's own claim.** Nothing on the site is graded. The quick quiz at the
+    end of a module is for the reader alone, and nobody sees the answers. Nobody else marks a module
+    done, and a reader can undo it at any time.
 12. **Never state a number the project cannot check.** Counts, durations, totals and citations are
     derived from the material, never typed in by hand. A wrong number on a project whose whole premise
     is that machine-written content is unreliable is the one unforgivable defect.
@@ -119,7 +115,7 @@ reason, and so does a Persian version of every written one (**D80**). See `genes
 16. **The interface talks; it does not explain itself.** No sentence describing what the reader is
     already looking at — a control, a mark, a count or a heading says it by being one. This is rule 5
     turned on the product rather than on the prose, and the test is one question: does the page
-    already show this? Reasoning and the eleven blocks it removed: `logs/BRAINSTORM_2.md` **D61**.
+    already show this? Reasoning: `logs/BRAINSTORM_2.md` **D61**.
 17. **A translation reads as if it was written in its own language.** The author's words: *"WE
     CARE MORE ABOUT READABILITY AND CLARITY IN OTHER LANGUAGES THAN TO LITERAL TRANSLATION AND
     TRUTHFULNESS."* Turkish reads the way people talk or write professionally, Persian the way
@@ -158,12 +154,12 @@ Three questions kill most proposals:
 - **Does it get a reader to a finished module faster, or does it add a thing to learn first?** The
   interface is the thing this project has been worst at, and the fix is always fewer controls rather
   than better-labelled ones.
-- **Does it require an account?** If yes, it is the wrong shape. Rebuild it so the account is
-  optional.
+- **Does it require an account?** Then it is the wrong shape: the site has no accounts (rule 9).
+  Rebuild it so it works without one.
 - **Does it restate something the material already says?** Then it will drift out of step and be
   wrong. Derive it.
 
-**Two standing constraints on how the work is done**, which are not product rules but are absolute:
+**Standing constraints on how the work is done**, which are not product rules but are absolute:
 
 - The author's own working files are his. Nothing under `mini-courses/scratchpad/` is ours to tidy,
   and copying content out of a file is not permission to remove it.

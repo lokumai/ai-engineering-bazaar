@@ -217,10 +217,9 @@ categories:
         status: draft
         notes: >-
           issue #46. Static and objective metrics: BLEU (n-gram word matching),
-          ROUGE (overlap or recall), METEOR (penalizing order), accuracy and
-          precision, cosine similarity (BERTScore). Dynamic and subjective
+          ROUGE (overlap and recall), METEOR (penalizing order), accuracy and
+          precision, cosine similarity of embeddings (BERTScore). Dynamic and subjective
           metrics: faithfulness, LLM-as-judge, human preference
-
       - name: advanced_rag
         title: Advanced RAG & Embeddings
         status: draft

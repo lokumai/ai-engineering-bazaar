@@ -2554,8 +2554,9 @@ keep them in the right module"; no DPO relatives he did not ask for.
 - [x] **Addresses**: `/advanced-fine-tuning/` forwards to Offline Post-training; `/advanced-post-training/` and
       the older `/advanced-training/` to Online Post-training (`MOVED_MODULES`). `curriculum.yaml`, `topics.txt`
       (renumbered from 20), `tests/e2e/sheets.ts` and `lokum-modules.css` follow.
-- [x] **Advanced LLM Evaluation** moves from Expert's end to right after Advanced Online Post-training (sheet
-      23), with the other model modules: its metrics judge a model's output, which is where a reader needs them
+- [x] **Advanced LLM Evaluation** moves, on the author's word ("advanced LLM Evaluation is the last order in
+      expert level which is wrong. put it in correct place"), from Expert's end to right after Advanced Online
+      Post-training (sheet 23), with the other model modules: its metrics judge a model's output, which is where a reader needs them
       after training it. Advanced RAG and the rest are one place lower.
 - [x] **Two Haiku xhigh reviews** (references; placement and accuracy): nothing lost or duplicated, every
       link into Expert resolves. Fixed from them: the online intro (answers are scored once finished, not as
@@ -2564,7 +2565,9 @@ keep them in the right module"; no DPO relatives he did not ask for.
       Turkish lines and the Turkish title of Advanced LLM; Expert's count (17, already wrong on main) and topics
       in README.md and index.md, its blurb in curriculum.yaml and 3_expert/README.md; 46 modules in INDEX.md and
       ARCHITECTURE.md; the stale "1..33" and "module 32" in sheets.ts and navigation.spec.ts; a Turkish link
-      label and a "LoRa" typo.
+      label and a "LoRa" typo. A second round on the Evaluation move: its intro ("Once you train or change a
+      model"), "(issue #46)" out of the public pages, its Turkish heading, BERTScore described, ROUGE worded the
+      same everywhere, and ROADMAP.md's Expert range now ending at Advanced Agent Servers.
 - [x] **Gate (2026-11-15)**: typecheck; 1,619 unit tests; build, link and bundle checks; the three forwards
       checked in the export.
 ---

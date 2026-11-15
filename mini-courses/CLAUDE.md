@@ -167,8 +167,6 @@ run of short sentences is the failure, and so is a dense line packed with clause
 - **Turkish** is natural, professional Turkish, the register of a good Turkish tech blog, with the
   reader as `sen`. Technical vocabulary stays English with Turkish suffixes (`context'in`,
   `weight'ler`); words Turks say in Turkish stay Turkish (`model`, `veri`, `kod`).
-  Never `meme`: in Turkish it reads as "breast". Write `eğlenceli görsel (mim)` the first time and
-  `mim` after it; and `brainrot` is `çerezlik içerik (brainrot)` (the author, 2026-11-11).
 - **Translate a teaching example, keep a data example.** "The capital of Turkey" becomes
   "Türkiye'nin başkenti"; a record of what a model was shown stays in English.
 
@@ -193,13 +191,6 @@ planned module gets none. Everything above holds, plus:
   module stays as in the English.
 - **Code blocks and the series map's mermaid stay byte-identical**; other diagrams translate labels
   only, and `node scripts/check-mermaid.mjs <file>_fa.md` must pass. Alt text is translated.
-
-## The About story's translations
-
-`STORY_tr.md` and `STORY_fa.md` mirror `STORY.md`: the same `##` sections in the same order with the same
-number of paragraphs in each, and the closing line is the motto with its language's lead, `Mottomuz:` in
-Turkish and `شعار ما:` in Persian, in place of `Our motto:`. The About page and the bundle read them
-(D132), and a story file with a different shape fails `tests/unit/content/story.test.ts`.
 
 ## Visuals
 
@@ -317,14 +308,14 @@ function or a terminal is.
 - Explain the core in full (MANIFESTO rule 19 names it); for the rest, knowing the keyword and why
   it matters is enough, so the module comes out shorter than the technical one.
 - End with `## Words You Now Know` (each keyword, one plain line), `## Summary` with the quick check,
-  and `## References`, which may stay a little technical. No series map, and no quiz of its own: it shows the technical module's one quiz (D137).
+  and `## References`, which may stay a little technical. No series map, and no quiz of its own: it shows the technical module's quiz.
 - Prose links are written as in the technical module (they resolve against its folder) and point at
   the For Everyone page once that module has one.
 - A draft or planned module gets no For Everyone version.
 
 ## The quick quiz
 
-A written module carries `<name>.quiz.yaml` beside it, shown at the end of the module page, on both tracks and in every language: the For Everyone page of a module shows the same quiz, so write its questions from the facts both texts share. It is
+A written module carries `<name>.quiz.yaml` beside it, shown at the end of the module page on both tracks, so write its questions from what both texts teach. It is
 reinforcement, not assessment: nothing is scored or stored.
 
 - **3 to 5 questions**, 4 options each, exactly one correct, and an explanation of one or two short

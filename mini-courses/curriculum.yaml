@@ -177,27 +177,41 @@ categories:
         status: draft
         notes: >-
           Serving a model to many users: the KV cache as the limit, MQA and GQA,
-          MLA, FlashAttention, PagedAttention (vLLM), prefix caching,
-          quantization for serving (FP8, INT8, 4-bit), tensor and pipeline
-          parallelism, prefill/decode disaggregation (llm-d), serving engines
+          MLA, FlashAttention, PagedAttention (vLLM), prefix caching, tensor and
+          pipeline parallelism, prefill/decode disaggregation (llm-d), serving engines
           (vLLM, SGLang, TensorRT-LLM). Split from Advanced Deployment (D140).
-      - name: advanced_fine_tuning
-        title: Advanced Fine-tuning
+      - name: advanced_llm_compression
+        title: Advanced LLM Compression
         status: draft
         notes: >-
+          Why compress (memory, cost, latency, smaller hardware); quantization
+          for serving (FP8, INT8, 4-bit), moved from Advanced LLM Deployment;
+          post-training quantization (GPTQ, AWQ) vs quantization-aware
+          training; GGUF for local models; pruning (unstructured vs
+          structured, 2:4 sparsity); knowledge distillation (from the retired
+          Advanced Training, moved from Advanced Post-training): teacher and
+          student, logits vs generated outputs; measuring the quality cost
+          (D141).
+      - name: advanced_offline_post_training
+        title: Advanced Offline Post-training
+        status: draft
+        notes: >-
+          Was Advanced Fine-tuning (D141). Model Alignment & Post-Training;
           Full Fine-Tuning: What Actually Changes?, Why Full Fine-Tuning Is
           Expensive, Why Parameter-Efficient Fine-Tuning (PEFT)?, LoRA, One
-          Frozen Model: Save and Swap LoRA Adapters
-      - name: advanced_post_training
-        title: Advanced Post-training
+          Frozen Model: Save and Swap LoRA Adapters (PEFT and LoRA serve the
+          online methods too); SFT; Why Preference Tuning, Preference Data
+          Formats, DPO, SFT vs. DPO: One Training Example (moved from Advanced
+          Post-training).
+      - name: advanced_online_post_training
+        title: Advanced Online Post-training
         status: draft
         notes: >-
-          Model Alignment & Post-Training, Why Preference Tuning, Preference
-          Data Formats, RLHF, Prompt Policy and Reward, Reward Model: Learning
-          From a Preferred Pair, What Exactly Is a Policy Model?, PPO, SFT vs.
-          DPO: One Training Example, DPO, GRPO, PPO vs. GRPO: Which Models Are
-          Needed?, RLAIF; knowledge distillation (from the retired Advanced
-          Training)
+          Was Advanced Post-training (D141). What online means (the model
+          generates, then it is scored); RLHF, Prompt Policy and Reward, Reward
+          Model: Learning From a Preferred Pair, What Exactly Is a Policy
+          Model?, PPO, GRPO, PPO vs. GRPO: Which Models Are Needed?, RLAIF;
+          short notes on online DPO and on-policy distillation.
       - name: advanced_rag
         title: Advanced RAG & Embeddings
         status: draft

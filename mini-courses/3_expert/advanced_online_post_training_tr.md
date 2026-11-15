@@ -1,24 +1,20 @@
-# İleri Seviye Post-training
+# İleri Seviye Online Post-training
 
 *(Bu bir placeholder modül: şimdilik kısa bir özet, tam ders içeriği yakında geliyor.)*
 
-Pre-training'i bitmiş bir base model bir metni devam ettirebilir, ama henüz bir asistan gibi davranmaz. Bu modül, talimatlara uysun ve insanların tercih ettiği cevapları tercih etsin diye bundan sonra modele neler yapıldığını anlatıyor.
+İleri Seviye Offline Post-training modülü, modeli sabit bir veri setinden eğitti. Online post-training'de ise model, training sırasında yeni cevaplar yazar ve her cevap yazıldığı anda puanlanır; böylece model kendi o anki davranışından öğrenir. Bu modül bu döngüyü ve modelin, insanların tercih ettiği cevapları tercih etmesini sağlayan yöntemleri anlatıyor.
 
 **Bu modülde işlenecek konular**:
-- Model alignment ve post-training
-- Neden preference tuning?
-- Preference verisinin formatları
+- Online ne demek: model üretir, sonra puanlanır
 - RLHF (insan geri bildirimiyle reinforcement learning)
 - Prompt, policy ve reward
 - Reward model: tercih edilen bir çiftten öğrenmek
 - Policy model tam olarak nedir?
 - PPO (proximal policy optimization)
-- SFT ve DPO: tek bir training örneği üzerinden
-- DPO (direct preference optimization)
 - GRPO (group relative policy optimization)
 - PPO ve GRPO: hangi modellere ihtiyaç var?
 - RLAIF (yapay zekâ geri bildirimiyle reinforcement learning)
-- Knowledge distillation (bilgi damıtma): büyük bir modelin bildiklerini küçük bir modele aktarmak
+- Kısa notlar: online DPO ve on-policy distillation
 
 **Başlangıç için kaynaklar**:
 - [Unsloth: reinforcement learning rehberi](https://unsloth.ai/docs/get-started/reinforcement-learning-rl-guide)

@@ -22,8 +22,12 @@ export const MOVED_MODULES: Readonly<Record<string, string>> = {
   'protocols/protocols-reference': 'ecosystem/protocols-reference',
   // Advanced Training was split into Advanced Fine-tuning and Advanced
   // Post-training (D101); its address goes to the second, which kept most of
-  // its topics.
-  'expert/advanced-training': 'expert/advanced-post-training',
+  // its topics, and which is now Advanced Online Post-training (D141).
+  'expert/advanced-training': 'expert/advanced-online-post-training',
+  // Advanced Fine-tuning and Advanced Post-training were renamed Advanced
+  // Offline Post-training and Advanced Online Post-training (D141).
+  'expert/advanced-fine-tuning': 'expert/advanced-offline-post-training',
+  'expert/advanced-post-training': 'expert/advanced-online-post-training',
   // Advanced Deployment was split into Advanced LLM Deployment and Advanced
   // Agent Deployment (D140); its address goes to the second, which kept its
   // topics.

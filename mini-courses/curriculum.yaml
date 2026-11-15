@@ -172,6 +172,15 @@ categories:
           model-norm-position-attention-KV-FFN-sparse table or selection;
           static vs. continuous batching; serving metrics (TTFT, generation
           speed); speculative decoding
+      - name: advanced_llm_deployment
+        title: Advanced LLM Deployment
+        status: draft
+        notes: >-
+          Serving a model to many users: the KV cache as the limit, MQA and GQA,
+          MLA, FlashAttention, PagedAttention (vLLM), prefix caching,
+          quantization for serving (FP8, INT8, 4-bit), tensor and pipeline
+          parallelism, prefill/decode disaggregation (llm-d), serving engines
+          (vLLM, SGLang, TensorRT-LLM). Split from Advanced Deployment (D140).
       - name: advanced_fine_tuning
         title: Advanced Fine-tuning
         status: draft
@@ -269,15 +278,6 @@ categories:
           generative UI (the agent producing the interface itself), shared
           state, steering a run mid-way, agentic GenUI, A2UI, MCP Apps, OpenUI,
           json-render, CopilotKit, Agent Client Protocol ACP, TUI for agents
-      - name: advanced_llm_deployment
-        title: Advanced LLM Deployment
-        status: draft
-        notes: >-
-          Serving a model to many users: the KV cache as the limit, MQA and GQA,
-          MLA, FlashAttention, PagedAttention (vLLM), prefix caching,
-          quantization for serving (FP8, INT8, 4-bit), tensor and pipeline
-          parallelism, prefill/decode disaggregation (llm-d), serving engines
-          (vLLM, SGLang, TensorRT-LLM). Split from Advanced Deployment (D140).
       - name: advanced_agent_deployment
         title: Advanced Agent Deployment
         status: draft

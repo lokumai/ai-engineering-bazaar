@@ -2,7 +2,7 @@
 
 *(Bu bir placeholder modül: şimdilik kısa bir özet, tam ders içeriği yakında geliyor.)*
 
-Advanced LLM modülü, üretimin her adımında ne olduğunu anlattı. Bu modül ise o modeli aynı anda çok sayıda kullanıcıya sunmakla ilgili: attention katmanı ve KV cache nasıl küçültülüp hızlandırılır, bellek istekler arasında nasıl paylaşılır ve tek bir model birçok GPU'ya nasıl dağıtılır. Modelin kendisini quantization, pruning ve distillation ile küçültmek ise bir sonraki modülün, İleri Seviye LLM Compression'ın konusu.
+İleri Seviye LLM modülü, üretimin her adımında ne olduğunu anlattı. Bu modül ise o modeli aynı anda çok sayıda kullanıcıya sunmakla ilgili: attention katmanı ve KV cache nasıl küçültülüp hızlandırılır, bellek istekler arasında nasıl paylaşılır ve tek bir model birçok GPU'ya nasıl dağıtılır. Modelin kendisini quantization, pruning ve distillation ile küçültmek ise bir sonraki modülün, İleri Seviye LLM Compression'ın konusu.
 
 **Bu modülde işlenecek konular**:
 - KV cache, tek bir GPU'nun kaç kullanıcıya hizmet verebileceğini neden belirler

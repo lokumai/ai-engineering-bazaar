@@ -19,7 +19,7 @@ import { A0, INDEX_SHEET, SHEETS } from './sheets'
  *
  * So the walk is the whole set, one click at a time, checking the URL and the
  * title at every step. Both ends are asserted too — §5.7 renders `— END OF
- * SET` rather than omitting the cell, and a link that wraps sheet 32 back to
+ * SET` rather than omitting the cell, and a link that wraps the last sheet back to
  * sheet 1 would make the set a loop with no first sheet. (That cell reads
  * `End of the course` since M11; `— END OF SET` was drawing-set vocabulary the
  * copy register's word boundaries could not see.)
@@ -40,7 +40,7 @@ test('module 1 has no previous', async ({ page }) => {
   await expect(page.locator('.bz-pager a[rel="next"]')).toHaveCount(1)
 })
 
-test('module 32 has no next', async ({ page }) => {
+test('the last module has no next', async ({ page }) => {
   await page.goto(last.path)
 
   await expect(page.locator('.bz-pager a[rel="next"]')).toHaveCount(0)
@@ -49,7 +49,7 @@ test('module 32 has no next', async ({ page }) => {
   await expect(page.locator('.bz-pager a[rel="prev"]')).toHaveCount(1)
 })
 
-test('next walks 1 to 32 straight through every category boundary', async ({ page }) => {
+test('next walks the whole set in order, straight through every category boundary', async ({ page }) => {
   test.slow() // thirty-one real navigations
 
   await page.goto(first.path)

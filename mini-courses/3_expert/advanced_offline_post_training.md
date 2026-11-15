@@ -2,7 +2,9 @@
 
 *(Placeholder module: a short overview for now, full lesson content is coming soon.)*
 
-A base model that has finished pre-training can continue a text, but it does not yet behave like an assistant. Post-training is what is done to it after that, and this module covers the offline part: the model learns from a fixed dataset that was collected before training, either examples of good answers or pairs of a preferred and a rejected answer. Training LLMs introduced fine-tuning and PEFT at a high level; this module also goes under that: what fine-tuning really changes inside a model, why changing all of it is so expensive, and how LoRA lets one frozen model carry many small adapters. PEFT and LoRA are tools that the online methods in Advanced Online Post-training use too.
+A base model that has finished pre-training can continue a text, but it does not yet behave like an assistant. Post-training is what is done to the model after that. This module covers the offline part. In offline post-training, the model learns from a fixed dataset that was collected before training. The dataset holds examples of good answers, or pairs of a preferred answer and a rejected answer.
+
+Training LLMs introduced fine-tuning and PEFT at a high level. This module explains them in more depth: what fine-tuning really changes inside a model, why changing all of it is so expensive, and how LoRA lets one frozen model carry many small adapters. The online methods in Advanced Online Post-training can use PEFT and LoRA too.
 
 **Topics this module will cover**:
 - Model alignment and post-training

@@ -159,7 +159,7 @@ categories:
   - slug: expert
     title: Expert
     status: draft
-    blurb: Inside the LLM, fine-tuning and post-training, advanced RAG, tools, memory, multi-agent, prompting, context, coding agents, harnesses, loops, architectures, UI, deployment, agent servers and evaluation.
+    blurb: Inside the LLM, LLM deployment and compression, offline and online post-training, LLM evaluation, advanced RAG, tools, memory, multi-agent, prompting, context, coding agents, harnesses, loops, architectures, UI, agent deployment and agent servers.
     modules:
       - name: advanced_llm
         title: Advanced LLM

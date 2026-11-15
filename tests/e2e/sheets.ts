@@ -24,7 +24,7 @@
 export type SheetFormat = 'A0' | 'A4'
 
 export interface Sheet {
-  /** Position in the set, 1..33. The prev/next chain walks this order. */
+  /** Position in the set, from 1. The prev/next chain walks this order. */
   module: number
   path: string
   title: string

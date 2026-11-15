@@ -27,7 +27,7 @@ Er ya da geç şirketindeki biri şunu soracak: "Yapay zekâyı kendi sunucular�
 
 **2. Hacim, bunu daha ucuz yapıyor.** Token başına ödemek başta çok iyi bir anlaşma. Ama çok büyük hacimde, kendi makinelerini kiralayıp modeli kendin çalıştırmak daha ucuz hâle geliyor.
 
-**3. Hiçbir provider'ın sunmadığı bir şeye ihtiyacın var**; örneğin [LLM Eğitimi](../1_fundamentals/training_tr.md) modülündeki kendi fine-tune ettiğin model, kimsenin barındırmadığı bir model ya da hangi sürümün çalıştığı üzerinde tam kontrol; böylece bir güncelleme seni asla şaşırtmaz.
+**3. Hiçbir provider'ın sunmadığı bir şeye ihtiyacın var**; örneğin [Training LLMs](../1_fundamentals/training_tr.md) modülündeki kendi fine-tune ettiğin model, kimsenin barındırmadığı bir model ya da hangi sürümün çalıştığı üzerinde tam kontrol; böylece bir güncelleme seni asla şaşırtmaz.
 
 Bunların hiçbiri doğru değilse bir provider kullan. Modelleri kendin çalıştırmak, bir ekip için gerçek ve süregelen bir iş ve ilk ay çoğunlukla bütçelemeyi unuttuğun şeyleri öğreniyorsun.
 

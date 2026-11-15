@@ -7,7 +7,7 @@ A large model takes a lot of memory, costs a lot to run and answers slowly. This
 **Topics this module will cover**:
 - Why compress: memory, cost, latency, and running on smaller hardware
 - Quantization: FP8, INT8 and 4-bit weights
-- Post-training quantization (GPTQ, AWQ) vs. quantization-aware training
+- Post-training quantization (quantizing a model after its training ends, as GPTQ and AWQ do) vs. quantization-aware training
 - GGUF for local models
 - Pruning: unstructured vs. structured, and 2:4 sparsity
 - Knowledge distillation: teaching a small model from a large one

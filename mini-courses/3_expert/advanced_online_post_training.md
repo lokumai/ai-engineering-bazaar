@@ -2,13 +2,13 @@
 
 *(Placeholder module: a short overview for now, full lesson content is coming soon.)*
 
-Advanced Offline Post-training taught a model from a fixed dataset. In online post-training, the model writes new answers during training, and each answer is scored as it is written, so the model learns from its own current behaviour. This module covers that loop, and the methods that make the model prefer the answers people prefer.
+Advanced Offline Post-training taught a model from a fixed dataset. In online post-training, the model writes new answers during training, and each answer is scored once it is finished, so the model learns from its own current behaviour. This module covers that loop, and the methods that make the model prefer the answers that people, or an AI judge, prefer.
 
 **Topics this module will cover**:
 - What online means: the model generates, then it is scored
 - RLHF (reinforcement learning from human feedback)
 - Prompt, policy and reward
-- The reward model: learning from a preferred pair
+- The reward model: learning from a preferred pair, before the online loop starts
 - What exactly is a policy model?
 - PPO (proximal policy optimization)
 - GRPO (group relative policy optimization)

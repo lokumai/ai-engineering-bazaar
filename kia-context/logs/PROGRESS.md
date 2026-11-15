@@ -2554,6 +2554,9 @@ keep them in the right module"; no DPO relatives he did not ask for.
 - [x] **Addresses**: `/advanced-fine-tuning/` forwards to Offline Post-training; `/advanced-post-training/` and
       the older `/advanced-training/` to Online Post-training (`MOVED_MODULES`). `curriculum.yaml`, `topics.txt`
       (renumbered from 20), `tests/e2e/sheets.ts` and `lokum-modules.css` follow.
+- [x] **Advanced LLM Evaluation** moves from Expert's end to right after Advanced Online Post-training (sheet
+      23), with the other model modules: its metrics judge a model's output, which is where a reader needs them
+      after training it. Advanced RAG and the rest are one place lower.
 - [x] **Gate (2026-11-15)**: typecheck; 1,619 unit tests; build, link and bundle checks; the three forwards
       checked in the export.
 ---

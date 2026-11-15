@@ -212,6 +212,15 @@ categories:
           Model: Learning From a Preferred Pair, What Exactly Is a Policy
           Model?, PPO, GRPO, PPO vs. GRPO: Which Models Are Needed?, RLAIF;
           short notes on online DPO and on-policy distillation.
+      - name: advanced_llm_evaluation
+        title: Advanced LLM Evaluation
+        status: draft
+        notes: >-
+          issue #46. Static and objective metrics: BLEU (n-gram word matching),
+          ROUGE (overlap or recall), METEOR (penalizing order), accuracy and
+          precision, cosine similarity (BERTScore). Dynamic and subjective
+          metrics: faithfulness, LLM-as-judge, human preference
+
       - name: advanced_rag
         title: Advanced RAG & Embeddings
         status: draft
@@ -311,15 +320,6 @@ categories:
           author's notes: Aegra (Redis worker queue, lease locks, heartbeat),
           SkeinJS (BullMQ on Redis), the Vercel AI SDK with serverless durable
           orchestration (Inngest/Temporal), Redis Streams (PEL, append-only log)
-      - name: advanced_llm_evaluation
-        title: Advanced LLM Evaluation
-        status: draft
-        notes: >-
-          issue #46. Static and objective metrics: BLEU (n-gram word matching),
-          ROUGE (overlap or recall), METEOR (penalizing order), accuracy and
-          precision, cosine similarity (BERTScore). Dynamic and subjective
-          metrics: faithfulness, LLM-as-judge, human preference
-
   - slug: ecosystem
     title: Ecosystem
     status: draft

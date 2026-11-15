@@ -9,7 +9,7 @@ description: >
 authority: reasoning
 writes: agent, when a decision is taken
 status: active
-covers: "D97 to D141 so far, and D89, which part 2 held for PR #57 — 2026-11-06 onward"
+covers: "D97 to D142 so far, and D89, which part 2 held for PR #57 — 2026-11-06 onward"
 last_updated: 2026-11-15
 ---
 
@@ -1383,6 +1383,25 @@ quantization, pruning and distillation (M123).
   Advanced LLM Compression.
 - **Old addresses forward**: Advanced Fine-tuning's to the offline module; Advanced Post-training's, and
   Advanced Training's before it (D101), to the online module, which keeps RLHF, the old module's core.
+---
+
+### D142 · The MANIFESTO states no counts or durations · 2026-11-15
+status: active
+
+The author, reviewing the stale "Thirty-three short modules": "do not include things in MANIFESTO such as
+these numbers that get stale quickly. review MANIFESTO carefully and revise it a little."
+
+- **No module count and no minutes in the MANIFESTO.** §3 and rule 4 had both drifted (33 modules against
+  46; a duration corrected once already, D65). A promise that carries a number is a promise that goes
+  stale; rule 12 already says counts and durations are derived from the material, so the MANIFESTO now
+  points there instead. Rule 4 keeps its point, short on purpose and read in one sitting, and its number.
+- **The revision also corrected what had stopped being true:** the one sentence (Persian is no longer
+  partial, and there are two tracks), the North Star (no accounts since D88; "ten minutes" contradicted
+  rule 4), "three groups" over a list of four, "rules 8 to 18" over nineteen, rule 11 against the quick
+  quiz (it is the reader's own, ungraded), and the account question in §7. Rule numbers are unchanged.
+- **Rejected:** updating the numbers to today's values, which would only move the drift forward.
+- **Left for the author:** `mini-courses/MANIFEST.md`, his public document, still says "five to ten" minutes
+  a module, and the MANIFESTO defers to it where they disagree.
 ---
 
 > **← Part 2: [`BRAINSTORM_2.md`](BRAINSTORM_2.md)** — D26 to D96. **← Part 1:

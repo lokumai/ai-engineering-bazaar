@@ -2568,6 +2568,8 @@ keep them in the right module"; no DPO relatives he did not ask for.
       label and a "LoRa" typo. A second round on the Evaluation move: its intro ("Once you train or change a
       model"), "(issue #46)" out of the public pages, its Turkish heading, BERTScore described, ROUGE worded the
       same everywhere, and ROADMAP.md's Expert range now ending at Advanced Agent Servers.
+- [x] **MANIFESTO revised** on the author's word (D142): no module count or minutes; the one sentence, the
+      North Star, the reader groups, rule 11 and the account question brought up to date; rule numbers kept.
 - [x] **Gate (2026-11-15)**: typecheck; 1,619 unit tests; build, link and bundle checks; the three forwards
       checked in the export.
 ---

@@ -97,6 +97,13 @@ Bunu açıkça söylemek gerekiyor, çünkü mühendisler genelde bunu atlar. Pe
 
 Takas da bildiğin türden: şimdi hız kazanırsın, sonra daha az kontrol elde edersin. Platformdan ayrılırsan uygulamayı baştan yazman gerekir. Bu takasın hangi tarafını satın aldığını bilerek karar ver.
 
+## Büyük Resim
+
+Bir agent framework'ü, daha büyük bir yapının yalnızca bir katmanıdır. Aşağıdaki harita, bu modüldeki framework'lerin bu yapıda nerede durduğunu gösteriyor. **Applications** kutusunda onlar var: LangGraph, LlamaIndex, smolagents, CrewAI, PydanticAI, Mastra ve n8n gibi workflow araçları. Bu kutunun çevresinde, bir üretken yapay zekâ (generative AI) sisteminin ihtiyaç duyduğu diğer katmanlar yer alıyor: bir agent'ın ne yaptığını izlemek için **observability** ([Observability](../1_fundamentals/observability_tr.md)), bir modeli **eğitmek** ve fine-tune etmek için araçlar, bir modeli tüketici GPU'larında ya da birçok GPU üzerinde çalıştıran **inference** engine'leri ([Inference Engine'ler](./inference_engines_tr.md)), **inference'ı hizmet olarak** satan sağlayıcılar ([Inference Provider'lar](./inference_providers_tr.md)) ve bunların altında her şeyin üzerinde çalıştığı işlem gücü, GPU bulutları ve edge cihazları.
+
+![Katman katman üretken yapay zekâ framework'lerinin haritası](./images/genai-frameworks-map.webp)  
+*Bir üretken yapay zekâ sisteminin katmanları ve her katmandaki bilinen araçlar: en üstte observability, en altta GPU bulutları ve edge cihazları. Bu modüldeki bir framework, Applications kutusunda çalışır ve altındaki katmanları kullanır. Harita: [The AI Merge](https://read.theaimerge.com/).*
+
 ## Temel Terimler
 
 - **Agent framework**: agent döngüsünün etrafındaki her şey: yeniden deneme, streaming, tool şemaları ve hafıza.

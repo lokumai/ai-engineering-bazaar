@@ -91,6 +91,13 @@ with a form, that takes hours instead of weeks.
 The trade-off: you get speed now and less control later. If you ever move off the platform, you
 build the app again. Know which of those you are buying.
 
+## The Wider Map
+
+A framework is one piece of a bigger picture. The map below shows that picture. The frameworks from this module sit in the **Applications** box: LangGraph, LlamaIndex, CrewAI, n8n and others. The other boxes are the other pieces an AI system needs: tools that watch what the AI did, tools that train a model, programs and companies that run a model for you, and at the bottom the computers and data centres that everything runs on.
+
+![A map of the tools behind AI systems, piece by piece](../images/genai-frameworks-map.webp)  
+*The pieces of an AI system and well-known tools in each. You do not need to know these names. The point is that a framework is one layer, and many other layers work under it. Map by [The AI Merge](https://read.theaimerge.com/).*
+
 ## Words You Now Know
 
 - **Framework**: ready-made software around the agent loop.

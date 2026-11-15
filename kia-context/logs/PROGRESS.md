@@ -11,7 +11,7 @@ description: >
   backgrounds and copy (M81), Agentic UI (M82), the cast's colours (M83), and M84 to M90 (content
   and site fixes, the home page in Turkish and Persian, Dariush's motif, block menus in the top layer,
   and About, the story of the Bazaar); Caravan built (M91), its real trends waiting (M92) and its second
-  round (M93); multilingual SEO (M96); translated objectives on the site (M98) and in the bundle (M99); the story in the bundle (M100); three screen recordings and Human in the Loop moved into Agentic UI (M101); the search filters applied by a button (M102); a laptop section in Inference Engines (M103); the word count in the bundle (M105), the checklist index (M106), the diagrams without empty rects (M107) and five logos without CSS (M108); the About page in Turkish and Persian (M109); the module page's own words in Turkish and Persian (M110); the footer without its first row (M111); the tool-call recording cropped to the chat and the reasoning recording sped up (M112); the LokumAI mark on the References' Modules subsection (M113); stall 1 naming the treaty and the About page's name (M114); a replay button on every animated recording (M115); the quick quiz on both tracks (M116); the privacy note for the mobile app (M117); translated titles in the bundle's index (M118); lot-map in Code Agents and Agents in Practice (M119); Advanced Deployment split into LLM and agent deployment (M120); a map of the generative AI stack in Agent Frameworks (M121); Advanced LLM Deployment moved after Advanced LLM (M122); LLM Compression and offline/online post-training (M123); and M41, the content bundle for the mobile reader. Each milestone carries its deliverables and acceptance
+  round (M93); multilingual SEO (M96); translated objectives on the site (M98) and in the bundle (M99); the story in the bundle (M100); three screen recordings and Human in the Loop moved into Agentic UI (M101); the search filters applied by a button (M102); a laptop section in Inference Engines (M103); the word count in the bundle (M105), the checklist index (M106), the diagrams without empty rects (M107) and five logos without CSS (M108); the About page in Turkish and Persian (M109); the module page's own words in Turkish and Persian (M110); the footer without its first row (M111); the tool-call recording cropped to the chat and the reasoning recording sped up (M112); the LokumAI mark on the References' Modules subsection (M113); stall 1 naming the treaty and the About page's name (M114); a replay button on every animated recording (M115); the quick quiz on both tracks (M116); the privacy note for the mobile app (M117); translated titles in the bundle's index (M118); lot-map in Code Agents and Agents in Practice (M119); Advanced Deployment split into LLM and agent deployment (M120); a map of the generative AI stack in Agent Frameworks (M121); Advanced LLM Deployment moved after Advanced LLM (M122); LLM Compression and offline/online post-training (M123); Advanced Agent Architectures after Advanced Multi-Agent (M124); and M41, the content bundle for the mobile reader. Each milestone carries its deliverables and acceptance
   criteria as `- [ ]` checkboxes, ticked as the work lands, and closes with a dated report; the loop
   that governs that is below, in this file.
   NOT here: why a choice was made (BRAINSTORM.md), or any rule that outlives the milestone
@@ -19,7 +19,7 @@ description: >
 authority: state
 writes: agent, every session
 status: active
-covers: "M50 to M123, 2026-11-06 onward, and M41, which part 2 held for PR #57"
+covers: "M50 to M124, 2026-11-06 onward, and M41, which part 2 held for PR #57"
 last_updated: 2026-11-15
 ---
 
@@ -2572,6 +2572,17 @@ keep them in the right module"; no DPO relatives he did not ask for.
       North Star, the reader groups, rule 11 and the account question brought up to date; rule numbers kept.
 - [x] **Gate (2026-11-15)**: typecheck; 1,619 unit tests; build, link and bundle checks; the three forwards
       checked in the export.
+---
+
+## 🏁 Milestone M124: Advanced Agent Architectures right after Advanced Multi-Agent, DONE
+
+The author, 2026-11-15: Advanced Agent Architectures "should come right after advanced multi-agent".
+
+- [x] It is Expert's sheet 28, after Advanced Multi-Agent (27); Advanced Prompting to Advanced Loop
+      Engineering are one place lower (29 to 33). `curriculum.yaml`, `scratchpad/topics.txt`,
+      `tests/e2e/sheets.ts`, and the Expert topic lists in README.md, index.md, the curriculum blurb and
+      `3_expert/README.md` follow. Advanced Loop Engineering's links to it name no position, so they stay.
+- [x] **Gate (2026-11-15)**: 1,619 unit tests; build, link and bundle checks; navigation spec 18/18.
 ---
 
 > **← Part 2: [`PROGRESS_2.md`](PROGRESS_2.md)** — M16 to M49. **← Part 1: [`PROGRESS_1.md`](PROGRESS_1.md)**

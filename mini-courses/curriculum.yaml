@@ -159,7 +159,7 @@ categories:
   - slug: expert
     title: Expert
     status: draft
-    blurb: Inside the LLM, LLM deployment and compression, offline and online post-training, LLM evaluation, advanced RAG, tools, memory, multi-agent, prompting, context, coding agents, harnesses, loops, architectures, UI, agent deployment and agent servers.
+    blurb: Inside the LLM, LLM deployment and compression, offline and online post-training, LLM evaluation, advanced RAG, tools, memory, multi-agent, agent architectures, prompting, context, coding agents, harnesses, loops, UI, agent deployment and agent servers.
     modules:
       - name: advanced_llm
         title: Advanced LLM
@@ -251,6 +251,12 @@ categories:
           coordination context delegation (handoff) vs subagent context
           delegation vs messaging pool, background agents and monitoring,
           context forking for subagents
+      - name: advanced_agent_architectures
+        title: Advanced Agent Architectures
+        status: draft
+        notes: >-
+          THREAD, ReAct, Deep, CodeAct, RLM (Dynamic Workflows are taught in
+          Advanced Loop Engineering, issue #48)
       - name: advanced_prompting
         title: Advanced Prompting
         status: draft
@@ -287,12 +293,6 @@ categories:
         notes: >-
           issue #48. Agent Teams, Dynamic Workflows and RLMs, moved here from
           Loop Engineering
-      - name: advanced_agent_architectures
-        title: Advanced Agent Architectures
-        status: draft
-        notes: >-
-          THREAD, ReAct, Deep, CodeAct, RLM (Dynamic Workflows are taught in
-          Advanced Loop Engineering, issue #48)
       - name: advanced_ui
         title: Advanced Agentic UI
         status: draft

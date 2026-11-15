@@ -34,8 +34,7 @@
  *   lantern, `Articles`, `Sources`, `Videos` on the signpost, `AI` on Bit's
  *   chest) are drawing, and the drawing does not change with the language.
  * - **Technical words** (AI, LLM, brain rot) are not translated, the way a
- *   module keeps them (`mini-courses/CLAUDE.md`, "Translating a module"). Turkish is the
- *   exception for `meme` and `brain rot`; the same file says what it writes instead.
+ *   module keeps them (`mini-courses/CLAUDE.md`, "Translating a module").
  *
  * ## Why this file is outside `components/home`
  *

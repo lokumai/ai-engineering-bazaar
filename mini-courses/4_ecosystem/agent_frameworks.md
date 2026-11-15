@@ -98,6 +98,13 @@ This is worth saying plainly, because engineers tend to skip it. For a lot of jo
 
 The trade-off is the usual one. You get speed now and less control later. If you move off the platform, you must build the application again. Know which of those you are buying.
 
+## The Wider Map
+
+An agent framework is one layer of a larger stack. The map below puts the frameworks of this module in place. The **Applications** box holds them: LangGraph, LlamaIndex, smolagents, CrewAI, PydanticAI, Mastra, and workflow tools such as n8n. Around that box are the other layers a generative AI system needs: **observability** to trace what an agent did ([Observability](../1_fundamentals/observability.md)), tools to **train** and fine-tune a model, **inference** engines that run a model on consumer GPUs or across many GPUs ([Inference Engines](./inference_engines.md)), providers that sell **inference as a service** ([Inference Providers](./inference_providers.md)), and below them the compute, the GPU clouds and the edge devices that everything runs on.
+
+![A map of generative AI frameworks, layer by layer](./images/genai-frameworks-map.webp)  
+*The layers of a generative AI system and well-known tools in each, from observability at the top to GPU clouds and edge devices at the bottom. A framework from this module works in the Applications box and calls down into the layers below it. Map by [The AI Merge](https://read.theaimerge.com/).*
+
 ## Key Terms
 
 - **Agent framework**: the code around the agent loop, such as retries, streaming, tool schemas and memory.

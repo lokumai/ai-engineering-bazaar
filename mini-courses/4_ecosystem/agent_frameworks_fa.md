@@ -97,6 +97,13 @@ graph TD
 
 بده‌بستونش هم همون همیشگیه: الان سرعت می‌گیری و بعداً کنترلت کمتره، و اگه بخوای از پلتفرم بری بیرون، باید اپلیکیشن رو از نو بسازی. پس حواست باشه داری چی رو با چی معامله می‌کنی.
 
+## نقشه‌ی کلی
+
+یه agent framework فقط یکی از لایه‌های یه ساختار بزرگ‌تره. نقشه‌ی پایین نشون می‌ده framework‌های این ماژول کجای این ساختار قرار می‌گیرن. توی جعبه‌ی **Applications** خودشونن: LangGraph، LlamaIndex، smolagents، CrewAI، PydanticAI، Mastra و ابزارهای workflow مثل n8n. دور این جعبه، لایه‌های دیگه‌ای هستن که یه سیستم هوش مصنوعی مولد (generative AI) لازم داره: **observability** برای این‌که ببینی یه agent چی‌کار کرده ([Observability](../1_fundamentals/observability_fa.md))، ابزارهایی برای **آموزش** و fine-tune کردن مدل، inference engine‌هایی که مدل رو روی GPU‌های معمولی یا روی چندتا GPU اجرا می‌کنن ([Inference Engine‌ها](./inference_engines_fa.md))، شرکت‌هایی که **inference رو به‌عنوان سرویس** می‌فروشن ([Inference Provider‌ها](./inference_providers_fa.md))، و زیر همه‌ی این‌ها قدرت پردازش، ابرهای GPU و دستگاه‌های edge که همه‌چی روشون اجرا می‌شه.
+
+![نقشه‌ی framework‌های هوش مصنوعی مولد، لایه به لایه](./images/genai-frameworks-map.webp)  
+*لایه‌های یه سیستم هوش مصنوعی مولد و ابزارهای معروف هر لایه: بالای نقشه observability، پایینش ابرهای GPU و دستگاه‌های edge. یه framework از این ماژول توی جعبه‌ی Applications کار می‌کنه و از لایه‌های زیرش استفاده می‌کنه. نقشه از [The AI Merge](https://read.theaimerge.com/).*
+
 ## اصطلاح‌های کلیدی
 
 - **Agent framework**: همه‌ی چیزهایی که دور agent loop لازم داری، مثل retry، streaming، tool schema و memory.

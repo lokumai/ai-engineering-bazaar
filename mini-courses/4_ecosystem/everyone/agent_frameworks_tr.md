@@ -68,6 +68,13 @@ Birçok iş için doğru cevap bir no-code platform. ![](../images/logos/lovable
 
 Bedeli şu: şimdi hız kazanıyorsun, sonra daha az kontrol. Platformdan hiç ayrılırsan uygulamayı yeniden yaparsın. Bu ikisinden hangisini satın aldığını bil.
 
+## Büyük Resim
+
+Bir framework, daha büyük bir resmin yalnızca bir parçasıdır. Aşağıdaki harita bu resmi gösteriyor. Bu modüldeki framework'ler **Applications** kutusunda: LangGraph, LlamaIndex, CrewAI, n8n ve diğerleri. Diğer kutular, bir yapay zekâ sisteminin ihtiyaç duyduğu diğer parçalar: yapay zekânın ne yaptığını izleyen araçlar, bir modeli eğiten araçlar, bir modeli senin için çalıştıran programlar ve şirketler, en altta da her şeyin üzerinde çalıştığı bilgisayarlar ve veri merkezleri.
+
+![Bir yapay zekâ sisteminin arkasındaki araçların haritası, parça parça](../images/genai-frameworks-map.webp)  
+*Bir yapay zekâ sisteminin parçaları ve her parçadaki bilinen araçlar. Bu isimleri bilmen gerekmiyor. Önemli olan, bir framework'ün tek bir katman olduğu ve altında başka birçok katmanın çalıştığıdır. Harita: [The AI Merge](https://read.theaimerge.com/).*
+
 ## Artık Bildiğin Terimler
 
 - **Framework**: agent döngüsünün etrafındaki hazır yazılım.

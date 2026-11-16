@@ -42,7 +42,7 @@ while it works, or where the agent designs the screen itself, come in the Expert
 
 ## Agentic UI vs. Traditional UI
 
-A normal app is built for a quick back-and-forth. You click, it does what you asked, and you decide
+A normal app is built for quick questions and answers. You click, it does what you asked, and you decide
 what to do next. Some tasks take longer, like downloading a large file with a progress bar, but the app
 still only does what you told it to, and the same click always gives the same result.
 

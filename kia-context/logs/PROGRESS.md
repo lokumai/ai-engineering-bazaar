@@ -2600,6 +2600,9 @@ and its scratchpad name assistant-ui, OpenUI and CopilotKit's two generative UI 
       changes on its own, "no vocabulary" for progress, though progress bars exist). Rewritten: the real
       difference is who decides the next step; "usually" where it generalises; the Engineers track credits
       What Is Agentic UI?; reconnecting is what a well-built agentic UI does, not the category.
+- [x] **Language review** (Haiku xhigh): "back-and-forth" and its Persian calque became "questions and
+      answers"; the spinner keeps the one name each file already uses (not "yükleme simgesi" or "لودینگ");
+      the Persian heading says "رابط سنتی", the file's own term, in both tracks.
 - [x] **Advanced Agentic UI** (EN, TR, `curriculum.yaml`, `topics.txt`): assistant-ui and the generative UI
       spectrum (controlled, declarative, open) as topics; [What is the Generative UI Spectrum?] and
       [assistant-ui · The frontend library for AI agents] added as references with their fetched titles; the

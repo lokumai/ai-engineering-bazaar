@@ -51,7 +51,7 @@ Bir agent bu kalıbı dört yerden bozar. CopilotKit'in
 | Sonraki adıma kim karar verir | Kullanıcı | Agent; kullanıcı da izler |
 | Ekranı kim değiştirir | Genellikle yalnızca kullanıcı | Kullanıcı ve agent |
 | Bir işlem ne kadar sürer | Genellikle birkaç saniye ya da daha az | Dakikalar, saatler, bazen günler |
-| İş sürerken | Bir yükleme simgesi ya da ilerleme çubuğu | Her adım, olduğu anda |
+| İş sürerken | Bir spinner ya da ilerleme çubuğu | Her adım, olduğu anda |
 | Aynı istek iki kez | Aynı sonuç | Farklı bir sonuç olabilir; kullanıcı onu gözden geçirir |
 | Bağlantı koparsa | İstek yeniden gönderilir | Yeniden bağlanılır ve run izlenmeye devam edilir |
 

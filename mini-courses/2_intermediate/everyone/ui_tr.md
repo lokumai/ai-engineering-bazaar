@@ -50,7 +50,7 @@ Bir yapay zekâ agent'ı farklı çalışır:
 | Sonraki adıma kim karar verir | Sen | Yapay zekâ; sen de izlersin |
 | Ekranı kim değiştirir | Genellikle yalnızca sen | Sen ve yapay zekâ |
 | Bir iş ne kadar sürer | Genellikle bir an | Dakikalar ya da daha uzun |
-| Beklerken | Bir yükleme simgesi ya da ilerleme çubuğu | Her adımı, olduğu anda |
+| Beklerken | Bir spinner ya da ilerleme çubuğu | Her adımı, olduğu anda |
 | Aynı istek iki kez | Aynı cevap | Belki farklı bir cevap; bu yüzden kontrol edersin |
 | İnternet koparsa | Yeniden tıklarsın | Yeniden bağlanır, işi geldiği yerden izlersin |
 

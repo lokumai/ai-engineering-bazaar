@@ -2603,6 +2603,8 @@ and its scratchpad name assistant-ui, OpenUI and CopilotKit's two generative UI 
 - [x] **Language review** (Haiku xhigh): "back-and-forth" and its Persian calque became "questions and
       answers"; the spinner keeps the one name each file already uses (not "yükleme simgesi" or "لودینگ");
       the Persian heading says "رابط سنتی", the file's own term, in both tracks.
+      A second read of the rewrite fixed a Turkish calque ("geldiği yerden", which reads as the origin)
+      and a switched subject, and wrote "upload" in Latin letters in the Persian technical file.
 - [x] **Advanced Agentic UI** (EN, TR, `curriculum.yaml`, `topics.txt`): assistant-ui and the generative UI
       spectrum (controlled, declarative, open) as topics; [What is the Generative UI Spectrum?] and
       [assistant-ui · The frontend library for AI agents] added as references with their fetched titles; the

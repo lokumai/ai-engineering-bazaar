@@ -43,16 +43,16 @@ Bir yapay zekâ agent'ı farklı çalışır:
 - **Uygulamanın içinde kendisi iş yapar;** bu yüzden ekranda senin yapmadığın değişiklikleri de görürsün.
 - **Sonuçları her seferinde aynı olmaz;** bu yüzden ekran, işini kontrol edip düzeltmene izin verir.
 - **Çalışırken internet kopabilir;** iyi yapılmış bir agentic UI'da geri döndüğünde işin nereye
-  geldiğini görür ve oradan izlemeye devam edersin.
+  geldiğini görürsün ve oradan izlemeye devam edersin.
 
 | | Normal bir uygulama | Agentic UI |
 | --- | --- | --- |
 | Sonraki adıma kim karar verir | Sen | Yapay zekâ; sen de izlersin |
 | Ekranı kim değiştirir | Genellikle yalnızca sen | Sen ve yapay zekâ |
 | Bir iş ne kadar sürer | Genellikle bir an | Dakikalar ya da daha uzun |
-| Beklerken | Bir spinner ya da ilerleme çubuğu | Her adımı, olduğu anda |
+| Beklerken | Bir spinner ya da ilerleme çubuğu | Her adım, olduğu anda |
 | Aynı istek iki kez | Aynı cevap | Belki farklı bir cevap; bu yüzden kontrol edersin |
-| İnternet koparsa | Yeniden tıklarsın | Yeniden bağlanır, işi geldiği yerden izlersin |
+| İnternet koparsa | Yeniden tıklarsın | Yeniden bağlanır ve işin nereye geldiğini gösterir |
 
 ## Run'ı Neden Stream Ederiz
 

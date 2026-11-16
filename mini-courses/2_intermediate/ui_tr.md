@@ -44,7 +44,7 @@ Bir agent bu kalıbı dört yerden bozar. CopilotKit'in
 - **Sonuç her seferinde farklı olabilir;** bu yüzden arayüz, ilk sonucu kesin saymak yerine kullanıcının
   onu gözden geçirip düzeltmesine izin verir.
 - **Uzun bir run'ın ortasında bağlantı kopabilir;** bu yüzden iyi yapılmış bir agentic UI, kullanıcının
-  yeniden bağlanıp run'ı geldiği yerden izlemeye devam etmesini sağlar.
+  yeniden bağlanıp run'ı şu ana kadar ulaştığı yerden izlemeye devam etmesini sağlar.
 
 | | Geleneksel UI | Agentic UI |
 | --- | --- | --- |
@@ -53,7 +53,7 @@ Bir agent bu kalıbı dört yerden bozar. CopilotKit'in
 | Bir işlem ne kadar sürer | Genellikle birkaç saniye ya da daha az | Dakikalar, saatler, bazen günler |
 | İş sürerken | Bir spinner ya da ilerleme çubuğu | Her adım, olduğu anda |
 | Aynı istek iki kez | Aynı sonuç | Farklı bir sonuç olabilir; kullanıcı onu gözden geçirir |
-| Bağlantı koparsa | İstek yeniden gönderilir | Yeniden bağlanılır ve run izlenmeye devam edilir |
+| Bağlantı koparsa | İstek yeniden gönderilir | Arayüz yeniden bağlanır ve run'ı izlemeye devam eder |
 
 ## Run'ı Neden Stream Ederiz
 

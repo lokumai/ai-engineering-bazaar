@@ -52,8 +52,7 @@ An AI agent works differently:
   only showing that it is busy.
 - **It does things inside the app itself**, so the screen shows changes that you did not make.
 - **Its results are not the same every time**, so the screen lets you check its work and correct it.
-- **The internet can drop while it works**, so a well-made agentic UI lets you come back, see how far
-  the work has got, and follow it from there.
+- **The internet can drop while it works**, so a well-made agentic UI lets you come back, see the point the work has reached, and follow it from there.
 
 | | A normal app | An agentic UI |
 | --- | --- | --- |
@@ -62,7 +61,7 @@ An AI agent works differently:
 | One task takes | Usually a moment | Minutes or longer |
 | While you wait | A spinner or a progress bar | Each step, as it happens |
 | The same request twice | The same answer | Maybe a different answer, so you check it |
-| If the internet drops | You click again | You reconnect and follow the work |
+| If the internet drops | You click again | You come back and follow the work |
 
 ## Why Stream the Run
 

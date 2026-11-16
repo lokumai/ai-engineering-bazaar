@@ -55,7 +55,7 @@ An agent breaks that pattern in four ways. CopilotKit's guide
 - **The result can differ each time**, so the interface lets the user review and correct it instead of
   treating the first result as final.
 - **A connection can drop in the middle of a long run**, so a well-built agentic UI lets the user
-  reconnect and follow the run from where it has got to.
+  reconnect and follow the run from the point it has reached.
 
 | | Traditional UI | Agentic UI |
 | --- | --- | --- |

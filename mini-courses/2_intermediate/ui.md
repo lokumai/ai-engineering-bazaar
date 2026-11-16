@@ -39,6 +39,34 @@ the agent's work as it happens**, the protocol that standardises it, and **human
 the approvals. Steering a run while it works, shared state and interface that the agent generates
 itself belong to the Expert module, [Advanced Agentic UI](../3_expert/advanced_ui.md).
 
+## Agentic UI vs. Traditional UI
+
+Traditional UI is built on one assumption: request and response. The user acts, the system answers, and
+the exchange is over in milliseconds. Everything in conventional interface design follows from that
+assumption. Screens are predictable because the software is predictable. Loading states are short
+because answers are fast. Nothing changes unless the user changes it, so the screen never has to show
+what another actor is doing.
+
+Agents break every one of those assumptions:
+
+- **A session runs for a long time**, so the interface narrates the progress instead of blocking until
+  there is a result.
+- **The agent acts on the application**, so the interface shows changes that the user did not make.
+- **The outcome is not deterministic**, so the interface supports review and correction instead of
+  assuming that the first result is final.
+- **Connections drop in the middle of a run**, so a session reconnects and resumes without losing its
+  place.
+
+Traditional UI has no vocabulary for any of this. Agentic UI is that vocabulary.
+
+| | Traditional UI | Agentic UI |
+| --- | --- | --- |
+| Who changes the screen | Only the user | The user and the agent |
+| How long one action takes | A fraction of a second | Minutes, sometimes hours |
+| While it works | A short spinner | Live progress, step by step |
+| The same request twice | The same result | A different result, so the user reviews it |
+| If the connection drops | Send the request again | The run resumes where it stopped |
+
 ## Why Stream the Run
 
 An agent run takes time. A single answer from a model already arrives one token at a time, as

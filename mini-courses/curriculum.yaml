@@ -298,8 +298,12 @@ categories:
         status: draft
         notes: >-
           generative UI (the agent producing the interface itself), shared
-          state, steering a run mid-way, agentic GenUI, A2UI, MCP Apps, OpenUI,
-          json-render, CopilotKit, Agent Client Protocol ACP, TUI for agents
+          state, steering a run mid-way, agentic GenUI, the generative UI
+          spectrum (controlled, declarative, open), A2UI, MCP Apps, OpenUI,
+          json-render, CopilotKit, assistant-ui, Agent Client Protocol ACP, TUI
+          for agents. Sources include https://www.assistant-ui.com/,
+          https://www.openui.com/, https://www.copilotkit.ai/generative-ui-spectrum
+          and https://www.copilotkit.ai/generative-ui
       - name: advanced_agent_deployment
         title: Advanced Agent Deployment
         status: draft

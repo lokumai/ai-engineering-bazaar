@@ -27,6 +27,35 @@ Bildiğin arayüzlerden farkı, işi kimin yaptığında.
 
 Bu modül, tanımın her agentic UI'ın dayandığı kısımlarını anlatıyor: **agent'ın işini gerçekleştikçe stream etmek**, bunu standartlaştıran protocol ve onaylar, yani **human in the loop**. Bir run'ı çalışırken yönlendirmek, ortak state ve agent'ın kendi ürettiği arayüz ise Expert modülün konusu: [İleri Seviye Agentic UI](../3_expert/advanced_ui_tr.md).
 
+## Agentic UI ve Geleneksel UI
+
+Geleneksel UI tek bir varsayıma dayanır: istek ve cevap. Kullanıcı bir şey yapar, sistem cevap verir ve
+bu alışveriş milisaniyeler içinde biter. Alışık olduğumuz arayüz tasarımındaki her şey bu varsayımdan
+çıkar. Ekranlar öngörülebilirdir, çünkü yazılımın kendisi de öngörülebilirdir. Yükleme durumları kısadır,
+çünkü cevaplar hızlı gelir. Kullanıcı bir şeyi değiştirmedikçe hiçbir şey değişmez; bu yüzden ekranın
+başka birinin ne yaptığını göstermesi hiç gerekmez.
+
+Agent'lar bu varsayımların her birini bozar:
+
+- **Bir oturum uzun sürer;** bu yüzden arayüz, bir sonuç çıkana kadar donup kalmak yerine ilerlemeyi
+  anlatır.
+- **Agent uygulamanın içinde iş yapar;** bu yüzden arayüz, kullanıcının yapmadığı değişiklikleri de
+  gösterir.
+- **Sonuç her seferinde aynı olmaz;** bu yüzden arayüz, ilk sonucu kesin saymak yerine gözden geçirmeye
+  ve düzeltmeye izin verir.
+- **Bağlantı, çalışmanın ortasında kopabilir;** bu yüzden oturum yeniden bağlanır ve kaldığı yerden
+  devam eder.
+
+Geleneksel UI'ın bunların hiçbiri için bir dili yok. Agentic UI tam olarak o dil.
+
+| | Geleneksel UI | Agentic UI |
+| --- | --- | --- |
+| Ekranı kim değiştirir | Yalnızca kullanıcı | Kullanıcı ve agent |
+| Bir işlem ne kadar sürer | Saniyenin bir kesri | Dakikalar, bazen saatler |
+| İş sürerken | Kısa bir yükleme simgesi | Adım adım canlı ilerleme |
+| Aynı istek iki kez | Aynı sonuç | Farklı bir sonuç; kullanıcı onu gözden geçirir |
+| Bağlantı koparsa | İstek yeniden gönderilir | Çalışma kaldığı yerden devam eder |
+
 ## Run'ı Neden Stream Ederiz
 
 Bir agent run'ı zaman alır. Modelin tek bir cevabı bile, [LLM Temelleri](../1_fundamentals/llms_tr.md) modülünde gördüğün gibi, token token gelir. Agent bunun üstüne daha fazlasını ekler: düşünür, bir tool çağırır, sonucu bekler, başka bir tool çağırır ve subagent'lar başlatabilir. Bütün run bir dakika da sürebilir, bir saat de.

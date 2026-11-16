@@ -29,6 +29,30 @@ Sade bir dille söylersek, fark işi kimin yaptığında:
 
 Bu modül, bunların hepsinin temelini anlatıyor: **agent'ın işini gerçekleştikçe göstermek** ve agent'ın önemli bir adımdan önce **durup sana sorması**. Agent çalışırken onu yönlendirdiğin ya da agent'ın ekranı kendisinin tasarladığı kısımlar Expert seviyesinde geliyor.
 
+## Agentic UI ve Geleneksel UI
+
+Normal bir uygulama hızlı bir alışveriş için yapılmıştır. Tıklarsın, bir anda cevap verir ve iş biter.
+Bu yüzden ekranları basittir: aynı tıklama her zaman aynı sonucu verir, yükleme simgesi bir an sürer ve
+sen bir şeyi değiştirmedikçe ekranda hiçbir şey kıpırdamaz.
+
+Bir yapay zekâ agent'ı bunların hepsini değiştirir:
+
+- **Uzun süre çalışır;** bu yüzden ekran, yükleme simgesi yerine ne yaptığını sana adım adım anlatır.
+- **Uygulamanın içinde kendisi iş yapar;** bu yüzden ekranda senin yapmadığın değişiklikleri de görürsün.
+- **Sonuçları her seferinde aynı olmaz;** bu yüzden ekran, işini kontrol edip düzeltmene izin verir.
+- **Çalışırken bağlantı kopabilir;** bu yüzden geri döndüğünde iş kaldığı yerden devam eder.
+
+Normal bir uygulamanın bunların hiçbirini gösterecek bir yolu yoktur. Agentic UI tam da bunları
+göstermek için yapılır.
+
+| | Normal bir uygulama | Agentic UI |
+| --- | --- | --- |
+| Ekranı kim değiştirir | Yalnızca sen | Sen ve yapay zekâ |
+| Bir iş ne kadar sürer | Bir an | Dakikalar ya da daha uzun |
+| Beklerken | Bir yükleme simgesi | Adım adım ilerlemesi |
+| Aynı istek iki kez | Aynı cevap | Belki farklı bir cevap; bu yüzden kontrol edersin |
+| İnternet koparsa | Yeniden tıklarsın | Kaldığı yerden devam eder |
+
 ## Run'ı Neden Stream Ederiz
 
 Bir yemek uygulamasından sipariş verdiğini düşün. Kapıda, ne olduğunu bilmeden bekleyebilirsin. Ya da uygulama sana her adımı gösterir: sipariş alındı, hazırlanıyor, yolda, kapında. Yemek her iki durumda da aynı anda gelir. Ama ikinci durumda neler olduğunu bilirsin ve bir şey ters giderse erkenden öğrenirsin.

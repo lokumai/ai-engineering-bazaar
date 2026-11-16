@@ -6,6 +6,7 @@ Everything in agentic UI beyond streaming and human in the loop: the human steer
 
 **Topics this module will cover**:
 - Generative UI: the agent producing the interface itself, not only the text inside it, and the ways to do it, each with its trade-offs
+- The generative UI spectrum: controlled, declarative and open interfaces
 - Shared state: the screen and the agent reading and writing the same application state
 - Steering: the human redirecting a run while the agent works
 - Agentic generative UI: interface generated while the agent runs
@@ -14,12 +15,14 @@ Everything in agentic UI beyond streaming and human in the loop: the human steer
 - OpenUI
 - json-render
 - CopilotKit
+- assistant-ui
 - Agent Client Protocol (ACP)
 - TUI for agents
 
 **References to start from**:
 - [What is agentic UI?](https://www.copilotkit.ai/learning/what-is-agentic-ui): the concept on its own, before any framework
-- [Generative UI](https://www.copilotkit.ai/generative-ui): an interface the agent produces rather than one written in advance, and the ways to build it
+- [Generative UI: Understanding Agent-Powered Interfaces](https://www.copilotkit.ai/generative-ui): an interface the agent produces rather than one written in advance, and the ways to build it
+- [What is the Generative UI Spectrum?](https://www.copilotkit.ai/generative-ui-spectrum): CopilotKit's map of generative UI, from controlled components to fully open canvases
 - [Generative UI: A rich, custom, visual interactive user experience for any prompt](https://research.google/blog/generative-ui-a-rich-custom-visual-interactive-user-experience-for-any-prompt/): Google Research on a model that generates a whole interface for a prompt
 - [AG-UI Protocol](https://www.copilotkit.ai/ag-ui) and the [CopilotKit Interactive Dojo](https://dojo.ag-ui.com/): the protocol beyond streaming, and live demos of shared state and generative UI
 - [A2UI: Get Started in 5 Minutes](https://a2ui.org/#get-started-in-5-minutes) and [How Agents Work](https://a2ui.org/reference/agents/#how-agents-work): the protocol, from the shortest way in to the agent side of it
@@ -28,5 +31,6 @@ Everything in agentic UI beyond streaming and human in the loop: the human steer
 - [CopilotKit: Agent Context](https://docs.copilotkit.ai/agent-app-context), [shared state](https://docs.copilotkit.ai/shared-state) and [frontend tools](https://docs.copilotkit.ai/frontend-tools): the three pieces that let an agent read the app it lives inside and act on it
 - [OpenGenerativeUI](https://github.com/CopilotKit/OpenGenerativeUI): CopilotKit's open-source generative UI framework
 - [json-render](https://github.com/vercel-labs/json-render): Vercel Labs' generative UI framework
-- [OpenUI](https://www.openui.com/): the open standard for generative UI, built on a streaming-first language; its makers report far fewer tokens than JSON-based UI formats, in their own benchmark
+- [assistant-ui · The frontend library for AI agents](https://www.assistant-ui.com/): open-source React components and runtimes for AI chat, with streaming, tools and persistence
+- [OpenUI - The Open Standard for Generative UI](https://www.openui.com/): a streaming-first language for generative UI; its makers report far fewer tokens than JSON-based UI formats, in their own benchmark
 - [LangChain: headless tools](https://docs.langchain.com/oss/python/langchain/frontend/headless-tools): tools whose real execution happens in the user's app instead of on the server

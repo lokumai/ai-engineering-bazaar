@@ -40,6 +40,29 @@ This module covers the base of all of this: **showing the agent's work as it hap
 agent **stopping to ask you** before a step that matters. The parts where you steer the agent
 while it works, or where the agent designs the screen itself, come in the Expert level.
 
+## Agentic UI vs. Traditional UI
+
+A normal app is built for quick questions and answers. You click, it does what you asked, and you decide
+what to do next. Some tasks take longer, like downloading a large file with a progress bar, but the app
+still only does what you told it to, and the same click always gives the same result.
+
+An AI agent works differently:
+
+- **It can work for a long time**, so the screen tells you what it is doing, step by step, instead of
+  only showing that it is busy.
+- **It does things inside the app itself**, so the screen shows changes that you did not make.
+- **Its results are not the same every time**, so the screen lets you check its work and correct it.
+- **The internet can drop while it works**, so a well-made agentic UI lets you come back, see the point the work has reached, and follow it from there.
+
+| | A normal app | An agentic UI |
+| --- | --- | --- |
+| Who decides the next step | You | The AI, while you watch |
+| Who changes the screen | Usually only you | You and the AI |
+| One task takes | Usually a moment | Minutes or longer |
+| While you wait | A spinner or a progress bar | Each step, as it happens |
+| The same request twice | The same answer | Maybe a different answer, so you check it |
+| If the internet drops | You click again | You come back and follow the work |
+
 ## Why Stream the Run
 
 Think of ordering food with a delivery app. You can wait at the door with no idea what is

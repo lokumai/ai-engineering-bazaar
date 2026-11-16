@@ -39,6 +39,33 @@ the agent's work as it happens**, the protocol that standardises it, and **human
 the approvals. Steering a run while it works, shared state and interface that the agent generates
 itself belong to the Expert module, [Advanced Agentic UI](../3_expert/advanced_ui.md).
 
+## Agentic UI vs. Traditional UI
+
+Most interface design rests on one pattern: request and response. The user acts, the software
+answers, and the user decides what to do next. Even a slow action, such as uploading a large file with a
+progress bar, only carries out what the user asked for, and it gives the same result every time.
+
+An agent breaks that pattern in four ways. CopilotKit's guide
+[What Is Agentic UI?](https://www.copilotkit.ai/learning/what-is-agentic-ui) describes them like this:
+
+- **A run can last minutes or hours**, so the interface shows each step as it happens instead of making
+  the user wait for the end. The next section is about this.
+- **The agent changes the application itself**, so the interface has to show changes that the user did
+  not make.
+- **The result can differ each time**, so the interface lets the user review and correct it instead of
+  treating the first result as final.
+- **A connection can drop in the middle of a long run**, so a well-built agentic UI lets the user
+  reconnect and follow the run from the point it has reached.
+
+| | Traditional UI | Agentic UI |
+| --- | --- | --- |
+| Who decides the next step | The user | The agent, while the user watches |
+| Who changes the screen | Usually only the user | The user and the agent |
+| How long one action takes | Usually seconds or less | Minutes, hours, sometimes days |
+| While it works | A spinner or a progress bar | Each step, as it happens |
+| The same request twice | The same result | Possibly a different result, so the user reviews it |
+| If the connection drops | Send the request again | Reconnect and follow the run |
+
 ## Why Stream the Run
 
 An agent run takes time. A single answer from a model already arrives one token at a time, as

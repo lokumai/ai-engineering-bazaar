@@ -29,6 +29,31 @@ Sade bir dille söylersek, fark işi kimin yaptığında:
 
 Bu modül, bunların hepsinin temelini anlatıyor: **agent'ın işini gerçekleştikçe göstermek** ve agent'ın önemli bir adımdan önce **durup sana sorması**. Agent çalışırken onu yönlendirdiğin ya da agent'ın ekranı kendisinin tasarladığı kısımlar Expert seviyesinde geliyor.
 
+## Agentic UI ve Geleneksel UI
+
+Normal bir uygulama hızlı bir soru-cevap için yapılmıştır. Tıklarsın, uygulama istediğini yapar ve
+sonra ne yapacağına sen karar verirsin. Büyük bir dosya indirmek gibi bazı işler daha uzun sürer ve bir
+ilerleme çubuğu görürsün; ama uygulama yine yalnızca senin istediğini yapar ve aynı tıklama hep aynı
+sonucu verir.
+
+Bir yapay zekâ agent'ı farklı çalışır:
+
+- **Uzun süre çalışabilir;** bu yüzden ekran, yalnızca meşgul olduğunu göstermek yerine ne yaptığını
+  sana adım adım anlatır.
+- **Uygulamanın içinde kendisi iş yapar;** bu yüzden ekranda senin yapmadığın değişiklikleri de görürsün.
+- **Sonuçları her seferinde aynı olmaz;** bu yüzden ekran, işini kontrol edip düzeltmene izin verir.
+- **Çalışırken internet kopabilir;** iyi yapılmış bir agentic UI'da geri döndüğünde işin nereye
+  geldiğini görürsün ve oradan izlemeye devam edersin.
+
+| | Normal bir uygulama | Agentic UI |
+| --- | --- | --- |
+| Sonraki adıma kim karar verir | Sen | Yapay zekâ; sen de izlersin |
+| Ekranı kim değiştirir | Genellikle yalnızca sen | Sen ve yapay zekâ |
+| Bir iş ne kadar sürer | Genellikle bir an | Dakikalar ya da daha uzun |
+| Beklerken | Bir spinner ya da ilerleme çubuğu | Her adım, olduğu anda |
+| Aynı istek iki kez | Aynı cevap | Belki farklı bir cevap; bu yüzden kontrol edersin |
+| İnternet koparsa | Yeniden tıklarsın | Yeniden bağlanır ve işin nereye geldiğini gösterir |
+
 ## Run'ı Neden Stream Ederiz
 
 Bir yemek uygulamasından sipariş verdiğini düşün. Kapıda, ne olduğunu bilmeden bekleyebilirsin. Ya da uygulama sana her adımı gösterir: sipariş alındı, hazırlanıyor, yolda, kapında. Yemek her iki durumda da aynı anda gelir. Ama ikinci durumda neler olduğunu bilirsin ve bir şey ters giderse erkenden öğrenirsin.

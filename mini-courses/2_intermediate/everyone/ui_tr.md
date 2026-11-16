@@ -31,27 +31,28 @@ Bu modül, bunların hepsinin temelini anlatıyor: **agent'ın işini gerçekle�
 
 ## Agentic UI ve Geleneksel UI
 
-Normal bir uygulama hızlı bir alışveriş için yapılmıştır. Tıklarsın, bir anda cevap verir ve iş biter.
-Bu yüzden ekranları basittir: aynı tıklama her zaman aynı sonucu verir, yükleme simgesi bir an sürer ve
-sen bir şeyi değiştirmedikçe ekranda hiçbir şey kıpırdamaz.
+Normal bir uygulama hızlı bir soru-cevap için yapılmıştır. Tıklarsın, uygulama istediğini yapar ve
+sonra ne yapacağına sen karar verirsin. Büyük bir dosya indirmek gibi bazı işler daha uzun sürer ve bir
+ilerleme çubuğu görürsün; ama uygulama yine yalnızca senin istediğini yapar ve aynı tıklama hep aynı
+sonucu verir.
 
-Bir yapay zekâ agent'ı bunların hepsini değiştirir:
+Bir yapay zekâ agent'ı farklı çalışır:
 
-- **Uzun süre çalışır;** bu yüzden ekran, yükleme simgesi yerine ne yaptığını sana adım adım anlatır.
+- **Uzun süre çalışabilir;** bu yüzden ekran, yalnızca meşgul olduğunu göstermek yerine ne yaptığını
+  sana adım adım anlatır.
 - **Uygulamanın içinde kendisi iş yapar;** bu yüzden ekranda senin yapmadığın değişiklikleri de görürsün.
 - **Sonuçları her seferinde aynı olmaz;** bu yüzden ekran, işini kontrol edip düzeltmene izin verir.
-- **Çalışırken bağlantı kopabilir;** bu yüzden geri döndüğünde iş kaldığı yerden devam eder.
-
-Normal bir uygulamanın bunların hiçbirini gösterecek bir yolu yoktur. Agentic UI tam da bunları
-göstermek için yapılır.
+- **Çalışırken internet kopabilir;** iyi yapılmış bir agentic UI'da geri döndüğünde işin nereye
+  geldiğini görür ve oradan izlemeye devam edersin.
 
 | | Normal bir uygulama | Agentic UI |
 | --- | --- | --- |
-| Ekranı kim değiştirir | Yalnızca sen | Sen ve yapay zekâ |
-| Bir iş ne kadar sürer | Bir an | Dakikalar ya da daha uzun |
-| Beklerken | Bir yükleme simgesi | Adım adım ilerlemesi |
+| Sonraki adıma kim karar verir | Sen | Yapay zekâ; sen de izlersin |
+| Ekranı kim değiştirir | Genellikle yalnızca sen | Sen ve yapay zekâ |
+| Bir iş ne kadar sürer | Genellikle bir an | Dakikalar ya da daha uzun |
+| Beklerken | Bir yükleme simgesi ya da ilerleme çubuğu | Her adımı, olduğu anda |
 | Aynı istek iki kez | Aynı cevap | Belki farklı bir cevap; bu yüzden kontrol edersin |
-| İnternet koparsa | Yeniden tıklarsın | Kaldığı yerden devam eder |
+| İnternet koparsa | Yeniden tıklarsın | Yeniden bağlanır, işi geldiği yerden izlersin |
 
 ## Run'ı Neden Stream Ederiz
 

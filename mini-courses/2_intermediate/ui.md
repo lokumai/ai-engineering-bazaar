@@ -41,31 +41,30 @@ itself belong to the Expert module, [Advanced Agentic UI](../3_expert/advanced_u
 
 ## Agentic UI vs. Traditional UI
 
-Traditional UI is built on one assumption: request and response. The user acts, the system answers, and
-the exchange is over in milliseconds. Everything in conventional interface design follows from that
-assumption. Screens are predictable because the software is predictable. Loading states are short
-because answers are fast. Nothing changes unless the user changes it, so the screen never has to show
-what another actor is doing.
+Most interface design rests on one pattern: request and response. The user acts, the software
+answers, and the user decides what to do next. Even a slow action, such as uploading a large file with a
+progress bar, only carries out what the user asked for, and it gives the same result every time.
 
-Agents break every one of those assumptions:
+An agent breaks that pattern in four ways. CopilotKit's guide
+[What Is Agentic UI?](https://www.copilotkit.ai/learning/what-is-agentic-ui) describes them like this:
 
-- **A session runs for a long time**, so the interface narrates the progress instead of blocking until
-  there is a result.
-- **The agent acts on the application**, so the interface shows changes that the user did not make.
-- **The outcome is not deterministic**, so the interface supports review and correction instead of
-  assuming that the first result is final.
-- **Connections drop in the middle of a run**, so a session reconnects and resumes without losing its
-  place.
-
-Traditional UI has no vocabulary for any of this. Agentic UI is that vocabulary.
+- **A run can last minutes or hours**, so the interface shows each step as it happens instead of making
+  the user wait for the end. The next section is about this.
+- **The agent changes the application itself**, so the interface has to show changes that the user did
+  not make.
+- **The result can differ each time**, so the interface lets the user review and correct it instead of
+  treating the first result as final.
+- **A connection can drop in the middle of a long run**, so a well-built agentic UI lets the user
+  reconnect and follow the run from where it has got to.
 
 | | Traditional UI | Agentic UI |
 | --- | --- | --- |
-| Who changes the screen | Only the user | The user and the agent |
-| How long one action takes | A fraction of a second | Minutes, sometimes hours |
-| While it works | A short spinner | Live progress, step by step |
-| The same request twice | The same result | A different result, so the user reviews it |
-| If the connection drops | Send the request again | The run resumes where it stopped |
+| Who decides the next step | The user | The agent, while the user watches |
+| Who changes the screen | Usually only the user | The user and the agent |
+| How long one action takes | Usually seconds or less | Minutes, hours, sometimes days |
+| While it works | A spinner or a progress bar | Each step, as it happens |
+| The same request twice | The same result | Possibly a different result, so the user reviews it |
+| If the connection drops | Send the request again | Reconnect and follow the run |
 
 ## Why Stream the Run
 

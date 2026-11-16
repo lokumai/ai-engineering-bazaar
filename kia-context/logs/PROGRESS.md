@@ -2592,14 +2592,19 @@ table, in English, Turkish and Persian, then the For Everyone version; and make 
 and its scratchpad name assistant-ui, OpenUI and CopilotKit's two generative UI pages.
 
 - [x] **"Agentic UI vs. Traditional UI"** after "What Agentic UI is", both tracks, EN/TR/FA: the
-      request-response assumption, the four assumptions an agent breaks (long sessions, the agent changing
-      the app, non-deterministic results, dropped connections), "agentic UI is that vocabulary", and a
-      five-row table. The For Everyone text says the same in plain words. Same heading per language in
-      both tracks.
+      request-response pattern, the four ways an agent breaks it (long runs, the agent changing the app,
+      results that differ, dropped connections), and a six-row table. The For Everyone text says the same
+      in plain words. Same heading per language in both tracks.
+- [x] **Accuracy review** (Haiku xhigh): the first draft followed CopilotKit's "Agentic UI vs.
+      traditional UI" section closely without saying so, and overstated it (a traditional screen "never"
+      changes on its own, "no vocabulary" for progress, though progress bars exist). Rewritten: the real
+      difference is who decides the next step; "usually" where it generalises; the Engineers track credits
+      What Is Agentic UI?; reconnecting is what a well-built agentic UI does, not the category.
 - [x] **Advanced Agentic UI** (EN, TR, `curriculum.yaml`, `topics.txt`): assistant-ui and the generative UI
       spectrum (controlled, declarative, open) as topics; [What is the Generative UI Spectrum?] and
-      [assistant-ui: The frontend library for AI agents] added as references with their fetched titles, the
-      Generative UI link given its real title; OpenUI was already there.
+      [assistant-ui · The frontend library for AI agents] added as references with their fetched titles; the
+      Generative UI and OpenUI links given their real titles.
+- [x] **Gate (2026-11-16)**: typecheck; 1,619 unit tests; build, link and bundle checks.
 ---
 
 > **← Part 2: [`PROGRESS_2.md`](PROGRESS_2.md)** — M16 to M49. **← Part 1: [`PROGRESS_1.md`](PROGRESS_1.md)**

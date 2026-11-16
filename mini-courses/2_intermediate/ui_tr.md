@@ -29,32 +29,31 @@ Bu modül, tanımın her agentic UI'ın dayandığı kısımlarını anlatıyor:
 
 ## Agentic UI ve Geleneksel UI
 
-Geleneksel UI tek bir varsayıma dayanır: istek ve cevap. Kullanıcı bir şey yapar, sistem cevap verir ve
-bu alışveriş milisaniyeler içinde biter. Alışık olduğumuz arayüz tasarımındaki her şey bu varsayımdan
-çıkar. Ekranlar öngörülebilirdir, çünkü yazılımın kendisi de öngörülebilirdir. Yükleme durumları kısadır,
-çünkü cevaplar hızlı gelir. Kullanıcı bir şeyi değiştirmedikçe hiçbir şey değişmez; bu yüzden ekranın
-başka birinin ne yaptığını göstermesi hiç gerekmez.
+Arayüz tasarımının çoğu tek bir kalıba dayanır: istek ve cevap. Kullanıcı bir şey yapar, yazılım
+cevap verir ve sonra ne yapılacağına yine kullanıcı karar verir. Büyük bir dosyayı ilerleme çubuğuyla
+yüklemek gibi uzun süren bir işlem bile yalnızca kullanıcının istediği işi yapar ve her seferinde aynı
+sonucu verir.
 
-Agent'lar bu varsayımların her birini bozar:
+Bir agent bu kalıbı dört yerden bozar. CopilotKit'in
+[What Is Agentic UI?](https://www.copilotkit.ai/learning/what-is-agentic-ui) yazısı bunları şöyle anlatıyor:
 
-- **Bir oturum uzun sürer;** bu yüzden arayüz, bir sonuç çıkana kadar donup kalmak yerine ilerlemeyi
-  anlatır.
-- **Agent uygulamanın içinde iş yapar;** bu yüzden arayüz, kullanıcının yapmadığı değişiklikleri de
-  gösterir.
-- **Sonuç her seferinde aynı olmaz;** bu yüzden arayüz, ilk sonucu kesin saymak yerine gözden geçirmeye
-  ve düzeltmeye izin verir.
-- **Bağlantı, çalışmanın ortasında kopabilir;** bu yüzden oturum yeniden bağlanır ve kaldığı yerden
-  devam eder.
-
-Geleneksel UI'ın bunların hiçbiri için bir dili yok. Agentic UI tam olarak o dil.
+- **Bir run dakikalarca, hatta saatlerce sürebilir;** bu yüzden arayüz, kullanıcıyı sonuna kadar
+  bekletmek yerine her adımı olduğu anda gösterir. Bir sonraki bölüm bunu anlatıyor.
+- **Agent uygulamayı kendisi değiştirir;** bu yüzden arayüz, kullanıcının yapmadığı değişiklikleri de
+  göstermek zorundadır.
+- **Sonuç her seferinde farklı olabilir;** bu yüzden arayüz, ilk sonucu kesin saymak yerine kullanıcının
+  onu gözden geçirip düzeltmesine izin verir.
+- **Uzun bir run'ın ortasında bağlantı kopabilir;** bu yüzden iyi yapılmış bir agentic UI, kullanıcının
+  yeniden bağlanıp run'ı geldiği yerden izlemeye devam etmesini sağlar.
 
 | | Geleneksel UI | Agentic UI |
 | --- | --- | --- |
-| Ekranı kim değiştirir | Yalnızca kullanıcı | Kullanıcı ve agent |
-| Bir işlem ne kadar sürer | Saniyenin bir kesri | Dakikalar, bazen saatler |
-| İş sürerken | Kısa bir yükleme simgesi | Adım adım canlı ilerleme |
-| Aynı istek iki kez | Aynı sonuç | Farklı bir sonuç; kullanıcı onu gözden geçirir |
-| Bağlantı koparsa | İstek yeniden gönderilir | Çalışma kaldığı yerden devam eder |
+| Sonraki adıma kim karar verir | Kullanıcı | Agent; kullanıcı da izler |
+| Ekranı kim değiştirir | Genellikle yalnızca kullanıcı | Kullanıcı ve agent |
+| Bir işlem ne kadar sürer | Genellikle birkaç saniye ya da daha az | Dakikalar, saatler, bazen günler |
+| İş sürerken | Bir yükleme simgesi ya da ilerleme çubuğu | Her adım, olduğu anda |
+| Aynı istek iki kez | Aynı sonuç | Farklı bir sonuç olabilir; kullanıcı onu gözden geçirir |
+| Bağlantı koparsa | İstek yeniden gönderilir | Yeniden bağlanılır ve run izlenmeye devam edilir |
 
 ## Run'ı Neden Stream Ederiz
 

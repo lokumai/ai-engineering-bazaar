@@ -31,6 +31,6 @@ Agentic UI'da streaming'in ve human in the loop'un ötesindeki her şey: insanı
 - [CopilotKit: agent-app context](https://docs.copilotkit.ai/agent-app-context), [shared state](https://docs.copilotkit.ai/shared-state) ve [frontend tools](https://docs.copilotkit.ai/frontend-tools): bir agent'ın içinde yaşadığı uygulamayı okuyup üzerinde iş yapmasını sağlayan üç parça
 - [OpenGenerativeUI](https://github.com/CopilotKit/OpenGenerativeUI): CopilotKit'in açık kaynak generative UI framework'ü
 - [json-render](https://github.com/vercel-labs/json-render): Vercel Labs'ın generative UI framework'ü
-- [assistant-ui: The frontend library for AI agents](https://www.assistant-ui.com/): yapay zekâ sohbetleri için açık kaynak React bileşenleri ve runtime'lar; streaming, tool'lar ve kalıcılık ile
-- [OpenUI](https://www.openui.com/): generative UI için renderer'dan bağımsız açık bir standart, streaming öncelikli, JSON göndermekten çok daha az token iddiasıyla
+- [assistant-ui · The frontend library for AI agents](https://www.assistant-ui.com/): yapay zekâ sohbetleri için açık kaynak React bileşenleri ve runtime'lar; streaming, tool'lar ve kalıcılık ile
+- [OpenUI - The Open Standard for Generative UI](https://www.openui.com/): generative UI için renderer'dan bağımsız açık bir standart, streaming öncelikli, JSON göndermekten çok daha az token iddiasıyla
 - [LangChain: headless tool'lar](https://docs.langchain.com/oss/python/langchain/frontend/headless-tools): aynı fikir framework tarafından, kendi arayüzü olmayan tool'lar

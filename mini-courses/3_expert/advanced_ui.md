@@ -31,6 +31,6 @@ Everything in agentic UI beyond streaming and human in the loop: the human steer
 - [CopilotKit: Agent Context](https://docs.copilotkit.ai/agent-app-context), [shared state](https://docs.copilotkit.ai/shared-state) and [frontend tools](https://docs.copilotkit.ai/frontend-tools): the three pieces that let an agent read the app it lives inside and act on it
 - [OpenGenerativeUI](https://github.com/CopilotKit/OpenGenerativeUI): CopilotKit's open-source generative UI framework
 - [json-render](https://github.com/vercel-labs/json-render): Vercel Labs' generative UI framework
-- [assistant-ui: The frontend library for AI agents](https://www.assistant-ui.com/): open-source React components and runtimes for AI chat, with streaming, tools and persistence
-- [OpenUI](https://www.openui.com/): the open standard for generative UI, built on a streaming-first language; its makers report far fewer tokens than JSON-based UI formats, in their own benchmark
+- [assistant-ui · The frontend library for AI agents](https://www.assistant-ui.com/): open-source React components and runtimes for AI chat, with streaming, tools and persistence
+- [OpenUI - The Open Standard for Generative UI](https://www.openui.com/): a streaming-first language for generative UI; its makers report far fewer tokens than JSON-based UI formats, in their own benchmark
 - [LangChain: headless tools](https://docs.langchain.com/oss/python/langchain/frontend/headless-tools): tools whose real execution happens in the user's app instead of on the server

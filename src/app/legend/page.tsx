@@ -3,6 +3,7 @@ import { canonicalOf } from '@/lib/content/seo'
 import { RECORD_SCOPE } from '@/lib/record/scope'
 import {
   AFFILIATION,
+  FEEDBACK_URL,
   GITHUB_PAGES_LABEL,
   GITHUB_PAGES_URL,
   GITHUB_PRIVACY_LABEL,
@@ -183,6 +184,11 @@ export default function LegendPage() {
               <p>
                 This site collects no personal data. It sets no cookies, and it has no analytics, no account and
                 no form.
+              </p>
+              <p>
+                The <a className="bz-link" href={FEEDBACK_URL}>Feedback</a> link in the footer opens a Google Form on
+                Google&apos;s own site. It is anonymous unless you add your email, and only what you choose to send
+                reaches us.
               </p>
             </div>
           </div>

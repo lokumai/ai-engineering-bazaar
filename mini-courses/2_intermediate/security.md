@@ -136,7 +136,9 @@ Everything above is about protecting an LLM. Now point the same capability outwa
 - **[Shannon](https://github.com/KeygraphHQ/shannon)** reads your source code and finds the attack vectors. Then it runs real exploits to prove that a vulnerability is genuine, not only theoretical.
 - ![](./images/logos/pentagi-mono.svg)**[PentAGI](https://github.com/vxcontrol/pentagi)** is a fully autonomous multi-agent system for complex penetration testing tasks.
 - ![](./images/logos/pentestswarm.svg)**[Pentest Swarm AI](https://github.com/Armur-Ai/Pentest-Swarm-AI)** splits the job across specialist agents for recon, classification, exploitation and reporting. It has modes for bug bounty work, continuous monitoring and CTFs.
+- **[ARTEX](https://github.com/BaaRai/ARTEX)** is a self-hosted penetration tester built from several agents. Every finding it reports stays tied to the captured request and response that prove it, and every action it takes passes through scope rules and a person's approval.
 - **[claude-red](https://github.com/SnailSploit/Claude-Red)** is not an agent at all. It is a library of offensive security **skills**, in the sense that [Code Agents](coding_agents.md) described. There is one `SKILL.md` per attack surface. Each one gives an ordinary coding agent an expert's method for that surface.
+- **[Claude-BugHunter](https://github.com/elementalsouls/Claude-BugHunter)** is another skill library, built for bug bounty work, where companies pay outside researchers for the flaws they report. Its skills come from hundreds of publicly disclosed bug reports, and they cover the whole job, from finding a flaw to writing the report.
 
 That last one is the neat one, because it needs no new software. It turns out that the extension mechanism from Code Agents is enough.
 
@@ -235,6 +237,7 @@ Next: agents that live with you and not in a repository, and what that does to e
 - [OpenRT](https://github.com/AI45Lab/OpenRT): more than 40 attack methods for multimodal models
 - [PyRIT](https://github.com/microsoft/PyRIT): Microsoft's red-teaming framework, with Crescendo, TAP and PAIR as classes you can run
 - [AI Red Teaming Playground Labs](https://github.com/microsoft/AI-Red-Teaming-Playground-Labs): labs and infrastructure for learning this by doing it
-- [Strix](https://github.com/usestrix/strix), [Shannon](https://github.com/KeygraphHQ/shannon), [PentAGI](https://github.com/vxcontrol/pentagi) and [Pentest Swarm AI](https://github.com/Armur-Ai/Pentest-Swarm-AI): agents that do the penetration testing
+- [Strix](https://github.com/usestrix/strix), [Shannon](https://github.com/KeygraphHQ/shannon), [PentAGI](https://github.com/vxcontrol/pentagi), [Pentest Swarm AI](https://github.com/Armur-Ai/Pentest-Swarm-AI) and [ARTEX](https://github.com/BaaRai/ARTEX): agents that do the penetration testing
 - [claude-red](https://github.com/SnailSploit/Claude-Red): offensive security as a skill library for an agent you already have
+- [Claude-BugHunter](https://github.com/elementalsouls/Claude-BugHunter): bug bounty hunting as a skill library, drawn from disclosed reports
 - [security-audit-skill](https://github.com/cloudflare/security-audit-skill): the defensive half of the same mechanism, from Cloudflare, with every finding verified before it is reported

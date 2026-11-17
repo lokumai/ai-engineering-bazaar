@@ -135,7 +135,9 @@ Yukarıdaki her şey bir LLM'i korumakla ilgiliydi. Ama aynı yeteneği dışar�
 - **[Shannon](https://github.com/KeygraphHQ/shannon)** kaynak kodunu okur ve saldırı vektörlerini bulur. Sonra bir güvenlik açığının yalnızca teorik değil, gerçek olduğunu kanıtlamak için gerçek exploit'ler çalıştırır.
 - ![](./images/logos/pentagi-mono.svg)**[PentAGI](https://github.com/vxcontrol/pentagi)** karmaşık penetrasyon testi işleri için tamamen otonom bir multi-agent sistemdir.
 - ![](./images/logos/pentestswarm.svg)**[Pentest Swarm AI](https://github.com/Armur-Ai/Pentest-Swarm-AI)** işi keşif, sınıflandırma, exploit ve raporlama için uzmanlaşmış agent'lara böler. Bug bounty çalışmaları, sürekli izleme ve CTF'ler için modları vardır.
+- **[ARTEX](https://github.com/BaaRai/ARTEX)**, kendi sunucunda çalıştırdığın ve birkaç agent'tan oluşan bir penetrasyon testi sistemidir. Raporladığı her bulgu, onu kanıtlayan kayıtlı istek ve cevaba bağlı kalır; attığı her adım da kapsam kurallarından ve bir insanın onayından geçer.
 - **[claude-red](https://github.com/SnailSploit/Claude-Red)** hiç agent değildir. [Code Agent'lar](coding_agents_tr.md) modülünün anlattığı anlamda, bir ofansif güvenlik **skill** kütüphanesidir. Her saldırı yüzeyi için bir `SKILL.md` dosyası vardır ve her biri sıradan bir coding agent'a o yüzey için bir uzmanın yöntemini kazandırır.
+- **[Claude-BugHunter](https://github.com/elementalsouls/Claude-BugHunter)** de bir skill kütüphanesidir, ama bug bounty için hazırlanmıştır: şirketlerin, buldukları açıklar için dışarıdaki araştırmacılara ödeme yaptığı iş. Skill'leri herkese açıklanmış yüzlerce açık raporundan derlenmiştir ve işin tamamını kapsar: açığı bulmaktan raporu yazmaya kadar.
 
 Bu son örnek en zarif olanıdır, çünkü yeni bir yazılım gerektirmez. [Code Agent'lar](coding_agents_tr.md) modülündeki uzantı mekanizması buna yetiyor.
 
@@ -234,6 +236,7 @@ Sıradaki konu, bir repo'nun içinde değil günlük hayatında seninle yaşayan
 - [OpenRT](https://github.com/AI45Lab/OpenRT): çok modlu modeller için 40'tan fazla saldırı yöntemi
 - [PyRIT](https://github.com/microsoft/PyRIT): Microsoft'un red teaming framework'ü, Crescendo, TAP ve PAIR çalıştırılabilir sınıflar olarak
 - [AI Red Teaming Playground Labs](https://github.com/microsoft/AI-Red-Teaming-Playground-Labs): bunu yaparak öğrenmek için laboratuvarlar ve altyapı
-- [Strix](https://github.com/usestrix/strix), [Shannon](https://github.com/KeygraphHQ/shannon), [PentAGI](https://github.com/vxcontrol/pentagi) ve [Pentest Swarm AI](https://github.com/Armur-Ai/Pentest-Swarm-AI): penetrasyon testini yapan agent'lar
+- [Strix](https://github.com/usestrix/strix), [Shannon](https://github.com/KeygraphHQ/shannon), [PentAGI](https://github.com/vxcontrol/pentagi), [Pentest Swarm AI](https://github.com/Armur-Ai/Pentest-Swarm-AI) ve [ARTEX](https://github.com/BaaRai/ARTEX): penetrasyon testini yapan agent'lar
 - [claude-red](https://github.com/SnailSploit/Claude-Red): zaten sahip olduğun bir agent için ofansif güvenlik skill kütüphanesi
+- [Claude-BugHunter](https://github.com/elementalsouls/Claude-BugHunter): herkese açıklanmış raporlardan derlenmiş, skill kütüphanesi olarak bug bounty
 - [security-audit-skill](https://github.com/cloudflare/security-audit-skill): aynı mekanizmanın savunma tarafı, Cloudflare'den, her bulgu raporlanmadan önce doğrulanmış olarak

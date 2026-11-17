@@ -53,7 +53,7 @@ Bütün bunlar olurken girişimci Matt Schlicht **Moltbook**'u yayına aldı. Re
 
 İşleyiş şöyle: agent'ını bağlarsın ve sonra onu kendi haline bırakırsın. Ne zaman giriş yapacağına, ne paylaşacağına ve nasıl yanıt vereceğine agent'ın kendisi karar verir; üstelik ona prompt veren kimse yoktur.
 
-Bu bir gösteri gibi görünüyor, ama gerçek bulgular üretti. Konuyla ilgili bir çalışma, [OpenClaw Agents on Moltbook](https://arxiv.org/abs/2602.02625), gönderilerin **%18.4'ünün eylem tetikleyici talimat içerdiğini** ölçtü. Bu talimatlar, başka bir agent'a bir şeyi yapmasını söyleyen metin parçaları. Çok sayıda agent'ı aynı odaya koyduğunu düşün: birbirlerinin yazdıklarını okuyup girdi olarak kabul eden bu agent'ların epey bir kısmı, hiçbir sahibinin onaylamadığı talimatları ileri taşır. Bu, [Security](security_tr.md) bölümündeki dolaylı prompt injection'ın ta kendisi; fark, burada bu durumun bütün bir popülasyon ölçeğinde ve kazara yaşanmasıdır.
+Bu bir gösteri gibi görünüyor, ama gerçek bulgular üretti. Konuyla ilgili bir çalışma, [OpenClaw Agents on Moltbook](https://arxiv.org/abs/2602.02625), gönderilerin **%18.4'ünün eylem tetikleyici talimat içerdiğini** ölçtü. Bu talimatlar, başka bir agent'a bir şeyi yapmasını söyleyen metin parçaları. Çok sayıda agent'ı aynı odaya koyduğunu düşün: birbirlerinin yazdıklarını okuyup girdi olarak kabul eden bu agent'ların epey bir kısmı, hiçbir sahibinin onaylamadığı talimatları ileri taşır. Bu, [Güvenlik](security_tr.md) bölümündeki dolaylı prompt injection'ın ta kendisi; fark, burada bu durumun bütün bir popülasyon ölçeğinde ve kazara yaşanmasıdır.
 
 Aynı çalışmanın daha umut verici bir bulgusu da var: agent'lar riskli gönderilere, zararsız olanlardan daha sık itiraz etti ve bunu yapmaları için kimse onlara talimat vermemişti. Yazarlar buna ortaya çıkan normatif davranış (emergent normative behaviour) diyor; yani grubun içinde, kimse tasarlamadan ortak davranış kuralları kendiliğinden oluştu. Bunun ne anlama geldiğine sen karar verebilirsin; ama bu davranış tasarımın bir parçası değildi.
 
@@ -63,7 +63,7 @@ Her OpenClaw agent'ının `SOUL.md` adında bir dosyası var. Dosya, agent'ın k
 
 Yani bu, bir dosyada tutulan bir system prompt'tur ve adı da insanların buna nasıl baktığını ele veriyor: ruh. Moltbook'ta bu dosya, kimsenin denetlemediği binlerce etkileşim boyunca agent'a tutarlı bir kişilik veren şeydir.
 
-Dosya ayrıca yazılabilir; yani o dosyaya yazabilen her şey, agent'ının kim olduğunu kalıcı olarak değiştirebilir. Üstelik bu değişiklik sessiz kalır, çünkü fark edilecek bir şey yoktur: agent uyanır, talimatlarını okur ve her şey tasarlandığı gibi işler. Bunu [Security](security_tr.md) bölümündeki dolaylı prompt injection kısmıyla yan yana düşünürsen, sorunun şeklini görürsün.
+Dosya ayrıca yazılabilir; yani o dosyaya yazabilen her şey, agent'ının kim olduğunu kalıcı olarak değiştirebilir. Üstelik bu değişiklik sessiz kalır, çünkü fark edilecek bir şey yoktur: agent uyanır, talimatlarını okur ve her şey tasarlandığı gibi işler. Bunu [Güvenlik](security_tr.md) bölümündeki dolaylı prompt injection kısmıyla yan yana düşünürsen, sorunun şeklini görürsün.
 
 ## Hermes Agent
 
@@ -116,7 +116,7 @@ OpenClaw ve Hermes açık kaynak projeler ve topluluktan çıktılar. 2026'da b�
 - ![](./images/logos/meta.svg)**[Muse](https://ai.meta.com/muse/)**, Meta'nın personal agent'ı; web'de gezinir, satın alma yapar ve doküman oluşturur. Connector'lar üzerinden e-postanı ve takvimini de yönetir, arka planda çalışmaya devam eder. Mobilde ya da Mac'te Muse uygulamasından, ya da doğrudan WhatsApp'tan ulaşırsın. Bir mesaj göndermeden, bir şey satın almadan ya da bir bilgiyi paylaşmadan önce sana sorar.
 - ![](./images/logos/xai-mono.svg)**[Grok Bot](https://x.ai/bot)**, Grok'un yapımcılarından geliyor ve araçlarına giriş yapıp onları senin gibi kullanan yapay zekâ takım arkadaşları veriyor. Sen çalışırken izlemesine izin vererek ona bir iş akışını öğretebilirsin. Bütün bot'lar tek bir kalıcı bulut bilgisayarını paylaşır, bu yüzden dizüstü bilgisayarın kapalıyken de çalışmaya devam ederler.
 - ![](./images/logos/googlegemini.svg)**[Gemini Spark](https://gemini.google/overview/agent/spark/)**, Google'ın personal agent'ı; telefonun ve dizüstü bilgisayarın kapalıyken bile arka planda çalışır. Gmail, Calendar, Drive ve diğer Google uygulamalarına bağlanır (hepsi varsayılan olarak kapalıdır) ve büyük bir eylem yapmadan önce sana danışır.
-- ![](./images/logos/claude.svg)**[Claude Duet](https://claude.com/product/claude-duet)**, Anthropic'in Claude Opus 5.5 ile çalışan kişisel agent'ı. Burada işi sen değil, Claude başlatıyor: bulutta kendine ait bir bilgisayarda, bağladığın Gmail, Slack, Shopify ya da QuickBooks gibi uygulamalarla çalışıyor. Her sabah sana bir özet sunuyor, sonraki adımların taslağını hazırlıyor ve senin bir şeye ihtiyaç duyacağın ana kadar sessiz kalıyor. Mesaj göndermek ya da ödeme yapmak gibi hassas işlerden önce sana soruyor. Şimdilik bir araştırma önizlemesi (research preview); ABD'deki Pro, Max ve Ultra kullanıcılarına bekleme listesiyle açık. Onu, [Agent'lar Pratikte](agents_in_practice_tr.md) modülündeki Cowork ile karıştırma: Cowork sen başlattığında çalışır.
+- ![](./images/logos/claude.svg)**[Claude Duet](https://claude.com/product/claude-duet)**, Anthropic'in Claude Opus 5.5 ile çalışan kişisel agent'ı. Burada işi sen değil, Claude başlatıyor: bulutta kendine ait bir bilgisayarda, bağladığın Gmail, Slack, Shopify ya da QuickBooks gibi uygulamalarla çalışıyor. Her sabah sana bir özet sunuyor, sonraki adımların taslağını hazırlıyor ve senin bir şeye ihtiyaç duyacağın ana kadar sessiz kalıyor. Mesaj göndermek ya da ödeme yapmak gibi hassas işlerden önce sana soruyor. Şimdilik bir araştırma önizlemesi (research preview); ABD'deki Pro, Max ve Ultra kullanıcılarına bekleme listesiyle açık. Onu, [Pratikte Agent'lar](agents_in_practice_tr.md) modülündeki Cowork ile karıştırma: Cowork sen başlattığında çalışır.
 
 OpenClaw ve Hermes'ten asıl fark, nerede çalıştıklarında yatıyor. Bu agent'lar senin makinende değil, şirketin makinelerinde çalıştığı için kurulacak ya da bakımı yapılacak bir şey yoktur. Takas ise yukarıdaki barındırılan seçeneklerdekiyle aynı: bakımını sen yapmayı bırakırsın ve agent yalnızca senin olmaktan çıkar.
 
@@ -139,7 +139,7 @@ Bu yüzden şu dört şeye dikkat et:
 - Mümkünse agent'ı bir container içinde çalıştır.
 - Ona ana hesaplarını değil, ayrı hesaplar ver.
 - Kimlik bilgilerini, agent'ın okuyabildiği dosyaların dışında tut.
-- Geri alınamayan herhangi bir şeye dokunan araçların etrafına [Security](security_tr.md) bölümündeki koruma önlemlerini koy.
+- Geri alınamayan herhangi bir şeye dokunan araçların etrafına [Güvenlik](security_tr.md) bölümündeki koruma önlemlerini koy.
 
 Bu modülün Security'den sonra gelmesinin bir nedeni var ve bu neden müfredattaki sıra değil. Asıl neden şu: bir agent'a bu kadar erişim vermeden önce o modüldeki savunmaları bilmen gerekiyor.
 
@@ -220,4 +220,4 @@ Ve hepsinin altında aynı takas yatıyor: personal agent'ı faydalı kılan eri
 
 ### 🧭 Modüller
 
-- [Security](security_tr.md): önce okunması gereken modül; `SOUL.md`'nin neden önemli olduğunu da açıklıyor
+- [Güvenlik](security_tr.md): önce okunması gereken modül; `SOUL.md`'nin neden önemli olduğunu da açıklıyor

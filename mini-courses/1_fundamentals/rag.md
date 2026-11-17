@@ -70,7 +70,7 @@ flowchart TB
 ```
 
 The same trick works for anything made of text, not only code. Say you have a folder of legal
-contracts. Somebody asks "what is the termination notice period in the Acme vendor contract?". The
+contracts. Somebody asks "what is the termination notice period in the 'Acme' vendor contract?". The
 model does not guess from memory. Instead, RAG searches across every contract you have and finds
 the clause that answers the question. Then it gives the model only that clause.
 

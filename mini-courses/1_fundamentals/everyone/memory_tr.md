@@ -64,7 +64,7 @@ graph TD
 
 ## Long-term Memory
 
-Bazen uygulama, sohbet bittiğinde working memory'nin yok olmasına izin vermez. Modelin dışında bir yere notlar ya da bir özet kaydeder; tıpkı bir defterdeki notlar gibi. Daha sonra, tamamen yeni bir sohbette bile defterine bakıp doğru notları sohbete geri getirebilir. Onları bulmak için çoğu zaman [RAG & Embeddings](rag_tr.md) modülündeki aramayı kullanır.
+Bazen uygulama, sohbet bittiğinde working memory'nin yok olmasına izin vermez. Modelin dışında bir yere notlar ya da bir özet kaydeder; tıpkı bir defterdeki notlar gibi. Daha sonra, tamamen yeni bir sohbette bile defterine bakıp doğru notları sohbete geri getirebilir. Onları bulmak için çoğu zaman [RAG ve Embedding'ler](rag_tr.md) modülündeki aramayı kullanır.
 
 **Örnek:** bir sohbette ChatGPT'ye 5 PDF yüklüyorsun. Daha sonra, yeni bir sohbette bunları soruyorsun ve ChatGPT yine de cevap verebiliyor. Bunun nedeni modelin onları eğitimde öğrenmiş olması değil; ayrıca boş başlayan yeni sohbette de bulunmuyorlar. Nedeni, ChatGPT'nin onları daha önce kaydedip indekslemiş olması ve şimdi yeniden bulup doğru parçaları sohbete geri getirmesi.
 

@@ -308,7 +308,7 @@ Asıl beceri, düşünme bütçesini görevin zorluğuna göre ayarlayabilmektir
 
 Role prompting, görevi vermeden önce modele bir iş, bir persona ya da bir karakter vermek demek.
 
-> **NOT, system prompt nedir?** System prompt, context'in en üstünde bir kez yer alır ve konuşmanın tamamında modelin nasıl davranacağını tanımlar. Onu kullanıcı değil, modelin ya da agent'ın geliştiricisi yazar ve genellikle uzun olur. Araçlar da burada, şemaları ve açıklamalarıyla birlikte kayıtlıdır ([LLM Tool Calling](../1_fundamentals/tools_tr.md)). Gerçek system prompt'ları görmek istersen, [system prompt leaks](https://github.com/asgeirtj/system_prompts_leaks) ChatGPT, Claude, Gemini, Grok ve diğerlerinin system prompt'larını kelimesi kelimesine topluyor.
+> **NOT, system prompt nedir?** System prompt, context'in en üstünde bir kez yer alır ve konuşmanın tamamında modelin nasıl davranacağını tanımlar. Onu kullanıcı değil, modelin ya da agent'ın geliştiricisi yazar ve genellikle uzun olur. Araçlar da burada, şemaları ve açıklamalarıyla birlikte kayıtlıdır ([Tool Calling](../1_fundamentals/tools_tr.md)). Gerçek system prompt'ları görmek istersen, [system prompt leaks](https://github.com/asgeirtj/system_prompts_leaks) ChatGPT, Claude, Gemini, Grok ve diğerlerinin system prompt'larını kelimesi kelimesine topluyor.
 
 ![System prompt'un içi](./images/system-prompt-context.webp)  
 *Bu şekil [LLM Temelleri](../1_fundamentals/llms_tr.md) modülündeki şeklin aynısı. Rol, kimlik ve talimatların yazıldığı yer burası. Bu kutudaki her şey, kullanıcı tek kelime etmeden önce yazılmış olur.*

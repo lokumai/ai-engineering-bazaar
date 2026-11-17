@@ -5,7 +5,7 @@ objectives:
   - "Claude Cowork'ü Claude Duet'ten ayırt et"
 ---
 
-# Agent'lar Pratikte
+# Pratikte Agent'lar
 
 Bir yapay zekâ agent'ı, sana yalnızca cevap veren bir yapay zekâ değildir; senin için iş de yapar. Dosyaları açar, doküman yazar, internette arama yapar ve uygulamalarını kullanır; bir işi bitirene kadar bunları adım adım yapar. Agent'lar hakkında uzun süre okuyabilirsin, ama onları anlamanın en hızlı yolu birine gerçek bir iş verip ne yaptığını izlemektir.
 

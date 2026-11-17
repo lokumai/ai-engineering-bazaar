@@ -246,7 +246,7 @@ graph LR
 
 Agentic UI, bir insanın ve çalışan bir agent'ın aynı uygulamada birlikte çalıştığı arayüzdür. Temeli streaming'dir: agent'ın işi adım adım üretildiği için ekrana da adım adım gönderilir; run'ın lifecycle'ı, metni, reasoning'i, tool call'ları, subagent'ları ve state'i için tipli event'ler hâlinde. Her framework'ün kendi event formatı var ve bu, front end'i tek bir backend'e bağlıyor. AG-UI bu bağı, MCP'nin tool'lar için yaptığı gibi, açık ve ortak tek bir event kümesiyle ortadan kaldırıyor ve birçok agent framework'ü onu destekliyor. MCP (tool'lar) ve A2A'in (diğer agent'lar) yanında, bir agent'ın üçüncü tarafı için, yani kullanıcıları için olan protocol bu. Aynı protocol, bir run'ın önemli bir adımda durup bir insanı beklemesini de sağlıyor; human in the loop budur: run bir interrupt ile biter ve sonraki run insanın cevabını taşır.
 
-Sıradaki konu: agent'ı denetlemeyi zorlaştıran her şey, onu saldırı için daha değerli bir hedef de yaptı. Bunu [Security](security_tr.md) modülü anlatıyor.
+Sıradaki konu: agent'ı denetlemeyi zorlaştıran her şey, onu saldırı için daha değerli bir hedef de yaptı. Bunu [Güvenlik](security_tr.md) modülü anlatıyor.
 
 **Hızlı Kontrol**: Bir agentic UI neden nihai cevabı beklemek yerine event'leri stream eder? AG-UI, her framework'ün kendi event formatının çözemediği hangi sorunu çözer? MCP, A2A ve AG-UI'ın her biri agent'ın hangi tarafını bağlar? Bir agent'ın bir insanın cevabına ihtiyacı olduğunda run'a ne olur?
 

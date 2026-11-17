@@ -22,13 +22,13 @@ Elinde işe yarayan veriler var:
 
 Bu verinin toplamı, bir context window'a sığabileceğinden çok daha büyük ve context window de kesin bir sınır. Ama asıl önemli nokta şu: tek bir soru için bütün veriye ihtiyacın yok. Diyelim ki biri bir tedarikçi sözleşmesindeki fesih maddesini soruyor. O kişinin diğer iki yüz sözleşmeye ihtiyacı yoktur, ona yalnızca tek bir madde lazımdır.
 
-Fikrin tamamı bu: veriyi modelin dışında tut, bir soru geldiğinde yalnızca ona cevap veren parçaları getir ve bu parçaları context'e koy. Buna **Retrieval-Augmented Generation** (RAG) denir ve adındaki mantık basittir: önce getir, sonra üret.
+Fikrin tamamı şu şekilde: veriyi modelin dışında tut, bir soru geldiğinde yalnızca ona cevap veren parçaları getir ve bu parçaları context'e koy. Buna **Retrieval-Augmented Generation** (RAG) denir ve adındaki mantık basittir: önce getir, sonra üret.
 
 ### Masa ve Kütüphane
 
 Bunu düşünmenin basit bir yolu var. **Modelin ağırlıkları bir kütüphanedir.** Çok büyük bir kütüphanedir ve model pre-training sırasında öğrendiği her şey onun bir yerinde durur. **Context window ise senin masandır.** Küçüktür, ama masana ne koyarsan tam önünde olur.
 
-Büyük bir kütüphanedeki bir şeyi hatırlamak zor ve güvenilmezdir, oysa önündeki masada açık duran bir sayfayı okumak kolay ve kesindir. Yani RAG, masaya hangi sayfaların konacağını seçmektir.
+Büyük bir kütüphanedeki bir şeyi hatırlamak zor ve güvenilmezdir, oysa önündeki masada açık duran bir sayfayı okumak kolayca doğru sonuca götürür. Yani RAG, masaya hangi sayfaların konacağını seçmektir.
 
 ![Naif RAG akışı](./images/rag.webp)  
 *Temel "naif" RAG akışı: sorgu aynı anda iki yere gider. Bir yol, vektör deposu indeksini aramak için bir embedding modelinden geçer. Diğer yol ise arama sonucunda dönen context ile birlikte doğrudan LLM'e gider.*
@@ -53,13 +53,13 @@ flowchart TB
     Q -.->|"sorunun kendisi"| C
 ```
 
-Aynı mantık, kod dışında metinden oluşan her şey için de işler. Diyelim ki elinde bir klasör dolusu hukuki sözleşme var ve birisi "Acme tedarikçi sözleşmesindeki fesih bildirim süresi nedir?" diye soruyor. Model bunu hafızasından tahmin etmeye çalışmaz. Bunun yerine RAG, sahip olduğun bütün sözleşmelerde arama yapar, soruyu cevaplayan maddeyi bulur ve modele yalnızca o maddeyi verir.
+Aynı mantık, kod dışında metinden oluşan her şey için de işler. Diyelim ki elinde bir klasör dolusu hukuki sözleşme var ve birisi "'Acme' tedarikçi sözleşmesindeki fesih bildirim süresi nedir?" diye soruyor. Model bunu hafızasından tahmin etmeye çalışmaz. Bunun yerine RAG, sahip olduğun bütün sözleşmelerde arama yapar, soruyu cevaplayan maddeyi bulur ve modele yalnızca o maddeyi verir.
 
 Altta yatan mekanizma budur: bir encoder modeli metni vektör embedding'lerine çevirir, bu embedding'leri bir vektör veritabanında saklarsın ve soru geldiğinde soruyu da bir vektöre çevirip en yakın eşleşmeleri bulursun.
 
 ## Vector Embedding'ler
 
-Embedding, bir metin parçasını anlatan sayılardan oluşan bir listedir ve bunu bir parmak izi gibi düşünebilirsin. Bu sayıları, encoder adı verilen özel bir model üretir.
+Embedding, bir metin parçasını anlatan sayılardan oluşan bir listedir; bunu bir parmak izi gibi düşünebilirsin. Bu sayıları, encoder adı verilen özel bir model üretir.
 
 Asıl faydalı özellik şu: **benzer anlam, benzer sayılar üretir.** Bu, bir şehirdeki adresler gibi çalışır, çünkü birbirine yakın adresler yakın yerleri anlatır. İki parmak izinin ne kadar yakın olduğunu **cosine similarity** ile ölçeriz ve yüksek bir skor, ikisinin çok benzer olduğu anlamına gelir.
 
@@ -68,7 +68,7 @@ Bunun klasik örneği, dört kelime üzerinden anlatılan bir görseldir:
 ![King, queen, man ve woman vektörleri](./images/vector-king-queen.webp)  
 *Dört kelime dört vektöre dönüşür ve bu vektörler uzayda birer konuma yerleşir. King, queen'e yakın düşer, man ise woman'a. İki oka bak: paralel olmaları, king'den queen'e giden adımın man'den woman'a giden adımla aynı olduğunu gösterir. Böylece kelimelerin anlamı, uzaydaki mesafelere ve yönlere dönüşmüş olur.*
 
-Şu paralelliğe bir an dikkat et, çünkü sayıların, her kelimeye yalnızca sabit bir kayıt veren sıradan bir arama tablosundan (lookup table) fazlası olduğunu gösteren şey budur. Embedding yalnızca benzer şeyleri yan yana koymakla kalmadı. İkisi arasındaki *ilişkiyi* de tutarlı bir yöne yerleştirdi.
+Görseldeki paralelliği detaylı incelersen sayıların, her kelimeye yalnızca sabit bir kayıt veren sıradan bir arama tablosundan (lookup table) fazlası olduğunu görürsün. Embedding yalnızca benzer şeyleri yan yana koymakla kalmadı. İkisi arasındaki *ilişkiyi* de tutarlı bir yöne yerleştirdi.
 
 Açıkça söylemek gerekirse burada bir sadeleştirme yaptık: görsel, sayfaya sığsın diye üç boyut çiziyor. Gerçek embedding'ler ise yüzlerce, hatta binlerce boyuttan oluşur ve tam da bu yüzden yakınlığı gözle bakarak değil, cosine similarity ile ölçeriz.
 
@@ -80,7 +80,7 @@ graph LR
     M --> V2["Vektör 2<br/>[0.1, 0.7, ...]"]
 ```
 
-İki farklı fonksiyona bak: sayıları birbirine yakın çıkıyor. Asıl önemli olan da bu yakınlık, çünkü birini sorduğunda diğerini bulmayı mümkün kılan şey tam olarak budur.
+İki farklı fonksiyonun sayıları birbirine yakın çıkıyor. Aslında önemli olan da bu yakınlık, çünkü birini sorduğunda diğerini bulmayı mümkün kılan şey tam olarak budur.
 
 Asıl önemli nokta, bunun eşleşen kelimeleri değil *anlamı* yakalamasıdır:
 
@@ -127,8 +127,8 @@ Bir vektör veritabanı bu parmak izlerinden milyonlarcasını saklar, her birin
 5. Bu metni soruyla birlikte context'e koy.
 6. LLM, artık gördüğü şeye bakarak cevap verir.
 
-![RAG'in offline ve online yarıları](./images/rag-offline-online.webp)  
-*Offline yarı bir kez, sonra da belgeler her değiştiğinde çalışır; online yarı ise her soruda çalışır. Resim, listelerde olmayan bir adımı da gösteriyor: bir reranker en yakın 20 chunk'ı okur ve en iyi 3'ünü tutar, böylece context'te yalnızca soruyu cevaplayan şey kalır.*
+![RAG'ın offline ve online yarıları](./images/rag-offline-online.webp)  
+*Offline yarı bir kez, sonra da belgeler her değiştiğinde çalışır; online yarı ise her soruda çalışır. Görsel, listelerde olmayan bir adımı da gösteriyor: bir reranker en yakın 20 chunk'ı okur ve en iyi 3'ünü tutar, böylece context'te yalnızca soruyu cevaplayan şey kalır.*
 
 ```mermaid
 graph TD
@@ -182,7 +182,7 @@ Retrieval döngüsünü neredeyse hiçbir zaman kendin yazmayacaksın. Bu yüzde
 - ![](./images/logos/chroma.svg)**[ChromaDB](https://github.com/chroma-core/chroma)**: metnini embedding'leriyle yan yana saklayan bir vektör veritabanı. Bu yüzden bir arama sana özgün chunk'ı geri verir.
 - ![](./images/logos/meta.svg)**[FAISS](https://github.com/facebookresearch/faiss)**: yalnızca arama katmanı, başka bir şey değil. Çok hızlıdır, ama yalnızca sayılardan anlar.
 
-Şimdi FAISS'e bakalım, çünkü gösterilmeye değecek en küçük örnek budur: yukarıdaki her seçeneğin sarmaladığı ham mekanizma tam olarak bu.
+Şimdi FAISS'e bakalım, çünkü gösterilmeye değecek en küçük örnek budur: yukarıdaki her seçeneğin sarmaladığı (wrapped) ham mekanizma tam olarak bu.
 
 ```python
 import faiss
@@ -200,11 +200,11 @@ Bu kod yalnızca arama adımını gösterir, başka bir şeyi değil. FAISS sana
 Kendin kurmak yerine hazır bir RAG sisteminden başlamayı tercih edersen, şu açık kaynak projeler kullanıma hazır:
 
 - ![](./images/logos/ragflow.svg)**[RAGFlow](https://github.com/infiniflow/ragflow)**, web arayüzü olan eksiksiz bir RAG platformudur. Docker ile çalıştırırsın. Düzensiz belgeleri okumakta iyidir: sayfa düzenini, tabloları ve taranmış sayfaları da işler. Cevaplarında kaynağa giden atıflar (citation) bulunur.
-- ![](./images/logos/lightrag.svg)**[LightRAG](https://github.com/HKUDS/LightRAG)**, belgelerindeki kişilerin, nesnelerin ve ilişkilerin bir bilgi grafiğini (knowledge graph) kurar. Embedding'leri bu grafiğin yanında tutar, böylece bir arama yalnızca benzerliğe bakmaz, bağlantıları da takip edebilir. Bir Python kütüphanesidir, sunucusu ve web arayüzü de vardır. Ayrıca Microsoft'un GraphRAG'ine daha hafif bir alternatiftir.
-- ![](./images/logos/pageindex.svg)**[PageIndex](https://github.com/VectifyAI/PageIndex)** vektör veritabanı da chunk'lama da kullanmaz. Her belgenin, bir içindekiler tablosu gibi, ağaç yapılı bir yapısını kurar. Sonra bir LLM bu ağacın içinde aşağı doğru ilerleyerek doğru bölüme ulaşır. Projenin temel iddiası şu: soruya benzeyen bir bölüm, her zaman soruyu cevaplayan bölüm değildir.
-- **[RAG-Anything](https://github.com/HKUDS/RAG-Anything)**, LightRAG üzerine kuruludur. Metinle birlikte resim, tablo ve denklem içeren belgeleri işler. 2026'dan beri LightRAG'in kendisi de bu yeteneği içeriyor.
+- ![](./images/logos/lightrag.svg)**[LightRAG](https://github.com/HKUDS/LightRAG)**, belgelerindeki kişilerin, nesnelerin ve ilişkilerin bir bilgi grafiğini (knowledge graph) kurar. Embedding'leri bu grafiğin yanında tutar, böylece bir arama yalnızca benzerliğe bakmaz, bağlantıları da takip edebilir. Bir Python kütüphanesidir, sunucusu ve web arayüzü de vardır. Ayrıca Microsoft'un GraphRAG'ına daha hafif bir alternatiftir.
+- ![](./images/logos/pageindex.svg)**[PageIndex](https://github.com/VectifyAI/PageIndex)** vektör veritabanı da chunk'lama da kullanmaz. Her belgenin, içindekiler tablosu gibi bir ağaç yapısını kurar. Sonra bir LLM bu ağacın içinde aşağı doğru ilerleyerek doğru bölüme ulaşır. Projenin temel iddiası şu: soruya benzeyen bir bölüm, her zaman soruyu cevaplayan bölüm değildir.
+- **[RAG-Anything](https://github.com/HKUDS/RAG-Anything)**, LightRAG üzerine kuruludur. Metinle birlikte resim, tablo ve denklem içeren belgeleri işler. 2026'dan beri LightRAG'ın kendisi de bu yeteneği içeriyor.
 - ![](./images/logos/docsgpt-mono.svg)**[DocsGPT](https://github.com/arc53/DocsGPT)**, kendi sunucunda çalıştırabileceğin bir uygulamadır. Belgelerini, web sitelerini ve bağladığın uygulamaları asistanlara dönüştürür. Bu asistanlar cevaplarını kaynak göstererek verir.
-- **[MiniRAG](https://github.com/HKUDS/MiniRAG)** bir araştırma projesidir. RAG'i küçük dil modelleriyle çalışır hale getirir, bu sayede tek bir cihazda da çalışabilir.
+- **[MiniRAG](https://github.com/HKUDS/MiniRAG)** bir araştırma projesidir. RAG'ı küçük dil modelleriyle çalışır hale getirir, bu sayede tek bir cihazda da çalışabilir.
 - **[PixelRAG](https://github.com/StarTrail-org/PixelRAG)**, metni çıkarıp onda aramak yerine sayfaların ekran görüntülerinde arama yapar. Böylece tablolar, grafikler ve düzen kaybolmaz. 2026'da yayımlanmış bir araştırma makalesinden çıkmıştır ve çok yenidir.
 
 ## Neden Modeli Sadece Belgelerin Üzerinde Fine-tune Etmeyelim?
@@ -215,7 +215,7 @@ Kendin kurmak yerine hazır bir RAG sisteminden başlamayı tercih edersen, şu 
 
 **Çünkü fine-tuning görevler için işe yarar, veri için değil.** Modele bir *davranış* öğretmekte iyidir; şöyle özetle, her zaman bu formatta cevap ver, şu kategorilere ayır gibi. Ama modele *gerçekleri* öğretmekte kötüdür. Senin yüz sayfan milyarlarca parametrenin arasına karışır ve bu parametreler modelin okuduğu her şeyle doludur. Bu yüzden fine-tune edilmiş bir model, senin ayrıntılarını pre-training'den yarım yamalak hatırladığı bir şeyle kolayca karıştırabilir.
 
-**Çünkü hareketli bir hedefin peşindesin.** Diyelim ki bir ay boyunca görevin için bir modeli fine-tune ediyorsun. Bitirdiğinde ise bir sonraki öncü (frontier) model çıkmış olacak ve onu, senin sahip olmadığın kaynaklarla bir laboratuvar eğitmiş olacak. Hiç fine-tuning yapmasan bile bu model, büyük ihtimalle görevinde senin geçen kuşaktan fine-tune ettiğin modelden daha iyi olur. Bu yarışı kazanamazsın. RAG ise bu yarışa hiç girmez, çünkü aynı retrieval, hangi model en yeniyse onunla da çalışır.
+**Çünkü hareketli bir hedefin peşindesin.** Diyelim ki bir ay boyunca görevin için bir modeli fine-tune ediyorsun. Bitirdiğinde ise bir sonraki öncü (frontier) model çıkmış olacak ve onu, senin sahip olmadığın kaynaklarla bir laboratuvar eğitmiş olacak. Hiç fine-tuning yapmasan bile bu model, büyük ihtimalle görevinde senin bir önceki kuşaktan fine-tune ettiğin modelden daha iyi olur. Bu yarışı kazanamazsın. RAG ise bu yarışa hiç girmez, çünkü aynı retrieval, hangi model en yeniyse onunla da çalışır.
 
 **Çünkü retrieval, cevabı modelin önüne koyar.** Masaya ve kütüphaneye geri dönersek, fine-tuning belgelerini milyarlarca kitap barındıran bir kütüphanenin bir yerindeki rafa koymaya çalışır ve sonra modelin doğru rafı hatırlamasını umar. RAG ise birisi soruyu sorduğu anda, ihtiyaç duyulan tek sayfayı masaya açık olarak koyar.
 
@@ -223,7 +223,7 @@ Kendin kurmak yerine hazır bir RAG sisteminden başlamayı tercih edersen, şu 
 
 Tek cümleyle özetlersek: **fine-tuning modelin *bildiğini* değiştirir, RAG ise modelin *gördüğünü* değiştirir.**
 
-Bir nokta daha var ve o da şu: bu ikisinden birini seçmek zorunda değilsin. Modelin nasıl davranması gerektiği için fine-tuning yapabilir, neyi bilmesi gerektiği için de RAG kullanabilirsin. Bu kombinasyon production ortamlarında oldukça yaygındır.
+Ek bir not: bu ikisinden birini seçmek zorunda değilsin. Modelin nasıl davranması gerektiği için fine-tuning yapabilir, neyi bilmesi gerektiği için de RAG kullanabilirsin. Bu kombinasyon production ortamlarında oldukça yaygındır.
 
 ## Temel Terimler
 

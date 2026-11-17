@@ -5,7 +5,7 @@ objectives:
   - "Şirket bilgisi için RAG'in neden genellikle fine-tuning'den daha iyi olduğunu söyle"
 ---
 
-# RAG & Embeddings
+# RAG ve Embedding'ler
 
 [LLM Temelleri](llms_tr.md) modülü sana yapay zekânın okuduğu sohbeti ve onun en büyük boyutunu, yani context window'u verdi. [Training LLMs](training_tr.md) modülü fine-tuning'i verdi; bu yöntem modelin kendisini değiştiriyor. Bu modül ise bir modele bilgi vermenin üçüncü yolunu anlatıyor. Ve en çok kullanılan yol da bu.
 

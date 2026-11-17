@@ -79,7 +79,7 @@ export const SHEETS: readonly Sheet[] = [
   sheet(26, '/courses/expert/advanced-memory/', 'Advanced Memory', 'A4'),
   sheet(27, '/courses/expert/advanced-multiagent/', 'Advanced Multi-Agent', 'A4'),
   sheet(28, '/courses/expert/advanced-agent-architectures/', 'Advanced Agent Architectures', 'A4'),
-  sheet(29, '/courses/expert/advanced-prompting/', 'Advanced Prompting', 'A4'),
+  sheet(29, '/courses/expert/advanced-prompting/', 'Advanced Prompt Engineering', 'A4'),
   sheet(30, '/courses/expert/advanced-context-engineering/', 'Advanced Context Engineering', 'A4'),
   sheet(31, '/courses/expert/advanced-coding-agents/', 'Advanced Coding Agents', 'A4'),
   sheet(32, '/courses/expert/advanced-harness-engineering/', 'Advanced Harness Engineering', 'A4'),

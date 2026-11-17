@@ -1,4 +1,4 @@
-# İleri Seviye Prompting
+# İleri Seviye Prompt Engineering
 
 *(Bu bir placeholder modül: şimdilik kısa bir özet, tam ders içeriği yakında geliyor.)*
 

@@ -1,4 +1,4 @@
-# Advanced Prompting
+# Advanced Prompt Engineering
 
 *(Placeholder module: a short overview for now, full lesson content is coming soon.)*
 

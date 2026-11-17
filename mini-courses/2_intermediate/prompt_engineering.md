@@ -99,7 +99,7 @@ graph TD
 ```
 
 That is why this module only covers what is useful in a daily AI engineering job. The more
-advanced part of the subject is in [Advanced Prompting](../3_expert/advanced_prompting.md).
+advanced part of the subject is in [Advanced Prompt Engineering](../3_expert/advanced_prompting.md).
 
 If you want the full catalogue and not only the useful subset, the [Prompt Engineering
 Guide](https://www.promptingguide.ai/) has it. Also, treat what follows as starting points, not
@@ -527,4 +527,4 @@ And what does a role prompt actually change?
 
 ### 🧭 Modules
 
-- [Advanced Prompting](../3_expert/advanced_prompting.md): the techniques this module skipped on purpose
+- [Advanced Prompt Engineering](../3_expert/advanced_prompting.md): the techniques this module skipped on purpose

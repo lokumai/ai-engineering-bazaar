@@ -69,7 +69,7 @@ graph TD
     B --> C["2026<br/>prompt سرسری هم معمولاً جواب می‌ده<br/>عمق فکر کردن یه پارامتر API‌ه<br/>prompt نوشتن رو از همه انتظار دارن، کسی رو براش استخدام نمی‌کنن"]
 ```
 
-برای همین این درس فقط سراغ چیزهایی می‌ره که توی کار روزمره‌ی یه AI engineer به درد می‌خورن، و بخش پیشرفته‌ترش رو گذاشتیم برای [Advanced Prompting](../3_expert/advanced_prompting.md).
+برای همین این درس فقط سراغ چیزهایی می‌ره که توی کار روزمره‌ی یه AI engineer به درد می‌خورن، و بخش پیشرفته‌ترش رو گذاشتیم برای [Advanced Prompt Engineering](../3_expert/advanced_prompting.md).
 
 اگه فهرست کامل تکنیک‌ها رو می‌خوای و نه فقط اون‌هایی که به کار میان، [Prompt Engineering Guide](https://www.promptingguide.ai/) همه‌ش رو داره. چیزهایی رو هم که در ادامه میاد نقطه‌ی شروع ببین، نه سرفصل کامل درس. prompt نوشتن کار تجربیه و با نوشتن، خوندن خروجی و دوباره عوض کردن prompt کم‌کم دستت میاد.
 
@@ -411,4 +411,4 @@ chain of thought هم قبلاً یکی از همین تکنیک‌ها بود،
 
 ### 🧭 ماژول‌ها
 
-- [Advanced Prompting](../3_expert/advanced_prompting.md): تکنیک‌هایی که این درس عمداً سراغشون نرفت
+- [Advanced Prompt Engineering](../3_expert/advanced_prompting.md): تکنیک‌هایی که این درس عمداً سراغشون نرفت

@@ -23,6 +23,13 @@ export const SITE_DESCRIPTION =
 
 export const REPO_URL = 'https://github.com/lokumai/ai-engineering-bazaar'
 
+/**
+ * Where a reader sends feedback: an anonymous Google Form, reached by a plain link from the footer.
+ * It is never embedded and the site sends nothing to it, so the Privacy note's promise that this
+ * site collects no personal data stays true: the form is opened by the reader's own choice.
+ */
+export const FEEDBACK_URL = 'https://forms.gle/U4oXwczTx3nmv3kGA'
+
 export const LICENCE_URL = `${REPO_URL}/blob/main/LICENSE`
 
 export const LICENCE_LABEL = 'MIT licence'

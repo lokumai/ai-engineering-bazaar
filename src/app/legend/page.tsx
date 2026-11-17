@@ -162,49 +162,88 @@ export default function LegendPage() {
           </h2>
         </div>
 
-        <div className="bz-note space-y-2">
-          <p>
-            This site collects no personal data. It sets no cookies, and it has no analytics, no account and
-            no form.
-          </p>
-          <p>
-            Your progress and your settings, such as the theme, are saved in this browser only. They are never
-            sent anywhere. You can export or erase them on the{' '}
-            <Link className="bz-link" href="/profile/#data">
-              progress page
-            </Link>
-            .
-          </p>
-          <p>
-            The AI Engineering Bazaar app for Android and iOS collects no personal data either, and it has no
-            analytics and no account. Your progress and your settings are saved on your device only, and a backup
-            leaves it only when you save one yourself. When the app crashes, it sends a crash report to Sentry so
-            the fault can be fixed. To follow the app's health by version, it also tells Sentry when it opens and
-            closes, how long it took to open and when it froze, with a random number for that installation. A
-            problem you report from the app's settings goes to Sentry too, with no name or email asked. None of
-            this holds your name, what you read or your quiz answers: the app masks personal details before they
-            leave the device, and Sentry keeps no IP address. The app downloads the course from this site, so
-            GitHub's record below covers its requests too.
-          </p>
-          <p>
-            The site is hosted on GitHub Pages. GitHub logs and stores the IP address of every visitor for
-            security. This is GitHub's record, not ours: see{' '}
-            <a className="bz-link" href={GITHUB_PAGES_URL}>
-              {GITHUB_PAGES_LABEL}
-            </a>{' '}
-            and the{' '}
-            <a className="bz-link" href={GITHUB_PRIVACY_URL}>
-              {GITHUB_PRIVACY_LABEL}
-            </a>
-            .
-          </p>
-          <p>
-            For any question about personal data, write to{' '}
-            <a className="bz-link" href={`mailto:${SITE_OWNER.email}`}>
-              {SITE_OWNER.email}
-            </a>
-            .
-          </p>
+        <div className="mb-6 rounded-lg border border-line-strong bg-surface p-4">
+          <p className="m-0 mb-2 text-item font-semibold text-on-surface-title">In short, for this site</p>
+          <ul className="m-0 grid list-none gap-x-6 gap-y-1 p-0 text-item text-on-surface sm:grid-cols-2">
+            {['No cookies', 'No analytics', 'No account or form', 'Progress stays in your browser'].map((fact) => (
+              <li key={fact} className="flex gap-2">
+                <span aria-hidden="true" className="text-success">
+                  ✓
+                </span>
+                {fact}
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        <div className="space-y-6">
+          <div>
+            <h3 className="mb-1 text-item font-semibold text-on-surface-title">This website</h3>
+            <div className="bz-note space-y-2">
+              <p>
+                This site collects no personal data. It sets no cookies, and it has no analytics, no account and
+                no form.
+              </p>
+            </div>
+          </div>
+          <div>
+            <h3 className="mb-1 text-item font-semibold text-on-surface-title">Your progress and settings</h3>
+            <div className="bz-note space-y-2">
+              <p>
+                Your progress and your settings, such as the theme, are saved in this browser only. They are never
+                sent anywhere. You can export or erase them on the{' '}
+                <Link className="bz-link" href="/profile/#data">
+                  progress page
+                </Link>
+                .
+              </p>
+            </div>
+          </div>
+          <div>
+            <h3 className="mb-1 text-item font-semibold text-on-surface-title">The mobile app</h3>
+            <div className="bz-note space-y-2">
+              <p>
+                The AI Engineering Bazaar app for Android and iOS collects no personal data either, and it has no
+                analytics and no account. Your progress and your settings are saved on your device only, and a backup
+                leaves it only when you save one yourself. When the app crashes, it sends a crash report to Sentry so
+                the fault can be fixed. To follow the app's health by version, it also tells Sentry when it opens and
+                closes, how long it took to open and when it froze, with a random number for that installation. A
+                problem you report from the app's settings goes to Sentry too, with no name or email asked. None of
+                this holds your name, what you read or your quiz answers: the app masks personal details before they
+                leave the device, and Sentry keeps no IP address. The app downloads the course from this site, so
+                GitHub's record below covers its requests too.
+              </p>
+            </div>
+          </div>
+          <div>
+            <h3 className="mb-1 text-item font-semibold text-on-surface-title">Hosting</h3>
+            <div className="bz-note space-y-2">
+              <p>
+                The site is hosted on GitHub Pages. GitHub logs and stores the IP address of every visitor for
+                security. This is GitHub's record, not ours: see{' '}
+                <a className="bz-link" href={GITHUB_PAGES_URL}>
+                  {GITHUB_PAGES_LABEL}
+                </a>{' '}
+                and the{' '}
+                <a className="bz-link" href={GITHUB_PRIVACY_URL}>
+                  {GITHUB_PRIVACY_LABEL}
+                </a>
+                .
+              </p>
+            </div>
+          </div>
+          <div>
+            <h3 className="mb-1 text-item font-semibold text-on-surface-title">Questions</h3>
+            <div className="bz-note space-y-2">
+              <p>
+                For any question about personal data, write to{' '}
+                <a className="bz-link" href={`mailto:${SITE_OWNER.email}`}>
+                  {SITE_OWNER.email}
+                </a>
+                .
+              </p>
+            </div>
+          </div>
         </div>
       </section>
 

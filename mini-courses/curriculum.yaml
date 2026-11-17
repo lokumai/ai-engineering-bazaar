@@ -258,7 +258,7 @@ categories:
           THREAD, ReAct, Deep, CodeAct, RLM (Dynamic Workflows are taught in
           Advanced Loop Engineering, issue #48)
       - name: advanced_prompting
-        title: Advanced Prompting
+        title: Advanced Prompt Engineering
         status: draft
         notes: >-
           issue #39, first topic: Forcing Structured Output (prompting is

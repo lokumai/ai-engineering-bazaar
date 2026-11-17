@@ -69,7 +69,7 @@ graph TD
     B --> C["2026<br/>Özensiz prompt'lar çoğunlukla hâlâ işe yarıyor<br/>Düşünme derinliği bir API parametresi<br/>Prompting beklenen bir beceri, işe alım kriteri değil"]
 ```
 
-Bu yüzden bu modül, yalnızca günlük bir AI mühendisliği işinde işe yarayan kısmı anlatıyor. Konunun daha ileri kısmı [İleri Seviye Prompting](../3_expert/advanced_prompting_tr.md) modülünde.
+Bu yüzden bu modül, yalnızca günlük bir AI mühendisliği işinde işe yarayan kısmı anlatıyor. Konunun daha ileri kısmı [İleri Seviye Prompt Engineering](../3_expert/advanced_prompting_tr.md) modülünde.
 
 Tüm kataloğu istiyorsan, [Prompt Engineering Guide](https://www.promptingguide.ai/) hepsini içeriyor. Bu bölümde anlatılanları da bir müfredat olarak değil, başlangıç noktası olarak gör, çünkü prompting deneysel bir alan. Bu işte ustalaşmanın yolu, bir prompt yazmak, çıktısını okumak ve prompt'u değiştirmek.
 
@@ -410,4 +410,4 @@ Sıradaki konu: context window'a giren her şey ve bu alanın neyi hak ettiğine
 
 ### 🧭 Modüller
 
-- [Advanced Prompting](../3_expert/advanced_prompting_tr.md): bu modülün bilerek atladığı teknikler
+- [Advanced Prompt Engineering](../3_expert/advanced_prompting_tr.md): bu modülün bilerek atladığı teknikler

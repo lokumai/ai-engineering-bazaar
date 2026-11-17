@@ -17,7 +17,7 @@ A reference to help you learn practical topics in modern AI engineering. Our goa
 | [Fundamentals](https://ai-bazaar.lokum.dev/courses/fundamentals/) | 8 | LLMs, training, RAG, tools, memory, agents, multi-agent systems, observability. **Start here.** |
 | [Intermediate](https://ai-bazaar.lokum.dev/courses/intermediate/) | 9 | Prompt engineering, context engineering, code agents, agents in practice, harness engineering, loop engineering, agentic UI, security, personal agents. |
 | [Ecosystem](https://ai-bazaar.lokum.dev/courses/ecosystem/) | 6 | Agent frameworks, inference providers, inference engines, UI design, choosing a tech stack, and a reference of every protocol and spec in the series. |
-| [IN PROGRESS] [Expert](https://ai-bazaar.lokum.dev/courses/expert/) | 19 | Advanced LLM, LLM deployment, LLM compression, offline and online post-training, LLM evaluation, RAG, tools, memory, multi-agent, agent architectures, prompting, context engineering, coding agents, harness engineering, loop engineering, UI, agent deployment, agent servers. |
+| [IN PROGRESS] [Expert](https://ai-bazaar.lokum.dev/courses/expert/) | 19 | Advanced LLM, LLM deployment, LLM compression, offline and online post-training, LLM evaluation, RAG, tools, memory, multi-agent, agent architectures, prompt engineering, context engineering, coding agents, harness engineering, loop engineering, UI, agent deployment, agent servers. |
 | [IN PROGRESS] [Emerging](https://ai-bazaar.lokum.dev/sheets/trends/) | 4 | Ideas that are hot in industry and research but not settled yet: LLMs that can't jump, video rendering, recursive self-improvement, decision models. |
 
 ### How to Use

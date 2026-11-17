@@ -9,8 +9,8 @@ description: >
 authority: reasoning
 writes: agent, when a decision is taken
 status: active
-covers: "D97 to D142 so far, and D89, which part 2 held for PR #57 — 2026-11-06 onward"
-last_updated: 2026-11-15
+covers: "D97 to D143 so far, and D89, which part 2 held for PR #57 — 2026-11-06 onward"
+last_updated: 2026-11-17
 ---
 
 # 🧠 BRAINSTORM, part 3 — D97 onward
@@ -1402,6 +1402,21 @@ these numbers that get stale quickly. review MANIFESTO carefully and revise it a
 - **Rejected:** updating the numbers to today's values, which would only move the drift forward.
 - **Left for the author:** `mini-courses/MANIFEST.md`, his public document, still says "five to ten" minutes
   a module, and the MANIFESTO defers to it where they disagree.
+
+### D143 · Feedback is an external form behind a footer link; the footer groups its facts by owner and kind · 2026-11-17
+
+- **Context:** the author wanted readers to be able to send feedback, found the footer's single dotted row
+  of mixed links badly designed (he liked that it was small), and the privacy and legal text hard to scan.
+- **Decision:** a **Feedback** link in the footer to an anonymous Google Form, held once as `FEEDBACK_URL`
+  in `src/lib/site.ts`; nothing embedded, no request leaves the site unless the reader opens it, and the
+  privacy note says so. The footer is mockup B of `playground/2026-11-round-6/F-footer-designs.html`: the
+  owner block (law 5651) beside two link columns, Site and Project. The privacy note is mockup C of
+  `L-legal-designs.html`: an "In short" box and short headed sections, still at `/legend/#privacy` so every
+  existing link holds.
+- **Rejected:** a form inside the site (a server or a third-party script, against the privacy promise); a
+  Microsoft Form open to anyone (more spam, and the program's own forms stay inside PIA-TEAM, D121); footer A
+  (three quiet lines) and C (a centred stack); legal A (a new page with a contents rail) and B (two tabbed
+  pages), both of which would have moved the privacy and legal addresses.
 ---
 
 > **← Part 2: [`BRAINSTORM_2.md`](BRAINSTORM_2.md)** — D26 to D96. **← Part 1:

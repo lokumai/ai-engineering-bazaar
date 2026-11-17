@@ -135,7 +135,9 @@ graph LR
 - **[Shannon](https://github.com/KeygraphHQ/shannon)** سورس‌کدت رو می‌خونه و attack vector‌ها رو پیدا می‌کنه. بعد exploit واقعی اجرا می‌کنه تا ثابت کنه آسیب‌پذیری واقعیه و فقط روی کاغذ نیست.
 - ![](./images/logos/pentagi-mono.svg)**[PentAGI](https://github.com/vxcontrol/pentagi)** یه سیستم multi-agent کاملاً خودکاره برای کارهای پیچیده‌ی penetration testing.
 - ![](./images/logos/pentestswarm.svg)**[Pentest Swarm AI](https://github.com/Armur-Ai/Pentest-Swarm-AI)** کار رو بین چند agent متخصص پخش می‌کنه: یکی برای recon، یکی برای دسته‌بندی، یکی برای exploitation و یکی برای گزارش‌نویسی. برای bug bounty، پایش مداوم و CTF هم حالت‌های جدا داره.
+- **[ARTEX](https://github.com/BaaRai/ARTEX)** یه سیستم penetration test‌ه که با چند agent کار می‌کنه و روی سرور خودت اجراش می‌کنی. هر یافته‌ای که گزارش می‌ده به request و response ضبط‌شده‌ای وصل می‌مونه که ثابتش می‌کنه، و هر کاری که می‌کنه از قانون‌های scope و تأیید یه آدم رد می‌شه.
 - **[claude-red](https://github.com/SnailSploit/Claude-Red)** اصلاً agent نیست؛ یه کتابخونه از **skill**‌های امنیت تهاجمیه، به همون معنایی که توی [Code Agent‌ها](coding_agents_fa.md) دیدیم. برای هر attack surface یه `SKILL.md` داره، و هر کدوم روش کار یه متخصص رو روی اون surface به یه coding agent معمولی یاد می‌ده.
+- **[Claude-BugHunter](https://github.com/elementalsouls/Claude-BugHunter)** هم یه کتابخونه‌ی skill‌ه، ولی برای bug bounty ساخته شده؛ یعنی کاری که توش شرکت‌ها به محقق‌های بیرونی، برای حفره‌هایی که پیدا می‌کنن، پول می‌دن. skill‌هاش از صدها گزارش باگ عمومی‌شده درومده و کل کار رو پوشش می‌ده، از پیدا کردن حفره تا نوشتن گزارش.
 
 این آخری از همه قشنگ‌تره، چون هیچ نرم‌افزار جدیدی لازم نداره: همون مکانیزم extension که توی Code Agent‌ها دیدیم برای این کار کافیه.
 
@@ -236,6 +238,7 @@ jailbreaking یعنی مدل رو وادار کنی چیزی رو تولید ک�
 - [OpenRT](https://github.com/AI45Lab/OpenRT): بیشتر از 40 روش حمله‌ی آماده برای مدل‌های multimodal
 - [PyRIT](https://github.com/microsoft/PyRIT): framework مایکروسافت برای red teaming، که Crescendo، TAP و PAIR رو به شکل کلاس‌های آماده‌ی اجرا داره
 - [AI Red Teaming Playground Labs](https://github.com/microsoft/AI-Red-Teaming-Playground-Labs): lab و زیرساخت، برای اینکه این کار رو با دست خودت یاد بگیری
-- [Strix](https://github.com/usestrix/strix)، [Shannon](https://github.com/KeygraphHQ/shannon)، [PentAGI](https://github.com/vxcontrol/pentagi) و [Pentest Swarm AI](https://github.com/Armur-Ai/Pentest-Swarm-AI): agent‌هایی که خودشون penetration test انجام می‌دن
+- [Strix](https://github.com/usestrix/strix)، [Shannon](https://github.com/KeygraphHQ/shannon)، [PentAGI](https://github.com/vxcontrol/pentagi)، [Pentest Swarm AI](https://github.com/Armur-Ai/Pentest-Swarm-AI) و [ARTEX](https://github.com/BaaRai/ARTEX): agent‌هایی که خودشون penetration test انجام می‌دن
 - [claude-red](https://github.com/SnailSploit/Claude-Red): امنیت تهاجمی به شکل یه کتابخونه‌ی skill، برای agent‌ی که از قبل داری
+- [Claude-BugHunter](https://github.com/elementalsouls/Claude-BugHunter): bug bounty به شکل یه کتابخونه‌ی skill، از گزارش‌های عمومی‌شده
 - [security-audit-skill](https://github.com/cloudflare/security-audit-skill): نیمه‌ی دفاعی همین مکانیزم، از Cloudflare، که هر یافته رو قبل از گزارش وارسی می‌کنه

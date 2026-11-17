@@ -7,7 +7,7 @@ objectives:
   - "Bir red teaming aracı seç ve agent'ların artık güvenlik işini kendilerinin yaptığını bil"
 ---
 
-# Security
+# Güvenlik
 
 [Loop Engineering](loop_engineering_tr.md) modülü, insanı döngünün dışına çıkararak bitiyordu. Artık agent günlerce kesintisiz çalışabiliyor ve ona artık sen prompt vermiyorsun. Bunu bir script yapıyor, script çalışırken de çıktısını kimse okumuyor. Bütün bunlar sürerken agent'ı kendi sınırları içinde tutan şey, [Harness Engineering](harness_engineering_tr.md) modülünde anlatılan kurulumdur (wiring).
 

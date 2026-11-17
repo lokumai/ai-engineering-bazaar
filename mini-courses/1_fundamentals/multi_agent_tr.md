@@ -85,7 +85,7 @@ Bu, her multi-agent tasarımın altında yatan bir seçime götürüyor. Agent'l
 Bu terimleri şimdiden tanıyasın diye adlarını burada koyuyoruz. Hepsini daha sonra ayrıntılı olarak işleyeceğiz:
 
 - **Hiyerarşik:** en üstteki bir supervisor başka supervisor'ları yönetir, onların her biri de kendi worker'larını yönetir. Tek bir katman yetmediğinde bunu kullanırsın.
-- **Agent-as-a-tool:** bir agent, diğer bir agent'a sıradan bir tool gibi verilir. Bu, doğrudan [LLM Tool Calling](tools_tr.md) bölümündeki mekanizmaya oturur.
+- **Agent-as-a-tool:** bir agent, diğer bir agent'a sıradan bir tool gibi verilir. Bu, doğrudan [Tool Calling](tools_tr.md) bölümündeki mekanizmaya oturur.
 - **Subagent'lar:** bir agent kısa ömürlü yardımcılar başlatır ve her yardımcının kendi izole bağlamı olur. Ana agent ise sonunda yalnızca onların sonuçlarını tutar.
 
 ## Bir Multi-agent Nasıl Kurulur
@@ -148,7 +148,7 @@ Bu, agent'ları birbirine bağlar. Supervisor'ı Claude Agent SDK ile, iki worke
 
 Bu, fikri görebilmen için sadeleştirilmiş bir kart. Gerçeğinde birkaç alan daha var.
 
-Bunun [LLM Tool Calling](tools_tr.md) modülündeki MCP ile nasıl yan yana durduğuna dikkat et. MCP, bir agent'ı **tool**'larına bağlar. A2A ise bir agent'ı **başka agent'lara** bağlar. A2A'nın kendi sitesi de ikisinin rakip değil, birbirini tamamlayan protokoller olduğunu söylüyor.
+Bunun [Tool Calling](tools_tr.md) modülündeki MCP ile nasıl yan yana durduğuna dikkat et. MCP, bir agent'ı **tool**'larına bağlar. A2A ise bir agent'ı **başka agent'lara** bağlar. A2A'nın kendi sitesi de ikisinin rakip değil, birbirini tamamlayan protokoller olduğunu söylüyor.
 
 **Buna ihtiyacın var mı?** Dürüst olmak gerekirse çoğu zaman yok, küçük bir projede de neredeyse hiç yok. Tek bir sistemin her agent'ını farklı bir framework ile yazmanın bir nedeni yok. Hepsini aynı framework ile yazarsan zaten birbirlerini anlarlar.
 

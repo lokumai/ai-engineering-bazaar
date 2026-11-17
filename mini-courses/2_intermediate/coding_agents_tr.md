@@ -118,7 +118,7 @@ Asıl önemli olan ise mekanizmadır; hatırlaman gereken bir adı var: **kademe
 Başlangıçta agent, kurulu her skill'in yalnızca `name` ve `description` alanını yükler. Bu her skill için bir ya da iki satır eder, yani yirmi skill bile neredeyse hiç yer kaplamaz. Agent tam talimatları ancak bir skill'in üzerinde çalıştığı göreve uyduğuna karar verdiğinde okur.
 
 ![Skill'ler ve context window](./images/skill-and-context-window.webp)  
-*Üstteki gri şerit, kullanılmadıkları sürece yirmi skill'in tam maliyetini gösterir: her biri için tek kısa bir satır. PDF görevi geldiğinde agent `SKILL.md` dosyasını sıradan bir Bash çağrısıyla okur. Sonra bu dosyanın içindeki bir referansı izleyerek ikinci bir dosyaya geçer. Dikkat et, skill context'e bir tool sonucu olarak girer. Yani bu yeni bir mekanizma değil. Veri yerine talimat okumak için kullanılan, LLM Tool Calling modülündeki tool döngüsüdür.*
+*Üstteki gri şerit, kullanılmadıkları sürece yirmi skill'in tam maliyetini gösterir: her biri için tek kısa bir satır. PDF görevi geldiğinde agent `SKILL.md` dosyasını sıradan bir Bash çağrısıyla okur. Sonra bu dosyanın içindeki bir referansı izleyerek ikinci bir dosyaya geçer. Dikkat et, skill context'e bir tool sonucu olarak girer. Yani bu yeni bir mekanizma değil. Veri yerine talimat okumak için kullanılan, Tool Calling modülündeki tool döngüsüdür.*
 
 Peki neden tek ve çok büyük bir sistem prompt'u yerine skill'ler var? Nedeni context engineering'dir: agent'ın ihtiyaç duyabileceği her şey erişilebilir durumdadır, ama pencerede yalnızca gerçekten ihtiyaç duyduğu şey bulunur.
 
@@ -263,7 +263,7 @@ Son ikisi kontrolle ilgilidir. Hook'lar, model onları seçse de seçmese de ger
 
 Neredeyse tamamı klasörde duran markdown'dır; hem sen hem modelin iyi kullandığı format da budur.
 
-Sırada: bu modülde modelin söz hakkı olmadığı ilk şey hook'lardı. Bu fikre harness engineering deniyor ve kısa bir pratik molasından hemen sonra geliyor: bu parçaları ücretsiz kurslarda kendi elinle denediğin [Agent'lar Pratikte](agents_in_practice_tr.md).
+Sırada: bu modülde modelin söz hakkı olmadığı ilk şey hook'lardı. Bu fikre harness engineering deniyor ve kısa bir pratik molasından hemen sonra geliyor: bu parçaları ücretsiz kurslarda kendi elinle denediğin [Pratikte Agent'lar](agents_in_practice_tr.md).
 
 **Hızlı Kontrol**: bir skill ile bir custom subagent, ikisi de agent'a bir uzmanlık alanı kazandırır. Aralarındaki gerçek fark nedir ve her biri ne zaman uygundur?
 

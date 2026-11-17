@@ -5,7 +5,7 @@ objectives:
   - "Claude Cowork'ü Claude Code'dan ve Claude Duet'ten ayırt et"
 ---
 
-# Agent'lar Pratikte
+# Pratikte Agent'lar
 
 [Code Agent'lar](coding_agents_tr.md) modülünde bir coding agent'ı parçalarına ayırdık: AGENTS.md, slash command'lar, MCP, subagent'lar, skill'ler, hook'lar ve plugin'ler. Artık her parçanın ne işe yaradığını biliyorsun. Bu modül ise onları kullanmakla ilgili. Bunu öğrenmenin en iyi yolu, gerçek aracı önünde açıkken işi kendi elinle yaptığın kısa bir kurs.
 

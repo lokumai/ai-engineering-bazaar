@@ -115,7 +115,7 @@ Normal fine-tuning modeldeki her sayıyı değiştirir, bu yüzden büyük bir m
 
 Fine-tuning isteyen birçok insanın aslında buna ihtiyacı yoktur. Cevabın "hayır" olduğu üç yaygın durum var.
 
-**Modele şirketinin bilgisini öğretmek için fine-tuning yapma.** Şirket bilgisi sürekli değişir: sözleşmeler güncellenir, politikalar değişir, yeni dokümanlar gelir. Fine-tuning, bir günün fotoğrafı gibidir. Sonrasında değişmez ve bir dosya her değiştiğinde yeniden yapmak hem zaman hem para harcatır. Şirket bilgisi için ihtiyacın olan şey retrieval, yani bir sonraki modül olan [RAG & Embeddings](rag_tr.md).
+**Modele şirketinin bilgisini öğretmek için fine-tuning yapma.** Şirket bilgisi sürekli değişir: sözleşmeler güncellenir, politikalar değişir, yeni dokümanlar gelir. Fine-tuning, bir günün fotoğrafı gibidir. Sonrasında değişmez ve bir dosya her değiştiğinde yeniden yapmak hem zaman hem para harcatır. Şirket bilgisi için ihtiyacın olan şey retrieval, yani bir sonraki modül olan [RAG ve Embedding'ler](rag_tr.md).
 
 **Fine-tuning'i bilgi için değil, beceri için yap.** Fine-tuning bir *davranışı* öğretmekte iyidir: şu biçimde yaz, metinleri şu kategorilere ayır. *Bilgi* öğretmekte ise zayıftır, çünkü senin birkaç yüz sayfan, modelin okuduğu diğer her şeyi tutan milyarlarca sayının arasına karışır.
 

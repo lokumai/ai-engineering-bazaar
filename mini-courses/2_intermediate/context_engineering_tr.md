@@ -84,7 +84,7 @@ Buradaki uyarı aynıdır ve kökü de aynıdır. Neyin saklanmaya değer olduğ
 [Memory](../1_fundamentals/memory_tr.md) belleği parametrik, çalışma (working) ve uzun vadeli olmak üzere üçe ayırmıştı. Bu bölümde uzun vadeli olanına bakıyoruz. Pratikte bu bellek genellikle üç türe ayrılır:
 
 ![Uzun vadeli belleğin üç türü](./images/semantic-episodic-procedural.webp)  
-*Bu ayrım önemli, çünkü agent üçünü farklı zamanlarda yazar ve okur. Senin hakkındaki bilgiler zamanla sessizce birikir. Geçmiş eylemler, agent'ın aynı hatayı tekrarlamasını engeller. Talimat katmanı ise [LLM Tool Calling](../1_fundamentals/tools_tr.md) bölümündeki system prompt'un başka bir adla anılmasından ibaret.*
+*Bu ayrım önemli, çünkü agent üçünü farklı zamanlarda yazar ve okur. Senin hakkındaki bilgiler zamanla sessizce birikir. Geçmiş eylemler, agent'ın aynı hatayı tekrarlamasını engeller. Talimat katmanı ise [Tool Calling](../1_fundamentals/tools_tr.md) bölümündeki system prompt'un başka bir adla anılmasından ibaret.*
 
 ## Context Isolation
 
@@ -97,7 +97,7 @@ Kodlama agent'ının sana, bir milyon satırlık bir deponun hangi mimariyi kull
 ![Kendi pencereleri olan iki subagent](./images/subagent.webp)  
 *Her kutu ayrı bir context. Boş olarak başlar ve iş bitince atılır. Ana agent ara adımları hiç görmez, bütün mesele de bu: o adımlar ana agent'ın penceresine hiç girmediği için onu dolduramaz ve cevaplarını kötüleştiremez.*
 
-**Nasıl çalışır?** Subagent, temiz bir context'e sahip yeni bir agent. Ana agent, diğer herhangi bir aracı çağırdığı gibi onu çağırır. Örneğin şuna benzer bir çağrı yapar: `Task("find out what architecture this repo uses")`. [LLM Tool Calling](../1_fundamentals/tools_tr.md) açısından bakınca ortada yeni bir şey yok: bir araç çağrıldı ve bir araç sonucu geri geldi. Subagent kendi döngüsünü çalıştırır, her ara adımı gizler ve son cevabı bu araç sonucu olarak geri döndürür. Anthropic, bu özetlerin genellikle 1,000 ile 2,000 token civarında olduğunu bildiriyor.
+**Nasıl çalışır?** Subagent, temiz bir context'e sahip yeni bir agent. Ana agent, diğer herhangi bir aracı çağırdığı gibi onu çağırır. Örneğin şuna benzer bir çağrı yapar: `Task("find out what architecture this repo uses")`. [Tool Calling](../1_fundamentals/tools_tr.md) açısından bakınca ortada yeni bir şey yok: bir araç çağrıldı ve bir araç sonucu geri geldi. Subagent kendi döngüsünü çalıştırır, her ara adımı gizler ve son cevabı bu araç sonucu olarak geri döndürür. Anthropic, bu özetlerin genellikle 1,000 ile 2,000 token civarında olduğunu bildiriyor.
 
 Günümüzün agent'ları subagent'ları ya art arda ya da paralel çağırıyor. Bu sayede ana agent, gerçekten iyi olduğu işe odaklanabilir: planı tutmak ve sonra neyin olacağına karar vermek.
 

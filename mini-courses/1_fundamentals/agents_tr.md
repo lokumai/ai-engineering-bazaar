@@ -31,7 +31,7 @@ Bir **agent ise çok turludur.** Aynı modeli tekrar tekrar çağırırsın ve h
 
 ## Döngünün tek bir geçişi
 
-[LLM Tool Calling](tools_tr.md) modülünde tek bir tool çağrısını görmüştük. Bir agent turu ise tam olarak bu çağrının tekrar tekrar yapılmasından ibarettir:
+[Tool Calling](tools_tr.md) modülünde tek bir tool çağrısını görmüştük. Bir agent turu ise tam olarak bu çağrının tekrar tekrar yapılmasından ibarettir:
 
 ![Bir agent'ın context'i](./images/agent-context.webp)  
 *Tek bir geçiş şöyle işliyor: sen soruyorsun, model düşünüyor ve bir tool istiyor. Host tool'u çalıştırıp sonucu geri yazar, ardından model cevap verir. Bir sonraki geçişte bütün mesaj yığını (message stack) modele yeniden gönderilir ve artık iki mesaj daha uzundur.*
@@ -68,7 +68,7 @@ Döngünün hiçbir parçası LLM'in içinde gerçekleşmez. **Hepsi host makine
 - döngüyü çalıştırmak ve ne zaman bittiğine karar vermek
 - agent'ın [hafızası](memory_tr.md) olan mesaj yığınını tutmak
 - her çağrıdan önce system prompt'u oluşturmak
-- tool'ları çalıştırmak, çünkü bunlar senin Python fonksiyonların ([LLM Tool Calling](tools_tr.md))
+- tool'ları çalıştırmak, çünkü bunlar senin Python fonksiyonların ([Tool Calling](tools_tr.md))
 - bir sonraki geçiş için, artık daha uzun olan tüm context'i modele geri göndermek
 
 ![Maskesi indirilmiş bir agent](./images/agents-in-action.jpeg)  
@@ -89,7 +89,7 @@ Yukarıdaki liste, agent'ların neden bir **framework** kullandığını açıkl
 Serinin ana noktasına bu noktada varıyoruz: **LLM gerçekten sadece bir beyin. Metin girer, metin çıkar, hiçbir şey saklamaz ve başka hiçbir şey yapmaz.** Şimdiye kadar anlattığımız her yetenek, bu beynin etrafına kurulmuş bir ortamdır. Bu ortam sayesinde model şunları yapabiliyor:
 
 - birden fazla tur boyunca çalışabilir (bu modül)
-- kendi dışındaki dünyaya uzanabilir ([LLM Tool Calling](tools_tr.md))
+- kendi dışındaki dünyaya uzanabilir ([Tool Calling](tools_tr.md))
 - hatırlayabilir ([Memory](memory_tr.md))
 - hiç eğitilmediği verileri okuyabilir ([RAG ve Embedding'ler](rag_tr.md))
 
@@ -103,7 +103,7 @@ Altta yatan şey yine de tekrar tekrar çağırdığın bir LLM. Peki hangi tool
 
 Cevap **system prompt**'tur. Host, döngüdeki her çağrıdan önce bunu yeniden oluşturup modele gönderir. System prompt; agent'ın rolünü, kullanılabilir tool'ların adlarını ve açıklamalarını taşır ve bir tool çağrısının nasıl biçimlendirileceğini anlatır. Böylece host çağrıyı ayrıştırabilir.
 
-Bu listeyi elle yazman gerekmez, çünkü [LLM Tool Calling](tools_tr.md) modülünde anlattığımız gibi bunu `@tool` dekoratörü yapar. Framework, fonksiyonunun adını, docstring'ini ve type hint'lerini okur ve ardından şemayı modelin göreceği içeriğe yerleştirir. O kodun bu kadar kısa olmasının sebebi de bu. Dekoratör yalnızca fonksiyonu kaydetmekle kalmaz; framework bu sayede modele fonksiyonun var olduğunu da bildirir.
+Bu listeyi elle yazman gerekmez, çünkü [Tool Calling](tools_tr.md) modülünde anlattığımız gibi bunu `@tool` dekoratörü yapar. Framework, fonksiyonunun adını, docstring'ini ve type hint'lerini okur ve ardından şemayı modelin göreceği içeriğe yerleştirir. O kodun bu kadar kısa olmasının sebebi de bu. Dekoratör yalnızca fonksiyonu kaydetmekle kalmaz; framework bu sayede modele fonksiyonun var olduğunu da bildirir.
 
 ## Bir örnek
 
@@ -213,5 +213,5 @@ Sırada ise bir agent birden fazlaya dönüştüğünde neler olduğu var.
 
 ### 🧭 Modüller
 
-- [LLM Tool Calling](tools_tr.md): tool şemasının nereden geldiği
+- [Tool Calling](tools_tr.md): tool şemasının nereden geldiği
 - [Memory](memory_tr.md): döngünün büyüttüğü mesaj yığını

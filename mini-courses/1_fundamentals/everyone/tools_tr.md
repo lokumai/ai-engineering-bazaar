@@ -7,7 +7,7 @@ objectives:
 
 # Tool Calling
 
-[LLM Temelleri](llms_tr.md), [Training LLMs](training_tr.md) ve [RAG & Embeddings](rag_tr.md) modülleri bir modelin ne olduğunu, nasıl öğrendiğini ve kendi dokümanlarını onun önüne nasıl koyacağını anlattı. Bunların hepsinde yapay zekâ yalnızca okuyor ve yazıyordu. Bu modülde ise bir şeyler *yapmaya* başlıyor: internette arama yapıyor, bir dosyayı okuyor, takvimde bir etkinlik oluşturuyor ya da bir e-posta gönderiyor.
+[LLM Temelleri](llms_tr.md), [Training LLMs](training_tr.md) ve [RAG ve Embedding'ler](rag_tr.md) modülleri bir modelin ne olduğunu, nasıl öğrendiğini ve kendi dokümanlarını onun önüne nasıl koyacağını anlattı. Bunların hepsinde yapay zekâ yalnızca okuyor ve yazıyordu. Bu modülde ise bir şeyler *yapmaya* başlıyor: internette arama yapıyor, bir dosyayı okuyor, takvimde bir etkinlik oluşturuyor ya da bir e-posta gönderiyor.
 
 Bu, her AI agent'ının altındaki mekanizma. O yüzden onu tam olarak anlamaya değer.
 
@@ -108,7 +108,7 @@ Bazı chat ekranları bu adımları olurken gösterir. Bu kayıtta her hisse sor
 Bir bilgisayarın yapabildiği hemen her şey bir tool olabilir:
 
 - internette arama yapmak
-- şirket dokümanlarını okumak ya da aramak (bu, [RAG & Embeddings](rag_tr.md) modülündeki RAG aramasının bir tool'a çevrilmiş hâli; böylece bir şeye *ne zaman* bakacağına yapay zekâ karar verir)
+- şirket dokümanlarını okumak ya da aramak (bu, [RAG ve Embedding'ler](rag_tr.md) modülündeki RAG aramasının bir tool'a çevrilmiş hâli; böylece bir şeye *ne zaman* bakacağına yapay zekâ karar verir)
 - Gmail'den e-posta göndermek
 - Jira'da bir ticket oluşturmak
 - takvimine bir etkinlik eklemek

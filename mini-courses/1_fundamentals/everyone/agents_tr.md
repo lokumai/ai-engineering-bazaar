@@ -85,7 +85,7 @@ Bu da kursu ana noktasına getiriyor. **LLM yalnızca bir beyindir. İçeri meti
 - birçok tur boyunca çalışmak (bu modül)
 - kendi dışına uzanmak ([Tool Calling](tools_tr.md))
 - hatırlamak ([Memory](memory_tr.md))
-- hiç eğitilmediği dokümanları okumak ([RAG & Embeddings](rag_tr.md))
+- hiç eğitilmediği dokümanları okumak ([RAG ve Embedding'ler](rag_tr.md))
 
 Model gerçekten bu kadar basit. Geri kalan her şey, onun etrafındaki mühendislik.
 

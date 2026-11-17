@@ -98,7 +98,7 @@ Bir agent turn'ünün içi daha kalabalıktır. HumanMessage'ından sonra model,
 ![Bir agent'ın context'i](./images/agent-context.webp)  
 *Bir agent'ın tek turn'ü: sen prompt'u yazarsın, AI düşünür, bir tool'u çağırır ve sonra cevap verir. Kimin neyi yazdığına bak. LLM düşünceyi, Tool Call'u ve cevabı üretir. Tool Result ise fonksiyonu çalıştıran host makineden gelir.*
 
-Agent'ların nasıl işlediğinin temeli tam olarak bu ayrımdır. Bunu [LLM Tool Calling](tools_tr.md) ve [AI Agents](agents_tr.md) modüllerinde yeniden ele alacağız.
+Agent'ların nasıl işlediğinin temeli tam olarak bu ayrımdır. Bunu [Tool Calling](tools_tr.md) ve [AI Agents](agents_tr.md) modüllerinde yeniden ele alacağız.
 
 ## LLM Hyperparameter'ları
 

@@ -34,8 +34,8 @@ import type { ListTrend } from './TrendEntry'
  */
 
 const NOTICE = {
-  sample: { lead: 'Illustrative:', rest: 'the trends below are sample data and this page is not ready yet.' },
-  real: { lead: 'Not ready:', rest: 'this page is still being built.' },
+  sample: { lead: 'This page is not ready yet.', rest: 'The trends below are sample data and have not been checked.' },
+  real: { lead: 'This page is not ready yet.', rest: 'It is still being built.' },
 } as const
 
 export function sceneDataOf(view: CaravanView): SceneData {

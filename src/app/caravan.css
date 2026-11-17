@@ -67,33 +67,38 @@
   }
 
   /* -- the notice, first on the page ------------------------------------- */
+  /* The notice is the one thing on this page that says it is not finished, so it is drawn as a
+     filled bar in the language's caution pair, centred, at body size. `on-caution` on `caution`
+     is 5.11:1 in both themes (bazaar.css, measured there). The words carry the meaning and the
+     mark repeats it; the colour is never the only signal. */
   .cv-notice {
     display: flex;
-    align-items: flex-start;
-    gap: 9px;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
     margin: 0 var(--cv-gutter) 12px;
-    padding: 8px 13px;
-    border: 1px dashed var(--color-line-strong);
+    padding: 9px 20px;
+    border: 1px solid var(--color-caution);
     border-radius: var(--radius-sm);
-    background: var(--color-surface-raised);
-    color: var(--color-on-surface);
-    font-size: var(--text-meta);
-    line-height: 1.45;
+    background: var(--color-caution);
+    color: var(--color-on-caution);
+    font-size: var(--text-body);
+    line-height: 1.5;
+    text-align: center;
   }
 
   .cv-notice svg {
     flex: none;
-    width: 15px;
-    height: 15px;
-    margin-top: 2px;
+    width: 20px;
+    height: 20px;
     fill: none;
     stroke: currentColor;
     stroke-width: 1.6;
   }
 
   .cv-notice b {
-    color: var(--color-on-surface-title);
-    font-weight: 600;
+    color: inherit;
+    font-weight: 700;
   }
 
   /* -- the head ------------------------------------------------------------ */

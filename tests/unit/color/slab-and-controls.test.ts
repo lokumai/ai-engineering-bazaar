@@ -2,6 +2,7 @@ import { readFileSync, readdirSync } from 'node:fs'
 import { join } from 'node:path'
 import { describe, expect, it } from 'vitest'
 import { readDesignToken } from '@/lib/content/code-theme'
+import { NOT_A_SURFACE } from '../design/surfaces'
 
 /**
  * Who owns a theme, and the one palette that refuses to flip.
@@ -34,7 +35,6 @@ import { readDesignToken } from '@/lib/content/code-theme'
 
 const LANGUAGE = join(import.meta.dirname, '../../../src/design/bazaar.css')
 const APP_DIR = join(import.meta.dirname, '../../../src/app')
-const NOT_A_SURFACE = new Set(['globals.css', 'lokum-modules.css'])
 
 const language = readFileSync(LANGUAGE, 'utf8')
 

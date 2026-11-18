@@ -1,6 +1,7 @@
 import { readFileSync, readdirSync, statSync } from 'node:fs'
 import { join, relative } from 'node:path'
 import { describe, expect, it } from 'vitest'
+import { withoutComments } from './surfaces'
 
 /**
  * Every styling reference in the markup resolves against the language.
@@ -239,14 +240,13 @@ function declaresItself(source: string): ReadonlySet<string> {
  * the file for describing its own history, which is the opposite of what this
  * test is for. Replaced with spaces rather than removed, so nothing shifts.
  */
-function withoutComments(source: string): string {
-  return source
-    .replace(/\/\*[\s\S]*?\*\//g, (match) => match.replace(/[^\n]/g, ' '))
+function withoutSourceComments(source: string): string {
+  return withoutComments(source)
     .replace(/(^|[^:])\/\/[^\n]*/g, (match, lead) => lead + ' '.repeat(match.length - lead.length))
 }
 
 function referencesIn(path: string): Reference[] {
-  const source = withoutComments(readFileSync(path, 'utf8'))
+  const source = withoutSourceComments(readFileSync(path, 'utf8'))
   const file = path.slice(ROOT.length + 1)
   const own = declaresItself(source)
   const found: Reference[] = []

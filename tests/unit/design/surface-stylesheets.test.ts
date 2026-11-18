@@ -1,7 +1,6 @@
-import { readFileSync, readdirSync } from 'node:fs'
-import { join } from 'node:path'
+import { readdirSync } from 'node:fs'
 import { describe, expect, it } from 'vitest'
-import { NOT_A_SURFACE } from './surfaces'
+import { NOT_A_SURFACE, SURFACE_DIR, surfaces as surfaceFiles, withoutComments } from './surfaces'
 
 /**
  * The discipline a SURFACE stylesheet is held to, as opposed to the language.
@@ -38,36 +37,11 @@ import { NOT_A_SURFACE } from './surfaces'
  * group, and it may not be spent on a link, a button or a focus ring.
  */
 
-const APP_DIR = join(import.meta.dirname, '../../../src/app')
+const APP_DIR = SURFACE_DIR
 
-/** The entry point and the generated per-module sheet are not surfaces. */
-
-interface Surface {
-  readonly name: string
-  readonly css: string
-}
-
-/**
- * Comments out, and every rule below needs it.
- *
- * A comment is where a surface explains itself — why a value is what it is,
- * which mockup it came from, what the retired design did instead — so prose
- * naming `box-shadow` or a hex would fail the file for describing itself. The
- * selector rules need it more: without stripping, `([^{}]+)\{` captures the
- * whole comment ahead of a rule AS the selector, and any comment containing the
- * word "a" then reads as a link. That is exactly how this file first failed.
- *
- * Replaced with spaces rather than removed, so nothing shifts.
- */
-function withoutComments(css: string): string {
-  return css.replace(/\/\*[\s\S]*?\*\//g, (match) => match.replace(/[^\n]/g, ' '))
-}
-
-function surfaces(): Surface[] {
-  return readdirSync(APP_DIR)
-    .filter((name) => name.endsWith('.css') && !NOT_A_SURFACE.has(name))
-    .sort()
-    .map((name) => ({ name, css: withoutComments(readFileSync(join(APP_DIR, name), 'utf8')) }))
+/** Every surface, comments out (`withoutComments`: every rule below needs it). */
+function surfaces() {
+  return surfaceFiles().map(({ name, css }) => ({ name, css: withoutComments(css) }))
 }
 
 const SURFACES = surfaces()

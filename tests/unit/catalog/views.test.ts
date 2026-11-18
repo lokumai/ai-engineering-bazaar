@@ -13,6 +13,7 @@ import {
 import { CATALOG_VIEWS, EMPTY_RECORD } from '@/lib/record/schema'
 import { setCatalogView } from '@/lib/record/events'
 import { coerceRecordData } from '@/lib/record/validate'
+import { NOT_A_SURFACE } from '../design/surfaces'
 
 /**
  * M12 / D13 — the three catalog views, and the channel-A selector list that
@@ -40,7 +41,6 @@ import { coerceRecordData } from '@/lib/record/validate'
  * vocabulary and the record, and never needed a stylesheet.
  */
 
-const NOT_A_SURFACE = new Set(['globals.css', 'lokum-modules.css'])
 const APP_DIR = join(import.meta.dirname, '../../../src/app')
 
 const CSS = readdirSync(APP_DIR)

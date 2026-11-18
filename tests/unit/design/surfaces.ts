@@ -43,3 +43,19 @@ export function surfaces(): Surface[] {
     .sort()
     .map((name) => ({ name, css: readFileSync(join(SURFACE_DIR, name), 'utf8') }))
 }
+
+/**
+ * Comments out, for every test that scans a stylesheet's rules.
+ *
+ * A comment is where a surface explains itself (why a value is what it is, which
+ * mockup it came from, what the retired design did instead), so prose naming
+ * `box-shadow` or a hex would fail a file for describing itself, and `([^{}]+)\{`
+ * would capture the whole comment ahead of a rule AS its selector. Four test files
+ * had written this one line; the first three kept the comment's width, so nothing
+ * shifts and a reported line number stays true.
+ *
+ * Replaced with spaces rather than removed.
+ */
+export function withoutComments(css: string): string {
+  return css.replace(/\/\*[\s\S]*?\*\//g, (match) => match.replace(/[^\n]/g, ' '))
+}

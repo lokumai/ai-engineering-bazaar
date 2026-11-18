@@ -19,18 +19,11 @@
  * Plain `.mjs` importing only `node:` (the scripts cannot import the TypeScript list of
  * languages; the finaliser reads it from the bundle's own index).
  */
-import { existsSync, readFileSync, readdirSync, writeFileSync } from 'node:fs'
+import { existsSync, readFileSync, writeFileSync } from 'node:fs'
 import { join } from 'node:path'
+import { htmlFiles } from './base-path.mjs'
 
 const ENGLISH = '<html lang="en"'
-
-function htmlFiles(dir) {
-  return readdirSync(dir, { withFileTypes: true }).flatMap((entry) => {
-    const full = join(dir, entry.name)
-    if (entry.isDirectory()) return htmlFiles(full)
-    return entry.name.endsWith('.html') ? [full] : []
-  })
-}
 
 /**
  * @param {string} outDir the export

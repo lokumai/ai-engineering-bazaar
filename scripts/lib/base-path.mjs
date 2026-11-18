@@ -20,15 +20,21 @@ import { join } from 'node:path'
 /**
  * Every `.html` file under `dir`, in directory order.
  *
+ * Four scripts and specs had written this walk, differing only in what they skip;
+ * that is the one option. `skip` names directories not to enter (the e2e SEO spec
+ * leaves `_next` alone: its assets are not pages).
+ *
  * @param {string} dir
+ * @param {{ skip?: readonly string[] }} [options]
  * @returns {string[]}
  */
-export function htmlFiles(dir) {
+export function htmlFiles(dir, { skip = [] } = {}) {
   const out = []
   for (const entry of readdirSync(dir, { withFileTypes: true })) {
     const p = join(dir, entry.name)
-    if (entry.isDirectory()) out.push(...htmlFiles(p))
-    else if (entry.isFile() && entry.name.endsWith('.html')) out.push(p)
+    if (entry.isDirectory()) {
+      if (!skip.includes(entry.name)) out.push(...htmlFiles(p, { skip }))
+    } else if (entry.isFile() && entry.name.endsWith('.html')) out.push(p)
   }
   return out
 }

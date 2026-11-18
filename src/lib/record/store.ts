@@ -50,7 +50,6 @@ let current: RecordData = EMPTY_RECORD
 let hydrated = false
 let started = false
 let storage: RecordStorage | null = null
-let savedAt: string | null = null
 let quarantined: 'newer' | 'malformed' | null = null
 let lastWrite: WriteState = 'pending'
 let dirty = false
@@ -124,7 +123,6 @@ function flushNow(): void {
   const at = nowIso()
   const result = writeRecord(storage, current, at)
   if (result.ok) {
-    savedAt = at
     lastWrite = 'saved'
   } else {
     lastWrite = result.reason
@@ -172,7 +170,6 @@ function onStorage(event: StorageEvent): void {
   }
   const result = parseEnvelope(event.newValue)
   if (result.kind === 'ok') {
-    savedAt = result.savedAt
     adopt(result.data)
   }
 }
@@ -181,7 +178,6 @@ function onMessage(event: MessageEvent): void {
   if (typeof event.data !== 'string') return
   const result = parseEnvelope(event.data)
   if (result.kind === 'ok') {
-    savedAt = result.savedAt
     adopt(result.data)
   }
 }
@@ -246,7 +242,6 @@ function start(): void {
   const result = readRecord(storage)
   if (result.kind === 'ok') {
     current = result.data
-    savedAt = result.savedAt
   } else if (result.kind === 'quarantine') {
     // §12.1.2 — the live record is treated as absent and the profile sheet
     // prints RECORD WRITTEN BY A NEWER VERSION OF THIS SITE — NOT READ.
@@ -336,11 +331,6 @@ export function snapshot(): RecordData {
   return current
 }
 
-/** §12.11 item 6 — the envelope's own `savedAt`, or null if never written. */
-export function recordSavedAt(): string | null {
-  return savedAt
-}
-
 /** §12.1.2 — non-null when a payload this build cannot read was set aside. */
 export function quarantineReason(): 'newer' | 'malformed' | null {
   return quarantined
@@ -399,39 +389,6 @@ export async function requestPersistence(): Promise<boolean | null> {
  * gauge, ring or fill bar.
  */
 export type StorageReadout = 'PERSISTENT' | 'BEST-EFFORT' | 'UNAVAILABLE' | 'UNKNOWN'
-
-/**
- * The same answer, subscribed — and the reason it had to exist was MEASURED.
- *
- * `askPersisted()` resolves after the hydration commit and records the grant in
- * a module variable, then `notify()`s. A component that merely CALLS
- * `storageReadout()` re-renders only if something else it subscribes to also
- * changed, and the grant is deliberately not written through the reducer (see
- * `askPersisted`), so the record never moves. `StoragePanel` got away with it by
- * accident: its `estimate()` effect calls `setAsked(true)`, and that re-render
- * happened to land after the grant arrived. `StorageReading` — §16.4.1's closed
- * summary for the same row — subscribed to nothing at all, so it froze at the
- * value it read in the commit.
- *
- * Measured, on the register gate `record-pages.spec.ts` now carries: with the
- * storage row closed and the browser having answered, the body's `<dd>` printed
- * `BEST-EFFORT` while the summary one line above it printed `UNKNOWN`, at the
- * same instant. Two readings of one fact, contradicting each other on the same
- * screen, which is §1's failure with the evidence against it in view.
- *
- * The snapshot is a string, so it is stable by value and a `notify()` that did
- * not change the answer costs no render. The server snapshot is `UNKNOWN`
- * because a build has queried nothing; both call sites still gate on
- * `useHydrated()` and print `--` in the prerender, which is the difference
- * between "not queried" and "queried, no answer".
- */
-export function useStorageReadout(): StorageReadout {
-  return useSyncExternalStore(
-    subscribe,
-    () => storageReadout(),
-    () => 'UNKNOWN' as StorageReadout,
-  )
-}
 
 export function storageReadout(): StorageReadout {
   if ((started && storage === null) || lastWrite === 'blocked') return 'UNAVAILABLE'

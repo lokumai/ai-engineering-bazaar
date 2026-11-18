@@ -67,7 +67,7 @@ export function signedCount(
 }
 
 /**
- * §8.2 — the shape `Lkm01Progress` consumes, keyed by category slug. Every
+ * §8.2 — the approved count and total per category, keyed by category slug. Every
  * category is present even at zero, because a dormant face is a state the mark
  * has to be able to draw, and the tick gauge needs the total either way.
  *

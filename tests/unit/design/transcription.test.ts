@@ -1,6 +1,7 @@
 import { readFileSync } from 'node:fs'
 import path from 'node:path'
 import { describe, expect, it } from 'vitest'
+import { withoutComments } from './surfaces'
 
 /**
  * M15 — the language is a TRANSCRIPTION, and this is what holds it to that.
@@ -52,11 +53,6 @@ const ANNOTATION = /^\.(pg|mx|sw)\b/
 
 function read(file: string): string {
   return readFileSync(file, 'utf8')
-}
-
-/** Comments carry prose about values and would otherwise be scanned as CSS. */
-function withoutComments(css: string): string {
-  return css.replaceAll(/\/\*[\s\S]*?\*\//g, ' ')
 }
 
 function styleBlock(file: string): string {

@@ -1,9 +1,10 @@
 import { expect, test } from '@playwright/test'
-import { existsSync, readFileSync, readdirSync } from 'node:fs'
+import { existsSync, readFileSync } from 'node:fs'
 import { join, relative, sep } from 'node:path'
 import { TRANSLATED_LANGS, type ReadingLang } from '@/lib/content/languages'
 import { SITE_ORIGIN } from '@/lib/site'
 import { THEME_BOOT_SCRIPT } from '@/lib/theme'
+import { htmlFiles } from '../../scripts/lib/base-path.mjs'
 
 /**
  * D119 — what a search engine reads off the export: the page's language, its
@@ -35,13 +36,7 @@ interface Page {
   noindex: boolean
 }
 
-function htmlFiles(dir: string): string[] {
-  return readdirSync(dir, { withFileTypes: true }).flatMap((entry) => {
-    const full = join(dir, entry.name)
-    if (entry.isDirectory()) return entry.name === '_next' ? [] : htmlFiles(full)
-    return entry.name.endsWith('.html') ? [full] : []
-  })
-}
+const pageFiles = (dir: string): string[] => htmlFiles(dir, { skip: ['_next'] })
 
 function languageOf(route: string): { lang: ReadingLang; bare: string } {
   for (const lang of TRANSLATED_LANGS) {
@@ -61,7 +56,7 @@ const links = (html: string, rel: string): string[] =>
 
 /** Every page in the export. `404.html` and `404/index.html` are pages too: they say `noindex`. */
 function readPages(): Page[] {
-  return htmlFiles(OUT).map((file) => {
+  return pageFiles(OUT).map((file) => {
     const path = relative(OUT, file).split(sep).join('/')
     const route = path === 'index.html' ? '/' : path.endsWith('/index.html') ? `/${path.slice(0, -'index.html'.length)}` : `/${path}`
     const html = readFileSync(file, 'utf8')

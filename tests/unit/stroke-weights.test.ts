@@ -1,6 +1,7 @@
 import { readFileSync, readdirSync } from 'node:fs'
 import { join } from 'node:path'
 import { describe, expect, it } from 'vitest'
+import { withoutComments } from './design/surfaces'
 
 /**
  * One browser fact, guarded generally.
@@ -44,12 +45,6 @@ interface Declaration {
   line: number
   property: string
   value: string
-}
-
-/** Strip `/* … *\/` so a comment that names the anti-pattern is not a hit. */
-function withoutComments(css: string): string {
-  // Replaced with spaces, not removed, so line numbers survive.
-  return css.replace(/\/\*[\s\S]*?\*\//g, (match) => match.replace(/[^\n]/g, ' '))
 }
 
 function declarationsIn(path: string, label: string): Declaration[] {

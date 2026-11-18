@@ -2,6 +2,7 @@ import { readFileSync, readdirSync } from 'node:fs'
 import { join } from 'node:path'
 import { describe, expect, it } from 'vitest'
 import { CATEGORIES } from '@/lib/content/curriculum-file'
+import { NOT_A_SURFACE } from '../design/surfaces'
 
 /**
  * The channel-A state lists a SURFACE has to keep complete.
@@ -35,7 +36,6 @@ import { CATEGORIES } from '@/lib/content/curriculum-file'
  */
 
 const APP_DIR = join(import.meta.dirname, '../../../src/app')
-const NOT_A_SURFACE = new Set(['globals.css', 'lokum-modules.css'])
 
 /** Every surface stylesheet, concatenated, comments stripped. */
 function surfaceCss(): string {

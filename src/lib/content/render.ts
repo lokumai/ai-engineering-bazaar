@@ -535,7 +535,7 @@ function rehypeRewriteImages(
 ) {
   return (tree: Root) => {
     if (!imageBase) return
-    /* The first picture stays eager (it can be on the first screen); every later one waits
+    /* The first picture stays eager (it can be on the first screen); every later still one waits
        until it nears the viewport. The marks beside a name are inline at text height and
        are left as they are. */
     let pictures = 0
@@ -563,7 +563,9 @@ function rehypeRewriteImages(
       node.properties.width = width
       node.properties.height = height
       node.properties.decoding = 'async'
-      if (pictures > 0) node.properties.loading = 'lazy'
+      /* A recording plays from the moment it loads, and its replay button reads the loaded file
+         (`Affordances.tsx`), so it is never deferred: the page keeps starting it as it did. */
+      if (pictures > 0 && !isAnimatedCourseImage(`${imagePath}/${served}`)) node.properties.loading = 'lazy'
       pictures += 1
     })
   }

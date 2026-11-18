@@ -23,7 +23,7 @@ const ROUTES = [
 
 const isPhone = (page: Page) => page.viewportSize()!.width < 768
 
-for (const width of [360, 390]) {
+for (const width of [320, 360, 390]) {
   test(`no route scrolls sideways at ${width}px, and the tab bar stays inside the screen`, async ({ page }) => {
     test.skip(!isPhone(page), 'a phone-width rule')
     await page.setViewportSize({ width, height: 780 })
@@ -67,6 +67,53 @@ test('every main destination is a visible, fixed, 44px tab with nothing to scrol
   expect(await current.evaluate((el) => getComputedStyle(el).borderTopColor !== 'rgba(0, 0, 0, 0)')).toBe(true)
 })
 
+test('a phone on its side keeps the tab bar, and only the tab bar, on screen', async ({ page }) => {
+  test.skip(!isPhone(page), 'a phone rule')
+  await page.setViewportSize({ width: 844, height: 390 })
+  for (const route of [A0.path, '/caravan/']) {
+    await page.goto(route)
+    await page.waitForLoadState('networkidle')
+    const facts = await page.evaluate(() => {
+      const nav = document.querySelector('.bz-bar-nav')!
+      const tabs = [...nav.querySelectorAll(':scope > ul > li')].map((li) => li.getBoundingClientRect().toJSON())
+      return {
+        position: getComputedStyle(nav).position,
+        bar: getComputedStyle(document.querySelector('.bz-bar')!).position,
+        tabs,
+        scroll: document.documentElement.scrollWidth,
+        room: nav.querySelector(':scope > ul')!.scrollWidth <= nav.querySelector(':scope > ul')!.clientWidth,
+      }
+    })
+    expect(facts.position, `${route}: no tab bar in landscape`).toBe('fixed')
+    expect(facts.bar, `${route}: the top bar should leave the screen with the page in landscape`).toBe('static')
+    expect(facts.tabs.length).toBeGreaterThanOrEqual(3)
+    for (const tab of facts.tabs) {
+      expect(tab.left).toBeGreaterThanOrEqual(0)
+      expect(tab.right).toBeLessThanOrEqual(844)
+      expect(tab.height, `${route}: a landscape tab is under 44px`).toBeGreaterThanOrEqual(44)
+    }
+    expect(facts.room, `${route}: tabs scroll sideways`).toBe(true)
+    expect(facts.scroll, `${route} scrolls sideways in landscape`).toBeLessThanOrEqual(844)
+  }
+})
+
+for (const size of [{ width: 390, height: 844 }, { width: 844, height: 390 }]) {
+  test(`the trail is one back link of 44px at ${size.width}x${size.height}`, async ({ page }) => {
+    test.skip(!isPhone(page), 'a phone rule')
+    await page.setViewportSize(size)
+    for (const route of [A0.path, CATEGORY_PATHS[1], '/caravan/']) {
+      await page.goto(route)
+      const shown = await page.evaluate(() =>
+        [...document.querySelectorAll('.bz-crumb li')]
+          .filter((li) => li.checkVisibility())
+          .map((li) => ({ link: li.querySelector('a') !== null, height: li.querySelector('a')?.getBoundingClientRect().height ?? 0 })))
+      expect(shown.length, `${route}: more than one crumb is shown`).toBe(1)
+      expect(shown[0].link, `${route}: the crumb is not a link back`).toBe(true)
+      expect(shown[0].height, `${route}: the back link is under 44px`).toBeGreaterThanOrEqual(44)
+    }
+  })
+}
+
 test('the page ends above the tab bar, not behind it', async ({ page }) => {
   test.skip(!isPhone(page), 'a phone-width rule')
   await page.goto(A0.path)
@@ -93,8 +140,12 @@ test('the catalog menu opens by touch and by keyboard, and closes by Escape and 
     expect((await row.boundingBox())!.height, 'a menu row is under 44px').toBeGreaterThanOrEqual(44)
   }
 
-  await page.touchscreen.tap(20, 200)
+  // A tap on the page above the sheet closes it and goes no further: where it lands is
+  // read from the sheet's own edge, and a link beneath would have changed the address.
+  const here = page.url()
+  await page.touchscreen.tap(30, Math.round(sheet.y / 2))
   await expect(details).not.toHaveAttribute('open', '')
+  expect(page.url(), 'the tap that closed the sheet also followed a link beneath it').toBe(here)
 
   await summary.focus()
   await page.keyboard.press('Enter')
@@ -113,6 +164,7 @@ test('no control lives behind a hover: the heading anchor and the chord hint are
   expect(await anchors.count(), 'the module has no heading anchors to check').toBeGreaterThan(0)
   for (const anchor of await anchors.all()) await expect(anchor).toBeHidden()
   await page.goto('/profile/')
+  await expect(page.locator('.bz-chord-hint'), 'the hint is gone from the page, so hiding it proves nothing').toHaveCount(1)
   await expect(page.locator('.bz-chord-hint')).toBeHidden()
 })
 
@@ -158,6 +210,8 @@ test('at desktop width the bar keeps its place: the navigation is in the top bar
   const nav = page.locator('.bz-bar-nav')
   expect(await nav.evaluate((el) => getComputedStyle(el).position)).not.toBe('fixed')
   const box = (await nav.boundingBox())!
-  expect(box.y + box.height, 'the navigation left the top bar').toBeLessThanOrEqual(76)
+  const bar = (await page.locator('.bz-bar').boundingBox())!
+  expect(box.y, 'the navigation left the top bar (above it)').toBeGreaterThanOrEqual(bar.y)
+  expect(box.y + box.height, 'the navigation left the top bar (below it)').toBeLessThanOrEqual(bar.y + bar.height)
   expect(await page.locator('.bz-tab-icon').first().isVisible()).toBe(false)
 })

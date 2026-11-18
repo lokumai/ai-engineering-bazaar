@@ -27,14 +27,14 @@ export const metadata: Metadata = {
 /**
  * `viewport-fit=cover` lets the page draw under a phone's notch and home indicator, which is
  * what makes `env(safe-area-inset-*)` mean anything; `mobile.css` pads the tab bar and the page
- * edges with it. `theme-color` is the bar's cobalt (the same in both themes), so the browser's own chrome matches it.
- * Neither changes a desktop browser.
+ * edges with it. `theme-color` is the bar's cobalt (the same in both themes) and applies only at phone width, so the browser's own chrome matches it.
+ * Neither changes a desktop browser: the theme colour is media-conditioned so a desktop Safari tab bar is left alone.
  */
 export const viewport: Viewport = {
   width: 'device-width',
   initialScale: 1,
   viewportFit: 'cover',
-  themeColor: '#282864',
+  themeColor: [{ media: '(max-width: 767px)', color: '#282864' }],
 }
 
 /**

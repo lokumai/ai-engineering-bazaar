@@ -4,9 +4,11 @@
    Plan, measurements and screenshots: `playground/2026-11-round-7/MOBILE-PLAN.md`.
 
    THE DESKTOP IS NOT TOUCHED. Every rule here sits inside a media query that
-   is false at 768px and above (`max-width: 767px`, `hover: none`, or a short
-   landscape window), so the mockup's rendering holds exactly where it was
-   transcribed. `01` was drawn for a desktop and never at 390px; what a phone
+   is false for a mouse at 768px and above: `max-width: 767px`, a touch device
+   (`hover: none` and `pointer: coarse`) held landscape in under 500px of height
+   (a phone on its side, 844 or 932 wide), or `hover: none` alone for the two
+   things no touch screen can use. The mockup's rendering holds exactly where
+   it was transcribed. `01` was drawn for a desktop and never at 390px; what a phone
    gets is derived, and recorded in `NARROW_DEVIATIONS` (`tests/e2e/fidelity.ts`).
 
    UNLAYERED ON PURPOSE. The language and the other surfaces write their rules
@@ -32,7 +34,7 @@
 /* The tab glyph exists for the phone only. */
 .bz-tab-icon { display: none; }
 
-@media (max-width: 767px) {
+@media (max-width: 767px), (hover: none) and (pointer: coarse) and (max-height: 500px) and (orientation: landscape) {
 
   /* -- the tab bar -------------------------------------------------------- */
 
@@ -94,6 +96,13 @@
     font-weight: 700;
   }
 
+  /* The Catalog tab is a disclosure and carries `data-current`, not
+     `aria-current`; it gets the chip the other four tabs get. */
+  .bz-bar-nav .bz-bar-link[data-current] {
+    background: var(--color-bar-chip);
+    color: var(--color-on-bar-chip);
+  }
+
   .bz-bar-nav details[open] > .bz-bar-link {
     background: var(--color-bar-hover);
     color: var(--color-on-bar);
@@ -111,6 +120,10 @@
     padding: 8px;
   }
 
+  /* The sheet is inside the bar, whose ring is white, and its surface is white
+     too: the ring that reaches it from the bar would be invisible. */
+  .bz-bar-nav .bz-menu { --bz-ring: var(--color-focus); }
+
   .bz-bar-nav .bz-menu-item { min-height: 48px; padding-block: 10px; }
 
   .bz-bar-nav .bz-menu-tab { min-height: 44px; }
@@ -120,7 +133,7 @@
   .bz-bar-nav details[open]::after {
     content: "";
     position: fixed;
-    inset: 0 0 calc(var(--bz-tabbar) + env(safe-area-inset-bottom, 0px));
+    inset: var(--layout-sticky) 0 calc(var(--bz-tabbar) + env(safe-area-inset-bottom, 0px));
     z-index: 55;
     background: var(--color-slab-surface);
     opacity: 0.45;
@@ -163,9 +176,10 @@
 
   /* The trail is one back link: the parent, with the page's own name already
      the heading under it. The slash that opened the trail goes with the rest. */
-  .bz-crumb li:not(:only-child):last-child { display: none; }
+  .bz-crumb li { display: none; }
 
-  .bz-crumb li:nth-last-child(2) { display: flex; }
+  .bz-crumb li:nth-last-child(2),
+  .bz-crumb li:only-child { display: flex; }
 
   .bz-crumb li > span[aria-hidden="true"] { display: none; }
 
@@ -177,8 +191,6 @@
   }
 
   .bz-crumb li:nth-last-child(2) a::before { content: "\2039"; margin-inline-end: 6px; font-size: 1.4em; line-height: 1; }
-
-  .bz-crumb li:nth-last-child(2) a:dir(rtl)::before { content: "\203A"; }
 
   /* -- 44px, for a thumb --------------------------------------------------
      Where the painted control can grow it grows; where it cannot, the hit
@@ -216,6 +228,27 @@
 
   .bz-chip.cv-page { min-width: 44px; }
 
+  .bz-check { align-items: center; min-height: 44px; }
+
+  /* A text field under 16px makes iOS zoom the page when it takes focus, and
+     the page stays zoomed until the reader pinches back. */
+  .bz-field > input,
+  .bz-field > select,
+  .bz-field > textarea,
+  .cv-search > input { font-size: 16px; }
+
+  /* The Caravan card slides up as a sheet; it stands on the tab bar. */
+  .cv-card.is-sheet {
+    bottom: calc(var(--bz-tabbar) + env(safe-area-inset-bottom, 0px) + 8px);
+    max-height: calc(100dvh - var(--layout-sticky) - var(--bz-tabbar) - 24px);
+  }
+
+  /* The home page's hero is drawn on a light sky in both themes (the desktop
+     walk says so: `html.is-walk`, `home.css`), so its ink is the dark one in
+     both. Without it the dark theme set pale text on that sky. */
+  .bz-street .bz-hero-title,
+  .bz-street .bz-lede { color: var(--color-on-bar-chip); }
+
   /* -- the search window is a full-screen sheet ---------------------------- */
 
   .bz-search {
@@ -250,8 +283,8 @@
     overscroll-behavior-x: contain;
     scrollbar-width: none;
     /* room for a focus ring, which an overflow box would otherwise clip */
-    padding-block: 4px;
-    margin-block: -4px;
+    padding: 4px;
+    margin: -4px;
   }
 
   .bz-filters .bz-chip-row::-webkit-scrollbar,
@@ -262,13 +295,14 @@
 
 }
 
-/* -- wide content scrolls inside its own box, and says so -------------------
-   A table, a code block or a diagram wider than the column scrolls in its own
-   box; what tells a thumb so is a soft edge on whichever side has more to see.
-   The fade follows the scroll position (a scroll-driven animation), so a block
-   that fits has no fade at all and one scrolled to its end loses it: a fade
-   painted unconditionally would blur text that is not cut off. Where scroll
-   timelines are not supported the box still scrolls and shows no edge. */
+/* -- a row of chips that continues past the edge says so ------------------
+   Tables, code and diagrams already carry the language's overflow fade
+   (`shell.css` §6.5, driven by `data-hl-scroller`). The catalog's filter rows
+   become one scrolling line each on a phone and are not scrollers the script
+   knows, so they take a fade that follows the scroll position: the start edge
+   fades once the row has moved, the end edge until it has reached its end, and
+   a row that fits has neither (an inactive timeline leaves both lengths at
+   zero). Where scroll timelines are unsupported the row still scrolls. */
 @property --bz-fade-start { syntax: "<length>"; inherits: false; initial-value: 0px; }
 @property --bz-fade-end { syntax: "<length>"; inherits: false; initial-value: 0px; }
 
@@ -279,29 +313,14 @@
   100% { --bz-fade-start: 32px; --bz-fade-end: 0px; }
 }
 
-@media (max-width: 767px) {
+@media (max-width: 767px), (hover: none) and (pointer: coarse) and (max-height: 500px) and (orientation: landscape) {
   @supports (animation-timeline: scroll(self inline)) {
-    .bz-scroller,
-    .bz-slab-code,
-    .bz-figure-body,
     .bz-filters .bz-chip-row,
     .bz-filters .bz-viewtoggle {
       animation: bz-edge-fade linear both;
       animation-timeline: scroll(self inline);
       mask-image: linear-gradient(
         to right,
-        transparent,
-        black var(--bz-fade-start),
-        black calc(100% - var(--bz-fade-end)),
-        transparent
-      );
-    }
-  }
-
-  @supports (animation-timeline: scroll(self inline)) {
-    .bz-scroller:dir(rtl) {
-      mask-image: linear-gradient(
-        to left,
         transparent,
         black var(--bz-fade-start),
         black calc(100% - var(--bz-fade-end)),
@@ -320,23 +339,21 @@
   .bz-chord-hint { display: none; }
 }
 
-/* A phone on its side has 390px of height, and 76px of sticky bar is a fifth of
-   it. On a touch device that short the ornament goes (the bar alone is 58px),
-   whatever the width. */
+/* A phone on its side has 390px of height. On a touch device that short the
+   ornament goes (the bar alone is 58px) and the bar stops being sticky, so the
+   only chrome that stays on screen is the 48px tab bar. */
 @media (hover: none) and (pointer: coarse) and (max-height: 500px) and (orientation: landscape) {
-  :root { --layout-sticky: 58px; }
+  :root { --layout-sticky: 0px; --layout-band: 0px; --bz-tabbar: 48px; }
 
   .bz-band { display: none; }
-}
 
-/* And below the tab bar's width the bar thins and its labels sit beside the
-   glyph; every tab keeps 44px. */
-@media (max-width: 767px) and (max-height: 500px) and (orientation: landscape) {
-  :root { --bz-tabbar: 48px; }
+  .bz-bar { position: static; }
 
   .bz-bar-nav .bz-bar-link { flex-direction: row; gap: 6px; padding: 0 4px; }
 
   .bz-bar-nav .bz-bar-link .bz-tab-icon { width: 16px; height: 16px; }
 
-  .bz-bar-nav .bz-menu { max-height: calc(100dvh - 58px - var(--bz-tabbar) - 16px); }
+  .bz-bar-nav .bz-menu { max-height: calc(100dvh - var(--bz-tabbar) - 16px); }
+
+  .bz-bar-nav details[open]::after { inset-block-start: 0; }
 }

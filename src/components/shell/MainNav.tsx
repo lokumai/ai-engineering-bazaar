@@ -121,7 +121,6 @@ interface Destination {
    * Every other destination must fit at 390 (D91's guarantee, asserted in
    * `tracks.spec.ts` and `search.spec.ts`).
    */
-  edge?: boolean
 }
 
 /**
@@ -157,11 +156,11 @@ const DESTINATIONS: readonly Destination[] = [
   // 390 the bar is 67px short of fitting it beside Catalog and Progress, and
   // the only ways to make room were removing the theme toggle or the language
   // flag; the navigation already scrolls there, so Caravan takes the edge.
-  { href: '/caravan/', label: 'Caravan', icon: 'M8 2.5a5.5 5.5 0 1 0 0 11 5.5 5.5 0 0 0 0-11Zm2.3 3.2-1.1 3.5-3.5 1.1 1.1-3.5 3.5-1.1Z', owns: ['/caravan/'], edge: true },
+  { href: '/caravan/', label: 'Caravan', icon: 'M8 2.5a5.5 5.5 0 1 0 0 11 5.5 5.5 0 0 0 0-11Zm2.3 3.2-1.1 3.5-3.5 1.1 1.1-3.5 3.5-1.1Z', owns: ['/caravan/'] },
   // M90 — the story of the Bazaar, last in the bar after Caravan (the author,
   // 2026-11-10: "the about page should be also in navbar as the last item right
   // after Caravan"), and still in the footer. It shares Caravan's edge on a phone.
-  { href: ABOUT_ROUTE, label: 'About', icon: 'M8 2.5a5.5 5.5 0 1 0 0 11 5.5 5.5 0 0 0 0-11ZM8 7.2v3.6M8 5.3v.1', owns: [ABOUT_ROUTE], edge: true },
+  { href: ABOUT_ROUTE, label: 'About', icon: 'M8 2.5a5.5 5.5 0 1 0 0 11 5.5 5.5 0 0 0 0-11ZM8 7.2v3.6M8 5.3v.1', owns: [ABOUT_ROUTE] },
 ]
 
 /**
@@ -433,7 +432,6 @@ export function MainNav({ categories }: { categories: readonly CategoryLabel[] }
             <li
               key={destination.href}
               data-home={destination.href === '/' ? '' : undefined}
-              data-bar-edge={destination.edge ? '' : undefined}
             >
               {hasMenu ? (
                 <details

@@ -89,7 +89,7 @@ export default function ProgressPage() {
       <div className="mb-4 flex flex-wrap items-baseline justify-between gap-3">
         <h1 className="bz-display m-0">Your progress</h1>
         {/* Derived from `SHORTCUTS`, where the chord is defined and handled. */}
-        <p className="text-mark m-0 text-on-surface-muted">{PROFILE_CHORD}</p>
+        <p className="bz-chord-hint text-mark m-0 text-on-surface-muted">{PROFILE_CHORD}</p>
       </div>
 
       {/* §12.1.2 — the one surface where a quarantined record can be

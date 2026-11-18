@@ -741,15 +741,15 @@ test('on a phone the shut panel leaves the results more room, the open one wraps
   expect(await dialog(page).evaluate((d) => d.scrollWidth <= d.clientWidth)).toBe(true)
 })
 
-test('on a phone the search icon leaves every main destination in view', async ({ page }) => {
+test('on a phone the search icon sits in the bar and every main destination stays in view', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 })
   await page.goto(A0.path)
   await expect(page.getByRole('button', { name: 'Search' })).toBeVisible()
-  const nav = (await page.locator('.bz-bar-nav > ul').boundingBox())!
-  expect(await page.locator('.bz-bar-nav > ul > li:not([data-bar-edge])').filter({ visible: true }).count(), 'no main destination is shown').toBeGreaterThan(1)
-  for (const box of await page.locator('.bz-bar-nav > ul > li:not([data-bar-edge])').filter({ visible: true }).evaluateAll((items) =>
-    items.map((item) => ({ text: item.textContent?.trim() ?? '', right: item.getBoundingClientRect().right })))) {
-    expect(box.right, `${box.text} runs past the bar's navigation`).toBeLessThanOrEqual(nav.x + nav.width + 1)
+  const items = page.locator('.bz-bar-nav > ul > li').filter({ visible: true })
+  expect(await items.count(), 'no main destination is shown').toBeGreaterThan(3)
+  for (const box of await items.evaluateAll((lis) =>
+    lis.map((item) => ({ text: item.textContent?.trim() ?? '', right: item.getBoundingClientRect().right })))) {
+    expect(box.right, `${box.text} runs past the viewport`).toBeLessThanOrEqual(390)
   }
   expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(390)
 })

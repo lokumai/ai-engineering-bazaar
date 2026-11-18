@@ -58,7 +58,10 @@ export function initCaravan(root: HTMLElement, data: SceneData): (() => void) | 
     const top = stage!.getBoundingClientRect().top + window.scrollY
     const below = parseFloat(getComputedStyle(strip!).marginTop) + strip!.offsetHeight + FOOT
     const max = isPhone() ? STAGE_MAX.phone : STAGE_MAX.desk
-    stage!.style.height = `${clamp(Math.floor(window.innerHeight - top - below), 300, max)}px`
+    /* The phone's tab bar is fixed over the bottom of the window, so the strip has to end above it. */
+    const dock = document.querySelector('.bz-bar-nav')
+    const docked = dock && getComputedStyle(dock).position === 'fixed' ? dock.getBoundingClientRect().height : 0
+    stage!.style.height = `${clamp(Math.floor(window.innerHeight - docked - top - below), 300, max)}px`
   }
 
   function mount(): void {

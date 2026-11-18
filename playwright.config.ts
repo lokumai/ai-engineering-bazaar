@@ -105,6 +105,14 @@ export default defineConfig({
         hasTouch: true,
       },
     },
+    {
+      // The phone as a touch device: `(hover: none)`, `(pointer: coarse)` and a
+      // visual viewport, which the 390 project above (a desktop window made
+      // narrow) never reports. M129.
+      name: 'chrome-mobile',
+      testMatch: /mobile\.spec\.ts/,
+      use: { ...devices['Pixel 7'], channel, viewport: { width: 390, height: 844 } },
+    },
   ],
   webServer,
 })

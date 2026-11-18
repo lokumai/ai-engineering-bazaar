@@ -363,27 +363,6 @@ test('the home screen cannot be nudged sideways at any width', async ({ page }) 
  * 44 fails as a stale exemption, the same rule `NARROW_DEVIATIONS` follows.
  */
 const BOUNDED: Readonly<Record<string, { width: number; why: string }>> = {
-  'bz-bar-icon': {
-    width: 41,
-    why:
-      'two icons 8px apart in a fixed strip: 44 each would overlap by 3px on '
-      + 'a side, so each takes the width it can have without reaching into its '
-      + "neighbour's target. Growing the box instead would grow the bar.",
-  },
-  'bz-trackswitch-seg': {
-    width: 30,
-    why:
-      'the two track segments touch inside one 33px field in the bar, so each '
-      + "target is its own segment's width; wider would take taps from the other "
-      + 'track. Growing the segments instead would push Catalog and Progress out '
-      + 'of the bar at 390px (D91).',
-  },
-  'bz-langmenu-trigger': {
-    width: 38,
-    why:
-      'the flag button sits 6px from the switch and the theme button in the '
-      + "same fixed strip; 44 would reach into both neighbours' targets.",
-  },
   'bz-cmod-toggle': {
     width: 25,
     why:
@@ -422,6 +401,8 @@ const TOUCH_CONTROLS = [
   '.bz-btn',
   '.bz-bar-icon',
   '.bz-bar-repo',
+  // The phone's tab bar: five tabs, each a full 44px target.
+  '.bz-bar-link',
   // M43 — the bar's track switch and the language button joined the bar.
   '.bz-trackswitch-seg',
   '.bz-langmenu-trigger',

@@ -1,4 +1,4 @@
-import type { Metadata } from 'next'
+import type { Metadata, Viewport } from 'next'
 import { Affordances } from '@/components/shell/Affordances'
 import { ReadingOptions } from '@/components/shell/ReadingOptions'
 import { SiteHeader } from '@/components/shell/SiteHeader'
@@ -22,6 +22,19 @@ export const metadata: Metadata = {
   metadataBase: new URL(SITE_ORIGIN),
   title: { default: SITE_NAME, template: `%s · ${SITE_NAME}` },
   description: SITE_DESCRIPTION,
+}
+
+/**
+ * `viewport-fit=cover` lets the page draw under a phone's notch and home indicator, which is
+ * what makes `env(safe-area-inset-*)` mean anything; `mobile.css` pads the tab bar and the page
+ * edges with it. `theme-color` is the bar's cobalt (the same in both themes), so the browser's own chrome matches it.
+ * Neither changes a desktop browser.
+ */
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  viewportFit: 'cover',
+  themeColor: '#282864',
 }
 
 /**

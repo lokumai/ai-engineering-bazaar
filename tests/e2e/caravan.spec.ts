@@ -497,8 +497,12 @@ test('at a phone width the whole caravan, its rods, every shown label and the st
     const strip = document.querySelector('.cv-scrub')!.getBoundingClientRect()
     const cloth = document.querySelector('.cv-screen')!.getBoundingClientRect()
     const bad: string[] = []
+    // The phone's tab bar is fixed over the window's bottom edge: the strip ends above it.
+    const dock = document.querySelector('.bz-bar-nav')!
+    const docked = getComputedStyle(dock).position === 'fixed' ? dock.getBoundingClientRect().height : 0
+    const room = innerHeight - docked
     if (stage.left < 0 || stage.right > innerWidth) bad.push(`the stage spans ${stage.left}–${stage.right}`)
-    if (strip.bottom > innerHeight) bad.push(`the strip ends at ${strip.bottom}`)
+    if (strip.bottom > room) bad.push(`the strip ends at ${strip.bottom}`)
     const members = [...document.querySelectorAll('.cv-member')]
     if (members.length < 4) bad.push(`${members.length} puppets`)
     members.forEach((member, i) => {
@@ -506,7 +510,7 @@ test('at a phone width the whole caravan, its rods, every shown label and the st
       const body = { l: Math.min(...parts.map((r) => r.left)), t: Math.min(...parts.map((r) => r.top)), b: Math.max(...parts.map((r) => r.bottom)) }
       if (body.l < stage.left + 24 || body.t < stage.top + 32) bad.push(`puppet ${i} at ${Math.round(body.l)},${Math.round(body.t)}`)
       // The first build drew the leader at 7.6% of an 844 px window; the zoom draws it at 9.5%.
-      if (i === 0 && body.b - body.t < innerHeight * 0.085) bad.push(`the leader is ${Math.round(body.b - body.t)} px tall`)
+      if (i === 0 && body.b - body.t < room * 0.085) bad.push(`the leader is ${Math.round(body.b - body.t)} px tall`)
       const rod = member.querySelector('.cv-rod')!.getBoundingClientRect()
       if (Math.min(rod.bottom, stage.bottom) - cloth.bottom < 20) bad.push(`puppet ${i}'s rod barely shows below the cloth`)
     })

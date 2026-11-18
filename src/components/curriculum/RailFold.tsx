@@ -2,6 +2,7 @@
 
 import { setRailFolded } from '@/lib/record/events'
 import { update } from '@/lib/record/store'
+import { StrokeIcon } from '@/components/StrokeIcon'
 
 /**
  * M10 — the fold, and the tab that brings the rail back.
@@ -79,18 +80,10 @@ function setFold(folded: boolean): void {
 /** Points the way the press will move the rail. Mirrored for the other face. */
 function Chevron({ back }: { back: boolean }) {
   return (
-    <svg
-      width="12"
-      height="12"
-      viewBox="0 0 12 12"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="1.6"
-      aria-hidden="true"
-    >
+    <StrokeIcon size={12} viewBox="0 0 12 12" strokeWidth={1.6}>
       {back ? <path d="M7.5 2.5L4 6l3.5 3.5" /> : <path d="M4.5 2.5L8 6l-3.5 3.5" />}
       <path d={back ? 'M1.5 1.5v9' : 'M10.5 1.5v9'} />
-    </svg>
+    </StrokeIcon>
   )
 }
 

@@ -1,4 +1,6 @@
+
 import Link from 'next/link'
+import { StrokeIcon } from '@/components/StrokeIcon'
 import { PAGE_COPY, type PageCopy, wordsAttrs } from '@/lib/content/page-copy'
 import type { ReadingLang } from '@/lib/content/languages'
 
@@ -68,18 +70,9 @@ export interface PrevNextTarget {
  */
 function Chevron({ back = false }: { back?: boolean }) {
   return (
-    <svg
-      className="bz-pager-arrow"
-      width="14"
-      height="14"
-      viewBox="0 0 16 16"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="1.6"
-      aria-hidden="true"
-    >
+    <StrokeIcon className="bz-pager-arrow" size={14} viewBox="0 0 16 16" strokeWidth={1.6}>
       <path d={back ? 'M9.5 3.5L5 8l4.5 4.5' : 'M6.5 3.5L11 8l-4.5 4.5'} />
-    </svg>
+    </StrokeIcon>
   )
 }
 

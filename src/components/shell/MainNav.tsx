@@ -6,6 +6,8 @@ import { useEffect, useRef, useState } from 'react'
 import { ABOUT_ROUTE, INDEX_ROUTE, INDEX_TITLE, type CategoryLabel } from '@/lib/route-labels'
 import { TRACKS, type Track, EVERYONE_SEGMENT, catalogRoute, trackOfPath } from '@/lib/tracks'
 import { useReadingTrack } from '@/lib/use-reading-track'
+import { StrokeIcon } from '@/components/StrokeIcon'
+import { REDUCED_MOTION } from '@/lib/reduced-motion'
 
 /**
  * M10 — the navbar. One row, on every route, with a dropdown per level.
@@ -190,18 +192,9 @@ function isCurrent(destination: Destination, pathname: string): boolean {
 
 function Chevron() {
   return (
-    <svg
-      width="10"
-      height="10"
-      viewBox="0 0 12 12"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="1.8"
-      aria-hidden="true"
-      className="bz-bar-chevron"
-    >
+    <StrokeIcon className="bz-bar-chevron" size={10} viewBox="0 0 12 12" strokeWidth={1.8}>
       <path d="M2.5 4.5L6 8l3.5-3.5" />
-    </svg>
+    </StrokeIcon>
   )
 }
 
@@ -239,7 +232,7 @@ export function MainNav({ categories }: { categories: readonly CategoryLabel[] }
   function switchTab(next: Track): void {
     if (next === tab && leaving === null) return
     if (leaveTimer.current !== null) clearTimeout(leaveTimer.current)
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    if (window.matchMedia(REDUCED_MOTION).matches) {
       setLeaving(null)
       setEntered(null)
       setTab(next)

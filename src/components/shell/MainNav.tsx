@@ -111,6 +111,8 @@ import { REDUCED_MOTION } from '@/lib/reduced-motion'
 interface Destination {
   href: string
   label: string
+  /** The tab's glyph, drawn only by the phone's bottom bar (`mobile.css`). */
+  icon: string
   /** Every route this destination owns, so a child page still lights it. */
   owns: readonly string[]
   /**
@@ -119,7 +121,6 @@ interface Destination {
    * Every other destination must fit at 390 (D91's guarantee, asserted in
    * `tracks.spec.ts` and `search.spec.ts`).
    */
-  edge?: boolean
 }
 
 /**
@@ -130,7 +131,7 @@ interface Destination {
 const MODULES = `/${COURSES_SEGMENT}/`
 
 const DESTINATIONS: readonly Destination[] = [
-  { href: '/', label: 'Home', owns: [] },
+  { href: '/', label: 'Home', icon: 'M2.5 7.2 8 2.5l5.5 4.7V13a.5.5 0 0 1-.5.5H10V9.5H6v4H3a.5.5 0 0 1-.5-.5V7.2Z', owns: [] },
   /**
    * M17 — ONE list, with the dropdown that used to hang off `Curriculum`.
    *
@@ -140,13 +141,14 @@ const DESTINATIONS: readonly Destination[] = [
    * is the author's own framing of the milestone: *"lets only have a single
    * catalog page which has everything there and people can filter there."*
    */
-  { href: INDEX_ROUTE, label: INDEX_TITLE, owns: [INDEX_ROUTE, MODULES, `/${EVERYONE_SEGMENT}/`] },
+  { href: INDEX_ROUTE, label: INDEX_TITLE, icon: 'M2.5 2.5h4.5v4.5H2.5zM9 2.5h4.5v4.5H9zM2.5 9H7v4.5H2.5zM9 9h4.5v4.5H9z', owns: [INDEX_ROUTE, MODULES, `/${EVERYONE_SEGMENT}/`] },
   {
     href: '/profile/',
     // The author, 2026-11-05: `Progress` in the bar. The page keeps its own
     // title, `Your progress`. It read `My progress` once, and the copy register
     // bans the first person outright.
     label: 'Progress',
+    icon: 'M8 2.5a5.5 5.5 0 1 0 0 11 5.5 5.5 0 0 0 0-11Zm-2.2 5.6 1.6 1.6 3-3.2',
     owns: ['/profile/'],
   },
   // M62 — the trends timeline, beside Progress (the author, 2026-11-09). Its
@@ -154,11 +156,11 @@ const DESTINATIONS: readonly Destination[] = [
   // 390 the bar is 67px short of fitting it beside Catalog and Progress, and
   // the only ways to make room were removing the theme toggle or the language
   // flag; the navigation already scrolls there, so Caravan takes the edge.
-  { href: '/caravan/', label: 'Caravan', owns: ['/caravan/'], edge: true },
+  { href: '/caravan/', label: 'Caravan', icon: 'M8 2.5a5.5 5.5 0 1 0 0 11 5.5 5.5 0 0 0 0-11Zm2.3 3.2-1.1 3.5-3.5 1.1 1.1-3.5 3.5-1.1Z', owns: ['/caravan/'] },
   // M90 — the story of the Bazaar, last in the bar after Caravan (the author,
   // 2026-11-10: "the about page should be also in navbar as the last item right
   // after Caravan"), and still in the footer. It shares Caravan's edge on a phone.
-  { href: ABOUT_ROUTE, label: 'About', owns: [ABOUT_ROUTE], edge: true },
+  { href: ABOUT_ROUTE, label: 'About', icon: 'M8 2.5a5.5 5.5 0 1 0 0 11 5.5 5.5 0 0 0 0-11ZM8 7.2v3.6M8 5.3v.1', owns: [ABOUT_ROUTE] },
 ]
 
 /**
@@ -188,6 +190,26 @@ function isCurrent(destination: Destination, pathname: string): boolean {
   // A translated page belongs to the same tree as its English one.
   const path = pathname.replace(/^\/(?:tr|fa)(?=\/)/, '')
   return destination.owns.some((route) => path.startsWith(route))
+}
+
+/** One tab glyph, on the 16-unit box every glyph here uses. Hairline, like the rest. */
+function TabIcon({ d }: { d: string }) {
+  return (
+    <svg
+      width="20"
+      height="20"
+      viewBox="0 0 16 16"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.3"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+      className="bz-tab-icon"
+    >
+      <path d={d} />
+    </svg>
+  )
 }
 
 function Chevron() {
@@ -267,6 +289,24 @@ export function MainNav({ categories }: { categories: readonly CategoryLabel[] }
   useEffect(() => {
     if (panel.current) panel.current.open = false
   }, [pathname])
+
+  /* On a phone the Catalog menu is a sheet above the tab bar, and there is no
+     pointer to leave it with: a tap anywhere outside closes it. Gated to the
+     phone width so the desktop dropdown keeps its hover and focus rules. */
+  useEffect(() => {
+    function away(event: PointerEvent): void {
+      const details = panel.current
+      if (!details?.open) return
+      if (!window.matchMedia('(max-width: 767px)').matches) return
+      /* The sheet and its trigger are inside; the backdrop is a pseudo-element of the
+         `<details>` itself, so its taps arrive with the `<details>` as their target. */
+      const target = event.target
+      if (target instanceof Element && target.closest('.bz-menu, summary')) return
+      details.open = false
+    }
+    document.addEventListener('pointerdown', away)
+    return () => document.removeEventListener('pointerdown', away)
+  }, [])
 
   /* Clearing on unmount, because the timer outlives the component otherwise
      and fires against a detached element. */
@@ -392,7 +432,6 @@ export function MainNav({ categories }: { categories: readonly CategoryLabel[] }
             <li
               key={destination.href}
               data-home={destination.href === '/' ? '' : undefined}
-              data-bar-edge={destination.edge ? '' : undefined}
             >
               {hasMenu ? (
                 <details
@@ -420,6 +459,7 @@ export function MainNav({ categories }: { categories: readonly CategoryLabel[] }
                     className="bz-bar-link"
                     data-current={current ? '' : undefined}
                   >
+                    <TabIcon d={destination.icon} />
                     {destination.label}
                     <Chevron />
                   </summary>
@@ -519,6 +559,7 @@ export function MainNav({ categories }: { categories: readonly CategoryLabel[] }
                   // M62), so the link brings itself fully into view.
                   onFocus={(event) => event.currentTarget.scrollIntoView({ block: 'nearest', inline: 'nearest' })}
                 >
+                  <TabIcon d={destination.icon} />
                   {destination.label}
                 </Link>
               )}

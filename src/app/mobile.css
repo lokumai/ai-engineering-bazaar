@@ -1,0 +1,359 @@
+/* ===========================================================================
+   THE PHONE — M129 (mobile milestone).
+
+   Plan, measurements and screenshots: `playground/2026-11-round-7/MOBILE-PLAN.md`.
+
+   THE DESKTOP IS NOT TOUCHED. Every rule here sits inside a media query that
+   is false for a mouse at 768px and above: `max-width: 767px`, a touch device
+   (`hover: none` and `pointer: coarse`) held landscape in under 500px of height
+   (a phone on its side, 844 or 932 wide), or `hover: none` alone for the two
+   things no touch screen can use. The mockup's rendering holds exactly where
+   it was transcribed. `01` was drawn for a desktop and never at 390px; what a phone
+   gets is derived, and recorded in `NARROW_DEVIATIONS` (`tests/e2e/fidelity.ts`).
+
+   UNLAYERED ON PURPOSE. The language and the other surfaces write their rules
+   in `@layer components`, and Tailwind's utilities (`hidden md:flex`, `py-[3px]`)
+   sit in a layer above it. A rule outside every layer beats all of them
+   regardless of specificity, which is what lets a phone-only override win
+   without `!important` and without reordering a layer the desktop depends on.
+   It is also why nothing in this file may be written outside a media query.
+
+   THE NAVIGATION IS A BOTTOM TAB BAR. `shell.css` and DESIGN.md forbid a
+   hamburger and a sideways-scrolling bar; the bar's own answer at 390px was
+   to scroll the list inside itself with the scrollbar hidden, so Home, About
+   and most of Caravan sat out of sight with nothing to say so (MEASURED, plan
+   P1). A tab bar is neither of the two forbidden things: all five
+   destinations stay on screen, one thumb-length from the edge, in the same
+   `<nav>` the desktop bar uses — one landmark, one DOM, restyled.
+
+   A surface stylesheet takes tokens only (`surface-stylesheets.test.ts`), so
+   the colours here are the bar's own, and the current tab is marked by a rule
+   above it as well as by the fill, because colour is never the only signal.
+   =========================================================================== */
+
+/* The tab glyph exists for the phone only. */
+.bz-tab-icon { display: none; }
+
+@media (max-width: 767px), (hover: none) and (pointer: coarse) and (max-height: 500px) and (orientation: landscape) {
+
+  /* -- the tab bar -------------------------------------------------------- */
+
+  :root { --bz-tabbar: 60px; }
+
+  .bz-bar-nav {
+    position: fixed;
+    inset: auto 0 0;
+    z-index: 50;
+    margin: 0;
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+    padding-inline: env(safe-area-inset-left, 0px) env(safe-area-inset-right, 0px);
+    background: var(--color-bar);
+    border-top: 1px solid var(--color-bar-field-line);
+  }
+
+  .bz-bar-nav > ul {
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: minmax(0, 1fr);
+    gap: 0;
+    width: 100%;
+    overflow: visible;
+  }
+
+  /* Home returns: the 1180px rule that hid it assumed the logo was the way
+     home, and a tab bar with four of five destinations is not a tab bar. */
+  .bz-bar-nav li[data-home] { display: block; }
+
+  .bz-bar-nav li { position: static; }
+
+  .bz-bar-nav .bz-bar-link {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+    width: 100%;
+    height: var(--bz-tabbar);
+    padding: 6px 2px 4px;
+    border-top: 3px solid transparent;
+    border-radius: 0;
+    font: 500 12px / 1.1 var(--font-sans);
+    list-style: none;
+  }
+
+  .bz-bar-nav .bz-bar-link::-webkit-details-marker { display: none; }
+
+  .bz-bar-nav .bz-bar-link .bz-tab-icon { display: block; flex: none; }
+
+  .bz-bar-nav .bz-bar-chevron { display: none; }
+
+  /* "You are here": the chip fill the bar already uses, plus a gold rule on
+     the tab's top edge and a heavier word. Three carriers, one of them not a
+     colour. */
+  .bz-bar-nav .bz-bar-link[aria-current],
+  .bz-bar-nav .bz-bar-link[data-current] {
+    border-top-color: var(--color-ornament);
+    font-weight: 700;
+  }
+
+  /* The Catalog tab is a disclosure and carries `data-current`, not
+     `aria-current`; it gets the chip the other four tabs get. */
+  .bz-bar-nav .bz-bar-link[data-current] {
+    background: var(--color-bar-chip);
+    color: var(--color-on-bar-chip);
+  }
+
+  .bz-bar-nav details[open] > .bz-bar-link {
+    background: var(--color-bar-hover);
+    color: var(--color-on-bar);
+  }
+
+  /* The Catalog menu is a sheet standing on the tab bar. */
+  .bz-bar-nav .bz-menu {
+    position: fixed;
+    inset: auto 8px calc(var(--bz-tabbar) + env(safe-area-inset-bottom, 0px) + 8px);
+    top: auto;
+    z-index: 60;
+    max-height: min(70dvh, calc(100dvh - var(--layout-sticky) - var(--bz-tabbar) - 24px));
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    padding: 8px;
+  }
+
+  /* The sheet is inside the bar, whose ring is white, and its surface is white
+     too: the ring that reaches it from the bar would be invisible. */
+  .bz-bar-nav .bz-menu { --bz-ring: var(--color-focus); }
+
+  .bz-bar-nav .bz-menu-item { min-height: 48px; padding-block: 10px; }
+
+  .bz-bar-nav .bz-menu-tab { min-height: 44px; }
+
+  /* Under the sheet, over the page: a tap outside closes it (`MainNav`) and
+     cannot fall through to a link beneath. The tab bar stays live. */
+  .bz-bar-nav details[open]::after {
+    content: "";
+    position: fixed;
+    inset: var(--layout-sticky) 0 calc(var(--bz-tabbar) + env(safe-area-inset-bottom, 0px));
+    z-index: 55;
+    background: var(--color-slab-surface);
+    opacity: 0.45;
+  }
+
+  /* The page stops above the bar, not behind it. */
+  body { padding-bottom: calc(var(--bz-tabbar) + env(safe-area-inset-bottom, 0px)); }
+
+  /* -- the top bar -------------------------------------------------------- */
+
+  .bz-bar-inner {
+    gap: 6px;
+    padding-inline: max(10px, env(safe-area-inset-left, 0px)) max(10px, env(safe-area-inset-right, 0px));
+  }
+
+  /* Five controls, each a real 44px target. The navigation left this row, so
+     there is room for them where it used to scroll. */
+  .bz-bar-icon,
+  .bz-langmenu-trigger { width: 44px; height: 44px; }
+
+  .bz-trackswitch { height: 44px; padding: 3px; }
+
+  .bz-trackswitch-seg { height: 36px; min-width: 44px; justify-content: center; padding: 0 8px; }
+
+  .bz-brand { min-width: 44px; min-height: 44px; justify-content: center; }
+
+  /* -- the page ----------------------------------------------------------- */
+
+  /* A notch in landscape is cleared by a margin on the column, not by changing
+     its padding: the home, About and Caravan surfaces each set their own, and
+     an unlayered padding rule here would have overwritten all three. */
+  .bz-main {
+    margin-inline: env(safe-area-inset-left, 0px) env(safe-area-inset-right, 0px);
+  }
+
+  /* Anything scrolled or focused into view stops above the tab bar, not under it. */
+  html { scroll-padding-bottom: calc(var(--bz-tabbar) + env(safe-area-inset-bottom, 0px) + 12px); }
+
+  .bz-drawer-bar { padding-bottom: 12px; }
+
+  /* The trail is one back link: the parent, with the page's own name already
+     the heading under it. The slash that opened the trail goes with the rest. */
+  .bz-crumb li { display: none; }
+
+  .bz-crumb li:nth-last-child(2),
+  .bz-crumb li:only-child { display: flex; }
+
+  .bz-crumb li > span[aria-hidden="true"] { display: none; }
+
+  .bz-crumb li:nth-last-child(2) a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    margin-block: -10px;
+  }
+
+  .bz-crumb li:nth-last-child(2) a::before { content: "\2039"; margin-inline-end: 6px; font-size: 1.4em; line-height: 1; }
+
+  /* -- 44px, for a thumb --------------------------------------------------
+     Where the painted control can grow it grows; where it cannot, the hit
+     area is already carried by an invisible `::after` (the language's idiom). */
+
+  .bz-quiz-restart { min-height: 44px; padding-inline: 8px; }
+
+  .bz-boardcol-mod { padding-block: 13px; }
+
+  .bz-catcard-link,
+  .bz-desc-trigger { display: inline-flex; align-items: center; min-height: 44px; }
+
+  .bz-cmod-link { align-items: center; min-height: 44px; }
+
+  .bz-dataline-action { min-height: 44px; padding-inline: 8px; }
+
+  .bz-ptab { min-height: 44px; }
+
+  footer .bz-link.inline-block { padding-block: 12px; min-width: 44px; }
+
+  .bz-boardcol-link { display: inline-flex; align-items: center; min-height: 44px; }
+
+  .cv-year { min-height: 44px; min-width: 44px; }
+
+  /* The home page's teller captions are small chips under the art: the hit
+     area grows by a pseudo, so the chip and the scene keep their drawn size. */
+  .bz-street .who-story::after {
+    content: "";
+    position: absolute;
+    inset-inline: 0;
+    top: 50%;
+    height: 44px;
+    translate: 0 -50%;
+  }
+
+  .bz-chip.cv-page { min-width: 44px; }
+
+  .bz-check { align-items: center; min-height: 44px; }
+
+  /* A text field under 16px makes iOS zoom the page when it takes focus, and
+     the page stays zoomed until the reader pinches back. */
+  .bz-field > input,
+  .bz-field > select,
+  .bz-field > textarea,
+  .cv-search > input { font-size: 16px; }
+
+  /* The Caravan card slides up as a sheet; it stands on the tab bar. */
+  .cv-card.is-sheet {
+    bottom: calc(var(--bz-tabbar) + env(safe-area-inset-bottom, 0px) + 8px);
+    max-height: calc(100dvh - var(--layout-sticky) - var(--bz-tabbar) - 24px);
+  }
+
+  /* The home page's hero is drawn on a light sky in both themes (the desktop
+     walk says so: `html.is-walk`, `home.css`), so its ink is the dark one in
+     both. Without it the dark theme set pale text on that sky. */
+  .bz-street .bz-hero-title,
+  .bz-street .bz-lede { color: var(--color-on-bar-chip); }
+
+  /* -- the search window is a full-screen sheet ---------------------------- */
+
+  .bz-search {
+    width: 100vw;
+    max-width: none;
+    height: 100dvh;
+    max-height: none;
+    margin: 0;
+    border: 0;
+    border-radius: 0;
+    padding-top: env(safe-area-inset-top, 0px);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+
+  .bz-search-panel { height: 100%; }
+
+  /* 16px keeps iOS from zooming the page when the field takes focus. */
+  .bz-search-field input { font-size: max(16px, var(--text-lead)); }
+
+  .bz-search-results a { min-height: 48px; }
+
+  /* -- catalog filters: one scrolling row per group ------------------------ */
+
+  /* Each row scrolls inside its own box, which stops at the column's edges:
+     the surfaces that reuse these rows (the catalog, Caravan) have different
+     gutters, so a bleed past them would push the document sideways. The edge
+     fade below says there is more. */
+  .bz-filters .bz-chip-row,
+  .bz-filters .bz-viewtoggle {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    scrollbar-width: none;
+    /* room for a focus ring, which an overflow box would otherwise clip */
+    padding: 4px;
+    margin: -4px;
+  }
+
+  .bz-filters .bz-chip-row::-webkit-scrollbar,
+  .bz-filters .bz-viewtoggle::-webkit-scrollbar { display: none; }
+
+  .bz-filters .bz-chip,
+  .bz-filters .bz-viewbtn { flex: none; }
+
+}
+
+/* -- a row of chips that continues past the edge says so ------------------
+   Tables, code and diagrams already carry the language's overflow fade
+   (`shell.css` §6.5, driven by `data-hl-scroller`). The catalog's filter rows
+   become one scrolling line each on a phone and are not scrollers the script
+   knows, so they take a fade that follows the scroll position: the start edge
+   fades once the row has moved, the end edge until it has reached its end, and
+   a row that fits has neither (an inactive timeline leaves both lengths at
+   zero). Where scroll timelines are unsupported the row still scrolls. */
+@property --bz-fade-start { syntax: "<length>"; inherits: false; initial-value: 0px; }
+@property --bz-fade-end { syntax: "<length>"; inherits: false; initial-value: 0px; }
+
+@keyframes bz-edge-fade {
+  0% { --bz-fade-start: 0px; --bz-fade-end: 32px; }
+  8% { --bz-fade-start: 32px; --bz-fade-end: 32px; }
+  92% { --bz-fade-start: 32px; --bz-fade-end: 32px; }
+  100% { --bz-fade-start: 32px; --bz-fade-end: 0px; }
+}
+
+@media (max-width: 767px), (hover: none) and (pointer: coarse) and (max-height: 500px) and (orientation: landscape) {
+  @supports (animation-timeline: scroll(self inline)) {
+    .bz-filters .bz-chip-row,
+    .bz-filters .bz-viewtoggle {
+      animation: bz-edge-fade linear both;
+      animation-timeline: scroll(self inline);
+      mask-image: linear-gradient(
+        to right,
+        transparent,
+        black var(--bz-fade-start),
+        black calc(100% - var(--bz-fade-end)),
+        transparent
+      );
+    }
+  }
+}
+
+/* A phone has no pointer to hover with: nothing may live behind one. The
+   `§` anchor beside a heading appears on hover and is 11px wide, so on a
+   touch screen it was an invisible 11px link; it goes. */
+@media (hover: none) {
+  .bz-anchor { display: none; }
+
+  .bz-chord-hint { display: none; }
+}
+
+/* A phone on its side has 390px of height. On a touch device that short the
+   ornament goes (the bar alone is 58px) and the bar stops being sticky, so the
+   only chrome that stays on screen is the 48px tab bar. */
+@media (hover: none) and (pointer: coarse) and (max-height: 500px) and (orientation: landscape) {
+  :root { --layout-sticky: 0px; --layout-band: 0px; --bz-tabbar: 48px; }
+
+  .bz-band { display: none; }
+
+  .bz-bar { position: static; }
+
+  .bz-bar-nav .bz-bar-link { flex-direction: row; gap: 6px; padding: 0 4px; }
+
+  .bz-bar-nav .bz-bar-link .bz-tab-icon { width: 16px; height: 16px; }
+
+  .bz-bar-nav .bz-menu { max-height: calc(100dvh - var(--bz-tabbar) - 16px); }
+
+  .bz-bar-nav details[open]::after { inset-block-start: 0; }
+}

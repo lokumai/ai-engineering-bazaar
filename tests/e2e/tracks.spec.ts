@@ -96,37 +96,29 @@ test('a For Everyone page offers the same languages as its For Engineers page, e
   expect(everyone).toEqual(engineers.map((path) => path.replace(/(^|\/)courses\//, '$1everyone/courses/')))
 })
 
-test('on a phone every main destination is in view in the bar, with the switch and the flag beside them', async ({ page }) => {
+test('on a phone every main destination is in view in the tab bar, with the switch and the flag in the top bar', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 })
   await page.goto(A0.path)
-  const nav = await page.locator('.bz-bar-nav > ul').boundingBox()
-  // `data-bar-edge` marks the destinations allowed at the scroller's cut edge
-  // (Caravan and About, the last two); each must come fully into view when focused.
-  const links = page.locator('.bz-bar-nav > ul > li:not([data-bar-edge])').filter({ visible: true })
-  expect(await links.count(), 'no main destination is shown').toBeGreaterThan(1)
-  for (const box of await links.evaluateAll((items) => items.map((item) => {
-    const rect = item.getBoundingClientRect()
-    return { text: item.textContent?.trim() ?? '', left: rect.left, right: rect.right }
-  }))) {
-    expect(box.right, `${box.text} runs past the bar's navigation`).toBeLessThanOrEqual(nav!.x + nav!.width + 1)
-    expect(box.left).toBeGreaterThanOrEqual(nav!.x - 1)
+  // The destinations are the tab bar's tabs: all of them inside the viewport with
+  // nothing to scroll, which is what the bar's scrolling list could not promise.
+  const tabs = await page.locator('.bz-bar-nav > ul > li').filter({ visible: true }).evaluateAll((items) =>
+    items.map((item) => {
+      const rect = item.getBoundingClientRect()
+      return { text: item.textContent?.trim() ?? '', left: rect.left, right: rect.right, bottom: rect.bottom }
+    }))
+  expect(tabs.length, 'no main destination is shown').toBeGreaterThan(3)
+  for (const tab of tabs) {
+    expect(tab.left, `${tab.text} starts before the viewport`).toBeGreaterThanOrEqual(0)
+    expect(tab.right, `${tab.text} runs past the viewport`).toBeLessThanOrEqual(390)
+    expect(tab.bottom, `${tab.text} is below the viewport`).toBeLessThanOrEqual(844)
   }
   expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(390)
-
-  const items = page.locator('.bz-bar-nav > ul > li').filter({ visible: true })
-  const flags = await items.evaluateAll((lis) => lis.map((li) => li.hasAttribute('data-bar-edge')))
-  const edges = flags.filter(Boolean).length
-  expect(edges, 'more than two destinations are exempt from fitting').toBeLessThanOrEqual(2)
-  // The exempt ones are the last in the bar, so every guaranteed destination comes first.
-  expect(flags.slice(flags.length - edges).every(Boolean), 'an exempt destination sits before a guaranteed one').toBe(true)
-  const edge = page.locator('.bz-bar-nav > ul > li[data-bar-edge]')
-  for (let i = 0; i < edges; i++) {
-    const one = edge.nth(i)
-    await one.locator('a').focus()
-    await expect.poll(async () => {
-      const rect = (await one.boundingBox())!
-      return rect.x + rect.width <= nav!.x + nav!.width + 1 && rect.x >= nav!.x - 1
-    }, `${await one.textContent()} does not scroll into view when focused`).toBe(true)
+  expect(await page.locator('.bz-bar-nav > ul').evaluate((ul) => ul.scrollWidth <= ul.clientWidth), 'the tab bar scrolls').toBe(true)
+  // The switch and the flag are in the top bar, on screen.
+  for (const selector of ['.bz-trackswitch', '.bz-langmenu']) {
+    const rect = (await page.locator(selector).first().boundingBox())!
+    expect(rect.x + rect.width, `${selector} runs past the viewport`).toBeLessThanOrEqual(390)
+    expect(rect.x).toBeGreaterThanOrEqual(0)
   }
 })
 

@@ -14,6 +14,8 @@
  * soft ellipse instead of clipped by a hard one, so the shoulders dissolve rather than end on a line.
  */
 
+import { lerp } from '@/lib/motion-math'
+
 const INK = '#1d1b35'
 const PAPER = '#f6eedf'
 const GOLD_DEEP = '#c8a078'
@@ -26,7 +28,6 @@ function lcg(seed: number): () => number {
     return s / 4294967296
   }
 }
-const lerp = (a: number, b: number, t: number) => a + (b - a) * t
 const f1 = (n: number) => n.toFixed(1)
 
 /** The head is turned a little to the viewer's left: every feature of the face shifts by this. */

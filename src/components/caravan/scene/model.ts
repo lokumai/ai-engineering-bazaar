@@ -3,6 +3,8 @@
  * from the round-5 mockup's shared block (`buildTrends`, `heatAt`, `onRoad`).
  */
 
+import { REDUCED_MOTION } from '@/lib/reduced-motion'
+
 /** One trend, as the scene needs it. Its words are not here: the card shows the page's own entry. */
 export interface SceneTrend {
   id: string
@@ -58,10 +60,8 @@ export function onRoad<T extends SceneTrend>(trends: readonly T[], t: number, ma
   return trends.filter((trend) => t >= trend.si && t <= trend.ei + 1).slice(-max)
 }
 
-export const clamp = (v: number, a: number, b: number) => Math.max(a, Math.min(b, v))
-
 export function reduced(): boolean {
-  return window.matchMedia('(prefers-reduced-motion: reduce)').matches
+  return window.matchMedia(REDUCED_MOTION).matches
 }
 
 /**

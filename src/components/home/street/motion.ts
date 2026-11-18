@@ -4,6 +4,7 @@ import { WALK_GROW } from './cast'
 import { CHASE_END, ZOOM_AT, makeChase } from './chase'
 import { STALL_TIMELINES } from './stall-timelines'
 import { CHOSEN } from './track'
+import { NO_MOTION_PREFERENCE, REDUCED_MOTION } from '@/lib/reduced-motion'
 
 /**
  * The home page's motion: the walk through the bazaar, and the stalls coming
@@ -419,7 +420,7 @@ export function initBazaar(root: HTMLElement): Cleanup {
   const onChosen = () => {
     if (toDoors !== null) toDoors()
     else {
-      const calm = matchMedia('(prefers-reduced-motion: reduce)').matches
+      const calm = matchMedia(REDUCED_MOTION).matches
       $('.end', root).scrollIntoView({ behavior: calm ? 'auto' : 'smooth', block: 'start' })
     }
   }
@@ -427,9 +428,9 @@ export function initBazaar(root: HTMLElement): Cleanup {
   const mm = gsap.matchMedia()
   mm.add(
     {
-      walk: '(min-width: 900px) and (min-height: 560px) and (min-aspect-ratio: 6/5) and (prefers-reduced-motion: no-preference)',
-      motion: '(prefers-reduced-motion: no-preference)',
-      still: '(prefers-reduced-motion: reduce)',
+      walk: '(min-width: 900px) and (min-height: 560px) and (min-aspect-ratio: 6/5) and ' + NO_MOTION_PREFERENCE,
+      motion: NO_MOTION_PREFERENCE,
+      still: REDUCED_MOTION,
     },
     (ctx) => {
       const { walk, motion, still } = ctx.conditions as Record<string, boolean>

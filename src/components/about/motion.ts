@@ -6,6 +6,7 @@ import { createHaystack } from './scenes/haystack-canvas'
 import type { SceneHandle } from './scenes/scene'
 import { createSeal } from './scenes/seal-motion'
 import { createTreaty } from './scenes/treaty-motion'
+import { REDUCED_MOTION } from '@/lib/reduced-motion'
 
 /**
  * The About page's motion: F1, "Procession", on B2, "Dusk to dawn" (D115), ported from
@@ -33,7 +34,6 @@ import { createTreaty } from './scenes/treaty-motion'
 
 type Cleanup = () => void
 
-const RM = '(prefers-reduced-motion: reduce)'
 const WIDE = '(min-width: 900px)'
 
 const SCENES: Record<string, (scene: HTMLElement) => SceneHandle> = {
@@ -304,7 +304,7 @@ function setup(root: HTMLElement, wide: boolean): Cleanup {
 }
 
 export function initAbout(root: HTMLElement): Cleanup {
-  const reduce = matchMedia(RM)
+  const reduce = matchMedia(REDUCED_MOTION)
   const wide = matchMedia(WIDE)
   let teardown: Cleanup | null = null
   let token = 0

@@ -1,5 +1,6 @@
 import type { Journey } from './journey'
-import { clamp, isPhone, type Placed } from './model'
+import { isPhone, type Placed } from './model'
+import { clamp } from '@/lib/motion-math'
 
 /**
  * M91, D116 — the stops: real buttons laid over the picture, one per trend, ported from the round-5

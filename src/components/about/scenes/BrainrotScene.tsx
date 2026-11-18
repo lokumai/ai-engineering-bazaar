@@ -1,4 +1,4 @@
-import { rng } from './haystack-geometry'
+import { mulberry32 } from '@/lib/motion-math'
 
 /**
  * Stall 4, "Brainrot" (4E): a phone scrolls through three of the course's memes; a young reader in a
@@ -45,7 +45,7 @@ const DOODLES: ReadonlyArray<readonly [number, number, 'spark' | 'spiral' | 'hea
 
 /** The lines of the AI's answer, drawn once from a seed so every load writes the same scroll. */
 const SCROLL_LINES = (() => {
-  const R = rng(2)
+  const R = mulberry32(2)
   const out: { y: number; w: number }[] = []
   for (let y = 324; y < 580; y += 9) {
     if (y === 441 || y === 450) continue

@@ -7,7 +7,6 @@ import {
   hatchSpec,
   type Face,
   type HatchSpec,
-  type Lkm01Progress,
 } from './geometry'
 
 /**
@@ -88,18 +87,6 @@ const PAINT_ORDER: readonly Face[] = [
 ]
 
 export interface Lkm01Props {
-  /**
-   * Retained for the callers §8.3 names — the header mark and the four larger
-   * homes §13.2 gave it — and deliberately not drawn from.
-   *
-   * Face state moved to channel A when §12.2 made this markup
-   * state-independent, so nothing here reads this value: the same six faces are
-   * emitted for every progress reading, and `completion.css` decides what each one
-   * looks like from the classes the boot script stamped. A caller that has a
-   * reading and wants it drawn has already got it — the stamp is on `<html>`
-   * before this component renders.
-   */
-  progress?: Lkm01Progress
   /**
    * Rendered size in px. §8.3 as §13.2 amends it: 28 header, 96 the 404 and the
    * report cover, 128 the dashboard and path heroes, 160 the profile and the

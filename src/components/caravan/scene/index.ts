@@ -1,10 +1,11 @@
 import { yearOf } from '@/lib/caravan-months'
 import { placeLabel } from '../places'
 import { Journey } from './journey'
-import { clamp, isPhone, place, type SceneData } from './model'
+import { isPhone, place, type SceneData } from './model'
 import { mountShadowPlay, type Scene } from './shadow'
 import { Stops } from './stops'
 import { mountStrip, type Strip } from './strip'
+import { clamp } from '@/lib/motion-math'
 
 /**
  * M91, D116 — the Caravan page's motion, started by `CaravanScene.tsx` and imported on demand so the

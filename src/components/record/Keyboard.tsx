@@ -16,7 +16,8 @@ import {
   type KeyState,
 } from '@/lib/record/keys'
 import { useRecord } from '@/lib/record/store'
-import { applyTheme, nextTheme, readTheme, type ThemeStorage } from '@/lib/theme'
+import { rawLocalStorage } from '@/lib/local-storage'
+import { applyTheme, nextTheme, readTheme } from '@/lib/theme'
 import { href } from '@/lib/url'
 import { ShortcutSheet } from './ShortcutSheet'
 import { SEARCH_OPEN_EVENT } from '@/lib/search/events'
@@ -54,15 +55,6 @@ const HEADING_INSET = 80
 /** A heading is "reached" once its top is within a pixel of the inset. */
 const EPSILON = 1
 
-/** Reading `window.localStorage` itself throws in some privacy modes. */
-function safeStorage(): ThemeStorage | null {
-  try {
-    return window.localStorage
-  } catch {
-    return null
-  }
-}
-
 /** The five fields the guards read, and not one more. */
 function describe(event: KeyboardEvent): DescribedKey {
   const node = event.target
@@ -88,7 +80,7 @@ function describe(event: KeyboardEvent): DescribedKey {
  */
 function toggleTheme(): void {
   const root = document.documentElement
-  const release = applyTheme(nextTheme(readTheme(root)), root, safeStorage())
+  const release = applyTheme(nextTheme(readTheme(root)), root, rawLocalStorage())
   requestAnimationFrame(release)
 }
 

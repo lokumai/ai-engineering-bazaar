@@ -16,6 +16,7 @@ import {
   type Envelope,
   type RecordData,
 } from './schema'
+import { rawLocalStorage } from '@/lib/local-storage'
 import { parseEnvelope, type ParseResult } from './validate'
 
 /** The slice of `Storage` this module uses. */
@@ -49,19 +50,14 @@ const ENCODER = new TextEncoder()
  * nothing.
  */
 export function safeStorage(): RecordStorage | null {
-  try {
-    // Not a render-time read: §12.2 forbids `typeof window` in a render path,
-    // and this is only ever called from an effect or an event handler.
-    if (typeof window === 'undefined') return null
-    const storage = window.localStorage
-    if (!storage) return null
-    return {
-      getItem: (key) => storage.getItem(key),
-      setItem: (key, value) => { storage.setItem(key, value) },
-      removeItem: (key) => { storage.removeItem(key) },
-    }
-  } catch {
-    return null
+  // Not a render-time read: §12.2 forbids `typeof window` in a render path,
+  // and this is only ever called from an effect or an event handler.
+  const storage = rawLocalStorage()
+  if (!storage) return null
+  return {
+    getItem: (key) => storage.getItem(key),
+    setItem: (key, value) => { storage.setItem(key, value) },
+    removeItem: (key) => { storage.removeItem(key) },
   }
 }
 

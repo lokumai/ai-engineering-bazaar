@@ -19,6 +19,7 @@ import type { Root } from 'hast'
 import type { ChecklistItem } from './checklist'
 import { moduleByNumber, neighbours, sheetPath } from './curriculum'
 import { moduleGraph } from './edges'
+import { courseImageSize, type ImageSize } from '@/lib/bundle/image-size'
 import { imageBaseFor, imagePathFor } from './images'
 import { categoryIntro } from './intro'
 import { type ReadingLang, type TranslatedLang } from './languages'
@@ -51,7 +52,7 @@ function routeMapFor(lang: TranslatedLang): (route: string) => string {
   const translated = new Set(
     loadAllModules()
       .filter((sheet) => sheet.translations[lang] !== null)
-      .map((sheet) => `/courses/${sheet.slug}/`),
+      .map((sheet) => moduleRoute(sheet.slug, 'engineers')),
   )
   return (route) => (translated.has(route) ? `/${lang}${route}` : route)
 }
@@ -67,7 +68,7 @@ function everyoneRouteMap(lang: ReadingLang): (route: string) => string {
     loadAllModules()
       .filter((sheet) => sheet.everyone !== null
         && (lang === 'en' || sheet.everyone.translations[lang] !== null))
-      .map((sheet) => [`/courses/${sheet.slug}/`, moduleRoute(sheet.slug, 'everyone', lang)]),
+      .map((sheet) => [moduleRoute(sheet.slug, 'engineers'), moduleRoute(sheet.slug, 'everyone', lang)]),
   )
   const plain = lang === 'en' ? (route: string) => route : routeMapFor(lang)
   return (route) => written.get(route) ?? plain(route)
@@ -127,6 +128,20 @@ function refFor(module: CourseModule, localise: (route: string) => string): Rend
 }
 
 /**
+ * A picture's size is read from its file's header; a module is rendered once per
+ * language and track, and the same file is asked for each time.
+ */
+const sizes = new Map<string, ImageSize>()
+function cachedImageSize(imagePath: string): ImageSize {
+  let size = sizes.get(imagePath)
+  if (size === undefined) {
+    size = courseImageSize(imagePath)
+    sizes.set(imagePath, size)
+  }
+  return size
+}
+
+/**
  * The render input of one module in one track and language. `sheet` is what
  * `loadModuleIn(slug, lang, track)` returned, so its body is already the one
  * that track shows, in `lang`.
@@ -142,6 +157,7 @@ export async function moduleRenderInput(
   const options = {
     imageBase: imageBaseFor(sheet.category.slug),
     imagePath: imagePathFor(sheet.category.slug),
+    imageSize: cachedImageSize,
     sheet: number,
     localiseRoute: lang !== 'en' || track === 'everyone' ? localise : undefined,
   }

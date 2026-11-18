@@ -79,7 +79,7 @@ export function storyDocPath(lang: ReadingLang): string {
 /** The About page's story, as the page reads it (D115), in the bundle's shape (D125). */
 export function buildStoryDoc(lang: ReadingLang = 'en'): StoryDoc {
   const { title, stalls, motto } = loadStory(lang)
-  return StoryDoc.parse({ schemaVersion: BUNDLE_MAJOR, lang, dir: dirOf(lang), title, stalls, motto })
+  return StoryDoc.parse({ schemaVersion: BUNDLE_MAJOR, lang, dir: textDirectionOf(lang), title, stalls, motto })
 }
 
 /** The English page in a track, site-relative, for "Open on the web". */
@@ -99,7 +99,7 @@ function refOf(ref: RenderRef): Ref {
   }
 }
 
-function dirOf(lang: ReadingLang): 'ltr' | 'rtl' {
+function textDirectionOf(lang: ReadingLang): 'ltr' | 'rtl' {
   if (lang === 'en') return 'ltr'
   const translation = TRANSLATIONS.find((one) => one.id === lang)
   if (!translation) throw new Error(`build: "${lang}" is not a languages.ts translation`)
@@ -136,7 +136,7 @@ export async function buildModuleDoc(
     key: slug,
     track,
     lang,
-    dir: dirOf(lang),
+    dir: textDirectionOf(lang),
     // The translated heading (`loadModuleIn`); `ModuleRenderInput` carries no title.
     title: sheet.frontmatter.title,
     // The `loadModuleIn` sheet the page's `FactsStrip` prints from, so the two numbers are one (D128).

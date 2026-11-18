@@ -1,5 +1,6 @@
 import { monthLabel, yearOf } from '@/lib/caravan-months'
-import { clamp, type Placed } from './model'
+import { type Placed } from './model'
+import { clamp } from '@/lib/motion-math'
 
 /**
  * M91, D116 — the histogram strip: the whole road in one strip, each month a bar as tall as its

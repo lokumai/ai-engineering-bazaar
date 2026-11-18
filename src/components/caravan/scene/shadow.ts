@@ -4,8 +4,9 @@ import {
   camelPuppet, driverPuppet, GLOW_FILTER, landmarkArt, leaderPuppet, packOf, POST_BOX, postArt, PROP_HEIGHT, PUPPET_HEIGHT, stopArt,
 } from './art'
 import type { Drawable } from './journey'
-import { clamp, heatAt, isPhone, onRoad, type Placed, reduced } from './model'
+import { heatAt, isPhone, onRoad, type Placed, reduced } from './model'
 import type { Box, Stops } from './stops'
+import { clamp } from '@/lib/motion-math'
 
 /**
  * M91, D116 — C4, Shadow Play: the 2D scene, ported from the round-5 mockup's `Scene2D` with its

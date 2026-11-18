@@ -16,7 +16,7 @@
  */
 
 import { TRANSLATED_LANGS } from './content/languages'
-import { EVERYONE_SEGMENT, type Track, catalogRoute } from './tracks'
+import { COURSES_SEGMENT, EVERYONE_SEGMENT, SHEETS_SEGMENT, type Track, catalogRoute } from './tracks'
 
 /** What the chrome needs to know about one subsystem. */
 export interface CategoryLabel {
@@ -96,14 +96,14 @@ function segmentsOf(pathname: string): string[] {
  * directory rather than a page. `retargetCourseAncestors` below is what sends
  * that crumb somewhere a reader should actually land.
  */
-const SET_SEGMENT = 'courses'
+const SET_SEGMENT = COURSES_SEGMENT
 
 /**
  * §15.1 — the flat manifest's own segment. `/` is the home screen now, and the
  * thirty-two-row register moved here, so the trail needs a name for it or it
  * prints the bare directory `sheets`.
  */
-const INDEX_SEGMENT = 'sheets'
+const INDEX_SEGMENT = SHEETS_SEGMENT
 
 /**
  * What each segment is CALLED, where the address does not say.

@@ -1,6 +1,7 @@
 import { CATEGORIES, type Category } from './curriculum-file'
 import { type CourseModule, loadAllModules } from './loader'
 import { levelRoute } from '@/lib/route-labels'
+import { moduleRoute } from '@/lib/tracks'
 
 /**
  * The drawing set as an ordered whole (§4.4, §4.9, §5.7).
@@ -75,7 +76,7 @@ export function neighbours(slug: string): Neighbours {
  * base path is the router's job, never ours (see `lib/url.ts`).
  */
 export function sheetPath(module: CourseModule): string {
-  return `/courses/${module.category.slug}/${module.moduleSlug}/`
+  return moduleRoute(module.slug, 'engineers')
 }
 
 /**

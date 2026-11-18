@@ -250,7 +250,7 @@ export function expirePending(state: KeyState): KeyState {
  */
 export const ROUTES: Readonly<Record<Exclude<NavTarget, 'category'>, string>> = Object.freeze({
   home: '/',
-  index: '/sheets/',
+  index: catalogRoute('engineers'),
   profile: '/profile/',
 })
 

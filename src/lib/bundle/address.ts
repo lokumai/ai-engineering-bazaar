@@ -1,5 +1,5 @@
 import { type ReadingLang, TRANSLATED_LANGS, type TranslatedLang } from '@/lib/content/languages'
-import { type Track, trackOfPath } from '@/lib/tracks'
+import { COURSES_SEGMENT, type Track, trackOfPath } from '@/lib/tracks'
 
 /**
  * The track and language of a module page, read off its address.
@@ -19,7 +19,7 @@ export function addressOf(route: string): { track: Track; lang: ReadingLang } {
   const first = route.split('/').filter(Boolean)[0]
   const lang: ReadingLang = TRANSLATED_LANGS.includes(first as TranslatedLang) ? (first as TranslatedLang) : 'en'
   const track = trackOfPath(route)
-  if (track === null || !route.includes('/courses/')) {
+  if (track === null || !route.includes(`/${COURSES_SEGMENT}/`)) {
     throw new Error(`address: "${route}" is not a module page in a track`)
   }
   return { track, lang }

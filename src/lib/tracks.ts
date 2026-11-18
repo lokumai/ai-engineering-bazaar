@@ -15,7 +15,7 @@
 
 export type Track = 'engineers' | 'everyone'
 
-export interface TrackInfo {
+interface TrackInfo {
   id: Track
   /** The name a reader sees (A1). */
   label: string
@@ -35,17 +35,18 @@ export const DEFAULT_TRACK: Track = 'engineers'
 /** The URL segment that marks a For Everyone page. */
 export const EVERYONE_SEGMENT = 'everyone'
 
-export function isTrack(value: unknown): value is Track {
+/** The segment every module page lives under, in either track. */
+export const COURSES_SEGMENT = 'courses'
+
+/** The segment of the catalog, the one listing of every module, in either track. */
+export const SHEETS_SEGMENT = 'sheets'
+
+function isTrack(value: unknown): value is Track {
   return TRACK_IDS.includes(value as Track)
 }
 
 export function trackLabel(track: Track): string {
   return TRACKS.find((one) => one.id === track)?.label ?? track
-}
-
-/** The other track, for the switch. */
-export function otherTrack(track: Track): Track {
-  return track === 'engineers' ? 'everyone' : 'engineers'
 }
 
 /**
@@ -57,21 +58,21 @@ export function otherTrack(track: Track): Track {
 export function trackOfPath(pathname: string): Track | null {
   const segments = pathname.split('/').filter(Boolean)
   if (segments.includes(EVERYONE_SEGMENT)) return 'everyone'
-  if (segments.includes('courses') || segments.includes('sheets')) return 'engineers'
+  if (segments.includes(COURSES_SEGMENT) || segments.includes(SHEETS_SEGMENT)) return 'engineers'
   return null
 }
 
 /** The catalog, or one level of it, in a track. */
 export function catalogRoute(track: Track, level: string | null = null): string {
   const prefix = track === 'everyone' ? `/${EVERYONE_SEGMENT}` : ''
-  return `${prefix}/sheets/${level === null ? '' : `${level}/`}`
+  return `${prefix}/${SHEETS_SEGMENT}/${level === null ? '' : `${level}/`}`
 }
 
 /** A module's page in a track and a language. */
 export function moduleRoute(slug: string, track: Track, lang: string = 'en'): string {
   const language = lang === 'en' ? '' : `/${lang}`
   const prefix = track === 'everyone' ? `/${EVERYONE_SEGMENT}` : ''
-  return `${language}${prefix}/courses/${slug}/`
+  return `${language}${prefix}/${COURSES_SEGMENT}/${slug}/`
 }
 
 /**
@@ -82,7 +83,7 @@ export function moduleRoute(slug: string, track: Track, lang: string = 'en'): st
  * forgets it when it closes. The boot script reads the same key before first
  * paint; `RecordStateSync` writes it.
  */
-export const TRACK_SESSION_KEY = 'hl-track'
+const TRACK_SESSION_KEY = 'hl-track'
 
 export function lastTrack(): Track | null {
   try {

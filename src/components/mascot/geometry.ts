@@ -55,9 +55,6 @@ function polyline(names: readonly PointName[], close: boolean): string {
   return close ? `${d} Z` : d
 }
 
-/** The hexagon silhouette. Always solid — the line type never changes (§8.2). */
-export const OUTLINE = polyline(['T', 'R', 'Rp', 'Bp', 'Lp', 'L'], true)
-
 export type FaceId = 'F1' | 'F2' | 'F3' | 'F4' | 'F5' | 'F6'
 
 export interface Face {
@@ -93,37 +90,7 @@ export const FACES: readonly Face[] = [
 ]
 
 /**
- * §13.1.1, §13.9 — the five flavour names, in the same order as the faces.
- *
- * Held UPPERCASE as literals so no locale-dependent casing ever runs over
- * them. Turkish casing is the trap: `toLocaleUpperCase('tr')` turns `i` into
- * `İ`, and a name cased at render time is cased in whatever locale the
- * renderer happened to be handed. Stored this way the question never arises.
- * **M9 renamed all five.** They are proper nouns for the colours themselves,
- * so when the palette was re-hued to Bazaar (`logs/BRAINSTORM_1.md` D12) every
- * one of them became false: Fundamentals was GÜL, rose, and is now teal. A
- * colour name that no longer names its colour is worse than no name, because
- * §13.9 prints it to a reader as the thing the hue is called.
- *
- * The five now are İznik's own: turquoise, the navy the tiles are known for,
- * plum, honey and roof-tile red. `İ` is held pre-cased for the same reason it
- * always was — `toLocaleUpperCase('tr')` turns `i` into `İ`, so a name cased at
- * render time is cased in whatever locale the renderer happened to be handed.
- *
- * §13.9 requires the English category title printed beside every one of them.
- * `FaceLegend` is where that pairing happens.
- */
-export const FLAVOURS = {
-  fundamentals: 'TURKUAZ',
-  intermediate: 'LACİVERT',
-  expert: 'ERİK',
-  ecosystem: 'BAL',
-  trends: 'KİREMİT',
-} as const satisfies Record<CategorySlug, string>
-
-/**
- * An edge belongs to two faces, so it is drawn once and takes the higher of
- * their two states (`edgeStateOf`). Drawing each face as its own closed
+ * An edge belongs to two faces, so it is drawn once. Drawing each face as its own closed
  * rhombus instead would paint one hidden face's dashes over a shared solid
  * outline edge, and §8.2 is explicit that solid stays solid.
  */
@@ -188,72 +155,6 @@ export const SUGAR: ReadonlyArray<Point> = [
 /** In user units, and so scaled from `size` by the viewBox — see HIDDEN_DASH. */
 export const SUGAR_R = 0.45
 
-/** §8.2 — three states, and only three. */
-export type FaceState = 'dormant' | 'started' | 'complete'
-
-export interface CategoryProgress {
-  /** Sheets in this category the reader has had approved. */
-  approved: number
-  /**
-   * Sheets that exist in this category. Derived from the corpus at build time
-   * and never hand-maintained (§11.25) — four of six categories contain no
-   * drawn sheets today, and the mark has to be able to say so.
-   */
-  total: number
-}
-
-/**
- * Approved counts per category. `0` is the whole zero state, spelled the way a
- * reader with no approved sheets actually stands — which is every reader until
- * the progress store lands. Never a percentage (§11.35): these are counts.
- */
-export type Lkm01Progress = 0 | Readonly<Partial<Record<CategorySlug, CategoryProgress>>>
-
-export function faceStateFor(entry: CategoryProgress | undefined): FaceState {
-  if (!entry || entry.total <= 0 || entry.approved <= 0) return 'dormant'
-  return entry.approved >= entry.total ? 'complete' : 'started'
-}
-
-export type FaceStates = Readonly<Record<FaceId, FaceState>>
-
-export function faceStatesFor(progress: Lkm01Progress): FaceStates {
-  const counts: Readonly<Partial<Record<CategorySlug, CategoryProgress>>> =
-    progress === 0 ? {} : progress
-  return Object.fromEntries(
-    FACES.map((face) => [face.id, faceStateFor(counts[face.category])]),
-  ) as Record<FaceId, FaceState>
-}
-
-const RANK: Record<FaceState, number> = { dormant: 0, started: 1, complete: 2 }
-
-/** Ascending, so the more energized edge is drawn last and owns the vertex. */
-export function byState(a: FaceState, b: FaceState): number {
-  return RANK[a] - RANK[b]
-}
-
-export function edgeStateOf(states: FaceStates, edge: Edge): FaceState {
-  const [a, b] = edge.faces.map((id) => states[id])
-  return RANK[a] >= RANK[b] ? a : b
-}
-
-/** §8.3 — the header mark's accessible name, updated from state. */
-export function progressLabel(states: FaceStates): string {
-  const started = FACES.filter((face) => states[face.id] !== 'dormant').length
-  return `Progress: ${started} of ${FACES.length} levels started`
-}
-
-/**
- * Whether a progress value is a *reading* or the absence of one.
- *
- * `0` is not "this reader has approved nothing" — it is "there is nothing that
- * could record an approval", because the progress store does not exist yet.
- * The two are different facts and only one of them is worth announcing, so the
- * mark asks this before it decides whether it has a state to name (§1).
- */
-export function isTracked(progress: Lkm01Progress): boolean {
-  return progress !== 0
-}
-
 /**
  * §8.3, as §13.2 amends it — four sizes, five homes.
  *
@@ -267,12 +168,6 @@ export function isTracked(progress: Lkm01Progress): boolean {
  * prove exactly that.
  */
 export const LKM01_SIZES = [28, 96, 128, 160] as const
-
-/** The header size, and the size every weight in the drawing was drawn at. */
-export const LKM01_BASE_SIZE = 28
-
-/** §13.2 — at this size and above the mark is accompanied by `FaceLegend`. */
-export const LKM01_LEGEND_FROM = 96
 
 export interface HatchSpec {
   /** Distance between hatch lines, in user units. */

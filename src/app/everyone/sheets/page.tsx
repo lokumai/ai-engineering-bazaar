@@ -5,12 +5,13 @@ import { SignOffMarks } from '@/components/record/SignOffMarks'
 import { PageShell } from '@/components/shell/PageShell'
 import { curriculumFacts } from '@/lib/content/facts'
 import { sheetRows } from '@/lib/content/manifest'
+import { catalogRoute } from '@/lib/tracks'
 
 export const metadata: Metadata = {
   title: 'Catalog, For Everyone',
   description:
     'Every module in the course in plain words, for readers with no technical background.',
-  alternates: canonicalOf('/everyone/sheets/'),
+  alternates: canonicalOf(catalogRoute('everyone')),
 }
 
 /**

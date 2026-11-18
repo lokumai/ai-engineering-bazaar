@@ -1,5 +1,6 @@
 import { CAST, VANISHING, type CastId } from './cast'
 import { closeClouds } from './clouds'
+import { clamp } from '@/lib/motion-math'
 
 /**
  * The escape at the gate (L3a, the author's pick of 2026-11-06), on the walk only.
@@ -35,7 +36,6 @@ export const CHASE_END = 7.6
 /** When, in the chase's own time, the walk's zoom through the gate starts. */
 export const ZOOM_AT = 6.4
 
-const clamp = (t: number) => (t < 0 ? 0 : t > 1 ? 1 : t)
 const span = (T: number, at: number, dur: number) => clamp((T - at) / dur)
 const ease = {
   in1: (t: number) => t * t,

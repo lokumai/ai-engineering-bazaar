@@ -1,11 +1,12 @@
 /**
  * Which stylesheets in `src/app/` are SURFACES, stated once.
  *
- * Four test files carried their own copy of this — `views.test.ts`,
- * `category-surfaces.test.ts`, `slab-and-controls.test.ts` and
- * `styling-references.test.ts` — which is one fact in four places, and a fifth
- * stylesheet with a special status would have had to be added to all of them
- * or silently checked as a surface in some and not others.
+ * Several test files carried their own copy of this, which is one fact in
+ * several places, and one more stylesheet with a special status would have had to
+ * be added to all of them or silently checked as a surface in some and not others.
+ * They import it from here now. `styling-references.test.ts` is the one that keeps a
+ * narrower set of its own, on purpose: its sweep also reads `globals.css`, because
+ * a dangling reference is as silent there as anywhere (see its own header).
  */
 import { readFileSync, readdirSync } from 'node:fs'
 import { join } from 'node:path'
@@ -42,4 +43,20 @@ export function surfaces(): Surface[] {
     .filter((name) => name.endsWith('.css') && !NOT_A_SURFACE.has(name))
     .sort()
     .map((name) => ({ name, css: readFileSync(join(SURFACE_DIR, name), 'utf8') }))
+}
+
+/**
+ * Comments out, for every test that scans a stylesheet's rules.
+ *
+ * A comment is where a surface explains itself (why a value is what it is, which
+ * mockup it came from, what the retired design did instead), so prose naming
+ * `box-shadow` or a hex would fail a file for describing itself, and `([^{}]+)\{`
+ * would capture the whole comment ahead of a rule AS its selector. Four test files
+ * had written this one line; the first three kept the comment's width, so nothing
+ * shifts and a reported line number stays true.
+ *
+ * Replaced with spaces rather than removed.
+ */
+export function withoutComments(css: string): string {
+  return css.replace(/\/\*[\s\S]*?\*\//g, (match) => match.replace(/[^\n]/g, ' '))
 }

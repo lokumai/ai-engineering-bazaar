@@ -10,6 +10,7 @@ import { toString as hastToString } from 'hast-util-to-string'
 import type { Element, ElementContent, Root, RootContent, Text } from 'hast'
 import { href } from '@/lib/url'
 import { widthForColumns } from '@/lib/figure/width'
+import type { ImageSize } from '@/lib/bundle/image-size'
 import type { ChecklistItem } from './checklist'
 import { CALLOUT_MARKER, calloutKindOf } from './callout'
 import { DIAGRAM_HEADING, SERIES_HEADINGS } from './lines'
@@ -92,6 +93,11 @@ export interface RenderOptions {
    * is given, every rewritten `img` also carries `data.imagePath`.
    */
   imagePath?: string
+  /**
+   * Reads a copied image's pixel size from its site-relative path. When it is given
+   * (with `imagePath`), every picture carries its intrinsic `width` and `height`.
+   */
+  imageSize?: (path: string) => ImageSize
   /**
    * The sheet (module) number, so figures and tables can be numbered
    * `FIG. 13.2` / `TBL. 13.2` as §6.5 and §6.10 require. Omitted for content
@@ -523,9 +529,17 @@ function swapModulesMark(tree: Root): Root {
 // §6.9 images
 // ---------------------------------------------------------------------------
 
-function rehypeRewriteImages(imageBase?: string, imagePath?: string) {
+function rehypeRewriteImages(
+  imageBase?: string,
+  imagePath?: string,
+  imageSize?: (path: string) => ImageSize,
+) {
   return (tree: Root) => {
     if (!imageBase) return
+    /* The first picture stays eager (it can be on the first screen); every later still one waits
+       until it nears the viewport. The marks beside a name are inline at text height and
+       are left as they are. */
+    let pictures = 0
     visit(tree, 'element', (node: Element) => {
       if (node.tagName !== 'img') return
       const src = node.properties?.src
@@ -539,7 +553,21 @@ function rehypeRewriteImages(imageBase?: string, imagePath?: string) {
       node.properties.src = `${imageBase}/${served}`
       if (imagePath) node.data = { ...node.data, imagePath: `${imagePath}/${served}` }
       // A vendor's mark (M68) is drawn inline at text height, not as a picture.
-      if (served.startsWith('logos/')) node.properties.className = ['bz-logo']
+      if (served.startsWith('logos/')) {
+        node.properties.className = ['bz-logo']
+        return
+      }
+      /* Its own size, so the browser reserves the box before the file arrives; the stylesheet
+         still sets width 100% and height auto, so nothing is drawn differently. */
+      if (!imageSize || !imagePath) return
+      const { width, height } = imageSize(`${imagePath}/${served}`)
+      node.properties.width = width
+      node.properties.height = height
+      node.properties.decoding = 'async'
+      /* A recording plays from the moment it loads, and its replay button reads the loaded file
+         (`Affordances.tsx`), so it is never deferred: the page keeps starting it as it did. */
+      if (pictures > 0 && !isAnimatedCourseImage(`${imagePath}/${served}`)) node.properties.loading = 'lazy'
+      pictures += 1
     })
   }
 }
@@ -1353,7 +1381,7 @@ export async function renderTree(
     .use(rehypeDropSeriesSection)
     .use(rehypeLeadParagraph)
     .use(rehypeSectionMarks)
-    .use(rehypeRewriteImages, options.imageBase, options.imagePath)
+    .use(rehypeRewriteImages, options.imageBase, options.imagePath, options.imageSize)
     .use(rehypeFigures, options)
     .use(rehypeKeepLogoWithName)
     .use(rehypeBlockquotes, `callout-${options.sheet ?? options.excerptOf ?? 0}${options.excerptOf === undefined ? '' : '-ex'}`)

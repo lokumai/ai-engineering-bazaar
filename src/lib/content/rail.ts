@@ -1,5 +1,6 @@
 import { CATEGORIES } from './curriculum-file'
 import { loadAllModules } from './loader'
+import { moduleRoute } from '@/lib/tracks'
 
 /**
  * M10 — the curriculum, shaped for the left rail.
@@ -66,7 +67,7 @@ export function railLevels(): readonly RailLevel[] {
         slug: module.slug,
         module: module.frontmatter.module,
         title: module.frontmatter.title,
-        path: `/courses/${module.category.slug}/${module.moduleSlug}/`,
+        path: moduleRoute(module.slug, 'engineers'),
         drawn: module.frontmatter.status === 'ready',
       })),
   }))

@@ -1,6 +1,7 @@
 'use client'
 
-import { applyTheme, nextTheme, readTheme, type ThemeStorage } from '@/lib/theme'
+import { readLocalStorage } from '@/lib/local-storage'
+import { applyTheme, nextTheme, readTheme } from '@/lib/theme'
 
 /**
  * Theme toggle (spec §5.1): 28 × 28, 16px icon at stroke-width 1.5.
@@ -10,15 +11,6 @@ import { applyTheme, nextTheme, readTheme, type ThemeStorage } from '@/lib/theme
  * state. That matters: the boot script sets that class before first paint, so
  * the correct glyph is in the first frame and there is nothing to hydrate.
  */
-
-/** Reading window.localStorage itself throws in some privacy modes. */
-function safeStorage(): ThemeStorage | null {
-  try {
-    return window.localStorage
-  } catch {
-    return null
-  }
-}
 
 /**
  * The author, 2026-11-05: a sun and a moon. The light theme shows the moon and
@@ -50,7 +42,7 @@ export function ThemeToggle() {
     const root = document.documentElement
     // §9.2: freeze transitions, flip, unfreeze on the next frame. The colours
     // snap. Cross-fading a whole page delays the answer the user asked for.
-    const release = applyTheme(nextTheme(readTheme(root)), root, safeStorage())
+    const release = applyTheme(nextTheme(readTheme(root)), root, readLocalStorage())
     requestAnimationFrame(release)
   }
 

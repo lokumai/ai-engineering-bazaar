@@ -2,7 +2,8 @@ import { monthRange, monthsBetween, periodLabel } from '@/lib/caravan-months'
 import { href } from '@/lib/url'
 import { type LinkKind, LINK_KINDS, type StrengthFile, type TrendsFile } from './caravan-file'
 import type { CurriculumModule } from './curriculum-file'
-import { moduleSlugFromName } from './slugs'
+import { fullSlug, moduleSlugFromName } from './slugs'
+import { moduleRoute } from '@/lib/tracks'
 
 /**
  * M91, D116 — what the Caravan page draws, built once from whichever source it has.
@@ -146,7 +147,7 @@ export function caravanView(input: CaravanInput): CaravanView {
 
 /** A module's page and title, read from the curriculum; never restated. */
 export function moduleLink(module: CurriculumModule): CaravanLink {
-  return { title: module.title, href: href(`/courses/${module.category}/${moduleSlugFromName(module.name)}/`) }
+  return { title: module.title, href: href(moduleRoute(fullSlug(module.category, moduleSlugFromName(module.name)), 'engineers')) }
 }
 
 /**

@@ -7,6 +7,8 @@
  * 1000 x 1000 square.
  */
 
+import { clamp, lerp, mulberry32, smoothstep } from '@/lib/motion-math'
+
 export const HAY = {
   straw: '#dcb66a',
   ground: '#0f0e23',
@@ -17,23 +19,7 @@ export const HAY = {
   sand: '#e6dac6',
 } as const
 
-/** The same generator the playground seeds, so the stack is identical. */
-export function rng(seed: number): () => number {
-  return () => {
-    seed |= 0
-    seed = (seed + 0x6d2b79f5) | 0
-    let t = Math.imul(seed ^ (seed >>> 15), 1 | seed)
-    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t
-    return ((t ^ (t >>> 14)) >>> 0) / 4294967296
-  }
-}
-
-export const clamp = (v: number, a = 0, b = 1) => (v < a ? a : v > b ? b : v)
-export const smooth = (a: number, b: number, v: number) => {
-  const x = clamp((v - a) / (b - a))
-  return x * x * (3 - 2 * x)
-}
-export const lerp = (a: number, b: number, t: number) => a + (b - a) * t
+export const smooth = (a: number, b: number, v: number) => smoothstep((v - a) / (b - a))
 
 function rgb(hex: string): [number, number, number] {
   const n = parseInt(hex.replace('#', ''), 16)
@@ -101,7 +87,7 @@ let cached: Haystack | null = null
 
 export function haystack(): Haystack {
   if (cached) return cached
-  const R = rng(20261109)
+  const R = mulberry32(20261109)
   const cx = 500
   const base = 800
   const RX = 390

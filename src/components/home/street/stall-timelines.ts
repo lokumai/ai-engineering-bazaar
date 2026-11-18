@@ -1,4 +1,5 @@
 import { gsap } from 'gsap'
+import { mulberry32 } from '@/lib/motion-math'
 
 /**
  * The four stall scenes, moving.
@@ -33,17 +34,6 @@ type Timeline = gsap.core.Timeline
 
 const $ = <T extends Element = SVGElement>(q: string, r: ParentNode): T => r.querySelector(q) as T
 const $$ = <T extends Element = SVGElement>(q: string, r: ParentNode): T[] => [...r.querySelectorAll<T>(q)]
-
-/** The page's seeded generator, for the one place a timeline draws random numbers. */
-function rng(seed: number): () => number {
-  let a = seed >>> 0
-  return () => {
-    a = (a + 0x6d2b79f5) | 0
-    let t = Math.imul(a ^ (a >>> 15), 1 | a)
-    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t
-    return ((t ^ (t >>> 14)) >>> 0) / 4294967296
-  }
-}
 
 /** Take every part GSAP had moved back to where the drawing put it. */
 function rewind(svg: Element): void {
@@ -118,7 +108,7 @@ export function tlSieve(svg: Element): Timeline {
   const chips = $$('.ch', svg)
   const keep = $('.keep', svg)
   const spk = $$('.spk', svg)
-  const r = rng(9)
+  const r = mulberry32(9)
   tl.set(spk, { opacity: 0 }, 0)
   tl.fromTo(chips, { y: -40, opacity: 0 }, { y: 0, opacity: 1, duration: 0.4, stagger: 0.006, ease: 'power2.in' }, 0)
   tl.fromTo(sv, { rotation: 0, svgOrigin: '450 112' }, { rotation: 3.5, svgOrigin: '450 112', duration: 0.17, repeat: 17, yoyo: true, ease: 'sine.inOut' }, 0.8)

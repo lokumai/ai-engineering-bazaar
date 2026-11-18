@@ -1,6 +1,7 @@
 import { readFileSync, readdirSync } from 'node:fs'
 import { join } from 'node:path'
 import { describe, expect, it } from 'vitest'
+import { SURFACE_DIR, withoutComments } from './design/surfaces'
 
 /**
  * One browser fact, guarded generally.
@@ -35,7 +36,6 @@ import { describe, expect, it } from 'vitest'
  * `logs/BRAINSTORM_2.md` D32 records the retirement.
  */
 
-const APP_DIR = join(import.meta.dirname, '../../src/app')
 const LANGUAGE = join(import.meta.dirname, '../../src/design/bazaar.css')
 
 /** One `property: value` pair, with the line it sits on for the failure text. */
@@ -44,12 +44,6 @@ interface Declaration {
   line: number
   property: string
   value: string
-}
-
-/** Strip `/* … *\/` so a comment that names the anti-pattern is not a hit. */
-function withoutComments(css: string): string {
-  // Replaced with spaces, not removed, so line numbers survive.
-  return css.replace(/\/\*[\s\S]*?\*\//g, (match) => match.replace(/[^\n]/g, ' '))
 }
 
 function declarationsIn(path: string, label: string): Declaration[] {
@@ -79,10 +73,10 @@ function declarationsIn(path: string, label: string): Declaration[] {
  * is checked the moment it lands and nobody has to remember to add it here.
  */
 function shippedStylesheets(): Declaration[] {
-  const app = readdirSync(APP_DIR)
+  const app = readdirSync(SURFACE_DIR)
     .filter((name) => name.endsWith('.css'))
     .sort()
-    .flatMap((name) => declarationsIn(join(APP_DIR, name), name))
+    .flatMap((name) => declarationsIn(join(SURFACE_DIR, name), name))
   return [...declarationsIn(LANGUAGE, 'bazaar.css'), ...app]
 }
 

@@ -1,4 +1,5 @@
 import { STALL_GROUNDS } from '../palette'
+import { clamp, lerp, mulberry32, smoothstep } from '@/lib/motion-math'
 
 /**
  * Stall 1, "Down the table, revised" (1B6, the author's pick, D115): the Hall of Mirrors, 1919. A
@@ -57,22 +58,8 @@ const SC = 0.54
 const OY = 232
 const CAM = (250 + T1 + 40) / 2 - 500 / SC
 
-const clamp = (v: number, a: number, b: number) => Math.max(a, Math.min(b, v))
-const lerp = (a: number, b: number, k: number) => a + (b - a) * k
-const smooth = (k: number) => {
-  k = clamp(k, 0, 1)
-  return k * k * (3 - 2 * k)
-}
+const smooth = smoothstep
 const F = (n: number) => (+n).toFixed(1)
-function rng(a: number): () => number {
-  return () => {
-    a |= 0
-    a = (a + 0x6d2b79f5) | 0
-    let t = Math.imul(a ^ (a >>> 15), 1 | a)
-    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t
-    return ((t ^ (t >>> 14)) >>> 0) / 4294967296
-  }
-}
 const roman = (n: number) => {
   const m: [number, string][] = [[50, 'L'], [40, 'XL'], [10, 'X'], [9, 'IX'], [5, 'V'], [4, 'IV'], [1, 'I']]
   let s = ''
@@ -184,7 +171,7 @@ interface Diplomat { skin: string; hair: string; hc: string; mo: string; beard: 
 
 /** A cast of diplomats: frock coat, wing collar, and the moustaches of 1919. */
 function diplomats(n: number, seed: number): Diplomat[] {
-  const r = rng(seed)
+  const r = mulberry32(seed)
   const hairs = ['bald', 'part', 'white', 'part', 'bald', 'white']
   const mos = ['walrus', 'handle', 'brush', 'walrus', 'handle', 'none']
   const greys = ['#D9D4CA', '#9A958C', '#3A3036', '#C8C2B6', '#5A4A40']

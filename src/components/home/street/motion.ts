@@ -4,6 +4,8 @@ import { WALK_GROW } from './cast'
 import { CHASE_END, ZOOM_AT, makeChase } from './chase'
 import { STALL_TIMELINES } from './stall-timelines'
 import { CHOSEN } from './track'
+import { smoothstep } from '@/lib/motion-math'
+import { NO_MOTION_PREFERENCE, REDUCED_MOTION } from '@/lib/reduced-motion'
 
 /**
  * The home page's motion: the walk through the bazaar, and the stalls coming
@@ -215,8 +217,8 @@ export function initBazaar(root: HTMLElement): Cleanup {
     }
     /* The pull-back is full at the choice and gone EASE_OUT units either side, so every other stop is drawn as it always was. */
     const pull = (x: number): number => {
-      const t = Math.min(1, Math.abs(x - STOPS[STALL_STOPS + 1]) / EASE_OUT)
-      return 1 - (1 - K) * (1 - t * t * (3 - 2 * t))
+      const t = smoothstep(Math.abs(x - STOPS[STALL_STOPS + 1]) / EASE_OUT)
+      return 1 - (1 - K) * (1 - t)
     }
     /* Every layer pans by its speed and is scaled by the pull about the middle of the window's top edge (the floor then runs on under the art, see home.css). */
     const place = (el: HTMLElement, speed: number, x: number, k: number) => {
@@ -419,7 +421,7 @@ export function initBazaar(root: HTMLElement): Cleanup {
   const onChosen = () => {
     if (toDoors !== null) toDoors()
     else {
-      const calm = matchMedia('(prefers-reduced-motion: reduce)').matches
+      const calm = matchMedia(REDUCED_MOTION).matches
       $('.end', root).scrollIntoView({ behavior: calm ? 'auto' : 'smooth', block: 'start' })
     }
   }
@@ -427,9 +429,9 @@ export function initBazaar(root: HTMLElement): Cleanup {
   const mm = gsap.matchMedia()
   mm.add(
     {
-      walk: '(min-width: 900px) and (min-height: 560px) and (min-aspect-ratio: 6/5) and (prefers-reduced-motion: no-preference)',
-      motion: '(prefers-reduced-motion: no-preference)',
-      still: '(prefers-reduced-motion: reduce)',
+      walk: '(min-width: 900px) and (min-height: 560px) and (min-aspect-ratio: 6/5) and ' + NO_MOTION_PREFERENCE,
+      motion: NO_MOTION_PREFERENCE,
+      still: REDUCED_MOTION,
     },
     (ctx) => {
       const { walk, motion, still } = ctx.conditions as Record<string, boolean>

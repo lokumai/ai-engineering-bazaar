@@ -1,4 +1,5 @@
-import { clamp, reduced } from './model'
+import { reduced } from './model'
+import { clamp } from '@/lib/motion-math'
 
 /**
  * M91, D116 — the journey owns one number, `t`, the month at the centre of the view, ported from

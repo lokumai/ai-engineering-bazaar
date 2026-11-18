@@ -10,6 +10,7 @@ import { SEARCH_LANGS, joinedVariant, normalise, queryTokenize, searchOptions, t
 import { DIALOG_SELECTOR } from '@/lib/record/keys'
 import { readingTrackOf, trackLabel, type Track } from '@/lib/tracks'
 import { href } from '@/lib/url'
+import { StrokeIcon } from '@/components/icons/StrokeIcon'
 
 /**
  * M59 (D95, the author's pick N2 on O1) — search, as a window over the page.
@@ -102,9 +103,9 @@ function langOf(pathname: string): SearchLang {
 
 function Chevron() {
   return (
-    <svg className="bz-search-chevron" viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" focusable="false">
+    <StrokeIcon className="bz-search-chevron" size={16} viewBox="0 0 16 16" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round" focusable="false">
       <path d="M4 6.5 8 10.5 12 6.5" />
-    </svg>
+    </StrokeIcon>
   )
 }
 

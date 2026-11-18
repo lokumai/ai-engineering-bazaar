@@ -1,4 +1,4 @@
-import { rng } from './haystack-geometry'
+import { mulberry32 } from '@/lib/motion-math'
 
 /**
  * Stall 3, "The seal" (3E): a sheet on a desk in CSS 3D, written by hand with a reed pen, one line
@@ -17,7 +17,7 @@ import { rng } from './haystack-geometry'
 
 /** Cursive from a trochoid: each turn is one letter, a loop or a hump, sometimes tall, sometimes with a tail. */
 function script(x0: number, x1: number, b: number, seed: number, hgt = 13): string {
-  const R = rng(seed)
+  const R = mulberry32(seed)
   let d = ''
   let x = x0
   while (x < x1 - 20) {

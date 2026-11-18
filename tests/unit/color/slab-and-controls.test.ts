@@ -2,6 +2,7 @@ import { readFileSync, readdirSync } from 'node:fs'
 import { join } from 'node:path'
 import { describe, expect, it } from 'vitest'
 import { readDesignToken } from '@/lib/content/code-theme'
+import { NOT_A_SURFACE, SURFACE_DIR } from '../design/surfaces'
 
 /**
  * Who owns a theme, and the one palette that refuses to flip.
@@ -33,8 +34,6 @@ import { readDesignToken } from '@/lib/content/code-theme'
  */
 
 const LANGUAGE = join(import.meta.dirname, '../../../src/design/bazaar.css')
-const APP_DIR = join(import.meta.dirname, '../../../src/app')
-const NOT_A_SURFACE = new Set(['globals.css', 'lokum-modules.css'])
 
 const language = readFileSync(LANGUAGE, 'utf8')
 
@@ -43,10 +42,10 @@ interface Surface {
   readonly css: string
 }
 
-const SURFACES: Surface[] = readdirSync(APP_DIR)
+const SURFACES: Surface[] = readdirSync(SURFACE_DIR)
   .filter((name) => name.endsWith('.css') && !NOT_A_SURFACE.has(name))
   .sort()
-  .map((name) => ({ name, css: readFileSync(join(APP_DIR, name), 'utf8') }))
+  .map((name) => ({ name, css: readFileSync(join(SURFACE_DIR, name), 'utf8') }))
 
 /** Every `--color-slab-*` the language declares, from the light block. */
 const themeBlock = language.slice(

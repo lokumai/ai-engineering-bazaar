@@ -1,6 +1,7 @@
 'use client'
 
 import { useLayoutEffect } from 'react'
+import { REDUCED_MOTION } from '@/lib/reduced-motion'
 
 /**
  * The About page's one island (M90, D115). It renders nothing: it finds the story the server
@@ -20,7 +21,7 @@ export function AboutMotion({ rootId }: { rootId: string }) {
     let loading = false
     // Under reduced motion the page is the still, so `gsap` is not even fetched; it is fetched the
     // first time the reader allows motion, and from then on `initAbout` follows the setting itself.
-    const reduce = matchMedia('(prefers-reduced-motion: reduce)')
+    const reduce = matchMedia(REDUCED_MOTION)
     const load = () => {
       if (reduce.matches || loading) return
       loading = true

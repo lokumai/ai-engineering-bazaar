@@ -6,14 +6,13 @@ import {
   WIDTHS,
   WIDTH_ORDER,
   along,
-  clamp,
   haystack,
-  lerp,
   mix,
   rgba,
   smooth,
 } from './haystack-geometry'
 import type { SceneHandle } from './scene'
+import { clamp, lerp } from '@/lib/motion-math'
 
 /**
  * Stall 2 in motion: the playground's canvas (`R2-stall-haystack.html`, `haystack()`), ported line for

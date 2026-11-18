@@ -37,7 +37,14 @@ for (const lang of TRANSLATED_LANGS) {
     await page.locator('header a[href="/"]:visible').first().click()
     await expect(page).toHaveURL(/\/$/)
     expect(await page.evaluate(() => (window as unknown as { __kept?: boolean }).__kept), 'the navigation reloaded the document').toBe(true)
-    await expect.poll(() => language(page)).toBe('en')
+    // The URL changes BEFORE React commits the destination: measured on the export, the address
+    // led `<html lang>` by 165-260 ms at normal speed and by 1.0-1.5 s at 8x CPU slowdown, the time the
+    // home page's tree takes to render and commit (`RecordStateSync` sets the language in the
+    // effect that follows that commit). On a loaded CI runner `fa` was still there 5 s after the
+    // address changed (one CI run, passed on retry). So wait for the destination to be on the page, with the time a commit can
+    // take, then read the language: what is asserted is the language of the page that is shown.
+    await expect(page.locator('.bz-street'), 'the home page was never committed').toBeAttached({ timeout: 20_000 })
+    await expect.poll(() => language(page), { timeout: 10_000 }).toBe('en')
 
     expect(problems.consoleErrors).toEqual([])
     expect(problems.failedRequests).toEqual([])
@@ -56,7 +63,7 @@ test('a client navigation into a translation, through the language picker, says 
   await picker.locator(`a[href="${moduleRoute(sheet.slug, 'engineers', TRANSLATED_LANGS[0])}"]`).click()
   await expect(page).toHaveURL(new RegExp(`/${TRANSLATED_LANGS[0]}/`))
   expect(await page.evaluate(() => (window as unknown as { __kept?: boolean }).__kept), 'the navigation reloaded the document').toBe(true)
-  await expect.poll(() => language(page)).toBe(TRANSLATED_LANGS[0])
+  await expect.poll(() => language(page), { timeout: 10_000 }).toBe(TRANSLATED_LANGS[0])
 
   expect(problems.consoleErrors).toEqual([])
   expect(problems.failedRequests).toEqual([])

@@ -4,10 +4,20 @@
 #
 # The pages are generated from the markdown in mini-courses/, so the build has to
 # see the repository at one commit and with its full history.
+#
+# This workflow never publishes a commit whose CI failed. It used to fire on
+# `push: main` beside ci.yml with no dependency on it, and six red main commits
+# were published that way. It now starts when the CI workflow has finished on
+# main, and the `gate` job below proves, for every trigger, that the commit it is
+# about to build has a successful CI run of its own.
 name: Deploy
 
 on:
-  push:
+  # `workflow_run` runs the copy of this file that is on the default branch, and
+  # CI's `push: main` run is the one that ratifies a merged commit.
+  workflow_run:
+    workflows: [CI]
+    types: [completed]
     branches: [main]
   # Once a day, so the star count in the bar is never more than a day old even
   # when nothing is merged (D85). Off the hour, when GitHub's schedulers are
@@ -16,10 +26,11 @@ on:
     - cron: "17 4 * * *"
   workflow_dispatch:
 
+# Read-only by default. The one job that publishes (`deploy`) asks for
+# `pages: write` and `id-token: write` itself, so the job that runs `npm ci`
+# holds neither.
 permissions:
   contents: read
-  pages: write
-  id-token: write
 
 concurrency:
   group: pages
@@ -34,15 +45,73 @@ env:
   BASE_PATH: ""
 
 jobs:
+  # Decides which commit is built, and whether it may be. Everything after it is
+  # skipped, with the reason in this job's log, when the answer is no.
+  #
+  # - workflow_run: the commit CI just finished on. Built only if that run was a
+  #   success of a push to main in this repository (a fork's pull request from a
+  #   branch also called main matches `branches: [main]`, hence the checks on
+  #   `event` and the head repository), and only if it is still what main points
+  #   to: a newer commit has its own CI run and will deploy itself, and
+  #   publishing the older one after it would put the site back in time.
+  # - schedule and workflow_dispatch: the commit main points to now, built only
+  #   if a CI run of the push that created it has succeeded. A CI run still in
+  #   progress counts as not yet, and the next trigger will pick it up.
+  gate:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      actions: read
+    outputs:
+      deploy: ${{ steps.decide.outputs.deploy }}
+      sha: ${{ steps.decide.outputs.sha }}
+    steps:
+      - id: decide
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          TRIGGER: ${{ github.event_name }}
+          RUN_SHA: ${{ github.event.workflow_run.head_sha }}
+          RUN_CONCLUSION: ${{ github.event.workflow_run.conclusion }}
+          RUN_EVENT: ${{ github.event.workflow_run.event }}
+          RUN_REPO: ${{ github.event.workflow_run.head_repository.full_name }}
+        run: |
+          set -euo pipefail
+          skip() {
+            echo "Not deploying: $1"
+            echo "deploy=false" >> "$GITHUB_OUTPUT"
+            echo "sha=" >> "$GITHUB_OUTPUT"
+            exit 0
+          }
+          main_sha=$(gh api "repos/$REPO/commits/main" --jq .sha)
+          if [ "$TRIGGER" = "workflow_run" ]; then
+            [ "$RUN_CONCLUSION" = "success" ] || skip "CI finished as '$RUN_CONCLUSION' for $RUN_SHA"
+            [ "$RUN_EVENT" = "push" ] || skip "the CI run was a '$RUN_EVENT', not a push to main"
+            [ "$RUN_REPO" = "$REPO" ] || skip "the CI run came from $RUN_REPO"
+            [ "$RUN_SHA" = "$main_sha" ] || skip "$RUN_SHA is no longer main's head ($main_sha); the head's own CI run deploys it"
+            sha="$RUN_SHA"
+          else
+            sha="$main_sha"
+            green=$(gh api "repos/$REPO/actions/workflows/ci.yml/runs?head_sha=$sha&event=push&status=success" --jq '.total_count')
+            [ "$green" -gt 0 ] || skip "no successful CI run exists for main's head $sha"
+          fi
+          echo "Deploying $sha: CI succeeded for it."
+          echo "deploy=true" >> "$GITHUB_OUTPUT"
+          echo "sha=$sha" >> "$GITHUB_OUTPUT"
+
   build:
+    needs: gate
+    if: needs.gate.outputs.deploy == 'true'
     runs-on: ubuntu-latest
     # The bundle's contentVersion, so the deploy job can wait for the live site
     # to serve this build's index rather than the one before it.
     outputs:
       content_version: ${{ steps.bundle.outputs.content_version }}
     steps:
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
+          # The commit CI ratified, not whatever main has moved to since.
+          ref: ${{ needs.gate.outputs.sha }}
           # REVISION is the last commit that touched each module file (§11.26),
           # so the module sheets are wrong without the full history.
           fetch-depth: 0
@@ -50,7 +119,7 @@ jobs:
       # v5 added automatic caching keyed off a `packageManager` field in
       # package.json and v6 narrowed it to npm. `package.json` declares no such
       # field, so the explicit cache below is still the only one.
-      - uses: actions/setup-node@v7
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
           node-version: "24"
           cache: npm
@@ -67,9 +136,11 @@ jobs:
       # the build exits 1 without it rather than fall back to another browser.
       # 2026-11-11: the runners could not resolve security.ubuntu.com, and every `--with-deps` install
       # failed before a test ran. The main archive the runners already use carries the same security
-      # pocket, so apt is pointed there; nothing else about the install changes.
+      # pocket, so apt is pointed there over https (the first version used http and `|| true`); nothing else
+      # about the install changes. `xargs -r` is what makes a runner image without a legacy
+      # sources.list a no-op instead of an error, so nothing needs `|| true`.
       - name: Fetch Ubuntu security updates from the runner's main archive
-        run: sudo sed -i 's|https\?://security.ubuntu.com|http://azure.archive.ubuntu.com|g' /etc/apt/sources.list /etc/apt/sources.list.d/*.sources 2>/dev/null || true
+        run: grep -rlE 'security\.ubuntu\.com' /etc/apt/sources.list /etc/apt/sources.list.d 2>/dev/null | xargs -r sudo sed -i 's|https\?://security.ubuntu.com|https://azure.archive.ubuntu.com|g'
       - run: npx playwright install --with-deps chromium
       - name: Build the site
         run: npm run build
@@ -115,7 +186,7 @@ jobs:
       # GREEN and renders as unstyled HTML. The guard above would not have caught
       # it: it tests the directory before the upload, and the upload is what
       # drops the file. v5 added this input for exactly this case.
-      - uses: actions/upload-pages-artifact@v5
+      - uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5.0.0
         with:
           path: _site
           include-hidden-files: true
@@ -123,12 +194,18 @@ jobs:
   deploy:
     needs: build
     runs-on: ubuntu-latest
+    # The only job that may publish. It runs no repository code except the two
+    # curl checks below.
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - id: deployment
-        uses: actions/deploy-pages@v5
+        uses: actions/deploy-pages@368f82528645a54fb793d4d04e342629a3f51346 # v5.0.1
 
       # The build job's guard checks the directory it is about to upload, which
       # cannot see anything the upload or Pages itself then does to it — and the

@@ -17,6 +17,7 @@ import {
 import { A0, CATEGORY_PATHS, CHECKLIST_ITEMS, INDEX_SHEET, SHEETS, sheetByModule } from './sheets'
 import { showTable } from './views'
 import { watchPage } from './watch'
+import { hydrated } from './hydrated'
 
 /**
  * §12 THE RECORD, on a module sheet, in a real engine.
@@ -784,18 +785,23 @@ test('prefs.charKeys off silences every character shortcut (§12.16, SC 2.1.4)',
  */
 test('reading the site writes nothing until the reader records something (§12.13)', async ({ page }) => {
   const problems = watchPage(page)
+  // The store flushes on a 500 ms trailing timer. The page's clock is the test's: after the
+  // island is up, `runFor` moves it past the window, so "nothing was written" is asserted after
+  // the flush has had its turn by construction and not after however long a loaded runner took.
+  await page.clock.install()
+  const pastTheFlush = async () => {
+    await hydrated(page)
+    await page.clock.runFor(1200)
+  }
 
   await page.goto('/')
-  await page.waitForLoadState('networkidle')
-  // Give the store's 500ms trailing flush more than its window.
-  await page.waitForTimeout(1200)
+  await pastTheFlush()
 
   const afterIndex = await readRawRecord(page)
   expect(afterIndex, 'the catalog wrote nothing').toBeNull()
 
   await page.goto(A0.path)
-  await page.waitForLoadState('networkidle')
-  await page.waitForTimeout(1200)
+  await pastTheFlush()
   expect(await readRawRecord(page), 'a module module wrote nothing').toBeNull()
 
   // And the second load still reads as NEVER STARTED rather than CLEARED BY YOU.
@@ -808,8 +814,8 @@ test('reading the site writes nothing until the reader records something (§12.1
 
   // The first real act does write, or the feature would not work at all.
   await page.locator('[data-hl-signoff]').click()
-  await page.waitForTimeout(1200)
-  expect(await readRawRecord(page), 'signing off writes').not.toBeNull()
+  await page.clock.runFor(1200)
+  await expect.poll(() => readRawRecord(page), { message: 'signing off writes' }).not.toBeNull()
 
   expect(problems.consoleErrors).toEqual([])
   expect(problems.failedRequests).toEqual([])

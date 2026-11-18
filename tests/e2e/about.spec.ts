@@ -2,6 +2,7 @@ import { readFileSync } from 'node:fs'
 import { existsSync } from 'node:fs'
 import { join } from 'node:path'
 import { type Page, expect, test } from '@playwright/test'
+import { hydrated } from './hydrated'
 
 /**
  * M90, D115 — the About page, against the built export.
@@ -94,8 +95,8 @@ test.describe('under reduced motion', () => {
   test('the whole story is visible, nothing moves and nothing is pinned', async ({ page }) => {
     await page.goto(ROUTE)
     await page.waitForLoadState('networkidle')
-    // Long enough for the island to have loaded and decided.
-    await page.waitForTimeout(1000)
+    // The island has decided: its layout effect runs in the commit that precedes this signal.
+    await hydrated(page)
     await expect(page.locator('.bz-about')).not.toHaveAttribute('data-motion')
     const { read, hidden } = await hiddenText(page)
     expect(read, 'the story was not on the page at all').toBeGreaterThanOrEqual(AT_LEAST)
@@ -110,7 +111,7 @@ test.describe('under reduced motion', () => {
     })
     await page.goto(ROUTE)
     await page.waitForLoadState('networkidle')
-    await page.waitForTimeout(800)
+    await hydrated(page)
     const before = scripts.length
     // The positive control: allowing motion fetches it, and the page starts to move.
     await page.emulateMedia({ reducedMotion: 'no-preference' })
@@ -125,7 +126,7 @@ test.describe('at a phone\'s width', () => {
   test('nothing scrolls sideways, nothing pins, and each stall\'s text stands above its scene', async ({ page }) => {
     await page.goto(ROUTE)
     await page.waitForLoadState('networkidle')
-    await page.waitForTimeout(800)
+    await hydrated(page)
     for (const at of [0, 0.25, 0.5, 0.75, 1]) {
       await page.evaluate((f) => scrollTo(0, (document.documentElement.scrollHeight - innerHeight) * f), at)
       const width = await page.evaluate(() => [document.documentElement.scrollWidth, document.documentElement.clientWidth])

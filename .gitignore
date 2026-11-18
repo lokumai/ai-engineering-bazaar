@@ -63,3 +63,6 @@ supabase/.branches/
 /docs/PROJE-TR.pdf
 /docs/images/
 /docs/video/
+
+# Claude Code local permissions: machine-specific, may hold allow-listed commands
+.claude/settings.local.json

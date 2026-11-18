@@ -162,16 +162,46 @@ moved.
 
 ## Known flakes, and the family they nearly all belong to
 
-`responsive.spec.ts`'s "tells the reader where a scroller continues" fails at
-1024 roughly one run in three. Mermaid renders client-side, so whether a
-diagram's scroller has been marked as continuing depends on when the injection
-lands. Measured: one failure in three consecutive runs of that test alone.
+CI retries a failing browser test once (`retries: 1` in `playwright.config.ts`) as a safety
+net, and `tests/flaky-reporter.ts` makes a test that passed only on the retry loud: a GitHub
+warning annotation on the run, a `FLAKY:` block at the end of the log and a list in the job
+summary. A green run with that block is not a clean run. On 2026-11-18 a review counted 22 of the
+last 54 green runs with such a test, and the cause was the same each time: **an assertion made before the thing
+it asserts about had happened.** A flake that shows up in that list is a wait to write, never a
+number to raise.
 
-`theme.spec.ts` and `path.spec.ts` read `<html>`'s class list inside a
-`requestAnimationFrame` with the page's scripts blocked. The reading is
-sometimes taken before the frame fires: observed failing three then passing six
-on a re-run with nothing changed. Both files retry twice. A genuine break still
-fails all three attempts.
+The ones found that way, and what closed each (look for the pattern, not these names):
+
+- **A key pressed before the listener exists.** The keyboard map and the search window attach
+  their listeners in effects, so `/` and Ctrl+K pressed right after `goto` can be dropped, which
+  reads exactly like a key that does nothing. `hydrated()` (`tests/e2e/hydrated.ts`) waits for
+  the `data-hl-keys` and `data-hl-search` attributes those effects set. `search.spec.ts` calls it
+  before every first key; `about.spec.ts` and `record-sheet.spec.ts` use it instead of a fixed
+  wait.
+- **A value read once after an input.** `caravan.spec.ts` read the strip's `aria-valuenow`
+  straight after a key press or a wheel; the update is a render away. Each such reading is an
+  `expect.poll`.
+- **An island that arrives behind a dynamic import.** `is-walk` on `<html>` is set by `initBazaar`
+  after gsap loads and the street is rebuilt; on a loaded runner that takes longer than the
+  default 5 s of `expect`. `cast.spec.ts` waits for that signal with room for it.
+- **A URL that leads the page.** Next changes the address before React commits the destination, so
+  `toHaveURL` is not "the page is there". `html-lang.spec.ts` waits for the destination's own
+  element before it reads `<html lang>`.
+- **A fixed wait standing in for a timer.** The record store flushes on a 500 ms trailing timer
+  and a test that asserts "nothing was written" cannot poll for an absence. `record-sheet.spec.ts`
+  installs Playwright's clock and runs it past the window, so the window has passed by
+  construction. (The remaining `waitForTimeout` calls in other specs wait on animation or scrub
+  time; replace one with the state it waits for when you touch it.)
+
+`theme.spec.ts` reads `<html>`'s class list inside a `requestAnimationFrame` with the page's
+scripts blocked. The reading is sometimes taken before the frame fires: observed failing three
+then passing six on a re-run with nothing changed. The file retries twice
+(`test.describe.configure({ retries: 2 })`); a genuine break still fails all three attempts.
+
+`responsive.spec.ts`'s "tells the reader where a scroller continues" was the other known one
+when a 1024px project existed; that project is gone (M40, D88), so it now runs at 1440 and 390
+only. If it shows up in the `FLAKY:` list, the cause is the mermaid injection timing (an island
+that arrives late), not the viewport.
 
 **Before calling anything else a flake, check whether it is a race you can
 close.** Five failures were read as regressions in M10 and every one of them was

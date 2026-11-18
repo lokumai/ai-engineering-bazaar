@@ -3,6 +3,7 @@ import { categoryByDir } from './curriculum-file'
 import { type CourseModule, loadAllModules } from './loader'
 import { INDEX_ROUTE } from '@/lib/route-labels'
 import { TRANSLATED_LANGS } from './languages'
+import { moduleRoute } from '@/lib/tracks'
 
 /**
  * The corpus cross-references itself in the only notation a folder of markdown
@@ -166,7 +167,7 @@ export function courseLinkFor(rawHref: string, source: string): string | null {
 }
 
 /** The directory part of a source path, relative to `CONTENT_ROOT`. */
-function dirOf(source: string): string {
+function sourceDirectoryOf(source: string): string {
   return source.includes('/') ? source.slice(0, source.lastIndexOf('/')) : ''
 }
 
@@ -188,7 +189,7 @@ function dirOf(source: string): string {
 export function corpusTargetOf(rawHref: string, source: string): CourseModule | null {
   if (!isCourseLink(rawHref)) return null
 
-  const segments = walk(dirOf(source), targetOf(rawHref))
+  const segments = walk(sourceDirectoryOf(source), targetOf(rawHref))
   if (segments.length !== 2) return null
   const [dir, filename] = segments
 
@@ -226,9 +227,9 @@ function routeOf(rawHref: string, source: string): { route: string; key: string 
   // gate would still have passed — a stub is a page and it resolves — so this
   // is the class of defect no test can see: a link that works and lands one
   // redirect short of where it meant to.
-  const segments = walk(dirOf(source), targetOf(rawHref))
+  const segments = walk(sourceDirectoryOf(source), targetOf(rawHref))
   if (segments.length === 1 && segments[0] === 'index.md') return { route: INDEX_ROUTE, key: null }
 
   const module = corpusTargetOf(rawHref, source)
-  return module === null ? null : { route: `/courses/${module.slug}/`, key: module.slug }
+  return module === null ? null : { route: moduleRoute(module.slug, 'engineers'), key: module.slug }
 }

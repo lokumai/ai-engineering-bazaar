@@ -1,7 +1,9 @@
 /**
  * The base path an export was built with, measured from the export, defined
- * once and imported by `scripts/check-links-out.mjs` (every link must carry it)
- * and `scripts/check-bundle-out.mjs` (no bundle file may carry it).
+ * once and shared by the scripts that read an export: `check-links-out.mjs` (every
+ * link must carry it), `check-bundle-out.mjs` (no bundle file may carry it),
+ * `finalize-bundle.mjs` and `html-lang.mjs`, and `tests/e2e/seo.spec.ts`. The
+ * export's file walkers (`htmlFiles`, `filesUnder`) live here too.
  *
  * **Measured, not read from `next.config.ts` or the environment.**
  * `SITE_BASE_PATH` is set for the duration of one build command; by the time a
@@ -14,8 +16,8 @@
  * Moved here from `check-links-out.mjs` unchanged, so the two checkers cannot
  * disagree about which build they are looking at.
  */
-import { readFileSync, readdirSync } from 'node:fs'
-import { join } from 'node:path'
+import { existsSync, readFileSync, readdirSync } from 'node:fs'
+import { join, relative } from 'node:path'
 
 /**
  * Every `.html` file under `dir`, in directory order.
@@ -63,4 +65,27 @@ export function measureBasePath(files, env = process.env) {
       ? `measured from /_next/ URLs in ${seen} file(s)`
       : `measured from /_next/ URLs, but the export carries ${tally.size} different prefixes: ${[...tally.keys()].map((k) => k || '<empty>').join(', ')}`
   return { base, how }
+}
+
+/**
+ * Every file under `dir`, as `/`-separated paths relative to `root`, sorted. Empty when
+ * `dir` does not exist.
+ *
+ * @param {string} root
+ * @param {string} dir
+ * @returns {string[]}
+ */
+export function filesUnder(root, dir) {
+  const start = join(root, dir)
+  if (!existsSync(start)) return []
+  const out = []
+  const walk = (at) => {
+    for (const entry of readdirSync(at, { withFileTypes: true })) {
+      const path = join(at, entry.name)
+      if (entry.isDirectory()) walk(path)
+      else if (entry.isFile()) out.push(relative(root, path).split('\\').join('/'))
+    }
+  }
+  walk(start)
+  return out.sort()
 }

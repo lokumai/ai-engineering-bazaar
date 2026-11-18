@@ -55,9 +55,6 @@ function polyline(names: readonly PointName[], close: boolean): string {
   return close ? `${d} Z` : d
 }
 
-/** The hexagon silhouette. Always solid — the line type never changes (§8.2). */
-export const OUTLINE = polyline(['T', 'R', 'Rp', 'Bp', 'Lp', 'L'], true)
-
 export type FaceId = 'F1' | 'F2' | 'F3' | 'F4' | 'F5' | 'F6'
 
 export interface Face {
@@ -93,8 +90,7 @@ export const FACES: readonly Face[] = [
 ]
 
 /**
- * An edge belongs to two faces, so it is drawn once and takes the higher of
- * their two states (`edgeStateOf`). Drawing each face as its own closed
+ * An edge belongs to two faces, so it is drawn once. Drawing each face as its own closed
  * rhombus instead would paint one hidden face's dashes over a shared solid
  * outline edge, and §8.2 is explicit that solid stays solid.
  */
@@ -159,29 +155,6 @@ export const SUGAR: ReadonlyArray<Point> = [
 /** In user units, and so scaled from `size` by the viewBox — see HIDDEN_DASH. */
 export const SUGAR_R = 0.45
 
-/** §8.2 — three states, and only three. */
-export type FaceState = 'dormant' | 'started' | 'complete'
-
-export interface CategoryProgress {
-  /** Sheets in this category the reader has had approved. */
-  approved: number
-  /**
-   * Sheets that exist in this category. Derived from the corpus at build time
-   * and never hand-maintained (§11.25) — four of six categories contain no
-   * drawn sheets today, and the mark has to be able to say so.
-   */
-  total: number
-}
-
-export type FaceStates = Readonly<Record<FaceId, FaceState>>
-
-const RANK: Record<FaceState, number> = { dormant: 0, started: 1, complete: 2 }
-
-export function edgeStateOf(states: FaceStates, edge: Edge): FaceState {
-  const [a, b] = edge.faces.map((id) => states[id])
-  return RANK[a] >= RANK[b] ? a : b
-}
-
 /**
  * §8.3, as §13.2 amends it — four sizes, five homes.
  *
@@ -195,12 +168,6 @@ export function edgeStateOf(states: FaceStates, edge: Edge): FaceState {
  * prove exactly that.
  */
 export const LKM01_SIZES = [28, 96, 128, 160] as const
-
-/** The header size, and the size every weight in the drawing was drawn at. */
-export const LKM01_BASE_SIZE = 28
-
-/** §13.2 — at this size and above the mark is accompanied by `FaceLegend`. */
-export const LKM01_LEGEND_FROM = 96
 
 export interface HatchSpec {
   /** Distance between hatch lines, in user units. */

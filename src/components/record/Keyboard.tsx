@@ -16,7 +16,7 @@ import {
   type KeyState,
 } from '@/lib/record/keys'
 import { useRecord } from '@/lib/record/store'
-import { rawLocalStorage } from '@/lib/local-storage'
+import { readLocalStorage } from '@/lib/local-storage'
 import { applyTheme, nextTheme, readTheme } from '@/lib/theme'
 import { href } from '@/lib/url'
 import { ShortcutSheet } from './ShortcutSheet'
@@ -80,7 +80,7 @@ function describe(event: KeyboardEvent): DescribedKey {
  */
 function toggleTheme(): void {
   const root = document.documentElement
-  const release = applyTheme(nextTheme(readTheme(root)), root, rawLocalStorage())
+  const release = applyTheme(nextTheme(readTheme(root)), root, readLocalStorage())
   requestAnimationFrame(release)
 }
 

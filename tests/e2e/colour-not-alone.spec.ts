@@ -21,7 +21,7 @@ import { showCatalogView, showTable } from './views'
  * blank here and nowhere else.
  *
  * The same pass doubles as the colour-blindness argument. Two of the six hues
- * are 45° apart (KİREMİT and BAL) and a deuteranope may not separate them at
+ * are 45° apart (the Trends and Ecosystem hues) and a deuteranope may not separate them at
  * all; that is tolerable precisely because nothing here rests on telling two
  * hues apart.
  */

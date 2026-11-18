@@ -7,7 +7,7 @@
  * 1000 x 1000 square.
  */
 
-import { clamp, lerp, mulberry32 } from '@/lib/motion-math'
+import { clamp, lerp, mulberry32, smoothstep } from '@/lib/motion-math'
 
 export const HAY = {
   straw: '#dcb66a',
@@ -19,10 +19,7 @@ export const HAY = {
   sand: '#e6dac6',
 } as const
 
-export const smooth = (a: number, b: number, v: number) => {
-  const x = clamp((v - a) / (b - a))
-  return x * x * (3 - 2 * x)
-}
+export const smooth = (a: number, b: number, v: number) => smoothstep((v - a) / (b - a))
 
 function rgb(hex: string): [number, number, number] {
   const n = parseInt(hex.replace('#', ''), 16)

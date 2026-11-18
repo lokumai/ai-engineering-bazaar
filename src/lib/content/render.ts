@@ -10,6 +10,7 @@ import { toString as hastToString } from 'hast-util-to-string'
 import type { Element, ElementContent, Root, RootContent, Text } from 'hast'
 import { href } from '@/lib/url'
 import { widthForColumns } from '@/lib/figure/width'
+import type { ImageSize } from '@/lib/bundle/image-size'
 import type { ChecklistItem } from './checklist'
 import { CALLOUT_MARKER, calloutKindOf } from './callout'
 import { DIAGRAM_HEADING, SERIES_HEADINGS } from './lines'
@@ -96,7 +97,7 @@ export interface RenderOptions {
    * Reads a copied image's pixel size from its site-relative path. When it is given
    * (with `imagePath`), every picture carries its intrinsic `width` and `height`.
    */
-  imageSize?: (path: string) => { width: number; height: number }
+  imageSize?: (path: string) => ImageSize
   /**
    * The sheet (module) number, so figures and tables can be numbered
    * `FIG. 13.2` / `TBL. 13.2` as §6.5 and §6.10 require. Omitted for content
@@ -531,7 +532,7 @@ function swapModulesMark(tree: Root): Root {
 function rehypeRewriteImages(
   imageBase?: string,
   imagePath?: string,
-  imageSize?: (path: string) => { width: number; height: number },
+  imageSize?: (path: string) => ImageSize,
 ) {
   return (tree: Root) => {
     if (!imageBase) return

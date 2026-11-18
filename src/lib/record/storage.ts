@@ -1,7 +1,10 @@
 /**
- * §12.1.1, §12.1.4 — the ONLY module that names the storage key or touches a
- * Storage object. Nothing else in the codebase may (the sole existing
- * exception, `hl-theme` in `lib/theme.ts`, is unchanged).
+ * §12.1.1, §12.1.4 — the ONLY module that names the record's storage key, and the
+ * only one that reads or writes the record through a Storage object. The property
+ * access itself goes through `lib/local-storage.ts`, the guarded accessor the theme
+ * toggle and the keyboard island share. The exceptions are `hl-theme` in
+ * `lib/theme.ts` and the two inline boot scripts (`record/boot.ts`, `theme.ts`),
+ * which run before any module and carry their own try/catch.
  *
  * Port-shaped, so every branch below is testable in node behind a Map-backed
  * fake — the pattern `ThemeStorage` already established (§12.14.2). The port
@@ -16,7 +19,7 @@ import {
   type Envelope,
   type RecordData,
 } from './schema'
-import { rawLocalStorage } from '@/lib/local-storage'
+import { readLocalStorage } from '@/lib/local-storage'
 import { parseEnvelope, type ParseResult } from './validate'
 
 /** The slice of `Storage` this module uses. */
@@ -39,8 +42,8 @@ export const SOFT_CAP_BYTES = 512 * 1024
 const ENCODER = new TextEncoder()
 
 /**
- * §12.1.4 — the `window.localStorage` PROPERTY ACCESS ITSELF is inside the
- * try/catch. The getter throws `SecurityError` when the origin is opaque or
+ * §12.1.4 — the `window.localStorage` PROPERTY ACCESS ITSELF is guarded, inside
+ * the try/catch of `readLocalStorage`. The getter throws `SecurityError` when the origin is opaque or
  * the user has configured the browser not to persist data, and blocking
  * cookies is commonly interpreted as exactly that instruction — so the access
  * throws before any key is read.
@@ -52,7 +55,7 @@ const ENCODER = new TextEncoder()
 export function safeStorage(): RecordStorage | null {
   // Not a render-time read: §12.2 forbids `typeof window` in a render path,
   // and this is only ever called from an effect or an event handler.
-  const storage = rawLocalStorage()
+  const storage = readLocalStorage()
   if (!storage) return null
   return {
     getItem: (key) => storage.getItem(key),

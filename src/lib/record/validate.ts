@@ -42,10 +42,8 @@ export type ParseResult =
   /**
    * `schema` is the version the payload was FOUND at, not the version it now
    * holds — the profile sheet can say where a record came from.
-   * `savedAt` is what the envelope carried, so §12.11 can print it without a
-   * second module naming the storage key.
    */
-  | { kind: 'ok'; data: RecordData; schema: number; savedAt: string | null }
+  | { kind: 'ok'; data: RecordData; schema: number }
   | { kind: 'quarantine'; reason: 'newer' | 'malformed'; raw: string }
 
 /**
@@ -264,8 +262,5 @@ export function parseEnvelope(raw: string | null): ParseResult {
     // coercer would already have dropped.
     data: migrate(parsed.data, schema),
     schema,
-    // An instant or nothing: §12.11 prints this, and a string the site cannot
-    // vouch for is not a date.
-    savedAt: asInstant(parsed.savedAt),
   }
 }

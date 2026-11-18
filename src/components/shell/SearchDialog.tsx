@@ -10,7 +10,7 @@ import { SEARCH_LANGS, joinedVariant, normalise, queryTokenize, searchOptions, t
 import { DIALOG_SELECTOR } from '@/lib/record/keys'
 import { readingTrackOf, trackLabel, type Track } from '@/lib/tracks'
 import { href } from '@/lib/url'
-import { StrokeIcon } from '@/components/StrokeIcon'
+import { StrokeIcon } from '@/components/icons/StrokeIcon'
 
 /**
  * M59 (D95, the author's pick N2 on O1) — search, as a window over the page.

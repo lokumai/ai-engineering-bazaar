@@ -2,7 +2,7 @@ import { readFileSync, readdirSync } from 'node:fs'
 import { join } from 'node:path'
 import { describe, expect, it } from 'vitest'
 import { CATEGORIES } from '@/lib/content/curriculum-file'
-import { NOT_A_SURFACE } from '../design/surfaces'
+import { NOT_A_SURFACE, SURFACE_DIR } from '../design/surfaces'
 
 /**
  * The channel-A state lists a SURFACE has to keep complete.
@@ -35,14 +35,13 @@ import { NOT_A_SURFACE } from '../design/surfaces'
  * focus ring.
  */
 
-const APP_DIR = join(import.meta.dirname, '../../../src/app')
 
 /** Every surface stylesheet, concatenated, comments stripped. */
 function surfaceCss(): string {
-  const raw = readdirSync(APP_DIR)
+  const raw = readdirSync(SURFACE_DIR)
     .filter((name) => name.endsWith('.css') && !NOT_A_SURFACE.has(name))
     .sort()
-    .map((name) => readFileSync(join(APP_DIR, name), 'utf8'))
+    .map((name) => readFileSync(join(SURFACE_DIR, name), 'utf8'))
     .join('\n')
   return raw.replace(/\/\*[\s\S]*?\*\//g, ' ')
 }

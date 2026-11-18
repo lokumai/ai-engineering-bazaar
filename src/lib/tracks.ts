@@ -15,7 +15,7 @@
 
 export type Track = 'engineers' | 'everyone'
 
-export interface TrackInfo {
+interface TrackInfo {
   id: Track
   /** The name a reader sees (A1). */
   label: string
@@ -41,7 +41,7 @@ export const COURSES_SEGMENT = 'courses'
 /** The segment of the catalog, the one listing of every module, in either track. */
 export const SHEETS_SEGMENT = 'sheets'
 
-export function isTrack(value: unknown): value is Track {
+function isTrack(value: unknown): value is Track {
   return TRACK_IDS.includes(value as Track)
 }
 
@@ -83,7 +83,7 @@ export function moduleRoute(slug: string, track: Track, lang: string = 'en'): st
  * forgets it when it closes. The boot script reads the same key before first
  * paint; `RecordStateSync` writes it.
  */
-export const TRACK_SESSION_KEY = 'hl-track'
+const TRACK_SESSION_KEY = 'hl-track'
 
 export function lastTrack(): Track | null {
   try {

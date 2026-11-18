@@ -4,9 +4,9 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useEffect, useRef, useState } from 'react'
 import { ABOUT_ROUTE, INDEX_ROUTE, INDEX_TITLE, type CategoryLabel } from '@/lib/route-labels'
-import { TRACKS, type Track, EVERYONE_SEGMENT, catalogRoute, trackOfPath } from '@/lib/tracks'
+import { TRACKS, type Track, COURSES_SEGMENT, EVERYONE_SEGMENT, catalogRoute, trackOfPath } from '@/lib/tracks'
 import { useReadingTrack } from '@/lib/use-reading-track'
-import { StrokeIcon } from '@/components/StrokeIcon'
+import { StrokeIcon } from '@/components/icons/StrokeIcon'
 import { REDUCED_MOTION } from '@/lib/reduced-motion'
 
 /**
@@ -127,7 +127,7 @@ interface Destination {
  * is still owned: a reader on `/courses/expert/agents/` is inside the course,
  * so the catalog lights up and the level inside its dropdown does too.
  */
-const MODULES = '/courses/'
+const MODULES = `/${COURSES_SEGMENT}/`
 
 const DESTINATIONS: readonly Destination[] = [
   { href: '/', label: 'Home', owns: [] },

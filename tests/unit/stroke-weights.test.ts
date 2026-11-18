@@ -1,7 +1,7 @@
 import { readFileSync, readdirSync } from 'node:fs'
 import { join } from 'node:path'
 import { describe, expect, it } from 'vitest'
-import { withoutComments } from './design/surfaces'
+import { SURFACE_DIR, withoutComments } from './design/surfaces'
 
 /**
  * One browser fact, guarded generally.
@@ -36,7 +36,6 @@ import { withoutComments } from './design/surfaces'
  * `logs/BRAINSTORM_2.md` D32 records the retirement.
  */
 
-const APP_DIR = join(import.meta.dirname, '../../src/app')
 const LANGUAGE = join(import.meta.dirname, '../../src/design/bazaar.css')
 
 /** One `property: value` pair, with the line it sits on for the failure text. */
@@ -74,10 +73,10 @@ function declarationsIn(path: string, label: string): Declaration[] {
  * is checked the moment it lands and nobody has to remember to add it here.
  */
 function shippedStylesheets(): Declaration[] {
-  const app = readdirSync(APP_DIR)
+  const app = readdirSync(SURFACE_DIR)
     .filter((name) => name.endsWith('.css'))
     .sort()
-    .flatMap((name) => declarationsIn(join(APP_DIR, name), name))
+    .flatMap((name) => declarationsIn(join(SURFACE_DIR, name), name))
   return [...declarationsIn(LANGUAGE, 'bazaar.css'), ...app]
 }
 

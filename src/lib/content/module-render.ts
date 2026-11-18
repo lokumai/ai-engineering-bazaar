@@ -19,7 +19,7 @@ import type { Root } from 'hast'
 import type { ChecklistItem } from './checklist'
 import { moduleByNumber, neighbours, sheetPath } from './curriculum'
 import { moduleGraph } from './edges'
-import { courseImageSize } from '@/lib/bundle/image-size'
+import { courseImageSize, type ImageSize } from '@/lib/bundle/image-size'
 import { imageBaseFor, imagePathFor } from './images'
 import { categoryIntro } from './intro'
 import { type ReadingLang, type TranslatedLang } from './languages'
@@ -131,8 +131,8 @@ function refFor(module: CourseModule, localise: (route: string) => string): Rend
  * A picture's size is read from its file's header; a module is rendered once per
  * language and track, and the same file is asked for each time.
  */
-const sizes = new Map<string, ReturnType<typeof courseImageSize>>()
-function cachedImageSize(imagePath: string) {
+const sizes = new Map<string, ImageSize>()
+function cachedImageSize(imagePath: string): ImageSize {
   let size = sizes.get(imagePath)
   if (size === undefined) {
     size = courseImageSize(imagePath)

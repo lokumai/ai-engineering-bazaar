@@ -54,10 +54,11 @@
  *
  * Plain `.mjs` importing only `node:`, packages and `scripts/lib/` (spec 2.5).
  */
-import { copyFileSync, existsSync, mkdirSync, readFileSync, readdirSync, renameSync, rmSync, writeFileSync } from 'node:fs'
-import { dirname, join, relative, resolve } from 'node:path'
+import { copyFileSync, existsSync, mkdirSync, readFileSync, renameSync, rmSync, writeFileSync } from 'node:fs'
+import { dirname, join, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { chromium } from '@playwright/test'
+import { filesUnder } from './lib/base-path.mjs'
 import { canonicalJson, contentVersionOf, sha256Hex, sortedRecord } from './lib/bundle-hash.mjs'
 import { diagramPaths, imagePaths } from './lib/bundle-walk.mjs'
 import { DIAGRAM_FONT } from './lib/diagram-font.mjs'
@@ -89,22 +90,6 @@ class Stop extends Error {}
 
 const stop = (message) => {
   throw new Stop(message)
-}
-
-/** Every file under `dir`, as `/`-separated paths relative to `root`, sorted. */
-function filesUnder(root, dir) {
-  const start = join(root, dir)
-  if (!existsSync(start)) return []
-  const out = []
-  const walk = (at) => {
-    for (const entry of readdirSync(at, { withFileTypes: true })) {
-      const path = join(at, entry.name)
-      if (entry.isDirectory()) walk(path)
-      else if (entry.isFile()) out.push(relative(root, path).split('\\').join('/'))
-    }
-  }
-  walk(start)
-  return out.sort()
 }
 
 const diagramFile = (id) => `api/v1/diagrams/${id}.svg`

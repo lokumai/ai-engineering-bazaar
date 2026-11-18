@@ -28,7 +28,7 @@ import {
  *    and the arrow keys move that one, which is a keyboard sequence, not a
  *    snapshot.
  *  - **The profile sheet** prints values that come out of `navigator.storage`,
- *    `localStorage` and `crypto.subtle`. `storageReadout()` is unit-tested
+ *    `localStorage` and `crypto.subtle`. The record's unit tests run
  *    against a fake; what those tests cannot do is *query a browser*, and
  *    §12.1.6's whole rule is that the answer is queried and never assumed.
  *  - **Erase, export and import** are `Blob`, `URL.createObjectURL`,

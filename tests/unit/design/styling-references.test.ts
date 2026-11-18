@@ -1,7 +1,7 @@
 import { readFileSync, readdirSync, statSync } from 'node:fs'
 import { join, relative } from 'node:path'
 import { describe, expect, it } from 'vitest'
-import { withoutComments } from './surfaces'
+import { SURFACE_DIR, withoutComments } from './surfaces'
 
 /**
  * Every styling reference in the markup resolves against the language.
@@ -284,7 +284,6 @@ function referencesIn(path: string): Reference[] {
  * markup sweep could not see it. Same treatment — comments out, a file's own
  * declarations allowed, everything else must resolve against the language.
  */
-const SURFACE_DIR = join(ROOT, 'src/app')
 
 /**
  * The one file in `src/app/` this SWEEP does not read, which is not the same

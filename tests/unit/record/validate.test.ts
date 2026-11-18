@@ -92,19 +92,11 @@ describe('parseEnvelope — a malformed envelope quarantines rather than resetti
 })
 
 describe('parseEnvelope — an understood envelope', () => {
-  it('returns the schema it was found at and the savedAt it carried', () => {
+  it('returns the schema it was found at', () => {
     const result = parseEnvelope(wrap({}))
     expect(result.kind).toBe('ok')
     if (result.kind !== 'ok') return
     expect(result.schema).toBe(1)
-    expect(result.savedAt).toBe('2026-08-31T10:00:00.000Z')
-  })
-
-  it('defaults a missing savedAt to null rather than inventing a time', () => {
-    const result = parseEnvelope('{"schema":1,"data":{}}')
-    expect(result.kind).toBe('ok')
-    if (result.kind !== 'ok') return
-    expect(result.savedAt).toBeNull()
   })
 
   it('reads an empty data object as the empty record', () => {
@@ -312,7 +304,6 @@ describe('envelopeTextFrom — the importer accepts the report as well as the JS
     expect(result.kind).toBe('ok')
     if (result.kind !== 'ok') return
     expect(result.data.days).toEqual(['2026-08-31'])
-    expect(result.savedAt).toBe(NOW_ISO)
   })
 
   it('returns null for a document with no payload', () => {

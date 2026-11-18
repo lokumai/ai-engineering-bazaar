@@ -1,11 +1,12 @@
 /**
  * Which stylesheets in `src/app/` are SURFACES, stated once.
  *
- * Four test files carried their own copy of this — `views.test.ts`,
- * `category-surfaces.test.ts`, `slab-and-controls.test.ts` and
- * `styling-references.test.ts` — which is one fact in four places, and a fifth
- * stylesheet with a special status would have had to be added to all of them
- * or silently checked as a surface in some and not others.
+ * Several test files carried their own copy of this, which is one fact in
+ * several places, and one more stylesheet with a special status would have had to
+ * be added to all of them or silently checked as a surface in some and not others.
+ * They import it from here now. `styling-references.test.ts` is the one that keeps a
+ * narrower set of its own, on purpose: its sweep also reads `globals.css`, because
+ * a dangling reference is as silent there as anywhere (see its own header).
  */
 import { readFileSync, readdirSync } from 'node:fs'
 import { join } from 'node:path'

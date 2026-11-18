@@ -210,8 +210,8 @@ function askPersisted(): void {
         // they had asked the site to remember anything.
         //
         // Nothing is lost. The grant is re-queried on every load and
-        // `storageReadout` reads this variable first, so the readout is the
-        // browser's current answer rather than a stored one that may have gone
+        // this variable holds the browser's current answer, which
+        // `askPersisted` returns, rather than a stored one that may have gone
         // stale. `requestPersistence` still records it through the reducer,
         // because that runs on the first sign-off — where a write is happening
         // anyway, for work the reader actually did.
@@ -219,7 +219,7 @@ function askPersisted(): void {
         notify()
       })
       .catch(() => {
-        // Unimplemented or refused: the readout stays UNKNOWN, which is true.
+        // Unimplemented or refused: the grant stays unknown, which is true.
       })
   } catch {
     // Same.
@@ -380,22 +380,6 @@ export async function requestPersistence(): Promise<boolean | null> {
   } catch {
     return null
   }
-}
-
-/**
- * §12.1.6 — never print a value that has not been queried, which is what
- * `UNKNOWN` is for. `navigator.storage.estimate()` is not read here at all: it
- * may be shown as bytes labelled an approximation, and never as a percentage,
- * gauge, ring or fill bar.
- */
-export type StorageReadout = 'PERSISTENT' | 'BEST-EFFORT' | 'UNAVAILABLE' | 'UNKNOWN'
-
-export function storageReadout(): StorageReadout {
-  if ((started && storage === null) || lastWrite === 'blocked') return 'UNAVAILABLE'
-  const answer = queriedPersisted ?? current.meta.persisted
-  if (answer === true) return 'PERSISTENT'
-  if (answer === false) return 'BEST-EFFORT'
-  return 'UNKNOWN'
 }
 
 // --- export / import (§12.15) ------------------------------------------------

@@ -1,5 +1,5 @@
 import { STALL_GROUNDS } from '../palette'
-import { clamp, lerp, mulberry32 } from '@/lib/motion-math'
+import { clamp, lerp, mulberry32, smoothstep } from '@/lib/motion-math'
 
 /**
  * Stall 1, "Down the table, revised" (1B6, the author's pick, D115): the Hall of Mirrors, 1919. A
@@ -58,10 +58,7 @@ const SC = 0.54
 const OY = 232
 const CAM = (250 + T1 + 40) / 2 - 500 / SC
 
-const smooth = (k: number) => {
-  k = clamp(k, 0, 1)
-  return k * k * (3 - 2 * k)
-}
+const smooth = smoothstep
 const F = (n: number) => (+n).toFixed(1)
 const roman = (n: number) => {
   const m: [number, string][] = [[50, 'L'], [40, 'XL'], [10, 'X'], [9, 'IX'], [5, 'V'], [4, 'IV'], [1, 'I']]

@@ -28,10 +28,10 @@
  *
  * Plain `.mjs` importing only `node:` and `scripts/lib/` (spec 2.5).
  */
-import { existsSync, readFileSync, readdirSync, statSync } from 'node:fs'
-import { join, relative, resolve } from 'node:path'
+import { existsSync, readFileSync, statSync } from 'node:fs'
+import { join, resolve } from 'node:path'
 import { pathToFileURL } from 'node:url'
-import { htmlFiles, measureBasePath } from './lib/base-path.mjs'
+import { filesUnder, htmlFiles, measureBasePath } from './lib/base-path.mjs'
 import { contentVersionOf, sha256Hex } from './lib/bundle-hash.mjs'
 import { diagramPaths, imagePaths } from './lib/bundle-walk.mjs'
 import { DIAGRAM_FONT } from './lib/diagram-font.mjs'
@@ -43,22 +43,6 @@ const HEX64 = /^[0-9a-f]{64}$/
 
 /** Files under `api/v1/` that `files` does not list (spec 2.7): the index itself, its draft, and the snapshot. */
 export const UNLISTED = Object.freeze(['api/v1/index.json', 'api/v1/index.draft.json', 'api/v1/record-conformance.json'])
-
-/** Every file under `dir`, as `/`-separated paths relative to `root`, sorted. */
-function filesUnder(root, dir) {
-  const start = join(root, dir)
-  if (!existsSync(start)) return []
-  const out = []
-  const walk = (at) => {
-    for (const entry of readdirSync(at, { withFileTypes: true })) {
-      const path = join(at, entry.name)
-      if (entry.isDirectory()) walk(path)
-      else if (entry.isFile()) out.push(relative(root, path).split('\\').join('/'))
-    }
-  }
-  walk(start)
-  return out.sort()
-}
 
 /** Every string in a JSON value, keys included. */
 function stringsOf(value, out = []) {

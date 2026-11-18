@@ -1,6 +1,6 @@
 'use client'
 
-import { rawLocalStorage } from '@/lib/local-storage'
+import { readLocalStorage } from '@/lib/local-storage'
 import { applyTheme, nextTheme, readTheme } from '@/lib/theme'
 
 /**
@@ -42,7 +42,7 @@ export function ThemeToggle() {
     const root = document.documentElement
     // §9.2: freeze transitions, flip, unfreeze on the next frame. The colours
     // snap. Cross-fading a whole page delays the answer the user asked for.
-    const release = applyTheme(nextTheme(readTheme(root)), root, rawLocalStorage())
+    const release = applyTheme(nextTheme(readTheme(root)), root, readLocalStorage())
     requestAnimationFrame(release)
   }
 

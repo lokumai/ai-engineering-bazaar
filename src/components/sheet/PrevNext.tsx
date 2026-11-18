@@ -1,6 +1,5 @@
-
 import Link from 'next/link'
-import { StrokeIcon } from '@/components/StrokeIcon'
+import { StrokeIcon } from '@/components/icons/StrokeIcon'
 import { PAGE_COPY, type PageCopy, wordsAttrs } from '@/lib/content/page-copy'
 import type { ReadingLang } from '@/lib/content/languages'
 

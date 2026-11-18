@@ -36,8 +36,6 @@ interface Page {
   noindex: boolean
 }
 
-const pageFiles = (dir: string): string[] => htmlFiles(dir, { skip: ['_next'] })
-
 function languageOf(route: string): { lang: ReadingLang; bare: string } {
   for (const lang of TRANSLATED_LANGS) {
     if (route === `/${lang}/`) return { lang, bare: '/' }
@@ -56,7 +54,7 @@ const links = (html: string, rel: string): string[] =>
 
 /** Every page in the export. `404.html` and `404/index.html` are pages too: they say `noindex`. */
 function readPages(): Page[] {
-  return pageFiles(OUT).map((file) => {
+  return htmlFiles(OUT, { skip: ['_next'] }).map((file) => {
     const path = relative(OUT, file).split(sep).join('/')
     const route = path === 'index.html' ? '/' : path.endsWith('/index.html') ? `/${path.slice(0, -'index.html'.length)}` : `/${path}`
     const html = readFileSync(file, 'utf8')

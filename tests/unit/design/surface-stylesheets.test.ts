@@ -37,7 +37,6 @@ import { NOT_A_SURFACE, SURFACE_DIR, surfaces as surfaceFiles, withoutComments }
  * group, and it may not be spent on a link, a button or a focus ring.
  */
 
-const APP_DIR = SURFACE_DIR
 
 /** Every surface, comments out (`withoutComments`: every rule below needs it). */
 function surfaces() {
@@ -107,7 +106,7 @@ describe('a surface stylesheet arranges the language, it does not extend it', ()
     // And every file in `src/app/` that is not one of the two is a surface
     // this file checks, which is what makes the discipline rules exhaustive
     // rather than a list somebody maintains.
-    const present = readdirSync(APP_DIR).filter((name) => name.endsWith('.css'))
+    const present = readdirSync(SURFACE_DIR).filter((name) => name.endsWith('.css'))
     const checked = new Set(SURFACES.map((one) => one.name))
     for (const name of present) {
       if (NOT_A_SURFACE.has(name)) continue
@@ -117,7 +116,7 @@ describe('a surface stylesheet arranges the language, it does not extend it', ()
   })
 
   it('excludes the entry point and the generated sheet from what it checks', () => {
-    const app = readdirSync(APP_DIR).filter((name) => name.endsWith('.css'))
+    const app = readdirSync(SURFACE_DIR).filter((name) => name.endsWith('.css'))
     expect(app, 'the entry point is still where it was').toContain('globals.css')
     expect(SURFACES.map((s) => s.name)).not.toContain('globals.css')
     expect(SURFACES.map((s) => s.name)).not.toContain('lokum-modules.css')

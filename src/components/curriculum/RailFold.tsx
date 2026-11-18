@@ -2,7 +2,7 @@
 
 import { setRailFolded } from '@/lib/record/events'
 import { update } from '@/lib/record/store'
-import { StrokeIcon } from '@/components/StrokeIcon'
+import { StrokeIcon } from '@/components/icons/StrokeIcon'
 
 /**
  * M10 — the fold, and the tab that brings the rail back.

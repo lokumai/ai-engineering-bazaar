@@ -5,6 +5,7 @@ import { SignOffMarks } from '@/components/record/SignOffMarks'
 import { PageShell } from '@/components/shell/PageShell'
 import { curriculumFacts } from '@/lib/content/facts'
 import { sheetRows } from '@/lib/content/manifest'
+import { catalogRoute } from '@/lib/tracks'
 
 export const metadata: Metadata = {
   title: 'Catalog',
@@ -12,7 +13,7 @@ export const metadata: Metadata = {
     'Every module in the course, in three views over one list: the levels in '
     + 'order, a card for each module, or every column at once. Filter by level, '
     + 'by state or by language.',
-  alternates: canonicalOf('/sheets/'),
+  alternates: canonicalOf(catalogRoute('engineers')),
 }
 
 /**

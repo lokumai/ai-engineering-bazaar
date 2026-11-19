@@ -11,7 +11,7 @@ description: >
   backgrounds and copy (M81), Agentic UI (M82), the cast's colours (M83), and M84 to M90 (content
   and site fixes, the home page in Turkish and Persian, Dariush's motif, block menus in the top layer,
   and About, the story of the Bazaar); Caravan built (M91), its real trends waiting (M92) and its second
-  round (M93); multilingual SEO (M96); translated objectives on the site (M98) and in the bundle (M99); the story in the bundle (M100); three screen recordings and Human in the Loop moved into Agentic UI (M101); the search filters applied by a button (M102); a laptop section in Inference Engines (M103); the word count in the bundle (M105), the checklist index (M106), the diagrams without empty rects (M107) and five logos without CSS (M108); the About page in Turkish and Persian (M109); the module page's own words in Turkish and Persian (M110); the footer without its first row (M111); the tool-call recording cropped to the chat and the reasoning recording sped up (M112); the LokumAI mark on the References' Modules subsection (M113); stall 1 naming the treaty and the About page's name (M114); a replay button on every animated recording (M115); the quick quiz on both tracks (M116); the privacy note for the mobile app (M117); translated titles in the bundle's index (M118); lot-map in Code Agents and Agents in Practice (M119); Advanced Deployment split into LLM and agent deployment (M120); a map of the generative AI stack in Agent Frameworks (M121); Advanced LLM Deployment moved after Advanced LLM (M122); LLM Compression and offline/online post-training (M123); Advanced Agent Architectures after Advanced Multi-Agent (M124); agentic UI against traditional UI (M125); the Caravan notice as a centred caution bar (M126); Advanced Prompt Engineering named in full (M127); the footer and the privacy note redesigned, with a Feedback link (M128); ARTEX and Claude-BugHunter in Security (M129); progress moved between the site and the app in a link (M130); and M41, the content bundle for the mobile reader. Each milestone carries its deliverables and acceptance
+  round (M93); multilingual SEO (M96); translated objectives on the site (M98) and in the bundle (M99); the story in the bundle (M100); three screen recordings and Human in the Loop moved into Agentic UI (M101); the search filters applied by a button (M102); a laptop section in Inference Engines (M103); the word count in the bundle (M105), the checklist index (M106), the diagrams without empty rects (M107) and five logos without CSS (M108); the About page in Turkish and Persian (M109); the module page's own words in Turkish and Persian (M110); the footer without its first row (M111); the tool-call recording cropped to the chat and the reasoning recording sped up (M112); the LokumAI mark on the References' Modules subsection (M113); stall 1 naming the treaty and the About page's name (M114); a replay button on every animated recording (M115); the quick quiz on both tracks (M116); the privacy note for the mobile app (M117); translated titles in the bundle's index (M118); lot-map in Code Agents and Agents in Practice (M119); Advanced Deployment split into LLM and agent deployment (M120); a map of the generative AI stack in Agent Frameworks (M121); Advanced LLM Deployment moved after Advanced LLM (M122); LLM Compression and offline/online post-training (M123); Advanced Agent Architectures after Advanced Multi-Agent (M124); agentic UI against traditional UI (M125); the Caravan notice as a centred caution bar (M126); Advanced Prompt Engineering named in full (M127); the footer and the privacy note redesigned, with a Feedback link (M128); ARTEX and Claude-BugHunter in Security (M129); progress moved between the site and the app in a link (M130); the app link files (M131); and M41, the content bundle for the mobile reader. Each milestone carries its deliverables and acceptance
   criteria as `- [ ]` checkboxes, ticked as the work lands, and closes with a dated report; the loop
   that governs that is below, in this file.
   NOT here: why a choice was made (BRAINSTORM.md), or any rule that outlives the milestone
@@ -19,7 +19,7 @@ description: >
 authority: state
 writes: agent, every session
 status: active
-covers: "M50 to M130, 2026-11-06 onward, and M41, which part 2 held for PR #57"
+covers: "M50 to M131, 2026-11-06 onward, and M41, which part 2 held for PR #57"
 last_updated: 2026-11-19
 ---
 
@@ -2695,6 +2695,26 @@ app open the site's addresses are a separate change, held until the store accoun
       the sitemap.
 - [ ] **On the live site, after merging**: a phone scans the code on `/profile/` and adds the progress in the
       app (through `/transfer/` and Open in the Bazaar app), and a link the app shares adds its progress here.
+---
+
+## 🏁 Milestone M131: the app link files (D145)
+
+The owner, 2026-11-19: the files that let the Bazaar app open the site's addresses are their own pull request,
+opened once the store accounts give the two identifiers they need.
+
+- [x] **`public/.well-known/assetlinks.json`**: `delegate_permission/common.handle_all_urls` for the Android app
+      `dev.lokumai.bazaar`.
+- [x] **`public/.well-known/apple-app-site-association`** (no extension): `applinks` for
+      `<team>.dev.lokumai.bazaar`, claiming `/courses/*`, `/everyone/courses/*`, `/tr/courses/*`,
+      `/fa/courses/*`, `/tr/everyone/courses/*`, `/fa/everyone/courses/*`, `/sheets/*`, `/everyone/sheets/*`
+      and `/transfer/*`.
+- [x] **`tests/unit/app-links.test.ts`**: both files parse, name one app, and claim only routes the site has.
+- [ ] **Fill the Apple Team ID** (`REPLACE_WITH_TEAM_ID`): Apple developer account, Membership details.
+- [ ] **Fill the SHA-256 of the Play App Signing key** (`REPLACE_WITH_PLAY_APP_SIGNING_SHA256`): Play Console,
+      Test and release, App integrity, App signing key certificate.
+- [ ] **After merging, on the live site**: `https://app-site-association.cdn-apple.com/a/v1/ai-bazaar.lokum.dev`
+      serves the iOS file, Google's Digital Asset Links API verifies the Android one, and a scanned code opens
+      the app directly.
 ---
 
 > **← Part 2: [`PROGRESS_2.md`](PROGRESS_2.md)** — M16 to M49. **← Part 1: [`PROGRESS_1.md`](PROGRESS_1.md)**

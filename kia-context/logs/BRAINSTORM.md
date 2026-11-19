@@ -9,7 +9,7 @@ description: >
 authority: reasoning
 writes: agent, when a decision is taken
 status: active
-covers: "D97 to D144 so far, and D89, which part 2 held for PR #57 — 2026-11-06 onward"
+covers: "D97 to D145 so far, and D89, which part 2 held for PR #57 — 2026-11-06 onward"
 last_updated: 2026-11-19
 ---
 
@@ -1441,6 +1441,24 @@ these numbers that get stale quickly. review MANIFESTO carefully and revise it a
   the pinned `uqr` (MIT, no dependencies) does it; only the drawing is ours. **The trigger in the data
   line**, beside Back up and Restore: too easy to miss for the one way to the app. **An "On your phone"
   block** under the title, with a line of explanation: rejected by the owner as too big for what it does.
+
+### D145 · The site publishes the app link files, with the store identifiers filled before merging · 2026-11-19
+
+- **Context:** with D144 a scanned code opens `/transfer/` in the phone's browser, and the reader taps Open in
+  the Bazaar app. The app can open the site's addresses itself only if the site says it may: Android reads
+  `/.well-known/assetlinks.json`, iOS reads `/.well-known/apple-app-site-association` through Apple's CDN.
+- **Decision:** both files in `public/.well-known/`, naming the app `dev.lokumai.bazaar` and claiming the
+  module pages in every track and language, the two catalogs and `/transfer/` (the app claims the same list on
+  Android). They are a change of their own, separate from D144, because each needs an identifier only the
+  store accounts give: the Apple Team ID and the SHA-256 of the Play App Signing key. The files carry the
+  placeholders `REPLACE_WITH_TEAM_ID` and `REPLACE_WITH_PLAY_APP_SIGNING_SHA256` until then, and **the change
+  is not merged with a placeholder in it** (M131).
+- **Measured:** the export copies `public/.well-known/` into `out/`, and the deploy publishes it because the
+  artifact upload already includes dotfiles for `.nojekyll`. Pages serves the extensionless iOS file as
+  `application/octet-stream`; Apple's current documentation asks for https with a valid certificate and no
+  redirects and names no content type, and its CDN, not the phone, fetches the file.
+- **Rejected:** shipping the files with the placeholders and filling them later: a wrong fingerprint or Team ID
+  fails silently on a phone, and a file that names an app it does not verify is worse than no file.
 ---
 
 > **← Part 2: [`BRAINSTORM_2.md`](BRAINSTORM_2.md)** — D26 to D96. **← Part 1:

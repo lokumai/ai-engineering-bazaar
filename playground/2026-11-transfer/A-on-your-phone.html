@@ -1,0 +1,176 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>A · On your phone, on the progress page</title>
+<style>
+/* Shell colours from 01-theme-T4-ground-G3-powder.html (light) and 01-theme-T4-G3-DARK.html (dark),
+   as src/design/bazaar.css declares them. Nothing here is a new token. */
+.light{
+  --ground:#fdfbf7;--raised:#ffffff;--sunken:#e6dac6;--line:#d8cbb4;--line-strong:#c3b299;
+  --text:#20242e;--title:#1b1b47;--muted:#6a6558;--faint:#948d7d;--primary:#282864;
+}
+.dark{
+  --ground:#1d1f27;--raised:#262933;--sunken:#181a21;--line:#33363f;--line-strong:#444854;
+  --text:#e7e3d8;--title:#e9e6e0;--muted:#9aa0ad;--faint:#606571;--primary:#848bd0;
+}
+:root{
+  --bar:#282864;--on-bar:#ffffff;--on-bar-dim:#c9c6e4;--bar-field:rgba(255,255,255,.08);
+  --bar-field-line:rgba(255,255,255,.25);--chip:#fdfbf7;--chip-ink:#1b1b47;--ornament:#c8a078;--success:#2f8c86;
+  --sans:"Avenir Next",ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:#f3efe7;color:#20242e;font:16px/1.6 var(--sans)}
+
+/* ---------- the playground's own frame ---------- */
+.pg{padding:40px 20px 80px}
+.pg-head{max-width:1100px}
+.pg-q{margin:0;color:#1b1b47;font:600 30px/1.2 var(--sans);letter-spacing:-.01em}
+.pg-lede{margin:12px 0 0;color:#6a6558;font-size:15px;max-width:84ch}
+.pg-list{margin:14px 0 0;padding-left:18px;color:#20242e;font-size:14.5px;line-height:1.55;max-width:96ch}
+.pg-list li{margin:0 0 6px}
+.pg-list li::marker{color:var(--ornament)}
+.pg-list code{font:13px var(--mono)}
+.pg-h2{margin:44px 0 12px;color:#1b1b47;font:600 18px/1.3 var(--sans)}
+.row{display:flex;flex-wrap:wrap;gap:28px;align-items:flex-start}
+.scroll{overflow-x:auto;padding-bottom:6px}
+.frame{flex:none;border:1px solid #c3b299;border-radius:9px;overflow:hidden;background:var(--ground);color:var(--text)}
+.frame.wide{width:1440px}
+.frame.phone{width:390px}
+.cap{margin:0 0 8px;color:#6a6558;font:600 13px/1 var(--sans);letter-spacing:.04em;text-transform:uppercase}
+
+/* ---------- the site: bar and tile band ---------- */
+.bar{display:flex;align-items:center;gap:16px;height:58px;padding:0 22px;background:var(--bar);color:var(--on-bar)}
+.brand{display:flex;align-items:center;gap:10px;color:#fff;font:600 16px/1 var(--sans);white-space:nowrap}
+.cube{width:28px;height:24px;border-radius:4px;background:linear-gradient(135deg,#c8a078 0 50%,#a0503c 50% 75%,#2f8c86 75%)}
+.nav{display:flex;gap:2px;margin-left:8px}
+.nav span{display:inline-flex;align-items:center;height:32px;padding:7px 11px;border-radius:5px;color:var(--on-bar-dim);font:500 14.5px/1 var(--sans)}
+.nav span.on{background:var(--chip);color:var(--chip-ink);font-weight:600}
+.spacer{flex:1}
+.tool{display:grid;place-items:center;min-width:33px;height:33px;padding:0 10px;border:1px solid var(--bar-field-line);border-radius:5px;background:var(--bar-field);color:#fff;font:500 14px/1 var(--sans)}
+.band{height:18px;background-color:#282864;background-image:linear-gradient(45deg,#2f8c86 25%,transparent 25% 75%,#2f8c86 75%),linear-gradient(45deg,#c8a078 25%,transparent 25% 75%,#c8a078 75%),linear-gradient(45deg,#a0503c 25%,transparent 25% 75%,#a0503c 75%);background-size:18px 18px,18px 18px,54px 18px;background-position:0 0,9px 9px,27px 0;border-bottom:2px solid #b8873b}
+
+/* ---------- the site: the top of /profile/ ---------- */
+.page{padding:26px 49px 40px}
+.crumb{margin:0;color:var(--muted);font-size:14px}
+.crumb b{color:var(--text);font-weight:400}
+.headrow{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin:10px 0 0}
+.h1{margin:0;color:var(--title);font:700 38px/1.16 var(--sans);letter-spacing:-.015em}
+.chord{color:var(--muted);font:600 12px/1 var(--mono);letter-spacing:.12em}
+
+/* THE NEW BLOCK. No box, no fill, no coloured rule: a small heading with the phone glyph, one line,
+   one quiet button (the language's `.bz-btn-quiet`). It sits between the page heading and the
+   tabs, because it moves both tracks at once and so belongs to neither tab. */
+.move{display:flex;flex-wrap:wrap;align-items:center;gap:12px 28px;margin:16px 0 22px}
+.move-text{max-width:88ch}
+.move-head{display:flex;align-items:center;gap:8px;margin:0;color:var(--title);font:600 15px/1.3 var(--sans)}
+.move-head svg{flex:none;width:16px;height:16px;color:var(--muted)}
+.move-line{margin:3px 0 0;color:var(--muted);font-size:14.5px;line-height:1.5}
+.btn-quiet{display:inline-flex;align-items:center;gap:9px;height:40px;padding:0 18px;border:1px solid var(--line-strong);border-radius:5px;background:var(--raised);color:var(--text);font:600 15px/1 var(--sans);cursor:pointer;white-space:nowrap}
+.btn-quiet svg{width:16px;height:16px}
+
+.tabs{display:flex;gap:4px;border-bottom:1px solid var(--line)}
+.tab{position:relative;display:inline-flex;align-items:baseline;gap:9px;height:46px;padding:14px 14px 0;color:var(--muted);font:500 15px/1 var(--sans)}
+.tab .count{color:var(--faint);font-size:13.5px}
+.tab.on{color:var(--title);font-weight:600}
+.tab.on .count{color:var(--muted)}
+.tab.on::after{content:"";position:absolute;left:0;right:0;bottom:-1px;height:3px;background:var(--primary)}
+.levels{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:14px;margin:20px 0 0}
+.level{height:150px;padding:16px 14px;border:1px solid var(--line);border-bottom:0;border-radius:8px 8px 0 0;background:var(--raised);text-align:center;-webkit-mask-image:linear-gradient(#000 60%,transparent);mask-image:linear-gradient(#000 60%,transparent)}
+.lorder{display:block;color:var(--faint);font:600 12.5px/1.5 var(--mono)}
+.ltitle{display:block;color:var(--text);font:600 14px/1.3 var(--sans)}
+.dial{display:grid;place-items:center;width:74px;height:74px;margin:10px auto 0;border-radius:50%;background:conic-gradient(var(--success) 0 var(--done,0%),var(--sunken) var(--done,0%))}
+.dial b{display:grid;place-items:center;width:58px;height:58px;border-radius:50%;background:var(--raised);font:600 16px/1 var(--sans)}
+
+/* ---------- 390 ---------- */
+.phone .bar{gap:10px;padding:0 14px}
+.phone .nav,.phone .brand span{display:none}
+.phone .page{padding:22px 24px 28px}
+.phone .h1{font-size:34px}
+.phone .move{flex-direction:column;align-items:flex-start;gap:12px;margin:14px 0 20px}
+.phone .btn-quiet{height:44px}
+.phone .tabs{flex-direction:column;gap:0}
+.phone .tab{height:48px;padding:16px 14px 0}
+.phone .tab.on::after{right:auto;width:175px}
+.phone .levels{grid-template-columns:1fr}
+.phone .level:nth-child(n+2){display:none}
+</style>
+</head>
+<body>
+<main class="pg">
+  <div class="pg-head">
+    <h1 class="pg-q">A · Move to the app, near the top of the progress page</h1>
+    <p class="pg-lede">Today "Move to the app" is a small text action at the foot of <code>/profile/</code>, under five long level cards, beside Back up, Restore and Reset. Option A gives it a calm block of its own near the top. The dialog it opens is unchanged.</p>
+    <ul class="pg-list">
+      <li><b>Where:</b> under the heading "Your progress" and above the For Engineers / For Everyone tabs. The block moves both tracks at once, so it belongs to neither tab panel, and here it is seen without scrolling past the level cards. The data line at the foot keeps Back up, Restore and Reset, and its "Move to the app" link goes, so there is one way in.</li>
+      <li><b>When:</b> only when this browser has something to move (a completed module or a ticked item in either track), the same condition the dialog uses to show a code. A reader with no progress never sees it, and the page looks as it does today.</li>
+      <li><b>What:</b> no box and no coloured bar. A small heading with a phone glyph, one muted line, and one quiet button (the language's quiet button, not the filled one, so it does not compete with the tabs).</li>
+      <li><b>Copy:</b> heading <q>On your phone</q> · line <q>Read on your phone too? Bring this progress into the app with your phone's camera.</q> · button <q>Move to the app</q>.</li>
+    </ul>
+  </div>
+
+  <template id="site">
+    <div class="bar">
+      <div class="brand"><div class="cube" aria-hidden="true"></div><span>AI Engineering Bazaar</span></div>
+      <div class="nav"><span>Home</span><span>Catalog</span><span class="on">Progress</span><span>Caravan</span><span>About</span></div>
+      <div class="spacer"></div>
+      <div class="tool">&#9906;</div><div class="tool">For Engineers</div><div class="tool">&#9789;</div>
+    </div>
+    <div class="band"></div>
+    <div class="page">
+      <p class="crumb"><span class="crumb-wide">Home &nbsp;/&nbsp; <b>Your progress</b></span></p>
+      <div class="headrow"><h2 class="h1">Your progress</h2><span class="chord">G P</span></div>
+
+      <section class="move" aria-labelledby="move-head">
+        <div class="move-text">
+          <h3 class="move-head" id="move-head">
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><rect x="4" y="1.5" width="8" height="13" rx="1.6"/><path d="M7 12.3h2"/></svg>
+            On your phone
+          </h3>
+          <p class="move-line">Read on your phone too? Bring this progress into the app with your phone's camera.</p>
+        </div>
+        <button type="button" class="btn-quiet">
+          <svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M2 2h5v5H2zM3.5 3.5v2h2v-2zM9 2h5v5H9zM10.5 3.5v2h2v-2zM2 9h5v5H2zM3.5 10.5v2h2v-2zM9 9h2v2H9zM12 9h2v2h-2zM9 12h2v2H9zM12 12h2v2h-2zM10.5 10.5h1.5v1.5h-1.5z"/></svg>
+          Move to the app
+        </button>
+      </section>
+
+      <div class="tabs" role="tablist">
+        <span class="tab on" role="tab" aria-selected="true">For Engineers <span class="count">7 of 46</span></span>
+        <span class="tab" role="tab">For Everyone <span class="count">2 of 46</span></span>
+      </div>
+      <div class="levels">
+        <div class="level" style="--done:62%"><span class="lorder">01</span><span class="ltitle">Fundamentals</span><div class="dial"><b>5/8</b></div></div>
+        <div class="level" style="--done:22%"><span class="lorder">02</span><span class="ltitle">Intermediate</span><div class="dial"><b>2/9</b></div></div>
+        <div class="level"><span class="lorder">03</span><span class="ltitle">Expert</span><div class="dial"><b>0/19</b></div></div>
+        <div class="level"><span class="lorder">04</span><span class="ltitle">Ecosystem</span><div class="dial"><b>0/6</b></div></div>
+        <div class="level"><span class="lorder">05</span><span class="ltitle">Emerging</span><div class="dial"><b>0/4</b></div></div>
+      </div>
+    </div>
+  </template>
+
+  <h2 class="pg-h2">1440, light and dark</h2>
+  <div class="scroll"><p class="cap">Light</p><div class="frame wide light" id="wide-light" data-site></div></div>
+  <div class="scroll" style="margin-top:22px"><p class="cap">Dark</p><div class="frame wide dark" id="wide-dark" data-site></div></div>
+
+  <h2 class="pg-h2">390, light and dark</h2>
+  <div class="row">
+    <div><p class="cap">Light</p><div class="frame phone light" id="phone-light" data-site></div></div>
+    <div><p class="cap">Dark</p><div class="frame phone dark" id="phone-dark" data-site></div></div>
+  </div>
+</main>
+<script>
+  // One copy of the site's markup, stamped into each frame, so the four views cannot drift apart.
+  const site = document.getElementById('site')
+  document.querySelectorAll('[data-site]').forEach((frame, index) => {
+    const copy = site.content.cloneNode(true)
+    copy.querySelector('#move-head').id = `move-head-${index}`
+    copy.querySelector('.move').setAttribute('aria-labelledby', `move-head-${index}`)
+    if (frame.classList.contains('phone')) copy.querySelector('.crumb').textContent = '‹ Home'
+    frame.append(copy)
+  })
+</script>
+</body>
+</html>

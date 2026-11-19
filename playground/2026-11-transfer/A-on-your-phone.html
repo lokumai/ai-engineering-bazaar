@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>A · On your phone, on the progress page</title>
+<title>A · Move to the app, on the progress page's title row</title>
 <style>
 /* Shell colours from 01-theme-T4-ground-G3-powder.html (light) and 01-theme-T4-G3-DARK.html (dark),
    as src/design/bazaar.css declares them. Nothing here is a new token. */
@@ -56,19 +56,15 @@ html,body{margin:0;background:#f3efe7;color:#20242e;font:16px/1.6 var(--sans)}
 .page{padding:26px 49px 40px}
 .crumb{margin:0;color:var(--muted);font-size:14px}
 .crumb b{color:var(--text);font-weight:400}
-.headrow{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin:10px 0 0}
+.headrow{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:12px;margin:10px 0 22px}
+.headtools{display:flex;align-items:center;gap:16px}
 .h1{margin:0;color:var(--title);font:700 38px/1.16 var(--sans);letter-spacing:-.015em}
 .chord{color:var(--muted);font:600 12px/1 var(--mono);letter-spacing:.12em}
 
-/* THE NEW BLOCK. No box, no fill, no coloured rule: a small heading with the phone glyph, one line,
-   one quiet button (the language's `.bz-btn-quiet`). It sits between the page heading and the
-   tabs, because it moves both tracks at once and so belongs to neither tab. */
-.move{display:flex;flex-wrap:wrap;align-items:center;gap:12px 28px;margin:16px 0 22px}
-.move-text{max-width:88ch}
-.move-head{display:flex;align-items:center;gap:8px;margin:0;color:var(--title);font:600 15px/1.3 var(--sans)}
-.move-head svg{flex:none;width:16px;height:16px;color:var(--muted)}
-.move-line{margin:3px 0 0;color:var(--muted);font-size:14.5px;line-height:1.5}
-.btn-quiet{display:inline-flex;align-items:center;gap:9px;height:40px;padding:0 18px;border:1px solid var(--line-strong);border-radius:5px;background:var(--raised);color:var(--text);font:600 15px/1 var(--sans);cursor:pointer;white-space:nowrap}
+/* THE NEW CONTROL (revision 2, the owner: the block was far too big). One quiet button, the
+   language's `.bz-btn-quiet`, with a small QR glyph, on the title row just left of the chord
+   hint. Nothing else: the dialog it opens already says what to do. */
+.btn-quiet{display:inline-flex;align-items:center;gap:9px;height:38px;padding:0 16px;border:1px solid var(--line-strong);border-radius:5px;background:var(--raised);color:var(--text);font:600 15px/1 var(--sans);cursor:pointer;white-space:nowrap}
 .btn-quiet svg{width:16px;height:16px}
 
 .tabs{display:flex;gap:4px;border-bottom:1px solid var(--line)}
@@ -89,7 +85,7 @@ html,body{margin:0;background:#f3efe7;color:#20242e;font:16px/1.6 var(--sans)}
 .phone .nav,.phone .brand span{display:none}
 .phone .page{padding:22px 24px 28px}
 .phone .h1{font-size:34px}
-.phone .move{flex-direction:column;align-items:flex-start;gap:12px;margin:14px 0 20px}
+.phone .chord{display:none}
 .phone .btn-quiet{height:44px}
 .phone .tabs{flex-direction:column;gap:0}
 .phone .tab{height:48px;padding:16px 14px 0}
@@ -101,13 +97,13 @@ html,body{margin:0;background:#f3efe7;color:#20242e;font:16px/1.6 var(--sans)}
 <body>
 <main class="pg">
   <div class="pg-head">
-    <h1 class="pg-q">A · Move to the app, near the top of the progress page</h1>
-    <p class="pg-lede">Today "Move to the app" is a small text action at the foot of <code>/profile/</code>, under five long level cards, beside Back up, Restore and Reset. Option A gives it a calm block of its own near the top. The dialog it opens is unchanged.</p>
+    <h1 class="pg-q">A · Move to the app, on the progress page's title row</h1>
+    <p class="pg-lede">Today "Move to the app" is a small text action at the foot of <code>/profile/</code>, under five long level cards, beside Back up, Restore and Reset. Revision 2 of option A, after the owner found the first version's block far too big: one quiet button and nothing else. The dialog it opens is unchanged and already says what to do.</p>
     <ul class="pg-list">
-      <li><b>Where:</b> under the heading "Your progress" and above the For Engineers / For Everyone tabs. The block moves both tracks at once, so it belongs to neither tab panel, and here it is seen without scrolling past the level cards. The data line at the foot keeps Back up, Restore and Reset, and its "Move to the app" link goes, so there is one way in.</li>
-      <li><b>When:</b> only when this browser has something to move (a completed module or a ticked item in either track), the same condition the dialog uses to show a code. A reader with no progress never sees it, and the page looks as it does today.</li>
-      <li><b>What:</b> no box and no coloured bar. A small heading with a phone glyph, one muted line, and one quiet button (the language's quiet button, not the filled one, so it does not compete with the tabs).</li>
-      <li><b>Copy:</b> heading <q>On your phone</q> · line <q>Read on your phone too? Bring this progress into the app with your phone's camera.</q> · button <q>Move to the app</q>.</li>
+      <li><b>Where:</b> on the "Your progress" title row, at its right end, just left of the chord hint (<code>G P</code>). It moves both tracks at once, so it sits above the tabs rather than in a tab panel, and it is seen without scrolling. The data line's "Move to the app" link goes, so there is one way in.</li>
+      <li><b>At 390:</b> the chord hint is hidden on a narrow screen, and the button does not fit beside the title (about 265px of title and 175px of button in 342px), so it takes its own line under the title, left-aligned and 44px tall.</li>
+      <li><b>When:</b> only when this browser has something to move (a completed module or a ticked item in either track), the same condition the dialog uses to show a code. With no progress the title row looks as it does today.</li>
+      <li><b>Copy:</b> the button only, <q>Move to the app</q>, with a small QR glyph.</li>
     </ul>
   </div>
 
@@ -121,21 +117,16 @@ html,body{margin:0;background:#f3efe7;color:#20242e;font:16px/1.6 var(--sans)}
     <div class="band"></div>
     <div class="page">
       <p class="crumb"><span class="crumb-wide">Home &nbsp;/&nbsp; <b>Your progress</b></span></p>
-      <div class="headrow"><h2 class="h1">Your progress</h2><span class="chord">G P</span></div>
-
-      <section class="move" aria-labelledby="move-head">
-        <div class="move-text">
-          <h3 class="move-head" id="move-head">
-            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><rect x="4" y="1.5" width="8" height="13" rx="1.6"/><path d="M7 12.3h2"/></svg>
-            On your phone
-          </h3>
-          <p class="move-line">Read on your phone too? Bring this progress into the app with your phone's camera.</p>
+      <div class="headrow">
+        <h2 class="h1">Your progress</h2>
+        <div class="headtools">
+          <button type="button" class="btn-quiet">
+            <svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M2 2h5v5H2zM3.5 3.5v2h2v-2zM9 2h5v5H9zM10.5 3.5v2h2v-2zM2 9h5v5H2zM3.5 10.5v2h2v-2zM9 9h2v2H9zM12 9h2v2h-2zM9 12h2v2H9zM12 12h2v2h-2zM10.5 10.5h1.5v1.5h-1.5z"/></svg>
+            Move to the app
+          </button>
+          <span class="chord">G P</span>
         </div>
-        <button type="button" class="btn-quiet">
-          <svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M2 2h5v5H2zM3.5 3.5v2h2v-2zM9 2h5v5H9zM10.5 3.5v2h2v-2zM2 9h5v5H2zM3.5 10.5v2h2v-2zM9 9h2v2H9zM12 9h2v2h-2zM9 12h2v2H9zM12 12h2v2h-2zM10.5 10.5h1.5v1.5h-1.5z"/></svg>
-          Move to the app
-        </button>
-      </section>
+      </div>
 
       <div class="tabs" role="tablist">
         <span class="tab on" role="tab" aria-selected="true">For Engineers <span class="count">7 of 46</span></span>
@@ -166,8 +157,6 @@ html,body{margin:0;background:#f3efe7;color:#20242e;font:16px/1.6 var(--sans)}
   const site = document.getElementById('site')
   document.querySelectorAll('[data-site]').forEach((frame, index) => {
     const copy = site.content.cloneNode(true)
-    copy.querySelector('#move-head').id = `move-head-${index}`
-    copy.querySelector('.move').setAttribute('aria-labelledby', `move-head-${index}`)
     if (frame.classList.contains('phone')) copy.querySelector('.crumb').textContent = '‹ Home'
     frame.append(copy)
   })

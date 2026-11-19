@@ -2,12 +2,13 @@ import { readFileSync } from 'node:fs'
 import { deflateRawSync } from 'node:zlib'
 import path from 'node:path'
 import { expect, test } from '@playwright/test'
-import { readRecord, seedRecord, signedSheet, waitForRecord } from './record'
+import { readRecord, seedRecord, signedSheet, waitForRecord, waitForRecordRead } from './record'
 
 /**
  * D144 — the progress transfer, in a real browser, against the export: `/transfer/` reads a link
  * made by another implementation (the shared vector), shows what it holds, and adds it through
- * the record's writer; the progress page draws a code of this browser's own link.
+ * the record's writer; the progress page's title-row button draws a code of this browser's own
+ * link, and is there only when there is something to move.
  *
  * The counts are computed from the vector's JSON here, never typed in, so the vector can change
  * without this file changing (tests/README.md).
@@ -64,20 +65,53 @@ test('an unreadable link says so and changes nothing; no link says what the page
   expect(await readRecord(page)).toBeNull()
 })
 
-test('the progress page draws a QR code of this browser\'s progress, and says when there is nothing', async ({ page }) => {
+test('the progress page shows "Move to the app" only when there is something to move', async ({ page }) => {
+  const move = page.getByRole('button', { name: 'Move to the app' })
+
+  await page.goto('/profile/')
+  await waitForRecordRead(page)
+  await expect(move).toHaveCount(0)
+
+  // A ticked item alone is something to move.
+  await seedRecord(page, { everyoneSheets: { 'alpha/first': { checklist: { '0': true } } } })
+  await page.reload()
+  await waitForRecordRead(page)
+  await expect(move).toBeVisible()
+})
+
+test('the button sits on the title row and the data line has no trigger', async ({ page }) => {
+  await seedRecord(page, { sheets: { 'alpha/first': signedSheet() } })
+  await page.goto('/profile/')
+  const move = page.getByRole('button', { name: 'Move to the app' })
+  await expect(move).toBeVisible()
+  await expect(move.locator('svg[aria-hidden="true"]')).toHaveCount(1)
+
+  // Beside the title or, where both do not fit, on the line under it: never below the tabs.
+  const title = await page.getByRole('heading', { level: 1, name: 'Your progress' }).boundingBox()
+  const tabs = await page.getByRole('tablist').boundingBox()
+  const box = await move.boundingBox()
+  expect(box && title && tabs).toBeTruthy()
+  expect(box!.y + box!.height).toBeLessThanOrEqual(tabs!.y)
+  expect(box!.y + box!.height).toBeGreaterThan(title!.y)
+
+  const dataLine = page.locator('#data')
+  await expect(dataLine.getByRole('button', { name: 'Back up to a file' })).toBeVisible()
+  await expect(dataLine.getByText('Move to the app')).toHaveCount(0)
+})
+
+test("the button opens a dialog with a QR code of this browser's progress", async ({ page }) => {
+  await seedRecord(page, { sheets: { 'alpha/first': signedSheet() } })
   await page.goto('/profile/')
   await page.getByRole('button', { name: 'Move to the app' }).click()
-  const dialog = page.getByRole('dialog')
-  await expect(dialog).toContainText('no completed module and no ticked item')
-  await expect(dialog.locator('svg[role="img"]')).toHaveCount(0)
-  await page.keyboard.press('Escape')
 
-  await seedRecord(page, { sheets: { 'alpha/first': signedSheet() } })
-  await page.reload()
-  await page.getByRole('button', { name: 'Move to the app' }).click()
-  const code = page.getByRole('img', { name: 'QR code of the link to this progress' })
+  const dialog = page.getByRole('dialog', { name: 'Move your progress to the app' })
+  const code = dialog.getByRole('img', { name: 'QR code of the link to this progress' })
   await expect(code).toBeVisible()
   const box = await code.boundingBox()
   expect(box?.width).toBeGreaterThan(100)
-  await expect(page.getByRole('dialog').getByRole('button', { name: 'Copy link' })).toBeVisible()
+  await expect(dialog.getByRole('button', { name: 'Copy link' })).toBeVisible()
+
+  await page.keyboard.press('Escape')
+  await expect(dialog).toHaveCount(0)
+  await expect(page.getByRole('button', { name: 'Move to the app' })).toBeFocused()
 })

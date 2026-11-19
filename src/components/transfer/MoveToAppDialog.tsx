@@ -4,7 +4,7 @@ import * as Dialog from '@radix-ui/react-dialog'
 import { useEffect, useState } from 'react'
 import { qrSquare } from '@/lib/qr'
 import { QR_MAX_CHARS, encodeTransfer, nothingToMove, transferLink } from '@/lib/record/transfer'
-import { useRecord } from '@/lib/record/store'
+import { useHydrated, useRecord } from '@/lib/record/store'
 import { href } from '@/lib/url'
 import { QrCode } from './QrCode'
 
@@ -22,6 +22,14 @@ import { QrCode } from './QrCode'
  * rejected by the owner as awkward; that direction is the app's share sheet and `/transfer/`.
  *
  * Radix for behaviour only, as `EraseDialog` uses it: focus trap, Escape, focus restored.
+ *
+ * ## Where the trigger is (option A, revision 2, 2026-11-19)
+ *
+ * One quiet button with a small QR glyph on the progress page's title row, left of the chord hint
+ * (`playground/2026-11-transfer/A-on-your-phone.html`). It is there only once the record is read
+ * and holds something to move: before hydration the page cannot know, and with nothing to move
+ * the button would open a dialog that says so. An open dialog stays open if the record empties
+ * under it (another tab erasing), and then says there is nothing to move.
  */
 
 export const MOVE_COPY = {
@@ -42,8 +50,28 @@ export const MOVE_COPY = {
 
 type CopyState = 'idle' | 'copied' | 'failed'
 
-export function MoveToAppDialog({ triggerClassName }: { triggerClassName: string }) {
+/** A QR code drawn small: three finder squares and a few modules, in the text's colour. */
+function QrGlyph() {
+  return (
+    <svg viewBox="0 0 16 16" width="16" height="16" fill="currentColor" aria-hidden="true">
+      <path d="M2 2h5v5H2zM3.5 3.5v2h2v-2zM9 2h5v5H9zM10.5 3.5v2h2v-2zM2 9h5v5H2zM3.5 10.5v2h2v-2zM9 9h2v2H9zM12 9h2v2h-2zM9 12h2v2H9zM12 12h2v2h-2zM10.5 10.5h1.5v1.5h-1.5z" />
+    </svg>
+  )
+}
+
+export function MoveToAppDialog({
+  triggerClassName,
+  triggerGlyph = false,
+  hideWhenEmpty = false,
+}: {
+  triggerClassName: string
+  /** Draws the small QR glyph before the label. */
+  triggerGlyph?: boolean
+  /** Renders nothing until the record is read, and while it holds nothing to move. */
+  hideWhenEmpty?: boolean
+}) {
   const record = useRecord()
+  const hydrated = useHydrated()
   const [open, setOpen] = useState(false)
   const [link, setLink] = useState<string | null>(null)
   const [copy, setCopy] = useState<CopyState>('idle')
@@ -82,11 +110,16 @@ export function MoveToAppDialog({ triggerClassName }: { triggerClassName: string
     }
   }
 
+  if (hideWhenEmpty && !open && (!hydrated || empty)) return null
+
   const square = link !== null && link.length <= QR_MAX_CHARS ? qrSquare(link) : null
 
   return (
     <Dialog.Root open={open} onOpenChange={onOpenChange}>
-      <Dialog.Trigger className={triggerClassName}>{MOVE_COPY.trigger}</Dialog.Trigger>
+      <Dialog.Trigger className={triggerClassName}>
+        {triggerGlyph && <QrGlyph />}
+        {MOVE_COPY.trigger}
+      </Dialog.Trigger>
 
       <Dialog.Portal>
         <Dialog.Overlay className="bz-dialog-backdrop" />

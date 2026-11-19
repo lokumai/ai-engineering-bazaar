@@ -5,6 +5,7 @@ import { DataPanel } from '@/components/record/DataPanel'
 import { ProgressTabs } from '@/components/record/ProgressTabs'
 import { QuarantineNote } from '@/components/record/ProfilePanels'
 import { PageShell } from '@/components/shell/PageShell'
+import { MoveToAppDialog } from '@/components/transfer/MoveToAppDialog'
 import { CATEGORIES } from '@/lib/content/curriculum-file'
 import { curriculumFacts } from '@/lib/content/facts'
 import { sheetRows } from '@/lib/content/manifest'
@@ -88,8 +89,13 @@ export default function ProgressPage() {
     <PageShell column={false}>
       <div className="mb-4 flex flex-wrap items-baseline justify-between gap-3">
         <h1 className="bz-display m-0">Your progress</h1>
-        {/* Derived from `SHORTCUTS`, where the chord is defined and handled. */}
-        <p className="bz-chord-hint text-mark m-0 text-on-surface-muted">{PROFILE_CHORD}</p>
+        <div className="bz-progress-headtools">
+          {/* D144: the way to the app, beside the title and only when there is something to
+              move. Where the row is too narrow for both, it wraps under the title. */}
+          <MoveToAppDialog triggerClassName="bz-btn bz-btn-quiet bz-move-trigger" triggerGlyph hideWhenEmpty />
+          {/* Derived from `SHORTCUTS`, where the chord is defined and handled. */}
+          <p className="bz-chord-hint text-mark m-0 text-on-surface-muted">{PROFILE_CHORD}</p>
+        </div>
       </div>
 
       {/* §12.1.2 — the one surface where a quarantined record can be

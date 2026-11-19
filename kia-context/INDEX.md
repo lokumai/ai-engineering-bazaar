@@ -87,8 +87,8 @@ and the same explanation given in person for the third time. See `genesis/GENESI
 | 2026-11-11 to 12 | The module page's own words in Turkish and Persian; a replay button on every recording; the quiz on both tracks; the privacy note covers the mobile app | M110 (D133), M115 (D136), M116 (D137), M117 (D138) |
 | 2026-11-14 to 15 | Content: Deployment split into LLM and agent, post-training split into offline and online, compression its own module, two modules moved to follow their neighbours; the MANIFESTO states no counts or durations | M120 to M124 (D140, D141, D142) |
 | 2026-11-17 | The footer as owner and two link columns, a Feedback link to an external form, and the privacy note's short summary | M128 (D143) |
-| 2026-11-18 | One module-route builder, one guarded `localStorage` accessor, shared motion helpers and icon frame, intrinsic image sizes; then the phone, a bottom tab bar | PR #143, PR #144 (`specs/ARCHITECTURE.md` §15) |
-| 2026-11-19 | CI gates the deploy: a commit deploys only if its own CI run succeeded and it is still `main`'s head; read-only workflows, pinned actions, an audit step | PR #147 (`specs/ARCHITECTURE.md` §12) |
+| 2026-11-18 | One module-route builder, one guarded `localStorage` accessor, shared motion helpers and icon frame, intrinsic image sizes; then the phone, a bottom tab bar; the specs re-measured | M132, M133, M135 (D146, D148), PR #143, #144 (`specs/ARCHITECTURE.md` §15) |
+| 2026-11-19 | CI gates the deploy: a commit deploys only if its own CI run succeeded and it is still `main`'s head; read-only workflows, pinned actions, an audit step | M134 (D147), PR #147 (`specs/ARCHITECTURE.md` §12) |
 
 **The harness itself was installed on 2026-09-08**, 107 commits in (`git rev-list --count 4832e2a^`). Everything before that date was
 reconstructed from git and is labelled as inferred inside each file.
@@ -195,8 +195,8 @@ and ignores `docs/superpowers/`. **`docs/` is not part of this harness** and an 
 
 ## 6. The numbering, and why it never restarts
 
-`M1…M15` are milestones in `logs/PROGRESS_1.md`, `M16…M49` are in `logs/PROGRESS_2.md` (M41, held for PR #57, is in `logs/PROGRESS.md`), and `M50` onward is in `logs/PROGRESS.md`; the highest in the files on 2026-11-19 is M129 (`grep -ohE '^## 🏁 Milestone M[0-9]+' logs/PROGRESS*.md | sort -V | tail -1`). `D1…D25` are decisions in `logs/BRAINSTORM_1.md` and `D26…D96` are in `logs/BRAINSTORM_2.md` (D89, held for PR #57, is in `logs/BRAINSTORM.md`), where `O1…O5` are the open questions,
-all five closed; `D97` onward is in `logs/BRAINSTORM.md`, and the highest on 2026-11-19 is D143 (`grep -ohE '^### D[0-9]+' logs/BRAINSTORM*.md | sort -V | tail -1`). Rules `1…19` are in
+`M1…M15` are milestones in `logs/PROGRESS_1.md`, `M16…M49` are in `logs/PROGRESS_2.md` (M41, held for PR #57, is in `logs/PROGRESS.md`), and `M50` onward is in `logs/PROGRESS.md`; the highest in the files on 2026-11-19 is M135 (M130 and M131 are claimed by open PRs #145 and #146) (`grep -ohE '^## 🏁 Milestone M[0-9]+' logs/PROGRESS*.md | sort -V | tail -1`). `D1…D25` are decisions in `logs/BRAINSTORM_1.md` and `D26…D96` are in `logs/BRAINSTORM_2.md` (D89, held for PR #57, is in `logs/BRAINSTORM.md`), where `O1…O5` are the open questions,
+all five closed; `D97` onward is in `logs/BRAINSTORM.md`, and the highest on 2026-11-19 is D148 (D144 and D145 are claimed by open PRs #145 and #146) (`grep -ohE '^### D[0-9]+' logs/BRAINSTORM*.md | sort -V | tail -1`). Rules `1…19` are in
 `specs/MANIFESTO.md`.
 
 **M8 did not become M9.** It stayed open as the umbrella for the whole interface revision and M9 to
@@ -238,7 +238,7 @@ every other file (`grep -o 'DESIGN\.md' logs/BRAINSTORM_2.md | wc -l` for one ce
 and 2 are `closed` (`PROGRESS_1.md`, `PROGRESS_2.md`, `BRAINSTORM_1.md`, `BRAINSTORM_2.md`) and point
 forward; part 3 is where the next entry goes, and it keeps the bare name (`PROGRESS.md`,
 `BRAINSTORM.md`). The
-numbering runs straight through — `M1…M129`, `D1…D143` on 2026-11-19 — so a citation never has
+numbering runs straight through — `M1…M135`, `D1…D148` on 2026-11-19 — so a citation never has
 to say which part it means, only the number.
 
 The heaviest edges, measured with `grep` rather than estimated (first on 2026-11-06, and all fourteen rows re-measured on 2026-11-19 with the command above: every cell came out the same, because each row's file is a closed part or a spec this refresh did not add a reference to):

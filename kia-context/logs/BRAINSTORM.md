@@ -9,8 +9,8 @@ description: >
 authority: reasoning
 writes: agent, when a decision is taken
 status: active
-covers: "D97 to D143 so far, and D89, which part 2 held for PR #57 — 2026-11-06 onward"
-last_updated: 2026-11-17
+covers: "D97 to D144 so far, and D89, which part 2 held for PR #57 — 2026-11-06 onward"
+last_updated: 2026-11-19
 ---
 
 # 🧠 BRAINSTORM, part 3 — D97 onward
@@ -1417,6 +1417,27 @@ these numbers that get stale quickly. review MANIFESTO carefully and revise it a
   Microsoft Form open to anyone (more spam, and the program's own forms stay inside PIA-TEAM, D121); footer A
   (three quiet lines) and C (a centred stack); legal A (a new page with a contents rail) and B (two tabbed
   pages), both of which would have moved the privacy and legal addresses.
+
+### D144 · Progress moves between the site and the app inside a link, and a transfer only adds · 2026-11-19
+
+- **Context:** a reader who reads on the computer and on the phone has two records that never meet. The
+  site keeps no data (D88), and Back up / Restore moves a whole file and replaces what is there.
+- **Decision:** a **transfer link**, `/transfer/#t=<payload>`, whose fragment carries the progress
+  (completions, their revisions, checklist ticks and days) as compact JSON, deflate-raw and base64url, in
+  a format the site and the app share (`src/lib/record/transfer.ts`, held to a vector made by a third
+  implementation). The fragment never reaches a server. Site to phone: "Move to the app" on the progress
+  page draws the link as a QR code the phone's own camera scans. Phone to site: the app's share sheet sends
+  the link and `/transfer/` opens it. Nothing is applied on open; one button adds it, and **a transfer only
+  adds**: a completion already here keeps its date and revision, ticks and days are unions, `prefs`, `meta`,
+  `reachedEnd` and `dwellSeconds` are untouched. A link that fails any of the record's own checks is refused
+  whole. The app link files that let a scanned code open the app directly come in a later change, once the
+  store accounts give the identifiers they need; until then the phone's browser opens `/transfer/`, which
+  offers the app's own scheme.
+- **Rejected:** a **server relay** (a short code that fetches the progress from a store): the site keeps no
+  data and has no server (D88). **Scanning a code with the computer's camera** for the phone-to-site
+  direction: rejected by the owner as awkward. **Replace instead of merge**: Restore from a file already
+  replaces, and a link opened by mistake must not be able to take anything away. **Writing a QR encoder**:
+  the pinned `uqr` (MIT, no dependencies) does it; only the drawing is ours.
 ---
 
 > **← Part 2: [`BRAINSTORM_2.md`](BRAINSTORM_2.md)** — D26 to D96. **← Part 1:

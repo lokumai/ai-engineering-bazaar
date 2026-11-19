@@ -85,6 +85,7 @@ and the same explanation given in person for the third time. See `genesis/GENESI
 | 2026-11-11 | In the same pull request: each checklist item's record index in the bundle, the empty rects out of the bundle's diagrams, and five logos without CSS | M106 (D129), M107 (D130), M108 (D131) |
 | 2026-11-11 | The About page in Turkish and Persian, at `/tr/about/` and `/fa/about/`, and its story in the bundle in both | M109 (D132) |
 | 2026-11-19 | Progress moves between the site and the mobile app inside a link: a QR code on the progress page, and `/transfer/` | M130 (D144) |
+| 2026-11-19 | The app link files, so the mobile app opens the site's addresses; merged once the store identifiers are filled | M131 (D145) |
 
 **The harness itself was installed on 2026-09-08**, 107 commits in (`git rev-list --count 4832e2a^`). Everything before that date was
 reconstructed from git and is labelled as inferred inside each file.

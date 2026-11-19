@@ -35,7 +35,7 @@ export const MOVE_COPY = {
   qrLabel: 'QR code of the link to this progress',
   copy: 'Copy link',
   copied: 'Link copied.',
-  copyFailed: 'The link could not be copied here. Select it below and copy it.',
+  copyFailed: 'The link could not be copied here. Copy it from the field above.',
   field: 'Transfer link',
   close: 'Close',
 } as const
@@ -110,17 +110,22 @@ export function MoveToAppDialog({ triggerClassName }: { triggerClassName: string
             )}
 
             {copy === 'failed' && link !== null && (
-              <label className="bz-field">
-                <span className="bz-field-label">{MOVE_COPY.field}</span>
-                <input
-                  type="text"
-                  readOnly
-                  value={link}
-                  onFocus={(event) => event.target.select()}
-                  spellCheck={false}
-                />
-                <span className="bz-field-hint">{MOVE_COPY.copyFailed}</span>
-              </label>
+              <>
+                <label className="bz-field">
+                  <span className="bz-field-label">{MOVE_COPY.field}</span>
+                  <input
+                    type="text"
+                    readOnly
+                    value={link}
+                    onFocus={(event) => event.target.select()}
+                    spellCheck={false}
+                    aria-describedby="bz-transfer-copy-hint"
+                  />
+                </label>
+                <p id="bz-transfer-copy-hint" className="bz-field-hint" role="status">
+                  {MOVE_COPY.copyFailed}
+                </p>
+              </>
             )}
 
             <div className="bz-actions">

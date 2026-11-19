@@ -54,7 +54,7 @@ export type ParseResult =
 export const SHORT_HASH = /^[0-9a-f]{4,40}$/
 export const ISO_DAY = /^\d{4}-\d{2}-\d{2}$/
 export const ISO_TIME = /^\d{4}-\d{2}-\d{2}(?:[T ][\d:.+\-Z]{1,20})?$/
-const INDEX_KEY = /^\d{1,4}$/
+export const INDEX_KEY = /^\d{1,4}$/
 
 function isRecordObject(value: unknown): value is Record<string, unknown> {
   return typeof value === 'object' && value !== null && !Array.isArray(value)
@@ -101,14 +101,14 @@ function isRealDay(day: string): boolean {
  * either. The date part is range-checked the same way `days` is, so an
  * impossible calendar date cannot be printed as a sign-off date.
  */
-function asInstant(value: unknown): string | null {
+export function asInstant(value: unknown): string | null {
   const text = asPattern(value, ISO_TIME)
   if (text === null) return null
   if (!isRealDay(text.slice(0, 10))) return null
   return Number.isFinite(Date.parse(text)) ? text : null
 }
 
-function asDay(value: unknown): string | null {
+export function asDay(value: unknown): string | null {
   const text = asPattern(value, ISO_DAY)
   if (text === null) return null
   return isRealDay(text) ? text : null

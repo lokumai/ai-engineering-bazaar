@@ -136,6 +136,7 @@ const ROUTE_TITLES: Record<string, string> = {
   legend: 'Legend',
   caravan: 'Caravan',
   about: 'About the Bazaar',
+  transfer: 'Add progress from a link',
 }
 
 /**

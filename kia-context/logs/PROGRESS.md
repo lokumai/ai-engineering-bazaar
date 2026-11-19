@@ -11,7 +11,7 @@ description: >
   backgrounds and copy (M81), Agentic UI (M82), the cast's colours (M83), and M84 to M90 (content
   and site fixes, the home page in Turkish and Persian, Dariush's motif, block menus in the top layer,
   and About, the story of the Bazaar); Caravan built (M91), its real trends waiting (M92) and its second
-  round (M93); multilingual SEO (M96); translated objectives on the site (M98) and in the bundle (M99); the story in the bundle (M100); three screen recordings and Human in the Loop moved into Agentic UI (M101); the search filters applied by a button (M102); a laptop section in Inference Engines (M103); the word count in the bundle (M105), the checklist index (M106), the diagrams without empty rects (M107) and five logos without CSS (M108); the About page in Turkish and Persian (M109); the module page's own words in Turkish and Persian (M110); the footer without its first row (M111); the tool-call recording cropped to the chat and the reasoning recording sped up (M112); the LokumAI mark on the References' Modules subsection (M113); stall 1 naming the treaty and the About page's name (M114); a replay button on every animated recording (M115); the quick quiz on both tracks (M116); the privacy note for the mobile app (M117); translated titles in the bundle's index (M118); lot-map in Code Agents and Agents in Practice (M119); Advanced Deployment split into LLM and agent deployment (M120); a map of the generative AI stack in Agent Frameworks (M121); Advanced LLM Deployment moved after Advanced LLM (M122); LLM Compression and offline/online post-training (M123); Advanced Agent Architectures after Advanced Multi-Agent (M124); agentic UI against traditional UI (M125); the Caravan notice as a centred caution bar (M126); Advanced Prompt Engineering named in full (M127); the footer and the privacy note redesigned, with a Feedback link (M128); ARTEX and Claude-BugHunter in Security (M129); shared helpers and image sizes (M132); the site on phones (M133); deploy gated on CI, pinned workflows and flake fixes (M134); the specs re-measured (M135); and M41, the content bundle for the mobile reader. Each milestone carries its deliverables and acceptance
+  round (M93); multilingual SEO (M96); translated objectives on the site (M98) and in the bundle (M99); the story in the bundle (M100); three screen recordings and Human in the Loop moved into Agentic UI (M101); the search filters applied by a button (M102); a laptop section in Inference Engines (M103); the word count in the bundle (M105), the checklist index (M106), the diagrams without empty rects (M107) and five logos without CSS (M108); the About page in Turkish and Persian (M109); the module page's own words in Turkish and Persian (M110); the footer without its first row (M111); the tool-call recording cropped to the chat and the reasoning recording sped up (M112); the LokumAI mark on the References' Modules subsection (M113); stall 1 naming the treaty and the About page's name (M114); a replay button on every animated recording (M115); the quick quiz on both tracks (M116); the privacy note for the mobile app (M117); translated titles in the bundle's index (M118); lot-map in Code Agents and Agents in Practice (M119); Advanced Deployment split into LLM and agent deployment (M120); a map of the generative AI stack in Agent Frameworks (M121); Advanced LLM Deployment moved after Advanced LLM (M122); LLM Compression and offline/online post-training (M123); Advanced Agent Architectures after Advanced Multi-Agent (M124); agentic UI against traditional UI (M125); the Caravan notice as a centred caution bar (M126); Advanced Prompt Engineering named in full (M127); the footer and the privacy note redesigned, with a Feedback link (M128); ARTEX and Claude-BugHunter in Security (M129); progress moved between the site and the app in a link (M130); shared helpers and image sizes (M132); the site on phones (M133); deploy gated on CI, pinned workflows and flake fixes (M134); the specs re-measured (M135); and M41, the content bundle for the mobile reader. Each milestone carries its deliverables and acceptance
   criteria as `- [ ]` checkboxes, ticked as the work lands, and closes with a dated report; the loop
   that governs that is below, in this file.
   NOT here: why a choice was made (BRAINSTORM.md), or any rule that outlives the milestone
@@ -2669,6 +2669,32 @@ fork-to-star ratio is far above the other tools'; the author vouched for it ("tr
 - [x] **References**: ARTEX joins the agents line; Claude-BugHunter gets its own line after claude-red.
 - [x] **Gate (2026-11-17)**: typecheck; 1,619 unit tests; build, link and bundle checks.
 ---
+
+## 🏁 Milestone M130: progress moves between the site and the app in a link (D144)
+
+The owner, 2026-11-18: a reader moves progress from the website to the phone with a QR code, and from the
+phone to the website with a link. The format is shared with the mobile app
+(lokumai/ai-engineering-bazaar-mobile), which builds its half in parallel. The app link files that let the
+app open the site's addresses are a separate change, held until the store accounts exist.
+
+- [x] **The codec and the merge** (`src/lib/record/transfer.ts`): encode, decode with the protocol's limits and
+      the record's own validators (`isSafeKey`, `asInstant`, `SHORT_HASH`, `asDay`, `INDEX_KEY`), and
+      `mergeTransfer`, which only adds and returns the record it was given when nothing is new. Held to
+      `tests/fixtures/transfer/vector-1.json`, made by Python's zlib.
+- [x] **Move to the app** on `/profile/`'s title row: one quiet button with a small QR glyph, left of the
+      chord hint, shown only once the record is read and holds something to move; where the title and the
+      button do not fit on one line (a phone) it wraps under the title, on the start edge, 44px tall
+      (`playground/2026-11-transfer/A-on-your-phone.html`, revision 2, approved 2026-11-19). It opens a
+      dialog with the QR code of the link (`uqr` 0.1.3, error correction L, quiet zone of four, dark on light
+      in both themes, `src/lib/qr.ts`), Copy link, and a line instead of a code when the link is too long
+      for one code. The data line keeps Back up, Restore and Reset only.
+- [x] **`/transfer/`**: reads the fragment after mount, shows the completed modules per track (and the checklist
+      items ticked, when a track carries any, so a link of ticks alone does not read as empty), adds on one
+      button through `store.ts`, clears the fragment; an unreadable link and a page without a link each get one
+      line; on a touch device, Open in the Bazaar app (`aibazaar://transfer#t=…`). Noindex, not in the bar or
+      the sitemap.
+- [ ] **On the live site, after merging**: a phone scans the code on `/profile/` and adds the progress in the
+      app (through `/transfer/` and Open in the Bazaar app), and a link the app shares adds its progress here.
 
 ## 🏁 Milestone M132: shared helpers instead of copies; module images carry their size, DONE
 

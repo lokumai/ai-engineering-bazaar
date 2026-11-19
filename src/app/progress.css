@@ -80,6 +80,61 @@
     font-size: var(--text-item);
   }
 
+  /* D144 — the "Move to the app" dialog: a QR code as wide as the dialog, so a version-40 code
+     still gives a phone camera two device pixels a module, and one line under it. The code's
+     inks are the bar chip's pair, the one light-on-dark pair that is the same in both themes:
+     a scanner needs dark modules on a light ground whatever the page's theme. */
+  /* The title row's right end: the "Move to the app" button, then the chord hint. When the title
+     and the button do not fit on one line (a phone), the row wraps and this group starts the next
+     line on the start edge, and `.bz-btn`'s touch floor makes the button 44px tall there. */
+  .bz-progress-headtools {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+  /* `.bz-btn .bz-btn-quiet` at the mockup's 38px, with the glyph at 16px. `height`, not
+     `min-height`, so the narrow touch floor (a `min-height`) still wins below 768px. */
+  .bz-move-trigger {
+    height: 38px;
+    padding-block: 0;
+    padding-inline: 16px;
+    white-space: nowrap;
+  }
+
+  .bz-move-trigger svg { flex: none; }
+
+  .bz-transfer-qr {
+    display: block;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 1;
+    margin: 0 0 14px;
+  }
+
+  .bz-transfer-qr-ground { fill: var(--color-bar-chip); }
+  .bz-transfer-qr-ink { fill: var(--color-on-bar-chip); }
+
+  .bz-transfer-line {
+    margin: 0 0 14px;
+    color: var(--color-on-surface);
+    font-size: var(--text-item);
+    line-height: 1.5;
+  }
+
+  /* `/transfer/` arranges the same pieces: the counts as the definition list above, the line,
+     and a quiet hint in the meta size. */
+  .bz-transfer { max-width: 52ch; }
+
+  .bz-transfer-counts.bz-defs { margin: 0 0 18px; }
+
+  .bz-transfer-hint {
+    margin: 14px 0 0;
+    color: var(--color-on-surface-muted);
+    font-size: var(--text-meta);
+    line-height: 1.5;
+  }
+
   .bz-defs {
     display: grid;
     grid-template-columns: max-content 1fr;

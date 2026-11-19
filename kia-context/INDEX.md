@@ -89,6 +89,7 @@ and the same explanation given in person for the third time. See `genesis/GENESI
 | 2026-11-17 | The footer as owner and two link columns, a Feedback link to an external form, and the privacy note's short summary | M128 (D143) |
 | 2026-11-18 | One module-route builder, one guarded `localStorage` accessor, shared motion helpers and icon frame, intrinsic image sizes; then the phone, a bottom tab bar; the specs re-measured | M132, M133, M135 (D146, D148), PR #143, #144 (`specs/ARCHITECTURE.md` §15) |
 | 2026-11-19 | CI gates the deploy: a commit deploys only if its own CI run succeeded and it is still `main`'s head; read-only workflows, pinned actions, an audit step | M134 (D147), PR #147 (`specs/ARCHITECTURE.md` §12) |
+| 2026-11-19 | Progress moves between the site and the mobile app inside a link: a QR code on the progress page, and `/transfer/` | M130 (D144) |
 
 **The harness itself was installed on 2026-09-08**, 107 commits in (`git rev-list --count 4832e2a^`). Everything before that date was
 reconstructed from git and is labelled as inferred inside each file.

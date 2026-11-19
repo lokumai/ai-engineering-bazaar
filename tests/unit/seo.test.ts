@@ -4,6 +4,7 @@ import { sheetMetadata } from '@/components/sheet/ModuleSheet'
 import { movedMetadata } from '@/components/shell/Moved'
 import { metadata as caravanMetadata } from '@/app/caravan/page'
 import { metadata as profileMetadata } from '@/app/profile/page'
+import { metadata as transferMetadata } from '@/app/transfer/page'
 import { TRANSLATED_LANGS, type ReadingLang } from '@/lib/content/languages'
 import { loadAllModules, loadModuleIn } from '@/lib/content/loader'
 import { showsSample } from '@/lib/content/caravan'
@@ -173,9 +174,11 @@ describe('what is kept out of search (D120)', () => {
     }
   })
 
-  it('lists no page whose own metadata says noindex: the profile, and the caravan while it draws its sample', () => {
+  it('lists no page whose own metadata says noindex: the profile, the transfer page, and the caravan while it draws its sample', () => {
     expect(profileMetadata.robots).toMatchObject({ index: false })
     expect(listed.has('/profile/')).toBe(false)
+    expect(transferMetadata.robots).toMatchObject({ index: false })
+    expect(listed.has('/transfer/')).toBe(false)
     const sample = caravanMetadata.robots !== undefined
     expect(listed.has('/caravan/'), 'the caravan is listed exactly when it is not the sample').toBe(!sample)
   })

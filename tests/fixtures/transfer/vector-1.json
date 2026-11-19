@@ -1,7 +1,7 @@
 {
   "recordData": {
     "sheets": {
-      "fundamentals/llms": {
+      "alpha/first": {
         "signedOff": "2026-11-02T09:15:30.123Z",
         "signedRevision": "a1b2c3d",
         "reachedEnd": true,
@@ -11,7 +11,7 @@
           "2": true
         }
       },
-      "fundamentals/tokens": {
+      "alpha/second": {
         "signedOff": null,
         "signedRevision": null,
         "reachedEnd": false,
@@ -20,7 +20,7 @@
           "1": true
         }
       },
-      "ecosystem/rag": {
+      "beta/third": {
         "signedOff": null,
         "signedRevision": null,
         "reachedEnd": true,
@@ -29,7 +29,7 @@
       }
     },
     "everyoneSheets": {
-      "fundamentals/llms": {
+      "alpha/first": {
         "signedOff": "2026-11-02T09:15:30.123Z",
         "signedRevision": "0f0e0d0",
         "reachedEnd": false,
@@ -42,7 +42,7 @@
       "2026-11-02"
     ]
   },
-  "compactJson": "{\"v\":1,\"e\":{\"fundamentals/llms\":[\"mvz1mz0r\",\"a1b2c3d\",[0,2]],\"fundamentals/tokens\":[\"\",\"\",[1]]},\"y\":{\"fundamentals/llms\":[\"mvz1mz0r\",\"0f0e0d0\",[]]},\"d\":[\"2026-11-01\",\"2026-11-02\"]}",
-  "payload": "jcwxDoMwDIXhu7zZqLYrdchVkIdAwtIklQpFKoi7kzJUYmO03v95xQwnhAi3YviU4HMsk0_jLaU8wrXI8yJ54TcIXjrt7wHUMqkZncH0esZykJrWRsw2wvfKYx44cuCKDhN-s7I-GpGGpQb_Q2HbDg",
-  "url": "https://ai-bazaar.lokum.dev/transfer/#t=jcwxDoMwDIXhu7zZqLYrdchVkIdAwtIklQpFKoi7kzJUYmO03v95xQwnhAi3YviU4HMsk0_jLaU8wrXI8yJ54TcIXjrt7wHUMqkZncH0esZykJrWRsw2wvfKYx44cuCKDhN-s7I-GpGGpQb_Q2HbDg"
+  "compactJson": "{\"v\":1,\"e\":{\"alpha/first\":[\"mvz1mz0r\",\"a1b2c3d\",[0,2]],\"alpha/second\":[\"\",\"\",[1]]},\"y\":{\"alpha/first\":[\"mvz1mz0r\",\"0f0e0d0\",[]]},\"d\":[\"2026-11-01\",\"2026-11-02\"]}",
+  "payload": "fczBCoMwEATQf5nzirtb8JBfkT2kJqKgrWgRavDfTUV69DjMm0lY4YQQ4RL8MHW-bPt5-cDVGNdNxo1nELw8tXkEUM2kZnTRJTbvV_jZbHIpZjvhe__FLUcOnPmpz7myVoVIwZLBPyhsPwA",
+  "url": "https://ai-bazaar.lokum.dev/transfer/#t=fczBCoMwEATQf5nzirtb8JBfkT2kJqKgrWgRavDfTUV69DjMm0lY4YQQ4RL8MHW-bPt5-cDVGNdNxo1nELw8tXkEUM2kZnTRJTbvV_jZbHIpZjvhe__FLUcOnPmpz7myVoVIwZLBPyhsPwA"
 }

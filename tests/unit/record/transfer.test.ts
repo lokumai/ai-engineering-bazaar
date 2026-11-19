@@ -68,9 +68,9 @@ describe('vector 1', () => {
   it('decodes the payload another implementation made', async () => {
     const progress = await decodeTransfer(VECTOR.payload)
     expect(progress).toEqual(parseCompactJson(VECTOR.compactJson))
-    expect(progress?.sheets['fundamentals/llms']).toEqual({
-      signedOff: data.sheets['fundamentals/llms'].signedOff,
-      signedRevision: data.sheets['fundamentals/llms'].signedRevision,
+    expect(progress?.sheets['alpha/first']).toEqual({
+      signedOff: data.sheets['alpha/first'].signedOff,
+      signedRevision: data.sheets['alpha/first'].signedRevision,
       ticks: [0, 2],
     })
     expect(progress?.days).toEqual(data.days)

@@ -80,6 +80,28 @@
     font-size: var(--text-item);
   }
 
+  /* D144 — the "Move to the app" dialog: a QR code as wide as the dialog, so a version-40 code
+     still gives a phone camera two device pixels a module, and one line under it. The code's
+     inks are the bar chip's pair, the one light-on-dark pair that is the same in both themes:
+     a scanner needs dark modules on a light ground whatever the page's theme. */
+  .bz-transfer-qr {
+    display: block;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 1;
+    margin: 0 0 14px;
+  }
+
+  .bz-transfer-qr-ground { fill: var(--color-bar-chip); }
+  .bz-transfer-qr-ink { fill: var(--color-on-bar-chip); }
+
+  .bz-transfer-line {
+    margin: 0 0 14px;
+    color: var(--color-on-surface);
+    font-size: var(--text-item);
+    line-height: 1.5;
+  }
+
   .bz-defs {
     display: grid;
     grid-template-columns: max-content 1fr;

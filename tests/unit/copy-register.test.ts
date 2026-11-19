@@ -83,6 +83,8 @@ const ROOTS: readonly string[] = [
   // D133 — the module page's own words, in three languages. The English strings are scanned here;
   // `page-copy.test.ts` holds the same bans for the Turkish and the Persian.
   'lib/content/page-copy.ts',
+  // D144 — the progress transfer: the "Move to the app" dialog on the progress page.
+  'components/transfer',
 ]
 
 function walk(target: string): string[] {

@@ -22,6 +22,7 @@ import {
   update,
   useHydrated,
 } from '@/lib/record/store'
+import { MoveToAppDialog } from '@/components/transfer/MoveToAppDialog'
 import { EraseDialog } from './EraseDialog'
 
 /**
@@ -219,6 +220,7 @@ export function DataPanel() {
             className="bz-dataline-file"
           />
         </label>
+        <MoveToAppDialog triggerClassName="bz-link bz-dataline-action" />
         <EraseDialog
           onConfirm={onErase}
           onExport={onExport}

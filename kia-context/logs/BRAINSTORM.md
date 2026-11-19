@@ -9,8 +9,8 @@ description: >
 authority: reasoning
 writes: agent, when a decision is taken
 status: active
-covers: "D97 to D143 so far, and D89, which part 2 held for PR #57 — 2026-11-06 onward"
-last_updated: 2026-11-17
+covers: "D97 to D148 so far, and D89, which part 2 held for PR #57 — 2026-11-06 onward"
+last_updated: 2026-11-19
 ---
 
 # 🧠 BRAINSTORM, part 3 — D97 onward
@@ -1417,6 +1417,38 @@ these numbers that get stale quickly. review MANIFESTO carefully and revise it a
   Microsoft Form open to anyone (more spam, and the program's own forms stay inside PIA-TEAM, D121); footer A
   (three quiet lines) and C (a centred stack); legal A (a new page with a contents rail) and B (two tabbed
   pages), both of which would have moved the privacy and legal addresses.
+
+### D146 · On a phone the bar's navigation becomes a bottom tab bar · 2026-11-18
+
+- **Context:** at 390px the top bar hid Home, About and most of Caravan behind a sideways swipe with no cue;
+  the site had been designed for desktop.
+- **Decision:** below 768px, and on landscape phones, the same `<nav>` is a fixed bottom tab bar with the five
+  destinations, labels and glyphs, the current one marked by more than colour; Catalog opens a sheet. Desktop
+  keeps its bar unchanged (M133).
+- **Rejected:** a hamburger menu (hides the destinations, which DESIGN.md forbids); keeping the scrolling bar
+  with a fade (still hides destinations); a separate mobile site (two designs to keep in step).
+
+### D147 · Deploy follows CI, and checks it for itself · 2026-11-18
+
+- **Context:** deploy ran on `push: main` beside CI with no dependency, and six red commits were published.
+- **Decision:** deploy starts on `workflow_run` of CI, and a gate job asks GitHub whether the commit's own CI
+  push run succeeded and whether it is still main's head; the daily rebuild uses the same check (M134).
+- **Rejected:** folding deploy into `ci.yml` (couples publishing to every PR run and risks the required
+  `Build and test` check); trusting the trigger alone (a fork's branch named main, or an older commit
+  finishing after a newer one, would publish).
+
+### D148 · No optimisation that changes the experience · 2026-11-18
+
+- **Context:** the review measured a layout-shift score of 0.95 at the home walk's release, the street art
+  sent twice in the home page, and the home font downloaded on other pages.
+- **Decision:** the author: "it should never cost UI/UX. we even prefer higher usage and computation to keep
+  the UI/UX, animations and flow the best looking as possible." All three were left: nothing jumps on
+  screen (Chrome scores the pin's mode switch, and silencing it makes the walk lag), the double art is how
+  server components serialize, and the font comes from prefetching the home page from the bar. Image sizes
+  and shared helpers, which change nothing visible, were done (M132). A pause control for ambient motion was
+  also declined: "it is modern website and being heavy is natural".
+- **Rejected:** `pinType: 'transform'`; a client-only art component (breaks navigation to /); turning off
+  prefetch for the show pages; removing or pausing the ambient animations.
 ---
 
 > **← Part 2: [`BRAINSTORM_2.md`](BRAINSTORM_2.md)** — D26 to D96. **← Part 1:

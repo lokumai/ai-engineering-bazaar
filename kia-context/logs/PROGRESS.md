@@ -2684,7 +2684,8 @@ app open the site's addresses are a separate change, held until the store accoun
 - [x] **Move to the app** on `/profile/`'s data line: a dialog with the QR code of the link (`uqr` 0.1.3, error
       correction L, quiet zone of four, dark on light in both themes, `src/lib/qr.ts`), Copy link, and a line
       instead of a code when there is nothing to move or the link is too long for one code.
-- [x] **`/transfer/`**: reads the fragment after mount, shows the completed modules per track, adds on one
+- [x] **`/transfer/`**: reads the fragment after mount, shows the completed modules per track (and the checklist
+      items ticked, when a track carries any, so a link of ticks alone does not read as empty), adds on one
       button through `store.ts`, clears the fragment; an unreadable link and a page without a link each get one
       line; on a touch device, Open in the Bazaar app (`aibazaar://transfer#t=…`). Noindex, not in the bar or
       the sitemap.

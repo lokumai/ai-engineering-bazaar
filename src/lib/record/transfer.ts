@@ -312,6 +312,16 @@ export function transferCounts(progress: TransferProgress): { engineers: number;
   return { engineers: completed(progress.sheets), everyone: completed(progress.everyoneSheets) }
 }
 
+/**
+ * The checklist items a link ticks, per track, summed over its modules. Shown beside the completed
+ * modules, so a link that carries ticks and no completion does not read as empty.
+ */
+export function transferTicks(progress: TransferProgress): { engineers: number; everyone: number } {
+  const ticked = (sheets: TransferProgress['sheets']) =>
+    Object.values(sheets).reduce((sum, entry) => sum + entry.ticks.length, 0)
+  return { engineers: ticked(progress.sheets), everyone: ticked(progress.everyoneSheets) }
+}
+
 // --- merge -------------------------------------------------------------------------------------
 
 function mergeSheet(local: SheetRecord, incoming: TransferEntry): SheetRecord {

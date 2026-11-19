@@ -13,6 +13,7 @@ import {
   parseCompactJson,
   payloadFromHash,
   transferCounts,
+  transferTicks,
   transferLink,
   type TransferProgress,
 } from '@/lib/record/transfer'
@@ -214,6 +215,21 @@ describe('counts', () => {
     })
     expect(transferCounts(incoming({ sheets: { 'a/one': { signedOff: null, signedRevision: null, ticks: [1] } } })))
       .toEqual({ engineers: 0, everyone: 0 })
+  })
+})
+
+describe('ticks', () => {
+  it('sums the ticked checklist items per track, over every module, completed or not', () => {
+    const progress = parseCompactJson(VECTOR.compactJson)!
+    const expected = (map: TransferProgress['sheets']) =>
+      Object.values(map).reduce((sum, entry) => sum + entry.ticks.length, 0)
+    expect(transferTicks(progress)).toEqual({
+      engineers: expected(progress.sheets),
+      everyone: expected(progress.everyoneSheets),
+    })
+    const ticksOnly = parseCompactJson('{"v":1,"e":{"a/b":["","",[0]]},"y":{"a/b":["","",[1,2]],"a/c":["","",[0]]},"d":[]}')!
+    expect(transferTicks(ticksOnly)).toEqual({ engineers: 1, everyone: 3 })
+    expect(transferCounts(ticksOnly)).toEqual({ engineers: 0, everyone: 0 })
   })
 })
 

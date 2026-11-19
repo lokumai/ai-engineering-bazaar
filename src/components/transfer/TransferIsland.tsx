@@ -1,13 +1,14 @@
 'use client'
 
 import Link from 'next/link'
-import { useEffect, useState } from 'react'
+import { Fragment, useEffect, useState } from 'react'
 import {
   appLink,
   decodeTransfer,
   mergeTransfer,
   payloadFromHash,
   transferCounts,
+  transferTicks,
   type TransferProgress,
 } from '@/lib/record/transfer'
 import { flush, requestPersistence, snapshot, update } from '@/lib/record/store'
@@ -53,6 +54,10 @@ type State =
 
 function completedModules(count: number): string {
   return `${count} ${count === 1 ? 'module' : 'modules'} completed`
+}
+
+function tickedItems(count: number): string {
+  return `${count} ${count === 1 ? 'checklist item' : 'checklist items'} ticked`
 }
 
 function hasCompletion(data: RecordData): boolean {
@@ -128,10 +133,18 @@ export function TransferIsland() {
       {state.kind === 'ready' && (
         <>
           <dl className="bz-defs bz-transfer-counts">
-            <dt>{TRANSFER_COPY.engineers}</dt>
-            <dd>{completedModules(transferCounts(state.progress).engineers)}</dd>
-            <dt>{TRANSFER_COPY.everyone}</dt>
-            <dd>{completedModules(transferCounts(state.progress).everyone)}</dd>
+            {(['engineers', 'everyone'] as const).map((track) => {
+              const ticks = transferTicks(state.progress)[track]
+              return (
+                <Fragment key={track}>
+                  <dt>{TRANSFER_COPY[track]}</dt>
+                  <dd>
+                    <span className="block">{completedModules(transferCounts(state.progress)[track])}</span>
+                    {ticks > 0 && <span className="block">{tickedItems(ticks)}</span>}
+                  </dd>
+                </Fragment>
+              )
+            })}
           </dl>
           <div className="flex flex-wrap items-center gap-3">
             <button type="button" className="bz-btn" onClick={() => onAdd(state.progress)}>

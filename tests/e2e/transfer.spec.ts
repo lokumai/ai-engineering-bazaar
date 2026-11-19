@@ -1,4 +1,5 @@
 import { readFileSync } from 'node:fs'
+import { deflateRawSync } from 'node:zlib'
 import path from 'node:path'
 import { expect, test } from '@playwright/test'
 import { readRecord, seedRecord, signedSheet, waitForRecord } from './record'
@@ -43,6 +44,14 @@ test('a progress link shows its counts, adds on one press, and says when nothing
   await page.goto(`/transfer/#t=${VECTOR.payload}`)
   await page.getByRole('button', { name: "Add to this browser's progress" }).click()
   await expect(page.getByText('Nothing new: this browser already has all of it.')).toBeVisible()
+})
+
+test('a link of ticks alone says how many checklist items it ticks in each track', async ({ page }) => {
+  const compact = '{"v":1,"e":{"a/b":["","",[0]]},"y":{"a/b":["","",[1,2]]},"d":[]}'
+  await page.goto(`/transfer/#t=${deflateRawSync(compact).toString('base64url')}`)
+  const counts = page.locator('dl')
+  await expect(counts).toContainText(`For Engineers${phrase(0)}1 checklist item ticked`)
+  await expect(counts).toContainText(`For Everyone${phrase(0)}2 checklist items ticked`)
 })
 
 test('an unreadable link says so and changes nothing; no link says what the page is for', async ({ page }) => {

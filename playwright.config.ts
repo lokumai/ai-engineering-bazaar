@@ -73,7 +73,9 @@ export default defineConfig({
   // 4 on CI: GitHub's runner has 4 vCPUs, and at 2 the suite took 13 of CI's
   // 16 minutes (measured 2026-11-05, D88).
   workers: process.env.CI ? 4 : undefined,
-  reporter: process.env.CI ? [['github'], ['list']] : 'list',
+  // `flaky-reporter` makes a pass-on-retry visible as a warning annotation and a summary list;
+  // the retry above stays as the safety net and nothing else fails on it.
+  reporter: process.env.CI ? [['github'], ['list'], ['./tests/flaky-reporter.ts']] : 'list',
   // Not the PR diff. On a pull request in CI, Playwright's git plugin fetches
   // the base commit with `--depth=1` to attach a diff to the report, and that
   // fetch makes the checkout shallow at the base before the webServer builds:

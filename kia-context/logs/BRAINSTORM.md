@@ -1425,8 +1425,9 @@ these numbers that get stale quickly. review MANIFESTO carefully and revise it a
 - **Decision:** a **transfer link**, `/transfer/#t=<payload>`, whose fragment carries the progress
   (completions, their revisions, checklist ticks and days) as compact JSON, deflate-raw and base64url, in
   a format the site and the app share (`src/lib/record/transfer.ts`, held to a vector made by a third
-  implementation). The fragment never reaches a server. Site to phone: "Move to the app" on the progress
-  page draws the link as a QR code the phone's own camera scans. Phone to site: the app's share sheet sends
+  implementation). The fragment never reaches a server. Site to phone: "Move to the app", one quiet button
+  on the progress page's title row (there only when there is something to move), draws the link as a QR
+  code the phone's own camera scans. Phone to site: the app's share sheet sends
   the link and `/transfer/` opens it. Nothing is applied on open; one button adds it, and **a transfer only
   adds**: a completion already here keeps its date and revision, ticks and days are unions, `prefs`, `meta`,
   `reachedEnd` and `dwellSeconds` are untouched. A link that fails any of the record's own checks is refused
@@ -1437,7 +1438,9 @@ these numbers that get stale quickly. review MANIFESTO carefully and revise it a
   data and has no server (D88). **Scanning a code with the computer's camera** for the phone-to-site
   direction: rejected by the owner as awkward. **Replace instead of merge**: Restore from a file already
   replaces, and a link opened by mistake must not be able to take anything away. **Writing a QR encoder**:
-  the pinned `uqr` (MIT, no dependencies) does it; only the drawing is ours.
+  the pinned `uqr` (MIT, no dependencies) does it; only the drawing is ours. **The trigger in the data
+  line**, beside Back up and Restore: too easy to miss for the one way to the app. **An "On your phone"
+  block** under the title, with a line of explanation: rejected by the owner as too big for what it does.
 ---
 
 > **← Part 2: [`BRAINSTORM_2.md`](BRAINSTORM_2.md)** — D26 to D96. **← Part 1:

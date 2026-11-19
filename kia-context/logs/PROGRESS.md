@@ -2681,9 +2681,13 @@ app open the site's addresses are a separate change, held until the store accoun
       the record's own validators (`isSafeKey`, `asInstant`, `SHORT_HASH`, `asDay`, `INDEX_KEY`), and
       `mergeTransfer`, which only adds and returns the record it was given when nothing is new. Held to
       `tests/fixtures/transfer/vector-1.json`, made by Python's zlib.
-- [x] **Move to the app** on `/profile/`'s data line: a dialog with the QR code of the link (`uqr` 0.1.3, error
-      correction L, quiet zone of four, dark on light in both themes, `src/lib/qr.ts`), Copy link, and a line
-      instead of a code when there is nothing to move or the link is too long for one code.
+- [x] **Move to the app** on `/profile/`'s title row: one quiet button with a small QR glyph, left of the
+      chord hint, shown only once the record is read and holds something to move; where the title and the
+      button do not fit on one line (a phone) it wraps under the title, on the start edge, 44px tall
+      (`playground/2026-11-transfer/A-on-your-phone.html`, revision 2, approved 2026-11-19). It opens a
+      dialog with the QR code of the link (`uqr` 0.1.3, error correction L, quiet zone of four, dark on light
+      in both themes, `src/lib/qr.ts`), Copy link, and a line instead of a code when the link is too long
+      for one code. The data line keeps Back up, Restore and Reset only.
 - [x] **`/transfer/`**: reads the fragment after mount, shows the completed modules per track (and the checklist
       items ticked, when a track carries any, so a link of ticks alone does not read as empty), adds on one
       button through `store.ts`, clears the fragment; an unreadable link and a page without a link each get one

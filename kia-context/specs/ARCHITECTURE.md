@@ -417,7 +417,8 @@ module orphans its progress, but moving it does not.
 **A transfer link moves progress without a server (D144).** `src/lib/record/transfer.ts` encodes the
 record's completions, revisions, ticks and days into the fragment of `/transfer/#t=<payload>` (compact JSON,
 deflate-raw, base64url), in a format the mobile app implements too and both hold to one test vector. The
-progress page's "Move to the app" draws that link as a QR code (`src/lib/qr.ts` over the pinned `uqr`);
+progress page's "Move to the app" (a button on its title row, rendered only once the record is read and
+holds something to move) draws that link as a QR code (`src/lib/qr.ts` over the pinned `uqr`);
 `/transfer/` decodes a link after mount and, on one button, applies it through `update` with
 `mergeTransfer`, which only adds: a completion already here is kept, ticks and days are unions, and `prefs`,
 `meta`, `reachedEnd` and `dwellSeconds` are untouched. A link that fails any of `validate.ts`'s checks is

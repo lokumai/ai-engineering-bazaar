@@ -22,12 +22,16 @@ on:
     branches: [main]
   workflow_dispatch:
 
+# Nothing here writes to the repository or to Pages; the token is read-only.
+permissions:
+  contents: read
+
 jobs:
   site:
     name: Build and test
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           # §11.26: REVISION is each file's last-touching commit.
           fetch-depth: 0
@@ -35,12 +39,20 @@ jobs:
       # package.json, and v6 narrowed it to npm. `package.json` declares no such
       # field, so nothing here is cached twice or cached differently; the
       # explicit `cache`/`cache-dependency-path` below is still what runs.
-      - uses: actions/setup-node@v7
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
           node-version: "24"
           cache: npm
           cache-dependency-path: package-lock.json
       - run: npm ci
+      # Production dependencies only, at `high`: the one advisory left after the 2026-11-18
+      # upgrades is a low one in katex through mermaid (its fix is mermaid 12, a major), and
+      # picomatch (high) is reachable only from vitest and vite, which never ship. A level of
+      # `high` fails on what the published site or bundle could carry and not on dev tooling or
+      # on a low advisory with no patch in the same major. Raise the bar to `moderate` when
+      # mermaid 12 is adopted.
+      - name: No high or critical advisory in what ships
+        run: npm audit --audit-level=high --omit=dev
       - run: npm run typecheck
       # Includes the B9 contrast check (§10.1): a token edited so that a pair
       # drops under its floor fails here, not in an audit six months later.
@@ -56,9 +68,11 @@ jobs:
       # command rather than fall back to a browser whose metrics differ.
       # 2026-11-11: the runners could not resolve security.ubuntu.com, and every `--with-deps` install
       # failed before a test ran. The main archive the runners already use carries the same security
-      # pocket, so apt is pointed there; nothing else about the install changes.
+      # pocket, so apt is pointed there over https (the first version used http and `|| true`); nothing else
+      # about the install changes. `xargs -r` is what makes a runner image without a legacy
+      # sources.list a no-op instead of an error, so nothing needs `|| true`.
       - name: Fetch Ubuntu security updates from the runner's main archive
-        run: sudo sed -i 's|https\?://security.ubuntu.com|http://azure.archive.ubuntu.com|g' /etc/apt/sources.list /etc/apt/sources.list.d/*.sources 2>/dev/null || true
+        run: grep -rlE 'security\.ubuntu\.com' /etc/apt/sources.list /etc/apt/sources.list.d 2>/dev/null | xargs -r sudo sed -i 's|https\?://security.ubuntu.com|https://azure.archive.ubuntu.com|g'
       - run: npx playwright install --with-deps chromium
       - run: npm run build
       - run: node scripts/check-links-out.mjs out
@@ -88,7 +102,7 @@ jobs:
           jq -c '[.modules[] | {key, r: .tracks.engineers.revision.hash}] | .[:5]' "$RUNNER_TEMP/api-first/v1/index.json" out/api/v1/index.json
           diff -r "$RUNNER_TEMP/api-first" out/api | head -c 4000
           exit 1
-      - uses: actions/upload-artifact@v7
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         if: failure()
         with:
           name: playwright-report

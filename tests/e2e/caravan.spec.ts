@@ -399,6 +399,7 @@ test('the wheel walks the whole road in about 3,000 px, then the page scrolls on
   expect((await thumb(page)).now, 'a wheel up at the start moved the caravan back').toBe(start)
 
   for (let i = 0; i < 15; i += 1) await page.mouse.wheel(0, 100)
+  await expect.poll(async () => (await thumb(page)).now, { message: '1,500 px of wheel did not move the caravan' }).toBeGreaterThan(start)
   const half = await thumb(page)
   expect(await scrollY(), 'the page scrolled while the caravan still had road ahead').toBe(0)
   const share = (half.now - start) / (half.max - start)
@@ -406,7 +407,7 @@ test('the wheel walks the whole road in about 3,000 px, then the page scrolls on
   expect(share, '1,500 px of wheel is not about half the road').toBeLessThan(0.65)
 
   for (let i = 0; i < 25; i += 1) await page.mouse.wheel(0, 100)
-  expect((await thumb(page)).now, '4,000 px of wheel did not reach the end of the road').toBe(half.max)
+  await expect.poll(async () => (await thumb(page)).now, { message: '4,000 px of wheel did not reach the end of the road' }).toBe(half.max)
   await page.mouse.wheel(0, 300)
   await expect.poll(scrollY, { message: 'at the road\'s end the wheel did not scroll the page' }).toBeGreaterThan(0)
 })
@@ -420,12 +421,12 @@ test('Shift and a wheel, and a sideways swipe, both move the caravan', async ({ 
   // a first version of this case compared with 0 and passed with sideways swipes ignored.
   const start = (await thumb(page)).now
   await page.mouse.wheel(400, 0)
+  await expect.poll(async () => (await thumb(page)).now, { message: 'a sideways swipe did not move the caravan' }).toBeGreaterThan(start)
   const swiped = (await thumb(page)).now
-  expect(swiped, 'a sideways swipe did not move the caravan').toBeGreaterThan(start)
   await page.keyboard.down('Shift')
   await page.mouse.wheel(0, 400)
   await page.keyboard.up('Shift')
-  expect((await thumb(page)).now, 'Shift and a wheel did not move the caravan').toBeGreaterThan(swiped)
+  await expect.poll(async () => (await thumb(page)).now, { message: 'Shift and a wheel did not move the caravan' }).toBeGreaterThan(swiped)
 })
 
 test('a drag on the picture pulls the road, and the strip walks it by month and by year', async ({ page }) => {
@@ -440,19 +441,22 @@ test('a drag on the picture pulls the road, and the strip walks it by month and 
   // 600 px: more than a month at any zoom (a month is up to 416 px since M93).
   await page.mouse.move(stage.x + stage.width - 660, y, { steps: 12 })
   await page.mouse.up()
-  expect((await thumb(page)).now, 'dragging the road left did not move the caravan on').toBeGreaterThan(before.now)
+  await expect.poll(async () => (await thumb(page)).now, { message: 'dragging the road left did not move the caravan on' }).toBeGreaterThan(before.now)
 
   await page.locator('.cv-scrub-thumb').focus()
+  // The strip's keys move the caravan through a state update, so each reading polls: one read
+  // straight after a key press raced the render and failed, then passed on the retry.
+  const at = (message: string) => expect.poll(async () => (await thumb(page)).now, { message })
   await page.keyboard.press('Home')
-  expect((await thumb(page)).now, 'Home did not go back to the start of the road').toBe(start)
+  await at('Home did not go back to the start of the road').toBe(start)
   await page.keyboard.press('ArrowRight')
-  expect((await thumb(page)).now).toBe(start + 1)
+  await at('ArrowRight did not move one month on').toBe(start + 1)
   await page.keyboard.press('PageDown')
-  expect((await thumb(page)).now).toBe(start + 13)
+  await at('PageDown did not move a year on').toBe(start + 13)
   await page.keyboard.press('ArrowLeft')
-  expect((await thumb(page)).now).toBe(start + 12)
+  await at('ArrowLeft did not move one month back').toBe(start + 12)
   await page.keyboard.press('End')
-  expect((await thumb(page)).now).toBe(before.max)
+  await at('End did not go to the end of the road').toBe(before.max)
 })
 
 test('a resize draws the scene again with nothing left lit or dimmed', async ({ page }) => {

@@ -11,7 +11,7 @@ description: >
   backgrounds and copy (M81), Agentic UI (M82), the cast's colours (M83), and M84 to M90 (content
   and site fixes, the home page in Turkish and Persian, Dariush's motif, block menus in the top layer,
   and About, the story of the Bazaar); Caravan built (M91), its real trends waiting (M92) and its second
-  round (M93); multilingual SEO (M96); translated objectives on the site (M98) and in the bundle (M99); the story in the bundle (M100); three screen recordings and Human in the Loop moved into Agentic UI (M101); the search filters applied by a button (M102); a laptop section in Inference Engines (M103); the word count in the bundle (M105), the checklist index (M106), the diagrams without empty rects (M107) and five logos without CSS (M108); the About page in Turkish and Persian (M109); the module page's own words in Turkish and Persian (M110); the footer without its first row (M111); the tool-call recording cropped to the chat and the reasoning recording sped up (M112); the LokumAI mark on the References' Modules subsection (M113); stall 1 naming the treaty and the About page's name (M114); a replay button on every animated recording (M115); the quick quiz on both tracks (M116); the privacy note for the mobile app (M117); translated titles in the bundle's index (M118); lot-map in Code Agents and Agents in Practice (M119); Advanced Deployment split into LLM and agent deployment (M120); a map of the generative AI stack in Agent Frameworks (M121); Advanced LLM Deployment moved after Advanced LLM (M122); LLM Compression and offline/online post-training (M123); Advanced Agent Architectures after Advanced Multi-Agent (M124); agentic UI against traditional UI (M125); the Caravan notice as a centred caution bar (M126); Advanced Prompt Engineering named in full (M127); the footer and the privacy note redesigned, with a Feedback link (M128); ARTEX and Claude-BugHunter in Security (M129); progress moved between the site and the app in a link (M130); and M41, the content bundle for the mobile reader. Each milestone carries its deliverables and acceptance
+  round (M93); multilingual SEO (M96); translated objectives on the site (M98) and in the bundle (M99); the story in the bundle (M100); three screen recordings and Human in the Loop moved into Agentic UI (M101); the search filters applied by a button (M102); a laptop section in Inference Engines (M103); the word count in the bundle (M105), the checklist index (M106), the diagrams without empty rects (M107) and five logos without CSS (M108); the About page in Turkish and Persian (M109); the module page's own words in Turkish and Persian (M110); the footer without its first row (M111); the tool-call recording cropped to the chat and the reasoning recording sped up (M112); the LokumAI mark on the References' Modules subsection (M113); stall 1 naming the treaty and the About page's name (M114); a replay button on every animated recording (M115); the quick quiz on both tracks (M116); the privacy note for the mobile app (M117); translated titles in the bundle's index (M118); lot-map in Code Agents and Agents in Practice (M119); Advanced Deployment split into LLM and agent deployment (M120); a map of the generative AI stack in Agent Frameworks (M121); Advanced LLM Deployment moved after Advanced LLM (M122); LLM Compression and offline/online post-training (M123); Advanced Agent Architectures after Advanced Multi-Agent (M124); agentic UI against traditional UI (M125); the Caravan notice as a centred caution bar (M126); Advanced Prompt Engineering named in full (M127); the footer and the privacy note redesigned, with a Feedback link (M128); ARTEX and Claude-BugHunter in Security (M129); progress moved between the site and the app in a link (M130); shared helpers and image sizes (M132); the site on phones (M133); deploy gated on CI, pinned workflows and flake fixes (M134); the specs re-measured (M135); and M41, the content bundle for the mobile reader. Each milestone carries its deliverables and acceptance
   criteria as `- [ ]` checkboxes, ticked as the work lands, and closes with a dated report; the loop
   that governs that is below, in this file.
   NOT here: why a choice was made (BRAINSTORM.md), or any rule that outlives the milestone
@@ -19,7 +19,7 @@ description: >
 authority: state
 writes: agent, every session
 status: active
-covers: "M50 to M130, 2026-11-06 onward, and M41, which part 2 held for PR #57"
+covers: "M50 to M135, 2026-11-06 onward, and M41, which part 2 held for PR #57"
 last_updated: 2026-11-19
 ---
 
@@ -2695,6 +2695,78 @@ app open the site's addresses are a separate change, held until the store accoun
       the sitemap.
 - [ ] **On the live site, after merging**: a phone scans the code on `/profile/` and adds the progress in the
       app (through `/transfer/` and Open in the Bazaar app), and a link the app shares adds its progress here.
+
+## 🏁 Milestone M132: shared helpers instead of copies; module images carry their size, DONE
+
+The author, 2026-11-18, after a five-persona read-only review of the whole repository: fix the code
+duplication, and optimise only where it costs nothing a reader sees or feels (D148). PR #143.
+
+- [x] **One copy each**: `src/lib/local-storage.ts` (the guarded accessor), `src/components/icons/StrokeIcon.tsx`,
+      `src/lib/motion-math.ts` (clamp with the floor winning, lerp, smoothstep, mulberry32),
+      `src/lib/reduced-motion.ts`, route segments and `moduleRoute` in `src/lib/tracks.ts`, one walker in
+      `scripts/lib/base-path.mjs`, shared test surface helpers. Same-name helpers with different meanings were
+      renamed (`textDirectionOf`, `sourceDirectoryOf`). Unused exports and an unused mascot prop removed.
+- [x] **Module images**: intrinsic width and height, `decoding="async"`, lazy after the first; animated
+      recordings stay eager (the replay button reads the loaded file).
+- [x] **Reviews** (two, Haiku xhigh): the first shared clamp let the ceiling win where the caravan copy let
+      the floor win, which slid the stop card under the bar on short windows; fixed and pinned by a test.
+- [x] **Gate (2026-11-18)**: typecheck; unit tests; build, link and bundle checks (bundle unchanged); browser
+      suite 750 passed; 26 of 40 before/after screenshots pixel-identical, the 14 home shots differing only
+      by animation phase, as two runs of main do.
+
+---
+
+## 🏁 Milestone M133: the site on phones, DONE
+
+The author, 2026-11-18: "this app was designed for desktop and not mobile ... a milestone which requires
+careful planning and analysis ... according to the best practices of the industry UI/UX design". Plan and
+audit: `playground/2026-11-round-7/MOBILE-PLAN.md`. PR #144 (D146).
+
+- [x] **Navigation**: below 768px and on landscape phones the bar's `<nav>` is a fixed bottom tab bar (Home,
+      Catalog, Progress, Caravan, About); Catalog opens a sheet with the track switch and the levels.
+- [x] **Touch and frame**: 44px targets in the chrome, safe-area insets, the page ending above the tab bar,
+      search as a full-screen sheet, 16px fields so iOS does not zoom, hover-only controls not offered to
+      touch, the breadcrumb as one back link.
+- [x] **Found on the way**: the home headline was nearly invisible in the dark theme on phones; fixed.
+- [x] **Desktop unchanged**: 15 routes pixel-identical at 1440 in both themes; the bundle unchanged.
+- [x] **Reviews** (two, Haiku xhigh: UI/UX against the screenshots; code, RTL, accessibility, tests) and the
+      lead's review of the screenshots; `tests/e2e/mobile.spec.ts` and a `chrome-mobile` project added.
+- Left as decisions, in the plan: the Catalog tab opens a sheet rather than navigating; heading anchors are
+  not offered on touch; the home art is not trimmed.
+
+---
+
+## 🏁 Milestone M134: deploy only after green CI; pinned workflows; flakes fixed at the cause, DONE
+
+From the same review: six red main commits had been published, and 22 of 54 green CI runs held a test that
+failed and passed on retry. PR #147 (D147).
+
+- [x] **Deploy** starts on `workflow_run` of CI; a gate job builds a commit only if its own CI push run
+      succeeded and it is still main's head. The daily rebuild and manual runs pass the same check.
+- [x] **Workflows** read-only by default; only the deploy job holds `pages: write` and `id-token: write`;
+      every action pinned to a commit SHA; the apt mirror over https without `|| true`.
+- [x] **Dependencies**: next 16.4.6, zod 4.6.7, dompurify 3.4.18 by override; CI fails on a high or critical
+      advisory in production dependencies.
+- [x] **Flakes**: caravan, search, html-lang and cast now wait for the island's ready signal or poll the
+      asserted state; fixed sleeps removed; a test that passes only on retry is listed in the log; the
+      flake list in `tests/README.md` rewritten.
+- [x] **Guards**: raw HTML never survives the render pipeline; the link checker fails on a dead link. Each
+      shown red against a broken version.
+- [x] **Gate (2026-11-18)**: typecheck; 1,629 unit tests; build, link and bundle checks; browser suite 763
+      passed; the four formerly flaky specs five times each without retries, 475 passed.
+
+---
+
+## 🏁 Milestone M135: the specs re-measured, DONE
+
+The author, 2026-11-18: "fix ARCHITECTURE.md (whole kia-context should not be stale)".
+
+- [x] **ARCHITECTURE, DESIGN, INDEX**: every number re-measured with its command (46 modules and 21 written,
+      not 44 and 20; 222 TypeScript files; 21 page routes and 10 route handlers; 1,622 unit and 787 browser
+      tests), removed features struck from the text, the record and route rules restated as the code enforces
+      them, the deploy gate and the phone tab bar described.
+- [x] **Logs**: M132 to M135 and D146 to D148. M130, M131, D144 and D145 belong to the colleague's open PRs
+      #145 and #146.
 ---
 
 > **← Part 2: [`PROGRESS_2.md`](PROGRESS_2.md)** — M16 to M49. **← Part 1: [`PROGRESS_1.md`](PROGRESS_1.md)**

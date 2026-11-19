@@ -4,6 +4,7 @@ import { CATEGORIES } from '@/lib/content/curriculum-file'
 import { moduleRoute } from '@/lib/tracks'
 import { searchDocs } from '@/lib/search/documents'
 import { A0 } from './sheets'
+import { hydrated } from './hydrated'
 
 /**
  * M59 (D95) — search in a browser: the window, its keys, when the index loads, and that a
@@ -14,6 +15,8 @@ import { A0 } from './sheets'
 const WRITTEN = loadAllModules().find((m) => m.frontmatter.status === 'ready')!
 /** A written module that has a Persian page, for the language check. */
 const PERSIAN = loadAllModules().map((m) => loadModuleIn(m.slug, 'fa')).find((m) => m !== undefined)
+
+const keysReady = hydrated
 
 const dialog = (page: Page) => page.locator('dialog.bz-search')
 const field = (page: Page) => dialog(page).getByRole('searchbox', { name: 'Search the course' })
@@ -33,7 +36,9 @@ test('the index is not fetched with the page, and is fetched when the window fir
 
 test('Ctrl+K and / open the window with the field focused; Escape closes it and focus goes back', async ({ page }) => {
   await page.goto(A0.path)
+  await keysReady(page)
   await page.locator('body').click()
+  await keysReady(page)
   await page.keyboard.press('Control+k')
   await expect(dialog(page)).toBeVisible()
   await expect(field(page)).toBeFocused()
@@ -42,6 +47,7 @@ test('Ctrl+K and / open the window with the field focused; Escape closes it and 
   await page.keyboard.press('/')
   await expect(dialog(page)).toBeVisible()
   await expect(field(page)).toBeFocused()
+  await keysReady(page)
   await page.keyboard.press('Control+k')
   await expect(dialog(page)).toBeHidden()
 
@@ -55,6 +61,7 @@ test('Ctrl+K and / open the window with the field focused; Escape closes it and 
 
 test('a module is found by its title and opened from the keyboard', async ({ page }) => {
   await page.goto('/')
+  await keysReady(page)
   await page.keyboard.press('Control+k')
   await field(page).fill(WRITTEN.frontmatter.title)
   const first = dialog(page).locator('.bz-search-results a').first()
@@ -70,6 +77,7 @@ test('a Persian page searches its own language first, and pressing English narro
   test.skip(PERSIAN === undefined, 'no module has a Persian page')
   const persian = moduleRoute(PERSIAN!.slug, 'engineers', 'fa')
   await page.goto(persian)
+  await keysReady(page)
   await page.keyboard.press('Control+k')
   await field(page).fill(PERSIAN!.frontmatter.title)
   // Its own language first. The page itself need not top the list: a module's For Everyone
@@ -105,6 +113,7 @@ const EVERYONE = loadAllModules().find((m) => loadModuleIn(m.slug, 'en', 'everyo
 
 async function openWith(page: Page, path: string, query: string) {
   await page.goto(path)
+  await keysReady(page)
   await page.keyboard.press('Control+k')
   await field(page).fill(query)
 }
@@ -118,6 +127,7 @@ test('the filters are shut by default, and a search then covers every track and 
   test.skip(PERSIAN === undefined, 'no module has a Persian page')
   const persian = moduleRoute(PERSIAN!.slug, 'engineers', 'fa')
   await page.goto('/')
+  await keysReady(page)
   await page.keyboard.press('Control+k')
   await expect(toggle(page)).toHaveAttribute('aria-expanded', 'false')
   await expect(toggle(page)).toHaveAttribute('aria-controls', 'bz-search-filters')
@@ -148,6 +158,7 @@ test('the other languages\' indexes load with the first search, not when the win
     if (m) asked.push(m[1])
   })
   await page.goto('/')
+  await keysReady(page)
   await page.keyboard.press('Control+k')
   await expect.poll(() => asked.includes('en')).toBe(true)
   await page.waitForLoadState('networkidle')
@@ -430,6 +441,7 @@ test('every way out of the window drops an unapplied change', async ({ page }) =
     await expect(apply(page)).toBeVisible()
     await leave()
     await expect(dialog(page)).toBeHidden()
+    await keysReady(page)
     await page.keyboard.press('Control+k')
     await expect(dialog(page)).toBeVisible()
     await openFilters(page)
@@ -440,6 +452,7 @@ test('every way out of the window drops an unapplied change', async ({ page }) =
   await chip(page, OTHER_LEVEL.title).click()
   await apply(page).click()
   await page.keyboard.press('Escape')
+  await keysReady(page)
   await page.keyboard.press('Control+k')
   await expect(toggle(page)).toHaveText('Filters (1)')
   await expect(chip(page, OTHER_LEVEL.title)).toHaveAttribute('aria-pressed', 'true')
@@ -679,6 +692,7 @@ test('with the panel shut and nothing to find, Tab from the last stop wraps to t
 
 test('the chevron turns when the panel opens', async ({ page }) => {
   await page.goto('/')
+  await keysReady(page)
   await page.keyboard.press('Control+k')
   const turned = () => dialog(page).locator('.bz-search-chevron').evaluate((c) => getComputedStyle(c).rotate)
   expect(await turned()).toBe('none')
@@ -691,6 +705,7 @@ test('the chevron turns when the panel opens', async ({ page }) => {
 test('in a Persian page the chevron still follows the label in the same direction as the dialog and the panel keeps inside it', async ({ page }) => {
   test.skip(PERSIAN === undefined, 'no module has a Persian page')
   await page.goto(moduleRoute(PERSIAN!.slug, 'engineers', 'fa'))
+  await keysReady(page)
   await page.keyboard.press('Control+k')
   await openFilters(page)
   const geometry = await toggle(page).evaluate((button) => {
@@ -756,11 +771,13 @@ test('on a phone the search icon sits in the bar and every main destination stay
 
 test('Escape closes the window even with text in the field; Enter opens the first result', async ({ page }) => {
   await page.goto('/')
+  await keysReady(page)
   await page.keyboard.press('Control+k')
   await field(page).fill(WRITTEN.frontmatter.title)
   await expect(dialog(page).locator('.bz-search-results a').first()).toBeVisible()
   await page.keyboard.press('Escape')
   await expect(dialog(page)).toBeHidden()
+  await keysReady(page)
   await page.keyboard.press('Control+k')
   await field(page).fill(WRITTEN.frontmatter.title)
   const first = await dialog(page).locator('.bz-search-results a').first().getAttribute('href')
@@ -770,6 +787,7 @@ test('Escape closes the window even with text in the field; Enter opens the firs
 
 test('Tab and Shift+Tab go round the window and never leave it', async ({ page }) => {
   await page.goto('/')
+  await keysReady(page)
   await page.keyboard.press('Control+k')
   await field(page).fill(WRITTEN.frontmatter.title)
   await expect(dialog(page).locator('.bz-search-results a').first()).toBeVisible()
@@ -789,6 +807,7 @@ test('a section result lands with its heading below the bar, also on the page al
   const doc = sections[Math.floor(sections.length / 2)]
   const target = doc.url
   await page.goto('/')
+  await keysReady(page)
   await page.keyboard.press('Control+k')
   await field(page).fill(doc.section)
   await dialog(page).locator(`.bz-search-results a[href="${target}"]`).first().click()
@@ -801,6 +820,7 @@ test('a section result lands with its heading below the bar, also on the page al
   await expect.poll(below).toBeGreaterThanOrEqual(0)
   // the same section again, from the page it is on, with its address already in the bar
   await page.evaluate(() => window.scrollTo(0, 0))
+  await keysReady(page)
   await page.keyboard.press('Control+k')
   await field(page).fill(doc.section)
   await dialog(page).locator(`.bz-search-results a[href="${target}"]`).first().click()

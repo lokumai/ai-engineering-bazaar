@@ -212,8 +212,12 @@ export function Keyboard() {
     }
 
     window.addEventListener('keydown', onKeyDown)
+    // The island's own ready signal, as `data-hl-ready` is the figure's: a key pressed before
+    // the listener exists is dropped, and a test cannot tell that from a key that does nothing.
+    document.documentElement.setAttribute('data-hl-keys', 'ready')
     return () => {
       window.removeEventListener('keydown', onKeyDown)
+      document.documentElement.removeAttribute('data-hl-keys')
       clearPendingTimer()
     }
   }, [charKeys, pathname])

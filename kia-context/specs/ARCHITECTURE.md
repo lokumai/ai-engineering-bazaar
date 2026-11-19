@@ -11,7 +11,7 @@ description: >
 authority: blueprint
 writes: agent, when explicitly refactoring
 status: active
-covers: the whole system as built on 2026-09-10, with M16 shipped — every route on the design language; the record, channel A and the render step corrected for M24 on 2026-10-11, and the quiz and the end of a module for M25 on 2026-10-12, the Bazaar Street front door for M27 and the Persian pages for M28 the same day, and the progress page slimmed to its circles and its data row for M38 on 2026-11-05, and the account layer, role paths, record of work and two thirds of the test suite removed for M40 the same day, and the two tracks (For Engineers, For Everyone) and their per-track record for M43 the same day; the custom domain (D92), the fifth level, Emerging (first named Emerging Trends), and moved addresses (D94) on 2026-11-06, and the people at the gate (M58), search (M59) and the catalog without its Sources count (M55) the same day; and for M64 to M69 the same night, a planned module that renders the sections it already has (D102), inline vendor logos, and the first For Everyone module; and the search filters and the level bar on a result (M70, D103), folded behind a Filters disclosure (M71, D104), and the stories at the gate kept until everyone has turned (M72), on 2026-11-07; and call-out cards in a module (D106), the reader's choice of Mermaid theme (D107), Mihrî in Leyla's place at the gate and the fifth level titled Emerging (M75), on 2026-11-08; and For Everyone versions of the nineteen other written modules of Fundamentals, Intermediate and Ecosystem, in three languages (M77, M78, D108), the same day; and one heading per shared section (D109), technical terms kept English in translations, and more vendor marks (M80), and each diagram theme on Mermaid's own ground with a copy control (M81), the same day; and the content bundle for the mobile reader, §13 (M41, D89, D111), on 2026-11-09, and Caravan's address in the bar (M62) the same day, and the About page (M90, D115) the same day, and Caravan's page, its two data files and their validation (§14, M91, D116) that evening, and its second round, a closer stage and the trends browsed like the catalog (§14, M93, D117), on 2026-11-10; and `<html lang>` per language, absolute canonicals and hreflang, the sitemap and robots.txt, and what is kept out of search (§7, M96, D119, D120) the same day; and the search filters applied by a button, held while the panel is shut (M102, D127); the About page in Turkish and Persian (M109, D132); the module page's own words in Turkish and Persian (M110, D133); and the footer without its first row, the sheet label, revision and reading record (M111, D134); and the quiz on both tracks (M116, D137), on 2026-11-11, and the translated module titles in the bundle's index (M118, D139) on 2026-11-12; and the progress transfer link and `/transfer/` (M130, D144) on 2026-11-19
+covers: the whole system as built on 2026-09-10, with M16 shipped — every route on the design language; the record, channel A and the render step corrected for M24 on 2026-10-11, and the quiz and the end of a module for M25 on 2026-10-12, the Bazaar Street front door for M27 and the Persian pages for M28 the same day, and the progress page slimmed to its circles and its data row for M38 on 2026-11-05, and the account layer, role paths, record of work and two thirds of the test suite removed for M40 the same day, and the two tracks (For Engineers, For Everyone) and their per-track record for M43 the same day; the custom domain (D92), the fifth level, Emerging (first named Emerging Trends), and moved addresses (D94) on 2026-11-06, and the people at the gate (M58), search (M59) and the catalog without its Sources count (M55) the same day; and for M64 to M69 the same night, a planned module that renders the sections it already has (D102), inline vendor logos, and the first For Everyone module; and the search filters and the level bar on a result (M70, D103), folded behind a Filters disclosure (M71, D104), and the stories at the gate kept until everyone has turned (M72), on 2026-11-07; and call-out cards in a module (D106), the reader's choice of Mermaid theme (D107), Mihrî in Leyla's place at the gate and the fifth level titled Emerging (M75), on 2026-11-08; and For Everyone versions of the nineteen other written modules of Fundamentals, Intermediate and Ecosystem, in three languages (M77, M78, D108), the same day; and one heading per shared section (D109), technical terms kept English in translations, and more vendor marks (M80), and each diagram theme on Mermaid's own ground with a copy control (M81), the same day; and the content bundle for the mobile reader, §13 (M41, D89, D111), on 2026-11-09, and Caravan's address in the bar (M62) the same day, and the About page (M90, D115) the same day, and Caravan's page, its two data files and their validation (§14, M91, D116) that evening, and its second round, a closer stage and the trends browsed like the catalog (§14, M93, D117), on 2026-11-10; and `<html lang>` per language, absolute canonicals and hreflang, the sitemap and robots.txt, and what is kept out of search (§7, M96, D119, D120) the same day; and the search filters applied by a button, held while the panel is shut (M102, D127); the About page in Turkish and Persian (M109, D132); the module page's own words in Turkish and Persian (M110, D133); and the footer without its first row, the sheet label, revision and reading record (M111, D134); and the quiz on both tracks (M116, D137), on 2026-11-11, and the translated module titles in the bundle's index (M118, D139) on 2026-11-12; and the progress transfer link and `/transfer/` (M130, D144) on 2026-11-19; and brought back in line with the code on 2026-11-19: every count re-measured, the shared helpers of PR #143, the phone's bottom tab bar of PR #144 (§15), the footer's three blocks, and the deploy gate of PR #147 (§12)
 last_updated: 2026-11-19
 ---
 
@@ -27,8 +27,8 @@ last_updated: 2026-11-19
 
 ## What this is
 
-A course site built **from** markdown rather than **around** it. The 46 modules in `mini-courses/`
-are the corpus, and everything a page shows — the progress marks, the figure numbers, the source
+A course site built **from** markdown rather than **around** it. The modules in `mini-courses/`
+are the corpus (§2 has the count), and everything a page shows — the progress marks, the figure numbers, the source
 counts, the revision hashes, the dependency graph — is derived from those files at build time. The
 output is a static export: HTML, CSS and JS on GitHub Pages, no server.
 
@@ -38,7 +38,7 @@ with the role paths and the record of work. A reader keeps a copy by exporting a
 
 ```
 mini-courses/*.md  ──build──▶  static export  ──▶  the reader's browser
-   (read-only)                  207 pages           record in localStorage
+   (read-only)                  219 pages           record in localStorage
 ```
 
 ---
@@ -56,13 +56,14 @@ know, and never presents a claim as a verified fact.
 
 In practice: a denominator is derived rather than typed, an in-flight query renders "in flight"
 rather than a zero, a failed write says `NOT SAVED` instead of pretending, a signed-off module is
-labelled the reader's own assertion rather than an achievement, and a footer that cannot reach the
-server says exactly that.
+labelled the reader's own assertion rather than an achievement, and a page that is not ready says so
+(the Caravan page's notice, §14).
 
 The rule has teeth because it is the one most often violated by convenience. Several defects found
-while building the account layer were exactly this shape: four pages claiming the record "is never
-sent anywhere" after it had started being sent, and an erase dialog promising a reach it did not
-have.
+while the account layer existed (removed in M40) were exactly this shape: four pages claiming the
+record "is never sent anywhere" after it had started being sent, and an erase dialog promising a
+reach it did not have. The Privacy section of `/legend/` makes the same kind of claim today, and
+`tests/e2e/legal.spec.ts` holds it (§12).
 
 ### 2 · Content is derived, never restated
 
@@ -88,16 +89,21 @@ Wherever a question has an answer, exactly one piece of code answers it.
 | Question | The one place |
 |---|---|
 | How far along is this reader? | `src/lib/record/derive.ts` |
-| What does a write to storage mean? | `src/lib/record/storage.ts` |
+| What does a write to storage mean? | `src/lib/record/storage.ts` (and the one guarded accessor, `src/lib/local-storage.ts`, below it) |
 | Where does the record go? | `src/lib/record/scope.ts` |
 | What is an internal link? | `src/lib/content/links.ts` |
 | What number is this module, and what comes next? | `mini-courses/curriculum.yaml` |
 
-The failure this prevents is two answers that agree until they do not. A manager's panel computing
-completion in SQL while the reader's page computes it in TypeScript works fine until the curriculum
-grows, and then one person is told `18/32` and another `17/32` about the same progress. `derive.ts`'s
-output is therefore **stored** in a column so reports read the same number rather than recomputing
-it.
+The failure this prevents is two answers that agree until they do not. The account layer once had a
+manager's panel computing completion in SQL while the reader's page computed it in TypeScript, which
+works until the curriculum grows, and then one person is told `18/32` and another `17/32` about the
+same progress. The panel went with M40; the rule did not, and it now binds the helpers PR #143
+collected: `src/lib/local-storage.ts` is the one place the application reads `window.localStorage`,
+`src/lib/motion-math.ts` the one `clamp`, `lerp`, `smoothstep` and seeded generator (`mulberry32`)
+every animated scene uses (its `clamp` lets the floor win when the bounds cross, which the Caravan's
+card placement depends on), `src/lib/reduced-motion.ts` the one spelling of the two motion media
+queries, `src/components/icons/StrokeIcon.tsx` the one frame of every small stroked glyph, and
+`src/lib/tracks.ts` the one builder of a module's address (`moduleRoute`, §2).
 
 ### 5 · Decisions are pure; only rendering needs a browser
 
@@ -106,8 +112,8 @@ No `Date.now()` inside a reducer, no `Math.random()` in a layout. That is what m
 testable at the boundary.
 
 What remains for a real browser is what only a browser can answer: did the diagram island render, is
-the theme right in the first frame, does any page push the document sideways at 390px, does a
-signed-in reader's record actually reach a second machine.
+the theme right in the first frame, does any page push the document sideways at 390px, does the
+tab bar stay on screen on a phone.
 
 ### ~~6 · Authorisation lives in the database~~ — retired with the account layer (M40)
 
@@ -119,14 +125,15 @@ rules are cited by number.
 
 **Two projects meet in one repository, and they meet at exactly one file.**
 
-One is an authored corpus of markdown: 44 course modules in English (20 of them written, the rest planned), each with a
+One is an authored corpus of markdown: the course modules in English (§2 counts them, and how many are written), each with a
 Turkish translation, and the written ones also in Persian (M28). The other is a Next.js
 application that renders it into a static site. They share no code. They share
 `mini-courses/curriculum.yaml`, which the corpus side authors and the application side reads. That
 file is the only place a change on one side can break the other.
 
-Everything below was read out of the repository on 2026-09-08. Counts come from the commands beside
-them; anything a command cannot produce cites the file it came from.
+Everything below was read out of the repository, and its counts were last re-measured on 2026-11-19 with
+the commands beside them (`git ls-files` forms where a command could pick up an untracked file); anything a
+command cannot produce cites the file it came from.
 
 ---
 
@@ -146,7 +153,7 @@ mini-courses/                    src/
 | Lives in | `mini-courses/` | `src/`, `tests/`, `scripts/` |
 | Written by | the author, by hand | a colleague |
 | Governed by | `mini-courses/CLAUDE.md` and `MANIFEST.md` | the root `CLAUDE.md` |
-| Measured | 120 markdown files (`find mini-courses -name '*.md' -not -path '*scratchpad*' \| wc -l`) | 148 TypeScript files, 22,175 lines (`find src -name '*.ts' -o -name '*.tsx' \| xargs wc -l`) |
+| Measured, 2026-11-19 | 190 markdown files (`find mini-courses -name '*.md' -not -path '*scratchpad*' \| wc -l`) | 222 TypeScript files, 32,746 lines (`git ls-files src \| grep -E '\.tsx?$' \| xargs cat \| wc -l` for the lines). The old command lacked parentheses around `-o`, so its `xargs` was handed only the `.tsx` files |
 
 **The application never restates a fact that lives in markdown.** No module count, no title, no
 category total is typed into `src/`. Everything is derived at build time. This is enforced socially by
@@ -166,9 +173,12 @@ order of the `CategorySlug` union in `src/lib/content/categories.ts`.
 
 **A module** has a `name` (the file stem, and the source of its URL slug), a required `title`, a
 `status` of `ready` or `draft`, a duration in `minutes`, a list of `needs` naming prerequisites **by
-name**, and free-text `notes` that nothing reads. There are **44**, of which **20** are `ready`
-(measured 2026-11-07, after M64 to M69 added Agents in Practice and five planned Expert modules and
-retired Advanced Training, D101, and M73 added Advanced Agent Servers).
+name**, and free-text `notes` that nothing reads. There are **46**, of which **21** are `ready`
+(measured 2026-11-19: `node -e "const c=require('js-yaml').load(require('fs').readFileSync('mini-courses/curriculum.yaml','utf8')).categories;
+console.log(c.flatMap(k=>k.modules).length, c.flatMap(k=>k.modules).filter(m=>m.status==='ready').length)"`; counting
+`- name:` lines undercounts, because some modules are written in flow style). The count has moved with the
+curriculum (D101 retired Advanced Training; M64 to M73 added planned modules and Agents in Practice), and
+`src/app/lokum-modules.css` states it in its header from the same file.
 
 **A module has no number of its own.** Its number is its position in the config, computed in exactly
 one place — `src/lib/content/loader.ts` — and written nowhere else. Filenames carry no number, prose
@@ -234,8 +244,15 @@ keeps every address it had. *For Everyone* is the same module in plain words, wr
 rules), listed by the same `curriculum.yaml` name: there is one list of modules, never two. The
 validator fails a For Everyone file whose name the config does not list. Its pages live under an
 `/everyone/` segment after the language prefix (`/everyone/sheets/<level>/`,
-`/tr/everyone/courses/<level>/<module>/`); `src/lib/tracks.ts` is the one place those addresses and
-the track names are written. Every module has a For Everyone page in every language it has a For
+`/tr/everyone/courses/<level>/<module>/`). `src/lib/tracks.ts` is where those addresses and the track names
+are written: the three segments (`EVERYONE_SEGMENT`, `COURSES_SEGMENT`, `SHEETS_SEGMENT`), `catalogRoute`,
+`moduleRoute(slug, track, lang)` and `trackOfPath`. **What still spells a segment itself, and why**:
+`record/boot.ts` carries an inline ES5 copy of `trackOfPath` (a string run in `<head>` before any module
+loads, so it cannot import); `MainNav.tsx`, `TrackSwitch.tsx` and `record/keys.ts` each split a pathname
+and test `segments[0]` against `'sheets'` or `'courses'` to find a level or a module; `HomeStreet.tsx`
+prefixes `/everyone`; and `lib/bundle/build.ts` writes the bundle's own `everyone/` path, which is a
+file address under `api/v1/` and not a page. The directories under `src/app/` (`everyone/`, `tr/`, `fa/`)
+are the routes themselves. Every module has a For Everyone page in every language it has a For
 Engineers page in; where the file is not written, that page says so, links back, carries no
 completion control and is `noindex`. A track is a second body of the same module, like a
 translation: it changes no count and no number, but it does have its own record (§5).
@@ -344,7 +361,7 @@ error naming the trend at fault.
 floors border widths to whole pixels, so the 1.5px weight must be painted as a gradient or a height,
 never as a border.
 
-**Authorisation refuses by row.** See §6.
+~~**Authorisation refuses by row.**~~ Retired with the account layer (§6).
 
 ---
 
@@ -386,10 +403,22 @@ the boot script stamps nothing for null, the stylesheet's fallback rule reveals 
 a later change of default therefore moves the reader who never chose and leaves the reader who did
 exactly where they put themselves.
 
-**The record store is the only writer, and a UI preference is not an exception.** The temptation with
-`railFolded` was a second `localStorage` key beside the record; that would be a second writer, and it
-would also be invisible to the export and the erase dialog, which are supposed to account for
-everything the site remembers.
+**`src/lib/record/store.ts` is the only writer of the record, and a UI preference inside the record is not an
+exception.** The temptation with `railFolded` was a second `localStorage` key beside the record; that would
+be a second writer, and it would also be invisible to the export and the erase dialog, which are supposed
+to account for everything the site remembers.
+
+**What the record does not own, stated exactly (measured with `git grep -n "localStorage\|sessionStorage" -- src`
+on 2026-11-19).** Two other things are stored, and both are deliberately outside it. `hl-theme`
+(`src/lib/theme.ts`, written by `applyTheme` from the theme toggle and the keyboard island) is the colour
+theme: it is read before first paint by its own inline script, `THEME_BOOT_SCRIPT`, so it could not wait for the
+record, and it is not exported or erased with the record. `hl-track` is `sessionStorage`, the tab's last
+track (below). **Reaching `window.localStorage` goes through one guarded accessor**, `readLocalStorage()` in
+`src/lib/local-storage.ts` (the property read itself throws `SecurityError` on an opaque origin, so it sits inside
+the `try`): `record/storage.ts` owns the record's two keys and the writes' meaning and calls it, and the theme
+toggle and the keyboard island pass its result to `applyTheme`. The exceptions are the two inline boot scripts
+(`record/boot.ts`, `theme.ts`), which are strings run before any module and each carry their own `try`. The
+record's cross-tab signal is a `BroadcastChannel` named `hl-record` in `store.ts`, not a storage key.
 
 **One write can be two, and that is why completion has one path.** D14 puts a completion control at
 the end of a module (**A**) and another across the whole course on the progress page (**C**). The
@@ -537,7 +566,7 @@ page prints none.
    location (an image under `images/logos/` gets the class `bz-logo` and is drawn inline at text
    height, never as a figure; it must sit beside text, since an image alone in a paragraph becomes a
    figure; an image figure whose file is animated, read from its bytes by `animated.ts`, carries
-   `data-hl-animated`, and `Affordances` adds the replay button to it, M115 / D136), and leaves mermaid as a `data-mermaid` source div. It also REMOVES what the page states
+   `data-hl-animated`, and `Affordances` adds the replay button to it, M115 / D136), and leaves mermaid as a `data-mermaid` source div. Every module image also carries its own `width` and `height`, read from the file's header bytes by `src/lib/bundle/image-size.ts`, so the browser reserves the box before the file arrives (the stylesheet still draws it at width 100%); every picture after the first is `loading="lazy"`, **except an animated recording, which is always eager**, because its replay button reads the loaded file (`rehypeRewriteImages` in `render.ts`; a vendor's mark is left as it is). It also REMOVES what the page states
    elsewhere: the first `h1`, the category dek, the self-check paragraph, and since M24 the series map
    (`## Where this fits in the series` / `## Bu serinin neresindeyiz`), which stays in the file for a
    reader of raw markdown. `SERIES_HEADINGS` in `lines.ts` holds every language. And it turns each
@@ -573,16 +602,19 @@ the diagram overflow measured on 2026-09-08: the injected SVG arrives at its nat
 1,423px against a 656px column — and escapes the scroll container meant to hold it, painting over both
 rails. See `logs/BRAINSTORM_1.md` D10.
 
-Because the loader reaches `node:fs`, **nothing under `src/lib/content/` may be imported by a client
-component.** `layout.tsx` measures `curriculumFacts()` itself and passes the result down as props.
-Four components import `CategorySlug` from `categories.ts` and all four use `import type`, which is
-erased; a value import from `curriculum-file.ts` into a client island pulls the file system into the
-browser bundle and stops the build.
+Because the loader reaches `node:fs`, **a client component may not import anything under `src/lib/content/`
+that reaches it.** `layout.tsx` measures `curriculumFacts()` itself and passes the result down as props.
+The files there that are plain data may be imported by a client component, and are: `languages.ts` (its
+header says so) and `page-copy.ts`, which `SignOff`, `QuickQuiz`, `ContentsDrawer` and `Affordances` read. For everything else the only import allowed is `import type`, which is erased: three files
+import `CategorySlug` from `categories.ts` that way (`git grep -n "categories'" -- src/components`, 2026-11-19).
+A value import from `curriculum-file.ts` into a client island pulls the file system into the browser bundle
+and stops the build.
 
-**19 page routes and 7 route handlers** (`find src/app -name page.tsx | wc -l`, `-name route.ts`),
-producing 207 HTML pages and 161 JSON files (measured 2026-11-09, after M90's About page; the JSON is
-mostly the mobile bundle, §13). `/caravan/` is the trends timeline's address (M62): in the bar beside
-Progress, with its content under maintenance until the timeline is built.
+**21 page routes and 10 route handlers** (`git ls-files src/app | grep -cE '/page\.tsx$'`, and `/route\.ts$`),
+producing 219 HTML pages and 166 JSON files (`find out -name '*.html' | wc -l`, `-name '*.json'`, after
+`npm run build`, measured 2026-11-19; the JSON is mostly the mobile bundle, §13, and the search indexes).
+`/caravan/` is Caravan's address (M62, §14): in the bar beside Progress, drawing sample data under a notice
+that says the page is not ready until the author's trends land.
 
 **About (M90, D115; translated in M109, D132).** `/about/` tells why the project exists, and its words are
 `mini-courses/STORY.md` (with `STORY_tr.md` and `STORY_fa.md` beside it, read by `loadStory(lang)`; the same
@@ -599,7 +631,7 @@ page's art, in `components/about/palette.ts`, written into the page as `--about-
 screen each stall pins and plays under the scroll and the ground changes colour; below 900px stalls rise
 into place unpinned; each scene is wrapped and run only near the screen. With no script, or under
 `prefers-reduced-motion`, the island does nothing and the still page is what a reader gets. The footer
-links to it; the bar does not. `/` is a home page
+links to it, and so does the bar, as its fifth destination (`DESTINATIONS` in `MainNav.tsx`). `/` is a home page
 built from components; `mini-courses/index.md` is no longer the published home page and is read only as
 a link target. Since **D113** the same home renders at `/tr/` and `/fa/` from one component
 (`src/components/home/HomeStreet.tsx`) and one table of its words (`src/lib/home-copy.ts`), keyed by
@@ -639,8 +671,9 @@ holds the normaliser and tokenizer both sides use (Turkish folding, Persian lett
 non-joiner). The window is `SearchDialog.tsx`, a native modal `<dialog>` in the bar that imports
 `minisearch` and fetches the page's language's index the first time it opens, never with the page;
 `/` reaches it through the site's key map and Ctrl/Cmd+K through its own listener. MEASURED with
-`gzip -9` on 2026-11-07: 92.7, 117.2 and 120.8 KiB for English, Turkish and Persian, each excerpt
-stored to 400 characters so the window shows the text around a match.
+`gzip -9 -c out/search/<lang>.json | wc -c` on 2026-11-19: 180.4, 218.4 and 232.6 KiB for English, Turkish
+and Persian (92.7, 117.2 and 120.8 on 2026-11-07, since when modules, For Everyone versions and sections
+have been added), each excerpt stored to 400 characters so the window shows the text around a match.
 
 **The filters (D103, D104, D127).** Under the field, a "Filters" button (`aria-expanded`, closed by
 default) opens a panel of three rows of toggle chips, the catalog's own `.bz-chip` with its level
@@ -706,8 +739,8 @@ export and asked for every trace to go. The section number is kept.
 
 **The reader-facing rename landed on 2026-09-08** (`logs/PROGRESS_1.md` M9, vocabulary set C). The right
 column is what a reader now sees. **The left column is still what the code says**, everywhere:
-`sheetStamps`, `data-drawn`, `kind: 'sign-off'`, `sheet_slug`. That is deliberate and it is
-not laziness — a storage key or a DB column carries a reader's saved history, and renaming one to match
+`sheetStamps`, `data-drawn`, `kind: 'sign-off'`; `sheet_slug` was a database column and went with the database (M40). That is deliberate and it is
+not laziness — a storage key (or, once, a DB column) carries a reader's saved history, and renaming one to match
 a label would invalidate every record for a cosmetic gain. So the two columns are both live, and the
 line between them is: **anything a reader can see uses the right column, anything the machine reads
 uses the left.**
@@ -722,8 +755,8 @@ uses the left.**
 | feeds | the modules a module is a prerequisite *for* | **Unlocks** |
 | requires | a module's own prerequisites | **Requirements** |
 | title block | the module's own panel of facts | **Module info** — M11 moved it out of the right rail and into the column |
-| the register | the reader's stored history | **Your progress** — the page's own title and the navbar's fourth item since M14; since M38 it draws the level circles, the continue card and one row, **Export, import, erase** |
-| the drafter | the reader | **you** / **Account** |
+| the register | the reader's stored history | **Your progress** — the page's own title and a destination in the bar since M14 (**Progress** there now, third of five); since M38 it draws the level circles, the continue card and one row, **Export, import, erase** |
+| the drafter | the reader | **you** (there is no Account since M40) |
 | index sheet | the flat list of all modules, at `/sheets` | **Catalog** |
 | extent | length in words and minutes | **Length** |
 | uptime | days in a row | ~~**Streak**~~ — shown nowhere since M38, which removed the readout row; the `uptime` selector went with the footer's readout (M111). The record still keeps `days` |
@@ -731,7 +764,7 @@ uses the left.**
 | unsigned | a module the reader has not completed | **Not completed** |
 | A0 / A4 | the two page anatomies, chosen by `status` | — internal |
 | mark, class, XP | badge, rank, points | ~~**Rank** / **XP**~~ — **nothing.** M13 took all three off every instrument: nobody could name the question they answered, and `Reading time` took XP's cell (`logs/BRAINSTORM_1.md` **D22**). `xp()` and `classOf()` were removed with them |
-| LKM-01 | the mark printed in the module info panel | — internal |
+| LKM-01 | the mascot's name, drawn by `components/mascot/` and introduced on `/legend/`; it is no longer printed in a module's info panel | — internal |
 | §n.n | a section of the original design spec, cited in code comments | — internal |
 
 **Two things are enforced rather than reviewed.** `tests/unit/copy-register.test.ts` scans **the whole
@@ -781,8 +814,10 @@ that produced it. Treat them as citations you cannot follow, not as dead links.
 
 ## 10. Stack, and the commands that matter
 
-Next.js 16 with Turbopack, React, TypeScript in strict mode, Tailwind v4, vitest, Playwright against
-real Chrome, zod, gray-matter, js-yaml, mermaid 11.17.
+Next.js 16 with Turbopack, React 19, TypeScript in strict mode, Tailwind v4, vitest, Playwright against
+real Chrome, zod, gray-matter, js-yaml, mermaid 11, minisearch, gsap (loaded on demand by the animated pages).
+Versions are in `package.json`; this file states none beyond the major, because a minor is moved by
+dependency updates and nothing here would notice.
 
 ```bash
 npm run dev            # next dev on :3000
@@ -792,38 +827,49 @@ npm test               # vitest: tests/unit/** + tests/corpus/**
 npm run test:e2e       # playwright: builds, serves out/ on :3111, real Chrome
 ```
 
-CI runs typecheck → test → build → link check → e2e, in that order (one build since M40, with no
-base path since D92, which is the build the deploy publishes). A green `npm test` alone means little: the link gate and the export itself only
-fail in `build`.
+CI (`.github/workflows/ci.yml`, job `Build and test`) runs, in this order: `npm ci`, `npm audit
+--audit-level=high --omit=dev` (a high or critical advisory in what ships fails the run), typecheck, test,
+build, the link check (`scripts/check-links-out.mjs`), the bundle check (`scripts/check-bundle-out.mjs`), e2e, and
+then a diff of the two `api/` trees the two builds of the commit produced (the build before e2e and the one e2e
+starts with), which must be byte-identical. It is one build since M40, with no base path since D92, and
+it is the build the deploy publishes. A green `npm test` alone means little: the link gate and the export
+itself only fail in `build`. Under CI Playwright retries a failing case once, and `tests/flaky-reporter.ts`
+turns a case that passed only on its retry into a warning annotation and a summary list, so using the retry
+is visible; it never fails the run.
 
 ---
 
 ## 11. The test suite, and the one rule it lives by
 
-**68** test files (`find tests -name '*.test.ts*' | wc -l`; vitest runs 67 of them) holding
-**1,164** unit and corpus tests, plus **36** Playwright spec files holding **534** browser cases
-(`npx playwright test --list`; measured 2026-11-07, after M74; M40 had cut them from 2,107 and
-1,234, **D88**), in three suites that each answer
-something the others cannot.
+**103** test files (`find tests \( -name '*.test.ts' -o -name '*.test.tsx' \) | wc -l`; the pattern
+`*.test.ts*` also matches a snapshot file) holding **1,622** unit and corpus tests (`npx vitest run`), plus
+**47** Playwright spec files holding **787** browser cases (`npx playwright test --list`, after a build;
+measured 2026-11-19; M40 had cut them from 2,107 and 1,234, **D88**), in three suites that each answer
+something the others cannot. The browser cases run in three projects: `chrome-1440` (725), `chrome-390`
+(only `responsive` and `containment`, 49) and `chrome-mobile` (only `mobile.spec.ts`, 13: a Pixel 7 profile
+at 390 wide, so `(hover: none)` and `(pointer: coarse)` are true, which a narrowed desktop window never
+reports).
 
 | Suite | Runs | Answers |
 |---|---|---|
 | `npm test`, vitest | every push | anything that computes a value, with no DOM |
 | `tests/corpus/` | inside `npm test` | the transforms against every real module, not a fixture |
-| `npm run test:e2e`, real Chrome | every push | first-frame correctness, layout at 1440 and 390, real interaction |
+| `npm run test:e2e`, real Chrome | every push | first-frame correctness, layout at 1440 and 390, the phone as a touch device, real interaction |
 
 **Two habits are load-bearing rather than decorative.**
 
 **Measure, do not assert.** The most valuable results here came from measuring: finding 39 broken
 links by counting them in the export, proving a CI failure was pre-existing by building the previous
-commit in a worktree, proving a magic link could not work cross-device by watching it fail in Chrome,
-and proving the diagram overflow by reading element geometry off the page rather than reasoning about
+commit in a worktree, proving (while the account layer existed) that a magic link could not work
+cross-device by watching it fail in Chrome, and proving the diagram overflow by reading element geometry off the page rather than reasoning about
 CSS.
 
 **Mutation-test the guards that matter.** A test that would pass against a deliberately broken
-implementation protects nothing. The claim gate and the sync generation counter were each verified by
-removing them and watching the right test fail; the guard added on 2026-09-08 against naming a module
-by number was watched failing in both languages before it was kept.
+implementation protects nothing. The guard added on 2026-09-08 against naming a module by number was
+watched failing in both languages before it was kept, and the two guards PR #147 added
+(`tests/unit/guards/render-xss.test.ts`: markup that runs script does not survive the markdown pipeline;
+`tests/unit/guards/check-links-out.test.ts`: a page linking to a path the export lacks makes
+`check-links-out.mjs` exit 1) each build a made-up input rather than read the content.
 
 ### The one rule the suite lives by
 
@@ -835,7 +881,7 @@ red and teaches nobody anything. The suite was cut from 1,948 tests that pinned 
 few hundred rule-checking ones in September 2026, and four more pinned assertions were replaced on
 2026-09-08.
 
-The one deliberate exception is `tests/e2e/sheets.ts`, which types out all 46 modules, their routes,
+The one deliberate exception is `tests/e2e/sheets.ts`, which types out every module (46 `sheet(` calls on 2026-11-19), their routes,
 titles and formats **by hand**, precisely so that a renumber, a slug change or a stub being written
 fails a test and someone has to look. `tests/e2e/index-sheet.spec.ts` reconciles that list against the
 manifest the site actually renders, which is what keeps the duplication honest.
@@ -851,8 +897,21 @@ moved every one of them onto different content with the whole suite still green.
 
 ## 12. Deployment
 
-`main` → GitHub Actions → GitHub Pages, at `https://ai-bazaar.lokum.dev/` since 2026-11-06 (D92),
-served from the domain's root, so the build has no base path. The domain is a CNAME to
+`main` → CI → the deploy workflow → GitHub Pages, at `https://ai-bazaar.lokum.dev/` since 2026-11-06 (D92),
+served from the domain's root, so the build has no base path.
+
+**A commit is deployed only if its own CI run succeeded (PR #147).** `deploy.yml` used to start on `push: main`
+beside `ci.yml` with no dependency on it, and six red `main` commits were published that way. It starts on
+`workflow_run` of the CI workflow, and its first job, `gate`, decides which commit is built and whether it may
+be, for every trigger. For a `workflow_run` the commit is the one CI finished on, built only if that run
+succeeded, was a `push` and came from this repository (a fork's pull request from a branch also called
+`main` matches `branches: [main]`), and only if that commit is still `main`'s head: a newer commit has its own
+run and deploys itself, and publishing the older one after it would put the site back in time. The daily
+`schedule` (the star count, D85) and `workflow_dispatch` take `main`'s head and build it only if a successful
+CI push run exists for it; a run still in progress counts as not yet. The `build` job then checks out that
+exact commit, not whatever `main` has moved to. Every workflow is read-only by default (`permissions:
+contents: read`), the one job that publishes (`deploy`) asks for `pages: write` and `id-token: write` itself,
+and every action is pinned to a commit SHA with its version beside it. The domain is a CNAME to
 `lokumai.github.io` in Cloudflare, **DNS only**: proxied, GitHub's domain check sees Cloudflare's
 addresses and never issues the certificate. `lokumai.github.io/ai-engineering-bazaar/` redirects to
 it (301).
@@ -872,13 +931,26 @@ fast-forward, and `gh pr merge --admin` is refused while a check is still runnin
 `repos/.../branches/main/protection` returns 404 for this repository, which is misleading; use
 `gh api repos/.../rulesets`.
 
-**What the site tells a visitor about itself (M97, D122).** The footer's second row (below the provenance row; the reading-record row that stood above both went in M111, D134) names the site's
-owner in law (the company's registered trade name), its address and a contact email, and links `/legend/#privacy`
-and `/legend/#legal`. The facts are one object, `SITE_OWNER` in `src/lib/site.ts`, with each source and the date it
-was read; the footer and the legend's Legal section both read it. The Privacy section promises no
-cookie, no form, no analytics and no request to another origin, which is true because the build fetches
-fonts and the star count itself and the record stays in `localStorage`; `tests/e2e/legal.spec.ts` fails a
-route that breaks any of those, so the note cannot go stale unnoticed.
+**What the site tells a visitor about itself (M97, D122).** The footer (`SiteFooter.tsx`, takes no props, the same
+server markup on every route; the first row and the reading-record readout went in M111, D134) is three blocks in
+one grid under one hairline, chosen from three on 2026-11-17: the **owner** (an `<address>`: the company's
+registered trade name whole, its address and a contact email), a **Site** column (About, Feedback, Legend and keys,
+Privacy, Legal) and a **Project** column (the repository, the licence, the chain of organisations in
+`AFFILIATION`, whose order is the claim), with the mark credit on a rule of its own beneath. On a phone the two
+link columns stay side by side and the owner block goes below them. The facts are in `src/lib/site.ts`:
+`SITE_OWNER` (each source and the date it was read), `AFFILIATION`, and `FEEDBACK_URL`, **a link to a Google Form
+that lives outside the site** (anonymous unless the sender adds an email); nothing is embedded, so the page has
+no form of its own. The footer, the legend's Legal section and the Privacy section read them.
+
+The Privacy section of `/legend/` opens with an **In short, for this site** box of four facts (no cookies, no
+analytics, no account or form, progress stays in the browser), then says it at length, names what the Feedback
+link does (it opens Google's own page, and only what the sender chooses to send reaches the author), says
+that progress and settings such as the theme are saved in the browser only, and has a paragraph on the mobile
+app, which the app's own repository holds true and no test here can see. The promise is no cookie, no form,
+no analytics and no request to another origin, true because the build fetches fonts and the star count itself
+and the record stays in `localStorage`; `tests/e2e/legal.spec.ts` fails a route that breaks any of those, so the
+note cannot go stale unnoticed. A link to Google's form is a navigation the reader chooses, not a request the
+page makes.
 
 ---
 
@@ -1020,6 +1092,44 @@ list's search, year, views, pages and hover.
 
 ---
 
+## 15. The phone
+
+Below 768px, and on a touch phone held on its side, the bar's own `<nav>` becomes a **fixed bottom tab bar**
+(PR #144; its plan, measurements and screenshots are `playground/2026-11-round-7/MOBILE-PLAN.md`, which the
+author holds, and `main` did not track on 2026-11-19). The desktop is not touched. The pattern's geometry and tokens are
+DESIGN.md's (Layout, "The phone"); this section is where it is enforced.
+
+**One landmark, one DOM, restyled.** `MainNav.tsx` renders the same five destinations (`DESTINATIONS`: Home,
+Catalog, Progress, Caravan, About) at every width, each with a small stroked glyph that only the phone draws
+(`.bz-tab-icon`, hidden by default). Nothing is rendered twice and nothing is hidden by script: `src/app/mobile.css`
+restyles the bar. The Catalog entry stays a `<details>` disclosure and its menu becomes a sheet standing on the
+tab bar, closed by Escape, by a tap outside it or by the summary again.
+
+**Every rule is inside a media query that is false for a mouse at 768px and above.** The query is
+`(max-width: 767px), (hover: none) and (pointer: coarse) and (max-height: 500px) and (orientation: landscape)`.
+`@media (hover: none)` alone gates the two things no touch screen can use (the `§` heading anchor and the
+keyboard chord hint, both removed there). The file is **unlayered on purpose**: the language and the surfaces
+write in `@layer components` and Tailwind's utilities sit above it, and an unlayered rule beats every layer
+without `!important` and without reordering a layer the desktop depends on. It follows that nothing in
+`mobile.css` may sit outside a media query. It takes tokens only, like any surface stylesheet
+(`surface-stylesheets.test.ts`), and what a phone gets that the mockup never drew is recorded in
+`NARROW_DEVIATIONS` in `tests/e2e/fidelity.ts`.
+
+**What it also changes**, each with a reason in the file: the page stops above the bar (`body` bottom padding and
+`html { scroll-padding-bottom }`); the breadcrumb trail is one back link of 44px; the search window is a
+full-screen sheet; text fields are 16px, because a smaller one makes iOS zoom the page when it takes focus; the
+catalog's filter rows become one scrolling line each with an edge fade that follows the scroll position; the
+Caravan card slides up standing on the bar; and on a phone on its side the ornament band goes, the top bar stops
+being sticky, and the tab bar shrinks.
+
+**Where it is held.** `tests/e2e/mobile.spec.ts` (project `chrome-mobile`, §11) asserts what the tab bar added:
+every destination visible, fixed and 44px with nothing to scroll, the bar inside the screen at 320, 360 and 390,
+the menu opening and closing by touch and keyboard, no control behind a hover, the search window filling the
+screen, and a desktop that kept its bar where it was. `responsive.spec.ts` still holds that the document never
+scrolls sideways and that controls reach the touch floor.
+
+---
+
 ## Read next
 
 Everything below is outside this harness. It is not superseded by this file: each one goes deeper on
@@ -1030,7 +1140,7 @@ one subject than an architecture document should.
 | `mini-courses/MANIFEST.md` | The seven rules every module is held to. Read before writing content |
 | `mini-courses/CLAUDE.md` | The working agreement: how a module gets written, the diagram system, the naming rules |
 | `tests/README.md` | The testing rule, the four layers, and what fails for a reason |
-| `SECURITY.md` | The shared-origin exposure and the one accepted risk |
+| `SECURITY.md` | The security posture and its operational rules; the one accepted risk it listed (the shared origin) ended with the custom domain (D92) |
 | `README.md` | What the course is, and the commands to run it |
 
 **The code carries its own reasoning.** Modules open with a comment recording the decision and *why*,

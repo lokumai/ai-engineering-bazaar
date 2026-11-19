@@ -106,6 +106,15 @@ describe('encoding', () => {
     expect(JSON.parse(compactJson(data)).e['a/one']).toEqual(['2026-11-02', '', []])
   })
 
+  it('carries an instant before 1970 as it is, and reads it back', async () => {
+    const before = '1969-12-31T23:59:59.000Z'
+    const data = record({ sheets: { 'a/one': sheet({ signedOff: before, signedRevision: 'abcd' }) } })
+    expect(JSON.parse(compactJson(data)).e['a/one']).toEqual([before, 'abcd', []])
+    const progress = await decodeTransfer(await encodeTransfer(data))
+    expect(progress?.sheets['a/one']).toEqual({ signedOff: before, signedRevision: 'abcd', ticks: [] })
+    expect(mergeTransfer(record(), progress!).sheets['a/one'].signedOff).toBe(before)
+  })
+
   it('writes no revision for a module that is not completed', () => {
     const data = record({ sheets: { 'a/one': sheet({ signedRevision: 'abcd', checklist: { '1': true } }) } })
     expect(JSON.parse(compactJson(data)).e['a/one']).toEqual(['', '', [1]])

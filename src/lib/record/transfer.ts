@@ -10,8 +10,8 @@
  *   compactJson = {"v":1,"e":{slug:[signedOff,signedRevision,[tick,…]]},"y":{…},"d":[day,…]}
  *
  * `e` is For Engineers (`sheets`), `y` For Everyone (`everyoneSheets`). A completion instant the
- * record holds in canonical form travels as base36 of its epoch milliseconds; any other instant
- * the record accepts travels as it is, and is told apart by its `-`, which base36 never has.
+ * record holds in canonical form, from 1970 on, travels as base36 of its epoch milliseconds; any other
+ * instant the record accepts travels as it is, told apart by its `-`, which such a base36 never has.
  *
  * **What it leaves out, on purpose:** `reachedEnd` and `dwellSeconds` (observed, they gate
  * nothing), `prefs` (a fact about one browser), `meta` and the envelope.
@@ -72,13 +72,15 @@ export interface TransferProgress {
 
 // --- encode ------------------------------------------------------------------------------------
 
-function isCanonicalInstant(instant: string): boolean {
-  const ms = Date.parse(instant)
-  return Number.isFinite(ms) && new Date(ms).toISOString() === instant
-}
-
+/**
+ * Base36 of the epoch milliseconds for a canonical instant at or after 1970; any other instant as it
+ * is. Before 1970 the milliseconds are negative and their base36 starts with `-`, which a decoder
+ * reads as an instant string, so such an instant travels as its own text.
+ */
 function encodeInstant(instant: string): string {
-  return isCanonicalInstant(instant) ? Date.parse(instant).toString(36) : instant
+  const ms = Date.parse(instant)
+  if (!Number.isFinite(ms) || ms < 0 || new Date(ms).toISOString() !== instant) return instant
+  return ms.toString(36)
 }
 
 /** The ticks the record reads: a key of one to four digits holding `true`. */

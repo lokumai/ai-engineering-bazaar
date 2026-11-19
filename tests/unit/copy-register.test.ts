@@ -85,6 +85,7 @@ const ROOTS: readonly string[] = [
   'lib/content/page-copy.ts',
   // D144 — the progress transfer: the "Move to the app" dialog on the progress page.
   'components/transfer',
+  'app/transfer',
 ]
 
 function walk(target: string): string[] {

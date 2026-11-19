@@ -102,6 +102,19 @@
     line-height: 1.5;
   }
 
+  /* `/transfer/` arranges the same pieces: the counts as the definition list above, the line,
+     and a quiet hint in the meta size. */
+  .bz-transfer { max-width: 52ch; }
+
+  .bz-transfer-counts.bz-defs { margin: 0 0 18px; }
+
+  .bz-transfer-hint {
+    margin: 14px 0 0;
+    color: var(--color-on-surface-muted);
+    font-size: var(--text-meta);
+    line-height: 1.5;
+  }
+
   .bz-defs {
     display: grid;
     grid-template-columns: max-content 1fr;

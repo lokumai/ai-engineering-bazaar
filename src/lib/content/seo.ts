@@ -18,7 +18,7 @@
  * ## What is not here, on purpose
  *
  * Forwards (`moved.ts`, the `/courses/<level>/` stubs), the unwritten For Everyone
- * pages, the planned (`draft`) modules, the profile, the caravan while it shows its
+ * pages, the planned (`draft`) modules, the profile, the transfer page (D144), the caravan while it shows its
  * sample (D120) and the 404 carry `noindex` and are in no list. The catalog, the level pages
  * and the handful of single pages are listed by route, not by content, because a route
  * is not content: a page added without being added here is caught by

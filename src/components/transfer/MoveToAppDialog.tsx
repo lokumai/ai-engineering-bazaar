@@ -26,7 +26,7 @@ import { QrCode } from './QrCode'
  * ## Where the trigger is (option A, revision 2, 2026-11-19)
  *
  * One quiet button with a small QR glyph on the progress page's title row, left of the chord hint
- * (`playground/2026-11-transfer/A-on-your-phone.html`). It is there only once the record is read
+ * (`playground/2026-11-transfer/A-on-your-phone.html` at commit 319dc94; the playground copy was removed in M137). It is there only once the record is read
  * and holds something to move: before hydration the page cannot know, and with nothing to move
  * the button would open a dialog that says so. An open dialog stays open if the record empties
  * under it (another tab erasing), and then says there is nothing to move.

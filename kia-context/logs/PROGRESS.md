@@ -11,7 +11,7 @@ description: >
   backgrounds and copy (M81), Agentic UI (M82), the cast's colours (M83), and M84 to M90 (content
   and site fixes, the home page in Turkish and Persian, Dariush's motif, block menus in the top layer,
   and About, the story of the Bazaar); Caravan built (M91), its real trends waiting (M92) and its second
-  round (M93); multilingual SEO (M96); translated objectives on the site (M98) and in the bundle (M99); the story in the bundle (M100); three screen recordings and Human in the Loop moved into Agentic UI (M101); the search filters applied by a button (M102); a laptop section in Inference Engines (M103); the word count in the bundle (M105), the checklist index (M106), the diagrams without empty rects (M107) and five logos without CSS (M108); the About page in Turkish and Persian (M109); the module page's own words in Turkish and Persian (M110); the footer without its first row (M111); the tool-call recording cropped to the chat and the reasoning recording sped up (M112); the LokumAI mark on the References' Modules subsection (M113); stall 1 naming the treaty and the About page's name (M114); a replay button on every animated recording (M115); the quick quiz on both tracks (M116); the privacy note for the mobile app (M117); translated titles in the bundle's index (M118); lot-map in Code Agents and Agents in Practice (M119); Advanced Deployment split into LLM and agent deployment (M120); a map of the generative AI stack in Agent Frameworks (M121); Advanced LLM Deployment moved after Advanced LLM (M122); LLM Compression and offline/online post-training (M123); Advanced Agent Architectures after Advanced Multi-Agent (M124); agentic UI against traditional UI (M125); the Caravan notice as a centred caution bar (M126); Advanced Prompt Engineering named in full (M127); the footer and the privacy note redesigned, with a Feedback link (M128); ARTEX and Claude-BugHunter in Security (M129); progress moved between the site and the app in a link (M130); shared helpers and image sizes (M132); the site on phones (M133); deploy gated on CI, pinned workflows and flake fixes (M134); the specs re-measured (M135); and M41, the content bundle for the mobile reader. Each milestone carries its deliverables and acceptance
+  round (M93); multilingual SEO (M96); translated objectives on the site (M98) and in the bundle (M99); the story in the bundle (M100); three screen recordings and Human in the Loop moved into Agentic UI (M101); the search filters applied by a button (M102); a laptop section in Inference Engines (M103); the word count in the bundle (M105), the checklist index (M106), the diagrams without empty rects (M107) and five logos without CSS (M108); the About page in Turkish and Persian (M109); the module page's own words in Turkish and Persian (M110); the footer without its first row (M111); the tool-call recording cropped to the chat and the reasoning recording sped up (M112); the LokumAI mark on the References' Modules subsection (M113); stall 1 naming the treaty and the About page's name (M114); a replay button on every animated recording (M115); the quick quiz on both tracks (M116); the privacy note for the mobile app (M117); translated titles in the bundle's index (M118); lot-map in Code Agents and Agents in Practice (M119); Advanced Deployment split into LLM and agent deployment (M120); a map of the generative AI stack in Agent Frameworks (M121); Advanced LLM Deployment moved after Advanced LLM (M122); LLM Compression and offline/online post-training (M123); Advanced Agent Architectures after Advanced Multi-Agent (M124); agentic UI against traditional UI (M125); the Caravan notice as a centred caution bar (M126); Advanced Prompt Engineering named in full (M127); the footer and the privacy note redesigned, with a Feedback link (M128); ARTEX and Claude-BugHunter in Security (M129); progress moved between the site and the app in a link (M130); shared helpers and image sizes (M132); the site on phones (M133); deploy gated on CI, pinned workflows and flake fixes (M134); the specs re-measured (M135); FreeToken in Inference Engines (M136); and M41, the content bundle for the mobile reader. Each milestone carries its deliverables and acceptance
   criteria as `- [ ]` checkboxes, ticked as the work lands, and closes with a dated report; the loop
   that governs that is below, in this file.
   NOT here: why a choice was made (BRAINSTORM.md), or any rule that outlives the milestone
@@ -19,8 +19,8 @@ description: >
 authority: state
 writes: agent, every session
 status: active
-covers: "M50 to M135, 2026-11-06 onward, and M41, which part 2 held for PR #57"
-last_updated: 2026-11-19
+covers: "M50 to M136, 2026-11-06 onward, and M41, which part 2 held for PR #57"
+last_updated: 2026-11-23
 ---
 
 # 📈 PROGRESS, part 3 — M50 onward
@@ -2767,6 +2767,18 @@ The author, 2026-11-18: "fix ARCHITECTURE.md (whole kia-context should not be st
       them, the deploy gate and the phone tab bar described.
 - [x] **Logs**: M132 to M135 and D146 to D148. M130, M131, D144 and D145 belong to the colleague's open PRs
       #145 and #146.
+---
+
+## 🏁 Milestone M136: FreeToken in Inference Engines, DONE
+
+The author, 2026-11-23: one or two sentences on FreeToken in Inference Engines.
+
+- [x] **"On your own machine"** (EN, TR, FA): when the model is far bigger than the GPU, an engine such as
+      FreeToken runs mixture-of-experts models by keeping the few experts in use on the GPU and the rest in
+      ordinary memory; a Repositories entry in each language. The course explains MoE only in the planned
+      Advanced LLM, so the sentence says it in plain words. The deeper treatment (expert offloading and
+      caching) is a candidate topic for Advanced LLM Deployment, not added.
+- [x] **Gate (2026-11-23)**: typecheck; 1,663 unit tests; build, link and bundle checks.
 ---
 
 > **← Part 2: [`PROGRESS_2.md`](PROGRESS_2.md)** — M16 to M49. **← Part 1: [`PROGRESS_1.md`](PROGRESS_1.md)**

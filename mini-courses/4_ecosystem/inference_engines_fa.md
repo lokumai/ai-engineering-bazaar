@@ -51,7 +51,7 @@ graph TD
 
 **روی سیستم خودت**، سراغ wrapper‌ها برو. [مبانی LLM](../1_fundamentals/llms_fa.md) درباره‌ی ![](./images/logos/ollama-mono.svg)**[Ollama](https://ollama.com/)** و ![](./images/logos/lmstudio-mono.svg)**[LM Studio](https://lmstudio.ai/)** گفت، و اینجا هم جواب درست همین‌هان: engine رو پشت خودشون قایم می‌کنن و ظرف چند دقیقه کارت رو راه می‌ندازن.
 
-زیر هر دوشون ![](./images/logos/llamacpp.svg)**[llama.cpp](https://github.com/ggml-org/llama.cpp)** خوابیده، یعنی inference مدل‌های زبانی که با C و C++ نوشته شده، و اصلاً به لطف همینه که یه مدل quantize‌شده می‌تونه روی لپ‌تاپ اجرا بشه. llama.cpp رو فقط توی دو حالت مستقیم استفاده کن: وقتی یه build flag می‌خوای که wrapper دستت نمی‌ده، یا وقتی داری مدل رو روی سخت‌افزاری می‌بری که هیچ‌کس دیگه پشتیبانیش نمی‌کنه.
+زیر هر دوشون ![](./images/logos/llamacpp.svg)**[llama.cpp](https://github.com/ggml-org/llama.cpp)** خوابیده، یعنی inference مدل‌های زبانی که با C و C++ نوشته شده، و اصلاً به لطف همینه که یه مدل quantize‌شده می‌تونه روی لپ‌تاپ اجرا بشه. llama.cpp رو فقط توی دو حالت مستقیم استفاده کن: وقتی یه build flag می‌خوای که wrapper دستت نمی‌ده، یا وقتی داری مدل رو روی سخت‌افزاری می‌بری که هیچ‌کس دیگه پشتیبانیش نمی‌کنه. اگه مدل خیلی بزرگ‌تر از حافظه‌ی GPU‌ت باشه، قدم بعدی یه engine مثل **[FreeToken](https://github.com/FlashML-org/FreeToken)**‌ه. مدل‌های mixture-of-experts برای هر token فقط چند تا از زیرشبکه‌های زیادشون رو به کار می‌گیرن؛ FreeToken همون چند تا رو روی GPU نگه می‌داره و بقیه توی حافظه‌ی معمولی کامپیوتر منتظر می‌مونن.
 
 **روی یه سرور GPU با کاربرهای واقعی**، wrapper‌ها دیگه جواب نمی‌دن و یه serving engine لازم داری.
 
@@ -187,6 +187,7 @@ batching ایده‌ایه که همه‌ی عددهای این درس رو تو
 ### 🗃️ Repository‌ها
 
 - [llama.cpp](https://github.com/ggml-org/llama.cpp): inference مدل‌های زبانی با C و C++، و پایه‌ای که wrapper‌های محلی روش ساخته شدن
+- [FreeToken](https://github.com/FlashML-org/FreeToken): اجرای مدل‌های mixture-of-experts بزرگ‌تر از GPU، روی یه کامپیوتر گیمینگ با کارت NVIDIA
 - [SGLang](https://github.com/sgl-project/sglang): serve کردن پرسرعت، که وقتی درخواست‌ها prefix مشترک دارن خیلی خوب جواب می‌ده
 - [TensorRT-LLM](https://github.com/NVIDIA/TensorRT-LLM): مال NVIDIA، که از قبل کامپایل می‌شه تا latency پایین‌تری بده
 - [llm-d](https://github.com/llm-d/llm-d): serve کردن روی چند تا سرور با Kubernetes

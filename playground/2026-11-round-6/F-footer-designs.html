@@ -1,0 +1,120 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Round 6 · Footer designs</title><style>
+*{box-sizing:border-box}
+.theme-light{--ground:#fdfbf7;--paper:#ffffff;--sand:#e6dac6;--line:#d8cbb4;--line2:#c3b299;--ink:#20242e;--title:#1b1b47;--muted:#6a6558;--faint:#948d7d;--accent:#282864;--headbg:#282864;--headink:#fff;--headdim:#c9c6e4;--gold:#b8873b;--ok:#2f8c86}
+.theme-dark{--ground:#1d1f27;--paper:#262933;--sand:#181a21;--line:#33363f;--line2:#444854;--ink:#e7e3d8;--title:#e9e6e0;--muted:#9aa0ad;--faint:#606571;--accent:#848bd0;--headbg:#282864;--headink:#fff;--headdim:#c9c6e4;--gold:#b8873b;--ok:#2f8c86}
+:root{--sans:"Avenir Next",ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;--mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+body{margin:0;background:#eee9de;color:#20242e;font:16px/1.6 var(--sans)}
+.doc{max-width:1120px;margin:0 auto;padding:40px 16px 80px}
+.doc h1{font:600 28px/1.25 var(--sans);margin:0 0 8px;color:#1b1b47}
+.doc>p.lede{color:#4d493f;margin:0 0 32px;max-width:70ch}
+.var{margin:0 0 56px}
+.var>h2{font:600 22px/1.3 var(--sans);margin:0 0 6px;color:#1b1b47}
+.var>p.note{margin:0 0 18px;color:#3c382f;max-width:75ch}
+.cap{font:600 13px/1.4 var(--sans);color:#4d493f;margin:18px 0 6px}
+.scroll{overflow-x:auto;border:1px solid #c3b299;border-radius:8px}
+.row2{display:flex;gap:16px;flex-wrap:wrap;align-items:flex-start}
+@media (max-width:860px){.row2{flex-wrap:nowrap;overflow-x:auto;padding-bottom:4px}}
+.phone{width:390px;flex:none;border:1px solid #c3b299;border-radius:8px;overflow:hidden}
+.frame{container-type:inline-size;background:var(--ground);color:var(--ink);font:16px/1.6 var(--sans)}
+.d .frame{min-width:960px}
+.pad{height:28px;background:var(--ground)}
+a{color:inherit}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style></head><body>
+<style>
+/* shared footer atoms */
+.ft{background:var(--paper);border-top:1px solid var(--line2);color:var(--muted);font-size:13px;line-height:1.6}
+.ft a{color:var(--muted);text-decoration:underline;text-decoration-color:var(--line2);text-underline-offset:3px;display:inline-block;padding:4px 0}
+.ft a:hover{color:var(--ink);text-decoration-color:currentColor}
+.ft a:focus-visible{outline:2px solid #a0503c;outline-offset:2px;border-radius:2px}
+.ft ul{list-style:none;margin:0;padding:0}
+.ft address{font-style:normal}
+.ft .in{padding:12px 22px}
+.ft .own b{font-weight:400;color:var(--ink)}
+
+/* A: quiet, three left-aligned lines, groups divided by space */
+.fa .in{display:flex;flex-direction:column;gap:2px}
+.fa .r1{display:flex;flex-wrap:wrap;gap:0 32px}
+.fa .g{display:flex;flex-wrap:wrap;gap:0 18px}
+.fa .r2{display:flex;flex-wrap:wrap;gap:0 18px;align-items:center}
+.fa .r3{padding-top:6px;margin-top:6px;border-top:1px solid var(--line)}
+.fa .r3 address{display:flex;flex-wrap:wrap;gap:0 20px}
+.fa .r3 .own{flex-basis:100%}
+.fa .r3 .sep{color:var(--faint)}
+
+/* B: owner block left, two link columns right */
+.fb .in{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr) minmax(0,1fr);gap:20px 40px;padding-top:18px;padding-bottom:12px}
+.fb h3{font:600 13px/1.5 var(--sans);color:var(--ink);margin:0 0 2px}
+.fb .own p{margin:0}
+.fb .own address{margin:0}
+.fb .base{grid-column:1/-1;border-top:1px solid var(--line);padding-top:8px;display:flex;flex-wrap:wrap;gap:0 18px}
+@container (max-width:640px){
+ .fb .in{grid-template-columns:1fr 1fr}
+ .fb .own{grid-column:1/-1;order:3}
+ .fb .base{order:4}
+}
+
+/* C: centred stack */
+.fc .in{display:flex;flex-direction:column;align-items:center;text-align:center;gap:2px;padding-top:16px;padding-bottom:14px}
+.fc ul{display:flex;flex-wrap:wrap;justify-content:center;gap:0 20px}
+.fc .chain{display:flex;flex-wrap:wrap;justify-content:center;gap:0 6px;align-items:center}
+.fc .chain .sep,.fc .meta .sep{color:var(--faint)}
+.fc .meta{display:flex;flex-wrap:wrap;justify-content:center;gap:0 6px;align-items:center}
+.fc address{max-width:60ch;margin-top:8px}
+.fc address .nm{display:block;color:var(--ink)}
+.fc .rule{width:48px;border:0;border-top:1px solid var(--line2);margin:8px 0}
+</style>
+
+<div class="doc">
+<h1>Footer: three alternatives</h1>
+<p class="lede">Each footer keeps every fact the current one carries, adds Feedback, and stays at 13px. Each is shown at desktop width and at 390px, in light and dark. The colours are the shell's tokens, with the same muted text and underlined links as today. The Feedback link is a placeholder.</p>
+<div id="out"></div>
+</div>
+
+<script>
+const OWN={n:'İŞ ZEKASI YAZILIM DANIŞMANLIK HİZMETLERİ TİCARET ANONİM ŞİRKETİ',a:'Atatürk Mah Turgut Özal Bulvarı Gardenya 1 İş Merkezi No:42/b, Kat 1, Ataşehir, 34758 İstanbul, Türkiye',e:'info@intellica.net'};
+const L=(t,h='#')=>`<a href="${h}">${t}</a>`;
+const S='<span class="sep" aria-hidden="true">·</span>';
+const FEED=L('Feedback','#feedback');
+const chain=[L('LokumAI'),L('Intellica'),L('PIA Group')];
+
+const A=()=>`<footer class="ft fa" role="contentinfo"><div class="in">
+ <div class="r1"><ul class="g"><li>${L('About')}</li><li>${L('Repository')}</li><li>${FEED}</li><li>${L('Legend and keys')}</li></ul>
+  <ul class="g"><li>${L('Privacy')}</li><li>${L('Legal')}</li></ul></div>
+ <div class="r2">${L('MIT licence')}<span>Marked by LKM-01</span>${chain.join('')}</div>
+ <div class="r3"><address><span class="own"><b>${OWN.n}</b></span><span>${OWN.a}</span><a href="mailto:${OWN.e}">${OWN.e}</a></address></div>
+</div></footer>`;
+
+const B=()=>`<footer class="ft fb" role="contentinfo"><div class="in">
+ <div class="own"><h3>Site owner</h3><address><p class="own"><b>${OWN.n}</b></p><p>${OWN.a}</p><p><a href="mailto:${OWN.e}">${OWN.e}</a></p></address></div>
+ <nav aria-label="Site"><h3>Site</h3><ul><li>${L('About')}</li><li>${FEED}</li><li>${L('Legend and keys')}</li><li>${L('Privacy')}</li><li>${L('Legal')}</li></ul></nav>
+ <nav aria-label="Project"><h3>Project</h3><ul><li>${L('Repository')}</li><li>${L('MIT licence')}</li><li>${L('LokumAI')}</li><li>${L('Intellica')}</li><li>${L('PIA Group')}</li></ul></nav>
+ <div class="base"><span>Marked by LKM-01</span></div>
+</div></footer>`;
+
+const C=()=>`<footer class="ft fc" role="contentinfo"><div class="in">
+ <ul><li>${L('About')}</li><li>${L('Repository')}</li><li>${FEED}</li><li>${L('Legend and keys')}</li><li>${L('Privacy')}</li><li>${L('Legal')}</li></ul>
+ <div class="chain">${L('LokumAI')}${S}${L('Intellica')}${S}${L('PIA Group')}</div>
+ <div class="meta">${L('MIT licence')}${S}<span>Marked by LKM-01</span></div>
+ <hr class="rule" aria-hidden="true">
+ <address><span class="nm">${OWN.n}</span>${OWN.a}<br><a href="mailto:${OWN.e}">${OWN.e}</a></address>
+</div></footer>`;
+
+const V=[
+ ['A','Quiet lines',A,'Three small left-aligned lines. Links are grouped by space rather than dots: the site links, then Privacy and Legal; then the licence, the mark and the three organisations; then the owner under a hairline, the name on one line and the address and email on the next. It is the closest to today, with the dots removed and the owner separated from the links.'],
+ ['B','Owner and two columns',B,'The owner block sits at the left with a plain heading, and the links sit in two short columns, Site and Project. It reads like the footer of a documentation site and makes the legal block easy to find. On a phone the two link columns stay side by side and the owner block goes below them.'],
+ ['C','Centred stack',C,'Everything is centred and stacked: links, the three organisations, the licence and the mark, then a short rule and the owner. It is the most compact on a phone, because every line wraps on its own and nothing sits in columns.']
+];
+const out=document.getElementById('out');
+for(const [k,t,f,n] of V){
+ const s=document.createElement('section');s.className='var';
+ const fr=(th)=>`<div class="frame theme-${th}"><div class="pad"></div>${f()}</div>`;
+ s.innerHTML=`<h2>${k}. ${t}</h2><p class="note">${n}</p>
+ <div class="cap">Desktop, light</div><div class="scroll d">${fr('light')}</div>
+ <div class="cap">Desktop, dark</div><div class="scroll d">${fr('dark')}</div>
+ <div class="cap">Phone, 390px, light and dark</div><div class="row2"><div class="phone">${fr('light')}</div><div class="phone">${fr('dark')}</div></div>`;
+ out.appendChild(s);
+}
+document.querySelectorAll('a[href="#"],a[href="#feedback"]').forEach(a=>a.addEventListener('click',e=>e.preventDefault()));
+</script>
+</body></html>

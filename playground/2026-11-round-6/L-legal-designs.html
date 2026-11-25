@@ -1,0 +1,186 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Round 6 · Legal page designs</title><style>
+*{box-sizing:border-box}
+.theme-light{--ground:#fdfbf7;--paper:#ffffff;--sand:#e6dac6;--line:#d8cbb4;--line2:#c3b299;--ink:#20242e;--title:#1b1b47;--muted:#6a6558;--faint:#948d7d;--accent:#282864;--headbg:#282864;--headink:#fff;--headdim:#c9c6e4;--gold:#b8873b;--ok:#2f8c86}
+.theme-dark{--ground:#1d1f27;--paper:#262933;--sand:#181a21;--line:#33363f;--line2:#444854;--ink:#e7e3d8;--title:#e9e6e0;--muted:#9aa0ad;--faint:#606571;--accent:#848bd0;--headbg:#282864;--headink:#fff;--headdim:#c9c6e4;--gold:#b8873b;--ok:#2f8c86}
+:root{--sans:"Avenir Next",ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;--mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+body{margin:0;background:#eee9de;color:#20242e;font:16px/1.6 var(--sans)}
+.doc{max-width:1120px;margin:0 auto;padding:40px 16px 80px}
+.doc h1{font:600 28px/1.25 var(--sans);margin:0 0 8px;color:#1b1b47}
+.doc>p.lede{color:#4d493f;margin:0 0 32px;max-width:70ch}
+.var{margin:0 0 56px}
+.var>h2{font:600 22px/1.3 var(--sans);margin:0 0 6px;color:#1b1b47}
+.var>p.note{margin:0 0 18px;color:#3c382f;max-width:75ch}
+.cap{font:600 13px/1.4 var(--sans);color:#4d493f;margin:18px 0 6px}
+.scroll{overflow-x:auto;border:1px solid #c3b299;border-radius:8px}
+.row2{display:flex;gap:16px;flex-wrap:wrap;align-items:flex-start}
+@media (max-width:860px){.row2{flex-wrap:nowrap;overflow-x:auto;padding-bottom:4px}}
+.phone{width:390px;flex:none;border:1px solid #c3b299;border-radius:8px;overflow:hidden}
+.frame{container-type:inline-size;background:var(--ground);color:var(--ink);font:16px/1.6 var(--sans)}
+.d .frame{min-width:960px}
+.pad{height:28px;background:var(--ground)}
+a{color:inherit}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style></head><body>
+<style>
+a.l{color:var(--accent);text-decoration:underline;text-underline-offset:3px;text-decoration-thickness:1px}
+a.l:hover{text-decoration-thickness:2px}
+a:focus-visible,button:focus-visible{outline:2px solid #a0503c;outline-offset:2px;border-radius:2px}
+.bar{background:var(--headbg);color:var(--headink);height:44px;display:flex;align-items:center;gap:18px;padding:0 22px;font-size:14px}
+.bar b{font-weight:600;white-space:nowrap}
+@container (max-width:560px){.bar span{display:none}}.bar span{color:var(--headdim)}
+.crumb{font-size:13px;color:var(--muted);margin:0 0 12px}
+.crumb a{color:var(--muted)}
+.pg{padding:28px 22px 56px}
+h1.t{font:700 34px/1.2 var(--sans);color:var(--title);margin:0 0 8px}
+.sub{color:var(--muted);margin:0 0 28px;font-size:16px}
+.pg h2{font:700 24px/1.3 var(--sans);color:var(--title);margin:0 0 4px}
+.pg h3{font:600 17px/1.4 var(--sans);color:var(--title);margin:0 0 6px}
+.pg p{margin:0 0 12px;max-width:68ch}
+.pg dl{margin:0}
+.dl{margin:0;max-width:68ch}
+.dl>div{display:grid;grid-template-columns:130px 1fr;gap:12px;padding:10px 0;border-bottom:1px solid var(--line)}
+.dl>div:first-child{border-top:1px solid var(--line)}
+.dl dt{color:var(--muted);font-size:14px}
+.dl dd{margin:0;word-break:break-word}
+@container (max-width:560px){.dl>div{grid-template-columns:1fr;gap:2px}h1.t{font-size:28px}.pg{padding:20px 16px 40px}}
+
+/* A: contents rail */
+.la .hd{max-width:1000px;margin:0 auto 12px}
+.la .wrap{display:grid;grid-template-columns:220px minmax(0,1fr);gap:48px;max-width:1000px;margin:0 auto}
+.la .toc{position:sticky;top:16px;align-self:start;font-size:14px}
+.la .toc h2{font:600 13px/1.4 var(--sans);color:var(--muted);margin:0 0 8px}
+.la .toc ul{list-style:none;margin:0 0 18px;padding:0;border-left:1px solid var(--line2)}
+.la .toc li a{display:block;padding:5px 12px;color:var(--ink);text-decoration:none;margin-left:-1px;border-left:2px solid transparent}
+.la .toc li a:hover{text-decoration:underline}
+.la .toc li.top a{font-weight:600}
+.la .toc li.cur a{border-left-color:var(--accent);font-weight:600;color:var(--title)}
+.la section.part{margin:0 0 44px}
+.la section.part>h2{padding-bottom:10px;border-bottom:1px solid var(--line2);margin-bottom:20px}
+.la .sec{margin:0 0 22px}
+@container (max-width:800px){.la .hd{max-width:1000px;margin:0 auto 12px}
+.la .wrap{grid-template-columns:1fr;gap:0}.la .toc{position:static;margin-bottom:24px}
+ .la .toc ul{display:flex;flex-wrap:wrap;gap:0 4px;border:0}.la .toc li a{border:0;padding:6px 10px 6px 0}}
+
+/* B: separate pages, label column */
+.lb .wrap{max-width:900px;margin:0 auto}
+.lb .tabs{display:flex;gap:4px;border-bottom:1px solid var(--line2);margin:0 0 8px}
+.lb .tabs button{font:600 15px/1 var(--sans);background:none;border:0;border-bottom:3px solid transparent;margin-bottom:-1px;padding:12px 14px;color:var(--muted);cursor:pointer}
+.lb .tabs button[aria-selected=true]{color:var(--title);border-bottom-color:var(--accent)}
+.lb .tabs button:hover{color:var(--ink)}
+.lb .part[hidden]{display:none}
+.lb .sec{display:grid;grid-template-columns:200px minmax(0,1fr);gap:8px 40px;padding:24px 0;border-bottom:1px solid var(--line)}
+.lb .sec:last-child{border-bottom:0}
+.lb .sec>h3{margin:0}
+.lb .sec>div p:last-child{margin-bottom:0}
+.lb .part>h2{display:none}
+@container (max-width:700px){.lb .sec{grid-template-columns:1fr;padding:18px 0}}
+
+/* C: summary first, one column, jump chips, owner card */
+.lc .wrap{max-width:720px;margin:0 auto}
+.lc .pg p,.lc .pg li{font-size:17px;line-height:1.7}
+.lc .sum{background:var(--paper);border:1px solid var(--line2);border-radius:10px;padding:18px 20px;margin:0 0 20px}
+.lc .sum h2{font:600 17px/1.4 var(--sans);margin:0 0 8px}
+.lc .sum ul{margin:0;padding:0;list-style:none;display:grid;grid-template-columns:1fr 1fr;gap:6px 24px}
+.lc .sum li{font-size:15px;line-height:1.5;display:flex;gap:8px}
+.lc .sum li::before{content:"\2713";color:var(--ok);font-weight:700}
+.lc .chips{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 36px}
+.lc .chips a{border:1px solid var(--line2);border-radius:999px;padding:6px 14px;font-size:14px;text-decoration:none;color:var(--ink);background:var(--paper)}
+.lc .chips a:hover{border-color:var(--accent)}
+.lc .part{margin-bottom:40px}
+.lc .part>h2{font-size:26px;margin-bottom:18px}
+.lc .sec{margin:0 0 24px}
+.lc .sec h3{font-size:18px}
+.lc .ownercard .dl>div:last-child{border-bottom:0}
+.lc .ownercard{background:var(--paper);border:1px solid var(--line2);border-radius:10px;padding:6px 20px}
+@container (max-width:560px){.lc .sum ul{grid-template-columns:1fr}.lc .pg p,.lc .pg li{font-size:16px}}
+</style>
+
+<div class="doc">
+<h1>Privacy and legal: three alternatives</h1>
+<p class="lede">All three use the full privacy and legal text from the Legend page, word for word. The only additions are short headings over the existing paragraphs. Each is shown at desktop width and at 390px, in light and dark.</p>
+<div id="out"></div>
+</div>
+
+<template id="content">
+<section class="part" data-part="privacy" data-label="Privacy"><h2>Privacy</h2>
+ <div class="sec" data-s="This website"><h3>This website</h3><div>
+  <p>This site collects no personal data. It sets no cookies, and it has no analytics, no account and no form.</p></div></div>
+ <div class="sec" data-s="Your progress and settings"><h3>Your progress and settings</h3><div>
+  <p>Your progress and your settings, such as the theme, are saved in this browser only. They are never sent anywhere. You can export or erase them on the <a class="l" href="#">progress page</a>.</p></div></div>
+ <div class="sec" data-s="The mobile app"><h3>The mobile app</h3><div>
+  <p>The AI Engineering Bazaar app for Android and iOS collects no personal data either, and it has no analytics and no account. Your progress and your settings are saved on your device only, and a backup leaves it only when you save one yourself. When the app crashes, it sends a crash report to Sentry so the fault can be fixed. To follow the app's health by version, it also tells Sentry when it opens and closes, how long it took to open and when it froze, with a random number for that installation. A problem you report from the app's settings goes to Sentry too, with no name or email asked. None of this holds your name, what you read or your quiz answers: the app masks personal details before they leave the device, and Sentry keeps no IP address. The app downloads the course from this site, so GitHub's record below covers its requests too.</p></div></div>
+ <div class="sec" data-s="Hosting"><h3>Hosting</h3><div>
+  <p>The site is hosted on GitHub Pages. GitHub logs and stores the IP address of every visitor for security. This is GitHub's record, not ours: see <a class="l" href="#">What is GitHub Pages?</a> and the <a class="l" href="#">GitHub General Privacy Statement</a>.</p></div></div>
+ <div class="sec" data-s="Questions"><h3>Questions</h3><div>
+  <p>For any question about personal data, write to <a class="l" href="mailto:info@intellica.net">info@intellica.net</a>.</p></div></div>
+</section>
+<section class="part" data-part="legal" data-label="Legal"><h2>Legal</h2>
+ <div class="sec" data-s="Site owner"><h3>Site owner</h3><div>
+  <dl class="dl">
+   <div><dt>Site owner</dt><dd>İŞ ZEKASI YAZILIM DANIŞMANLIK HİZMETLERİ TİCARET ANONİM ŞİRKETİ</dd></div>
+   <div><dt>MERSİS no.</dt><dd>0481058685800001</dd></div>
+   <div><dt>Address</dt><dd>Atatürk Mah Turgut Özal Bulvarı Gardenya 1 İş Merkezi No:42/b, Kat 1, Ataşehir, 34758 İstanbul, Türkiye</dd></div>
+   <div><dt>Email</dt><dd><a class="l" href="mailto:info@intellica.net">info@intellica.net</a></dd></div>
+   <div><dt>Phone</dt><dd><a class="l" href="tel:+902166884546">+90 216 688 45 46</a></dd></div>
+  </dl></div></div>
+ <div class="sec" data-s="Third-party marks and images"><h3>Third-party marks and images</h3><div>
+  <p>Company names and logos shown in the modules belong to their owners. They appear only to say which company is meant, and they do not mean that the company endorses this site.</p>
+  <p>Some images come from articles and other public sources, and we are sincerely grateful to their authors. They remain the property of their owners, we claim no rights in them, and they are shown only to explain the point next to them. If you own an image or a mark shown here, write to <a class="l" href="mailto:info@intellica.net">info@intellica.net</a> and we will gladly add your credit, or remove it, whichever you prefer.</p>
+  <p>The <a class="l" href="#">MIT licence</a> in the repository covers the code and the content of this project. It does not cover third-party marks or images.</p></div></div>
+</section>
+</template>
+
+<script>
+const T=document.getElementById('content');
+const clone=()=>T.content.cloneNode(true);
+const bar=`<div class="bar"><b>AI Engineering Bazaar</b><span>Home</span><span>Catalog</span><span>About</span></div>`;
+const crumb=(t)=>`<p class="crumb"><a href="#">Home</a> / ${t}</p>`;
+
+function A(){
+ const w=document.createElement('div');w.innerHTML=`${bar}<div class="pg la"><div class="hd">${crumb('Privacy and legal')}<h1 class="t">Privacy and legal</h1><p class="sub">What this site and the app do with your data, and who runs them.</p></div><div class="wrap"><nav class="toc" aria-label="On this page"><h2>On this page</h2><ul class="m"></ul></nav><div class="main"></div></div></div>`;
+ const main=w.querySelector('.main'),ul=w.querySelector('.m');
+ main.appendChild(clone());
+ main.querySelectorAll('.part').forEach((p,i)=>{
+  const top=document.createElement('li');top.className='top';top.innerHTML=`<a href="#">${p.dataset.label}</a>`;ul.appendChild(top);
+  p.querySelectorAll('.sec').forEach(s=>{const li=document.createElement('li');li.innerHTML=`<a href="#">${s.dataset.s}</a>`;ul.appendChild(li)});
+ });
+ ul.firstChild.classList.add('cur');
+ return w.innerHTML}
+
+function B(){
+ const w=document.createElement('div');w.innerHTML=`${bar}<div class="pg lb"><div class="wrap">${crumb('Privacy')}<h1 class="t">Privacy</h1><p class="sub">The privacy and legal notes are two pages, linked from the footer.</p><div class="tabs" role="tablist"><button role="tab" aria-selected="true" data-p="privacy">Privacy</button><button role="tab" aria-selected="false" data-p="legal">Legal</button></div><div class="body"></div></div></div>`;
+ w.querySelector('.body').appendChild(clone());
+ w.querySelectorAll('.part').forEach(p=>{if(p.dataset.part!=='privacy')p.hidden=true});
+ return w.innerHTML}
+document.addEventListener('click',e=>{const b=e.target.closest('.lb .tabs button');if(!b)return;
+ const root=b.closest('.lb');root.querySelectorAll('.tabs button').forEach(x=>x.setAttribute('aria-selected',x===b));
+ root.querySelectorAll('.part').forEach(p=>p.hidden=p.dataset.part!==b.dataset.p);
+ root.querySelector('h1').textContent=b.textContent;root.querySelector('.crumb').lastChild.textContent=' / '+b.textContent;});
+
+function C(){
+ const w=document.createElement('div');w.innerHTML=`${bar}<div class="pg lc"><div class="wrap">${crumb('Privacy and legal')}<h1 class="t">Privacy and legal</h1><p class="sub">The short version first, then the full text.</p>
+ <div class="sum"><h2>In short</h2><ul><li>No cookies</li><li>No analytics</li><li>No account or form</li><li>Progress stays in your browser</li></ul></div>
+ <nav class="chips" aria-label="Jump to"><a href="#">Privacy</a><a href="#">Legal</a><a href="#">Site owner</a><a href="#">Contact</a></nav><div class="body"></div></div></div>`;
+ const b=w.querySelector('.body');b.appendChild(clone());
+ const dl=b.querySelector('.dl');const card=document.createElement('div');card.className='ownercard';dl.parentNode.insertBefore(card,dl);card.appendChild(dl);
+ dl.querySelector('div').style.borderTop='0';
+ return w.innerHTML}
+
+const V=[
+ ['A','One page with a contents list',A,'Privacy and Legal become one page, "Privacy and legal", with a contents list at the left that stays in view and a single reading column. The footer links go to its two parts. The page is a separate route, so the Legend page goes back to keys, progress and colophon. On a phone the contents turn into a row of links above the text.'],
+ ['B','Two pages with a label column',B,'Privacy and Legal become two pages, each with its own title and two tabs between them, and each section is a row with its heading at the left and its text at the right. The footer links go to one page each. Click Legal to see the second page. On a phone the heading sits above its text.'],
+ ['C','Summary first, one wide column',C,'Privacy and Legal stay together on one page (or as one section of the Legend page, which would keep its keys and colophon). A four-line "In short" box comes first, then jump links, the full text in larger type, and the owner details in a card. The summary repeats what the text says and the full text stays complete.']
+];
+const out=document.getElementById('out');
+for(const [k,t,f,n] of V){
+ const s=document.createElement('section');s.className='var';
+ const fr=(th)=>`<div class="frame theme-${th}">${f()}</div>`;
+ s.innerHTML=`<h2>${k}. ${t}</h2><p class="note">${n}</p>
+ <div class="cap">Desktop, light</div><div class="scroll d">${fr('light')}</div>
+ <div class="cap">Desktop, dark</div><div class="scroll d">${fr('dark')}</div>
+ <div class="cap">Phone, 390px, light and dark</div><div class="row2"><div class="phone">${fr('light')}</div><div class="phone">${fr('dark')}</div></div>`;
+ out.appendChild(s);
+}
+document.querySelectorAll('a[href="#"]').forEach(a=>a.addEventListener('click',e=>e.preventDefault()));
+</script>
+</body></html>

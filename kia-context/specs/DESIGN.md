@@ -11,8 +11,8 @@ source: playground/01-theme-T4-ground-G3-powder.html (light) · playground/01-th
 authority: blueprint
 writes: agent, as the language evolves
 status: active
-covers: "the Bazaar language, transcribed from T4 on ground G3, with its derived dark sibling, plus the six primitives M16 derived from the component mockups — 2026-09-13, with thirteen recorded deviations (the sixth and seventh, the logo and the rail group, 2026-10-11; the eighth, the pager, the ninth, the Bazaar Street front door, and the tenth, a right-to-left script, 2026-10-12; the eleventh, the diagram frame's ground, 2026-11-08; the twelfth, the About page, 2026-11-09), the three reader palettes for code, the ten Mermaid themes for diagrams, the call-out card, and the end of a reading page"
-last_updated: 2026-11-11
+covers: "the Bazaar language, transcribed from T4 on ground G3, with its derived dark sibling, plus the six primitives M16 derived from the component mockups — 2026-09-13, with thirteen recorded deviations (the sixth and seventh, the logo and the rail group, 2026-10-11; the eighth, the pager, the ninth, the Bazaar Street front door, and the tenth, a right-to-left script, 2026-10-12; the eleventh, the diagram frame's ground, 2026-11-08; the twelfth, the About page, 2026-11-09), the three reader palettes for code, the ten Mermaid themes for diagrams, the call-out card, and the end of a reading page; and, added 2026-11-19, the phone pattern: a bottom tab bar and its sheet, derived because the source was never drawn at phone width"
+last_updated: 2026-11-19
 ---
 
 ---
@@ -695,13 +695,13 @@ the look:
 
 It adds no colour, no length and no ornament.
 
-**Four of the ten were forced and six are the author's.** The code comment
+**Of the first ten deviations, four were forced and six are the author's.** The code comment
 deviation, the pager's tracks and the rail's hairline were forced by a measured
 floor, and the Persian face and direction by a script the source has no text
 in; the `20ch` cap, the authorship line, the logo, the rail group's size, the
 pager's look and the front door were chosen.
 
-**The `20ch` cap, the authorship line, the logo, the rail group's size, the pager's look and the front door are the only entries in this file that the author decided rather than a measurement forcing.**
+**Among the first ten, the `20ch` cap, the authorship line, the logo, the rail group's size, the pager's look and the front door are the only entries that the author decided rather than a measurement forcing; the twelfth (About) and thirteenth (the gold Apply) are the author's too, and the eleventh follows the reader's choice of a diagram theme (D107).**
 The rule stands: the mockup outranks this document, a measured accessibility floor outranks the
 mockup (**D34**), and the author outranks all three — stated here so a third entry cannot be added
 by an agent reading the first two as precedent.
@@ -781,11 +781,57 @@ exist at all without pushing content under the bar.
 **Two breakpoints, and they drop the least important thing first.** Below `fold-at` the aside goes,
 because an in-page index is the most redundant of the three columns. Below `rail-at` the rail goes
 too and the reading column takes the whole window. Nothing reflows into a hamburger and nothing
-scrolls sideways at any width: wide content scrolls **inside its own box**.
+scrolls sideways at any width: wide content scrolls **inside its own box**. The top bar keeps both of
+those rules at every width; what changes on a phone is where its list of destinations stands, and that is
+neither a hamburger nor a row that scrolls (The phone, below).
 
 **The rail folds.** It collapses to zero width over `fold`, the reading column takes the space, and a
 small tab pinned to the leading edge — vertically centred, so it can never collide with the sticky
 chrome — brings it back. Under `prefers-reduced-motion` the fold is instant.
+
+**The phone is a third breakpoint, 767px, and the touch floor lives there.** It is the width below which a
+reader has a thumb and not a pointer, and it is also what a touch screen held on its side is treated as when it
+is under 500px tall. The source was drawn for a desktop and never at phone width, so everything in the six
+paragraphs on the phone is derived from the language rather than transcribed from it, and it adds no colour
+and no shadow. Its values are declared in the phone's own stylesheet, not in the token block above: the one
+new length, the tab bar's height, is `--bz-tabbar` (60px, 48px in landscape, read from `src/app/mobile.css` on 2026-11-19), the only length of the phone pattern that the language's own token block does not carry.
+
+**On a phone the bar's destinations become a tab bar fixed to the bottom edge.** A row of destinations that
+scrolls inside the bar hides its first and last entries with nothing to say so (measured at 390px: Home, About
+and most of Caravan sat out of sight), so the list does not scroll and does not collapse behind
+a button. All of it stays on screen, one thumb-length from the edge, in the same navigation the desktop bar
+uses, restyled. It is `60px` tall plus the device's bottom safe-area inset, on `bar` with a `1px`
+`bar-field-line` rule above it. The destinations share the width equally, five at most (more is past what a
+thumb can tell apart), each a small stroked glyph over its label at `12px` / `500` with a transparent `3px` rule
+on its top edge. **The current tab is told three ways, one of them not a colour**: that top rule turns
+`ornament`, the label goes to `700`, and a destination that opens a menu also takes the `bar-chip` fill with
+`on-bar-chip` type; the open state of such a tab is `bar-hover`. The page ends above the bar (the body is padded by
+the bar's height and the inset, and anything scrolled or focused into view stops above it).
+
+**A menu a tab opens is a sheet standing on the tab bar.** Fixed, `8px` in from both sides and `8px` above
+the bar, as tall as its rows need up to the smaller of `70dvh` and the room under the sticky chrome and
+above the bar, scrolling inside itself. Its rows are `48px` tall, its tabs `44px`, and its padding `8px`.
+The page behind it is dimmed by `slab-surface` at `0.45` opacity, from under the sticky chrome to the top of the bar,
+so a tap outside closes it and cannot fall through to a link beneath; the bar stays live. Escape closes it too.
+The sheet sits inside the bar, whose focus ring is white, and its own surface is white, so it takes the
+page's clay ring: the `ring` hook rebound on a third ground, by the rule already stated above.
+
+**Targets are `44px`, and where a painted control cannot grow, an invisible area carries the hit.** The
+top bar's icon buttons, language trigger, brand and track switch (its segments `36px` tall and at least `44px`
+wide in a `44px` frame) are all `44px`; tab, menu and search rows are `44px` or `48px`; a field is `16px` type,
+because a smaller one makes iOS zoom the page when it takes focus; the trail above a page is one back link
+and its heading, with the link `44px` tall. Nothing may live behind a hover: the heading anchor and the
+keyboard-chord hint, which only a pointer can use, are not offered to a device that cannot hover.
+
+**The search window is a full screen on a phone**: the window's width and `100dvh`, no radius and no border,
+padded by the safe-area insets, its result rows `48px`. **A row of chips that continues past the column's edge
+scrolls inside its own box, one line, and fades at the edge it continues past**, driven by the scroll position
+so a row that fits has no fade.
+
+**A phone on its side has about 390px of height, so the chrome gives it back.** On a touch device under 500px
+tall and in landscape the ornament band is removed, the top bar stops being sticky (`sticky` is `0`), and the
+tab bar is `48px` with its glyph beside its label (`16px`, `6px` apart) instead of above it. The sheet then
+stands on a bar `48px` tall and is as tall as the screen less that bar and `16px`.
 
 ## Elevation & Depth
 
@@ -984,6 +1030,9 @@ The measurement that forced the hook, and the two grounds that rebind it, are ab
 
 **Do** let wide content scroll inside its own box.
 **Don't** ever let the page body scroll sideways.
+
+**Do** keep every destination on screen on a phone, in a tab bar at the bottom edge.
+**Don't** fold them behind a menu button or let the list scroll inside the bar.
 
 **Do** use the type stack as given.
 **Don't** substitute a different family, add a serif, or introduce small uppercase mono labels.

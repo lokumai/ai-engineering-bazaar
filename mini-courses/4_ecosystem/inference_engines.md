@@ -50,7 +50,7 @@ graph TD
     B --> C["Many machines<br/>llm-d on Kubernetes"]
 ```
 
-**On your own machine**, use the wrappers. [LLM Fundamentals](../1_fundamentals/llms.md) covered ![](./images/logos/ollama-mono.svg)**[Ollama](https://ollama.com/)** and ![](./images/logos/lmstudio-mono.svg)**[LM Studio](https://lmstudio.ai/)**, and they are the right answer here. They hide the engine, and they get you running in minutes. Underneath, both of them are built on ![](./images/logos/llamacpp.svg)**[llama.cpp](https://github.com/ggml-org/llama.cpp)**. It is LLM inference written in C and C++. It is also the reason that a quantized model can run on a laptop at all. Use llama.cpp directly in two cases: when you want a build flag that the wrapper does not expose, or when you are putting a model on hardware that nobody else supports.
+**On your own machine**, use the wrappers. [LLM Fundamentals](../1_fundamentals/llms.md) covered ![](./images/logos/ollama-mono.svg)**[Ollama](https://ollama.com/)** and ![](./images/logos/lmstudio-mono.svg)**[LM Studio](https://lmstudio.ai/)**, and they are the right answer here. They hide the engine, and they get you running in minutes. Underneath, both of them are built on ![](./images/logos/llamacpp.svg)**[llama.cpp](https://github.com/ggml-org/llama.cpp)**. It is LLM inference written in C and C++. It is also the reason that a quantized model can run on a laptop at all. Use llama.cpp directly in two cases: when you want a build flag that the wrapper does not expose, or when you are putting a model on hardware that nobody else supports. When the model is far bigger than your GPU's memory, an engine such as **[FreeToken](https://github.com/FlashML-org/FreeToken)** is the next step. It runs mixture-of-experts models, which use only a few of their many sub-networks for each token, and it keeps those few on the GPU while the rest wait in the computer's ordinary memory.
 
 **On a GPU server with real users**, the wrappers are no longer enough. Here you want a serving engine.
 
@@ -186,6 +186,7 @@ Batching is the idea that explains every number in this module. A GPU that serve
 ### 🗃️ Repositories
 
 - [llama.cpp](https://github.com/ggml-org/llama.cpp): LLM inference in C and C++, and the base that the local wrappers are built on
+- [FreeToken](https://github.com/FlashML-org/FreeToken): mixture-of-experts models larger than your GPU, on an NVIDIA gaming PC
 - [SGLang](https://github.com/sgl-project/sglang): high-performance serving, strong when requests share a prefix
 - [TensorRT-LLM](https://github.com/NVIDIA/TensorRT-LLM): from NVIDIA, compiled ahead of time for lower latency
 - [llm-d](https://github.com/llm-d/llm-d): serving across many machines on Kubernetes

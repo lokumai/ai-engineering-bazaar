@@ -30,12 +30,17 @@ const row = (page: Page) => page.locator('.bz-street .cast-row .who-btn')
 const cloudsReady = (page: Page) => expect(page.locator('.bz-street[data-clouds]')).toHaveCount(1)
 /** ScrollTrigger scrubs with a lag (`scrub: 0.9`), so a pose is read after it settles. */
 const settle = (page: Page) => page.waitForTimeout(1600)
+/** The walk's own signal: `is-walk` is added by `initBazaar`, which arrives behind a dynamic
+ *  import (gsap and ScrollTrigger) and then moves the whole street into the walk, so on a loaded
+ *  runner it lands after the default 5 s of `expect`. Two CI runs failed here with the class
+ *  still empty at 5 s and passed on the retry; the wait is for that signal, with room for it. */
+const walking = (page: Page) => expect(page.locator('html'), 'the walk was never wired').toHaveClass(/is-walk/, { timeout: 25_000 })
 
 async function walk(page: Page, path = '/') {
   await page.setViewportSize(WALK)
   await page.emulateMedia({ reducedMotion: 'no-preference' })
   await page.goto(path)
-  await expect(page.locator('html')).toHaveClass(/is-walk/)
+  await walking(page)
 }
 
 /** Every language the home page is read in, with its address: from the registry, never typed in. */
@@ -250,7 +255,7 @@ test('on the walk no two captions touch and none leaves the window, from the sma
     await page.setViewportSize(size)
     await page.emulateMedia({ reducedMotion: 'no-preference' })
     await page.goto('/')
-    await expect(page.locator('html')).toHaveClass(/is-walk/)
+    await walking(page)
     const caps = page.locator('.bz-street .cast-box .who-cap')
     await expect(caps).toHaveCount(CAST.length)
     const boxes = await caps.evaluateAll((els) => els.map((el) => {
@@ -333,7 +338,7 @@ test('Bit\'s story is drawn over the way in, not under it (M72)', async ({ page 
   await page.setViewportSize({ width: 1280, height: 720 })
   await page.emulateMedia({ reducedMotion: 'no-preference' })
   await page.goto('/')
-  await expect(page.locator('html')).toHaveClass(/is-walk/)
+  await walking(page)
   await cloudsReady(page)
   const bit = page.locator('.bz-street .cast-box .who-btn[data-who="bit"]')
   await bit.click()
@@ -431,7 +436,7 @@ for (const [lang, path] of READINGS) {
       await page.setViewportSize(size)
       await page.emulateMedia({ reducedMotion: 'no-preference' })
       await page.goto(path)
-      await expect(page.locator('html')).toHaveClass(/is-walk/)
+      await walking(page)
       const boxes = await page.locator('.bz-street .cast-box .who-cap').evaluateAll((els) => els.map((el) => {
         const r = el.getBoundingClientRect()
         return { left: r.left, right: r.right, text: el.textContent ?? '' }

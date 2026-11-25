@@ -260,9 +260,12 @@ export function SearchDialog({ levels }: { levels: readonly SearchLevel[] }) {
     }
     window.addEventListener('keydown', onKey)
     window.addEventListener(SEARCH_OPEN_EVENT, open)
+    // Ready signal for tests and nothing else: a key before this line has no listener.
+    document.documentElement.setAttribute('data-hl-search', 'ready')
     return () => {
       window.removeEventListener('keydown', onKey)
       window.removeEventListener(SEARCH_OPEN_EVENT, open)
+      document.documentElement.removeAttribute('data-hl-search')
     }
   }, [open, close])
 

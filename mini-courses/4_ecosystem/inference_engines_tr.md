@@ -49,7 +49,7 @@ graph TD
     B --> C["Çok makine<br/>Kubernetes üzerinde llm-d"]
 ```
 
-**Kendi makinende** sarmalayıcıları (wrapper) kullanmak en doğrusudur. [LLM Temelleri](../1_fundamentals/llms_tr.md) modülünde anlatılan ![](./images/logos/ollama-mono.svg)**[Ollama](https://ollama.com/)** ve ![](./images/logos/lmstudio-mono.svg)**[LM Studio](https://lmstudio.ai/)** bu durumda doğru seçimdir. İkisi de engine'i gizler ve birkaç dakika içinde çalıştırmanı sağlar; altlarında ise ![](./images/logos/llamacpp.svg)**[llama.cpp](https://github.com/ggml-org/llama.cpp)** bulunur. llama.cpp, C ve C++ ile yazılmış bir LLM inference projesidir ve quantize edilmiş bir modelin dizüstü bilgisayarda bile çalışabilmesinin nedeni de budur. llama.cpp'yi doğrudan kullanmak iki durumda mantıklıdır: sarmalayıcının açmadığı bir build flag'ine ihtiyacın olduğunda ya da kimsenin desteklemediği bir donanıma model koyacağın zaman.
+**Kendi makinende** sarmalayıcıları (wrapper) kullanmak en doğrusudur. [LLM Temelleri](../1_fundamentals/llms_tr.md) modülünde anlatılan ![](./images/logos/ollama-mono.svg)**[Ollama](https://ollama.com/)** ve ![](./images/logos/lmstudio-mono.svg)**[LM Studio](https://lmstudio.ai/)** bu durumda doğru seçimdir. İkisi de engine'i gizler ve birkaç dakika içinde çalıştırmanı sağlar; altlarında ise ![](./images/logos/llamacpp.svg)**[llama.cpp](https://github.com/ggml-org/llama.cpp)** bulunur. llama.cpp, C ve C++ ile yazılmış bir LLM inference projesidir ve quantize edilmiş bir modelin dizüstü bilgisayarda bile çalışabilmesinin nedeni de budur. llama.cpp'yi doğrudan kullanmak iki durumda mantıklıdır: sarmalayıcının açmadığı bir build flag'ine ihtiyacın olduğunda ya da kimsenin desteklemediği bir donanıma model koyacağın zaman. Model GPU'nun belleğinden çok daha büyükse sıradaki adım **[FreeToken](https://github.com/FlashML-org/FreeToken)** gibi bir engine'dir. Mixture-of-experts modelleri her token için çok sayıdaki alt ağından yalnızca birkaçını kullanır; FreeToken o birkaçını GPU'da tutar, geri kalanını bilgisayarın normal belleğinde bekletir.
 
 **Gerçek kullanıcılara hizmet veren bir GPU sunucusunda** sarmalayıcılar artık yetmez ve burada bir serving engine'e ihtiyacın olur.
 
@@ -187,6 +187,7 @@ Batching, bu modüldeki her sayıyı açıklayan fikirdir. Tek bir isteğe hizme
 ### 🗃️ Repolar
 
 - [llama.cpp](https://github.com/ggml-org/llama.cpp): C ve C++ ile yazılmış bir LLM inference projesi. Yerel sarmalayıcıların dayandığı temel budur.
+- [FreeToken](https://github.com/FlashML-org/FreeToken): GPU'dan büyük mixture-of-experts modellerini NVIDIA ekran kartlı bir oyun bilgisayarında çalıştırır.
 - [SGLang](https://github.com/sgl-project/sglang): yüksek performanslı serving. Ortak bir prefix paylaşan isteklerde güçlüdür.
 - [TensorRT-LLM](https://github.com/NVIDIA/TensorRT-LLM): NVIDIA'dan gelir ve daha düşük gecikme için önceden derlenir.
 - [llm-d](https://github.com/llm-d/llm-d): Kubernetes üzerinde birden fazla makineye yayılmış serving.

@@ -1,0 +1,14 @@
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "dev.lokumai.bazaar",
+      "sha256_cert_fingerprints": [
+        "C8:F7:84:F1:BF:57:FE:45:01:F4:B7:59:D4:51:C3:FA:06:F1:D7:59:2D:AE:15:48:8F:C0:86:2D:76:2A:5F:DF",
+        "EB:D8:68:71:3C:62:AE:D0:70:EF:9F:15:02:AB:96:A9:EA:C5:88:B1:51:FF:72:81:10:47:C3:25:AA:41:75:4A",
+        "D3:CE:68:2A:3F:E5:AE:95:FF:28:1F:A8:69:22:6F:F2:98:FF:C9:00:C0:D4:CC:C6:61:54:91:72:0E:1D:9E:23"
+      ]
+    }
+  }
+]

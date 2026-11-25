@@ -1,0 +1,40 @@
+{
+  "applinks": {
+    "details": [
+      {
+        "appIDs": [
+          "GSQ9Q2VF96.dev.lokumai.bazaar"
+        ],
+        "components": [
+          {
+            "/": "/courses/*"
+          },
+          {
+            "/": "/everyone/courses/*"
+          },
+          {
+            "/": "/tr/courses/*"
+          },
+          {
+            "/": "/fa/courses/*"
+          },
+          {
+            "/": "/tr/everyone/courses/*"
+          },
+          {
+            "/": "/fa/everyone/courses/*"
+          },
+          {
+            "/": "/sheets/*"
+          },
+          {
+            "/": "/everyone/sheets/*"
+          },
+          {
+            "/": "/transfer/*"
+          }
+        ]
+      }
+    ]
+  }
+}

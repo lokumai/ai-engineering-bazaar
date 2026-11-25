@@ -21,6 +21,9 @@ describe('app link files', () => {
     expect(assetlinks[0].relation).toEqual(['delegate_permission/common.handle_all_urls'])
     expect(assetlinks[0].target.namespace).toBe('android_app')
     expect(assetlinks[0].target.sha256_cert_fingerprints.length).toBeGreaterThan(0)
+    for (const fp of assetlinks[0].target.sha256_cert_fingerprints as string[]) {
+      expect(fp, 'a SHA-256 as Play Console prints it').toMatch(/^([0-9A-F]{2}:){31}[0-9A-F]{2}$/)
+    }
   })
 
   it('names the same app on iOS, as <team>.<bundle id>', () => {

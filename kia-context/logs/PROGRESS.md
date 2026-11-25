@@ -2811,8 +2811,9 @@ opened once the store accounts give the two identifiers they need.
 - [x] **`tests/unit/app-links.test.ts`**: both files parse, name one app, and claim only routes the site has.
 - [x] **Fill the Apple Team ID**: `GSQ9Q2VF96`, the company's Apple developer team (2026-11-25); the app's
       Runner names the same team and `applinks:ai-bazaar.lokum.dev`.
-- [ ] **Fill the SHA-256 of the Play App Signing key** (`REPLACE_WITH_PLAY_APP_SIGNING_SHA256`): Play Console,
-      Test and release, App integrity, App signing key certificate.
+- [x] **Fill the SHA-256 of the Play App Signing key**: the three fingerprints Play Console lists under App
+      integrity, App signing (2026-11-25): the key in use, its post-quantum twin and the first key Play made
+      before it, so every build Play has signed or will sign opens the links. The upload key is not listed.
 - [ ] **After merging, on the live site**: `https://app-site-association.cdn-apple.com/a/v1/ai-bazaar.lokum.dev`
       serves the iOS file, Google's Digital Asset Links API verifies the Android one, and a scanned code opens
       the app directly.
